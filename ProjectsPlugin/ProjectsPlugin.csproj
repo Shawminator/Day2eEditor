@@ -8,16 +8,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
   </ItemGroup>
   
   <Target Name="copyToPluginsFolder" AfterTargets="Build">
     <MakeDir Directories="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" />
-    <Copy
-      SourceFiles="$(TargetPath)"
-      DestinationFolder="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

@@ -2,6 +2,7 @@
 {
     using System.Text.Json;
     using System.Text.Json.Serialization;
+    using System.Windows.Forms;
 
     public static class SettingsManager
     {

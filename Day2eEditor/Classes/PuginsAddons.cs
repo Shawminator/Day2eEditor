@@ -4,7 +4,7 @@
     {
         string pluginIdentifier { get; }
         string pluginName { get; }
-        decimal pluginVersion { get; }
+        string pluginVersion { get; }
 
         Form GetForm();
     }

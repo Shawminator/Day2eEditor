@@ -1,7 +1,7 @@
 {
   "mainApp": {
-    "version": "2.3.0",
-    "url": "https://github.com/your-org/mainapp/releases/download/v2.3.0/MainApp.zip",
+    "version": "0.0.2",
+    "url": "https://github.com/Shawminator/Day2eEditor/releases/download/v0.0.2/Day2eEditor_v0.0.2.zip",
     "checksum": "sha256-123abc..."
   },
   "plugins": [

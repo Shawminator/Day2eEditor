@@ -13,8 +13,16 @@ namespace Day2eEditor
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            var updateManager = new UpdateManager(); // Your own class
-            await updateManager.CheckForUpdatesAsync();
+            var updateManager = new UpdateManager("plugins", "downloads");
+
+            try
+            {
+                await updateManager.CheckAndUpdateAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Update failed:\n{ex.Message}");
+            }
 
             Application.Run(new Form1());
         }
