@@ -13,7 +13,7 @@ namespace Day2eEditor
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            var updateManager = new UpdateManager("plugins", "downloads");
+            var updateManager = new UpdateManager("Plugins", "Downloads");
 
             try
             {

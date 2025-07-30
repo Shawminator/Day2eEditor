@@ -3,40 +3,104 @@ using System.Diagnostics;
 
 class Updater
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
-        if (args.Length != 2)
+        if (args.Length < 2)
         {
-            Console.WriteLine("Invalid arguments.");
+            Console.WriteLine("Usage: Updater <zipPath> <expectedChecksum> [mainAppPid]");
             return;
         }
 
-        string zipFilePath = args[0];
+        string zipPath = args[0];
         string expectedChecksum = args[1];
-        string appDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        int? mainAppPid = args.Length >= 3 && int.TryParse(args[2], out var pid) ? pid : null;
 
-        try
+        string appDirectory = AppContext.BaseDirectory;
+
+        if (mainAppPid.HasValue)
         {
-            // Verify checksum (optional)
-            if (!ChecksumUtils.VerifyChecksum(File.ReadAllBytes(zipFilePath), expectedChecksum))
+            try
             {
-                throw new InvalidOperationException("Checksum mismatch. Update failed.");
+                var proc = Process.GetProcessById(mainAppPid.Value);
+                Console.WriteLine($"Waiting for MainApp (PID {mainAppPid.Value}) to exit...");
+                proc.WaitForExit();
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited
+            }
+        }
+        else
+        {
+            // Fallback: wait for process name
+            while (Process.GetProcessesByName("MainApp").Any())
+            {
+                await Task.Delay(500);
+            }
+        }
+
+        // Verify checksum
+        //if (!ChecksumUtils.VerifyChecksum(zipPath, expectedChecksum))
+        //{
+        //    Console.WriteLine("Checksum verification failed.");
+        //    return;
+        //}
+
+        // Extract
+        Console.WriteLine("Extracting update...");
+        using (FileStream fs = File.OpenRead(zipPath))
+        {
+            using (ZipArchive zip = new ZipArchive(fs))
+            {
+                ExtractToDirectory(zip, appDirectory, true);
+            }
+        }
+        File.Delete(zipPath);
+        Console.WriteLine("Update applied.");
+
+        // Restart main app
+        string mainAppExe = Path.Combine(appDirectory, "Day2eEditor.exe");
+        if (File.Exists(mainAppExe))
+        {
+            Console.WriteLine("Restarting Day2eEditor...");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = mainAppExe,
+                UseShellExecute = true
+            });
+        }
+        else
+        {
+            Console.WriteLine("Day2eEditor.exe not found.");
+        }
+    }
+    public static void ExtractToDirectory(ZipArchive archive, string destinationDirectoryName, bool overwrite)
+    {
+        if (!overwrite)
+        {
+            archive.ExtractToDirectory(destinationDirectoryName);
+            return;
+        }
+
+        DirectoryInfo di = Directory.CreateDirectory(destinationDirectoryName);
+        string destinationDirectoryFullPath = di.FullName;
+
+        foreach (ZipArchiveEntry file in archive.Entries)
+        {
+            if (file.Name == "Updater.exe" || file.Name == "Updater.dll") continue;
+            string completeFileName = Path.GetFullPath(Path.Combine(destinationDirectoryFullPath, file.FullName));
+            Console.WriteLine("Extracting : " + completeFileName);
+            if (!completeFileName.StartsWith(destinationDirectoryFullPath, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new IOException("Trying to extract file outside of destination directory");
             }
 
-            // Extract the ZIP file into the application directory
-            string extractPath = appDirectory;
-            Console.WriteLine("Extracting update...");
-            ZipFile.ExtractToDirectory(zipFilePath, extractPath);
-
-            // Restart the application
-            string appExePath = Path.Combine(appDirectory, "YourApp.exe");
-            Process.Start(appExePath);  // Start the app again
-
-            Console.WriteLine("Update applied successfully. Restarting application.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during update: {ex.Message}");
+            if (file.Name == "")
+            {// Assuming Empty for Directory
+                Directory.CreateDirectory(Path.GetDirectoryName(completeFileName));
+                continue;
+            }
+            file.ExtractToFile(completeFileName, true);
         }
     }
 }

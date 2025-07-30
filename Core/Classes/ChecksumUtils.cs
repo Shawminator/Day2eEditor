@@ -73,4 +73,18 @@ public static class ChecksumUtils
         string normalizedExpected = NormalizeChecksum(expected);
         return string.Equals(actual, normalizedExpected, StringComparison.OrdinalIgnoreCase);
     }
+    public static bool VerifyChecksum(string filePath, string expected)
+    {
+        if (!expected.StartsWith("sha256-", StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        expected = expected["sha256-".Length..];
+
+        using var stream = File.OpenRead(filePath);
+        using var sha256 = SHA256.Create();
+        var hashBytes = sha256.ComputeHash(stream);
+        string actual = Convert.ToHexString(hashBytes).ToLowerInvariant();
+
+        return string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase);
+    }
 }
