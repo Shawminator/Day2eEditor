@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
+  </ItemGroup>
+  
+  <Target Name="copyToPluginsFolder" AfterTargets="Build">
+    <MakeDir Directories="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" />
+    <Copy
+      SourceFiles="$(TargetPath)"
+      DestinationFolder="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

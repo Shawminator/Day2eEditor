@@ -1,0 +1,15 @@
+{
+  "mainApp": {
+    "version": "2.3.0",
+    "url": "https://github.com/your-org/mainapp/releases/download/v2.3.0/MainApp.zip",
+    "checksum": "sha256-123abc..."
+  },
+  "plugins": [
+    {
+      "name": "MyPluginA",
+      "version": "1.2.0",
+      "url": "https://github.com/your-org/plugins/releases/download/v1.2.0/MyPluginA.dll",
+      "checksum": "sha256-abc123..."
+    }
+  ]
+}
