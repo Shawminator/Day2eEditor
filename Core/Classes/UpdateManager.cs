@@ -163,8 +163,8 @@ namespace Day2eEditor
                 Console.WriteLine($"Downloading {plugin.Name}...");
                 byte[] data = await _http.GetByteArrayAsync(plugin.Url);
 
-                //if (!ChecksumUtils.VerifyChecksum(data, plugin.Checksum))
-                //    throw new InvalidOperationException($"Checksum verification failed for {plugin.Name}");
+                if (!ChecksumUtils.VerifyChecksum(data, plugin.Checksum))
+                    throw new InvalidOperationException($"Checksum verification failed for {plugin.Name}");
 
                 // Save the plugin file
                 await File.WriteAllBytesAsync(pluginPath, data);
