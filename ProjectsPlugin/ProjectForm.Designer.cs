@@ -28,17 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
+            listView1 = new ListView();
             SuspendLayout();
             // 
-            // label1
+            // listView1
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(223, 168);
-            label1.Name = "label1";
-            label1.Size = new Size(97, 15);
-            label1.TabIndex = 0;
-            label1.Text = "Test Project form";
+            listView1.BackColor = Color.FromArgb(60, 63, 65);
+            listView1.CheckBoxes = true;
+            listView1.ForeColor = SystemColors.Control;
+            listView1.Location = new Point(12, 12);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(196, 278);
+            listView1.TabIndex = 1;
+            listView1.UseCompatibleStateImageBehavior = false;
             // 
             // ProjectForm
             // 
@@ -46,17 +48,17 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(800, 450);
-            Controls.Add(label1);
+            Controls.Add(listView1);
             ForeColor = SystemColors.Control;
             FormBorderStyle = FormBorderStyle.None;
             Name = "ProjectForm";
             Text = "Form1";
+            Load += ProjectForm_Load;
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
+        private ListView listView1;
     }
 }

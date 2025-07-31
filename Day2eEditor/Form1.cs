@@ -252,11 +252,19 @@ namespace Day2eEditor
                     else
                     {
                         closeMdiChildren();
+                        List<object> datalist = new List<object>();
+                        if (plugin.pluginIdentifier == "ProjectForm")
+                        {
+                            datalist.Add(plugins);
+                            plugin.SetData(datalist);
+                        }
                         var form = plugin.GetForm();
                         form.MdiParent = this;
                         form.Location = new Point(30,0);
                         form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                         form.Size = this.Size - new Size(40, 65);
+
+                        
                         form.Show();
                         Console.WriteLine("loading Project manager....");
                         label1.Text = "Project Manager";
