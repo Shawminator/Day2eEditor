@@ -3,52 +3,68 @@ using System.ComponentModel;
 
 namespace ProjectsPlugin
 {
+
     public partial class ProjectForm : Form
     {
-        private List<IPluginForm> CurrentInstalledPluginList;
-        public ProjectForm()
+        private IPluginForm _plugin;
+        private Manifest _manifest;
+        private List<PluginEntry> currentlyinstalledplugins;
+        public ProjectForm(IPluginForm plugin)
         {
             InitializeComponent();
-        }
-
-        public void SetData(List<object> datalist)
-        {
-            foreach (object d in datalist)
-            {
-                if(d is List<IPluginForm> pluginForms)
-                {
-                    CurrentInstalledPluginList = pluginForms;
-                }
-            }
+            _plugin = plugin;
+            _manifest = AppServices.Get<Manifest>();
+            currentlyinstalledplugins = AppServices.Get<List<PluginEntry>>();
         }
 
         private void ProjectForm_Load(object sender, EventArgs e)
         {
-            
+            if (_manifest.Plugins != null)
+            {
+                foreach (var plugin in _manifest.Plugins)
+                {
+                    ListViewItem item = new ListViewItem();
+                    item.Text = plugin.Name;
+                    item.Tag = plugin;
+                    if(currentlyinstalledplugins.FirstOrDefault(x => x.Identifier == plugin.Name) != null)
+                        item.SubItems.Add("Installed");
+                    listView1.Items.Add(item);
+                }
+            }
+        }
+
+        private void ProjectForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (_plugin is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
     }
-    public class PluginProject : IPluginForm
+    [PluginInfo("Project Manager", "ProjectsPlugin")]
+    public class PluginProject : IPluginForm, IDisposable
     {
-        private List<object> _datalist;
-        public string pluginIdentifier => "ProjectForm";
+        private bool disposed = false;
+
+        public string pluginIdentifier => "ProjectsPlugin";
         public string pluginName => "Project Manager";
-
-
-        public void SetData(List<object> datalist)
-        {
-            _datalist = datalist;
-        }
 
         public Form GetForm()
         {
-            var form = new ProjectForm();
-            form.SetData(_datalist);
-            return form;
-
+            return new ProjectForm(this);
         }
         public override string ToString()
         {
             return pluginName;
+        }
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                // Dispose any resources (e.g., file handles, etc.)
+                disposed = true;
+            }
         }
     }
 }

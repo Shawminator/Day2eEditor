@@ -26,9 +26,9 @@ namespace Day2eEditor
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
-        private List<IPluginForm> plugins = new List<IPluginForm>();
+        private List<PluginEntry> pluginEntries = new();
         private bool hidden;
-        
+
         protected override CreateParams CreateParams
         {
             get
@@ -129,29 +129,56 @@ namespace Day2eEditor
         private void LoadPlugins()
         {
             pluginListbox.Items.Clear();
-            pluginListbox.Items.Add("Donate");
-            pluginListbox.Items.Add("Discord");
+            pluginEntries.Clear();
+
+            // Add static entries (e.g., Donate, Discord)
+            pluginEntries.Add(new PluginEntry { Name = "Donate", Identifier = "Donate" });
+            pluginEntries.Add(new PluginEntry { Name = "Discord", Identifier = "Discord" });
+
             string pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
             if (!Directory.Exists(pluginPath))
             {
                 Directory.CreateDirectory(pluginPath);
                 return;
             }
+
             foreach (var dll in Directory.GetFiles(pluginPath, "*.dll"))
             {
                 try
                 {
                     var asm = Assembly.LoadFrom(dll);
-                    var types = asm.GetTypes().Where(t => typeof(IPluginForm).IsAssignableFrom(t) && !t.IsInterface);
+                    var types = asm.GetTypes()
+                                   .Where(t => typeof(IPluginForm).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+                    List<PluginEntry> entries = new List<PluginEntry>();
                     foreach (var type in types)
                     {
-                        var plugin = (IPluginForm)Activator.CreateInstance(type);
-                        plugins.Add(plugin);
-                        pluginListbox.Items.Add(plugin.pluginName);
+                        // Get the PluginInfo attribute
+                        var pluginInfo = type.GetCustomAttribute<PluginInfoAttribute>();
+                        if (pluginInfo != null)
+                        {
+                            // Add the plugin info to the list
+                            PluginEntry pe =  new PluginEntry
+                            {
+                                Name = pluginInfo.Name,
+                                Identifier = pluginInfo.Identifier,
+                                PluginType = type
+                            };
+                            pluginEntries.Add(pe);
+                            entries.Add(pe);
+                        }
+                        AppServices.Register(entries);
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to load plugin from {dll}: {ex.Message}");
+                }
             }
+
+            // Bind the list to the ListBox
+            pluginListbox.DataSource = null;
+            pluginListbox.DataSource = pluginEntries;
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -228,58 +255,69 @@ namespace Day2eEditor
         }
         private void pluginListbox_Click(object sender, EventArgs e)
         {
-            var selectedItem = pluginListbox.SelectedItem?.ToString();
-            if(selectedItem == "Donate")
+            var selectedEntry = pluginListbox.SelectedItem as PluginEntry;
+            if (selectedEntry == null) return;
+
+            switch (selectedEntry.Identifier)
             {
-                OpenUrl("https://www.paypal.me/ADecadeOfdecay");
-            }
-            else if (selectedItem == "Discord")
-            {
-                OpenUrl("https://discord.gg/5EHE49Kjsv");
-            }
-            else
-            {
-                var plugin = plugins.FirstOrDefault(p => p.pluginName == selectedItem);
-                if (plugin != null)
-                {
-                    var _TM = Application.OpenForms[plugin.pluginIdentifier] as Form;
-                    if (_TM != null)
+                case "Donate":
+                    OpenUrl("https://www.paypal.me/ADecadeOfdecay");
+                    break;
+
+                case "Discord":
+                    OpenUrl("https://discord.gg/5EHE49Kjsv");
+                    break;
+
+                default:
+                    var openForm = Application.OpenForms[selectedEntry.Identifier];
+                    if (openForm != null)
                     {
-                        _TM.WindowState = FormWindowState.Normal;
-                        _TM.BringToFront();
-                        _TM.Activate();
+                        openForm.WindowState = FormWindowState.Normal;
+                        openForm.BringToFront();
+                        openForm.Activate();
                     }
                     else
                     {
                         closeMdiChildren();
-                        List<object> datalist = new List<object>();
-                        if (plugin.pluginIdentifier == "ProjectForm")
-                        {
-                            datalist.Add(plugins);
-                            plugin.SetData(datalist);
-                        }
-                        var form = plugin.GetForm();
-                        form.MdiParent = this;
-                        form.Location = new Point(30,0);
-                        form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                        form.Size = this.Size - new Size(40, 65);
 
-                        
-                        form.Show();
-                        Console.WriteLine("loading Project manager....");
-                        label1.Text = "Project Manager";
+                        // Instantiate the plugin only when needed
+                        if (Activator.CreateInstance(selectedEntry.PluginType) is IPluginForm plugin)
+                        {
+                            var form = plugin.GetForm();
+                            form.MdiParent = this;
+                            form.Name = plugin.pluginIdentifier;
+                            form.Location = new Point(30, 0);
+                            form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                            form.Size = this.Size - new Size(40, 65);
+                            form.Show();
+
+                            Console.WriteLine($"Loading {plugin.pluginName}...");
+                            label1.Text = plugin.pluginName;
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Failed to load plugin: {selectedEntry.Name}");
+                        }
                     }
-                }
+                    break;
             }
+
             timer1.Start();
         }
         private void closeMdiChildren()
         {
-            if (MdiChildren.Length > 0)
+            foreach (var mdiChild in MdiChildren)
             {
-                MdiChildren[0].Close();
+                if (mdiChild is IDisposable disposableForm)
+                {
+                    disposableForm.Dispose();  // Dispose of the form
+                }
+
+                mdiChild.Close();  // Close the form
             }
         }
+
+
     }
 }
 

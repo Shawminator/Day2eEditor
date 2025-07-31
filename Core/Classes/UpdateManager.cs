@@ -29,7 +29,7 @@ namespace Day2eEditor
         {
             Console.WriteLine($"Fetching manifest from {manifestUrl}...");
             Manifest manifest = await _http.GetFromJsonAsync<Manifest>(manifestUrl);
-
+            AppServices.Register(manifest);
             if (manifest == null)
             {
                 Console.WriteLine("Failed to fetch or parse manifest.");

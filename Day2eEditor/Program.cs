@@ -23,7 +23,6 @@ namespace Day2eEditor
             {
                 MessageBox.Show($"Update failed:\n{ex.Message}");
             }
-
             Application.Run(new Form1());
         }
     }

@@ -29,18 +29,33 @@
         private void InitializeComponent()
         {
             listView1 = new ListView();
+            PluginHeader = new ColumnHeader();
+            InstalledHeader = new ColumnHeader();
             SuspendLayout();
             // 
             // listView1
             // 
             listView1.BackColor = Color.FromArgb(60, 63, 65);
-            listView1.CheckBoxes = true;
+            listView1.Columns.AddRange(new ColumnHeader[] { PluginHeader, InstalledHeader });
             listView1.ForeColor = SystemColors.Control;
+            listView1.FullRowSelect = true;
             listView1.Location = new Point(12, 12);
+            listView1.MultiSelect = false;
             listView1.Name = "listView1";
-            listView1.Size = new Size(196, 278);
+            listView1.Size = new Size(307, 385);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
+            listView1.View = View.Details;
+            // 
+            // PluginHeader
+            // 
+            PluginHeader.Text = "Plugins";
+            PluginHeader.Width = 200;
+            // 
+            // InstalledHeader
+            // 
+            InstalledHeader.Text = "Installed";
+            InstalledHeader.Width = 100;
             // 
             // ProjectForm
             // 
@@ -53,6 +68,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "ProjectForm";
             Text = "Form1";
+            FormClosed += ProjectForm_FormClosed;
             Load += ProjectForm_Load;
             ResumeLayout(false);
         }
@@ -60,5 +76,7 @@
         #endregion
 
         private ListView listView1;
+        private ColumnHeader PluginHeader;
+        private ColumnHeader InstalledHeader;
     }
 }

@@ -8,6 +8,27 @@ namespace Day2eEditor
         string pluginName { get; }
 
         Form GetForm();
-        void SetData(List<object> data);
+    }
+
+    public class PluginEntry
+    {
+        public string Name { get; set; }
+        public string Identifier { get; set; }
+        public Type PluginType { get; set; }
+
+        public override string ToString() => Name;
+    }
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public class PluginInfoAttribute : Attribute
+    {
+        public string Name { get; }
+        public string Identifier { get; }
+
+        public PluginInfoAttribute(string name, string identifier)
+        {
+            Name = name;
+            Identifier = identifier;
+        }
     }
 }
