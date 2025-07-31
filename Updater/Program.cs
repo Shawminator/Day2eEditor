@@ -12,8 +12,7 @@ class Updater
         }
 
         string zipPath = args[0];
-        string expectedChecksum = args[1];
-        int? mainAppPid = args.Length >= 3 && int.TryParse(args[2], out var pid) ? pid : null;
+        int? mainAppPid = args.Length >= 2 && int.TryParse(args[1], out var pid) ? pid : null;
 
         string appDirectory = AppContext.BaseDirectory;
 
@@ -33,18 +32,11 @@ class Updater
         else
         {
             // Fallback: wait for process name
-            while (Process.GetProcessesByName("MainApp").Any())
+            while (Process.GetProcessesByName("Day2eEditor").Any())
             {
                 await Task.Delay(500);
             }
         }
-
-        // Verify checksum
-        //if (!ChecksumUtils.VerifyChecksum(zipPath, expectedChecksum))
-        //{
-        //    Console.WriteLine("Checksum verification failed.");
-        //    return;
-        //}
 
         // Extract
         Console.WriteLine("Extracting update...");

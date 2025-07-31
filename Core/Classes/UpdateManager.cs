@@ -108,7 +108,7 @@ namespace Day2eEditor
             var psi = new ProcessStartInfo
             {
                 FileName = updaterPath,
-                Arguments = $"\"{zipFilePath}\" \"{mainApp.Checksum}\" {pid}",
+                Arguments = $"\"{zipFilePath}\" \" {pid}",
                 WorkingDirectory = _appDirectory,
                 UseShellExecute = true, // better for launching external .exe files
                 CreateNoWindow = true
