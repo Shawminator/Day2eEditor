@@ -80,8 +80,8 @@ namespace Day2eEditor
                 Console.WriteLine($"Downloading the {appZipFileName}...");
                 byte[] data = await _http.GetByteArrayAsync(mainApp.Url);
 
-                //if (!ChecksumUtils.VerifyChecksum(data, mainApp.Checksum))
-                //    throw new InvalidOperationException("Checksum verification failed for the main app.");
+                if (!ChecksumUtils.VerifyChecksum(data, mainApp.Checksum))
+                    throw new InvalidOperationException("Checksum verification failed for the main app.");
 
                 // Save the main app ZIP file to the temporary folder
                 await File.WriteAllBytesAsync(appZipFilePath, data);

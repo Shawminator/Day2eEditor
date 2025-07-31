@@ -8,6 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <FileVersion>0.0.1</FileVersion>
     <AssemblyVersion>0.0.1</AssemblyVersion>
+    <ProductVersion>0.0.1</ProductVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
