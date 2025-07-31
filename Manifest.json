@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "ProjectsPlugin",
-      "version": "1.2.0",
+      "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ProjectsPlugin.dll",
       "checksum": "sha256:3f4a63f702e0ba79b9b89eecfb3167b273fd0956dd696fc83939c616c53a993e"
     }
