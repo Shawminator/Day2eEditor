@@ -12,6 +12,7 @@ namespace Day2eEditor
         private readonly string _appDirectory;  // This is the application directory
         private readonly HttpClient _http;
         public string manifestUrl = "https://raw.githubusercontent.com/Shawminator/Day2eEditor/refs/heads/master/Manifest.json";
+        private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin"};
 
         public UpdateManager(string pluginsDirectory = "Plugins", string downloadDirectory = "Downloads", string tempDirectory = "Temp", string appDirectory = "")
         {
@@ -127,14 +128,25 @@ namespace Day2eEditor
             Environment.Exit(0);  // Close the current app to allow updates
         }
 
+
         private async Task CheckAndUpdatePluginAsync(PluginInfo plugin)
         {
             string pluginPath = Path.Combine(_pluginsDirectory, $"{plugin.Name}.dll");
 
+            bool isCompulsory = _compulsoryPlugins.Contains(plugin.Name);
+            bool pluginExists = File.Exists(pluginPath);
+
+            // Skip optional plugins that don't exist
+            if (!isCompulsory && !pluginExists)
+            {
+                Console.WriteLine($"{plugin.Name} is optional and not present. Skipping.");
+                return;
+            }
+
             bool needsUpdate = true;
 
             // Check if the plugin is already downloaded and up-to-date
-            if (File.Exists(pluginPath))
+            if (pluginExists)
             {
                 try
                 {
@@ -166,10 +178,10 @@ namespace Day2eEditor
                 if (!ChecksumUtils.VerifyChecksum(data, plugin.Checksum))
                     throw new InvalidOperationException($"Checksum verification failed for {plugin.Name}");
 
-                // Save the plugin file
                 await File.WriteAllBytesAsync(pluginPath, data);
                 Console.WriteLine($"{plugin.Name} updated successfully.");
             }
         }
+
     }
 }

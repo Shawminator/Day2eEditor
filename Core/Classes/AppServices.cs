@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,20 @@ namespace Day2eEditor
 {
     public static class AppServices
     {
-        private static readonly Dictionary<Type, object> _services = new();
+        private static readonly ConcurrentDictionary<Type, object> _services = new();
 
         public static void Register<T>(T service)
         {
             _services[typeof(T)] = service!;
         }
 
-        public static T? Get<T>()
+        public static T? GetRequired<T>()
         {
-            return _services.TryGetValue(typeof(T), out var service) ? (T)service : default;
+            if (_services.TryGetValue(typeof(T), out var service))
+                return (T)service;
+
+            throw new InvalidOperationException($"Service of type {typeof(T)} not registered.");
+
         }
     }
 }

@@ -9,13 +9,13 @@
       "name": "ProjectsPlugin",
       "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ProjectsPlugin.dll",
-      "checksum": "sha256-3f4a63f702e0ba79b9b89eecfb3167b273fd0956dd696fc83939c616c53a993e"
+      "checksum": "sha256-3fb56dd4e37267196051d755949e732143e271e1459530a0cc7a7e13bd2979bc"
     },
     {
       "name": "EconomyPlugin",
       "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/EconomyPlugin.dll",
-      "checksum": "sha256-03cbec7b555ecce4f927d2b341c9e1a878a76c540edf9e1527ce82603fce37b0"
+      "checksum": "sha256-f6814333dbff7bac9d5464db44dbdb4fefa1a0131ea2dc3e654164b22e7cf1a1"
     }
   ]
 }

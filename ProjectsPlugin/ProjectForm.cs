@@ -12,8 +12,8 @@ namespace ProjectsPlugin
         {
             InitializeComponent();
             _plugin = plugin;
-            _manifest = AppServices.Get<Manifest>();
-            currentlyinstalledplugins = AppServices.Get<List<PluginEntry>>();
+            _manifest = AppServices.GetRequired<Manifest>();
+            currentlyinstalledplugins = AppServices.GetRequired<List<PluginEntry>>();
         }
 
         private void ProjectForm_Load(object sender, EventArgs e)

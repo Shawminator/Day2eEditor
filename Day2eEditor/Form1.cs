@@ -38,7 +38,7 @@ namespace Day2eEditor
                 return cp;
             }
         }
-        public Form1()
+        public Form1(string activeProject)
         {
 
             InitializeComponent();
@@ -56,6 +56,7 @@ namespace Day2eEditor
             LoadPlugins();
             slidePanel.Width = 30;
             hidden = true;
+            ChangeToolstrip = activeProject;
         }
         void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -141,7 +142,7 @@ namespace Day2eEditor
                 Directory.CreateDirectory(pluginPath);
                 return;
             }
-
+            List<PluginEntry> entries = new List<PluginEntry>();
             foreach (var dll in Directory.GetFiles(pluginPath, "*.dll"))
             {
                 try
@@ -150,7 +151,7 @@ namespace Day2eEditor
                     var types = asm.GetTypes()
                                    .Where(t => typeof(IPluginForm).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
-                    List<PluginEntry> entries = new List<PluginEntry>();
+                    
                     foreach (var type in types)
                     {
                         // Get the PluginInfo attribute
@@ -167,7 +168,7 @@ namespace Day2eEditor
                             pluginEntries.Add(pe);
                             entries.Add(pe);
                         }
-                        AppServices.Register(entries);
+                        
                     }
                 }
                 catch (Exception ex)
@@ -175,7 +176,7 @@ namespace Day2eEditor
                     Debug.WriteLine($"Failed to load plugin from {dll}: {ex.Message}");
                 }
             }
-
+            AppServices.Register(entries);
             // Bind the list to the ListBox
             pluginListbox.DataSource = null;
             pluginListbox.DataSource = pluginEntries;
