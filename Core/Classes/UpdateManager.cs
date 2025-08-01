@@ -12,7 +12,7 @@ namespace Day2eEditor
         private readonly string _appDirectory;  // This is the application directory
         private readonly HttpClient _http;
         public string manifestUrl = "https://raw.githubusercontent.com/Shawminator/Day2eEditor/refs/heads/master/Manifest.json";
-        private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin"};
+        private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin", "EconomyPlugin"};
 
         public UpdateManager(string pluginsDirectory = "Plugins", string downloadDirectory = "Downloads", string tempDirectory = "Temp", string appDirectory = "")
         {
@@ -24,8 +24,24 @@ namespace Day2eEditor
             Directory.CreateDirectory(_downloadDirectory);
             Directory.CreateDirectory(_tempDirectory); // Temporary directory for downloading
             _http = new HttpClient();
+            CleanupMarkedPlugins();
         }
-
+        private void CleanupMarkedPlugins()
+        {
+            Console.WriteLine("Clean up:");    
+            foreach (var file in Directory.GetFiles(_pluginsDirectory, "*.dll.delete"))
+            {
+                try
+                {
+                    File.Delete(file);
+                    Console.WriteLine($"\t{Path.GetFileName(file)} Removed");
+                }
+                catch
+                {
+                    // Log or ignore
+                }
+            }
+        }
         public async Task CheckAndUpdateAsync()
         {
             Console.WriteLine($"Fetching manifest from {manifestUrl}...");
@@ -129,7 +145,7 @@ namespace Day2eEditor
         }
 
 
-        private async Task CheckAndUpdatePluginAsync(PluginInfo plugin)
+        public async Task CheckAndUpdatePluginAsync(PluginInfo plugin)
         {
             string pluginPath = Path.Combine(_pluginsDirectory, $"{plugin.Name}.dll");
 
@@ -182,6 +198,18 @@ namespace Day2eEditor
                 Console.WriteLine($"{plugin.Name} updated successfully.");
             }
         }
+        public async Task DownloadNewPluginAsync(PluginInfo plugin)
+        {
+            string pluginPath = Path.Combine(_pluginsDirectory, $"{plugin.Name}.dll");
 
+            Console.WriteLine($"Downloading {plugin.Name}...");
+            byte[] data = await _http.GetByteArrayAsync(plugin.Url);
+
+            if (!ChecksumUtils.VerifyChecksum(data, plugin.Checksum))
+                throw new InvalidOperationException($"Checksum verification failed for {plugin.Name}");
+
+            await File.WriteAllBytesAsync(pluginPath, data);
+            Console.WriteLine($"{plugin.Name} Downloaded successfully.");
+        }
     }
 }

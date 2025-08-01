@@ -53,7 +53,7 @@ namespace Day2eEditor
                 MinimiseButton
 
             );
-            LoadPlugins();
+            
             slidePanel.Width = 30;
             hidden = true;
             ChangeToolstrip = activeProject;
@@ -129,7 +129,6 @@ namespace Day2eEditor
         }
         private void LoadPlugins()
         {
-            pluginListbox.Items.Clear();
             pluginEntries.Clear();
 
             // Add static entries (e.g., Donate, Discord)
@@ -206,6 +205,7 @@ namespace Day2eEditor
         }
         private void label2_Click(object sender, EventArgs e)
         {
+
             if (sender is Label)
             {
                 Label pb = sender as Label;
@@ -217,7 +217,7 @@ namespace Day2eEditor
                 }
                 else if (pb.Name == "Slidelabel")
                 {
-                    //ShowButtons();
+                    LoadPlugins();
                     timer1.Start();
                 }
             }
@@ -226,7 +226,7 @@ namespace Day2eEditor
                 Panel p = sender as Panel;
                 if (p.Name == "SlidePanel")
                 {
-                    //ShowButtons();
+                    LoadPlugins();
                     timer1.Start();
                 }
             }

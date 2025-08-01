@@ -12,6 +12,7 @@ namespace Day2eEditor
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
             //updatemanager
             var updateManager = new UpdateManager("Plugins", "Downloads");
 
@@ -23,6 +24,7 @@ namespace Day2eEditor
             {
                 MessageBox.Show($"Update failed:\n{ex.Message}");
             }
+            AppServices.Register(updateManager);
             //projectmanager
             var projectManager = new ProjectManager("Projects");
             AppServices.Register(projectManager);
@@ -39,5 +41,8 @@ namespace Day2eEditor
             Console.WriteLine(Activeproject);
             Application.Run(new Form1(Activeproject));
         }
+
+        
+
     }
 }
