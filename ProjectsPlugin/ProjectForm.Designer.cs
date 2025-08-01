@@ -35,7 +35,10 @@
             PluginCM = new ContextMenuStrip(components);
             downloadAndInstallToolStripMenuItem = new ToolStripMenuItem();
             removeToolStripMenuItem = new ToolStripMenuItem();
+            groupBox1 = new GroupBox();
+            button1 = new Button();
             PluginCM.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // PluginLB
@@ -88,12 +91,33 @@
             removeToolStripMenuItem.Text = "Remove";
             removeToolStripMenuItem.Click += removeToolStripMenuItem_Click;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(button1);
+            groupBox1.ForeColor = SystemColors.Control;
+            groupBox1.Location = new Point(325, 12);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(792, 384);
+            groupBox1.TabIndex = 2;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "New Project";
+            // 
+            // button1
+            // 
+            button1.Location = new Point(150, 78);
+            button1.Name = "button1";
+            button1.Size = new Size(272, 23);
+            button1.TabIndex = 0;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // ProjectForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1148, 408);
+            Controls.Add(groupBox1);
             Controls.Add(PluginLB);
             ForeColor = SystemColors.Control;
             FormBorderStyle = FormBorderStyle.None;
@@ -102,6 +126,7 @@
             FormClosed += ProjectForm_FormClosed;
             Load += ProjectForm_Load;
             PluginCM.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -113,5 +138,7 @@
         private ContextMenuStrip PluginCM;
         private ToolStripMenuItem downloadAndInstallToolStripMenuItem;
         private ToolStripMenuItem removeToolStripMenuItem;
+        private GroupBox groupBox1;
+        private Button button1;
     }
 }
