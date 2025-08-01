@@ -10,6 +10,14 @@ namespace AddonPlugin
             InitializeComponent();
             _plugin = plugin;
         }
+
+        private void EconomyForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (_plugin is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]
