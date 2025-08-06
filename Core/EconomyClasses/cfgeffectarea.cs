@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Day2eEditor
 {
@@ -33,6 +28,15 @@ namespace Day2eEditor
                 useBoolConvertor: false
             );
             convertpositionstolist();
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                convertlisttopositions();
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                isDirty = false;
+            }
         }
         public void convertpositionstolist()
         {

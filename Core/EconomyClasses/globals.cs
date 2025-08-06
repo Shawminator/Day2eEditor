@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
     public class globalsConfig : IAdvancedConfigLoader
     {
-        public List<globalsFile> AllEvents { get; private set; } = new List<globalsFile>();
+        public List<globalsFile> AllData { get; private set; } = new List<globalsFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
@@ -26,7 +21,7 @@ namespace Day2eEditor
                 FileType = "events"
             };
             vanilla.Load();
-            AllEvents.Add(vanilla);
+            AllData.Add(vanilla);
 
             if (vanilla.HasErrors)
             {
@@ -46,7 +41,7 @@ namespace Day2eEditor
                 };
 
                 modFile.Load();
-                AllEvents.Add(modFile);
+                AllData.Add(modFile);
 
                 if (modFile.HasErrors)
                 {
@@ -57,6 +52,18 @@ namespace Day2eEditor
                 }
             }
         }
+        public void Save()
+        {
+            foreach (var Data in AllData)
+            {
+                // Save only if the file is dirty
+                if (Data.isDirty)
+                {
+                    Data.Save();
+                }
+
+            }
+        }
     }
     public class globalsFile : IConfigLoader
     {
@@ -65,7 +72,7 @@ namespace Day2eEditor
         public variables Data { get; private set; } = new variables();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
-        public bool IsDirty { get; set; }
+        public bool isDirty { get; set; }
 
         // Metadata for file type and source
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
@@ -98,6 +105,14 @@ namespace Day2eEditor
                 },
                 configName: "globals"
             );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
     }
 

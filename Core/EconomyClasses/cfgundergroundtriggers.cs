@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Day2eEditor
 {
@@ -14,7 +9,7 @@ namespace Day2eEditor
         public cfgundergroundtriggers Data { get; private set; } = new cfgundergroundtriggers();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
-        public bool IsDirty { get; set; }
+        public bool isDirty { get; set; }
 
         public cfgundergroundtriggersConfig(string path)
         {
@@ -31,6 +26,14 @@ namespace Day2eEditor
                 configName: "cfgundergroundtriggers",
                 useBoolConvertor: false
             );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                isDirty = false;
+            }
         }
         private void LogError(string context, Exception ex)
         {

@@ -1,17 +1,18 @@
-﻿using Day2eEditor;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace Day2eEditor
+﻿namespace Day2eEditor
 {
     public interface IConfigLoader
     {
-        void Load();
         bool HasErrors { get; }
         public List<string> Errors { get; }
+
+        void Load();
+        void Save();
     }
     public interface IAdvancedConfigLoader : IConfigLoader
     {
+        void Load();
         void LoadWithParameters(string vanillaPath, List<string> modPaths);
+        void Save();
     }
     public class EconomyManager
     {
@@ -119,7 +120,7 @@ namespace Day2eEditor
         }
         private void LoadFiles(string basePath)
         {
-            Console.WriteLine($"[Load Economy] Loading all base economy files associated with the current Project.");
+            Console.WriteLine($"\n[Load Economy] Loading all base economy files associated with the current Project.");
 
             eonomyCoreConfig = new economyCoreConfig(_paths["cfgeconomycore"]);
             LoadConfigWithErrorReport("cfgeconomycore", eonomyCoreConfig);

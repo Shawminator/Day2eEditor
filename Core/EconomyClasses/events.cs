@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Day2eEditor
 {
     public class eventsConfig : IAdvancedConfigLoader
     {
-        public List<EventsFile> AllEvents { get; private set; } = new List<EventsFile>();
+        public List<EventsFile> AllData { get; private set; } = new List<EventsFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
@@ -27,7 +22,7 @@ namespace Day2eEditor
             };
 
             vanilla.Load();
-            AllEvents.Add(vanilla);
+            AllData.Add(vanilla);
 
             if (vanilla.HasErrors)
             {
@@ -47,7 +42,7 @@ namespace Day2eEditor
                 };
 
                 modFile.Load();
-                AllEvents.Add(modFile);
+                AllData.Add(modFile);
 
                 if (modFile.HasErrors)
                 {
@@ -56,6 +51,18 @@ namespace Day2eEditor
                     var fileName = Path.GetFileName(modFile.FilePath);
                     Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
                 }
+            }
+        }
+        public void Save()
+        {
+            foreach (var Data in AllData)
+            {
+                // Save only if the file is dirty
+                if (Data.isDirty)
+                {
+                    Data.Save();
+                }
+
             }
         }
     }
@@ -112,6 +119,14 @@ namespace Day2eEditor
                },
                configName: "Events"
             );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
         private void CheckValuesAfterLoad(events cfg)
         {

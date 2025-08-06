@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
@@ -40,6 +35,14 @@ namespace Day2eEditor
                },
                configName: "cfglimitsdefinition"
            );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
     }
 

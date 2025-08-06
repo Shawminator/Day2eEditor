@@ -10,7 +10,7 @@ namespace Day2eEditor
 {
     public class cfgspawnabletypesConfig : IAdvancedConfigLoader
     {
-        public List<cfgspawnabletypesFile> AllEvents { get; private set; } = new List<cfgspawnabletypesFile>();
+        public List<cfgspawnabletypesFile> AllData { get; private set; } = new List<cfgspawnabletypesFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
@@ -27,7 +27,7 @@ namespace Day2eEditor
             };
 
             vanilla.Load();
-            AllEvents.Add(vanilla);
+            AllData.Add(vanilla);
 
             if (vanilla.HasErrors)
             {
@@ -47,7 +47,7 @@ namespace Day2eEditor
                 };
 
                 modFile.Load();
-                AllEvents.Add(modFile);
+                AllData.Add(modFile);
 
                 if (modFile.HasErrors)
                 {
@@ -58,6 +58,18 @@ namespace Day2eEditor
                 }
             }
         }
+        public void Save()
+        {
+            foreach (var Data in AllData)
+            {
+                // Save only if the file is dirty
+                if (Data.isDirty)
+                {
+                    Data.Save();
+                }
+
+            }
+        }
     }
     public class cfgspawnabletypesFile : IConfigLoader
     {
@@ -66,7 +78,7 @@ namespace Day2eEditor
         public SpawnableTypes Data { get; private set; } = new SpawnableTypes();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
-        public bool IsDirty { get; set; }
+        public bool isDirty { get; set; }
 
         // Metadata for file type and source
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
@@ -100,6 +112,15 @@ namespace Day2eEditor
                 configName: "cfgspawnabletypes"
             );
         }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
+        }
+
     }
     [XmlRoot("spawnabletypes")]
     public partial class SpawnableTypes

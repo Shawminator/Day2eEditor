@@ -6,7 +6,7 @@ namespace Day2eEditor
 {
     public class TypesConfig : IAdvancedConfigLoader
     {
-        public List<TypesFile> AllTypes { get; private set; } = new List<TypesFile>();
+        public List<TypesFile> AllData { get; private set; } = new List<TypesFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
@@ -23,7 +23,7 @@ namespace Day2eEditor
             };
 
             vanilla.Load();
-            AllTypes.Add(vanilla);
+            AllData.Add(vanilla);
 
             if (vanilla.HasErrors)
             {
@@ -43,7 +43,7 @@ namespace Day2eEditor
                 };
 
                 modFile.Load();
-                AllTypes.Add(modFile);
+                AllData.Add(modFile);
 
                 if (modFile.HasErrors)
                 {
@@ -52,6 +52,18 @@ namespace Day2eEditor
                     var fileName = Path.GetFileName(modFile.FilePath);
                     Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
                 }
+            }
+        }
+        public void Save()
+        {
+            foreach (var Data in AllData)
+            {
+                // Save only if the file is dirty
+                if (Data.isDirty)
+                {
+                    Data.Save();
+                }
+
             }
         }
     }
@@ -108,6 +120,14 @@ namespace Day2eEditor
                },
                configName: "Types"
             );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
         private void CheckValuesAfterLoad(Types cfg)
         {

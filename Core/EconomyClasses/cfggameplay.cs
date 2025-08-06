@@ -1,14 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
-using static FileService;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Day2eEditor
 {
@@ -19,7 +10,7 @@ namespace Day2eEditor
         public cfggameplay Data { get; private set; } = new cfggameplay();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
-        public bool IsDirty { get; set; }
+        public bool isDirty { get; set; }
 
         private string BaseDirectory => Path.GetDirectoryName(_path) ?? "";
 
@@ -54,7 +45,7 @@ namespace Day2eEditor
             SaveSpawnGearPresetFiles();
             SavePlayerRestrictedAreaFiles();
 
-            IsDirty = false;
+            isDirty = false;
         }
 
         #region Spawn Gear Files
@@ -164,7 +155,7 @@ namespace Day2eEditor
             if (!string.IsNullOrWhiteSpace(spawner))
             {
                 Data.WorldsData.objectSpawnersArr.Add(spawner);
-                IsDirty = true;
+                isDirty = true;
                 Save();
             }
         }

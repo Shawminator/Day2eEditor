@@ -16,7 +16,6 @@ namespace Day2eEditor
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-
         public cfglimitsdefinitionuserConfig(string path)
         {
             _path = path;
@@ -41,7 +40,15 @@ namespace Day2eEditor
                        ex.InnerException?.Message);
                },
                configName: "cfglimitsdefinitionuser"
-           );
+            );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
     }
 

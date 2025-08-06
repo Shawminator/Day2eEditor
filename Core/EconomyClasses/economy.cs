@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Day2eEditor
+﻿namespace Day2eEditor
 {
     public class economyConfig : IAdvancedConfigLoader
     {
-        public List<economyFile> AllEvents { get; private set; } = new List<economyFile>();
+        public List<economyFile> AllData { get; private set; } = new List<economyFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
@@ -25,7 +19,7 @@ namespace Day2eEditor
             };
 
             vanilla.Load();
-            AllEvents.Add(vanilla);
+            AllData.Add(vanilla);
 
             if (vanilla.HasErrors)
             {
@@ -45,7 +39,7 @@ namespace Day2eEditor
                 };
 
                 modFile.Load();
-                AllEvents.Add(modFile);
+                AllData.Add(modFile);
 
                 if (modFile.HasErrors)
                 {
@@ -56,6 +50,18 @@ namespace Day2eEditor
                 }
             }
         }
+        public void Save()
+        {
+            foreach (var Data in AllData)
+            {
+                // Save only if the file is dirty
+                if (Data.isDirty)
+                {
+                    Data.Save();
+                }
+
+            }
+        }
     }
     public class economyFile : IConfigLoader
     {
@@ -64,7 +70,7 @@ namespace Day2eEditor
         public economy Data { get; private set; } = new economy();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
-        public bool IsDirty { get; set; }
+        public bool isDirty { get; set; }
 
         // Metadata for file type and source
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
@@ -97,6 +103,14 @@ namespace Day2eEditor
                     },
                 configName: "economy"
             );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
     }
 

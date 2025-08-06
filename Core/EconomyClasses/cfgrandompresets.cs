@@ -1,16 +1,10 @@
-﻿using Day2eEditor;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Day2eEditor
 {
     public class cfgrandompresetsConfig : IAdvancedConfigLoader
     {
-        public List<cfgrandompresetsFile> AllEvents { get; private set; } = new List<cfgrandompresetsFile>();
+        public List<cfgrandompresetsFile> AllData { get; private set; } = new List<cfgrandompresetsFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
@@ -27,7 +21,7 @@ namespace Day2eEditor
             };
 
             vanilla.Load();
-            AllEvents.Add(vanilla);
+            AllData.Add(vanilla);
 
             if (vanilla.HasErrors)
             {
@@ -47,7 +41,7 @@ namespace Day2eEditor
                 };
 
                 modFile.Load();
-                AllEvents.Add(modFile);
+                AllData.Add(modFile);
 
                 if (modFile.HasErrors)
                 {
@@ -55,6 +49,18 @@ namespace Day2eEditor
                     var modName = Path.GetFileName(modFile.ModFolder);
                     var fileName = Path.GetFileName(modFile.FilePath);
                     Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                }
+
+            }
+        }
+        public void Save()
+        {
+            foreach (var Data in AllData)
+            {
+                // Save only if the file is dirty
+                if (Data.isDirty)
+                {
+                    Data.Save();
                 }
 
             }
@@ -67,7 +73,7 @@ namespace Day2eEditor
         public randompresets Data { get; private set; } = new randompresets();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
-        public bool IsDirty { get; set; }
+        public bool isDirty { get; set; }
 
         // Metadata for file type and source
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
@@ -100,6 +106,14 @@ namespace Day2eEditor
                 },
                 configName: "cfgspawnabletypes"
             );
+        }
+        public void Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                isDirty = false;
+            }
         }
     }
 
