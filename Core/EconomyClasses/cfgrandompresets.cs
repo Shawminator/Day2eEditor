@@ -104,7 +104,7 @@ namespace Day2eEditor
                         ex.Message + "\n" +
                         ex.InnerException?.Message);
                 },
-                configName: "cfgspawnabletypes"
+                configName: "cfgrandompresets"
             );
         }
         public void Save()

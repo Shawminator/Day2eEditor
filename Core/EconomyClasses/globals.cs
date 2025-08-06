@@ -18,7 +18,7 @@ namespace Day2eEditor
             var vanilla = new globalsFile(vanillaPath)
             {
                 IsModded = false,
-                FileType = "events"
+                FileType = "globals"
             };
             vanilla.Load();
             AllData.Add(vanilla);
@@ -36,7 +36,7 @@ namespace Day2eEditor
                 var modFile = new globalsFile(modPath)
                 {
                     IsModded = true,
-                    FileType = "events",
+                    FileType = "globals",
                     ModFolder = Path.GetDirectoryName(modPath)
                 };
 
