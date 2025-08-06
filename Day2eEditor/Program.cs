@@ -7,10 +7,8 @@ namespace Day2eEditor
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static async Task Main()
+        static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
             //updatemanager
@@ -18,31 +16,43 @@ namespace Day2eEditor
 
             try
             {
-                await updateManager.CheckAndUpdateAsync();
+                Task.Run(() => updateManager.CheckAndUpdateAsync()).GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Update failed:\n{ex.Message}");
             }
             AppServices.Register(updateManager);
+
+            // Register fileService
+            AppServices.Register(new FileService());
+
             //projectmanager
             var projectManager = new ProjectManager("Projects");
             AppServices.Register(projectManager);
             projectManager.Load();
-            String Activeproject = null;
-            if(projectManager.CurrentProject == null)
+
+            string activeProject = projectManager.CurrentProject == null
+                ? "Active Project : None Selected"
+                : $"Active Project : {projectManager.CurrentProject.ProjectName}";
+            Console.WriteLine(activeProject);
+            if(projectManager.CurrentProject != null)
             {
-                Activeproject = "Active Project : None Selected";
+                var economymanager = new EconomyManager();
+                if (economymanager.HasErrors)
+                {
+                    var errorForm = new ErrorDialog("EconomyManager Errors", economymanager.Errors);
+                    errorForm.StartPosition = FormStartPosition.CenterScreen;
+                    errorForm.ShowDialog();
+
+
+                    Application.Exit(); // Cleanly close WinForms app
+                    return;
+                }
+                AppServices.Register(economymanager);
             }
-            else
-            {
-                Activeproject = $"Active Project : {projectManager.CurrentProject.ProjectName}";
-            }
-            Console.WriteLine(Activeproject);
-            Application.Run(new Form1(Activeproject));
+
+            Application.Run(new Form1(activeProject));
         }
-
-        
-
     }
 }

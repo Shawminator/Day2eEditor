@@ -37,8 +37,6 @@
     }
     public static class Form_Controls
     {
-#pragma warning disable CS8618
-#pragma warning disable CS8622
         public static Size Formsize;
         private static Button B;
         private static Button B1;

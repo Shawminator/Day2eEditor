@@ -245,7 +245,7 @@
         private Button MinimiseButton;
         private Label label1;
         private Panel ResizePanel;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        public ToolStripStatusLabel toolStripStatusLabel1;
         private CheckBox ShowConsoleCB;
         private ListBox pluginListbox;
         private Panel slidePanel;

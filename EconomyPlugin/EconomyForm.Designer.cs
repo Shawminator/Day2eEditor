@@ -1,4 +1,4 @@
-﻿namespace AddonPlugin
+﻿namespace EconomyPlugin
 {
     partial class EconomyForm
     {
@@ -52,6 +52,7 @@
             Name = "EconomyForm";
             Text = "Form1";
             FormClosed += EconomyForm_FormClosed;
+            Load += EconomyForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }

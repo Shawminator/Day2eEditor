@@ -9,6 +9,8 @@
     <FileVersion>0.0.2</FileVersion>
     <AssemblyVersion>0.0.2</AssemblyVersion>
     <ProductVersion>0.0.2</ProductVersion>
+    <EnableWindowsFormsHighDpiAutoResizing>true</EnableWindowsFormsHighDpiAutoResizing>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

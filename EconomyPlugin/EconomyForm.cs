@@ -1,9 +1,11 @@
 using Day2eEditor;
+using EconomyPlugin;
 
-namespace AddonPlugin
+namespace EconomyPlugin
 {
     public partial class EconomyForm : Form
     {
+        EconomyManager _economyManager;
         private IPluginForm _plugin;
         public EconomyForm(IPluginForm plugin)
         {
@@ -17,6 +19,11 @@ namespace AddonPlugin
             {
                 disposable.Dispose();
             }
+        }
+
+        private void EconomyForm_Load(object sender, EventArgs e)
+        {
+            _economyManager = AppServices.GetRequired<EconomyManager>();
         }
     }
 
@@ -32,10 +39,8 @@ namespace AddonPlugin
         {
             return new EconomyForm(this);
         }
-        public override string ToString()
-        {
-            return pluginName;
-        }
+        public override string ToString() => pluginName;
+
 
         public void Dispose()
         {

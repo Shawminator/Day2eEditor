@@ -1,6 +1,6 @@
 using Day2eEditor;
+using System.Diagnostics;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ProjectsPlugin
 {
@@ -9,12 +9,14 @@ namespace ProjectsPlugin
     {
         private IPluginForm _plugin;
         private Manifest _manifest;
+        private ProjectManager _ProjectManager;
         private ListViewItem _clickedItem;
         public ProjectForm(IPluginForm plugin)
         {
             InitializeComponent();
             _plugin = plugin;
             _manifest = AppServices.GetRequired<Manifest>();
+            _ProjectManager = AppServices.GetRequired<ProjectManager>();
         }
 
         private void ProjectForm_Load(object sender, EventArgs e)
@@ -31,6 +33,12 @@ namespace ProjectsPlugin
                     PluginLB.Items.Add(item);
                 }
             }
+
+            ProjectTypeComboBox.SelectedIndex = 0;
+
+            listBoxProjects.DataSource = _ProjectManager.Projects;
+            listBoxProjects.Invalidate();
+            listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
         }
 
         private void ProjectForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -87,7 +95,6 @@ namespace ProjectsPlugin
                 }
             }
         }
-
         private void PluginLB_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -108,6 +115,296 @@ namespace ProjectsPlugin
                 }
             }
 
+        }
+
+        private void ProjectTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
+            if (projecttype == "Create Local from FTP/SFTP" || projecttype == "Connect Direct to FTP/SFTP")
+            {
+                ProjectNameLabel.Visible = true;
+                ProjectNameTB.Visible = true;
+
+                SelectProjectFolderlabel.Visible = true;
+                SelectProjectFolderlabel.Text = "Select Project Folder";
+                ProjectFolderTB.Visible = true;
+                ProjectFolderTB.ReadOnly = true;
+                ProjectFolderTB.Text = "";
+                ProjectFolderTB.Size = new Size(424, 23);
+                SelectProjectFolderbutton.Visible = true;
+
+                ProfileFolderNamelabel.Visible = false;
+                ProjectProfileTB.Visible = false;
+                selectProfilefolderNamebutton.Visible = false;
+
+                MissionFoldertoUselabel.Visible = false;
+                ProjectMissionFolderTB.Visible = false;
+                ProjectMissionFolderTB.Text = "";
+                ProjectMissionFolderTB.ReadOnly = false;
+                MissionFoldertoUsebutton.Visible = false;
+
+                CreateProjectbutton.Location = new Point(615, 119);
+            }
+            else if (projecttype == "Create Blank")
+            {
+                ProjectNameLabel.Visible = true;
+                ProjectNameTB.Visible = true;
+
+                SelectProjectFolderlabel.Visible = true;
+                SelectProjectFolderlabel.Text = "Select Project Folder";
+                ProjectFolderTB.Visible = true;
+                ProjectFolderTB.ReadOnly = true;
+                ProjectFolderTB.Size = new Size(424, 23);
+                ProjectFolderTB.Text = "";
+                SelectProjectFolderbutton.Visible = true;
+
+                ProfileFolderNamelabel.Visible = true;
+                ProfileFolderNamelabel.Text = "Profile Folder Name";
+                ProjectProfileTB.Visible = true;
+                ProjectProfileTB.Size = new Size(452, 23);
+                ProjectProfileTB.Text = "Profiles";
+                ProjectProfileTB.ReadOnly = false;
+                selectProfilefolderNamebutton.Visible = false;
+
+                MissionFoldertoUselabel.Visible = true;
+                MissionFoldertoUselabel.Text = "Mission Folder to use";
+                ProjectMissionFolderTB.Visible = true;
+                ProjectMissionFolderTB.Size = new Size(452, 23);
+                ProjectMissionFolderTB.Text = "dayzOffline.chernarusplus";
+                ProjectMissionFolderTB.ReadOnly = false;
+                MissionFoldertoUsebutton.Visible = false;
+
+                CreateProjectbutton.Location = new Point(615, 167);
+            }
+            else if (projecttype == "Connect to Exisiting Server")
+            {
+                ProjectNameLabel.Visible = true;
+                ProjectNameTB.Visible = true;
+
+                SelectProjectFolderlabel.Visible = true;
+                SelectProjectFolderlabel.Text = "Project Folder";
+                ProjectFolderTB.Visible = true;
+                ProjectFolderTB.ReadOnly = true;
+                ProjectFolderTB.Text = "Will Be Auto populated....";
+                ProjectFolderTB.Size = new Size(452, 23);
+                SelectProjectFolderbutton.Visible = false;
+
+                ProfileFolderNamelabel.Visible = true;
+                ProfileFolderNamelabel.Text = "Profile Path";
+                ProjectProfileTB.Visible = true;
+                ProjectProfileTB.Size = new Size(424, 23);
+                ProjectProfileTB.Text = "";
+                ProjectProfileTB.ReadOnly = true;
+                selectProfilefolderNamebutton.Visible = true;
+
+                MissionFoldertoUselabel.Visible = true;
+                MissionFoldertoUselabel.Text = "Mission Path";
+                ProjectMissionFolderTB.Visible = true;
+                ProjectMissionFolderTB.Size = new Size(424, 23);
+                ProjectMissionFolderTB.ReadOnly = true;
+                MissionFoldertoUsebutton.Visible = true;
+
+                CreateProjectbutton.Location = new Point(615, 167);
+            }
+        }
+        private int Getmapsizefrommissionpath(string mpmissionpath)
+        {
+            string[] MapSizeList = File.ReadAllLines("Maps/MapSizes.txt");
+            Dictionary<string, int> maplist = new Dictionary<string, int>();
+            foreach (string line in MapSizeList)
+            {
+                maplist.Add(line.Split(':')[0], Convert.ToInt32(line.Split(':')[1]));
+            }
+            string currentmap = mpmissionpath.ToLower().Split('.')[1];
+            int size;
+            if (maplist.TryGetValue(currentmap, out size))
+            {
+                return size;
+            }
+            return 0;
+        }
+        private void CreateProjectbutton_Click(object sender, EventArgs e)
+        {
+            string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
+            if (projecttype == "Create Blank")
+            {
+                string ProjectFolder = ProjectFolderTB.Text;
+                string ProjectName = ProjectNameTB.Text;
+                if (ProjectFolder == "" || ProjectName == "")
+                {
+                    MessageBox.Show("Please select both a Project name and a directory where to save it.");
+                    return;
+                }
+
+                if (ProjectProfileTB.Text == "" || ProjectMissionFolderTB.Text == "")
+                {
+                    MessageBox.Show("Please select both a Profile name and an exact mpmission name.");
+                    return;
+                }
+                string missionsfolder = ProjectMissionFolderTB.Text;
+                string profilefolder = ProjectProfileTB.Text;
+                string mpmissionpath = Path.GetFileName(missionsfolder);
+                string PmissionFolder = ProjectFolder + "\\mpmissions\\" + Path.GetFileName(missionsfolder);
+                string Pprofilefolder = ProjectFolder + "\\" + profilefolder;
+
+                Directory.CreateDirectory(PmissionFolder);
+                Directory.CreateDirectory(Pprofilefolder);
+
+                Project project = new Project();
+                project.AddNames(ProjectName);
+                project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
+                project.MpMissionPath = mpmissionpath;
+                project.MapPath = "\\Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
+                project.ProfileName = profilefolder;
+                project.ProjectRoot = ProjectFolder;
+                _ProjectManager.AddProject(project);
+                MessageBox.Show("Project created, Please Close the editor and populate the missions files before trying to load this project");
+                ShellHelper.OpenFolderInExplorer(project.ProjectRoot);
+                listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
+            }
+            else if (projecttype == "Create Local from FTP/SFTP")
+            {
+            }
+            else if (projecttype == "Connect to Exisiting Server")
+            {
+                string ProjectPath = ProjectFolderTB.Text;
+                string ProjectName = ProjectNameTB.Text;
+                if (ProjectName == "")
+                {
+                    MessageBox.Show("Please select a Project name.");
+                    return;
+                }
+                string missionsfolder = ProjectMissionFolderTB.Text;
+                string profilefolder = Path.GetFileName(ProjectProfileTB.Text);
+                string mpmissionpath = Path.GetFileName(missionsfolder);
+
+                Project project = new Project();
+                project.AddNames(ProjectName);
+                project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
+                project.MpMissionPath = mpmissionpath;
+                project.MapPath = "\\Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
+                project.ProfileName = profilefolder;
+                project.ProjectRoot = ProjectPath;
+                _ProjectManager.AddProject(project);
+                MessageBox.Show("Project created, select the project from the list and load....");
+            }
+        }
+        private void SelectProjectFolderbutton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fb = new FolderBrowserDialog();
+            if (fb.ShowDialog() == DialogResult.OK)
+            {
+                ProjectFolderTB.Text = fb.SelectedPath;
+            }
+            else
+                ProjectFolderTB.Text = "";
+        }
+        private void selectProfilefolderNamebutton_Click(object sender, EventArgs e)
+        {
+            Form owner = Form.ActiveForm ?? Application.OpenForms[0];
+            using (var dialog = new FolderBrowserDialog())
+            {
+                dialog.Description = "Select the profile folder";
+                dialog.UseDescriptionForTitle = true; // Optional, makes dialog title better
+                DialogResult result = dialog.ShowDialog(owner);
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+                {
+                    ProjectProfileTB.Text = dialog.SelectedPath;
+                    // Use this path
+                }
+            }
+        }
+        private void MissionFoldertoUsebutton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fb = new FolderBrowserDialog();
+            if (fb.ShowDialog() == DialogResult.OK)
+            {
+                ProjectMissionFolderTB.Text = fb.SelectedPath;
+
+                string path1 = ProjectMissionFolderTB.Text;
+                string path2 = ProjectProfileTB.Text;
+
+                // Get two levels up from each path
+                string basePath1 = Directory.GetParent(Directory.GetParent(path1).FullName).FullName;
+                string basePath2 = Directory.GetParent(path2).FullName;
+
+                // Print results
+                Console.WriteLine("Base Path 1: " + basePath1);
+                Console.WriteLine("Base Path 2: " + basePath2);
+
+                // Compare
+                if (string.Equals(basePath1, basePath2, StringComparison.OrdinalIgnoreCase))
+                {
+                    ProjectFolderTB.Text = basePath1;
+                }
+                else
+                    MessageBox.Show("Root Directory seems to be different, check yo uhave selected the correct paths.....");
+            }
+        }
+        private void listBoxProjects_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int index = listBoxProjects.IndexFromPoint(e.Location);
+                if (index != ListBox.NoMatches)
+                {
+                    listBoxProjects.SelectedIndex = index; // Select the item
+                    var project = listBoxProjects.Items[index] as Project;
+
+                    // Now project is your clicked item
+                    ProjectsCM.Show(Cursor.Position); // Or e.Location relative to form
+                }
+            }
+        }
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var selected = listBoxProjects.SelectedItem as Project;
+            if (selected == null)
+                return;
+
+            if (_ProjectManager.CurrentProject?.ProjectName == selected.ProjectName)
+            {
+                // Already active, do nothing
+                MessageBox.Show($"{selected.ProjectName} is already the active project.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            _ProjectManager.SetCurrentProject(selected);
+            MessageBox.Show($"{selected.ProjectName} is now the active project.");
+
+            if (this.MdiParent is Form1 mainForm)
+            {
+                mainForm.toolStripStatusLabel1.Text = $"Active Project : {selected.ProjectName}";
+            }
+        }
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+
+            var selected = listBoxProjects.SelectedItem as Project;
+            if (selected != null)
+            {
+                DialogResult result = MessageBox.Show("Yes will remove project and all files in the project folder\nNo will only remove the project from the editor\nCancel will return with no changes", "Delete All Files.....", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+
+                    if (MessageBox.Show("Double checking you want to remove all files\nselecting no will still remove the project from the editor but keep all files in the project folder\nAre you sure you want to do this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        Directory.Delete(selected.ProjectRoot, true);
+                    }
+                    _ProjectManager.RemoveProject(selected);
+                    MessageBox.Show("Project and files Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+                else if (result == DialogResult.No)
+                {
+                    _ProjectManager.RemoveProject(selected);
+                    MessageBox.Show("Project Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
         }
     }
     [PluginInfo("Project Manager", "ProjectsPlugin")]

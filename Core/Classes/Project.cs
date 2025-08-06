@@ -7,9 +7,9 @@ namespace Day2eEditor
     {
         public bool ShowChangeLog { get; set; } = true;
         public string ActiveProject { get; set; } = string.Empty;
-        public List<Project> Projects { get; set; } = new();
+        public BindingList<Project> Projects { get; set; } = new();
     }
-    public class ProjectData
+    public class Project
     {
         public string ProjectName { get; set; }
         public string ProjectRoot { get; set; }
@@ -18,11 +18,14 @@ namespace Day2eEditor
         public string MapPath { get; set; }
         public int MapSize { get; set; }
         public bool CreateBackups { get; set; }
-    }
-    public class Project : ProjectData
-    {
-        [JsonIgnore] public bool HasWarnings { get; set; }
 
+        public void AddNames(string _ProjectName)
+        {
+            ProjectName = _ProjectName;
+        }
+        public override string ToString()
+        {
+            return ProjectName;
+        }
     }
-
 }
