@@ -201,6 +201,21 @@ namespace Day2eEditor
                     _ => value
                 };
             }
+            set
+            {
+                switch (type)
+                {
+                    case 0:
+                        this.value = Convert.ToInt32(value).ToString();
+                        break;
+                    case 1:
+                        this.value = Convert.ToDecimal(value).ToString();
+                        break;
+                    default:
+                        this.value = value?.ToString();
+                        break;
+                }
+            }
         }
     }
 

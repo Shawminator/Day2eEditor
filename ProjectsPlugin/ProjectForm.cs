@@ -254,7 +254,7 @@ namespace ProjectsPlugin
                 project.AddNames(ProjectName);
                 project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
-                project.MapPath = "\\Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
+                project.MapPath = "Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
                 project.ProjectRoot = ProjectFolder;
                 _ProjectManager.AddProject(project);
@@ -282,7 +282,7 @@ namespace ProjectsPlugin
                 project.AddNames(ProjectName);
                 project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
-                project.MapPath = "\\Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
+                project.MapPath = "Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
                 project.ProjectRoot = ProjectPath;
                 _ProjectManager.AddProject(project);

@@ -4,6 +4,38 @@ using System.IO;
 
 namespace Day2eEditor
 {
+    public class EventGuard
+    {
+        private bool _isSuppressed = false;
+
+        public bool IsUserInteraction => !_isSuppressed;
+
+        public IDisposable Suppress()
+        {
+            _isSuppressed = true;
+            return new Suppressor(() => _isSuppressed = false);
+        }
+
+        private class Suppressor : IDisposable
+        {
+            private readonly Action _onDispose;
+            private bool _disposed;
+
+            public Suppressor(Action onDispose)
+            {
+                _onDispose = onDispose;
+            }
+
+            public void Dispose()
+            {
+                if (!_disposed)
+                {
+                    _onDispose();
+                    _disposed = true;
+                }
+            }
+        }
+    }
     public static class ShellHelper
     {
         public static void OpenFolderInExplorer(string folderPath)

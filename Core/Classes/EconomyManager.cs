@@ -26,6 +26,8 @@
         public cfglimitsdefinitionConfig cfglimitsdefinitionConfig { get; set; }
         public cfglimitsdefinitionuserConfig cfglimitsdefinitionuserConfig { get; set; }
         public cfgenvironmentConfig cfgenvironmentConfig { get; set; }
+        public cfgeventspawnsConfig cfgeventspawnsConfig { get; set; }
+        public cfgeventgroupsConfig cfgeventgroupsConfig { get; set; }
 
         public economyConfig economyConfig { get; set; }
         public globalsConfig globalsConfig { get; set; }
@@ -40,7 +42,6 @@
 
         //public cfgplayerspawnpoints cfgplayerspawnpoints { get; set; }
         //public cfgeventspawns cfgeventspawns { get; set; }
-        //public cfgeventgroups cfgeventgroups { get; set; }
         //public cfgignorelist cfgignorelist { get; set; }
         //public weatherconfig weatherconfig { get; set; }
         //public mapgroupproto mapgroupproto { get; set; }
@@ -65,6 +66,8 @@
             _paths["cfglimitsdefinition"] = Path.Combine(basePath, "cfglimitsdefinition.xml");
             _paths["cfglimitsdefinitionuser"] = Path.Combine(basePath, "cfglimitsdefinitionuser.xml");
             _paths["cfgenvironment"] = Path.Combine(basePath, "cfgenvironment.xml");
+            _paths["cfgeventspawns"] = Path.Combine(basePath, "cfgeventspawns.xml");
+            _paths["cfgeventgroups"] = Path.Combine(basePath, "cfgeventgroups.xml");
             _paths["CFGGameplay"] = Path.Combine(basePath, "cfggameplay.json");
             _paths["cfgeffectarea"] = Path.Combine(basePath, "cfgeffectarea.json");
             _paths["cfgundergroundtriggers"] = Path.Combine(basePath, "cfgundergroundtriggers.json");
@@ -133,6 +136,12 @@
 
             cfgenvironmentConfig = new cfgenvironmentConfig(_paths["cfgenvironment"]);
             LoadConfigWithErrorReport("cfgenvironment", cfgenvironmentConfig);
+
+            cfgeventspawnsConfig = new cfgeventspawnsConfig(_paths["cfgeventspawns"]);
+            LoadConfigWithErrorReport("cfgeventspawns", cfgeventspawnsConfig);
+
+            cfgeventgroupsConfig = new cfgeventgroupsConfig(_paths["cfgeventgroups"]);
+            LoadConfigWithErrorReport("cfgeventgroups", cfgeventgroupsConfig);
 
             CFGGameplayConfig = new CFGGameplayConfig(_paths["CFGGameplay"]);
             LoadConfigWithErrorReport("CFGGameplay", CFGGameplayConfig);

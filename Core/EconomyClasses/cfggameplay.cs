@@ -170,6 +170,11 @@ namespace Day2eEditor
             Console.WriteLine(message);
             Errors.Add( message);
         }
+
+        public SpawnGearPresetFiles GetSpawnGearPreset(string spawnfile)
+        {
+            return Data.SpawnGearPresetFiles.FirstOrDefault(x => x.Filename == spawnfile);
+        }
     }
     
     
