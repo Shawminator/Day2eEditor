@@ -17,5 +17,37 @@
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/EconomyPlugin.dll",
       "checksum": "sha256-f6814333dbff7bac9d5464db44dbdb4fefa1a0131ea2dc3e654164b22e7cf1a1"
     }
+  ],
+  "mapaddons": [
+    {
+      "name": "CharnarusPlusMapAddon",
+      "version": "1.0.0",
+      "url": "https://github.com/Shawminator/Day2eEditor/releases/download/MapAddons/CharnarusPlusMapAddon.zip",
+      "checksum": "sha256-6d308743ee09558ed2168c8c525e279495f3633088e5a32fd009d53b744f498d",
+      "mapinfo": {
+        "mappng": "chernarusplus_Map.png",
+        "mapxyz": "chernarusplus_Map.png.xyz"
+      }
+    },
+    {
+      "name": "EnochMapAddon",
+      "version": "1.0.0",
+      "url": "https://github.com/Shawminator/Day2eEditor/releases/download/MapAddons/EnochMapAddon.zip",
+      "checksum": "sha256-615820cd9b59da472b8edbe696030a14d075b952ad62477cd77b930daf9c1e2a",
+      "mapinfo": {
+        "mappng": "enoch_Map.png",
+        "mapxyz": "enoch_Map.png.xyz"
+      }
+    },
+    {
+      "name": "SakhalMapAddon",
+      "version": "1.0.0",
+      "url": "https://github.com/Shawminator/Day2eEditor/releases/download/MapAddons/SakhalMapAddon.zip",
+      "checksum": "sha256-e0f2499f01752ebb9f57fd9da1490c10c27e60c4b1d00e4de3bb8587aa15e027",
+      "mapinfo": {
+        "mappng": "sakhal_map.png",
+        "mapxyz": "sakhal_map.png.xyz"
+      }
+    }
   ]
 }
