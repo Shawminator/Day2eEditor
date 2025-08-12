@@ -11,6 +11,7 @@ namespace ProjectsPlugin
         private Manifest _manifest;
         private ProjectManager _ProjectManager;
         private ListViewItem _clickedItem;
+        private string appDirectory;
         public ProjectForm(IPluginForm plugin)
         {
             InitializeComponent();
@@ -21,6 +22,7 @@ namespace ProjectsPlugin
 
         private void ProjectForm_Load(object sender, EventArgs e)
         {
+            appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             if (_manifest.Plugins != null)
             {
                 foreach (var plugin in _manifest.Plugins)
@@ -31,6 +33,20 @@ namespace ProjectsPlugin
                     if (AppServices.GetRequired<List<PluginEntry>>().FirstOrDefault(x => x.Identifier == plugin.Name) != null)
                         item.SubItems.Add("Installed");
                     PluginLB.Items.Add(item);
+                }
+            }
+            if (_manifest.MapAddons != null)
+            {
+                foreach (var mapaddon in _manifest.MapAddons)
+                {
+                    string imagePath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapPng);
+                    string XYZPath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapXYZ);
+                    ListViewItem item = new ListViewItem();
+                    item.Text = mapaddon.Name;
+                    item.Tag = mapaddon;
+                    if (File.Exists(imagePath) && File.Exists(XYZPath))
+                        item.SubItems.Add("Installed");
+                    MapAddonsLB.Items.Add(item);
                 }
             }
 
@@ -59,9 +75,11 @@ namespace ProjectsPlugin
 
                 _clickedItem.SubItems.Add("Installed");
             }
-            else
+            else if(_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
             {
-                MessageBox.Show("No valid plugin selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddoninfo);
+                MessageBox.Show($"{mapaddoninfo.Name} Downloaded.", "Plugin Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _clickedItem.SubItems.Add("Installed");
             }
 
         }
@@ -99,19 +117,39 @@ namespace ProjectsPlugin
         {
             if (e.Button == MouseButtons.Right)
             {
-                var item = PluginLB.GetItemAt(e.X, e.Y);
-                if (item != null)
+                if (PluginLB.Visible)
                 {
-                    _clickedItem = item;
-                    if (_clickedItem.Text == "ProjectsPlugin" || _clickedItem.Text == "EconomyPlugin")
-                        return;
-                    PluginLB.ContextMenuStrip = PluginCM;
-                    PluginCM.Show(PluginLB, e.Location);
+                    var item = PluginLB.GetItemAt(e.X, e.Y);
+                    if (item != null)
+                    {
+                        _clickedItem = item;
+                        if (_clickedItem.Text == "ProjectsPlugin" || _clickedItem.Text == "EconomyPlugin")
+                            return;
+                        PluginLB.ContextMenuStrip = PluginCM;
+                        PluginCM.Show(PluginLB, e.Location);
+                    }
+                    else
+                    {
+                        _clickedItem = null;
+                        PluginLB.ContextMenuStrip = null;
+                    }
                 }
-                else
+                else if (MapAddonsLB.Visible)
                 {
-                    _clickedItem = null;
-                    PluginLB.ContextMenuStrip = null;
+                    var item = MapAddonsLB.GetItemAt(e.X, e.Y);
+                    if (item != null)
+                    {
+                        _clickedItem = item;
+                        if (_clickedItem.Text == "ProjectsPlugin" || _clickedItem.Text == "EconomyPlugin")
+                            return;
+                        MapAddonsLB.ContextMenuStrip = PluginCM;
+                        PluginCM.Show(MapAddonsLB, e.Location);
+                    }
+                    else
+                    {
+                        _clickedItem = null;
+                        MapAddonsLB.ContextMenuStrip = null;
+                    }
                 }
             }
 
@@ -437,7 +475,7 @@ namespace ProjectsPlugin
         {
             Project p = listBoxProjects.SelectedItem as Project;
             p.ProjectName = EditProjectNameTB.Text;
-            p.ProjectRoot =EditProjectRootTB.Text;
+            p.ProjectRoot = EditProjectRootTB.Text;
             p.ProfileName = EditProfilePathTB.Text;
             p.MpMissionPath = EditMissionPathTB.Text;
             p.MapPath = EditMapPathTB.Text;
@@ -446,6 +484,22 @@ namespace ProjectsPlugin
             _ProjectManager.Save();
             listBoxProjects.Invalidate();
             MessageBox.Show("Projects Json has now been saved.");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MapAddonsLB.Visible = false;
+            PluginLB.Visible = true;
+            button1.Enabled = false;
+            button3.Enabled = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            MapAddonsLB.Visible = true;
+            PluginLB.Visible = false;
+            button1.Enabled = true;
+            button3.Enabled = false;
         }
     }
     [PluginInfo("Project Manager", "ProjectsPlugin")]

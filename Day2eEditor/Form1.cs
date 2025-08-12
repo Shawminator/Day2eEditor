@@ -224,7 +224,7 @@ namespace Day2eEditor
             else if (sender is Panel)
             {
                 Panel p = sender as Panel;
-                if (p.Name == "SlidePanel")
+                if (p.Name == "slidePanel")
                 {
                     LoadPlugins();
                     timer1.Start();

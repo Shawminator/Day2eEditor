@@ -55,6 +55,7 @@
             toolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             groupBox2 = new GroupBox();
+            button2 = new Button();
             label7 = new Label();
             EditCreateBackupsCB = new CheckBox();
             label6 = new Label();
@@ -69,7 +70,11 @@
             EditProjectRootTB = new TextBox();
             label1 = new Label();
             EditProjectNameTB = new TextBox();
-            button2 = new Button();
+            button1 = new Button();
+            button3 = new Button();
+            MapAddonsLB = new ListView();
+            columnHeader1 = new ColumnHeader();
+            columnHeader2 = new ColumnHeader();
             PluginCM.SuspendLayout();
             groupBox1.SuspendLayout();
             ProjectsCM.SuspendLayout();
@@ -83,10 +88,10 @@
             PluginLB.Columns.AddRange(new ColumnHeader[] { PluginHeader, InstalledHeader });
             PluginLB.ForeColor = SystemColors.Control;
             PluginLB.FullRowSelect = true;
-            PluginLB.Location = new Point(12, 12);
+            PluginLB.Location = new Point(12, 41);
             PluginLB.MultiSelect = false;
             PluginLB.Name = "PluginLB";
-            PluginLB.Size = new Size(307, 431);
+            PluginLB.Size = new Size(307, 402);
             PluginLB.TabIndex = 1;
             PluginLB.UseCompatibleStateImageBehavior = false;
             PluginLB.View = View.Details;
@@ -358,6 +363,17 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Highlighted Project";
             // 
+            // button2
+            // 
+            button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.Location = new Point(615, 196);
+            button2.Name = "button2";
+            button2.Size = new Size(171, 23);
+            button2.TabIndex = 23;
+            button2.Text = "Save Changes";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
             // label7
             // 
             label7.AutoSize = true;
@@ -486,16 +502,53 @@
             EditProjectNameTB.Size = new Size(452, 23);
             EditProjectNameTB.TabIndex = 3;
             // 
-            // button2
+            // button1
             // 
-            button2.BackColor = Color.FromArgb(60, 63, 65);
-            button2.Location = new Point(615, 196);
-            button2.Name = "button2";
-            button2.Size = new Size(171, 23);
-            button2.TabIndex = 23;
-            button2.Text = "Save Changes";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            button1.BackColor = Color.FromArgb(60, 63, 65);
+            button1.Enabled = false;
+            button1.Location = new Point(12, 12);
+            button1.Name = "button1";
+            button1.Size = new Size(148, 23);
+            button1.TabIndex = 24;
+            button1.Text = "Plugins";
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
+            // button3
+            // 
+            button3.BackColor = Color.FromArgb(60, 63, 65);
+            button3.Location = new Point(171, 12);
+            button3.Name = "button3";
+            button3.Size = new Size(148, 23);
+            button3.TabIndex = 25;
+            button3.Text = "MapAddons";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
+            // MapAddonsLB
+            // 
+            MapAddonsLB.BackColor = Color.FromArgb(60, 63, 65);
+            MapAddonsLB.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+            MapAddonsLB.ForeColor = SystemColors.Control;
+            MapAddonsLB.FullRowSelect = true;
+            MapAddonsLB.Location = new Point(12, 41);
+            MapAddonsLB.MultiSelect = false;
+            MapAddonsLB.Name = "MapAddonsLB";
+            MapAddonsLB.Size = new Size(307, 402);
+            MapAddonsLB.TabIndex = 26;
+            MapAddonsLB.UseCompatibleStateImageBehavior = false;
+            MapAddonsLB.View = View.Details;
+            MapAddonsLB.MouseDown += PluginLB_MouseDown;
+            // 
+            // columnHeader1
+            // 
+            columnHeader1.Text = "MapAddons";
+            columnHeader1.Width = 200;
+            // 
+            // columnHeader2
+            // 
+            columnHeader2.Text = "Installed";
+            columnHeader2.Width = 100;
             // 
             // ProjectForm
             // 
@@ -503,9 +556,12 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1148, 455);
+            Controls.Add(button3);
+            Controls.Add(button1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(PluginLB);
+            Controls.Add(MapAddonsLB);
             ForeColor = SystemColors.Control;
             FormBorderStyle = FormBorderStyle.None;
             Name = "ProjectForm";
@@ -565,5 +621,10 @@
         private Label label1;
         private TextBox EditProjectNameTB;
         private Button button2;
+        private Button button1;
+        private Button button3;
+        private ListView MapAddonsLB;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
     }
 }

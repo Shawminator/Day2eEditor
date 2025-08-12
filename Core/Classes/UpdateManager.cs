@@ -1,12 +1,16 @@
 ﻿using System.Diagnostics;
+using System.IO.Compression;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Day2eEditor
 {
     public class UpdateManager
     {
+        private readonly string _mapAddonsManifestPath;
         private readonly string _pluginsDirectory;
+        private readonly string _mapAddonsDirectory;
         private readonly string _downloadDirectory;
         private readonly string _tempDirectory;
         private readonly string _appDirectory;  // This is the application directory
@@ -14,14 +18,16 @@ namespace Day2eEditor
         public string manifestUrl = "https://raw.githubusercontent.com/Shawminator/Day2eEditor/refs/heads/master/Manifest.json";
         private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin", "EconomyPlugin"};
 
-        public UpdateManager(string pluginsDirectory = "Plugins", string downloadDirectory = "Downloads", string tempDirectory = "Temp", string appDirectory = "")
+        public UpdateManager(string pluginsDirectory = "Plugins", string mapAddonsDirectory = "MapAddons", string tempDirectory = "Temp", string DownloadDirectory = "Downloads", string appDirectory = "")
         {
             _pluginsDirectory = pluginsDirectory;
-            _downloadDirectory = downloadDirectory;
+            _mapAddonsDirectory = mapAddonsDirectory;
+            _mapAddonsManifestPath = Path.Combine(_mapAddonsDirectory, "mapaddons.json");
+            _downloadDirectory = DownloadDirectory;
             _tempDirectory = tempDirectory;
             _appDirectory = appDirectory == string.Empty ? Directory.GetCurrentDirectory() : appDirectory; // Default to current directory
             Directory.CreateDirectory(_pluginsDirectory);
-            Directory.CreateDirectory(_downloadDirectory);
+            Directory.CreateDirectory(mapAddonsDirectory);
             Directory.CreateDirectory(_tempDirectory); // Temporary directory for downloading
             _http = new HttpClient();
             CleanupMarkedPlugins();
@@ -64,9 +70,16 @@ namespace Day2eEditor
                     await CheckAndUpdatePluginAsync(plugin);
                 }
             }
+            // Update MapAddons
+            if (manifest.MapAddons != null)
+            {
+                await CheckAndUpdateMapAddonsAsync(manifest.MapAddons);
+            }
 
             Console.WriteLine("Update check complete.");
         }
+
+
 
         private async Task CheckAndUpdateMainAppAsync(AppInfo mainApp)
         {
@@ -109,7 +122,6 @@ namespace Day2eEditor
                 InitiateShutdown(appZipFilePath, mainApp);
             }
         }
-
         private void InitiateShutdown(string zipFilePath, AppInfo mainApp)
         {
             // Create a separate process to restart the application after the shutdown
@@ -143,8 +155,6 @@ namespace Day2eEditor
             // Shutdown the current application
             Environment.Exit(0);  // Close the current app to allow updates
         }
-
-
         public async Task CheckAndUpdatePluginAsync(PluginInfo plugin)
         {
             string pluginPath = Path.Combine(_pluginsDirectory, $"{plugin.Name}.dll");
@@ -210,6 +220,126 @@ namespace Day2eEditor
 
             await File.WriteAllBytesAsync(pluginPath, data);
             Console.WriteLine($"{plugin.Name} Downloaded successfully.");
+        }
+        private async Task CheckAndUpdateMapAddonsAsync(List<MapAddonInfo> remoteAddons)
+        {
+            List<MapAddonInfo> localAddons = new();
+
+            // If file doesn't exist, just save it and return
+            if (!File.Exists(_mapAddonsManifestPath))
+            {
+                Console.WriteLine("No local mapaddons.json found — creating from manifest.");
+                string newJson = JsonSerializer.Serialize(remoteAddons, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(_mapAddonsManifestPath, newJson);
+                return;
+            }
+
+            // Otherwise, read and compare
+            try
+            {
+                string json = await File.ReadAllTextAsync(_mapAddonsManifestPath);
+                localAddons = JsonSerializer.Deserialize<List<MapAddonInfo>>(json) ?? new();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Could not read local mapaddons.json: {ex.Message}");
+                localAddons = new();
+            }
+
+            foreach (var remoteAddon in remoteAddons)
+            {
+                string localPngPath = Path.Combine(_mapAddonsDirectory, remoteAddon.MapInfo.MapPng);
+                string localXyzPath = Path.Combine(_mapAddonsDirectory, remoteAddon.MapInfo.MapXYZ);
+
+                // Skip if addon is not installed (missing either file)
+                if (!File.Exists(localPngPath) || !File.Exists(localXyzPath))
+                {
+                    continue;
+                }
+
+                var localAddon = localAddons.FirstOrDefault(a => a.Name == remoteAddon.Name);
+
+                bool needsUpdate =
+                    localAddon == null ||
+                    localAddon.Version != remoteAddon.Version ||
+                    localAddon.Checksum != remoteAddon.Checksum;
+
+                if (needsUpdate)
+                {
+                    string addonpath = Path.Combine(_downloadDirectory, $"{remoteAddon.Name}.zip");
+                    Console.WriteLine($"{remoteAddon.Name} needs update (local: {localAddon?.Version ?? "none"}, remote: {remoteAddon.Version})");
+                    Console.WriteLine($"Downloading {remoteAddon.Name}...");
+                    byte[] data = await _http.GetByteArrayAsync(remoteAddon.Url);
+
+                    if (!ChecksumUtils.VerifyChecksum(data, remoteAddon.Checksum))
+                        throw new InvalidOperationException($"Checksum verification failed for {remoteAddon.Name}");
+
+                    await File.WriteAllBytesAsync(addonpath, data);
+                    Console.WriteLine("Extracting MapAddon...");
+                    using (FileStream fs = File.OpenRead(addonpath))
+                    {
+                        using (ZipArchive zip = new ZipArchive(fs))
+                        {
+                            ExtractToDirectory(zip, _mapAddonsDirectory, true);
+                        }
+                    }
+                    Console.WriteLine($"{remoteAddon.Name} updated successfully.");
+                }
+            }
+
+            // Save latest manifest data locally (after checks)
+            string updatedJson = JsonSerializer.Serialize(remoteAddons, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(_mapAddonsManifestPath, updatedJson);
+        }
+        public static void ExtractToDirectory(ZipArchive archive, string destinationDirectoryName, bool overwrite)
+        {
+            if (!overwrite)
+            {
+                archive.ExtractToDirectory(destinationDirectoryName);
+                return;
+            }
+
+            DirectoryInfo di = Directory.CreateDirectory(destinationDirectoryName);
+            string destinationDirectoryFullPath = di.FullName;
+
+            foreach (ZipArchiveEntry file in archive.Entries)
+            {
+                if (file.Name == "Updater.exe" || file.Name == "Updater.dll") continue;
+                string completeFileName = Path.GetFullPath(Path.Combine(destinationDirectoryFullPath, file.FullName));
+                Console.WriteLine("Extracting : " + completeFileName);
+                if (!completeFileName.StartsWith(destinationDirectoryFullPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new IOException("Trying to extract file outside of destination directory");
+                }
+
+                if (file.Name == "")
+                {// Assuming Empty for Directory
+                    Directory.CreateDirectory(Path.GetDirectoryName(completeFileName));
+                    continue;
+                }
+                file.ExtractToFile(completeFileName, true);
+            }
+        }
+        public async Task DownloadMapAddonAsync(MapAddonInfo addon)
+        {
+            string addonpath = Path.Combine(_pluginsDirectory, $"{addon.Name}.zip");
+
+            Console.WriteLine($"Downloading {addon.Name}...");
+            byte[] data = await _http.GetByteArrayAsync(addon.Url);
+
+            if (!ChecksumUtils.VerifyChecksum(data, addon.Checksum))
+                throw new InvalidOperationException($"Checksum verification failed for {addon.Name}");
+
+            await File.WriteAllBytesAsync(addonpath, data);
+            Console.WriteLine("Extracting MapAddon...");
+            using (FileStream fs = File.OpenRead(addonpath))
+            {
+                using (ZipArchive zip = new ZipArchive(fs))
+                {
+                    ExtractToDirectory(zip, _mapAddonsDirectory, true);
+                }
+            }
+            Console.WriteLine($"{addon.Name} Downloaded successfully.");
         }
     }
 }
