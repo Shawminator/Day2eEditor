@@ -40,13 +40,21 @@ namespace Day2eEditor
                configName: "cfgeventspawns"
            );
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
             if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
+                return new[] { Path.GetFileName(_path) };
             }
+
+            return Array.Empty<string>();
+        }
+
+        public bool needToSave()
+        {
+            return isDirty;
         }
         public eventposdefEvent Findevent(string eventpname)
         {

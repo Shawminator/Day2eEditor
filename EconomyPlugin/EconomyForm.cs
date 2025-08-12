@@ -1,11 +1,8 @@
 using Day2eEditor;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Reflection;
-using System.Text.Json.Serialization;
+using System.Diagnostics;
+using System.Web;
 using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EconomyPlugin
 {
@@ -26,14 +23,6 @@ namespace EconomyPlugin
             _economyManager = AppServices.GetRequired<EconomyManager>();
             _projectManager = AppServices.GetRequired<ProjectManager>();
         }
-        private void EconomyForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (_plugin is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
-        }
-
         private void EconomyForm_Load(object sender, EventArgs e)
         {
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -42,23 +31,168 @@ namespace EconomyPlugin
             _mapControl.LoadMap(mapImage, _projectManager.CurrentProject.MapSize);
             LoadTreeview();
         }
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            savefiles();
+        }
+        public void savefiles(bool updated = false)
+        {
+            var savedFiles = _economyManager.Save();
+            Console.WriteLine("Saved files:");
+            foreach (var file in savedFiles)
+            {
+                Console.WriteLine(file);
+            }
+            if (savedFiles.Count() > 0)
+            {
+                ShowSavedFilesMessage(savedFiles);
+            }
+        }
+        private void ShowSavedFilesMessage(IEnumerable<string> files)
+        {
+            // Build a nice multiline string
+            var fileListText = string.Join(Environment.NewLine, files);
+
+            // Limit length so the box doesn't get too tall
+            if (files.Count() > 15)
+            {
+                fileListText = string.Join(Environment.NewLine, files.Take(15)) +
+                               Environment.NewLine + $"...and {files.Count() - 15} more";
+            }
+
+            MessageBox.Show(
+                $"The following files were saved successfully:\n\n{fileListText}",
+                "Save Complete",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+        }
+        private void EconomyForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_economyManager.needToSave())
+            {
+                DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    savefiles();
+                }
+            }
+        }
+        private void EconomyForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (_plugin is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+        #region Loading treeview
+        private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, TFile file, Func<TFile, TreeNode> createFileNode)
+        {
+            string[] parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            TreeNode currentNode = parentNode;
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                string part = parts[i];
+
+                if (i == parts.Length - 1)
+                {
+                    TreeNode fileNode = createFileNode(file);
+                    currentNode.Nodes.Add(fileNode);
+                }
+                else
+                {
+                    TreeNode folderNode = currentNode.Nodes
+                        .Cast<TreeNode>()
+                        .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase));
+
+                    if (folderNode == null)
+                    {
+                        folderNode = new TreeNode(part)
+                        {
+                            Tag = Path.Combine(
+                                _economyManager.basePath,
+                                string.Join(Path.DirectorySeparatorChar.ToString(), parts.Take(i + 1))
+                            )
+                        };
+                        currentNode.Nodes.Add(folderNode);
+                    }
+
+                    currentNode = folderNode;
+                }
+            }
+        }
         private void LoadTreeview()
         {
             EconomyTV.Nodes.Clear();
-            EconomyTV.Nodes.Add(CreateeconomyConfigNodes());
-            EconomyTV.Nodes.Add(CreateGlobalsConfigNodes());
-            EconomyTV.Nodes.Add(CreateGameplayConfigNodes());
-            EconomyTV.Nodes.Add(CreateTypesConfigNodes());
-            EconomyTV.Nodes.Add(CreateSpawnableTypesConfigNodes());
-            EconomyTV.Nodes.Add(CreaterandomPresetsConfigNodes());
-            EconomyTV.Nodes.Add(CreateeventConfigNodes());
+
+            TreeNode rootNode = new TreeNode(Path.GetFileName(_economyManager.basePath))
+            {
+                Tag = _economyManager.basePath,
+            };
+
+            // Add all economy files directly under root
+            foreach (var ef in _economyManager.economyConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
+                AddFileToTree(rootNode, relativePath, ef, CreateEconomyfileNodes);
+            }
+
+            // Add all globals files directly under root
+            foreach (var gf in _economyManager.globalsConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, gf.FilePath);
+                AddFileToTree(rootNode, relativePath, gf, CreateGlobalsfileNodes);
+            }
+
+            // Gameplay config
+            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.CFGGameplayConfig.Data, CreateGameplayConfigNodes);
+
+            // Types config
+            foreach (var tf in _economyManager.TypesConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, tf.FilePath);
+                AddFileToTree(rootNode, relativePath, tf, CreateTypesfileNodes);
+            }
+
+            // SpawnableTypes config
+            foreach (var sf in _economyManager.cfgspawnabletypesConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, sf.FilePath);
+                AddFileToTree(rootNode, relativePath, sf, CreateSpawnableTypesfileNodes);
+            }
+
+            // RandomPresets config
+            foreach (var rf in _economyManager.cfgrandompresetsConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, rf.FilePath);
+                AddFileToTree(rootNode, relativePath, rf, CreateRandomPresetsFileNodes);
+            }
+
+            // Events config
+            foreach (var ef in _economyManager.eventsConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
+                AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
+            }
+
+
+            //rootNode.Nodes.Add(CreateeconomyConfigNodes());
+            //rootNode.Nodes.Add(CreateGlobalsConfigNodes());
+            //rootNode.Nodes.Add(CreateGameplayConfigNodes());
+            //rootNode.Nodes.Add(CreateTypesConfigNodes());
+            //rootNode.Nodes.Add(CreateSpawnableTypesConfigNodes());
+            //rootNode.Nodes.Add(CreaterandomPresetsConfigNodes());
+            //rootNode.Nodes.Add(CreateeventConfigNodes());
+            EconomyTV.Nodes.Add(rootNode);
         }
         //creating economy Nodes
         private TreeNode CreateeconomyConfigNodes()
         {
             TreeNode Typesroot = new TreeNode("Economy")
             {
-                Tag = "EconomyRoot"
+                Tag = _economyManager.economyConfig
             };
             foreach (economyFile ef in _economyManager.economyConfig.AllData)
             {
@@ -72,47 +206,75 @@ namespace EconomyPlugin
             {
                 Tag = ef
             };
-            EconomyRootNode.Nodes.Add(new TreeNode($"Dynamic")
-            {
-                Tag = ef.Data.dynamic
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Animals")
-            {
-                Tag = ef.Data.animals
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Zombies")
-            {
-                Tag = ef.Data.zombies
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Vehicles")
-            {
-                Tag = ef.Data.vehicles
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Randoms")
-            {
-                Tag = ef.Data.randoms
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Custom")
-            {
-                Tag = ef.Data.custom
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Building")
-            {
-                Tag = ef.Data.building
-            });
-            EconomyRootNode.Nodes.Add(new TreeNode($"Player")
-            {
-                Tag = ef.Data.player
-            });
+            CreateEconomyNodes(ef, EconomyRootNode);
 
             return EconomyRootNode;
+        }
+        private static void CreateEconomyNodes(economyFile ef, TreeNode EconomyRootNode)
+        {
+            if (ef.Data.dynamic != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Dynamic init:{ef.Data.dynamic.init} load:{ef.Data.dynamic.load} respawn:{ef.Data.dynamic.respawn} save:{ef.Data.dynamic.save}")
+                {
+                    Tag = ef.Data.dynamic
+                });
+            }
+            if (ef.Data.animals != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Animals init:{ef.Data.animals.init} load:{ef.Data.animals.load} respawn:{ef.Data.animals.respawn} save:{ef.Data.animals.save}")
+                {
+                    Tag = ef.Data.animals
+                });
+            }
+            if (ef.Data.zombies != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Zombies init:{ef.Data.zombies.init} load:{ef.Data.zombies.load} respawn:{ef.Data.zombies.respawn} save:{ef.Data.zombies.save}")
+                {
+                    Tag = ef.Data.zombies
+                });
+            }
+            if (ef.Data.vehicles != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Vehicles init:{ef.Data.vehicles.init} load:{ef.Data.vehicles.load} respawn:{ef.Data.vehicles.respawn} save:{ef.Data.vehicles.save}")
+                {
+                    Tag = ef.Data.vehicles
+                });
+            }
+            if (ef.Data.randoms != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Randoms init:{ef.Data.randoms.init} load:{ef.Data.randoms.load} respawn:{ef.Data.randoms.respawn} save:{ef.Data.randoms.save}")
+                {
+                    Tag = ef.Data.randoms
+                });
+            }
+            if (ef.Data.custom != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Custom init:{ef.Data.custom.init} load:{ef.Data.custom.load} respawn:{ef.Data.custom.respawn} save:{ef.Data.custom.save}")
+                {
+                    Tag = ef.Data.custom
+                });
+            }
+            if (ef.Data.building != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Building init:{ef.Data.building.init} load:{ef.Data.building.load} respawn:{ef.Data.building.respawn} save:{ef.Data.building.save}")
+                {
+                    Tag = ef.Data.building
+                });
+            }
+            if (ef.Data.player != null)
+            {
+                EconomyRootNode.Nodes.Add(new TreeNode($"Player init:{ef.Data.player.init} load:{ef.Data.player.load} respawn:{ef.Data.player.respawn} save:{ef.Data.player.save}")
+                {
+                    Tag = ef.Data.player
+                });
+            }
         }
         //creating globals Nodes
         private TreeNode CreateGlobalsConfigNodes()
         {
             TreeNode Typesroot = new TreeNode("Globals")
             {
-                Tag = "GlobalsRoot"
+                Tag = _economyManager.globalsConfig
             };
             foreach (globalsFile gf in _economyManager.globalsConfig.AllData)
             {
@@ -140,9 +302,13 @@ namespace EconomyPlugin
         //creating CFGGameplaynodes
         private TreeNode CreateGameplayConfigNodes()
         {
+            return CreateGameplayConfigNodes(_economyManager.CFGGameplayConfig.Data);
+        }
+        private TreeNode CreateGameplayConfigNodes(cfggameplay ganmeplay)
+        {
             TreeNode GameplayRootNode = new TreeNode("GamePlay")
             {
-                Tag = "CFGGameplayRoot"
+                Tag = _economyManager.CFGGameplayConfig
             };
             GameplayRootNode.Nodes.Add(new TreeNode($"Version:{_economyManager.CFGGameplayConfig.Data.version.ToString()}")
             {
@@ -343,7 +509,7 @@ namespace EconomyPlugin
         {
             TreeNode Typesroot = new TreeNode("Types")
             {
-                Tag = "TypeRoot"
+                Tag = _economyManager.TypesConfig
             };
             foreach (TypesFile tf in _economyManager.TypesConfig.AllData)
             {
@@ -359,23 +525,28 @@ namespace EconomyPlugin
             };
             foreach (TypeEntry type in tf.Data.TypeList)
             {
-                string cat = "other";
-                if (type.Category != null)
-                    cat = type.Category.Name;
+                Category cat = type.Category;
+                if (type.Category == null)
+                {
+                    cat = new Category()
+                    {
+                        Name = "other"
+                    };
+                }
                 TreeNode typenode = new TreeNode(type.Name)
                 {
                     Tag = type
                 };
-                if (!TypesrootNode.Nodes.ContainsKey(cat))
+                if (!TypesrootNode.Nodes.ContainsKey(cat.Name))
                 {
-                    TreeNode newcatnode = new TreeNode(cat)
+                    TreeNode newcatnode = new TreeNode(cat.Name)
                     {
-                        Name = cat,
+                        Name = cat.Name,
                         Tag = cat
                     };
                     TypesrootNode.Nodes.Add(newcatnode);
                 }
-                TypesrootNode.Nodes[cat].Nodes.Add(typenode);
+                TypesrootNode.Nodes[cat.Name].Nodes.Add(typenode);
             }
             return TypesrootNode;
         }
@@ -384,7 +555,7 @@ namespace EconomyPlugin
         {
             TreeNode STypesroot = new TreeNode("Spawnable Types")
             {
-                Tag = "SpawnableTypesRoot"
+                Tag = _economyManager.cfgspawnabletypesConfig
             };
             foreach (cfgspawnabletypesFile stf in _economyManager.cfgspawnabletypesConfig.AllData)
             {
@@ -581,7 +752,7 @@ namespace EconomyPlugin
         {
             TreeNode RandomPresetsroot = new TreeNode("Random Presets")
             {
-                Tag = "RandomPresetsRoot"
+                Tag = _economyManager.cfgrandompresetsConfig
             };
             foreach (cfgrandompresetsFile stf in _economyManager.cfgrandompresetsConfig.AllData)
             {
@@ -668,7 +839,7 @@ namespace EconomyPlugin
         {
             TreeNode rootNode = new TreeNode("Events")
             {
-                Tag = "EventsRoot"
+                Tag = _economyManager.eventsConfig
             };
             foreach (EventsFile ef in _economyManager.eventsConfig.AllData)
             {
@@ -745,78 +916,614 @@ namespace EconomyPlugin
             }
             return eventspawnroot;
         }
+        #endregion loading treeview
 
-        private void ShowHandler(IUIHandler handler, object data, TreeNode node)
+        void ShowHandler<T>(T handler, object primaryData, List<TreeNode> selectedNodes)
+        where T : IUIHandler
         {
+            if (_currentHandler != null && _currentHandler.GetType() == typeof(T))
+            {
+                _currentHandler.LoadFromData(primaryData, selectedNodes);
+                return;
+            }
+
+            // Dispose old control if needed
+            if (_currentHandler != null)
+            {
+                var oldControl = _currentHandler.GetControl();
+                splitContainer1.Panel2.Controls.Remove(oldControl);
+                oldControl.Dispose();
+            }
+
             _currentHandler = handler;
-            handler.LoadFromData(data, node);
+            handler.LoadFromData(primaryData, selectedNodes);
 
             var ctrl = handler.GetControl();
-            splitContainer1.Panel2.Controls.Clear(); // wherever you're hosting dynamic UI
             splitContainer1.Panel2.Controls.Add(ctrl);
+            ctrl.BringToFront();
             ctrl.Visible = true;
         }
-
         private void HideAllPanels()
         {
-            splitContainer1.Panel2.Controls.Clear();
+            foreach (Control ctrl in splitContainer1.Panel2.Controls.OfType<Control>().ToList())
+            {
+                if (ctrl != _mapControl)
+                {
+                    splitContainer1.Panel2.Controls.Remove(ctrl);
+                }
+            }
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            HideAllPanels();
+            BeginInvoke(new Action(() =>
+            {
+                _mapControl.Visible = false;
+                //HideAllPanels();
+                //EconomyTV.SelectedNode = e.Node;
+                currentTreeNode = e.Node;
+
+                var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
+                if (e.Node.Tag is EconomySection economydata)
+                {
+                    economyFile ef = e.Node.Parent.Tag as economyFile;
+                    if (ef.IsModded)
+                        ShowHandler(new economyControl(), economydata, selectedNodes);
+                }
+                else if (e.Node.Tag is variablesVar varData)
+                {
+                    globalsFile gf = e.Node.Parent.Tag as globalsFile;
+                    if (gf.IsModded)
+                        ShowHandler(new VariablesVarControl(), varData, selectedNodes);
+                }
+                else if (e.Node.Tag is Generaldata)
+                {
+
+                }
+                else if (e.Node.Tag is Playerdata)
+                {
+
+                }
+                else if (e.Node.Tag is Worldsdata)
+                {
+
+                }
+                else if (e.Node.Tag is Basebuildingdata)
+                {
+
+                }
+                else if (e.Node.Tag is Uidata)
+                {
+
+                }
+                else if (e.Node.Tag is CFGGameplayMapData)
+                {
+
+                }
+                else if (e.Node.Tag is VehicleData)
+                {
+
+                }
+                else if (e.Node.Tag is TypesFile typefile)
+                {
+
+                }
+                else if (e.Node.Tag is Category cat)
+                {
+
+                }
+                else if (e.Node.Tag is TypeEntry typentry)
+                {
+                    ShowHandler(new TypesControl(), typentry, selectedNodes);
+                }
+                else if (e.Node.Tag is SpawnableType)
+                {
+
+                }
+            }));
+        }
+
+        private void EconomyTV_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
             EconomyTV.SelectedNode = e.Node;
             currentTreeNode = e.Node;
-            if (e.Node.Tag is EconomySection)
+            if (e.Button == MouseButtons.Right)
             {
-
+                if (e.Node.Tag is EconomySection economydata)
+                {
+                    economyFile ef = e.Node.Parent.Tag as economyFile;
+                    if (!ef.IsModded)
+                    {
+                        editPropertyToolStripMenuItem.Visible = true;
+                        setToDefaultToolStripMenuItem.Visible = false;
+                        EditPropertyCMS.Show(Cursor.Position);
+                    }
+                    else if (ef.IsModded)
+                    {
+                        editPropertyToolStripMenuItem.Visible = false;
+                        setToDefaultToolStripMenuItem.Visible = true;
+                        EditPropertyCMS.Show(Cursor.Position);
+                    }
+                }
+                else if (e.Node.Tag is variablesVar varData)
+                {
+                    globalsFile gf = e.Node.Parent.Tag as globalsFile;
+                    if (!gf.IsModded)
+                    {
+                        editPropertyToolStripMenuItem.Visible = true;
+                        setToDefaultToolStripMenuItem.Visible = false;
+                        EditPropertyCMS.Show(Cursor.Position);
+                    }
+                    else if (gf.IsModded)
+                    {
+                        editPropertyToolStripMenuItem.Visible = false;
+                        setToDefaultToolStripMenuItem.Visible = true;
+                        EditPropertyCMS.Show(Cursor.Position);
+                    }
+                }
             }
-            else if (e.Node.Tag is variablesVar varData)
+        }
+        private void editPropertyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode?.Tag is EconomySection section)
             {
-                ShowHandler(new VariablesVarControl(), varData, e.Node);
+                economyFile file = currentTreeNode.Parent?.Tag as economyFile;
+                if (file != null && !file.IsModded)
+                {
+                    HandleVanillaeconomyEditRedirect(file, section, currentTreeNode.Text.Split(' ')[0]);
+                    return;
+                }
             }
-            else if (e.Node.Tag is Generaldata)
+            else if (currentTreeNode?.Tag is variablesVar variablevar)
             {
-
+                globalsFile file = currentTreeNode.Parent?.Tag as globalsFile;
+                if (file != null && !file.IsModded)
+                {
+                    HandleVanillaglobalsEditRedirect(file, variablevar, currentTreeNode.Text.Split(' ')[0]);
+                    return;
+                }
             }
-            else if (e.Node.Tag is Playerdata)
+        }
+        private void setToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode?.Tag is EconomySection section)
             {
+                economyFile file = currentTreeNode.Parent?.Tag as economyFile;
+                if (file != null && file.IsModded)
+                {
+                    bool removed = false;
 
+                    // Remove the section based on which property it matches
+                    if (file.Data.dynamic == section) { file.Data.dynamic = null; removed = true; }
+                    if (file.Data.animals == section) { file.Data.animals = null; removed = true; }
+                    if (file.Data.zombies == section) { file.Data.zombies = null; removed = true; }
+                    if (file.Data.vehicles == section) { file.Data.vehicles = null; removed = true; }
+                    if (file.Data.randoms == section) { file.Data.randoms = null; removed = true; }
+                    if (file.Data.custom == section) { file.Data.custom = null; removed = true; }
+                    if (file.Data.building == section) { file.Data.building = null; removed = true; }
+                    if (file.Data.player == section) { file.Data.player = null; removed = true; }
+
+                    if (removed)
+                    {
+                        file.isDirty = true;
+
+                        TreeNode fileNode = currentTreeNode.Parent; // file node in tree
+
+                        // Check if there are no sections left in the file
+                        bool noSectionsLeft =
+                            file.Data.dynamic == null &&
+                            file.Data.animals == null &&
+                            file.Data.zombies == null &&
+                            file.Data.vehicles == null &&
+                            file.Data.randoms == null &&
+                            file.Data.custom == null &&
+                            file.Data.building == null &&
+                            file.Data.player == null;
+
+                        if (noSectionsLeft)
+                        {
+                            bool deleteDirectory;
+                            string folderPathRel;
+                            string fileName;
+
+                            _economyManager.eonomyCoreConfig.RemoveCe(
+                                file.FileName,
+                                out folderPathRel,
+                                out fileName,
+                                out deleteDirectory
+                            );
+
+                            _economyManager.economyConfig.AllData.Remove(file);
+
+                            // Delete file on disk
+                            string absFolderPath = Path.Combine(_economyManager.basePath, folderPathRel.Replace("/", "\\"));
+                            string absFilePath = Path.Combine(absFolderPath, fileName);
+                            if (File.Exists(absFilePath))
+                            {
+                                File.Delete(absFilePath);
+                            }
+
+                            // Delete empty directories if needed
+                            if (deleteDirectory)
+                            {
+                                DeleteEmptyFoldersUpToBase(absFolderPath, _economyManager.basePath);
+                            }
+
+                            // Remove file node and clean up empty parent nodes
+                            RemoveTreeNodeAndEmptyParents(fileNode);
+                        }
+                        else
+                        {
+                            // Just remove the variable node
+                            currentTreeNode.Remove();
+                        }
+
+                        MessageBox.Show(
+                             $"Removed section \"{section}\" from {file.FileName}.",
+                            "Section Removed",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
             }
-            else if (e.Node.Tag is Worldsdata)
+            else if (currentTreeNode?.Tag is variablesVar variablevar)
             {
+                globalsFile file = currentTreeNode.Parent?.Tag as globalsFile;
+                if (file != null && file.IsModded)
+                {
+                    var removed = file.Data?.var?.Remove(variablevar) ?? false;
 
+                    if (removed)
+                    {
+                        file.isDirty = true;
+
+                        TreeNode fileNode = currentTreeNode.Parent; // file node in tree
+
+                        if (!file.Data.var.Any())
+                        {
+                            bool deleteDirectory;
+                            string folderPathRel;
+                            string fileName;
+
+                            _economyManager.eonomyCoreConfig.RemoveCe(
+                                file.FileName,
+                                out folderPathRel,
+                                out fileName,
+                                out deleteDirectory
+                            );
+
+                            _economyManager.globalsConfig.AllData.Remove(file);
+
+                            // Delete file on disk
+                            string absFolderPath = Path.Combine(_economyManager.basePath, folderPathRel.Replace("/", "\\"));
+                            string absFilePath = Path.Combine(absFolderPath, fileName);
+                            if (File.Exists(absFilePath))
+                            {
+                                File.Delete(absFilePath);
+                            }
+
+                            // Delete empty directories if needed
+                            if (deleteDirectory)
+                            {
+                                DeleteEmptyFoldersUpToBase(absFolderPath, _economyManager.basePath);
+                            }
+
+                            // Remove file node and clean up empty parent nodes
+                            RemoveTreeNodeAndEmptyParents(fileNode);
+                        }
+                        else
+                        {
+                            // Just remove the variable node
+                            currentTreeNode.Remove();
+                        }
+
+                        MessageBox.Show(
+                            $"Removed variable \"{variablevar.name}\" from {file.FileName}.",
+                            "Variable Removed",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
             }
-            else if (e.Node.Tag is Basebuildingdata)
-            {
+        }
+        private void RemoveTreeNodeAndEmptyParents(TreeNode node)
+        {
+            TreeNode parent = node.Parent;
+            node.Remove();
 
+            while (parent != null && parent.Nodes.Count == 0)
+            {
+                TreeNode grandparent = parent.Parent;
+                parent.Remove();
+                parent = grandparent;
             }
-            else if (e.Node.Tag is Uidata)
-            {
+        }
+        private void DeleteEmptyFoldersUpToBase(string startDir, string stopDir)
+        {
+            DirectoryInfo current = new DirectoryInfo(startDir);
+            DirectoryInfo stop = new DirectoryInfo(stopDir);
 
-            }
-            else if (e.Node.Tag is CFGGameplayMapData)
+            while (current.Exists && !IsSameDirectory(current, stop))
             {
-
-            }
-            else if (e.Node.Tag is VehicleData)
-            {
-
-            }
-            else if (e.Node.Tag is TypesFile)
-            {
-
-            }
-            else if (e.Node.Tag is TypeEntry)
-            {
-
-            }
-            else if (e.Node.Tag is SpawnableType)
-            {
-
+                if (!Directory.EnumerateFileSystemEntries(current.FullName).Any())
+                {
+                    current.Delete();
+                    current = current.Parent;
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
+        private bool IsSameDirectory(DirectoryInfo a, DirectoryInfo b)
+        {
+            return string.Equals(
+                Path.GetFullPath(a.FullName).TrimEnd(Path.DirectorySeparatorChar),
+                Path.GetFullPath(b.FullName).TrimEnd(Path.DirectorySeparatorChar),
+                StringComparison.OrdinalIgnoreCase
+            );
+        }
 
+        /// <summary>
+        /// Handle editing Economy values
+        /// </summary>
+        /// <param name="vanillaFile"></param>
+        /// <param name="section"></param>
+        /// <param name="sectionName"></param>
+        private void HandleVanillaeconomyEditRedirect(economyFile vanillaFile, EconomySection section, string sectionName)
+        {
+            string newmodPath = "CustomMods\\Customdb";
+            string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_" + vanillaFile.FileName);
+
+            var existingFile = _economyManager.economyConfig.AllData
+                .FirstOrDefault(f => f.FilePath.Equals(newPath, StringComparison.OrdinalIgnoreCase));
+
+            economyFile newFile = existingFile ?? new economyFile(newPath)
+            {
+                IsModded = true,
+                FileType = "economy",
+                ModFolder = newmodPath,
+                isDirty = true,
+                Data = new economy()
+            };
+
+            if (existingFile == null)
+            {
+                _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "economy");
+                _economyManager.economyConfig.AllData.Add(newFile);
+            }
+
+            if (GetSectionByName(newFile.Data, sectionName) == null)
+            {
+                var cloned = CloneSection(section);
+                switch (sectionName)
+                {
+                    case "Dynamic": newFile.Data.dynamic = cloned; break;
+                    case "Animals": newFile.Data.animals = cloned; break;
+                    case "Zombies": newFile.Data.zombies = cloned; break;
+                    case "Vehicles": newFile.Data.vehicles = cloned; break;
+                    case "Randoms": newFile.Data.randoms = cloned; break;
+                    case "Custom": newFile.Data.custom = cloned; break;
+                    case "Building": newFile.Data.building = cloned; break;
+                    case "Player": newFile.Data.player = cloned; break;
+                }
+
+                newFile.isDirty = true;
+            }
+
+            HandleTreeViewSelection(newFile, sectionName, f => GetSectionByName(f.Data, sectionName), EconomyTV);
+        }
+        private EconomySection CloneSection(EconomySection original)
+        {
+            return new EconomySection
+            {
+                init = original.init,
+                load = original.load,
+                respawn = original.respawn,
+                save = original.save
+            };
+        }
+        private EconomySection GetSectionByName(economy data, string name)
+        {
+            return name switch
+            {
+                "Dynamic" => data.dynamic,
+                "Animals" => data.animals,
+                "Zombies" => data.zombies,
+                "Vehicles" => data.vehicles,
+                "Randoms" => data.randoms,
+                "Custom" => data.custom,
+                "Building" => data.building,
+                "Player" => data.player,
+                _ => null
+            };
+        }
+        /// <summary>
+        /// Handle editing globals Variables
+        /// </summary>
+        /// <param name="vanillaFile"></param>
+        /// <param name="section"></param>
+        /// <param name="sectionName"></param>
+        private void HandleVanillaglobalsEditRedirect(globalsFile vanillaFile, variablesVar section, string sectionName)
+        {
+            string newmodPath = "CustomMods\\Customdb";
+            string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_" + vanillaFile.FileName);
+
+            // 2. Create new economyFile and add only selected section
+            var existingFile = _economyManager.globalsConfig.AllData
+                .FirstOrDefault(f => f.FilePath.Equals(newPath, StringComparison.OrdinalIgnoreCase));
+
+            globalsFile newFile = existingFile ?? new globalsFile(newPath)
+            {
+                IsModded = true,
+                FileType = "globals",
+                ModFolder = newmodPath,
+                isDirty = true,
+                Data = new variables { var = new System.ComponentModel.BindingList<variablesVar>() }
+            };
+
+            if (existingFile == null)
+            {
+                _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "globals");
+                _economyManager.globalsConfig.AllData.Add(newFile);
+            }
+
+            if (GetVariableByName(newFile.Data, sectionName) == null)
+            {
+                newFile.Data.var.Add(CloneVariable(section));
+                newFile.isDirty = true;
+            }
+
+            HandleTreeViewSelection(newFile, sectionName, f => GetVariableByName(f.Data, sectionName), EconomyTV);
+        }
+        private variablesVar CloneVariable(variablesVar original)
+        {
+            return new variablesVar
+            {
+                name = original.name,
+                type = original.type,
+                value = original.value
+            };
+        }
+        private variablesVar GetVariableByName(variables data, string name)
+        {
+            if (data?.var == null)
+                return null;
+
+            return data.var.FirstOrDefault(v => v.name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+        /// <summary>
+        /// Economy and Globals Helpers
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private string EnsureModFolderAndGetPath(string modPath, string fileName)
+        {
+            string modFolder = Path.Combine(_projectManager.CurrentProject.ProjectRoot, "mpmissions", _projectManager.CurrentProject.MpMissionPath, modPath);
+            Directory.CreateDirectory(modFolder);
+            return Path.Combine(modFolder, fileName);
+        }
+
+
+
+        private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
+                    where TFile : class
+                    where TSection : class
+        {
+            TreeNode parentNode = EconomyTV.Nodes[0];
+            TreeNode fileNode = FindOrCreateFileNodeFor(file, treeView, parentNode);
+            TreeNode sectionNode = FindOrCreateSectionNode(fileNode, sectionName, getSection(file));
+
+            treeView.SelectedNode = sectionNode;
+            sectionNode.EnsureVisible();
+        }
+        private TreeNode FindOrCreateFileNodeFor<T>(T data, TreeView treeView, TreeNode parentNode = null)
+        {
+            // First, try to find an existing node for this file anywhere in the tree
+            TreeNode foundNode = (parentNode != null)
+                ? FindNodeRecursive(parentNode.Nodes, data)
+                : FindNodeRecursive(treeView.Nodes, data);
+
+            if (foundNode != null)
+                return foundNode;
+
+            // If not found, create it using existing AddFileToTree logic
+            if (data is economyFile ecfile)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, ecfile.FilePath);
+
+                // We pass in either the provided parent node or the root
+                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
+
+                // This uses your *existing* implementation so nothing breaks
+                AddFileToTree(rootNode, relativePath, ecfile, CreateEconomyfileNodes);
+
+                // Return the node that was just added
+                return FindNodeRecursive(rootNode.Nodes, ecfile);
+            }
+            else if (data is globalsFile globalsFile)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, globalsFile.FilePath);
+
+                // We pass in either the provided parent node or the root
+                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
+
+                // Reuse AddFileToTree to respect folder structure
+                AddFileToTree(rootNode, relativePath, globalsFile, CreateGlobalsfileNodes);
+
+                return FindNodeRecursive(rootNode.Nodes, globalsFile);
+            }
+
+            return null;
+        }
+
+        private TreeNode FindNodeRecursive<T>(TreeNodeCollection nodes, T data)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Tag is T t && ReferenceEquals(t, data))
+                    return node;
+
+                TreeNode childResult = FindNodeRecursive(node.Nodes, data);
+                if (childResult != null)
+                    return childResult;
+            }
+            return null;
+        }
+        private TreeNode FindOrCreateSectionNode<T>(TreeNode parent, string nodeName, T sectionData)
+        {
+            foreach (TreeNode node in parent.Nodes)
+            {
+                // For EconomySection: check if node text starts with the section name and tag is same type
+                if (sectionData is EconomySection)
+                {
+                    if (node.Text.StartsWith(nodeName) && node.Tag is EconomySection)
+                        return node;
+                }
+                // For variablesVar: match exact name and type
+                else if (sectionData is variablesVar variablevar)
+                {
+                    if (node.Tag is variablesVar existingVar && existingVar.name == variablevar.name)
+                        return node;
+                }
+                // Fallback: match exact text and type
+                else
+                {
+                    if (node.Text == nodeName && node.Tag is T)
+                        return node;
+                }
+            }
+
+            // If no existing node found, create new node
+            TreeNode newSectionNode = null;
+            if (sectionData is EconomySection economysection)
+            {
+                newSectionNode = new TreeNode($"{nodeName} init:{economysection.init} load:{economysection.load} respawn:{economysection.respawn} save:{economysection.save}")
+                {
+                    Tag = sectionData
+                };
+            }
+            else if (sectionData is variablesVar variablevar)
+            {
+                newSectionNode = new TreeNode($"{variablevar.name} = {variablevar.value}")
+                {
+                    Tag = sectionData
+                };
+            }
+            else
+            {
+                newSectionNode = new TreeNode(nodeName)
+                {
+                    Tag = sectionData
+                };
+            }
+
+            parent.Nodes.Add(newSectionNode);
+            return newSectionNode;
+        }
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]

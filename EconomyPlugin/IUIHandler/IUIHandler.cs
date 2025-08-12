@@ -8,7 +8,7 @@ namespace EconomyPlugin
 {
     public interface IUIHandler
     {
-        void LoadFromData(object data, TreeNode node);
+        void LoadFromData(object data, List<TreeNode> selectedNodes);
         void ApplyChanges();
         void Reset(); // Revert changes to the initial state
         void HasChanges(); // Check if any changes have been made

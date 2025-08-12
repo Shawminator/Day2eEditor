@@ -44,12 +44,12 @@ public class FileService
             Console.Write($"[Load] Loading {configName} ({Path.GetFileName(path)})... ");
             try
             {
+                var options = new JsonSerializerOptions(_jsonOptions);
                 if (useBoolConvertor)
                 {
-                    _jsonOptions.Converters.Clear();
-                    _jsonOptions.Converters.Add(new BoolConverter());
+                    options.Converters.Add(new BoolConverter());
                 }
-                T? data = JsonSerializer.Deserialize<T>(File.ReadAllText(path), _jsonOptions);
+                T? data = JsonSerializer.Deserialize<T>(File.ReadAllText(path), options);
 
                 if (data == null)
                     throw new Exception("Deserialized object is null.");
@@ -151,7 +151,9 @@ public class FileService
         {
             using var stream = File.Create(path);
             var serializer = new XmlSerializer(typeof(T));
-            serializer.Serialize(stream, data);
+            var ns = new XmlSerializerNamespaces();
+            ns.Add("", ""); // no prefix, no namespace
+            serializer.Serialize(stream, data, ns);
         }
         catch (Exception ex)
         {

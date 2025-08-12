@@ -13,54 +13,25 @@ namespace EconomyPlugin
 {
     public partial class VariablesVarControl : UserControl, IUIHandler
     {
-        private string originalName;
-        private int originalType;
-        private object originalValue;
-
         private variablesVar _data;
-        private TreeNode _node;
+        private List<TreeNode> _nodes;
         private bool _suppressEvents;
         private variablesVar _originalData; // For storing the original state
 
         public VariablesVarControl()
         {
             InitializeComponent();
-            // Event listeners
-            variablesvartypeCB.SelectedIndexChanged += (s, e) =>
-            {
-                if (_suppressEvents) return;
-                _data.type = variablesvartypeCB.SelectedIndex;
-                UpdateTypedValueDisplay();
-                UpdateTreeNodeText();
-            };
-
-            variablesvarvalueNUD.ValueChanged += (s, e) =>
-            {
-                if (_suppressEvents) return;
-                _data.TypedValue = variablesvarvalueNUD.Value;
-                UpdateTreeNodeText();
-                HasChanges();
-            };
-
-            variablesvarnameTB.TextChanged += (s, e) =>
-            {
-                if (_suppressEvents) return;
-                _data.name = variablesvarnameTB.Text;
-                UpdateTreeNodeText();
-                HasChanges();
-            };
         }
 
 
-        public void LoadFromData(object data, TreeNode node)
+        public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             _data = data as variablesVar ?? throw new InvalidCastException();
-            _node = node;
+            _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
             _suppressEvents = true;
 
-            variablesvarnameTB.Text = _data.name;
-            variablesvartypeCB.SelectedIndex = _data.type;
+            globalsGB.Text = _data.name;
 
             switch (_data.type)
             {
@@ -88,25 +59,23 @@ namespace EconomyPlugin
         {
             // Reset the data and controls to the original state
             _data = CloneData(_originalData);
-            variablesvarnameTB.Text = _data.name;
-            variablesvartypeCB.SelectedIndex = _data.type;
             UpdateTypedValueDisplay();
             UpdateTreeNodeText();
         }
         public void HasChanges()
         {
             // Compare current data with original data to check if changes were made
-            if(!_data.Equals(_originalData))
+            if (!_data.Equals(_originalData))
             {
-                globalsFile gf = _node.Parent.Tag as globalsFile;
+                globalsFile gf = _nodes[0].Parent.Tag as globalsFile;
                 gf.isDirty = true;
             }
         }
         public Control GetControl() => this;
         private void UpdateTreeNodeText()
         {
-            if (_node != null)
-                _node.Text = $"{_data.name} = {_data.value}";
+            if (_nodes[0] != null)
+                _nodes[0].Text = $"{_data.name} = {_data.value}";
         }
         private void UpdateTypedValueDisplay()
         {
@@ -135,6 +104,13 @@ namespace EconomyPlugin
                 type = data.type,
                 value = data.value
             };
+        }
+        private void variablesvarvalueNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.TypedValue = variablesvarvalueNUD.Value;
+            UpdateTreeNodeText();
+            HasChanges();
         }
     }
 }

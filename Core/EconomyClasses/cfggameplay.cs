@@ -6,7 +6,8 @@ namespace Day2eEditor
     public class CFGGameplayConfig: IConfigLoader
     {
         private readonly string _path;
-
+        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
+        public string FilePath => _path;
         public cfggameplay Data { get; private set; } = new cfggameplay();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
@@ -34,20 +35,28 @@ namespace Day2eEditor
             LoadSpawnGearFiles();
             LoadRestrictedFiles();
         }
-
-        public void Save()
+        public IEnumerable<string> Save()
         {
-            UpdateSpawnGearFileList();
-            UpdateRestrictedFileList();
+            if (isDirty)
+            {
+                UpdateSpawnGearFileList();
+                UpdateRestrictedFileList();
 
-            AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
 
-            SaveSpawnGearPresetFiles();
-            SavePlayerRestrictedAreaFiles();
+                SaveSpawnGearPresetFiles();
+                SavePlayerRestrictedAreaFiles();
+                isDirty = false;
+                return new[] { Path.GetFileName(_path) };
+            }
 
-            isDirty = false;
+            return Array.Empty<string>();
         }
 
+        public bool needToSave()
+        {
+            return isDirty;
+        }
         #region Spawn Gear Files
 
         private void LoadSpawnGearFiles()

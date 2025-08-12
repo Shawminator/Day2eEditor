@@ -36,18 +36,26 @@ namespace Day2eEditor
                 configName: "cfgeconomycore"
             );
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
             if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
+                return new[] { Path.GetFileName(_path) };
             }
+
+            return Array.Empty<string>();
+        }
+
+        public bool needToSave()
+        {
+            return isDirty;
         }
         public void AddCe(string path, string filename, string type)
         {
             economycoreCEFile newfile = new economycoreCEFile();
-            string _path = path.Replace("\\", "/");
+            string _path = path.Replace("\\", "/").Replace("//", "/");
             switch (type)
             {
                 case "types":
@@ -65,6 +73,18 @@ namespace Day2eEditor
                 case "randompresets":
                     newfile.name = filename;
                     newfile.type = "randompresets";
+                    break;
+                case "globals":
+                    newfile.name = filename;
+                    newfile.type = "globals";
+                    break;
+                case "economy":
+                    newfile.name = filename;
+                    newfile.type = "economy";
+                    break;
+                case "messages":
+                    newfile.name = filename;
+                    newfile.type = "messages";
                     break;
                 default:
                     break;
@@ -87,6 +107,7 @@ namespace Day2eEditor
                 }
                 Data.ce.Add(newce);
             }
+            isDirty = true;
         }
         public economycoreCE getfolder(string path)
         {
@@ -105,6 +126,7 @@ namespace Day2eEditor
                 Data.ce.Remove(ce);
                 deletedirectory = true;
             }
+            isDirty = true;
         }
         public List<string> GetModdedPaths(string type)
         {
@@ -118,7 +140,7 @@ namespace Day2eEditor
 
             foreach (economycoreCE folder in Data.ce)
             {
-                string modFolderPath = Path.Combine(basePath, folder.folder);
+                string modFolderPath = Path.Combine(basePath, folder.folder.Replace("/", "\\"));
                 foreach (economycoreCEFile file in folder.file)
                 {
                     if (file.type?.Equals(type, StringComparison.OrdinalIgnoreCase) == true)
@@ -195,7 +217,7 @@ namespace Day2eEditor
         {
             foreach (economycoreCE ce in ce)
             {
-                if (ce.file.Any(x => x.name == modname + ".xml"))
+                if (ce.file.Any(x => x.name == modname))
                 {
                     return ce;
                 }
@@ -357,7 +379,7 @@ namespace Day2eEditor
         {
             foreach (economycoreCEFile _file in file)
             {
-                if (_file.name == modname + ".xml")
+                if (_file.name == modname)
                 {
                     return _file;
                 }

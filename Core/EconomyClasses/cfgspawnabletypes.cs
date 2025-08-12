@@ -10,13 +10,15 @@ namespace Day2eEditor
 {
     public class cfgspawnabletypesConfig : IAdvancedConfigLoader
     {
+        public string _basepath { get; set; }
         public List<cfgspawnabletypesFile> AllData { get; private set; } = new List<cfgspawnabletypesFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
         public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string vanillaPath, List<string> modPaths)
+        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
         {
+            _basepath = basePath;
             HasErrors = false;
             Errors.Clear();
             // Load vanilla file
@@ -43,7 +45,7 @@ namespace Day2eEditor
                 {
                     IsModded = true,
                     FileType = "cfgspawnabletypes",
-                    ModFolder = Path.GetDirectoryName(modPath)
+                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
                 };
 
                 modFile.Load();
@@ -58,18 +60,31 @@ namespace Day2eEditor
                 }
             }
         }
-        public void Save()
+        public IEnumerable<string> Save()
+        {
+            var savedFiles = new List<string>();
+
+            foreach (var data in AllData)
+            {
+                if (data.isDirty)
+                {
+                    savedFiles.AddRange(data.Save());
+                }
+            }
+
+            return savedFiles;
+        }
+
+        public bool needToSave()
         {
             foreach (var Data in AllData)
             {
-                // Save only if the file is dirty
-                if (Data.isDirty)
-                {
-                    Data.Save();
-                }
-
+                if (Data.needToSave())
+                    return true;
             }
+            return false;
         }
+
     }
     public class cfgspawnabletypesFile : IConfigLoader
     {
@@ -112,13 +127,21 @@ namespace Day2eEditor
                 configName: "cfgspawnabletypes"
             );
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
             if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
+                return new[] { FileName };
             }
+
+            return Array.Empty<string>();
+        }
+
+        public bool needToSave()
+        {
+            return isDirty;
         }
 
     }

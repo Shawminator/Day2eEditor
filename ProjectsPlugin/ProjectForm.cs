@@ -406,6 +406,47 @@ namespace ProjectsPlugin
                 }
             }
         }
+
+        private void listBoxProjects_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBoxProjects.SelectedItems.Count < 1) return;
+            Project p = listBoxProjects.SelectedItem as Project;
+            bool isActive = p == _ProjectManager.CurrentProject;
+            if (isActive)
+            {
+                EditProjectRootTB.Enabled = false;
+                EditProfilePathTB.Enabled = false;
+                EditMissionPathTB.Enabled = false;
+            }
+            else
+            {
+                EditProjectRootTB.Enabled = true;
+                EditProfilePathTB.Enabled = true;
+                EditMissionPathTB.Enabled = true;
+            }
+            EditProjectNameTB.Text = p.ProjectName;
+            EditProjectRootTB.Text = p.ProjectRoot;
+            EditProfilePathTB.Text = p.ProfileName;
+            EditMissionPathTB.Text = p.MpMissionPath;
+            EditMapPathTB.Text = p.MapPath;
+            EditMapSizeNUD.Value = p.MapSize;
+            EditCreateBackupsCB.Checked = p.CreateBackups;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Project p = listBoxProjects.SelectedItem as Project;
+            p.ProjectName = EditProjectNameTB.Text;
+            p.ProjectRoot =EditProjectRootTB.Text;
+            p.ProfileName = EditProfilePathTB.Text;
+            p.MpMissionPath = EditMissionPathTB.Text;
+            p.MapPath = EditMapPathTB.Text;
+            p.MapSize = (int)EditMapSizeNUD.Value;
+            p.CreateBackups = EditCreateBackupsCB.Checked;
+            _ProjectManager.Save();
+            listBoxProjects.Invalidate();
+            MessageBox.Show("Projects Json has now been saved.");
+        }
     }
     [PluginInfo("Project Manager", "ProjectsPlugin")]
     public class PluginProject : IPluginForm, IDisposable

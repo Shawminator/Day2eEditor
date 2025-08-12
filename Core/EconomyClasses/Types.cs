@@ -1,18 +1,21 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
     public class TypesConfig : IAdvancedConfigLoader
     {
+        public string _basepath { get; set; }
         public List<TypesFile> AllData { get; private set; } = new List<TypesFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
         public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string vanillaPath, List<string> modPaths)
+        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
         {
+            _basepath = basePath;
             HasErrors = false;
             Errors.Clear();
             // Load vanilla file
@@ -39,7 +42,7 @@ namespace Day2eEditor
                 {
                     IsModded = true,
                     FileType = "types",
-                    ModFolder = Path.GetDirectoryName(modPath)
+                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
                 };
 
                 modFile.Load();
@@ -54,17 +57,28 @@ namespace Day2eEditor
                 }
             }
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
-            foreach (var Data in AllData)
-            {
-                // Save only if the file is dirty
-                if (Data.isDirty)
-                {
-                    Data.Save();
-                }
+            var savedFiles = new List<string>();
 
+            foreach (var data in AllData)
+            {
+                if (data.isDirty)
+                {
+                    savedFiles.AddRange(data.Save());
+                }
             }
+
+            return savedFiles;
+        }
+        public bool needToSave()
+        {
+            foreach(var Data in AllData)
+            {
+                if (Data.needToSave())
+                    return true;
+            }
+            return false;
         }
     }
     public class TypesFile : IConfigLoader
@@ -121,13 +135,20 @@ namespace Day2eEditor
                configName: "Types"
             );
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
             if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
+                return new[] { FileName };
             }
+
+            return Array.Empty<string>();
+        }
+        public bool needToSave()
+        {
+            return isDirty;
         }
         private void CheckValuesAfterLoad(Types cfg)
         {
@@ -393,6 +414,166 @@ namespace Day2eEditor
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not TypeEntry other)
+                return false;
+
+            return
+                Name == other.Name &&
+                NameSpecified == other.NameSpecified &&
+
+                Nominal == other.Nominal &&
+                NominalSpecified == other.NominalSpecified &&
+
+                Lifetime == other.Lifetime &&
+                LifetimeSpecified == other.LifetimeSpecified &&
+
+                Restock == other.Restock &&
+                RestockSpecified == other.RestockSpecified &&
+
+                Min == other.Min &&
+                MinSpecified == other.MinSpecified &&
+
+                QuantMin == other.QuantMin &&
+                QuantMinSpecified == other.QuantMinSpecified &&
+
+                QuantMax == other.QuantMax &&
+                QuantMaxSpecified == other.QuantMaxSpecified &&
+
+                Cost == other.Cost &&
+                CostSpecified == other.CostSpecified &&
+
+                Equals(Flags, other.Flags) &&
+                Equals(Category, other.Category) &&
+                ListsEqual(Usages, other.Usages) &&
+                ListsEqual(Tags, other.Tags) &&
+                ListsEqual(Values, other.Values);
+        }
+        private static bool ListsEqual<T>(IList<T> a, IList<T> b)
+        {
+            if (a == b) return true;
+            if (a == null || b == null) return false;
+            if (a.Count != b.Count) return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+            return true;
+        }
+        public void AddTier(string tier)
+        {
+            if (Values == null)
+                Values = new BindingList<Value>();
+            Value newtier = (new Value() { Name = tier });
+            if (!Values.Any(x => x.Name == newtier.Name))
+                Values.Add(newtier);
+            for (int i = 0; i < Values.Count; i++)
+            {
+                if (Values[i].Name == null)
+                {
+                    Values.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        public void removetier(string tier)
+        {
+            if (Values == null) return;
+            if (Values.Any(x => x.Name == tier))
+                Values.Remove(Values.First(X => X.Name == tier));
+            if (Values.Count == 0)
+                Values = null;
+        }
+        public void AdduserTier(string tier)
+        {
+            if (Values == null)
+                Values = new BindingList<Value>();
+            Value newusertier = new Value() { User = tier };
+            if (!Values.Any(x => x.User == newusertier.User))
+                Values.Add(newusertier);
+            for (int i = 0; i < Values.Count; i++)
+            {
+                if (Values[i].User == null)
+                {
+                    Values.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        public void removeusertier(string tier)
+        {
+            if (Values == null) return;
+            if (Values.Any(x => x.User == tier))
+                Values.Remove(Values.First(X => X.User == tier));
+            if (Values.Count == 0)
+            {
+                Values = null;
+            }
+        }
+        public void removetiers()
+        {
+            if (Values != null)
+                Values = null;
+        }
+        public void AddnewUsage(listsUsage u)
+        {
+            if (Usages == null)
+                Usages = new BindingList<Usage>();
+            if (!Usages.Any(x => x.Name == u.name))
+            {
+                Usages.Add(new Usage() { Name = u.name });
+            }
+        }
+        public void AddnewUserUsage(user_listsUser uu)
+        {
+            if (Usages == null)
+                Usages = new BindingList<Usage>();
+            if (!Usages.Any(x => x.User == uu.name))
+            {
+                Usages.Add(new Usage() { User = uu.name });
+            }
+        }
+        public void removeusage(Usage u)
+        {
+            if (Usages == null) return;
+            Usage usagetoremove = Usages.FirstOrDefault(x => x.Name == u.Name);
+            if (usagetoremove != null)
+                Usages.Remove(usagetoremove);
+        }
+        public void Addnewtag(listsTag t)
+        {
+            if (Tags == null)
+                Tags = new BindingList<Tag>();
+            if (!Tags.Any(x => x.Name == t.name))
+            {
+                Tags.Add(new Tag() { Name = t.name });
+            }
+        }
+        public void removetag(Tag t)
+        {
+            if (Tags == null) return;
+            Tag tagtoremove = Tags.FirstOrDefault(x => x.Name == t.Name);
+            if (tagtoremove != null)
+                Tags.Remove(tagtoremove);
+        }
+        public void changecategory(listsCategory c)
+        {
+            Category cat = new Category()
+            {
+                Name = c.name
+            };
+            if (cat.Name == "other")
+                Category = null;
+            else
+            {
+                Category = cat;
+                Category.NameSpecified = true;
+            }
+        }
     }
 
     public class Flags
@@ -445,6 +626,20 @@ namespace Day2eEditor
             get => _deloot;
             set => _deloot = value;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Flags other)
+                return false;
+
+            return
+                CountInCargo == other.CountInCargo &&
+                CountInHoarder == other.CountInHoarder &&
+                CountInMap == other.CountInMap &&
+                CountInPlayer == other.CountInPlayer &&
+                Crafted == other.Crafted &&
+                Deloot == other.Deloot;
+        }
     }
 
     public class Category
@@ -464,6 +659,20 @@ namespace Day2eEditor
         {
             get => _nameSpecified;
             set => _nameSpecified = value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Category other)
+                return false;
+
+            return
+                Name == other.Name &&
+                NameSpecified == other.NameSpecified;
+        }
+        public override string ToString()
+        {
+            return Name;
         }
     }
 
@@ -501,6 +710,28 @@ namespace Day2eEditor
             get => _userSpecified;
             set => _userSpecified = value;
         }
+
+        public override string ToString()
+        {
+            string r = "";
+            if (Name != null && User == null)
+                r = Name;
+            else if (Name == null && User != null)
+                r = User;
+            return r;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Usage other)
+                return false;
+
+            return
+                Name == other.Name &&
+                NameSpecified == other.NameSpecified &&
+                User == other.User &&
+                UserSpecified == other.UserSpecified;
+        }
     }
 
     public class Tag
@@ -520,6 +751,21 @@ namespace Day2eEditor
         {
             get => _nameSpecified;
             set => _nameSpecified = value;
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Tag other)
+                return false;
+
+            return
+                Name == other.Name &&
+                NameSpecified == other.NameSpecified;
         }
     }
 
@@ -561,6 +807,18 @@ namespace Day2eEditor
         public override string ToString()
         {
             return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Value other)
+                return false;
+
+            return
+                Name == other.Name &&
+                NameSpecified == other.NameSpecified &&
+                User == other.User &&
+                UserSpecified == other.UserSpecified;
         }
     }
 }

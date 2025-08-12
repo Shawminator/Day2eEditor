@@ -1,4 +1,6 @@
-﻿namespace Day2eEditor
+﻿using System.Collections.Generic;
+
+namespace Day2eEditor
 {
     public interface IConfigLoader
     {
@@ -6,18 +8,25 @@
         public List<string> Errors { get; }
 
         void Load();
-        void Save();
+        IEnumerable<string> Save();
+        bool needToSave();
     }
     public interface IAdvancedConfigLoader : IConfigLoader
     {
         void Load();
-        void LoadWithParameters(string vanillaPath, List<string> modPaths);
-        void Save();
+        void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths);
+        IEnumerable<string> Save();
+        public bool needToSave()
+        {
+            return false;
+        }
     }
     public class EconomyManager
     {
         private readonly Dictionary<string, string> _paths = new();
         private readonly ProjectManager _projectManager;
+
+        public string basePath { get; set; }
 
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
@@ -60,7 +69,7 @@
         }
         public void SetProject(Project project)
         {
-            string basePath = Path.Combine(project.ProjectRoot, "mpmissions", project.MpMissionPath);
+            basePath = Path.Combine(project.ProjectRoot, "mpmissions", project.MpMissionPath);
 
             _paths["cfgeconomycore"] = Path.Combine(basePath, "cfgeconomycore.xml");
             _paths["cfglimitsdefinition"] = Path.Combine(basePath, "cfglimitsdefinition.xml");
@@ -108,7 +117,7 @@
                     throw new InvalidOperationException($"Unknown advanced config type '{name}' or missing path.");
                 }
 
-                advanced.LoadWithParameters(vanillaPath, modPaths);
+                advanced.LoadWithParameters(basePath, vanillaPath, modPaths);
             }
             else
             {
@@ -174,6 +183,73 @@
 
             cfgrandompresetsConfig = new cfgrandompresetsConfig();
             LoadConfigWithErrorReport("RandomPresets", cfgrandompresetsConfig);
+        }
+        public void Reset()
+        {
+
+        }
+        public IEnumerable<string> Save()
+        {
+            var configs = new object[]
+            {
+        eonomyCoreConfig,
+        cfglimitsdefinitionConfig,
+        cfglimitsdefinitionuserConfig,
+        cfgenvironmentConfig,
+        cfgeventspawnsConfig,
+        cfgeventgroupsConfig,
+        CFGGameplayConfig,
+        cfgeffectareaConfig,
+        cfgundergroundtriggersConfig,
+        economyConfig,
+        globalsConfig,
+        TypesConfig,
+        eventsConfig,
+        cfgspawnabletypesConfig,
+        cfgrandompresetsConfig
+            };
+
+            var savedFiles = new List<string>();
+
+            foreach (var obj in configs)
+            {
+                if (obj is IConfigLoader config)
+                {
+                    savedFiles.AddRange(config.Save());
+                }
+            }
+
+            return savedFiles;
+        }
+        public bool needToSave()
+        {
+            bool needtosave = false;
+            var configs = new object[]
+            {
+                eonomyCoreConfig,
+                cfglimitsdefinitionConfig,
+                cfglimitsdefinitionuserConfig,
+                cfgenvironmentConfig,
+                cfgeventspawnsConfig,
+                cfgeventgroupsConfig,
+                CFGGameplayConfig,
+                cfgeffectareaConfig,
+                cfgundergroundtriggersConfig,
+                economyConfig,
+                globalsConfig,
+                TypesConfig,
+                eventsConfig,
+                cfgspawnabletypesConfig,
+                cfgrandompresetsConfig
+            };
+            foreach (var obj in configs)
+            {
+                if (obj is not IConfigLoader config)
+                    continue;
+                if (config.needToSave())
+                    needtosave = true;
+            }
+            return needtosave;
         }
     }
 }

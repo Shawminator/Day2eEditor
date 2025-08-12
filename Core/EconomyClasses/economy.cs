@@ -2,13 +2,15 @@
 {
     public class economyConfig : IAdvancedConfigLoader
     {
+        public string _basepath { get; set; }
         public List<economyFile> AllData { get; private set; } = new List<economyFile>();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
 
         public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string vanillaPath, List<string> modPaths)
+        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
         {
+            _basepath = basePath;
             HasErrors = false;
             Errors.Clear();
             // Load vanilla file
@@ -35,7 +37,7 @@
                 {
                     IsModded = true,
                     FileType = "economy",
-                    ModFolder = Path.GetDirectoryName(modPath)
+                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
                 };
 
                 modFile.Load();
@@ -50,24 +52,36 @@
                 }
             }
         }
-        public void Save()
+        public IEnumerable<string> Save()
+        {
+            var savedFiles = new List<string>();
+
+            foreach (var data in AllData)
+            {
+                if (data.isDirty)
+                {
+                    savedFiles.AddRange(data.Save());
+                }
+            }
+
+            return savedFiles;
+        }
+
+        public bool needToSave()
         {
             foreach (var Data in AllData)
             {
-                // Save only if the file is dirty
-                if (Data.isDirty)
-                {
-                    Data.Save();
-                }
-
+                if (Data.needToSave())
+                    return true;
             }
+            return false;
         }
     }
     public class economyFile : IConfigLoader
     {
         private readonly string _path;
 
-        public economy Data { get; private set; } = new economy();
+        public economy Data { get; set; } = new economy();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
@@ -104,13 +118,20 @@
                 configName: "economy"
             );
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
             if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
+                return new[] { FileName };
             }
+
+            return Array.Empty<string>();
+        }
+        public bool needToSave()
+        {
+            return isDirty;
         }
     }
 
@@ -220,6 +241,11 @@
                 this.playerField = value;
             }
         }
+
+        public economy()
+        {
+
+        }
     }
 
     /// <remarks/>
@@ -228,13 +254,13 @@
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class EconomySection
     {
-        private byte initField;
-        private byte loadField;
-        private byte respawnField;
-        private byte saveField;
+        private int initField;
+        private int loadField;
+        private int respawnField;
+        private int saveField;
 
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public byte init
+        public int init
         {
             get
             {
@@ -247,7 +273,7 @@
         }
 
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public byte load
+        public int load
         {
             get
             {
@@ -260,7 +286,7 @@
         }
 
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public byte respawn
+        public int respawn
         {
             get
             {
@@ -273,7 +299,7 @@
         }
 
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public byte save
+        public int save
         {
             get
             {
@@ -284,5 +310,18 @@
                 this.saveField = value;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is EconomySection other)
+            {
+                return init == other.init &&
+                       load == other.load &&
+                       respawn == other.respawn &&
+                       save == other.save;
+            }
+            return false;
+        }
+
     }
 }

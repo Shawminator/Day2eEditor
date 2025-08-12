@@ -19,7 +19,6 @@ namespace Day2eEditor
             _projectsFolder = projectsFolder;
             Directory.CreateDirectory(_projectsFolder);
         }
-
         public void AddProject(Project project)
         {
             if (!_store.Projects.Any(p => p.ProjectName.Equals(project.ProjectName, StringComparison.OrdinalIgnoreCase)))
@@ -33,7 +32,6 @@ namespace Day2eEditor
 
             Save();
         }
-
         public void RemoveProject(Project project)
         {
             _store.Projects.Remove(project);
@@ -43,18 +41,17 @@ namespace Day2eEditor
 
             Save();
         }
-
         public void SetCurrentProject(Project project)
         {
             if (_store.Projects.Contains(project))
             {
                 _store.ActiveProject = project.ProjectName;
                 Console.WriteLine($"The Current Active Project is  {CurrentProject.ProjectName}");
+                AppServices.GetRequired<EconomyManager>().SetProject(project);
                 Console.WriteLine("Please click the select section to get the pop out menu");
                 Save();
             }
         }
-
         public void Load()
         {
             Console.WriteLine($"Loading {ProjectsFileName}");
@@ -84,7 +81,6 @@ namespace Day2eEditor
                 _store = loaded;
             }
         }
-
         public void Save()
         {
             var path = Path.Combine(_projectsFolder, ProjectsFileName);
@@ -95,8 +91,8 @@ namespace Day2eEditor
             });
 
             File.WriteAllText(path, json);
+            Console.WriteLine($"[INFO] Saved Project json.");
         }
-
         private void SortProjects()
         {
             var sorted = _store.Projects.OrderBy(p => p.ProjectName).ToList();

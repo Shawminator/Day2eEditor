@@ -309,11 +309,6 @@ namespace Day2eEditor
         {
             foreach (var mdiChild in MdiChildren)
             {
-                if (mdiChild is IDisposable disposableForm)
-                {
-                    disposableForm.Dispose();  // Dispose of the form
-                }
-
                 mdiChild.Close();  // Close the form
             }
         }

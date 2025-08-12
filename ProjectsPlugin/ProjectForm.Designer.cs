@@ -54,9 +54,27 @@
             ProjectsCM = new ContextMenuStrip(components);
             toolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
+            groupBox2 = new GroupBox();
+            label7 = new Label();
+            EditCreateBackupsCB = new CheckBox();
+            label6 = new Label();
+            EditMapSizeNUD = new NumericUpDown();
+            label5 = new Label();
+            EditMapPathTB = new TextBox();
+            label4 = new Label();
+            EditMissionPathTB = new TextBox();
+            label3 = new Label();
+            EditProfilePathTB = new TextBox();
+            label2 = new Label();
+            EditProjectRootTB = new TextBox();
+            label1 = new Label();
+            EditProjectNameTB = new TextBox();
+            button2 = new Button();
             PluginCM.SuspendLayout();
             groupBox1.SuspendLayout();
             ProjectsCM.SuspendLayout();
+            groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)EditMapSizeNUD).BeginInit();
             SuspendLayout();
             // 
             // PluginLB
@@ -68,7 +86,7 @@
             PluginLB.Location = new Point(12, 12);
             PluginLB.MultiSelect = false;
             PluginLB.Name = "PluginLB";
-            PluginLB.Size = new Size(307, 385);
+            PluginLB.Size = new Size(307, 431);
             PluginLB.TabIndex = 1;
             PluginLB.UseCompatibleStateImageBehavior = false;
             PluginLB.View = View.Details;
@@ -287,6 +305,7 @@
             listBoxProjects.Name = "listBoxProjects";
             listBoxProjects.Size = new Size(180, 169);
             listBoxProjects.TabIndex = 0;
+            listBoxProjects.SelectedIndexChanged += listBoxProjects_SelectedIndexChanged;
             listBoxProjects.MouseDown += listBoxProjects_MouseDown;
             // 
             // ProjectsCM
@@ -314,12 +333,177 @@
             toolStripMenuItem2.Text = "Remove";
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(button2);
+            groupBox2.Controls.Add(label7);
+            groupBox2.Controls.Add(EditCreateBackupsCB);
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(EditMapSizeNUD);
+            groupBox2.Controls.Add(label5);
+            groupBox2.Controls.Add(EditMapPathTB);
+            groupBox2.Controls.Add(label4);
+            groupBox2.Controls.Add(EditMissionPathTB);
+            groupBox2.Controls.Add(label3);
+            groupBox2.Controls.Add(EditProfilePathTB);
+            groupBox2.Controls.Add(label2);
+            groupBox2.Controls.Add(EditProjectRootTB);
+            groupBox2.Controls.Add(label1);
+            groupBox2.Controls.Add(EditProjectNameTB);
+            groupBox2.ForeColor = SystemColors.Control;
+            groupBox2.Location = new Point(325, 217);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(792, 226);
+            groupBox2.TabIndex = 3;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Highlighted Project";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(15, 195);
+            label7.Name = "label7";
+            label7.Size = new Size(88, 15);
+            label7.TabIndex = 21;
+            label7.Text = "Create Backups";
+            // 
+            // EditCreateBackupsCB
+            // 
+            EditCreateBackupsCB.AutoSize = true;
+            EditCreateBackupsCB.Location = new Point(147, 196);
+            EditCreateBackupsCB.Name = "EditCreateBackupsCB";
+            EditCreateBackupsCB.Size = new Size(15, 14);
+            EditCreateBackupsCB.TabIndex = 20;
+            EditCreateBackupsCB.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(15, 169);
+            label6.Name = "label6";
+            label6.Size = new Size(54, 15);
+            label6.TabIndex = 19;
+            label6.Text = "Map Size";
+            // 
+            // EditMapSizeNUD
+            // 
+            EditMapSizeNUD.BackColor = Color.FromArgb(60, 63, 65);
+            EditMapSizeNUD.ForeColor = SystemColors.Control;
+            EditMapSizeNUD.Location = new Point(147, 167);
+            EditMapSizeNUD.Maximum = new decimal(new int[] { 50000, 0, 0, 0 });
+            EditMapSizeNUD.Name = "EditMapSizeNUD";
+            EditMapSizeNUD.Size = new Size(148, 23);
+            EditMapSizeNUD.TabIndex = 18;
+            EditMapSizeNUD.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(15, 141);
+            label5.Name = "label5";
+            label5.Size = new Size(102, 15);
+            label5.TabIndex = 17;
+            label5.Text = "Relative Map Path";
+            // 
+            // EditMapPathTB
+            // 
+            EditMapPathTB.BackColor = Color.FromArgb(60, 63, 65);
+            EditMapPathTB.ForeColor = SystemColors.Control;
+            EditMapPathTB.Location = new Point(147, 138);
+            EditMapPathTB.Name = "EditMapPathTB";
+            EditMapPathTB.Size = new Size(452, 23);
+            EditMapPathTB.TabIndex = 16;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(15, 112);
+            label4.Name = "label4";
+            label4.Size = new Size(93, 15);
+            label4.TabIndex = 15;
+            label4.Text = "MPMission Path";
+            // 
+            // EditMissionPathTB
+            // 
+            EditMissionPathTB.BackColor = Color.FromArgb(60, 63, 65);
+            EditMissionPathTB.ForeColor = SystemColors.Control;
+            EditMissionPathTB.Location = new Point(147, 109);
+            EditMissionPathTB.Name = "EditMissionPathTB";
+            EditMissionPathTB.Size = new Size(452, 23);
+            EditMissionPathTB.TabIndex = 14;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(15, 83);
+            label3.Name = "label3";
+            label3.Size = new Size(68, 15);
+            label3.TabIndex = 12;
+            label3.Text = "Profile Path";
+            // 
+            // EditProfilePathTB
+            // 
+            EditProfilePathTB.BackColor = Color.FromArgb(60, 63, 65);
+            EditProfilePathTB.ForeColor = SystemColors.Control;
+            EditProfilePathTB.Location = new Point(147, 80);
+            EditProfilePathTB.Name = "EditProfilePathTB";
+            EditProfilePathTB.Size = new Size(452, 23);
+            EditProfilePathTB.TabIndex = 11;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(15, 54);
+            label2.Name = "label2";
+            label2.Size = new Size(59, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Root Path";
+            // 
+            // EditProjectRootTB
+            // 
+            EditProjectRootTB.BackColor = Color.FromArgb(60, 63, 65);
+            EditProjectRootTB.ForeColor = SystemColors.Control;
+            EditProjectRootTB.Location = new Point(147, 51);
+            EditProjectRootTB.Name = "EditProjectRootTB";
+            EditProjectRootTB.Size = new Size(424, 23);
+            EditProjectRootTB.TabIndex = 5;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(15, 25);
+            label1.Name = "label1";
+            label1.Size = new Size(39, 15);
+            label1.TabIndex = 4;
+            label1.Text = "Name";
+            // 
+            // EditProjectNameTB
+            // 
+            EditProjectNameTB.BackColor = Color.FromArgb(60, 63, 65);
+            EditProjectNameTB.ForeColor = SystemColors.Control;
+            EditProjectNameTB.Location = new Point(147, 22);
+            EditProjectNameTB.Name = "EditProjectNameTB";
+            EditProjectNameTB.Size = new Size(452, 23);
+            EditProjectNameTB.TabIndex = 3;
+            // 
+            // button2
+            // 
+            button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.Location = new Point(615, 196);
+            button2.Name = "button2";
+            button2.Size = new Size(171, 23);
+            button2.TabIndex = 23;
+            button2.Text = "Save Changes";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
             // ProjectForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            ClientSize = new Size(1148, 408);
+            ClientSize = new Size(1148, 455);
+            Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(PluginLB);
             ForeColor = SystemColors.Control;
@@ -332,6 +516,9 @@
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ProjectsCM.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)EditMapSizeNUD).EndInit();
             ResumeLayout(false);
         }
 
@@ -362,5 +549,21 @@
         private ContextMenuStrip ProjectsCM;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem toolStripMenuItem2;
+        private GroupBox groupBox2;
+        private Label label7;
+        private CheckBox EditCreateBackupsCB;
+        private Label label6;
+        private NumericUpDown EditMapSizeNUD;
+        private Label label5;
+        private TextBox EditMapPathTB;
+        private Label label4;
+        private TextBox EditMissionPathTB;
+        private Label label3;
+        private TextBox EditProfilePathTB;
+        private Label label2;
+        private TextBox EditProjectRootTB;
+        private Label label1;
+        private TextBox EditProjectNameTB;
+        private Button button2;
     }
 }

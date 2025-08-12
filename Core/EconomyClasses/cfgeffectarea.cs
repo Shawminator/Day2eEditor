@@ -25,18 +25,25 @@ namespace Day2eEditor
                 },
                 onError: ex => LogError("cfgeffectarea", ex),
                 configName: "cfgeffectarea",
-                useBoolConvertor: false
+                useBoolConvertor: true
             );
             convertpositionstolist();
         }
-        public void Save()
+        public IEnumerable<string> Save()
         {
             if (isDirty)
             {
                 convertlisttopositions();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
+                return new[] { Path.GetFileName(_path) };
             }
+
+            return Array.Empty<string>();
+        }
+        public bool needToSave()
+        {
+            return isDirty;
         }
         public void convertpositionstolist()
         {
