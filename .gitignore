@@ -363,3 +363,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Day2eEditor/Maps/Capare_Map.png.xyz
+/Day2eEditor/Maps/chernarusplus_Map.png.xyz
+/Day2eEditor/Maps/chernarusplus_Map.png
+/Day2eEditor/Maps/Capare_Map.png
