@@ -18,15 +18,15 @@
       "checksum": "sha256-f6814333dbff7bac9d5464db44dbdb4fefa1a0131ea2dc3e654164b22e7cf1a1"
     }
   ],
-  "mapAddons": [
+  "mapaddons": [
     {
       "name": "CharnarusPlusMapAddon",
       "version": "1.0.0",
       "url": "https://github.com/Shawminator/DayZeEditor/releases/download/DayZeEditor_mapAddons/CharnarusPlusMapAddon.rar",
       "checksum": "sha256-7fcfce0a5ca9c2640fe770349365a1305d3973abc17223b7fabab9ccffb55610",
-      "mapInfo": {
-        "mapPng": "chernarusplus_Map.png",
-        "mapXYZ": "chernarusplus_Map.png.xyz"
+      "mapinfo": {
+        "mappng": "chernarusplus_Map.png",
+        "mapxyz": "chernarusplus_Map.png.xyz"
       }
     },
     {
@@ -34,9 +34,9 @@
       "version": "1.0.0",
       "url": "https://github.com/Shawminator/DayZeEditor/releases/download/DayZeEditor_mapAddons/EnochMapAddon.rar",
       "checksum": "sha256-fe81b5b91b5982a5220192974f726cccfe6b777d6b9d2bd8f9a446bc157c59dd",
-      "mapInfo": {
-        "mapPng": "enoch_Map.png",
-        "mapXYZ": "enoch_Map.png.xyz"
+      "mapinfo": {
+        "mappng": "enoch_Map.png",
+        "mapxyz": "enoch_Map.png.xyz"
       }
     },
     {
@@ -44,9 +44,9 @@
       "version": "1.0.0",
       "url": "https://github.com/Shawminator/DayZeEditor/releases/download/DayZeEditor_mapAddons/SakhalMapAddon.rar",
       "checksum": "sha256-bc7a9c75bc52ae206b0a229632dfd7a0683d6d10f16f18830248b8385eb8692e",
-      "mapInfo": {
-        "mapPng": "sakhal_map.png",
-        "mapXYZ": "sakhal_map.png.xyz"
+      "mapinfo": {
+        "mappng": "sakhal_map.png",
+        "mapxyz": "sakhal_map.png.xyz"
       }
     }
   ]
