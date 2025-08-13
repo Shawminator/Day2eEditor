@@ -1,9 +1,4 @@
 using Day2eEditor;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Formats.Tar;
-using System.Web;
-using System.Windows.Forms;
 
 namespace EconomyPlugin
 {
@@ -1014,7 +1009,43 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is TypeEntry typentry)
                 {
-                    ShowHandler(new TypesControl(), typentry, selectedNodes);
+                    // Build a flattened list of (File, Entry) tuples
+                    var matchingEntries = _economyManager.TypesConfig.AllData
+                        .SelectMany(tf => tf.Data.TypeList.Select(te => (File: tf, Entry: te)))
+                        .Where(x => x.Entry.Name == typentry.Name)
+                        .ToList();
+
+                    // Get the latest match (file + entry)
+                    var latestMatch = matchingEntries.LastOrDefault();
+
+                    if (latestMatch != default && !ReferenceEquals(latestMatch.Entry, typentry))
+                    {
+                        var result = MessageBox.Show(
+                            $"This type is overridden by a later definition in:\n{latestMatch.File.FileName}\n\nJump to it?",
+                            "Type Override Found",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question
+                        );
+                        if (result == DialogResult.Yes)
+                        {
+                            Console.WriteLine($"Jumping to latest override in file: {latestMatch.File.FileName}");
+                            var foundNode = FindNodeByTag(EconomyTV.Nodes, latestMatch.Entry);
+                            if (foundNode != null)
+                            {
+                                EconomyTV.SelectedNode = foundNode; // triggers AfterSelect again
+                            }
+                        }
+                        else
+                        {
+                            // User chose No — show current entry
+                            ShowHandler(new TypesControl(), typentry, selectedNodes);
+                        }
+                    }
+                    else
+                    {
+                        // Already latest — show control
+                        ShowHandler(new TypesControl(), typentry, selectedNodes);
+                    }
                 }
                 else if (e.Node.Tag is SpawnableType)
                 {
@@ -1022,7 +1053,19 @@ namespace EconomyPlugin
                 }
             }));
         }
+        private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (ReferenceEquals(node.Tag, tagToFind))
+                    return node;
 
+                var found = FindNodeByTag(node.Nodes, tagToFind);
+                if (found != null)
+                    return found;
+            }
+            return null;
+        }
         private void EconomyTV_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             EconomyTV.SelectedNode = e.Node;

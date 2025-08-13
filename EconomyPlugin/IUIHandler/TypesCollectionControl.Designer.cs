@@ -29,15 +29,26 @@
         private void InitializeComponent()
         {
             TypesCollectionGB = new GroupBox();
+            ChangeMinCB = new CheckBox();
+            button5 = new Button();
+            CollectionCustomNUD = new NumericUpDown();
+            button3 = new Button();
+            button2 = new Button();
             button1 = new Button();
             button4 = new Button();
             textBox1 = new TextBox();
             label1 = new Label();
             TypesCollectionGB.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)CollectionCustomNUD).BeginInit();
             SuspendLayout();
             // 
             // TypesCollectionGB
             // 
+            TypesCollectionGB.Controls.Add(ChangeMinCB);
+            TypesCollectionGB.Controls.Add(button5);
+            TypesCollectionGB.Controls.Add(CollectionCustomNUD);
+            TypesCollectionGB.Controls.Add(button3);
+            TypesCollectionGB.Controls.Add(button2);
             TypesCollectionGB.Controls.Add(button1);
             TypesCollectionGB.Controls.Add(button4);
             TypesCollectionGB.Controls.Add(textBox1);
@@ -51,10 +62,65 @@
             TypesCollectionGB.TabStop = false;
             TypesCollectionGB.Text = "Types Collection";
             // 
+            // ChangeMinCB
+            // 
+            ChangeMinCB.AutoSize = true;
+            ChangeMinCB.Location = new Point(51, 130);
+            ChangeMinCB.Name = "ChangeMinCB";
+            ChangeMinCB.RightToLeft = RightToLeft.Yes;
+            ChangeMinCB.Size = new Size(123, 19);
+            ChangeMinCB.TabIndex = 31;
+            ChangeMinCB.Text = "Change Minimum";
+            ChangeMinCB.UseVisualStyleBackColor = true;
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(60, 63, 65);
+            button5.Location = new Point(15, 155);
+            button5.Name = "button5";
+            button5.Size = new Size(159, 23);
+            button5.TabIndex = 30;
+            button5.Text = "Set to Custom Value";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
+            // CollectionCustomNUD
+            // 
+            CollectionCustomNUD.BackColor = Color.FromArgb(60, 63, 65);
+            CollectionCustomNUD.ForeColor = SystemColors.Control;
+            CollectionCustomNUD.Location = new Point(15, 101);
+            CollectionCustomNUD.Maximum = new decimal(new int[] { 50000, 0, 0, 0 });
+            CollectionCustomNUD.Name = "CollectionCustomNUD";
+            CollectionCustomNUD.Size = new Size(159, 23);
+            CollectionCustomNUD.TabIndex = 29;
+            CollectionCustomNUD.TextAlign = HorizontalAlignment.Center;
+            // 
+            // button3
+            // 
+            button3.BackColor = Color.FromArgb(60, 63, 65);
+            button3.Location = new Point(15, 203);
+            button3.Name = "button3";
+            button3.Size = new Size(159, 23);
+            button3.TabIndex = 28;
+            button3.Text = "Sync Min to Nom";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
+            // button2
+            // 
+            button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.Location = new Point(15, 232);
+            button2.Name = "button2";
+            button2.Size = new Size(159, 23);
+            button2.TabIndex = 27;
+            button2.Text = "Sync Nom to Min";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
             // button1
             // 
             button1.BackColor = Color.FromArgb(60, 63, 65);
-            button1.Location = new Point(15, 151);
+            button1.Location = new Point(15, 284);
             button1.Name = "button1";
             button1.Size = new Size(159, 23);
             button1.TabIndex = 26;
@@ -65,7 +131,7 @@
             // button4
             // 
             button4.BackColor = Color.FromArgb(60, 63, 65);
-            button4.Location = new Point(15, 71);
+            button4.Location = new Point(15, 56);
             button4.Name = "button4";
             button4.Size = new Size(159, 23);
             button4.TabIndex = 25;
@@ -107,6 +173,7 @@
             Size = new Size(652, 513);
             TypesCollectionGB.ResumeLayout(false);
             TypesCollectionGB.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)CollectionCustomNUD).EndInit();
             ResumeLayout(false);
         }
 
@@ -117,5 +184,10 @@
         private Label label1;
         private Button button4;
         private Button button1;
+        private Button button3;
+        private Button button2;
+        private Button button5;
+        private NumericUpDown CollectionCustomNUD;
+        private CheckBox ChangeMinCB;
     }
 }

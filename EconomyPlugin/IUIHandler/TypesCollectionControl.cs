@@ -34,11 +34,13 @@ namespace EconomyPlugin
                 Cat = selectedNodes[0].Tag as Category;
                 isCat = true;
                 textBox1.Text = Cat.Name;
+                label1.Text = "Category:-";
                 button1.Visible = false;
             }
             else
             {
                 textBox1.Text = _data.FileName;
+                label1.Text = "Filename:-";
                 button1.Visible = true;
             }
 
@@ -57,6 +59,11 @@ namespace EconomyPlugin
 
         private void button4_Click(object sender, EventArgs e)
         {
+            string title = "";
+            if (isCat)
+                title = Cat.Name;
+            else
+                title = _data.FileName;
             foreach (TypeEntry te in _data.Data.TypeList)
             {
                 if (isCat)
@@ -72,10 +79,9 @@ namespace EconomyPlugin
                 {
                     te.Nominal = 0;
                     te.Min = 0;
-                    ;
                 }
             }
-            Console.WriteLine($"[INFO] Zeroing Complete.");
+            Console.WriteLine($"[INFO] Zeroing Complete for all entires in {title}");
             _data.isDirty = true;
         }
 
@@ -97,6 +103,93 @@ namespace EconomyPlugin
                 }
 
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string title = "";
+            if (isCat)
+                title = Cat.Name;
+            else
+                title = _data.FileName;
+
+            foreach (TypeEntry te in _data.Data.TypeList)
+            {
+                if (isCat)
+                {
+                    if ((te.Category != null && te.Category.Name == Cat.Name) ||
+                        (te.Category == null && Cat.Name == "other"))
+                    {
+                        te.Min = te.Nominal;
+                    }
+                }
+                else
+                {
+                    te.Min = te.Nominal;
+                }
+            }
+            Console.WriteLine($"[INFO] Syncing Minimum to Nominal for all Entries in {title}");
+            _data.isDirty = true;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string title = "";
+            if (isCat)
+                title = Cat.Name;
+            else
+                title = _data.FileName;
+
+            foreach (TypeEntry te in _data.Data.TypeList)
+            {
+                if (isCat)
+                {
+                    if ((te.Category != null && te.Category.Name == Cat.Name) ||
+                        (te.Category == null && Cat.Name == "other"))
+                    {
+                        te.Nominal = te.Min;
+                    }
+                }
+                else
+                {
+                    te.Nominal = te.Min;
+                }
+            }
+            Console.WriteLine($"[INFO] Syncing Nominal to Minimum for all Entries in {title}");
+            _data.isDirty = true;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string title = "";
+            if (isCat)
+                title = Cat.Name;
+            else
+                title = _data.FileName;
+            foreach (TypeEntry te in _data.Data.TypeList)
+            {
+                if (isCat)
+                {
+                    if ((te.Category != null && te.Category.Name == Cat.Name) ||
+                        (te.Category == null && Cat.Name == "other"))
+                    {
+                        te.Nominal = (int)CollectionCustomNUD.Value;
+                        if(ChangeMinCB.Checked)
+                            te.Min = (int)CollectionCustomNUD.Value; 
+                    }
+                }
+                else
+                {
+                    te.Nominal = (int)CollectionCustomNUD.Value; ;
+                    if (ChangeMinCB.Checked)
+                        te.Min = (int)CollectionCustomNUD.Value;
+                }
+            }
+            Console.WriteLine($"[INFO] All Entries Nominal Value Set to {CollectionCustomNUD.Value} in {title}");
+            if(ChangeMinCB.Checked)
+                Console.WriteLine($"[INFO] All Entries Minimum Value Set to {CollectionCustomNUD.Value} in {title}");
+
+            _data.isDirty = true;
         }
     }
 }
