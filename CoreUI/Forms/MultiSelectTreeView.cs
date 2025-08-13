@@ -10,167 +10,7 @@ namespace Day2eEditor
 {
     public class MultiSelectTreeView : TreeView
     {
-        //private List<TreeNode> selectedNodes = new List<TreeNode>();
-        //private TreeNode firstNode;
-        //private Type allowedMultiSelectType;
-        //private bool canMultiSelect = true;
-
-        //[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        //public bool CanMultiSelect
-        //{
-        //    get => canMultiSelect;
-        //    set => canMultiSelect = value;
-        //}
-
-        //public List<TreeNode> SelectedNodes => selectedNodes;
-
-        //protected override void OnBeforeSelect(TreeViewCancelEventArgs e)
-        //{
-        //    base.OnBeforeSelect(e);
-
-        //    bool ctrl = (ModifierKeys & Keys.Control) == Keys.Control;
-        //    bool shift = (ModifierKeys & Keys.Shift) == Keys.Shift;
-
-        //    var nodeTagType = e.Node.Tag?.GetType();
-
-        //    // If multi-select disabled, single select normally
-        //    if (!canMultiSelect)
-        //    {
-        //        firstNode = e.Node;
-        //        allowedMultiSelectType = nodeTagType;
-        //        return;
-        //    }
-
-        //    // Only allow multi-select if node.Tag is TypeEntry
-        //    bool isTypeEntry = nodeTagType == typeof(TypeEntry);
-
-        //    if (!ctrl && !shift)
-        //    {
-        //        firstNode = e.Node;
-        //        allowedMultiSelectType = isTypeEntry ? nodeTagType : null; // only TypeEntry allowed for multi-select
-        //        return;
-        //    }
-
-        //    // Multi-select (ctrl or shift) only allowed for TypeEntry nodes
-        //    if (!isTypeEntry)
-        //    {
-        //        e.Cancel = true;  // Cancel multi-selection for non-TypeEntry nodes
-        //        return;
-        //    }
-
-        //    // Initialize firstNode and allowedMultiSelectType if not set
-        //    if (firstNode == null || allowedMultiSelectType == null)
-        //    {
-        //        firstNode = e.Node;
-        //        allowedMultiSelectType = nodeTagType;
-        //    }
-
-        //    // If node type mismatches allowedMultiSelectType, cancel multi-select
-        //    if (nodeTagType != allowedMultiSelectType)
-        //    {
-        //        e.Cancel = true;
-        //        return;
-        //    }
-
-        //    // Ctrl + node already selected = toggle off
-        //    if (ctrl && selectedNodes.Contains(e.Node))
-        //    {
-        //        e.Cancel = true;  // cancel default selection change
-        //        selectedNodes.Remove(e.Node);
-        //        Invalidate();
-        //        OnAfterSelect(new TreeViewEventArgs(e.Node));
-        //        return;
-        //    }
-
-        //    // If shift not pressed, update firstNode for next shift range selection
-        //    if (!shift)
-        //    {
-        //        firstNode = e.Node;
-        //    }
-        //}
-
-        //protected override void OnAfterSelect(TreeViewEventArgs e)
-        //{
-        //    base.OnAfterSelect(e);
-
-        //    bool ctrl = (ModifierKeys & Keys.Control) == Keys.Control;
-        //    bool shift = (ModifierKeys & Keys.Shift) == Keys.Shift;
-
-        //    var nodeTagType = e.Node.Tag?.GetType();
-
-        //    // Only allow multi-select if allowedMultiSelectType is TypeEntry, else single select
-        //    if (!canMultiSelect || allowedMultiSelectType == null || allowedMultiSelectType != typeof(TypeEntry) || nodeTagType != allowedMultiSelectType)
-        //    {
-        //        selectedNodes.Clear();
-        //        selectedNodes.Add(e.Node);
-        //        Invalidate();
-        //        return;
-        //    }
-
-        //    if (ctrl)
-        //    {
-        //        if (!selectedNodes.Contains(e.Node))
-        //            selectedNodes.Add(e.Node);
-        //        else
-        //            selectedNodes.Remove(e.Node);
-        //    }
-        //    else if (shift && firstNode != null)
-        //    {
-        //        SelectNodesBetween(firstNode, e.Node);
-        //    }
-        //    else
-        //    {
-        //        selectedNodes.Clear();
-        //        selectedNodes.Add(e.Node);
-        //    }
-
-        //    Invalidate();
-        //}
-
-        //private void SelectNodesBetween(TreeNode start, TreeNode end)
-        //{
-        //    if (start == null || end == null) return;
-
-        //    // Only select between siblings or within root nodes
-        //    if (start.Parent != end.Parent)
-        //    {
-        //        selectedNodes.Clear();
-        //        selectedNodes.Add(end);
-        //        return;
-        //    }
-
-        //    TreeNodeCollection siblings = start.Parent?.Nodes ?? this.Nodes;
-
-        //    int startIndex = siblings.IndexOf(start);
-        //    int endIndex = siblings.IndexOf(end);
-
-        //    if (startIndex > endIndex)
-        //    {
-        //        int temp = startIndex;
-        //        startIndex = endIndex;
-        //        endIndex = temp;
-        //    }
-
-        //    selectedNodes.Clear();
-        //    for (int i = startIndex; i <= endIndex; i++)
-        //    {
-        //        selectedNodes.Add(siblings[i]);
-        //    }
-        //}
-
-        //protected override void OnDrawNode(DrawTreeNodeEventArgs e)
-        //{
-        //    if (selectedNodes.Contains(e.Node))
-        //    {
-        //        e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-        //        TextRenderer.DrawText(e.Graphics, e.Node.Text, this.Font, e.Bounds, SystemColors.HighlightText, TextFormatFlags.GlyphOverhangPadding);
-        //    }
-        //    else
-        //    {
-        //        e.DrawDefault = true;
-        //    }
-        //}
-        [Category("Behavior")]
+         [Category("Behavior")]
         public event EventHandler<NodeRequestTextEventArgs> RequestDisplayText;
 
         [Category("Behavior")]
@@ -353,7 +193,14 @@ namespace Day2eEditor
                 this.paintSelectedNodes();
                 return;
             }
-
+            if (e.Node.Tag is TypeEntry == false)
+            {
+                e.Cancel = true; // keep toggle behavior
+                this.removePaintFromNodes();
+                //this.m_coll.Remove(e.Node);
+                this.paintSelectedNodes();
+                return;
+            }
             // normal multi-select flow will continue in OnAfterSelect
             this.m_lastNode = e.Node;
             if (!bShift)

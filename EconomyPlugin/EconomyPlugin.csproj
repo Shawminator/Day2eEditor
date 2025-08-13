@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="IUIHandler\TypesCollectionControl.cs~RF1909030.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
   </ItemGroup>
 

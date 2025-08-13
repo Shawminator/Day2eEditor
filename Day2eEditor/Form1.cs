@@ -309,7 +309,7 @@ namespace Day2eEditor
                             form.Size = this.Size - new Size(40, 65);
                             form.Show();
 
-                            Console.WriteLine($"Loading {plugin.pluginName}...");
+                            Console.WriteLine($"[INFO] Loading {plugin.pluginName}...");
                             label1.Text = plugin.pluginName;
                         }
                         else

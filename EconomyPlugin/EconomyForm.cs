@@ -1,6 +1,7 @@
 using Day2eEditor;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.Web;
 using System.Windows.Forms;
 
@@ -1005,11 +1006,11 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is TypesFile typefile)
                 {
-
+                    ShowHandler(new TypesCollectionControl(), typefile, selectedNodes);
                 }
                 else if (e.Node.Tag is Category cat)
                 {
-
+                    ShowHandler(new TypesCollectionControl(), e.Node.Parent.Tag as TypesFile, selectedNodes);
                 }
                 else if (e.Node.Tag is TypeEntry typentry)
                 {
