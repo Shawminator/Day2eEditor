@@ -27,9 +27,6 @@ namespace Day2eEditor
                 SortProjects();
             }
 
-            if (string.IsNullOrWhiteSpace(_store.ActiveProject))
-                _store.ActiveProject = project.ProjectName;
-
             Save();
         }
         public void RemoveProject(Project project)

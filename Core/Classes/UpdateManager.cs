@@ -76,7 +76,7 @@ namespace Day2eEditor
                 await CheckAndUpdateMapAddonsAsync(manifest.MapAddons);
             }
 
-            Console.WriteLine("Update check complete.");
+            Console.WriteLine("Update checks complete.");
         }
 
 
@@ -322,7 +322,7 @@ namespace Day2eEditor
         }
         public async Task DownloadMapAddonAsync(MapAddonInfo addon)
         {
-            string addonpath = Path.Combine(_pluginsDirectory, $"{addon.Name}.zip");
+            string addonpath = Path.Combine(_downloadDirectory, $"{addon.Name}.zip");
 
             Console.WriteLine($"Downloading {addon.Name}...");
             byte[] data = await _http.GetByteArrayAsync(addon.Url);

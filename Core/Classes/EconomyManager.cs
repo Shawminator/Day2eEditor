@@ -60,12 +60,6 @@ namespace Day2eEditor
         public EconomyManager() 
         {
             _projectManager = AppServices.GetRequired<ProjectManager>();
-
-            var project = _projectManager.CurrentProject;
-            if (project != null)
-            {
-                SetProject(project);
-            }
         }
         public void SetProject(Project project)
         {

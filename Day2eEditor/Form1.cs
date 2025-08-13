@@ -132,8 +132,7 @@ namespace Day2eEditor
             pluginEntries.Clear();
 
             // Add static entries (e.g., Donate, Discord)
-            pluginEntries.Add(new PluginEntry { Name = "Donate", Identifier = "Donate" });
-            pluginEntries.Add(new PluginEntry { Name = "Discord", Identifier = "Discord" });
+
 
             string pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
             if (!Directory.Exists(pluginPath))
@@ -177,8 +176,24 @@ namespace Day2eEditor
             }
             AppServices.Register(entries);
             // Bind the list to the ListBox
-            pluginListbox.DataSource = null;
-            pluginListbox.DataSource = pluginEntries;
+            Setlistbox();
+        }
+        private void Setlistbox()
+        {
+            List<PluginEntry> availbeentries = new List<PluginEntry>();
+            availbeentries.Add(new PluginEntry { Name = "Donate", Identifier = "Donate" });
+            availbeentries.Add(new PluginEntry { Name = "Discord", Identifier = "Discord" });
+            if (AppServices.GetRequired<ProjectManager>().CurrentProject != null)
+            {
+                availbeentries.AddRange(pluginEntries);
+            }
+            else
+            {
+                availbeentries.Add(pluginEntries.First(x => x.Identifier == "ProjectsPlugin"));
+
+            }
+                pluginListbox.DataSource = null;
+            pluginListbox.DataSource = availbeentries;
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -281,6 +296,8 @@ namespace Day2eEditor
                     {
                         closeMdiChildren();
 
+                        
+
                         // Instantiate the plugin only when needed
                         if (Activator.CreateInstance(selectedEntry.PluginType) is IPluginForm plugin)
                         {
@@ -312,8 +329,6 @@ namespace Day2eEditor
                 mdiChild.Close();  // Close the form
             }
         }
-
-
     }
 }
 

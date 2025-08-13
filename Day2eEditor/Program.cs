@@ -36,9 +36,11 @@ namespace Day2eEditor
                 ? "Active Project : None Selected"
                 : $"Active Project : {projectManager.CurrentProject.ProjectName}";
             Console.WriteLine(activeProject);
-            if(projectManager.CurrentProject != null)
+            var economymanager = new EconomyManager();
+            AppServices.Register(economymanager);
+            if (projectManager.CurrentProject != null)
             {
-                var economymanager = new EconomyManager();
+                economymanager.SetProject(projectManager.CurrentProject);
                 if (economymanager.HasErrors)
                 {
                     var errorForm = new ErrorDialog("EconomyManager Errors", economymanager.Errors);
@@ -49,7 +51,7 @@ namespace Day2eEditor
                     Application.Exit(); // Cleanly close WinForms app
                     return;
                 }
-                AppServices.Register(economymanager);
+                
             }
 
             Application.Run(new Form1(activeProject));

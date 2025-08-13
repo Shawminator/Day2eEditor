@@ -67,10 +67,11 @@ namespace ProjectsPlugin
 
         private async void downloadAndInstallToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            Cursor.Current = Cursors.WaitCursor;
             if (_clickedItem?.Tag is PluginInfo plugin)
             {
                 await AppServices.GetRequired<UpdateManager>().DownloadNewPluginAsync(plugin);
+                Cursor.Current = Cursors.Default;
                 MessageBox.Show($"{plugin.Name} Downloaded.", "Plugin Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 _clickedItem.SubItems.Add("Installed");
@@ -78,10 +79,11 @@ namespace ProjectsPlugin
             else if(_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
             {
                 await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddoninfo);
+                Cursor.Current = Cursors.Default;
                 MessageBox.Show($"{mapaddoninfo.Name} Downloaded.", "Plugin Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 _clickedItem.SubItems.Add("Installed");
             }
-
+            
         }
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -111,6 +113,33 @@ namespace ProjectsPlugin
 
                     _clickedItem = null;
                 }
+            }
+            else if (_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
+            {
+                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string imagePath = Path.Combine(appDirectory, "MapAddons", mapaddoninfo.MapInfo.MapPng);
+                string xyzPath = Path.Combine(appDirectory, "MapAddons", mapaddoninfo.MapInfo.MapXYZ);
+
+                bool mapisused = false;
+                foreach (Project p in _ProjectManager.Projects)
+                {
+                    if (p.MapPath == mapaddoninfo.MapInfo.MapPng) { mapisused = true; }
+                }
+
+                if (mapisused)
+                {
+                    var result = MessageBox.Show($"{mapaddoninfo.Name} is used by one of your projects.\nAre you sure you want to remove it?",
+                                                 "Confirm Removal",
+                                                 MessageBoxButtons.YesNo,
+                                                 MessageBoxIcon.Question);
+                    if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+                File.Delete(imagePath);
+                File.Delete(xyzPath);
+                _clickedItem.SubItems.RemoveAt(1);
             }
         }
         private void PluginLB_MouseDown(object sender, MouseEventArgs e)
@@ -247,7 +276,7 @@ namespace ProjectsPlugin
         }
         private int Getmapsizefrommissionpath(string mpmissionpath)
         {
-            string[] MapSizeList = File.ReadAllLines("Maps/MapSizes.txt");
+            string[] MapSizeList = File.ReadAllLines("Data/MapSizes.txt");
             Dictionary<string, int> maplist = new Dictionary<string, int>();
             foreach (string line in MapSizeList)
             {
@@ -292,13 +321,15 @@ namespace ProjectsPlugin
                 project.AddNames(ProjectName);
                 project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
-                project.MapPath = "Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
+                project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
                 project.ProjectRoot = ProjectFolder;
                 _ProjectManager.AddProject(project);
+                CheckMapanddownload(project);
                 MessageBox.Show("Project created, Please Close the editor and populate the missions files before trying to load this project");
                 ShellHelper.OpenFolderInExplorer(project.ProjectRoot);
                 listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
+                
             }
             else if (projecttype == "Create Local from FTP/SFTP")
             {
@@ -320,13 +351,29 @@ namespace ProjectsPlugin
                 project.AddNames(ProjectName);
                 project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
-                project.MapPath = "Maps\\" + mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
+                project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
                 project.ProjectRoot = ProjectPath;
                 _ProjectManager.AddProject(project);
+                CheckMapanddownload(project);
                 MessageBox.Show("Project created, select the project from the list and load....");
             }
         }
+        private async void CheckMapanddownload(Project project)
+        {
+            MapAddonInfo mapaddon = _manifest.MapAddons.FirstOrDefault(x => x.MapInfo.MapPng == project.MapPath);
+            if(mapaddon != null)
+            {
+                string imagePath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapPng);
+                string XYZPath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapXYZ);
+                if (!File.Exists(imagePath) || !File.Exists(XYZPath))
+                {
+                    await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddon);
+                    _clickedItem.SubItems.Add("Installed");
+                }
+            }
+        }
+
         private void SelectProjectFolderbutton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fb = new FolderBrowserDialog();

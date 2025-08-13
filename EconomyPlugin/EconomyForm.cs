@@ -26,7 +26,7 @@ namespace EconomyPlugin
         private void EconomyForm_Load(object sender, EventArgs e)
         {
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string imagePath = Path.Combine(appDirectory, _projectManager.CurrentProject.MapPath);
+            string imagePath = Path.Combine(appDirectory, "MapAddons", _projectManager.CurrentProject.MapPath);
             Image mapImage = Image.FromFile(imagePath);
             _mapControl.LoadMap(mapImage, _projectManager.CurrentProject.MapSize);
             LoadTreeview();
