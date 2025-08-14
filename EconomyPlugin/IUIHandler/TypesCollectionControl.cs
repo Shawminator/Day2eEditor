@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace EconomyPlugin
 {
@@ -33,15 +34,15 @@ namespace EconomyPlugin
             {
                 Cat = selectedNodes[0].Tag as Category;
                 isCat = true;
-                textBox1.Text = Cat.Name;
+                CollectionNameTB.Text = Cat.Name;
                 label1.Text = "Category:-";
-                button1.Visible = false;
+                UpdateTypesFileButton.Visible = false;
             }
             else
             {
-                textBox1.Text = _data.FileName;
+                CollectionNameTB.Text = _data.FileName;
                 label1.Text = "Filename:-";
-                button1.Visible = true;
+                UpdateTypesFileButton.Visible = true;
             }
 
         }
@@ -56,7 +57,6 @@ namespace EconomyPlugin
         public void HasChanges()
         {
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             string title = "";
@@ -84,7 +84,6 @@ namespace EconomyPlugin
             Console.WriteLine($"[INFO] Zeroing Complete for all entires in {title}");
             _data.isDirty = true;
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -104,7 +103,6 @@ namespace EconomyPlugin
 
             }
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             string title = "";
@@ -131,7 +129,6 @@ namespace EconomyPlugin
             Console.WriteLine($"[INFO] Syncing Minimum to Nominal for all Entries in {title}");
             _data.isDirty = true;
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             string title = "";
@@ -158,7 +155,6 @@ namespace EconomyPlugin
             Console.WriteLine($"[INFO] Syncing Nominal to Minimum for all Entries in {title}");
             _data.isDirty = true;
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             string title = "";
@@ -174,8 +170,8 @@ namespace EconomyPlugin
                         (te.Category == null && Cat.Name == "other"))
                     {
                         te.Nominal = (int)CollectionCustomNUD.Value;
-                        if(ChangeMinCB.Checked)
-                            te.Min = (int)CollectionCustomNUD.Value; 
+                        if (ChangeMinCB.Checked)
+                            te.Min = (int)CollectionCustomNUD.Value;
                     }
                 }
                 else
@@ -186,10 +182,105 @@ namespace EconomyPlugin
                 }
             }
             Console.WriteLine($"[INFO] All Entries Nominal Value Set to {CollectionCustomNUD.Value} in {title}");
-            if(ChangeMinCB.Checked)
+            if (ChangeMinCB.Checked)
                 Console.WriteLine($"[INFO] All Entries Minimum Value Set to {CollectionCustomNUD.Value} in {title}");
 
             _data.isDirty = true;
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string title = "";
+            if (isCat)
+                title = Cat.Name;
+            else
+                title = _data.FileName;
+            foreach (TypeEntry te in _data.Data.TypeList)
+            {
+                if (isCat)
+                {
+                    if ((te.Category != null && te.Category.Name == Cat.Name) ||
+                        (te.Category == null && Cat.Name == "other"))
+                    {
+                        Domultiplier(te);
+                    }
+                }
+                else
+                {
+                    Domultiplier(te);
+                }
+            }
+            Console.WriteLine($"[INFO] All Entries Nominal Value Set to {MultiplierCB.GetItemText(MultiplierCB.SelectedItem)} in {title}");
+            if (ChangeMinCheckBox.Checked)
+                Console.WriteLine($"[INFO] All Entries Minimum Value Set to {MultiplierCB.GetItemText(MultiplierCB.SelectedItem)} in {title}");
+
+            _data.isDirty = true;
+        }
+        private void Domultiplier(TypeEntry item)
+        {
+            if (!item.NominalSpecified) { return; }
+            if (item.Nominal != 0)
+            {
+                item.Nominal = getmultiplier((int)item.Nominal);
+                if (item.Nominal == 0 && if0setto1CB.Checked)
+                    item.Nominal = 1;
+            }
+            if (ChangeMinCheckBox.Checked)
+            {
+                if (item.Min != 0)
+                {
+                    item.Min = getmultiplier((int)item.Min);
+                    if (item.Min == 0 && if0setto1CB.Checked)
+                        item.Min = 1;
+                }
+            }
+        }
+        private int getmultiplier(int nominal)
+        {
+            switch (MultiplierCB.SelectedIndex)
+            {
+                case 0:
+                    return nominal * 10;
+                case 1:
+                    return nominal * 9;
+                case 2:
+                    return nominal * 8;
+                case 3:
+                    return nominal * 7;
+                case 4:
+                    return nominal * 6;
+                case 5:
+                    return nominal * 5;
+                case 6:
+                    return nominal * 4;
+                case 7:
+                    return nominal * 3;
+                case 8:
+                    return nominal * 2;
+                case 9:
+                    return (int)((float)(nominal * 1.5));
+                case 10:
+                    return (int)((float)(nominal / 1.5));
+                case 11:
+                    return nominal / 2;
+                case 12:
+                    return nominal / 3;
+                case 13:
+                    return nominal / 4;
+                case 14:
+                    return nominal / 5;
+                case 15:
+                    return nominal / 6;
+                case 16:
+                    return nominal / 7;
+                case 17:
+                    return nominal / 8;
+                case 18:
+                    return nominal / 9;
+                case 19:
+                    return nominal / 10;
+                default:
+                    return 0;
+            }
         }
     }
 }

@@ -1005,6 +1005,7 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is Category cat)
                 {
+                    if(e.Node.Parent == null) { return;}
                     ShowHandler(new TypesCollectionControl(), e.Node.Parent.Tag as TypesFile, selectedNodes);
                 }
                 else if (e.Node.Tag is TypeEntry typentry)
@@ -1103,6 +1104,12 @@ namespace EconomyPlugin
                         setToDefaultToolStripMenuItem.Visible = true;
                         EditPropertyCMS.Show(Cursor.Position);
                     }
+                }
+                else if (e.Node.Tag is TypeEntry typeentry)
+                {
+                    addNewTypesToolStripMenuItem.Visible = true;
+                    removeSelectedToolStripMenuItem.Visible = true;
+                    TypesCM.Show(Cursor.Position);
                 }
             }
         }
@@ -1451,7 +1458,38 @@ namespace EconomyPlugin
             return Path.Combine(modFolder, fileName);
         }
 
+        private void addNewTypesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
+        }
+
+        private void removeSelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TypesFile typefile = currentTreeNode.Parent.Parent.Tag as TypesFile;
+            if (typefile.IsModded == false)
+            {
+                var result = MessageBox.Show(
+                            $"Type entry(s) is in the vanilla types file, are you sure you want to delete it?",
+                            "Vanilla Types File",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question
+                        );
+                if (result == DialogResult.No) { return; };
+            }
+            var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
+            foreach (var node in selectedNodes)
+            {
+                TypeEntry typeeentry = node.Tag as TypeEntry;
+                typefile.Data.TypeList.Remove(typeeentry);
+                var parent = node.Parent;
+                EconomyTV.Nodes.Remove(node);
+                if(parent.Nodes.Count == 0)
+                {
+                    EconomyTV.Nodes.Remove(parent);
+                }
+            }
+            typefile.isDirty = true;
+        }
 
         private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
                     where TFile : class

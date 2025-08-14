@@ -29,14 +29,18 @@
         private void InitializeComponent()
         {
             TypesCollectionGB = new GroupBox();
+            if0setto1CB = new CheckBox();
+            ChangeMinCheckBox = new CheckBox();
+            MultiplierButton = new Button();
+            MultiplierCB = new ComboBox();
             ChangeMinCB = new CheckBox();
-            button5 = new Button();
+            SetCustomButton = new Button();
             CollectionCustomNUD = new NumericUpDown();
-            button3 = new Button();
-            button2 = new Button();
-            button1 = new Button();
-            button4 = new Button();
-            textBox1 = new TextBox();
+            SyncMIntoNomButton = new Button();
+            SyncNomtoMinButton = new Button();
+            UpdateTypesFileButton = new Button();
+            ZeroiseButton = new Button();
+            CollectionNameTB = new TextBox();
             label1 = new Label();
             TypesCollectionGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)CollectionCustomNUD).BeginInit();
@@ -44,28 +48,76 @@
             // 
             // TypesCollectionGB
             // 
+            TypesCollectionGB.Controls.Add(if0setto1CB);
+            TypesCollectionGB.Controls.Add(ChangeMinCheckBox);
+            TypesCollectionGB.Controls.Add(MultiplierButton);
+            TypesCollectionGB.Controls.Add(MultiplierCB);
             TypesCollectionGB.Controls.Add(ChangeMinCB);
-            TypesCollectionGB.Controls.Add(button5);
+            TypesCollectionGB.Controls.Add(SetCustomButton);
             TypesCollectionGB.Controls.Add(CollectionCustomNUD);
-            TypesCollectionGB.Controls.Add(button3);
-            TypesCollectionGB.Controls.Add(button2);
-            TypesCollectionGB.Controls.Add(button1);
-            TypesCollectionGB.Controls.Add(button4);
-            TypesCollectionGB.Controls.Add(textBox1);
+            TypesCollectionGB.Controls.Add(SyncMIntoNomButton);
+            TypesCollectionGB.Controls.Add(SyncNomtoMinButton);
+            TypesCollectionGB.Controls.Add(UpdateTypesFileButton);
+            TypesCollectionGB.Controls.Add(ZeroiseButton);
+            TypesCollectionGB.Controls.Add(CollectionNameTB);
             TypesCollectionGB.Controls.Add(label1);
             TypesCollectionGB.Dock = DockStyle.Fill;
             TypesCollectionGB.ForeColor = SystemColors.Control;
             TypesCollectionGB.Location = new Point(0, 0);
             TypesCollectionGB.Name = "TypesCollectionGB";
-            TypesCollectionGB.Size = new Size(652, 513);
+            TypesCollectionGB.Size = new Size(645, 231);
             TypesCollectionGB.TabIndex = 0;
             TypesCollectionGB.TabStop = false;
             TypesCollectionGB.Text = "Types Collection";
             // 
+            // if0setto1CB
+            // 
+            if0setto1CB.AutoSize = true;
+            if0setto1CB.Location = new Point(483, 107);
+            if0setto1CB.Name = "if0setto1CB";
+            if0setto1CB.RightToLeft = RightToLeft.Yes;
+            if0setto1CB.Size = new Size(143, 19);
+            if0setto1CB.TabIndex = 35;
+            if0setto1CB.Text = "If Nominal = 0 set as 1";
+            if0setto1CB.UseVisualStyleBackColor = true;
+            // 
+            // ChangeMinCheckBox
+            // 
+            ChangeMinCheckBox.AutoSize = true;
+            ChangeMinCheckBox.Location = new Point(345, 107);
+            ChangeMinCheckBox.Name = "ChangeMinCheckBox";
+            ChangeMinCheckBox.RightToLeft = RightToLeft.Yes;
+            ChangeMinCheckBox.Size = new Size(123, 19);
+            ChangeMinCheckBox.TabIndex = 34;
+            ChangeMinCheckBox.Text = "Change Minimum";
+            ChangeMinCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // MultiplierButton
+            // 
+            MultiplierButton.BackColor = Color.FromArgb(60, 63, 65);
+            MultiplierButton.Location = new Point(15, 105);
+            MultiplierButton.Name = "MultiplierButton";
+            MultiplierButton.Size = new Size(159, 23);
+            MultiplierButton.TabIndex = 33;
+            MultiplierButton.Text = "Do Multiplier";
+            MultiplierButton.UseVisualStyleBackColor = false;
+            MultiplierButton.Click += button6_Click;
+            // 
+            // MultiplierCB
+            // 
+            MultiplierCB.BackColor = Color.FromArgb(60, 63, 65);
+            MultiplierCB.ForeColor = SystemColors.Control;
+            MultiplierCB.FormattingEnabled = true;
+            MultiplierCB.Items.AddRange(new object[] { "x10", "x9", "x8", "x7", "x6", "x5", "x4", "x3", "x2", "x1.5", "/1.5", "/2", "/3", "/4", "/5", "/6", "/7", "/8", "/9", "/10" });
+            MultiplierCB.Location = new Point(180, 105);
+            MultiplierCB.Name = "MultiplierCB";
+            MultiplierCB.Size = new Size(159, 23);
+            MultiplierCB.TabIndex = 32;
+            // 
             // ChangeMinCB
             // 
             ChangeMinCB.AutoSize = true;
-            ChangeMinCB.Location = new Point(51, 130);
+            ChangeMinCB.Location = new Point(345, 77);
             ChangeMinCB.Name = "ChangeMinCB";
             ChangeMinCB.RightToLeft = RightToLeft.Yes;
             ChangeMinCB.Size = new Size(123, 19);
@@ -73,89 +125,89 @@
             ChangeMinCB.Text = "Change Minimum";
             ChangeMinCB.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // SetCustomButton
             // 
-            button5.BackColor = Color.FromArgb(60, 63, 65);
-            button5.Location = new Point(15, 155);
-            button5.Name = "button5";
-            button5.Size = new Size(159, 23);
-            button5.TabIndex = 30;
-            button5.Text = "Set to Custom Value";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
+            SetCustomButton.BackColor = Color.FromArgb(60, 63, 65);
+            SetCustomButton.Location = new Point(15, 76);
+            SetCustomButton.Name = "SetCustomButton";
+            SetCustomButton.Size = new Size(159, 23);
+            SetCustomButton.TabIndex = 30;
+            SetCustomButton.Text = "Set to Custom Value";
+            SetCustomButton.UseVisualStyleBackColor = false;
+            SetCustomButton.Click += button5_Click;
             // 
             // CollectionCustomNUD
             // 
             CollectionCustomNUD.BackColor = Color.FromArgb(60, 63, 65);
             CollectionCustomNUD.ForeColor = SystemColors.Control;
-            CollectionCustomNUD.Location = new Point(15, 101);
+            CollectionCustomNUD.Location = new Point(180, 76);
             CollectionCustomNUD.Maximum = new decimal(new int[] { 50000, 0, 0, 0 });
             CollectionCustomNUD.Name = "CollectionCustomNUD";
             CollectionCustomNUD.Size = new Size(159, 23);
             CollectionCustomNUD.TabIndex = 29;
             CollectionCustomNUD.TextAlign = HorizontalAlignment.Center;
             // 
-            // button3
+            // SyncMIntoNomButton
             // 
-            button3.BackColor = Color.FromArgb(60, 63, 65);
-            button3.Location = new Point(15, 203);
-            button3.Name = "button3";
-            button3.Size = new Size(159, 23);
-            button3.TabIndex = 28;
-            button3.Text = "Sync Min to Nom";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            SyncMIntoNomButton.BackColor = Color.FromArgb(60, 63, 65);
+            SyncMIntoNomButton.Location = new Point(15, 134);
+            SyncMIntoNomButton.Name = "SyncMIntoNomButton";
+            SyncMIntoNomButton.Size = new Size(159, 23);
+            SyncMIntoNomButton.TabIndex = 28;
+            SyncMIntoNomButton.Text = "Sync Min to Nom";
+            SyncMIntoNomButton.UseVisualStyleBackColor = false;
+            SyncMIntoNomButton.Click += button3_Click;
             // 
-            // button2
+            // SyncNomtoMinButton
             // 
-            button2.BackColor = Color.FromArgb(60, 63, 65);
-            button2.Location = new Point(15, 232);
-            button2.Name = "button2";
-            button2.Size = new Size(159, 23);
-            button2.TabIndex = 27;
-            button2.Text = "Sync Nom to Min";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            SyncNomtoMinButton.BackColor = Color.FromArgb(60, 63, 65);
+            SyncNomtoMinButton.Location = new Point(15, 163);
+            SyncNomtoMinButton.Name = "SyncNomtoMinButton";
+            SyncNomtoMinButton.Size = new Size(159, 23);
+            SyncNomtoMinButton.TabIndex = 27;
+            SyncNomtoMinButton.Text = "Sync Nom to Min";
+            SyncNomtoMinButton.UseVisualStyleBackColor = false;
+            SyncNomtoMinButton.Click += button2_Click;
             // 
-            // button1
+            // UpdateTypesFileButton
             // 
-            button1.BackColor = Color.FromArgb(60, 63, 65);
-            button1.Location = new Point(15, 284);
-            button1.Name = "button1";
-            button1.Size = new Size(159, 23);
-            button1.TabIndex = 26;
-            button1.Text = "Update Types file";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            UpdateTypesFileButton.BackColor = Color.FromArgb(60, 63, 65);
+            UpdateTypesFileButton.Location = new Point(15, 192);
+            UpdateTypesFileButton.Name = "UpdateTypesFileButton";
+            UpdateTypesFileButton.Size = new Size(159, 23);
+            UpdateTypesFileButton.TabIndex = 26;
+            UpdateTypesFileButton.Text = "Update Types file";
+            UpdateTypesFileButton.UseVisualStyleBackColor = false;
+            UpdateTypesFileButton.Click += button1_Click;
             // 
-            // button4
+            // ZeroiseButton
             // 
-            button4.BackColor = Color.FromArgb(60, 63, 65);
-            button4.Location = new Point(15, 56);
-            button4.Name = "button4";
-            button4.Size = new Size(159, 23);
-            button4.TabIndex = 25;
-            button4.Text = "Zero all Entries";
-            button4.UseVisualStyleBackColor = false;
-            button4.Click += button4_Click;
+            ZeroiseButton.BackColor = Color.FromArgb(60, 63, 65);
+            ZeroiseButton.Location = new Point(15, 47);
+            ZeroiseButton.Name = "ZeroiseButton";
+            ZeroiseButton.Size = new Size(159, 23);
+            ZeroiseButton.TabIndex = 25;
+            ZeroiseButton.Text = "Zero all Entries";
+            ZeroiseButton.UseVisualStyleBackColor = false;
+            ZeroiseButton.Click += button4_Click;
             // 
-            // textBox1
+            // CollectionNameTB
             // 
-            textBox1.BackColor = Color.FromArgb(60, 63, 65);
-            textBox1.BorderStyle = BorderStyle.None;
-            textBox1.ForeColor = SystemColors.ButtonFace;
-            textBox1.Location = new Point(101, 34);
-            textBox1.Margin = new Padding(4, 3, 4, 3);
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(175, 16);
-            textBox1.TabIndex = 3;
-            textBox1.TabStop = false;
+            CollectionNameTB.BackColor = Color.FromArgb(60, 63, 65);
+            CollectionNameTB.BorderStyle = BorderStyle.None;
+            CollectionNameTB.ForeColor = SystemColors.ButtonFace;
+            CollectionNameTB.Location = new Point(101, 25);
+            CollectionNameTB.Margin = new Padding(4, 3, 4, 3);
+            CollectionNameTB.Name = "CollectionNameTB";
+            CollectionNameTB.ReadOnly = true;
+            CollectionNameTB.Size = new Size(175, 16);
+            CollectionNameTB.TabIndex = 3;
+            CollectionNameTB.TabStop = false;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(15, 34);
+            label1.Location = new Point(15, 25);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(70, 15);
@@ -170,7 +222,7 @@
             Controls.Add(TypesCollectionGB);
             ForeColor = SystemColors.Control;
             Name = "TypesCollectionControl";
-            Size = new Size(652, 513);
+            Size = new Size(645, 231);
             TypesCollectionGB.ResumeLayout(false);
             TypesCollectionGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)CollectionCustomNUD).EndInit();
@@ -180,14 +232,18 @@
         #endregion
 
         private GroupBox TypesCollectionGB;
-        private TextBox textBox1;
+        private TextBox CollectionNameTB;
         private Label label1;
-        private Button button4;
-        private Button button1;
-        private Button button3;
-        private Button button2;
-        private Button button5;
+        private Button ZeroiseButton;
+        private Button UpdateTypesFileButton;
+        private Button SyncMIntoNomButton;
+        private Button SyncNomtoMinButton;
+        private Button SetCustomButton;
         private NumericUpDown CollectionCustomNUD;
         private CheckBox ChangeMinCB;
+        private CheckBox ChangeMinCheckBox;
+        private Button MultiplierButton;
+        private ComboBox MultiplierCB;
+        private CheckBox if0setto1CB;
     }
 }

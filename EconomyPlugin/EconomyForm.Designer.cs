@@ -37,21 +37,23 @@ namespace EconomyPlugin
             EconomyTV = new MultiSelectTreeView();
             EditPropertyCMS = new ContextMenuStrip(components);
             editPropertyToolStripMenuItem = new ToolStripMenuItem();
+            setToDefaultToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
             SaveButton = new Button();
             contextMenuStrip1 = new ContextMenuStrip(components);
             toolStripMenuItem1 = new ToolStripMenuItem();
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem2 = new ToolStripMenuItem();
-            setToDefaultToolStripMenuItem = new ToolStripMenuItem();
+            TypesCM = new ContextMenuStrip(components);
+            addNewTypesToolStripMenuItem = new ToolStripMenuItem();
+            removeSelectedToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             EditPropertyCMS.SuspendLayout();
             panel1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
+            TypesCM.SuspendLayout();
             SuspendLayout();
             // 
             // _mapControl
@@ -100,15 +102,23 @@ namespace EconomyPlugin
             EditPropertyCMS.Items.AddRange(new ToolStripItem[] { editPropertyToolStripMenuItem, setToDefaultToolStripMenuItem });
             EditPropertyCMS.Name = "contextMenuStrip1";
             EditPropertyCMS.ShowImageMargin = false;
-            EditPropertyCMS.Size = new Size(156, 70);
+            EditPropertyCMS.Size = new Size(122, 48);
             // 
             // editPropertyToolStripMenuItem
             // 
             editPropertyToolStripMenuItem.ForeColor = SystemColors.Control;
             editPropertyToolStripMenuItem.Name = "editPropertyToolStripMenuItem";
-            editPropertyToolStripMenuItem.Size = new Size(155, 22);
+            editPropertyToolStripMenuItem.Size = new Size(121, 22);
             editPropertyToolStripMenuItem.Text = "Edit Property";
             editPropertyToolStripMenuItem.Click += editPropertyToolStripMenuItem_Click;
+            // 
+            // setToDefaultToolStripMenuItem
+            // 
+            setToDefaultToolStripMenuItem.ForeColor = SystemColors.Control;
+            setToDefaultToolStripMenuItem.Name = "setToDefaultToolStripMenuItem";
+            setToDefaultToolStripMenuItem.Size = new Size(121, 22);
+            setToDefaultToolStripMenuItem.Text = "Set To Default";
+            setToDefaultToolStripMenuItem.Click += setToDefaultToolStripMenuItem_Click;
             // 
             // panel1
             // 
@@ -163,13 +173,29 @@ namespace EconomyPlugin
             toolStripMenuItem2.Size = new Size(117, 22);
             toolStripMenuItem2.Text = "Edit Property";
             // 
-            // setToDefaultToolStripMenuItem
+            // TypesCM
             // 
-            setToDefaultToolStripMenuItem.ForeColor = SystemColors.Control;
-            setToDefaultToolStripMenuItem.Name = "setToDefaultToolStripMenuItem";
-            setToDefaultToolStripMenuItem.Size = new Size(155, 22);
-            setToDefaultToolStripMenuItem.Text = "Set To Default";
-            setToDefaultToolStripMenuItem.Click += setToDefaultToolStripMenuItem_Click;
+            TypesCM.BackColor = Color.FromArgb(60, 63, 65);
+            TypesCM.Items.AddRange(new ToolStripItem[] { addNewTypesToolStripMenuItem, removeSelectedToolStripMenuItem });
+            TypesCM.Name = "TypesCM";
+            TypesCM.ShowImageMargin = false;
+            TypesCM.Size = new Size(156, 70);
+            // 
+            // addNewTypesToolStripMenuItem
+            // 
+            addNewTypesToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTypesToolStripMenuItem.Name = "addNewTypesToolStripMenuItem";
+            addNewTypesToolStripMenuItem.Size = new Size(155, 22);
+            addNewTypesToolStripMenuItem.Text = "Add New Types";
+            addNewTypesToolStripMenuItem.Click += addNewTypesToolStripMenuItem_Click;
+            // 
+            // removeSelectedToolStripMenuItem
+            // 
+            removeSelectedToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeSelectedToolStripMenuItem.Name = "removeSelectedToolStripMenuItem";
+            removeSelectedToolStripMenuItem.Size = new Size(155, 22);
+            removeSelectedToolStripMenuItem.Text = "Remove Selected";
+            removeSelectedToolStripMenuItem.Click += removeSelectedToolStripMenuItem_Click;
             // 
             // EconomyForm
             // 
@@ -186,14 +212,13 @@ namespace EconomyPlugin
             FormClosing += EconomyForm_FormClosing;
             FormClosed += EconomyForm_FormClosed;
             Load += EconomyForm_Load;
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             EditPropertyCMS.ResumeLayout(false);
             panel1.ResumeLayout(false);
             contextMenuStrip1.ResumeLayout(false);
             contextMenuStrip2.ResumeLayout(false);
+            TypesCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -210,5 +235,8 @@ namespace EconomyPlugin
         private ToolStripMenuItem toolStripMenuItem1;
         private ContextMenuStrip contextMenuStrip2;
         private ToolStripMenuItem toolStripMenuItem2;
+        private ContextMenuStrip TypesCM;
+        private ToolStripMenuItem addNewTypesToolStripMenuItem;
+        private ToolStripMenuItem removeSelectedToolStripMenuItem;
     }
 }
