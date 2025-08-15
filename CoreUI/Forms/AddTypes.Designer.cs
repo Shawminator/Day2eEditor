@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddTypes));
             TitlePanel = new Panel();
             button2 = new Button();
             button1 = new Button();
@@ -50,6 +51,7 @@
             Usage = new DataGridViewTextBoxColumn();
             Tiers = new DataGridViewTextBoxColumn();
             button4 = new Button();
+            ResizePanel = new Panel();
             TitlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_grid).BeginInit();
             SuspendLayout();
@@ -156,7 +158,7 @@
             _grid.GridColor = SystemColors.ActiveCaptionText;
             _grid.Location = new Point(12, 63);
             _grid.Name = "_grid";
-            _grid.Size = new Size(1106, 487);
+            _grid.Size = new Size(1094, 476);
             _grid.TabIndex = 7;
             // 
             // NameGridColumn
@@ -251,12 +253,23 @@
             button4.Text = "Remove Selected";
             button4.UseVisualStyleBackColor = false;
             // 
+            // ResizePanel
+            // 
+            ResizePanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            ResizePanel.BackgroundImage = (Image)resources.GetObject("ResizePanel.BackgroundImage");
+            ResizePanel.BackgroundImageLayout = ImageLayout.Stretch;
+            ResizePanel.Location = new Point(1102, 536);
+            ResizePanel.Name = "ResizePanel";
+            ResizePanel.Size = new Size(25, 25);
+            ResizePanel.TabIndex = 26;
+            // 
             // AddTypes
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1130, 562);
+            Controls.Add(ResizePanel);
             Controls.Add(button4);
             Controls.Add(_grid);
             Controls.Add(TitlePanel);
@@ -295,5 +308,6 @@
         private DataGridViewTextBoxColumn Tags;
         private DataGridViewTextBoxColumn Usage;
         private DataGridViewTextBoxColumn Tiers;
+        private Panel ResizePanel;
     }
 }

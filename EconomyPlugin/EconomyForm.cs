@@ -1461,6 +1461,7 @@ namespace EconomyPlugin
         private void addNewTypesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddTypes frm = new AddTypes();
+            frm.StartPosition = FormStartPosition.CenterParent;
             DialogResult dr = frm.ShowDialog();
             if (dr == DialogResult.Cancel)
             {

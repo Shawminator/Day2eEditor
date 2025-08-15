@@ -19,11 +19,11 @@
             (
                 this,
                 TitlePanel,
-                null,
+                ResizePanel,
                 TitleLabel,
                 label1,
                 CloseButton,
-                MinimiseButton
+                null
 
             );
             PopulateDefs();
