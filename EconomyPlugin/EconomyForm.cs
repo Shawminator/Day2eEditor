@@ -1461,7 +1461,11 @@ namespace EconomyPlugin
         private void addNewTypesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddTypes frm = new AddTypes();
-            frm.Show();
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.Cancel)
+            {
+                frm.Close();
+            }
         }
 
         private void removeSelectedToolStripMenuItem_Click(object sender, EventArgs e)

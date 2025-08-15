@@ -468,7 +468,7 @@ namespace Day2eEditor
         {
             if (Values == null)
                 Values = new BindingList<Value>();
-            Value newtier = (new Value() { Name = tier });
+            Value newtier = (new Value() { Name = tier, NameSpecified = true });
             if (!Values.Any(x => x.Name == newtier.Name))
                 Values.Add(newtier);
             for (int i = 0; i < Values.Count; i++)
@@ -492,7 +492,7 @@ namespace Day2eEditor
         {
             if (Values == null)
                 Values = new BindingList<Value>();
-            Value newusertier = new Value() { User = tier };
+            Value newusertier = new Value() { User = tier, UserSpecified = true};
             if (!Values.Any(x => x.User == newusertier.User))
                 Values.Add(newusertier);
             for (int i = 0; i < Values.Count; i++)
@@ -525,7 +525,7 @@ namespace Day2eEditor
                 Usages = new BindingList<Usage>();
             if (!Usages.Any(x => x.Name == u.name))
             {
-                Usages.Add(new Usage() { Name = u.name });
+                Usages.Add(new Usage() { Name = u.name, NameSpecified = true });
             }
         }
         public void AddnewUserUsage(user_listsUser uu)
@@ -534,7 +534,7 @@ namespace Day2eEditor
                 Usages = new BindingList<Usage>();
             if (!Usages.Any(x => x.User == uu.name))
             {
-                Usages.Add(new Usage() { User = uu.name });
+                Usages.Add(new Usage() { User = uu.name, UserSpecified = true });
             }
         }
         public void removeusage(Usage u)
@@ -550,7 +550,7 @@ namespace Day2eEditor
                 Tags = new BindingList<Tag>();
             if (!Tags.Any(x => x.Name == t.name))
             {
-                Tags.Add(new Tag() { Name = t.name });
+                Tags.Add(new Tag() { Name = t.name, NameSpecified = true});
             }
         }
         public void removetag(Tag t)
@@ -640,6 +640,8 @@ namespace Day2eEditor
                 Crafted == other.Crafted &&
                 Deloot == other.Deloot;
         }
+
+       
     }
 
     public class Category

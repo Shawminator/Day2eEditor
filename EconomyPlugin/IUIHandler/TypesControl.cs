@@ -565,8 +565,7 @@ namespace EconomyPlugin
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            listsUsage u = comboBox2.SelectedItem as listsUsage;
-            if (u != null)
+            if (comboBox2.SelectedItem is listsUsage u)
             {
                 foreach (TreeNode tn in _nodes)
                 {
@@ -574,8 +573,7 @@ namespace EconomyPlugin
                     looptype.AddnewUsage(u);
                 }
             }
-            user_listsUser uu = comboBox2.SelectedItem as user_listsUser;
-            if (uu != null)
+            if (comboBox2.SelectedItem is user_listsUser uu)
             {
                 foreach (TreeNode tn in _nodes)
                 {
