@@ -1,8 +1,7 @@
-﻿namespace Day2eEditor
-{
-    using System.Text.Json;
-    using System.Windows.Forms;
+﻿using System.Text.Json;
 
+namespace Day2eEditor
+{
     public static class SettingsManager
     {
         private static string SettingsPath =>
@@ -34,25 +33,28 @@
         public Size FormSize { get; set; }
         public bool ShowConsole { get; set; }
     }
-    public static class Form_Controls
+    public class FormController : IDisposable
     {
-        public static Size Formsize;
-        private static Button B;
-        private static Button B1;
-        private static Panel P;
-        private static Panel P2;
-        private static Label L;
-        private static Label L2;
-        private static Form F;
-        private static bool mouseDown;
-        private static Point lastLocation;
-        private static Size LastSize;
-        private static Point LastMousePositon;
+        private bool disposed;
 
-        public static int Height { get; private set; }
+        private Form F;
+        private Button B;
+        private Button B1;
+        private Panel P;
+        private Panel P2;
+        private Label L;
+        private Label L2;
 
-        public static void InitializeForm_Controls(Form _F, Panel _P, Panel _P2, Label _L, Label _L2, Button _B, Button _B1)
+        private bool mouseDown;
+        private Point lastLocation;
+        private Size LastSize;
+        private Point LastMousePositon;
+
+        public Size Formsize { get; private set; }
+
+        public FormController(Form _F, Panel _P, Panel _P2, Label _L, Label _L2, Button _B, Button _B1)
         {
+
             F = _F;
             P = _P;
             P2 = _P2;
@@ -61,42 +63,47 @@
             L = _L;
             L2 = _L2;
 
-            P.MouseDoubleClick += new MouseEventHandler(FormMax_MouseDoubleClick);
-            P.MouseDown += new MouseEventHandler(FormMove_MouseDown);
-            P.MouseMove += new MouseEventHandler(FormMove_MouseMove);
-            P.MouseUp += new MouseEventHandler(FormMove_MouseUp);
-            P2.MouseDown += new MouseEventHandler(FormResize_MouseDown);
-            P2.MouseMove += new MouseEventHandler(FormResize_MouseMove);
-            P2.MouseUp += new MouseEventHandler(FormResize_MouseUp);
-            L.MouseDoubleClick += new MouseEventHandler(FormMax_MouseDoubleClick);
-            L.MouseDown += new MouseEventHandler(FormMove_MouseDown);
-            L.MouseMove += new MouseEventHandler(FormMove_MouseMove);
-            L.MouseUp += new MouseEventHandler(FormMove_MouseUp);
-            L2.MouseDoubleClick += new MouseEventHandler(FormMax_MouseDoubleClick);
-            L2.MouseDown += new MouseEventHandler(FormMove_MouseDown);
-            L2.MouseMove += new MouseEventHandler(FormMove_MouseMove);
-            L2.MouseUp += new MouseEventHandler(FormMove_MouseUp);
+            P.MouseDoubleClick += FormMax_MouseDoubleClick;
+            P.MouseDown += FormMove_MouseDown;
+            P.MouseMove += FormMove_MouseMove;
+            P.MouseUp += FormMove_MouseUp;
+
+            P2.MouseDown += FormResize_MouseDown;
+            P2.MouseMove += FormResize_MouseMove;
+            P2.MouseUp += FormResize_MouseUp;
+
+            L.MouseDoubleClick += FormMax_MouseDoubleClick;
+            L.MouseDown += FormMove_MouseDown;
+            L.MouseMove += FormMove_MouseMove;
+            L.MouseUp += FormMove_MouseUp;
+
+            L2.MouseDoubleClick += FormMax_MouseDoubleClick;
+            L2.MouseDown += FormMove_MouseDown;
+            L2.MouseMove += FormMove_MouseMove;
+            L2.MouseUp += FormMove_MouseUp;
+
             if (_B != null)
-                B.Click += new System.EventHandler(FormClose_Click);
+                B.Click += FormClose_Click;
             if (_B1 != null)
-                B1.Click += new System.EventHandler(MinimiseForm_Click);
+                B1.Click += MinimiseForm_Click;
+
             Formsize = F.Size;
         }
 
-        public static void Setfromsize()
+        public void SetFromSize()
         {
             Formsize = F.Size;
         }
 
-        private static void FormResize_MouseUp(object sender, MouseEventArgs e)
+        private void FormResize_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown = false;
             Formsize = F.Size;
         }
 
-        private static void FormResize_MouseMove(object sender, MouseEventArgs e)
+        private void FormResize_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mouseDown == true && F.WindowState == System.Windows.Forms.FormWindowState.Normal)
+            if (mouseDown && F.WindowState == FormWindowState.Normal)
             {
                 F.Size = new Size(LastSize.Width + e.X, LastSize.Height + e.Y);
                 LastSize = F.Size;
@@ -104,49 +111,50 @@
             F.Update();
         }
 
-        private static void FormResize_MouseDown(object sender, MouseEventArgs e)
+        private void FormResize_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown = true;
             LastSize = F.Size;
             LastMousePositon = e.Location;
-            Console.WriteLine(F.Size.ToString());
-            Console.WriteLine(e.X.ToString() + " , " + e.Y.ToString());
         }
 
-        private static void FormMove_MouseDown(object sender, MouseEventArgs e)
+        private void FormMove_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown = true;
             lastLocation = e.Location;
         }
 
-        private static void FormMove_MouseMove(object sender, MouseEventArgs e)
+        private void FormMove_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouseDown)
             {
-                if (F.WindowState == System.Windows.Forms.FormWindowState.Maximized)
-                    F.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                if (F.WindowState == FormWindowState.Maximized)
+                    F.WindowState = FormWindowState.Normal;
+
                 F.Location = new Point(
-                    (F.Location.X - lastLocation.X) + e.X, (F.Location.Y - lastLocation.Y) + e.Y);
+                    (F.Location.X - lastLocation.X) + e.X,
+                    (F.Location.Y - lastLocation.Y) + e.Y
+                );
 
                 F.Update();
             }
         }
 
-        private static void FormMove_MouseUp(object sender, MouseEventArgs e)
+        private void FormMove_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown = false;
         }
 
-        private static void FormMax_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void FormMax_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (F.WindowState == System.Windows.Forms.FormWindowState.Maximized)
+                if (F.WindowState == FormWindowState.Maximized)
                 {
-                    F.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                    F.WindowState = FormWindowState.Normal;
                     Formsize = F.Size;
                 }
-                else if (F.WindowState == System.Windows.Forms.FormWindowState.Normal)
+                else if (F.WindowState == FormWindowState.Normal)
                 {
                     Rectangle rect = Screen.FromHandle(F.Handle).WorkingArea;
                     rect.Location = new Point(0, 0);
@@ -158,16 +166,59 @@
             }
         }
 
-        // Fixed code: sender is now non-nullable, which is the expected behavior for event handlers.
-        private static void FormClose_Click(object sender, EventArgs e)
+        private void FormClose_Click(object sender, EventArgs e)
         {
             F.Close();
         }
 
-        // Fixed code: sender is now non-nullable, which is the expected behavior for event handlers.
-        private static void MinimiseForm_Click(object sender, EventArgs e)
+        private void MinimiseForm_Click(object sender, EventArgs e)
         {
             F.WindowState = FormWindowState.Minimized;
         }
+        public void Dispose()
+        {
+            if (disposed) return;
+
+            // Unhook events
+            if (P != null)
+            {
+                P.MouseDoubleClick -= FormMax_MouseDoubleClick;
+                P.MouseDown -= FormMove_MouseDown;
+                P.MouseMove -= FormMove_MouseMove;
+                P.MouseUp -= FormMove_MouseUp;
+            }
+
+            if (P2 != null)
+            {
+                P2.MouseDown -= FormResize_MouseDown;
+                P2.MouseMove -= FormResize_MouseMove;
+                P2.MouseUp -= FormResize_MouseUp;
+            }
+
+            if (L != null)
+            {
+                L.MouseDoubleClick -= FormMax_MouseDoubleClick;
+                L.MouseDown -= FormMove_MouseDown;
+                L.MouseMove -= FormMove_MouseMove;
+                L.MouseUp -= FormMove_MouseUp;
+            }
+
+            if (L2 != null)
+            {
+                L2.MouseDoubleClick -= FormMax_MouseDoubleClick;
+                L2.MouseDown -= FormMove_MouseDown;
+                L2.MouseMove -= FormMove_MouseMove;
+                L2.MouseUp -= FormMove_MouseUp;
+            }
+
+            if (B != null)
+                B.Click -= FormClose_Click;
+
+            if (B1 != null)
+                B1.Click -= MinimiseForm_Click;
+
+            disposed = true;
+        }
     }
+
 }

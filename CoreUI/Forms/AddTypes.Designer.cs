@@ -30,13 +30,14 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddTypes));
             TitlePanel = new Panel();
-            button2 = new Button();
             button1 = new Button();
             MinimiseButton = new Button();
             CloseButton = new Button();
             TitleLabel = new Label();
             label1 = new Label();
             _grid = new DataGridView();
+            button4 = new Button();
+            ResizePanel = new Panel();
             NameGridColumn = new DataGridViewTextBoxColumn();
             nominal = new DataGridViewTextBoxColumn();
             lifetime = new DataGridViewTextBoxColumn();
@@ -45,13 +46,11 @@
             quantmin = new DataGridViewTextBoxColumn();
             quantmax = new DataGridViewTextBoxColumn();
             cost = new DataGridViewTextBoxColumn();
-            FlagsColumn = new DataGridViewTextBoxColumn();
-            CategoryGridColumn = new DataGridViewTextBoxColumn();
+            Flags = new DataGridViewTextBoxColumn();
+            Category = new DataGridViewTextBoxColumn();
             Tags = new DataGridViewTextBoxColumn();
             Usage = new DataGridViewTextBoxColumn();
             Tiers = new DataGridViewTextBoxColumn();
-            button4 = new Button();
-            ResizePanel = new Panel();
             TitlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_grid).BeginInit();
             SuspendLayout();
@@ -59,7 +58,6 @@
             // TitlePanel
             // 
             TitlePanel.BackColor = Color.Black;
-            TitlePanel.Controls.Add(button2);
             TitlePanel.Controls.Add(button1);
             TitlePanel.Controls.Add(MinimiseButton);
             TitlePanel.Controls.Add(CloseButton);
@@ -70,21 +68,6 @@
             TitlePanel.Name = "TitlePanel";
             TitlePanel.Size = new Size(1130, 28);
             TitlePanel.TabIndex = 6;
-            // 
-            // button2
-            // 
-            button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button2.BackColor = Color.Black;
-            button2.DialogResult = DialogResult.Cancel;
-            button2.FlatStyle = FlatStyle.Popup;
-            button2.Font = new Font("Segoe UI", 12F);
-            button2.ForeColor = Color.DarkRed;
-            button2.Location = new Point(1086, 0);
-            button2.Name = "button2";
-            button2.Size = new Size(41, 28);
-            button2.TabIndex = 10;
-            button2.Text = "X";
-            button2.UseVisualStyleBackColor = false;
             // 
             // button1
             // 
@@ -121,7 +104,7 @@
             CloseButton.FlatStyle = FlatStyle.Popup;
             CloseButton.Font = new Font("Segoe UI", 12F);
             CloseButton.ForeColor = Color.DarkRed;
-            CloseButton.Location = new Point(2435, 0);
+            CloseButton.Location = new Point(1086, 0);
             CloseButton.Name = "CloseButton";
             CloseButton.Size = new Size(41, 28);
             CloseButton.TabIndex = 6;
@@ -140,11 +123,11 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
             label1.ForeColor = Color.FromArgb(75, 110, 175);
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(61, 15);
+            label1.Size = new Size(1130, 28);
             label1.TabIndex = 8;
             label1.Text = "Add Types";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -154,12 +137,34 @@
             _grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             _grid.BackgroundColor = Color.FromArgb(60, 63, 65);
             _grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            _grid.Columns.AddRange(new DataGridViewColumn[] { NameGridColumn, nominal, lifetime, restock, min, quantmin, quantmax, cost, FlagsColumn, CategoryGridColumn, Tags, Usage, Tiers });
+            _grid.Columns.AddRange(new DataGridViewColumn[] { NameGridColumn, nominal, lifetime, restock, min, quantmin, quantmax, cost, Flags, Category, Tags, Usage, Tiers });
             _grid.GridColor = SystemColors.ActiveCaptionText;
             _grid.Location = new Point(12, 63);
             _grid.Name = "_grid";
             _grid.Size = new Size(1094, 476);
             _grid.TabIndex = 7;
+            _grid.CellDoubleClick += _grid_CellDoubleClick;
+            _grid.CellFormatting += _grid_CellFormatting;
+            // 
+            // button4
+            // 
+            button4.BackColor = Color.FromArgb(60, 63, 65);
+            button4.Location = new Point(12, 34);
+            button4.Name = "button4";
+            button4.Size = new Size(152, 23);
+            button4.TabIndex = 25;
+            button4.Text = "Remove Selected";
+            button4.UseVisualStyleBackColor = false;
+            // 
+            // ResizePanel
+            // 
+            ResizePanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            ResizePanel.BackgroundImage = (Image)resources.GetObject("ResizePanel.BackgroundImage");
+            ResizePanel.BackgroundImageLayout = ImageLayout.Stretch;
+            ResizePanel.Location = new Point(1102, 536);
+            ResizePanel.Name = "ResizePanel";
+            ResizePanel.Size = new Size(25, 25);
+            ResizePanel.TabIndex = 26;
             // 
             // NameGridColumn
             // 
@@ -201,7 +206,7 @@
             // 
             quantmax.HeaderText = "quantmax";
             quantmax.Name = "quantmax";
-            quantmax.Width = 86;
+            quantmax.Width = 85;
             // 
             // cost
             // 
@@ -209,27 +214,27 @@
             cost.Name = "cost";
             cost.Width = 54;
             // 
-            // FlagsColumn
+            // Flags
             // 
-            FlagsColumn.HeaderText = "Flags";
-            FlagsColumn.Name = "FlagsColumn";
-            FlagsColumn.Resizable = DataGridViewTriState.True;
-            FlagsColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-            FlagsColumn.Width = 40;
+            Flags.HeaderText = "Flags";
+            Flags.Name = "Flags";
+            Flags.Resizable = DataGridViewTriState.True;
+            Flags.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Flags.Width = 40;
             // 
-            // CategoryGridColumn
+            // Category
             // 
-            CategoryGridColumn.HeaderText = "Category";
-            CategoryGridColumn.Name = "CategoryGridColumn";
-            CategoryGridColumn.Resizable = DataGridViewTriState.True;
-            CategoryGridColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-            CategoryGridColumn.Width = 61;
+            Category.HeaderText = "Category";
+            Category.Name = "Category";
+            Category.Resizable = DataGridViewTriState.True;
+            Category.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Category.Width = 61;
             // 
             // Tags
             // 
-            Tags.HeaderText = "TagColumn";
+            Tags.HeaderText = "Tag";
             Tags.Name = "Tags";
-            Tags.Width = 93;
+            Tags.Width = 51;
             // 
             // Usage
             // 
@@ -239,29 +244,9 @@
             // 
             // Tiers
             // 
-            Tiers.HeaderText = "TiersColumn";
+            Tiers.HeaderText = "Tiers";
             Tiers.Name = "Tiers";
-            Tiers.Width = 99;
-            // 
-            // button4
-            // 
-            button4.BackColor = Color.FromArgb(60, 63, 65);
-            button4.Location = new Point(12, 34);
-            button4.Name = "button4";
-            button4.Size = new Size(152, 23);
-            button4.TabIndex = 25;
-            button4.Text = "Remove Selected";
-            button4.UseVisualStyleBackColor = false;
-            // 
-            // ResizePanel
-            // 
-            ResizePanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            ResizePanel.BackgroundImage = (Image)resources.GetObject("ResizePanel.BackgroundImage");
-            ResizePanel.BackgroundImageLayout = ImageLayout.Stretch;
-            ResizePanel.Location = new Point(1102, 536);
-            ResizePanel.Name = "ResizePanel";
-            ResizePanel.Size = new Size(25, 25);
-            ResizePanel.TabIndex = 26;
+            Tiers.Width = 57;
             // 
             // AddTypes
             // 
@@ -293,8 +278,8 @@
         private Label TitleLabel;
         private Label label1;
         private DataGridView _grid;
-        private Button button2;
         private Button button4;
+        private Panel ResizePanel;
         private DataGridViewTextBoxColumn NameGridColumn;
         private DataGridViewTextBoxColumn nominal;
         private DataGridViewTextBoxColumn lifetime;
@@ -303,11 +288,10 @@
         private DataGridViewTextBoxColumn quantmin;
         private DataGridViewTextBoxColumn quantmax;
         private DataGridViewTextBoxColumn cost;
-        private DataGridViewTextBoxColumn FlagsColumn;
-        private DataGridViewTextBoxColumn CategoryGridColumn;
+        private DataGridViewTextBoxColumn Flags;
+        private DataGridViewTextBoxColumn Category;
         private DataGridViewTextBoxColumn Tags;
         private DataGridViewTextBoxColumn Usage;
         private DataGridViewTextBoxColumn Tiers;
-        private Panel ResizePanel;
     }
 }

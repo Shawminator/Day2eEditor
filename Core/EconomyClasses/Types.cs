@@ -641,7 +641,23 @@ namespace Day2eEditor
                 Deloot == other.Deloot;
         }
 
-       
+        public override string ToString() => DisplayString;
+
+        [XmlIgnore]
+        public string DisplayString
+        {
+            get
+            {
+                List<string> flags = new();
+                if (CountInCargo == 1) flags.Add("count_in_cargo");
+                if (CountInHoarder == 1) flags.Add("count_in_hoarder");
+                if (CountInMap == 1) flags.Add("count_in_map");
+                if (CountInPlayer == 1) flags.Add("count_in_player");
+                if (Crafted == 1) flags.Add("crafted");
+                if (Deloot == 1) flags.Add("deloot");
+                return string.Join(", ", flags);
+            }
+        }
     }
 
     public class Category

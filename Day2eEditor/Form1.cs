@@ -26,6 +26,8 @@ namespace Day2eEditor
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
+        private FormController controller;
+
         private List<PluginEntry> pluginEntries = new();
         private bool hidden;
 
@@ -42,18 +44,16 @@ namespace Day2eEditor
         {
 
             InitializeComponent();
-            Form_Controls.InitializeForm_Controls
-            (
+            controller = new FormController(
                 this,
                 TitlePanel,
                 ResizePanel,
                 TitleLabel,
                 label1,
                 CloseButton,
-                MinimiseButton
-
+                null
             );
-            
+
             slidePanel.Width = 30;
             hidden = true;
             ChangeToolstrip = activeProject;
