@@ -203,12 +203,12 @@ namespace EconomyPlugin
         {
             if (_data.Flags != null)
             {
-                checkBox1.Checked = _data.Flags.CountInCargo == 1 ? true : false;
-                checkBox2.Checked = _data.Flags.CountInHoarder == 1 ? true : false;
-                checkBox3.Checked = _data.Flags.CountInMap == 1 ? true : false;
-                checkBox4.Checked = _data.Flags.CountInPlayer == 1 ? true : false;
-                checkBox5.Checked = _data.Flags.Crafted == 1 ? true : false;
-                checkBox6.Checked = _data.Flags.Deloot == 1 ? true : false;
+                checkBox1.Checked = _data.Flags.count_in_cargo == 1 ? true : false;
+                checkBox2.Checked = _data.Flags.count_in_hoarder == 1 ? true : false;
+                checkBox3.Checked = _data.Flags.count_in_map == 1 ? true : false;
+                checkBox4.Checked = _data.Flags.count_in_player == 1 ? true : false;
+                checkBox5.Checked = _data.Flags.crafted == 1 ? true : false;
+                checkBox6.Checked = _data.Flags.deloot == 1 ? true : false;
             }
             else
             {
@@ -274,12 +274,12 @@ namespace EconomyPlugin
                 Flags = data.Flags != null
                     ? new Flags
                     {
-                        CountInCargo = data.Flags.CountInCargo,
-                        CountInHoarder = data.Flags.CountInHoarder,
-                        CountInMap = data.Flags.CountInMap,
-                        CountInPlayer = data.Flags.CountInPlayer,
-                        Crafted = data.Flags.Crafted,
-                        Deloot = data.Flags.Deloot
+                        count_in_cargo = data.Flags.count_in_cargo,
+                        count_in_hoarder = data.Flags.count_in_hoarder,
+                        count_in_map = data.Flags.count_in_map,
+                        count_in_player = data.Flags.count_in_player,
+                        crafted = data.Flags.crafted,
+                        deloot = data.Flags.deloot
                     }
                     : null,
 
@@ -625,22 +625,22 @@ namespace EconomyPlugin
                 switch (cb.Name)
                 {
                     case "checkBox1":
-                        looptype.Flags.CountInCargo = checkBox1.Checked == true ? 1 : 0;
+                        looptype.Flags.count_in_cargo = checkBox1.Checked == true ? 1 : 0;
                         break;
                     case "checkBox2":
-                        looptype.Flags.CountInHoarder = checkBox2.Checked == true ? 1 : 0;
+                        looptype.Flags.count_in_hoarder = checkBox2.Checked == true ? 1 : 0;
                         break;
                     case "checkBox3":
-                        looptype.Flags.CountInMap = checkBox3.Checked == true ? 1 : 0;
+                        looptype.Flags.count_in_map = checkBox3.Checked == true ? 1 : 0;
                         break;
                     case "checkBox4":
-                        looptype.Flags.CountInPlayer = checkBox4.Checked == true ? 1 : 0;
+                        looptype.Flags.count_in_player = checkBox4.Checked == true ? 1 : 0;
                         break;
                     case "checkBox5":
-                        looptype.Flags.Crafted = checkBox5.Checked == true ? 1 : 0;
+                        looptype.Flags.crafted = checkBox5.Checked == true ? 1 : 0;
                         break;
                     case "checkBox6":
-                        looptype.Flags.Deloot = checkBox6.Checked == true ? 1 : 0;
+                        looptype.Flags.deloot = checkBox6.Checked == true ? 1 : 0;
                         break;
                 }
             }

@@ -124,7 +124,7 @@ namespace EconomyPlugin
 
             TreeNode rootNode = new TreeNode(Path.GetFileName(_economyManager.basePath))
             {
-                Tag = _economyManager.basePath,
+                Tag = "RootNode",
             };
 
             // Add all economy files directly under root
@@ -1073,7 +1073,13 @@ namespace EconomyPlugin
             currentTreeNode = e.Node;
             if (e.Button == MouseButtons.Right)
             {
-                if (e.Node.Tag is EconomySection economydata)
+                if(e.Node.Tag.ToString() == "RootNode")
+                {
+                    addNewTypesToolStripMenuItem.Visible = true;
+                    removeSelectedToolStripMenuItem.Visible = false;
+                    TypesCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is EconomySection economydata)
                 {
                     economyFile ef = e.Node.Parent.Tag as economyFile;
                     if (!ef.IsModded)
@@ -1107,9 +1113,7 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is TypeEntry typeentry)
                 {
-                    addNewTypesToolStripMenuItem.Visible = true;
-                    removeSelectedToolStripMenuItem.Visible = true;
-                    TypesCM.Show(Cursor.Position);
+                    
                 }
             }
         }

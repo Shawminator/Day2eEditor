@@ -586,42 +586,42 @@ namespace Day2eEditor
         private int _deloot;
 
         [XmlAttribute("count_in_cargo")]
-        public int CountInCargo
+        public int count_in_cargo
         {
             get => _countInCargo;
             set => _countInCargo = value;
         }
 
         [XmlAttribute("count_in_hoarder")]
-        public int CountInHoarder
+        public int count_in_hoarder
         {
             get => _countInHoarder;
             set => _countInHoarder = value;
         }
 
         [XmlAttribute("count_in_map")]
-        public int CountInMap
+        public int count_in_map
         {
             get => _countInMap;
             set => _countInMap = value;
         }
 
         [XmlAttribute("count_in_player")]
-        public int CountInPlayer
+        public int count_in_player
         {
             get => _countInPlayer;
             set => _countInPlayer = value;
         }
 
         [XmlAttribute("crafted")]
-        public int Crafted
+        public int crafted
         {
             get => _crafted;
             set => _crafted = value;
         }
 
         [XmlAttribute("deloot")]
-        public int Deloot
+        public int deloot
         {
             get => _deloot;
             set => _deloot = value;
@@ -633,12 +633,12 @@ namespace Day2eEditor
                 return false;
 
             return
-                CountInCargo == other.CountInCargo &&
-                CountInHoarder == other.CountInHoarder &&
-                CountInMap == other.CountInMap &&
-                CountInPlayer == other.CountInPlayer &&
-                Crafted == other.Crafted &&
-                Deloot == other.Deloot;
+                count_in_cargo == other.count_in_cargo &&
+                count_in_hoarder == other.count_in_hoarder &&
+                count_in_map == other.count_in_map &&
+                count_in_player == other.count_in_player &&
+                crafted == other.crafted &&
+                deloot == other.deloot;
         }
 
         public override string ToString() => DisplayString;
@@ -649,12 +649,12 @@ namespace Day2eEditor
             get
             {
                 List<string> flags = new();
-                if (CountInCargo == 1) flags.Add("count_in_cargo");
-                if (CountInHoarder == 1) flags.Add("count_in_hoarder");
-                if (CountInMap == 1) flags.Add("count_in_map");
-                if (CountInPlayer == 1) flags.Add("count_in_player");
-                if (Crafted == 1) flags.Add("crafted");
-                if (Deloot == 1) flags.Add("deloot");
+                if (count_in_cargo == 1) flags.Add("count_in_cargo");
+                if (count_in_hoarder == 1) flags.Add("count_in_hoarder");
+                if (count_in_map == 1) flags.Add("count_in_map");
+                if (count_in_player == 1) flags.Add("count_in_player");
+                if (crafted == 1) flags.Add("crafted");
+                if (deloot == 1) flags.Add("deloot");
                 return string.Join(", ", flags);
             }
         }
@@ -824,7 +824,12 @@ namespace Day2eEditor
         }
         public override string ToString()
         {
-            return Name;
+            string r = "";
+            if (Name != null && User == null)
+                r = Name;
+            else if (Name == null && User != null)
+                r = User;
+            return r;
         }
 
         public override bool Equals(object obj)

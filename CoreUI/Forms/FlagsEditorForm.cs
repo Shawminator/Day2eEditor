@@ -7,23 +7,24 @@ public partial class FlagsEditorForm : Form
 
     private readonly Flags _flags;                  // Original flags
     private readonly Action<Flags> _onFlagsUpdated; // Callback when popup changes
-    private readonly Flags _tempFlags;              // Temporary copy for editing
+    private readonly Flags _tempFlags;
+    private readonly List<string> _flagslist;// Temporary copy for editing
 
-    public FlagsEditorForm(Flags flags, Action<Flags> onFlagsUpdated)
+    public FlagsEditorForm(List<string> flagslist, Flags flags, Action<Flags> onFlagsUpdated)
     {
-        
+        _flagslist = flagslist;
         _flags = flags;
         _onFlagsUpdated = onFlagsUpdated;
 
         // Copy current flag values to temporary object
         _tempFlags = new Flags
         {
-            CountInCargo = flags.CountInCargo,
-            CountInHoarder = flags.CountInHoarder,
-            CountInMap = flags.CountInMap,
-            CountInPlayer = flags.CountInPlayer,
-            Crafted = flags.Crafted,
-            Deloot = flags.Deloot
+            count_in_cargo = flags.count_in_cargo,
+            count_in_hoarder = flags.count_in_hoarder,
+            count_in_map = flags.count_in_map,
+            count_in_player = flags.count_in_player,
+            crafted = flags.crafted,
+            deloot = flags.deloot
         };
 
         this.BackColor = Color.FromArgb(60, 63, 65);
@@ -66,10 +67,8 @@ public partial class FlagsEditorForm : Form
             Dock = DockStyle.Fill  // fills the form but respects the padding
         };
 
-        string[] names = { "CountInCargo", "CountInHoarder", "CountInMap", "CountInPlayer", "Crafted", "Deloot" };
-
         int maxWidth = 0;
-        foreach (var name in names)
+        foreach (var name in _flagslist)
         {
             var cb = AddCheckbox(layout, name);
             if (cb.PreferredSize.Width > maxWidth)
@@ -98,12 +97,12 @@ public partial class FlagsEditorForm : Form
             typeof(Flags).GetProperty(name).SetValue(_tempFlags, cb.Checked ? 1 : 0);
 
             // Immediately notify main form to refresh cell string
-            _flags.CountInCargo = _tempFlags.CountInCargo;
-            _flags.CountInHoarder = _tempFlags.CountInHoarder;
-            _flags.CountInMap = _tempFlags.CountInMap;
-            _flags.CountInPlayer = _tempFlags.CountInPlayer;
-            _flags.Crafted = _tempFlags.Crafted;
-            _flags.Deloot = _tempFlags.Deloot;
+            _flags.count_in_cargo = _tempFlags.count_in_cargo;
+            _flags.count_in_hoarder = _tempFlags.count_in_hoarder;
+            _flags.count_in_map = _tempFlags.count_in_map;
+            _flags.count_in_player = _tempFlags.count_in_player;
+            _flags.crafted = _tempFlags.crafted;
+            _flags.deloot = _tempFlags.deloot;
 
             _onFlagsUpdated?.Invoke(_flags);
         };
@@ -115,12 +114,12 @@ public partial class FlagsEditorForm : Form
     private void CloseAndApply()
     {
         // Final update before closing
-        _flags.CountInCargo = _tempFlags.CountInCargo;
-        _flags.CountInHoarder = _tempFlags.CountInHoarder;
-        _flags.CountInMap = _tempFlags.CountInMap;
-        _flags.CountInPlayer = _tempFlags.CountInPlayer;
-        _flags.Crafted = _tempFlags.Crafted;
-        _flags.Deloot = _tempFlags.Deloot;
+        _flags.count_in_cargo = _tempFlags.count_in_cargo;
+        _flags.count_in_hoarder = _tempFlags.count_in_hoarder;
+        _flags.count_in_map = _tempFlags.count_in_map;
+        _flags.count_in_player = _tempFlags.count_in_player;
+        _flags.crafted = _tempFlags.crafted;
+        _flags.deloot = _tempFlags.deloot;
 
         _onFlagsUpdated?.Invoke(_flags);
         this.Close();
