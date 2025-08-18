@@ -101,6 +101,13 @@ namespace Day2eEditor
         {
             _path = path;
         }
+        public void CreateNew()
+        {
+            Data = new Types()
+            {
+                TypeList = new BindingList<TypeEntry>()
+            };
+        }
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<Types>(
@@ -220,6 +227,7 @@ namespace Day2eEditor
     [XmlRoot("types")]
     public class Types
     {
+        public Types() { }
         private BindingList<TypeEntry> _typeList = new();
 
         [XmlElement("type")]

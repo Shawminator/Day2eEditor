@@ -1,4 +1,6 @@
 using Day2eEditor;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace EconomyPlugin
 {
@@ -1467,9 +1469,27 @@ namespace EconomyPlugin
             AddTypes frm = new AddTypes();
             frm.StartPosition = FormStartPosition.CenterParent;
             DialogResult dr = frm.ShowDialog();
-            if (dr == DialogResult.Cancel)
+            if (dr == DialogResult.OK)
             {
-                frm.Close();
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + ".xml";
+                string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+                
+                BindingList<TypeEntry> types = frm._entries;
+                TypesFile newtypesfile = new TypesFile(newPath)
+                {
+                    FileType = "types",
+                    IsModded = true,
+                    ModFolder = newmodPath
+                };
+                newtypesfile.CreateNew();
+                newtypesfile.Data.TypeList = types;
+                newtypesfile.isDirty = true;
+                _economyManager.eonomyCoreConfig.AddCe(newtypesfile.ModFolder, newtypesfile.FileName, "types");
+                _economyManager.TypesConfig.AllData.Add(newtypesfile);
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, newtypesfile.FilePath);
+                AddFileToTree(EconomyTV.Nodes[0], relativePath, newtypesfile, CreateTypesfileNodes);
+                savefiles();
             }
         }
 
@@ -1499,6 +1519,7 @@ namespace EconomyPlugin
                 }
             }
             typefile.isDirty = true;
+            savefiles();
         }
 
         private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)

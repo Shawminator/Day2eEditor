@@ -58,6 +58,7 @@
             button4 = new Button();
             button2 = new Button();
             button3 = new Button();
+            button5 = new Button();
             TitlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_grid).BeginInit();
             SuspendLayout();
@@ -153,6 +154,7 @@
             _grid.TabIndex = 7;
             _grid.CellDoubleClick += _grid_CellDoubleClick;
             _grid.CellFormatting += _grid_CellFormatting;
+            _grid.KeyDown += _grid_KeyDown;
             // 
             // NameGridColumn
             // 
@@ -194,7 +196,7 @@
             // 
             quantmax.HeaderText = "quantmax";
             quantmax.Name = "quantmax";
-            quantmax.Width = 86;
+            quantmax.Width = 85;
             // 
             // cost
             // 
@@ -222,7 +224,7 @@
             // 
             Tags.HeaderText = "Tags";
             Tags.Name = "Tags";
-            Tags.Width = 55;
+            Tags.Width = 56;
             // 
             // Usages
             // 
@@ -274,6 +276,7 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(406, 23);
             textBox1.TabIndex = 29;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // textBox2
             // 
@@ -325,12 +328,24 @@
             button3.UseVisualStyleBackColor = false;
             button3.Click += button3_Click;
             // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(60, 63, 65);
+            button5.DialogResult = DialogResult.OK;
+            button5.Location = new Point(927, 34);
+            button5.Name = "button5";
+            button5.Size = new Size(179, 79);
+            button5.TabIndex = 35;
+            button5.Text = "Import to Economy";
+            button5.UseVisualStyleBackColor = false;
+            // 
             // AddTypes
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1130, 562);
+            Controls.Add(button5);
             Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button4);
@@ -385,5 +400,6 @@
         private Button button4;
         private Button button2;
         private Button button3;
+        private Button button5;
     }
 }
