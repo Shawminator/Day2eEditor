@@ -10,9 +10,17 @@ namespace Day2eEditor
         private readonly BindingSource _binding = new();
         public BindingList<TypeEntry> _entries = new BindingList<TypeEntry>();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string moddir { get; set; }
+        public string moddir 
+        { 
+            get { return textBox2.Text; }
+            set { textBox2.Text = value; }
+        }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string typesname { get; set; }
+        public string typesname 
+        {
+            get { return textBox1.Text; } 
+            set { textBox1.Text = value; }
+        }
 
         // Lookup lists (replace with your actual lists as needed)
         private readonly List<listsCategory> _categories = new List<listsCategory>();
@@ -85,22 +93,6 @@ namespace Day2eEditor
         private void AddTypes_Load(object sender, EventArgs e)
         {
             var economymanager = AppServices.GetRequired<EconomyManager>();
-            //_entries.Add(new TypeEntry
-            //{
-            //    Name = "ACOGOptic_6x",
-            //    Nominal = 5,
-            //    Lifetime = 14400,
-            //    Restock = 1800,
-            //    Min = 2,
-            //    QuantMin = -1,
-            //    QuantMax = -1,
-            //    Cost = 100,
-            //    Flags = new Flags { count_in_map = 1 },
-            //    Category = new Category { Name = "weapons", NameSpecified = true },
-            //    Usages = new BindingList<Usage> { new Usage { Name = "Military", NameSpecified = true }, new Usage { Name = "Police", NameSpecified = true } },
-            //    Tags = new BindingList<Tag>(),
-            //    Values = new BindingList<Value> { new Value { Name = "Tier3", NameSpecified = true }, new Value { Name = "Tier4", NameSpecified = true } }
-            //});
         }
         private void _grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -342,6 +334,21 @@ namespace Day2eEditor
                     _entries.Add(new TypeEntry()
                     {
                         Name = line,
+                        NameSpecified = true,
+                        Nominal = 10,
+                        NominalSpecified = true,
+                        Lifetime = 28800,
+                        LifetimeSpecified = true,
+                        Restock = 0,
+                        RestockSpecified = true,
+                        Min = 5,
+                        MinSpecified = true,
+                        QuantMin = -1,
+                        QuantMinSpecified = true,
+                        QuantMax = -1,
+                        QuantMaxSpecified = true,
+                        Cost = 100,
+                        CostSpecified = true,
                         Flags = new Flags()
                     });
                 }
@@ -358,6 +365,21 @@ namespace Day2eEditor
                 _entries.Add(new TypeEntry()
                 {
                     Name = line,
+                    NameSpecified = true,
+                    Nominal = 10,
+                    NominalSpecified = true,
+                    Lifetime = 28800,
+                    LifetimeSpecified = true,
+                    Restock = 0,
+                    RestockSpecified = true,
+                    Min = 5,
+                    MinSpecified = true,
+                    QuantMin = -1,
+                    QuantMinSpecified = true,
+                    QuantMax = -1,
+                    QuantMaxSpecified = true,
+                    Cost = 100,
+                    CostSpecified = true,
                     Flags = new Flags()
                 });
             }
