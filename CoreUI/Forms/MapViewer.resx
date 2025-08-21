@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -117,40 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="EditPropertyCMS.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>207, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="SaveButton.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACYAAAAWCAIAAAAjJXlUAAAABGdBTUEAALGPC/xhBQAAABl0RVh0U29m
-        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAMmSURBVEhLvZXZTxNBHMf5k7yPKEcxGqMBKZeJL1aO
-        iIBCfJT4QuKDvkBbUrvlKkLBLiAVopJ4AS12253dst3u0e7aFtoKlB6oXIa2Y4rGBNcAjQ2Tz8Mv+WW+
-        n/wmmZkceOgrB0J4Pl92aOyvPHbyTOHFsmslNUXF1UXF1VeLqouL5Y31lQ311xvqr9fVVZaXX1HcLD1+
-        Mv/suTzpdin7KwsKS1GURVHWaGSMRqZ/gB019kA4CqEJwvGN+ODjx08Yx1Ol8mW+TH7mXK404S/2V5aW
-        3RkeZvv7iV9095DPDQiEKEyMQji2uvSstbUNWNt0unfd3VjBAaz7K0vktSjK/FHq++Z0WkTkOrw84nXr
-        KFzV0tI4/uKRRvMWRTm93p6bV7S39aDKgQGHwUAZDNTgoLOnx6ZSvVar36jVbzo6JrXaSY3m/a+u0ejS
-        6235smvSnMyUIyMcgky3t79UKtOoVBNq9evdvFIqx9vaTRrNB9OYWFX9UJqTibL0dl8fOTQ0Fg774zF/
-        LLqLaMQXXhZj0XRrJTJvMk309uIKxQNpTgZKeVmdFjGTpNXv5zkW8BzxB44jvJ+dG+uL6ZoFXi8rCpRO
-        N6W41SLNyUyJIGYAPrGsgwAWDJsigIUkZklilgAWhsHX1xYJwgLSNeFxz3V2TmdLaRVFhqZtW5thUaRo
-        2uZy2RmXnaZtDnLW5bK7aLsg0FlUWgCw+nwcy4KtzWWfl+ZYgmWBk8IYBud5cudgCa+XyaIyPeVCQBAF
-        iuMIQZgTPHNLiyKEW9GI3+NxiCIlCtT8gjubSoKwhsPzwQAfCrpDQXcgwEdWfKnk13hsIRDgQkF3MMAv
-        L/sFD6XTZUdpAeATw5AYNvUl5GEZHMdncPsMhn3E7TMAmAEw4/YZmgZu3pGdKbVaM0liyeT3xHY0mYgl
-        tmOJ7aiUZPKbKDizcEnKK+oRxEKSGITrMLWaSsZhKg5Tq/8AromCs7Nzuqrm/16fS5dvIIiZ56md//zH
-        nqS+hISuLnNF5V1pTgbKoydOF8jkCkVtU/P9e03Ne9DUfL+mtu7CxfIjx09JczJQZp3fykNePwE7LSEV
-        SsZKzAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>351, 17</value>
-  </metadata>
-  <metadata name="contextMenuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>505, 17</value>
-  </metadata>
-  <metadata name="EventSpawnContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="TypesCM.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>659, 17</value>
-  </metadata>
 </root>

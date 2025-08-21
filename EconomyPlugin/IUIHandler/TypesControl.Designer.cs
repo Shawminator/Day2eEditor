@@ -224,6 +224,7 @@
             // button2
             // 
             button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.FlatStyle = FlatStyle.Flat;
             button2.Location = new Point(9, 99);
             button2.Name = "button2";
             button2.Size = new Size(273, 23);
@@ -249,6 +250,7 @@
             // button3
             // 
             button3.BackColor = Color.FromArgb(60, 63, 65);
+            button3.FlatStyle = FlatStyle.Flat;
             button3.Location = new Point(10, 58);
             button3.Name = "button3";
             button3.Size = new Size(207, 23);
@@ -300,6 +302,7 @@
             // button4
             // 
             button4.BackColor = Color.FromArgb(60, 63, 65);
+            button4.FlatStyle = FlatStyle.Flat;
             button4.Location = new Point(9, 111);
             button4.Name = "button4";
             button4.Size = new Size(273, 23);
@@ -326,6 +329,7 @@
             // button1
             // 
             button1.BackColor = Color.FromArgb(60, 63, 65);
+            button1.FlatStyle = FlatStyle.Flat;
             button1.Location = new Point(12, 81);
             button1.Name = "button1";
             button1.Size = new Size(207, 23);
@@ -387,11 +391,11 @@
             // 
             // Button28
             // 
-            Button28.Location = new Point(200, 18);
+            Button28.FlatStyle = FlatStyle.Flat;
+            Button28.Location = new Point(192, 19);
             Button28.Margin = new Padding(4, 3, 4, 3);
             Button28.Name = "Button28";
-            Button28.Padding = new Padding(6);
-            Button28.Size = new Size(88, 28);
+            Button28.Size = new Size(96, 27);
             Button28.TabIndex = 7;
             Button28.Text = "Clear All";
             Button28.TextImageRelation = TextImageRelation.TextAboveImage;

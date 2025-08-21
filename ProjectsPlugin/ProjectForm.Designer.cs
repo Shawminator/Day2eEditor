@@ -161,6 +161,7 @@
             // CreateProjectbutton
             // 
             CreateProjectbutton.BackColor = Color.FromArgb(60, 63, 65);
+            CreateProjectbutton.FlatStyle = FlatStyle.Flat;
             CreateProjectbutton.Location = new Point(615, 167);
             CreateProjectbutton.Name = "CreateProjectbutton";
             CreateProjectbutton.Size = new Size(171, 23);
@@ -366,6 +367,7 @@
             // button2
             // 
             button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.FlatStyle = FlatStyle.Flat;
             button2.Location = new Point(615, 196);
             button2.Name = "button2";
             button2.Size = new Size(171, 23);
@@ -506,6 +508,7 @@
             // 
             button1.BackColor = Color.FromArgb(60, 63, 65);
             button1.Enabled = false;
+            button1.FlatStyle = FlatStyle.Flat;
             button1.Location = new Point(12, 12);
             button1.Name = "button1";
             button1.Size = new Size(148, 23);
@@ -517,6 +520,7 @@
             // button3
             // 
             button3.BackColor = Color.FromArgb(60, 63, 65);
+            button3.FlatStyle = FlatStyle.Flat;
             button3.Location = new Point(171, 12);
             button3.Name = "button3";
             button3.Size = new Size(148, 23);

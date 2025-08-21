@@ -79,8 +79,11 @@ namespace Day2eEditor
             }
             return null;
         }
-
-
+        public void AddNewEventSpawn(eventposdefEvent newvenspawn)
+        {
+            Data.@event.Add(newvenspawn);
+            isDirty = true;
+        }
     }
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]

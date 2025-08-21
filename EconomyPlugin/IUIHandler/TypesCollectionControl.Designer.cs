@@ -95,6 +95,7 @@
             // MultiplierButton
             // 
             MultiplierButton.BackColor = Color.FromArgb(60, 63, 65);
+            MultiplierButton.FlatStyle = FlatStyle.Flat;
             MultiplierButton.Location = new Point(15, 105);
             MultiplierButton.Name = "MultiplierButton";
             MultiplierButton.Size = new Size(159, 23);
@@ -128,6 +129,7 @@
             // SetCustomButton
             // 
             SetCustomButton.BackColor = Color.FromArgb(60, 63, 65);
+            SetCustomButton.FlatStyle = FlatStyle.Flat;
             SetCustomButton.Location = new Point(15, 76);
             SetCustomButton.Name = "SetCustomButton";
             SetCustomButton.Size = new Size(159, 23);
@@ -150,6 +152,7 @@
             // SyncMIntoNomButton
             // 
             SyncMIntoNomButton.BackColor = Color.FromArgb(60, 63, 65);
+            SyncMIntoNomButton.FlatStyle = FlatStyle.Flat;
             SyncMIntoNomButton.Location = new Point(15, 134);
             SyncMIntoNomButton.Name = "SyncMIntoNomButton";
             SyncMIntoNomButton.Size = new Size(159, 23);
@@ -161,6 +164,7 @@
             // SyncNomtoMinButton
             // 
             SyncNomtoMinButton.BackColor = Color.FromArgb(60, 63, 65);
+            SyncNomtoMinButton.FlatStyle = FlatStyle.Flat;
             SyncNomtoMinButton.Location = new Point(15, 163);
             SyncNomtoMinButton.Name = "SyncNomtoMinButton";
             SyncNomtoMinButton.Size = new Size(159, 23);
@@ -172,6 +176,7 @@
             // UpdateTypesFileButton
             // 
             UpdateTypesFileButton.BackColor = Color.FromArgb(60, 63, 65);
+            UpdateTypesFileButton.FlatStyle = FlatStyle.Flat;
             UpdateTypesFileButton.Location = new Point(15, 192);
             UpdateTypesFileButton.Name = "UpdateTypesFileButton";
             UpdateTypesFileButton.Size = new Size(159, 23);
@@ -183,6 +188,7 @@
             // ZeroiseButton
             // 
             ZeroiseButton.BackColor = Color.FromArgb(60, 63, 65);
+            ZeroiseButton.FlatStyle = FlatStyle.Flat;
             ZeroiseButton.Location = new Point(15, 47);
             ZeroiseButton.Name = "ZeroiseButton";
             ZeroiseButton.Size = new Size(159, 23);

@@ -186,21 +186,21 @@ namespace Day2eEditor
         {
             var configs = new object[]
             {
-        eonomyCoreConfig,
-        cfglimitsdefinitionConfig,
-        cfglimitsdefinitionuserConfig,
-        cfgenvironmentConfig,
-        cfgeventspawnsConfig,
-        cfgeventgroupsConfig,
-        CFGGameplayConfig,
-        cfgeffectareaConfig,
-        cfgundergroundtriggersConfig,
-        economyConfig,
-        globalsConfig,
-        TypesConfig,
-        eventsConfig,
-        cfgspawnabletypesConfig,
-        cfgrandompresetsConfig
+                eonomyCoreConfig,
+                cfglimitsdefinitionConfig,
+                cfglimitsdefinitionuserConfig,
+                cfgenvironmentConfig,
+                cfgeventspawnsConfig,
+                cfgeventgroupsConfig,
+                CFGGameplayConfig,
+                cfgeffectareaConfig,
+                cfgundergroundtriggersConfig,
+                economyConfig,
+                globalsConfig,
+                TypesConfig,
+                eventsConfig,
+                cfgspawnabletypesConfig,
+                cfgrandompresetsConfig
             };
 
             var savedFiles = new List<string>();

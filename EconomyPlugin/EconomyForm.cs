@@ -1,6 +1,8 @@
 using Day2eEditor;
 using System.ComponentModel;
+using System.Text.Json;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace EconomyPlugin
 {
@@ -331,10 +333,21 @@ namespace EconomyPlugin
             }
             PlayerDataNodes.Nodes.Add(spawnGearNodes);
             GameplayRootNode.Nodes.Add(PlayerDataNodes);
-            GameplayRootNode.Nodes.Add(new TreeNode($"WorldsData")
+            TreeNode WorldsDataaNodes = new TreeNode($"WorldsData")
             {
                 Tag = _economyManager.CFGGameplayConfig.Data.WorldsData
-            });
+            };
+            TreeNode playerRestrictedAreaFilesNodes = new TreeNode($"playerRestrictedAreaFiles")
+            {
+                Tag = _economyManager.CFGGameplayConfig.Data.WorldsData.playerRestrictedAreaFiles
+            };
+            foreach (string restrictedfile in _economyManager.CFGGameplayConfig.Data.WorldsData.playerRestrictedAreaFiles)
+            {
+                PlayerRestrictedFiles PlayerRestrictedFiles = _economyManager.CFGGameplayConfig.getRestrictedFiles(restrictedfile);
+                playerRestrictedAreaFilesNodes.Nodes.Add(CreateRestrictedfilesNodes(PlayerRestrictedFiles));
+            }
+            WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
+            GameplayRootNode.Nodes.Add(WorldsDataaNodes);
             GameplayRootNode.Nodes.Add(new TreeNode($"BaseBuildingData")
             {
                 Tag = _economyManager.CFGGameplayConfig.Data.BaseBuildingData
@@ -358,7 +371,7 @@ namespace EconomyPlugin
         {
             TreeNode rootNode = new TreeNode(spawnGearPresetFiles.Filename)
             {
-                Tag = "SpawnGearPresetFilesParent"
+                Tag = spawnGearPresetFiles
             };
             rootNode.Nodes.Add(new TreeNode("Name")
             {
@@ -501,6 +514,47 @@ namespace EconomyPlugin
                 Tag = "simpleChildrenTypes"
             });
             return CCTNode;
+        }
+        private TreeNode CreateRestrictedfilesNodes(PlayerRestrictedFiles playerRestrictedFiles)
+        {
+            TreeNode areaNode = new TreeNode(playerRestrictedFiles.Filename)
+            {
+                Tag = playerRestrictedFiles
+            };
+            TreeNode praBoxesNode = new TreeNode("PRABoxes")
+            {
+                Tag = playerRestrictedFiles.PRABoxes
+            };
+            for (int i = 0; i < playerRestrictedFiles.PRABoxes.Count; i++)
+            {
+                var box = playerRestrictedFiles.PRABoxes[i];
+                TreeNode boxNode = new TreeNode($"Box {i + 1}")
+                {
+                    Tag = box
+                };
+
+                boxNode.Nodes.Add("HalfExtents: [" + string.Join(", ", box[0]) + "]");
+                boxNode.Nodes.Add("Orientation: [" + string.Join(", ", box[1]) + "]");
+                boxNode.Nodes.Add("Position: [" + string.Join(", ", box[2]) + "]");
+
+                praBoxesNode.Nodes.Add(boxNode);
+            }
+            TreeNode safePositionsNode = new TreeNode("SafePositions3D");
+            safePositionsNode.Tag = playerRestrictedFiles.SafePositions3D;
+
+            for (int i = 0; i < playerRestrictedFiles.SafePositions3D.Count; i++)
+            {
+                var pos = playerRestrictedFiles.SafePositions3D[i];
+                TreeNode posNode = new TreeNode($"Position {i + 1}: [{string.Join(", ", pos)}]")
+                {
+                    Tag = pos
+                };
+                safePositionsNode.Nodes.Add(posNode);
+            }
+
+            areaNode.Nodes.Add(praBoxesNode);
+            areaNode.Nodes.Add(safePositionsNode);
+            return areaNode;
         }
         //Creating Types Nodes
         private TreeNode CreateTypesConfigNodes()
@@ -919,20 +973,36 @@ namespace EconomyPlugin
         void ShowHandler<T>(T handler, object primaryData, List<TreeNode> selectedNodes)
         where T : IUIHandler
         {
+            if (handler == null)
+            {
+                if (_currentHandler != null)
+                {
+                    var oldControl = _currentHandler.GetControl();
+                    splitContainer1.Panel2.Controls.Remove(oldControl);
+                    oldControl.Dispose();
+                    (_currentHandler as IDisposable)?.Dispose();
+                    _currentHandler = null;
+                }
+                return;
+            }
+
+            // If same type → just reload
             if (_currentHandler != null && _currentHandler.GetType() == typeof(T))
             {
                 _currentHandler.LoadFromData(primaryData, selectedNodes);
                 return;
             }
 
-            // Dispose old control if needed
+            // Dispose old handler if different
             if (_currentHandler != null)
             {
                 var oldControl = _currentHandler.GetControl();
                 splitContainer1.Panel2.Controls.Remove(oldControl);
                 oldControl.Dispose();
+                (_currentHandler as IDisposable)?.Dispose();
             }
 
+            // Set new handler
             _currentHandler = handler;
             handler.LoadFromData(primaryData, selectedNodes);
 
@@ -955,13 +1025,31 @@ namespace EconomyPlugin
         {
             BeginInvoke(new Action(() =>
             {
+                _selectedEventPos = null;
                 _mapControl.Visible = false;
                 //HideAllPanels();
                 //EconomyTV.SelectedNode = e.Node;
                 currentTreeNode = e.Node;
 
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
-                if (e.Node.Tag is EconomySection economydata)
+                if (e.Node.Tag is string _string)
+                {
+                    switch (_string)
+                    {
+                        default:
+                            ShowHandler<IUIHandler>(null, null, null);
+                            break;
+                    }
+                }
+                else if (e.Node.Tag is economyFile)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is globalsFile)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is EconomySection economydata)
                 {
                     economyFile ef = e.Node.Parent.Tag as economyFile;
                     if (ef.IsModded)
@@ -973,41 +1061,13 @@ namespace EconomyPlugin
                     if (gf.IsModded)
                         ShowHandler(new VariablesVarControl(), varData, selectedNodes);
                 }
-                else if (e.Node.Tag is Generaldata)
-                {
-
-                }
-                else if (e.Node.Tag is Playerdata)
-                {
-
-                }
-                else if (e.Node.Tag is Worldsdata)
-                {
-
-                }
-                else if (e.Node.Tag is Basebuildingdata)
-                {
-
-                }
-                else if (e.Node.Tag is Uidata)
-                {
-
-                }
-                else if (e.Node.Tag is CFGGameplayMapData)
-                {
-
-                }
-                else if (e.Node.Tag is VehicleData)
-                {
-
-                }
                 else if (e.Node.Tag is TypesFile typefile)
                 {
                     ShowHandler(new TypesCollectionControl(), typefile, selectedNodes);
                 }
                 else if (e.Node.Tag is Category cat)
                 {
-                    if(e.Node.Parent == null) { return;}
+                    if (e.Node.Parent == null) { return; }
                     ShowHandler(new TypesCollectionControl(), e.Node.Parent.Tag as TypesFile, selectedNodes);
                 }
                 else if (e.Node.Tag is TypeEntry typentry)
@@ -1050,12 +1110,140 @@ namespace EconomyPlugin
                         ShowHandler(new TypesControl(), typentry, selectedNodes);
                     }
                 }
-                else if (e.Node.Tag is SpawnableType)
+                else if (e.Node.Tag is EventsFile)
                 {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is events)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is eventsEvent _event)
+                {
+                    // Build a flattened list of (File, Entry) tuples
+                    var matchingEntries = _economyManager.eventsConfig.AllData
+                        .SelectMany(tf => tf.Data.@event.Select(te => (File: tf, Event: te)))
+                        .Where(x => x.Event.name == _event.name)
+                        .ToList();
 
+                    // Get the latest match (file + entry)
+                    var latestMatch = matchingEntries.LastOrDefault();
+
+
+                    if (latestMatch != default && !ReferenceEquals(latestMatch.Event, _event))
+                    {
+                        var result = MessageBox.Show(
+                            $"This Event is overridden by a later definition in:\n{latestMatch.File.FileName}\n\nJump to it?",
+                            "Type Override Found",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question
+                        );
+                        if (result == DialogResult.Yes)
+                        {
+                            Console.WriteLine($"Jumping to latest override in file: {latestMatch.File.FileName}");
+                            var foundNode = FindNodeByTag(EconomyTV.Nodes, latestMatch.Event);
+                            if (foundNode != null)
+                            {
+                                EconomyTV.SelectedNode = foundNode; // triggers AfterSelect again
+                            }
+                        }
+                        else
+                        {
+                            // User chose No — show current entry
+                            ShowHandler(new EventsControl(), _event, selectedNodes);
+                        }
+                    }
+                    else
+                    {
+                        // Already latest — show control
+                        ShowHandler(new EventsControl(), _event, selectedNodes);
+                    }
+                }
+                else if (e.Node.Tag is eventposdefEvent)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                    _mapControl.Visible = true;
+                    _mapControl.ClearDrawables();
+                }
+                else if (e.Node.Tag is eventposdefEventPos eventpos)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                    _mapControl.Visible = true;
+                    _mapControl.ClearDrawables();
+                    _selectedEventPos = eventpos;
+
+                    _mapControl.MapDoubleClicked -= MapControl_EventSpawnDoubleclicked;
+                    _mapControl.MapDoubleClicked += MapControl_EventSpawnDoubleclicked;
+                    _mapControl.MapsingleClicked -= MapControl_EventSpawnSingleclicked;
+                    _mapControl.MapsingleClicked += MapControl_EventSpawnSingleclicked;
+
+                    eventposdefEvent defevent = e.Node.Parent.Parent.Tag as eventposdefEvent;
+                    DrawEventSpawns(defevent);
+                }
+                else if (e.Node.Tag is CFGGameplayConfig)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is Generaldata)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is Playerdata)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is Worldsdata)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is Basebuildingdata)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is Uidata)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is CFGGameplayMapData)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is VehicleData)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is cfgspawnabletypesFile)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
                 }
             }));
         }
+
+        private void DrawEventSpawns(eventposdefEvent defevent)
+        {
+            foreach (eventposdefEventPos pos in defevent.pos)
+            {
+                if (_selectedEventPos == pos)
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+        }
+
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
         {
             foreach (TreeNode node in nodes)
@@ -1075,7 +1263,7 @@ namespace EconomyPlugin
             currentTreeNode = e.Node;
             if (e.Button == MouseButtons.Right)
             {
-                if(e.Node.Tag.ToString() == "RootNode")
+                if (e.Node.Tag.ToString() == "RootNode")
                 {
                     addNewTypesToolStripMenuItem.Visible = true;
                     removeSelectedToolStripMenuItem.Visible = false;
@@ -1118,6 +1306,29 @@ namespace EconomyPlugin
                     addNewTypesToolStripMenuItem.Visible = true;
                     removeSelectedToolStripMenuItem.Visible = true;
                     TypesCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is TypeEntry typeentry)
+                {
+                    addNewTypesToolStripMenuItem.Visible = false;
+                    removeSelectedToolStripMenuItem.Visible = true;
+                    TypesCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is eventposdefEvent eventpos)
+                {
+                    foreach (ToolStripMenuItem TSMI in EventSpawnContextMenu.Items)
+                    {
+                        TSMI.Visible = false;
+                    }
+                    addNewPosirtionToolStripMenuItem.Visible = true;
+                    importPositionFromdzeToolStripMenuItem.Visible = true;
+                    importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Visible = true;
+                    deleteSelectedEventSpawnToolStripMenuItem.Visible = true;
+                    if (eventpos.pos != null && eventpos.pos.Count > 0)
+                    {
+                        removeAllPositionToolStripMenuItem.Visible = true;
+                        exportPositionTodzeToolStripMenuItem.Visible = true;
+                    }
+                    EventSpawnContextMenu.Show(Cursor.Position);
                 }
             }
         }
@@ -1191,24 +1402,9 @@ namespace EconomyPlugin
                                 out deleteDirectory
                             );
 
-                            _economyManager.economyConfig.AllData.Remove(file);
-
-                            // Delete file on disk
-                            string absFolderPath = Path.Combine(_economyManager.basePath, folderPathRel.Replace("/", "\\"));
-                            string absFilePath = Path.Combine(absFolderPath, fileName);
-                            if (File.Exists(absFilePath))
-                            {
-                                File.Delete(absFilePath);
-                            }
-
-                            // Delete empty directories if needed
-                            if (deleteDirectory)
-                            {
-                                DeleteEmptyFoldersUpToBase(absFolderPath, _economyManager.basePath);
-                            }
-
-                            // Remove file node and clean up empty parent nodes
-                            RemoveTreeNodeAndEmptyParents(fileNode);
+                            RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                            file.toDelete = true;
+                            AppServices.GetRequired<EconomyManager>().eonomyCoreConfig.Save();
                         }
                         else
                         {
@@ -1216,12 +1412,7 @@ namespace EconomyPlugin
                             currentTreeNode.Remove();
                         }
 
-                        MessageBox.Show(
-                             $"Removed section \"{section}\" from {file.FileName}.",
-                            "Section Removed",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
+                        AppServices.GetRequired<EconomyManager>().economyConfig.Save();
                     }
                 }
             }
@@ -1251,24 +1442,10 @@ namespace EconomyPlugin
                                 out deleteDirectory
                             );
 
-                            _economyManager.globalsConfig.AllData.Remove(file);
-
-                            // Delete file on disk
-                            string absFolderPath = Path.Combine(_economyManager.basePath, folderPathRel.Replace("/", "\\"));
-                            string absFilePath = Path.Combine(absFolderPath, fileName);
-                            if (File.Exists(absFilePath))
-                            {
-                                File.Delete(absFilePath);
-                            }
-
-                            // Delete empty directories if needed
-                            if (deleteDirectory)
-                            {
-                                DeleteEmptyFoldersUpToBase(absFolderPath, _economyManager.basePath);
-                            }
-
                             // Remove file node and clean up empty parent nodes
-                            RemoveTreeNodeAndEmptyParents(fileNode);
+                            RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                            file.toDelete = true;
+                            AppServices.GetRequired<EconomyManager>().eonomyCoreConfig.Save();
                         }
                         else
                         {
@@ -1276,12 +1453,7 @@ namespace EconomyPlugin
                             currentTreeNode.Remove();
                         }
 
-                        MessageBox.Show(
-                            $"Removed variable \"{variablevar.name}\" from {file.FileName}.",
-                            "Variable Removed",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
+                        AppServices.GetRequired<EconomyManager>().globalsConfig.Save();
                     }
                 }
             }
@@ -1298,32 +1470,69 @@ namespace EconomyPlugin
                 parent = grandparent;
             }
         }
-        private void DeleteEmptyFoldersUpToBase(string startDir, string stopDir)
-        {
-            DirectoryInfo current = new DirectoryInfo(startDir);
-            DirectoryInfo stop = new DirectoryInfo(stopDir);
 
-            while (current.Exists && !IsSameDirectory(current, stop))
+        private eventposdefEventPos _selectedEventPos;
+        private void MapControl_EventSpawnSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            eventposdefEventPos closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
             {
-                if (!Directory.EnumerateFileSystemEntries(current.FullName).Any())
+                if (child.Tag is eventposdefEventPos pos)
                 {
-                    current.Delete();
-                    current = current.Parent;
-                }
-                else
-                {
-                    break;
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
                 }
             }
-        }
 
-        private bool IsSameDirectory(DirectoryInfo a, DirectoryInfo b)
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        EconomyTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_EventSpawnDoubleclicked(object sender, MapClickEventArgs e)
         {
-            return string.Equals(
-                Path.GetFullPath(a.FullName).TrimEnd(Path.DirectorySeparatorChar),
-                Path.GetFullPath(b.FullName).TrimEnd(Path.DirectorySeparatorChar),
-                StringComparison.OrdinalIgnoreCase
-            );
+            if (_selectedEventPos == null) return;
+
+            _selectedEventPos.x = (decimal)e.MapCoordinates.X;
+            _selectedEventPos.z = (decimal)e.MapCoordinates.Y;
+
+            _mapControl.ClearDrawables();
+
+            eventposdefEvent defevent = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
+
+            DrawEventSpawns(defevent);
+            currentTreeNode.Text = _selectedEventPos.ToString();
         }
 
         /// <summary>
@@ -1352,6 +1561,7 @@ namespace EconomyPlugin
             if (existingFile == null)
             {
                 _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "economy");
+                _economyManager.eonomyCoreConfig.Save();
                 _economyManager.economyConfig.AllData.Add(newFile);
             }
 
@@ -1372,7 +1582,7 @@ namespace EconomyPlugin
 
                 newFile.isDirty = true;
             }
-
+            _economyManager.economyConfig.Save();
             HandleTreeViewSelection(newFile, sectionName, f => GetSectionByName(f.Data, sectionName), EconomyTV);
         }
         private EconomySection CloneSection(EconomySection original)
@@ -1427,6 +1637,7 @@ namespace EconomyPlugin
             if (existingFile == null)
             {
                 _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "globals");
+                _economyManager.eonomyCoreConfig.Save();
                 _economyManager.globalsConfig.AllData.Add(newFile);
             }
 
@@ -1436,6 +1647,7 @@ namespace EconomyPlugin
                 newFile.isDirty = true;
             }
 
+            _economyManager.globalsConfig.Save();
             HandleTreeViewSelection(newFile, sectionName, f => GetVariableByName(f.Data, sectionName), EconomyTV);
         }
         private variablesVar CloneVariable(variablesVar original)
@@ -1470,6 +1682,16 @@ namespace EconomyPlugin
         {
             if (currentTreeNode.Tag is TypesFile typefile)
             {
+                if (!typefile.IsModded)
+                {
+                    var result = MessageBox.Show(
+                                $"this is the Vanilla types file, I suggest you add new types to a custom type file......",
+                                "Vanilla Types File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.OK) { return; }
+                }
                 AddTypes frm = new AddTypes();
                 frm.StartPosition = FormStartPosition.CenterParent;
                 frm.typesname = typefile.FileName;
@@ -1477,14 +1699,15 @@ namespace EconomyPlugin
                 DialogResult dr = frm.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
-                    foreach(TypeEntry te in frm._entries)
+                    foreach (TypeEntry te in frm._entries)
                     {
                         if (typefile.Data.TypeList.Any(x => x.Name == te.Name))
                             continue;
                         typefile.Data.TypeList.Add(te);
-                    };
+                    }
+                    ;
                     typefile.isDirty = true;
-                    
+
                     string relativePath = Path.GetRelativePath(_economyManager.basePath, typefile.FilePath);
                     EconomyTV.Nodes.Remove(currentTreeNode);
                     AddFileToTree(EconomyTV.Nodes[0], relativePath, typefile, CreateTypesfileNodes);
@@ -1520,34 +1743,218 @@ namespace EconomyPlugin
                 }
             }
         }
-
         private void removeSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TypesFile typefile = currentTreeNode.Parent.Parent.Tag as TypesFile;
-            if (typefile.IsModded == false)
+            if (currentTreeNode.Tag is TypesFile typefile)
             {
-                var result = MessageBox.Show(
-                            $"Type entry(s) is in the vanilla types file, are you sure you want to delete it?",
-                            "Vanilla Types File",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question
-                        );
-                if (result == DialogResult.No) { return; };
-            }
-            var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
-            foreach (var node in selectedNodes)
-            {
-                TypeEntry typeeentry = node.Tag as TypeEntry;
-                typefile.Data.TypeList.Remove(typeeentry);
-                var parent = node.Parent;
-                EconomyTV.Nodes.Remove(node);
-                if(parent.Nodes.Count == 0)
+                if (typefile.IsModded == false)
                 {
-                    EconomyTV.Nodes.Remove(parent);
+                    var result = MessageBox.Show(
+                                $"Type TypeFile is in the vanilla types file, You cant delete it......",
+                                "Vanilla Types File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.OK) { return; }
                 }
+                else if (typefile.IsModded == true)
+                {
+                    var result = MessageBox.Show(
+                               $"Are you sure you want to delete this full Types file?",
+                               "Modded Types File",
+                               MessageBoxButtons.YesNo,
+                               MessageBoxIcon.Question
+                           );
+                    if (result == DialogResult.No) { return; }
+                }
+                bool deleteDirectory;
+                string folderPathRel;
+                string fileName;
+
+                _economyManager.eonomyCoreConfig.RemoveCe(
+                    typefile.FileName,
+                    out folderPathRel,
+                    out fileName,
+                    out deleteDirectory
+                );
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                typefile.isDirty = true;
+                typefile.ToDelete = true;
             }
-            typefile.isDirty = true;
-            savefiles();
+            else if (currentTreeNode.Tag is TypeEntry typeentry)
+            {
+                TypesFile _typefile = currentTreeNode.Parent.Parent.Tag as TypesFile;
+                if (_typefile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"Type entry(s) is in the vanilla types file, are you sure you want to delete it?",
+                                "Vanilla Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                   ;
+                }
+                var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
+                foreach (var node in selectedNodes)
+                {
+                    TypeEntry typeeentry = node.Tag as TypeEntry;
+                    _typefile.Data.TypeList.Remove(typeeentry);
+                    var parent = node.Parent;
+                    RemoveTreeNodeAndEmptyParents(node);
+                }
+                _typefile.isDirty = true;
+            }
+        }
+
+        private void importPositionFromdzeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Import Positions";
+            openFileDialog.Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                TreeNode eventposnodes = null;
+                if (eventposdefEvent.pos == null || eventposdefEvent.pos.Count == 0)
+                {
+                    eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+                    if (!EconomyTV.SelectedNode.Nodes.ContainsKey("POS"))
+                    {
+                        eventposnodes = new TreeNode("pos");
+                        eventposnodes.Name = "POS";
+                        eventposnodes.Tag = "PosParent";
+                    }
+                    else
+                    {
+                        eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
+                    }
+                }
+                else
+                {
+                    eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
+                    DialogResult dialogResult = MessageBox.Show("Clear Exisitng Positions?", "Clear position", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+                        eventposnodes.Nodes.Clear();
+
+                    }
+                    eventposnodes.Remove();
+                }
+                switch (openFileDialog.FilterIndex)
+                {
+                    case 1:
+                        string[] fileContent = File.ReadAllLines(filePath);
+                        for (int i = 0; i < fileContent.Length; i++)
+                        {
+                            if (fileContent[i] == "") continue;
+                            string[] linesplit = fileContent[i].Split('|');
+                            string[] XYZ = linesplit[1].Split(' ');
+                            string[] YPR = linesplit[2].Split(' ');
+                            eventposdefEventPos newpos = new eventposdefEventPos()
+                            {
+                                x = Convert.ToDecimal(XYZ[0]),
+                                ySpecified = true,
+                                y = Convert.ToDecimal(XYZ[1]),
+                                z = Convert.ToDecimal(XYZ[2]),
+                                aSpecified = true,
+                                a = Convert.ToDecimal(YPR[0]),
+                                group = null
+
+                            };
+                            if (newpos.a < 0)
+                            {
+                                while (newpos.a < 0)
+                                {
+                                    newpos.a += 360;
+                                }
+                            }
+                            else if (newpos.a >= 360)
+                            {
+                                while (newpos.a >= 360)
+                                {
+                                    newpos.a -= 360;
+                                }
+                            }
+                            eventposdefEvent.pos.Add(newpos);
+                        }
+                        break;
+                    case 2:
+                        ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
+                        foreach (SpawnObjects so in newobjectspawner.Objects)
+                        {
+                            eventposdefEventPos newpos = new eventposdefEventPos()
+                            {
+                                x = Convert.ToDecimal(so.pos[0]),
+                                ySpecified = true,
+                                y = Convert.ToDecimal(so.pos[1]),
+                                z = Convert.ToDecimal(so.pos[2]),
+                                aSpecified = true,
+                                a = Convert.ToDecimal(so.ypr[0]),
+                                group = null
+
+                            };
+                            if (newpos.a < 0)
+                            {
+                                while (newpos.a < 0)
+                                {
+                                    newpos.a += 360;
+                                }
+                            }
+                            else if (newpos.a >= 360)
+                            {
+                                while (newpos.a >= 360)
+                                {
+                                    newpos.a -= 360;
+                                }
+                            }
+                            eventposdefEvent.pos.Add(newpos);
+                        }
+                        break;
+                    case 3:
+                        DZE importfile = DZEHelpers.LoadFile(filePath);
+                        foreach (Editorobject eo in importfile.EditorObjects)
+                        {
+                            eventposdefEventPos newpos = new eventposdefEventPos()
+                            {
+                                x = Convert.ToDecimal(eo.Position[0]),
+                                ySpecified = true,
+                                y = Convert.ToDecimal(eo.Position[1]),
+                                z = Convert.ToDecimal(eo.Position[2]),
+                                aSpecified = true,
+                                a = Convert.ToDecimal(eo.Orientation[0]),
+                                group = null
+
+                            };
+                            if (newpos.a < 0)
+                            {
+                                while (newpos.a < 0)
+                                {
+                                    newpos.a += 360;
+                                }
+                            }
+                            else if (newpos.a >= 360)
+                            {
+                                while (newpos.a >= 360)
+                                {
+                                    newpos.a -= 360;
+                                }
+                            }
+                            eventposdefEvent.pos.Add(newpos);
+                        }
+                        break;
+                }
+                foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                {
+                    TreeNode posnodes = new TreeNode(pos.ToString());
+                    posnodes.Tag = pos;
+                    eventposnodes.Nodes.Add(posnodes);
+                }
+                EconomyTV.SelectedNode.Nodes.Add(eventposnodes);
+                _economyManager.cfgeventspawnsConfig.isDirty = true;
+            }
         }
 
         private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
@@ -1665,6 +2072,8 @@ namespace EconomyPlugin
             parent.Nodes.Add(newSectionNode);
             return newSectionNode;
         }
+
+
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]

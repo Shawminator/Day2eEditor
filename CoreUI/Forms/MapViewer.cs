@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Day2eEditor
 {
     public class MapViewerControl : Control
     {
         private DrawingManager _drawingManager = new DrawingManager();
+        public event EventHandler<MapClickEventArgs> MapDoubleClicked;
+        public event EventHandler<MapClickEventArgs> MapsingleClicked;
 
         private Image _image;
         private float _zoom = 1.0f;
@@ -17,7 +20,13 @@ namespace Day2eEditor
         private Point _mousePosition;
         private Size _mapSize = new Size(1024, 1024); // Logical map coordinate system
 
-       
+
+        private Timer _clickTimer = new Timer { Interval = 100 };
+        private MouseEventArgs _lastClick;
+        private bool _isFirstClick = true;
+        private bool _isDoubleClick = false;
+        private int _elapsed = 0;
+
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Size MapSize
@@ -54,12 +63,42 @@ namespace Day2eEditor
 
         public MapViewerControl()
         {
+            Cursor = Cursors.Hand;
+            _clickTimer.Tick += ClickTimer_Tick;
             DoubleBuffered = true;
             ResizeRedraw = true;
             SetStyle(ControlStyles.ResizeRedraw |
                      ControlStyles.AllPaintingInWmPaint |
                      ControlStyles.OptimizedDoubleBuffer |
                      ControlStyles.UserPaint, true);
+        }
+        private void ClickTimer_Tick(object sender, EventArgs e)
+        {
+            _elapsed += _clickTimer.Interval;
+
+            if (_elapsed >= SystemInformation.DoubleClickTime)
+            {
+                _clickTimer.Stop();
+
+                var mapCoord = GetMapCoordinate(_lastClick.Location);
+
+                if (_isDoubleClick)
+                {
+                    // Double-click action
+                    MapDoubleClicked?.Invoke(this, new MapClickEventArgs(mapCoord));
+                }
+                else
+                {
+                    // Single-click action
+                    //MessageBox.Show($"Left-click at Map Coord:\nX: {mapCoord.X:0.##}, Z: {mapCoord.Y:0.##}","Map Coordinate");
+                    MapsingleClicked?.Invoke(this, new MapClickEventArgs(mapCoord));
+                }
+
+                // Reset click state
+                _isFirstClick = true;
+                _isDoubleClick = false;
+                _elapsed = 0;
+            }
         }
         public void LoadMap(Image image, int mapSize)
         {
@@ -87,6 +126,25 @@ namespace Day2eEditor
 
             return new PointF(mapX, mapY);
         }
+        public PointF MapToScreen(PointF mapCoord)
+        {
+            if (_image == null || _image.Width == 0 || _image.Height == 0)
+                return PointF.Empty;
+
+            // Normalize map coordinates to [0..1]
+            float normalizedX = mapCoord.X / _mapSize.Width;
+            float normalizedY = 1f - (mapCoord.Y / _mapSize.Height); // flip Y to match your GetMapCoordinate
+
+            // Convert to image pixel space
+            float imageX = normalizedX * _image.Width;
+            float imageY = normalizedY * _image.Height;
+
+            // Convert to drawn screen coordinates
+            float screenX = _drawnImageBounds.X + imageX * _drawnImageBounds.Width / _image.Width;
+            float screenY = _drawnImageBounds.Y + imageY * _drawnImageBounds.Height / _image.Height;
+
+            return new PointF(screenX, screenY);
+        }
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -106,6 +164,11 @@ namespace Day2eEditor
 
                 e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 e.Graphics.DrawImage(_image, _drawnImageBounds);
+            }
+
+            foreach (var drawable in _drawingManager.GetDrawables())
+            {
+                drawable.Draw(e.Graphics, _drawnImageBounds, _zoom, _panOffset);
             }
 
             // Optional: draw control border (for visibility)
@@ -142,16 +205,33 @@ namespace Day2eEditor
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Right)
             {
-                var mapCoord = GetMapCoordinate(e.Location);
-                MessageBox.Show($"Right-click at Map Coord:\nX: {mapCoord.X:0.##}, Y: {mapCoord.Y:0.##}", "Map Coordinate");
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
+                Cursor.Current = Cursors.SizeAll;
                 _isPanning = true;
                 _lastMousePos = e.Location;
-                Cursor = Cursors.Hand;
+                return;
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                _lastClick = e;
+
+                if (_isFirstClick)
+                {
+                    _isFirstClick = false;
+                    _elapsed = 0;
+                    _isDoubleClick = false;
+                    _clickTimer.Start();
+                }
+                else
+                {
+                    // Second click within double-click time & area
+                    if ((Math.Abs(e.X - _lastClick.X) <= SystemInformation.DoubleClickSize.Width / 2) &&
+                        (Math.Abs(e.Y - _lastClick.Y) <= SystemInformation.DoubleClickSize.Height / 2))
+                    {
+                        _isDoubleClick = true;
+                    }
+                }
             }
         }
         protected override void OnMouseMove(MouseEventArgs e)
@@ -177,7 +257,7 @@ namespace Day2eEditor
             if (e.Button == MouseButtons.Right)
             {
                 _isPanning = false;
-                Cursor = Cursors.Default;
+                Cursor = Cursors.Hand;
             }
         }
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -212,6 +292,15 @@ namespace Day2eEditor
         {
             base.OnResize(e);
             Invalidate();
+        }
+    }
+    public class MapClickEventArgs : EventArgs
+    {
+        public PointF MapCoordinates { get; }
+
+        public MapClickEventArgs(PointF mapCoords)
+        {
+            MapCoordinates = mapCoords;
         }
     }
 }

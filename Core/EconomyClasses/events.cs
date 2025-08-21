@@ -273,8 +273,9 @@ namespace Day2eEditor
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventsEvent
+    public partial class eventsEvent : IEquatable<eventsEvent>
     {
+        public override bool Equals(object obj) => Equals(obj as eventsEvent);
 
         private int nominalField;
         private int minField;
@@ -491,14 +492,95 @@ namespace Day2eEditor
         {
             children.Remove(currentChild);
         }
+        public bool Equals(eventsEvent other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            // Compare simple fields
+            bool basicEqual =
+                nominal == other.nominal &&
+                min == other.min &&
+                max == other.max &&
+                lifetime == other.lifetime &&
+                restock == other.restock &&
+                saferadius == other.saferadius &&
+                distanceradius == other.distanceradius &&
+                cleanupradius == other.cleanupradius &&
+                secondary == other.secondary &&
+                active == other.active &&
+                name == other.name &&
+                position == other.position &&
+                limit == other.limit;
+
+            if (!basicEqual) return false;
+
+            // Compare flags
+            if ((flags is null) != (other.flags is null)) return false;
+            if (flags != null)
+            {
+                if (flags.deletable != other.flags.deletable ||
+                    flags.init_random != other.flags.init_random ||
+                    flags.remove_damaged != other.flags.remove_damaged)
+                    return false;
+            }
+
+            // Compare children
+            if ((children is null) != (other.children is null)) return false;
+            if (children != null)
+            {
+                if (children.Count != other.children.Count) return false;
+                for (int i = 0; i < children.Count; i++)
+                {
+                    if (!children[i].Equals(other.children[i]))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(nominal);
+            hash.Add(min);
+            hash.Add(max);
+            hash.Add(lifetime);
+            hash.Add(restock);
+            hash.Add(saferadius);
+            hash.Add(distanceradius);
+            hash.Add(cleanupradius);
+            hash.Add(secondary);
+            hash.Add(active);
+            hash.Add(name);
+            hash.Add(position);
+            hash.Add(limit);
+
+            if (flags != null)
+            {
+                hash.Add(flags.deletable);
+                hash.Add(flags.init_random);
+                hash.Add(flags.remove_damaged);
+            }
+
+            if (children != null)
+            {
+                foreach (var child in children)
+                    hash.Add(child);
+            }
+
+            return hash.ToHashCode();
+        }
     }
 
     /// <remarks/>
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventsEventFlags
+    public partial class eventsEventFlags : IEquatable<eventsEventFlags>
     {
+        public override bool Equals(object obj) => Equals(obj as eventsEventFlags);
+
         private int deletableField;
         private int init_randomField;
         private int remove_damagedField;
@@ -542,14 +624,34 @@ namespace Day2eEditor
                 this.remove_damagedField = value;
             }
         }
+
+        public bool Equals(eventsEventFlags other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return deletable == other.deletable &&
+                   init_random == other.init_random &&
+                   remove_damaged == other.remove_damaged;
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(deletable);
+            hash.Add(init_random);
+            hash.Add(remove_damaged);
+            return hash.ToHashCode();
+        }
     }
 
     /// <remarks/>
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventsEventChild
+    public partial class eventsEventChild : IEquatable<eventsEventChild>
     {
+        public override bool Equals(object obj) => Equals(obj as eventsEventChild);
 
         private int lootmaxField;
         private int lootminField;
@@ -629,6 +731,27 @@ namespace Day2eEditor
         public override string ToString()
         {
             return type;
+        }
+        public bool Equals(eventsEventChild other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return lootmax == other.lootmax &&
+                   lootmin == other.lootmin &&
+                   max == other.max &&
+                   min == other.min &&
+                   type == other.type;
+        }
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(lootmax);
+            hash.Add(lootmin);
+            hash.Add(max);
+            hash.Add(min);
+            hash.Add(type);
+            return hash.ToHashCode();
         }
     }
     #endregion events

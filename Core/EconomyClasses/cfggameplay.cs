@@ -184,6 +184,11 @@ namespace Day2eEditor
         {
             return Data.SpawnGearPresetFiles.FirstOrDefault(x => x.Filename == spawnfile);
         }
+
+        public PlayerRestrictedFiles getRestrictedFiles(string restrictedfile)
+        {
+            return Data.RestrictedAreaFiles.FirstOrDefault(x => x.Filename == restrictedfile);
+        }
     }
     
     
@@ -626,8 +631,11 @@ namespace Day2eEditor
     public class PlayerRestrictedFiles
     {
         public string areaName { get; set; }
-        public BindingList<float[][]> PRABoxes { get; set; }
-        public BindingList<float[]> safePositions3D { get; set; }
+        /// <summary>
+        /// Each PRABox = [ halfExtents [x,y,z], orientation [yaw,pitch,roll], position [x,y,z] ]
+        /// </summary>
+        public BindingList<BindingList<BindingList<double>>> PRABoxes { get; set; }
+        public BindingList<BindingList<double>> SafePositions3D { get; set; }
 
         [JsonIgnore]
         public bool isDirty;

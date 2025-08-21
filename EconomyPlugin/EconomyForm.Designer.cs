@@ -44,15 +44,28 @@ namespace EconomyPlugin
             toolStripMenuItem1 = new ToolStripMenuItem();
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem2 = new ToolStripMenuItem();
+            EventSpawnContextMenu = new ContextMenuStrip(components);
+            addNewEventSpawnToolStripMenuItem = new ToolStripMenuItem();
+            deleteSelectedEventSpawnToolStripMenuItem = new ToolStripMenuItem();
+            importPositionFromdzeToolStripMenuItem = new ToolStripMenuItem();
+            exportPositionTodzeToolStripMenuItem = new ToolStripMenuItem();
+            addNewPosirtionToolStripMenuItem = new ToolStripMenuItem();
+            removeSelectedPositionToolStripMenuItem = new ToolStripMenuItem();
+            removeAllPositionToolStripMenuItem = new ToolStripMenuItem();
+            exportGroupSpawnTodzeToolStripMenuItem = new ToolStripMenuItem();
+            importPositionAndCreateEventgroupFormdzeToolStripMenuItem = new ToolStripMenuItem();
             TypesCM = new ContextMenuStrip(components);
             addNewTypesToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             EditPropertyCMS.SuspendLayout();
             panel1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
+            EventSpawnContextMenu.SuspendLayout();
             TypesCM.SuspendLayout();
             SuspendLayout();
             // 
@@ -102,13 +115,13 @@ namespace EconomyPlugin
             EditPropertyCMS.Items.AddRange(new ToolStripItem[] { editPropertyToolStripMenuItem, setToDefaultToolStripMenuItem });
             EditPropertyCMS.Name = "contextMenuStrip1";
             EditPropertyCMS.ShowImageMargin = false;
-            EditPropertyCMS.Size = new Size(122, 48);
+            EditPropertyCMS.Size = new Size(123, 48);
             // 
             // editPropertyToolStripMenuItem
             // 
             editPropertyToolStripMenuItem.ForeColor = SystemColors.Control;
             editPropertyToolStripMenuItem.Name = "editPropertyToolStripMenuItem";
-            editPropertyToolStripMenuItem.Size = new Size(121, 22);
+            editPropertyToolStripMenuItem.Size = new Size(122, 22);
             editPropertyToolStripMenuItem.Text = "Edit Property";
             editPropertyToolStripMenuItem.Click += editPropertyToolStripMenuItem_Click;
             // 
@@ -116,7 +129,7 @@ namespace EconomyPlugin
             // 
             setToDefaultToolStripMenuItem.ForeColor = SystemColors.Control;
             setToDefaultToolStripMenuItem.Name = "setToDefaultToolStripMenuItem";
-            setToDefaultToolStripMenuItem.Size = new Size(121, 22);
+            setToDefaultToolStripMenuItem.Size = new Size(122, 22);
             setToDefaultToolStripMenuItem.Text = "Set To Default";
             setToDefaultToolStripMenuItem.Click += setToDefaultToolStripMenuItem_Click;
             // 
@@ -173,19 +186,80 @@ namespace EconomyPlugin
             toolStripMenuItem2.Size = new Size(117, 22);
             toolStripMenuItem2.Text = "Edit Property";
             // 
+            // EventSpawnContextMenu
+            // 
+            EventSpawnContextMenu.Items.AddRange(new ToolStripItem[] { addNewEventSpawnToolStripMenuItem, deleteSelectedEventSpawnToolStripMenuItem, importPositionFromdzeToolStripMenuItem, exportPositionTodzeToolStripMenuItem, addNewPosirtionToolStripMenuItem, removeSelectedPositionToolStripMenuItem, removeAllPositionToolStripMenuItem, exportGroupSpawnTodzeToolStripMenuItem, importPositionAndCreateEventgroupFormdzeToolStripMenuItem });
+            EventSpawnContextMenu.Name = "EventSpawnContextMenu";
+            EventSpawnContextMenu.Size = new Size(279, 224);
+            // 
+            // addNewEventSpawnToolStripMenuItem
+            // 
+            addNewEventSpawnToolStripMenuItem.Name = "addNewEventSpawnToolStripMenuItem";
+            addNewEventSpawnToolStripMenuItem.Size = new Size(278, 22);
+            addNewEventSpawnToolStripMenuItem.Text = "Add new event spawn";
+            // 
+            // deleteSelectedEventSpawnToolStripMenuItem
+            // 
+            deleteSelectedEventSpawnToolStripMenuItem.Name = "deleteSelectedEventSpawnToolStripMenuItem";
+            deleteSelectedEventSpawnToolStripMenuItem.Size = new Size(278, 22);
+            deleteSelectedEventSpawnToolStripMenuItem.Text = "Delete selected event spawn";
+            // 
+            // importPositionFromdzeToolStripMenuItem
+            // 
+            importPositionFromdzeToolStripMenuItem.Name = "importPositionFromdzeToolStripMenuItem";
+            importPositionFromdzeToolStripMenuItem.Size = new Size(278, 22);
+            importPositionFromdzeToolStripMenuItem.Text = "Import position";
+            importPositionFromdzeToolStripMenuItem.Click += importPositionFromdzeToolStripMenuItem_Click;
+            // 
+            // exportPositionTodzeToolStripMenuItem
+            // 
+            exportPositionTodzeToolStripMenuItem.Name = "exportPositionTodzeToolStripMenuItem";
+            exportPositionTodzeToolStripMenuItem.Size = new Size(278, 22);
+            exportPositionTodzeToolStripMenuItem.Text = "Export Position";
+            // 
+            // addNewPosirtionToolStripMenuItem
+            // 
+            addNewPosirtionToolStripMenuItem.Name = "addNewPosirtionToolStripMenuItem";
+            addNewPosirtionToolStripMenuItem.Size = new Size(278, 22);
+            addNewPosirtionToolStripMenuItem.Text = "Add new position";
+            // 
+            // removeSelectedPositionToolStripMenuItem
+            // 
+            removeSelectedPositionToolStripMenuItem.Name = "removeSelectedPositionToolStripMenuItem";
+            removeSelectedPositionToolStripMenuItem.Size = new Size(278, 22);
+            removeSelectedPositionToolStripMenuItem.Text = "Remove selected position";
+            // 
+            // removeAllPositionToolStripMenuItem
+            // 
+            removeAllPositionToolStripMenuItem.Name = "removeAllPositionToolStripMenuItem";
+            removeAllPositionToolStripMenuItem.Size = new Size(278, 22);
+            removeAllPositionToolStripMenuItem.Text = "Remove all position";
+            // 
+            // exportGroupSpawnTodzeToolStripMenuItem
+            // 
+            exportGroupSpawnTodzeToolStripMenuItem.Name = "exportGroupSpawnTodzeToolStripMenuItem";
+            exportGroupSpawnTodzeToolStripMenuItem.Size = new Size(278, 22);
+            exportGroupSpawnTodzeToolStripMenuItem.Text = "Export Group Spawn";
+            // 
+            // importPositionAndCreateEventgroupFormdzeToolStripMenuItem
+            // 
+            importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Name = "importPositionAndCreateEventgroupFormdzeToolStripMenuItem";
+            importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Size = new Size(278, 22);
+            importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Text = "Import Position and create Eventgroup";
+            // 
             // TypesCM
             // 
             TypesCM.BackColor = Color.FromArgb(60, 63, 65);
             TypesCM.Items.AddRange(new ToolStripItem[] { addNewTypesToolStripMenuItem, removeSelectedToolStripMenuItem });
             TypesCM.Name = "TypesCM";
             TypesCM.ShowImageMargin = false;
-            TypesCM.Size = new Size(156, 70);
+            TypesCM.Size = new Size(140, 48);
             // 
             // addNewTypesToolStripMenuItem
             // 
             addNewTypesToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewTypesToolStripMenuItem.Name = "addNewTypesToolStripMenuItem";
-            addNewTypesToolStripMenuItem.Size = new Size(155, 22);
+            addNewTypesToolStripMenuItem.Size = new Size(139, 22);
             addNewTypesToolStripMenuItem.Text = "Add New Types";
             addNewTypesToolStripMenuItem.Click += addNewTypesToolStripMenuItem_Click;
             // 
@@ -193,7 +267,7 @@ namespace EconomyPlugin
             // 
             removeSelectedToolStripMenuItem.ForeColor = SystemColors.Control;
             removeSelectedToolStripMenuItem.Name = "removeSelectedToolStripMenuItem";
-            removeSelectedToolStripMenuItem.Size = new Size(155, 22);
+            removeSelectedToolStripMenuItem.Size = new Size(139, 22);
             removeSelectedToolStripMenuItem.Text = "Remove Selected";
             removeSelectedToolStripMenuItem.Click += removeSelectedToolStripMenuItem_Click;
             // 
@@ -212,12 +286,15 @@ namespace EconomyPlugin
             FormClosing += EconomyForm_FormClosing;
             FormClosed += EconomyForm_FormClosed;
             Load += EconomyForm_Load;
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             EditPropertyCMS.ResumeLayout(false);
             panel1.ResumeLayout(false);
             contextMenuStrip1.ResumeLayout(false);
             contextMenuStrip2.ResumeLayout(false);
+            EventSpawnContextMenu.ResumeLayout(false);
             TypesCM.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -231,6 +308,16 @@ namespace EconomyPlugin
         private Button SaveButton;
         private MultiSelectTreeView EconomyTV;
         private ToolStripMenuItem setToDefaultToolStripMenuItem;
+        private ContextMenuStrip EventSpawnContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem addNewEventSpawnToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteSelectedEventSpawnToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importPositionFromdzeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportPositionTodzeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addNewPosirtionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeSelectedPositionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeAllPositionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportGroupSpawnTodzeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importPositionAndCreateEventgroupFormdzeToolStripMenuItem;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem toolStripMenuItem1;
         private ContextMenuStrip contextMenuStrip2;

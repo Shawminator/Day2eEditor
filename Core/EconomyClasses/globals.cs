@@ -58,11 +58,14 @@ namespace Day2eEditor
         {
             var savedFiles = new List<string>();
 
-            foreach (var data in AllData)
+            foreach (var data in AllData.ToList())
             {
-                if (data.isDirty)
+                var result = data.Save();
+                savedFiles.AddRange(result);
+
+                if (data.toDelete)
                 {
-                    savedFiles.AddRange(data.Save());
+                    AllData.Remove(data); // cleanup after deleting
                 }
             }
 
@@ -86,6 +89,7 @@ namespace Day2eEditor
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
+        public bool toDelete { get; set; }
 
         // Metadata for file type and source
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
@@ -121,7 +125,16 @@ namespace Day2eEditor
         }
         public IEnumerable<string> Save()
         {
-            if (isDirty)
+            if(toDelete)
+            {
+                if (File.Exists(_path))
+                {
+                    File.Delete(_path);
+                }
+                // Delete empty directories if needed
+                ShellHelper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
+            }
+            else if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;

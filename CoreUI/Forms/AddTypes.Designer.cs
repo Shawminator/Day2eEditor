@@ -298,6 +298,7 @@
             // button4
             // 
             button4.BackColor = Color.FromArgb(60, 63, 65);
+            button4.FlatStyle = FlatStyle.Flat;
             button4.Location = new Point(12, 34);
             button4.Name = "button4";
             button4.Size = new Size(117, 23);
@@ -309,6 +310,7 @@
             // button2
             // 
             button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.FlatStyle = FlatStyle.Flat;
             button2.Location = new Point(135, 34);
             button2.Name = "button2";
             button2.Size = new Size(179, 23);
@@ -320,6 +322,7 @@
             // button3
             // 
             button3.BackColor = Color.FromArgb(60, 63, 65);
+            button3.FlatStyle = FlatStyle.Flat;
             button3.Location = new Point(320, 34);
             button3.Name = "button3";
             button3.Size = new Size(179, 23);
@@ -332,6 +335,7 @@
             // 
             button5.BackColor = Color.FromArgb(60, 63, 65);
             button5.DialogResult = DialogResult.OK;
+            button5.FlatStyle = FlatStyle.Flat;
             button5.Location = new Point(927, 34);
             button5.Name = "button5";
             button5.Size = new Size(179, 79);
