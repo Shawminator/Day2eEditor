@@ -59,11 +59,14 @@ namespace Day2eEditor
         {
             var savedFiles = new List<string>();
 
-            foreach (var data in AllData)
+            foreach (var data in AllData.ToList())
             {
-                if (data.isDirty)
+                var result = data.Save();
+                savedFiles.AddRange(result);
+
+                if (data.ToDelete)
                 {
-                    savedFiles.AddRange(data.Save());
+                    AllData.Remove(data); // cleanup after deleting
                 }
             }
 
@@ -94,6 +97,7 @@ namespace Day2eEditor
         public string FileType { get; set; }               // "types"
         public bool IsModded { get; set; }                 // true if modded, false if vanilla
         public string ModFolder { get; set; }
+        public bool ToDelete { get; set; }
 
         public EventsFile(string path)
         {
@@ -135,7 +139,19 @@ namespace Day2eEditor
         }
         public IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (ToDelete)
+            {
+                if (File.Exists(_path))
+                {
+                    File.Delete(_path);
+                    // Delete empty directories if needed
+                    ShellHelper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
+                    return new[] { FileName + " (deleted)" };
+                }
+                return Array.Empty<string>();
+            }
+
+            else if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
@@ -210,6 +226,14 @@ namespace Day2eEditor
                     }
                 }
             }
+        }
+
+        public void CreateNew()
+        {
+            Data = new events()
+            {
+                @event = new BindingList<eventsEvent>()
+            };
         }
     }
     #region Events

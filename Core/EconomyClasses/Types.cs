@@ -598,6 +598,35 @@ namespace Day2eEditor
                 Category.NameSpecified = true;
             }
         }
+        public TypeEntry Clone()
+        {
+            return new TypeEntry
+            {
+                Name = Name,
+                NameSpecified = NameSpecified,
+                Nominal = Nominal,
+                NominalSpecified = NominalSpecified,
+                Lifetime = Lifetime,
+                LifetimeSpecified = LifetimeSpecified,
+                Restock = Restock,
+                RestockSpecified = RestockSpecified,
+                Min = Min,
+                MinSpecified = MinSpecified,
+                QuantMin = QuantMin,
+                QuantMinSpecified = QuantMinSpecified,
+                QuantMax = QuantMax,
+                QuantMaxSpecified = QuantMaxSpecified,
+                Cost = Cost,
+                CostSpecified = CostSpecified,
+
+                Flags = Flags?.Clone(),
+                Category = Category?.Clone(),
+
+                Usages = new BindingList<Usage>(Usages?.Select(u => u.Clone()).ToList() ?? new List<Usage>()),
+                Tags = new BindingList<Tag>(Tags?.Select(t => t.Clone()).ToList() ?? new List<Tag>()),
+                Values = new BindingList<Value>(Values?.Select(v => v.Clone()).ToList() ?? new List<Value>())
+            };
+        }
     }
 
     public class Flags
@@ -682,6 +711,15 @@ namespace Day2eEditor
                 return string.Join(", ", flags);
             }
         }
+        public Flags Clone() => new Flags
+        {
+            count_in_cargo = count_in_cargo,
+            count_in_hoarder = count_in_hoarder,
+            count_in_map = count_in_map,
+            count_in_player = count_in_player,
+            crafted = crafted,
+            deloot = deloot
+        };
     }
 
     public class Category
@@ -716,6 +754,11 @@ namespace Day2eEditor
         {
             return Name;
         }
+        public Category Clone() => new Category
+        {
+            Name = Name,
+            NameSpecified = NameSpecified
+        };
     }
 
     public class Usage
@@ -774,6 +817,13 @@ namespace Day2eEditor
                 User == other.User &&
                 UserSpecified == other.UserSpecified;
         }
+        public Usage Clone() => new Usage
+        {
+            Name = Name,
+            NameSpecified = NameSpecified,
+            User = User,
+            UserSpecified = UserSpecified
+        };
     }
 
     public class Tag
@@ -809,6 +859,11 @@ namespace Day2eEditor
                 Name == other.Name &&
                 NameSpecified == other.NameSpecified;
         }
+        public Tag Clone() => new Tag
+        {
+            Name = Name,
+            NameSpecified = NameSpecified
+        };
     }
 
     public class Value
@@ -867,5 +922,12 @@ namespace Day2eEditor
                 User == other.User &&
                 UserSpecified == other.UserSpecified;
         }
+        public Value Clone() => new Value
+        {
+            Name = Name,
+            NameSpecified = NameSpecified,
+            User = User,
+            UserSpecified = UserSpecified
+        };
     }
 }

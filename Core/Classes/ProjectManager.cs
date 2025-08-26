@@ -77,6 +77,78 @@ namespace Day2eEditor
                 loaded.Projects = new BindingList<Project>(sorted);
                 _store = loaded;
             }
+            bool anyChanges = false;
+
+            foreach (var p in _store.Projects)
+            {
+                bool canFix = true;
+
+                // --- Normalize ProjectRoot ---
+                var normalizedRoot = p.ProjectRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (p.ProjectRoot != normalizedRoot)
+                {
+                    Console.WriteLine($"[INFO] Normalised Project root from : {p.ProjectRoot} to {normalizedRoot} for Project : {p.ProjectName}");
+                    p.ProjectRoot = normalizedRoot;
+                    anyChanges = true;
+                }
+
+                // --- Check ProjectRoot ---
+                if (!Directory.Exists(p.ProjectRoot))
+                {
+                    Console.WriteLine($"[ERROR] Project root missing: {p.ProjectRoot}");
+                    canFix = false;
+                }
+
+                // --- Check mission folder ---
+                var missionDir = Path.Combine(p.ProjectRoot, "mpmissions", p.MpMissionPath);
+                if (!Directory.Exists(missionDir))
+                {
+                    Console.WriteLine($"[ERROR] Mission folder missing: {missionDir}");
+                    canFix = false;
+                }
+
+                // --- Optional checks ---
+                var mapFile = Path.Combine("MapAddons", p.MapPath);
+                if (!File.Exists(mapFile))
+                {
+                    Console.WriteLine($"[WARN] Map file missing: {mapFile}, Please download and Install from Project Manager");
+                }
+
+                var profileDir = Path.Combine(p.ProjectRoot, p.ProfileName);
+                if (!Directory.Exists(profileDir))
+                {
+                    Console.WriteLine($"[WARN] Profile directory missing: {profileDir}");
+                    canFix = false;
+                }
+
+                // --- MapSize validation ---
+                var newSize = ShellHelper.Getmapsizefrommissionpath(p.MpMissionPath);
+                if (p.MapSize != newSize)
+                {
+                    p.MapSize = newSize;
+                    anyChanges = true;
+                }
+ 
+                // --- Ensure ProjectName ---
+                if (string.IsNullOrWhiteSpace(p.ProjectName))
+                {
+                    p.ProjectName = Path.GetFileNameWithoutExtension(p.MpMissionPath);
+                    anyChanges = true;
+                }
+
+                // --- If not fixable, clear active project ---
+                if (!canFix && _store.ActiveProject == p.ProjectName)
+                {
+                    Console.WriteLine($"[INFO] Clearing active project: {p.ProjectName}");
+                    _store.ActiveProject = string.Empty;
+                    anyChanges = true;
+                }
+            }
+
+            if (anyChanges)
+            {
+                Save();
+            }
         }
         public void Save()
         {

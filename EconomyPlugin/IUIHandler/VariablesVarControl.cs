@@ -13,17 +13,7 @@ namespace EconomyPlugin
 {
     public partial class VariablesVarControl : UserControl, IUIHandler
     {
-        private variablesVar _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private variablesVar _originalData; // For storing the original state
-
-        public VariablesVarControl()
-        {
-            InitializeComponent();
-        }
-
-
+        public Control GetControl() => this;
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             _data = data as variablesVar ?? throw new InvalidCastException();
@@ -53,7 +43,7 @@ namespace EconomyPlugin
         }
         public void ApplyChanges()
         {
-            // Apply the changes to the underlying data object (no additional logic here if done in LoadFromData)
+            _originalData = CloneData(_data);
         }
         public void Reset()
         {
@@ -64,14 +54,19 @@ namespace EconomyPlugin
         }
         public void HasChanges()
         {
-            // Compare current data with original data to check if changes were made
-            if (!_data.Equals(_originalData))
-            {
-                globalsFile gf = _nodes[0].Parent.Tag as globalsFile;
-                gf.isDirty = true;
-            }
+            globalsFile gf = _nodes.Last().FindParentOfType<globalsFile>();
+            gf.isDirty = !_data.Equals(_originalData);
         }
-        public Control GetControl() => this;
+
+        private variablesVar _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+        private variablesVar _originalData; 
+
+        public VariablesVarControl()
+        {
+            InitializeComponent();
+        }
         private void UpdateTreeNodeText()
         {
             if (_nodes[0] != null)
@@ -97,7 +92,6 @@ namespace EconomyPlugin
         }
         private variablesVar CloneData(variablesVar data)
         {
-            // Clone the original data to preserve it for reset purposes
             return new variablesVar
             {
                 name = data.name,

@@ -156,4 +156,21 @@ namespace Day2eEditor
 
             Process.Start(psi);
         }
-    }}
+        public static int Getmapsizefrommissionpath(string mpmissionpath)
+        {
+            string[] MapSizeList = File.ReadAllLines("Data/MapSizes.txt");
+            Dictionary<string, int> maplist = new Dictionary<string, int>();
+            foreach (string line in MapSizeList)
+            {
+                maplist.Add(line.Split(':')[0], Convert.ToInt32(line.Split(':')[1]));
+            }
+            string currentmap = mpmissionpath.ToLower().Split('.')[1];
+            int size;
+            if (maplist.TryGetValue(currentmap, out size))
+            {
+                return size;
+            }
+            return 0;
+        }
+    }
+}

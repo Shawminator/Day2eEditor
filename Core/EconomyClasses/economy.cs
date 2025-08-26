@@ -339,6 +339,17 @@ namespace Day2eEditor
             }
             return false;
         }
-
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + init.GetHashCode();
+                hash = hash * 23 + load.GetHashCode();
+                hash = hash * 23 + respawn.GetHashCode();
+                hash = hash * 23 + save.GetHashCode();
+                return hash;
+            }
+        }
     }
 }

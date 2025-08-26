@@ -14,18 +14,7 @@ namespace EconomyPlugin
 {
     public partial class TypesCollectionControl : UserControl, IUIHandler
     {
-        private TypesFile _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private TypeEntry _originalData;
-        private Category Cat;
-        private bool isCat = false;
-
         public Control GetControl() => this;
-        public TypesCollectionControl()
-        {
-            InitializeComponent();
-        }
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             _data = data as TypesFile ?? throw new InvalidCastException();
@@ -56,6 +45,18 @@ namespace EconomyPlugin
         }
         public void HasChanges()
         {
+        }
+
+        private TypesFile _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+        private TypeEntry _originalData;
+        private Category Cat;
+        private bool isCat = false;
+
+        public TypesCollectionControl()
+        {
+            InitializeComponent();
         }
         private void button4_Click(object sender, EventArgs e)
         {

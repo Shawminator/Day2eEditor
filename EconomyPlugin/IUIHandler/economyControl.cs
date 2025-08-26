@@ -4,16 +4,7 @@ namespace EconomyPlugin
 {
     public partial class economyControl : UserControl, IUIHandler
     {
-        private EconomySection _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private EconomySection _originalData;
-
         public Control GetControl() => this;
-        public economyControl()
-        {
-            InitializeComponent();
-        }
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             _data = data as EconomySection ?? throw new InvalidCastException();
@@ -32,25 +23,26 @@ namespace EconomyPlugin
         }
         public void ApplyChanges()
         {
-
+            _originalData = CloneData(_data);
         }
         public void Reset()
         {
 
         }
-        private void UpdateTreeNodeText()
-        {
-            if (_nodes.Last() != null)
-                _nodes.Last().Text = $"{economyGB.Text} init:{_data.init} load:{_data.load} respawn:{_data.respawn} save:{_data.save}";
-        }
         public void HasChanges()
         {
-            economyFile ef = _nodes.Last().Parent.Tag as economyFile;
-            // Compare current data with original data to check if changes were made
-            if (!_data.Equals(_originalData))
-            {
-                ef.isDirty = true;
-            }
+            economyFile ef = _nodes.Last().FindParentOfType<economyFile>();
+            ef.isDirty = !_data.Equals(_originalData);
+        }
+
+        private EconomySection _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+        private EconomySection _originalData;
+
+        public economyControl()
+        {
+            InitializeComponent();
         }
         private EconomySection CloneData(EconomySection data)
         {
@@ -62,6 +54,11 @@ namespace EconomyPlugin
                 respawn = data.respawn,
                 save = data.save,
             };
+        }
+        private void UpdateTreeNodeText()
+        {
+            if (_nodes.Last() != null)
+                _nodes.Last().Text = $"{economyGB.Text} init:{_data.init} load:{_data.load} respawn:{_data.respawn} save:{_data.save}";
         }
         private void economyinitCB_CheckedChanged(object sender, EventArgs e)
         {

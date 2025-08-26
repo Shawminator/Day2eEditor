@@ -252,6 +252,30 @@ namespace Day2eEditor
                 }
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null || obj.GetType() != typeof(variablesVar)) return false;
+
+            var other = (variablesVar)obj;
+
+            return this.name == other.name &&
+                   this.type == other.type &&
+                   this.value == other.value;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // allow overflow
+            {
+                int hash = 17;
+                hash = hash * 23 + (name?.GetHashCode() ?? 0);
+                hash = hash * 23 + type.GetHashCode();
+                hash = hash * 23 + (value?.GetHashCode() ?? 0);
+                return hash;
+            }
+        }
     }
 
 

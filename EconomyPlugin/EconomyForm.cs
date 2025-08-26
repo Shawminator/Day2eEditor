@@ -1,14 +1,17 @@
 using Day2eEditor;
 using System.ComponentModel;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EconomyPlugin
 {
     public partial class EconomyForm : Form
     {
-        private IUIHandler _currentHandler;
+        private IUIHandler? _currentHandler;
         private EventGuard _eventGuard = new EventGuard();
         public MapViewerControl MapControl => _mapControl;
         private EconomyManager _economyManager;
@@ -27,6 +30,12 @@ namespace EconomyPlugin
         {
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string imagePath = Path.Combine(appDirectory, "MapAddons", _projectManager.CurrentProject.MapPath);
+            if (!File.Exists(imagePath))
+            {
+                MessageBox.Show($"Map File does not exist for {_projectManager.CurrentProject.ProjectName}\nPlease download it from the Projects Manager");
+                this.BeginInvoke(new Action(Close)); // defer until safe
+                return;
+            }
             Image mapImage = Image.FromFile(imagePath);
             _mapControl.LoadMap(mapImage, _projectManager.CurrentProject.MapSize);
             LoadTreeview();
@@ -38,6 +47,8 @@ namespace EconomyPlugin
         public void savefiles(bool updated = false)
         {
             var savedFiles = _economyManager.Save();
+            if (_currentHandler != null)
+                _currentHandler.ApplyChanges();
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
@@ -86,7 +97,7 @@ namespace EconomyPlugin
             }
         }
         #region Loading treeview
-        private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, TFile file, Func<TFile, TreeNode> createFileNode)
+        private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, TFile file, Func<TFile, TreeNode> createFileNode, bool expand = false)
         {
             string[] parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             TreeNode currentNode = parentNode;
@@ -99,6 +110,12 @@ namespace EconomyPlugin
                 {
                     TreeNode fileNode = createFileNode(file);
                     currentNode.Nodes.Add(fileNode);
+                    if (expand)
+                    {
+                        // Expand all parent folders
+                        fileNode.Expand();
+                        EconomyTV.SelectedNode = fileNode;
+                    }
                 }
                 else
                 {
@@ -119,6 +136,12 @@ namespace EconomyPlugin
                     }
 
                     currentNode = folderNode;
+
+                    if (expand)
+                    {
+                        // Expand all parent folders
+                        currentNode.Expand();
+                    }
                 }
             }
         }
@@ -865,12 +888,12 @@ namespace EconomyPlugin
             if (Preset is randompresetsAttachments)
             {
                 randompresetsAttachments RPA = Preset as randompresetsAttachments;
-                return "Name = " + RPA.name + " Chance = " + RPA.chance;
+                return $"Name = {RPA.name}, Chance = {RPA.chance}";
             }
             else if (Preset is randompresetsCargo)
             {
                 randompresetsCargo RPC = Preset as randompresetsCargo;
-                return "Name = " + RPC.name + " Chance = " + RPC.chance;
+                return $"Name = {RPC.name}, Chance = {RPC.chance}";
             }
             return null;
         }
@@ -884,7 +907,7 @@ namespace EconomyPlugin
         }
         private string GetRPItemString(randompresetsItem item)
         {
-            return "name = " + item.name + " chance = " + item.chance;
+            return $"Name = {item.name}, Chance = {item.chance}";
         }
         //Creating Event and event spawn Nodes
         private TreeNode CreateeventConfigNodes()
@@ -1216,9 +1239,52 @@ namespace EconomyPlugin
                 {
                     ShowHandler<IUIHandler>(null, null, null);
                 }
+                else if (e.Node.Tag is randompresetsAttachments PresetAttachment)
+                {
+                    ShowHandler(new RandompresetsAttchmentsControl(), PresetAttachment, selectedNodes);
+                }
+                else if (e.Node.Tag is randompresetsCargo PresetCargo)
+                {
+                    ShowHandler(new RandompresetsCargoControl(), PresetCargo, selectedNodes);
+                }
+                else if (e.Node.Tag is randompresetsItem item)
+                {
+                    ShowHandler(new RandomPresetItemControl(), item, selectedNodes);
+                }
+                else if (e.Node.Tag is SpawnableType spawnabletype)
+                {
+                    ShowHandler(new SpawnabletypesControl(), spawnabletype, selectedNodes);
+                }
+                else if (e.Node.Tag is SpawnableTypes spawnabletypes)
+                {
+                   
+                }
+                else if (e.Node.Tag is spawnableTypesHoarder spawnableTypesHoarder)
+                {
+
+                }
+                else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
+                {
+
+                }
+                else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
+                {
+
+                }
+                else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem)
+                {
+
+                }
+                else if (e.Node.Tag is spawnableTypeTag spawnableTypeTag)
+                {
+                    ShowHandler(new SpawnabletypesTagsControl(), spawnableTypeTag, selectedNodes);
+                }
+                else if (e.Node.Tag is spawnableTypeDamage spawnableTypeDamage)
+                {
+                    ShowHandler(new SpawnabletypesDamageControl(), spawnableTypeDamage, selectedNodes);
+                }
             }));
         }
-
         private void DrawEventSpawns(eventposdefEvent defevent)
         {
             foreach (eventposdefEventPos pos in defevent.pos)
@@ -1243,7 +1309,6 @@ namespace EconomyPlugin
                 }
             }
         }
-
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
         {
             foreach (TreeNode node in nodes)
@@ -1265,8 +1330,13 @@ namespace EconomyPlugin
             {
                 if (e.Node.Tag.ToString() == "RootNode")
                 {
-                    addNewTypesToolStripMenuItem.Visible = true;
-                    removeSelectedToolStripMenuItem.Visible = false;
+                    TypesCM.Items.Clear();
+                    TypesCM.Items.Add(addNewTypesToolStripMenuItem);
+                    TypesCM.Items.Add(new ToolStripSeparator());
+                    TypesCM.Items.Add(AddNewEventsToolstripMenuItem);
+                    TypesCM.Items.Add(new ToolStripSeparator());
+                    TypesCM.Items.Add(addNewRandomPresetFileToolStripMenuItem);
+
                     TypesCM.Show(Cursor.Position);
                 }
                 else if (e.Node.Tag is EconomySection economydata)
@@ -1303,15 +1373,29 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is TypesFile TypeFile)
                 {
-                    addNewTypesToolStripMenuItem.Visible = true;
-                    removeSelectedToolStripMenuItem.Visible = true;
+                    TypesCM.Items.Clear();
+                    TypesCM.Items.Add(addNewTypesToolStripMenuItem);
+                    TypesCM.Items.Add(removeSelectedToolStripMenuItem);
                     TypesCM.Show(Cursor.Position);
                 }
                 else if (e.Node.Tag is TypeEntry typeentry)
                 {
-                    addNewTypesToolStripMenuItem.Visible = false;
-                    removeSelectedToolStripMenuItem.Visible = true;
+                    TypesCM.Items.Clear();
+                    TypesCM.Items.Add(removeSelectedToolStripMenuItem);
                     TypesCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is EventsFile eventfile)
+                {
+                    EventsCM.Items.Clear();
+                    EventsCM.Items.Add(AddNewEventsToolstripMenuItem);
+                    EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+                    EventsCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is eventsEvent)
+                {
+                    EventsCM.Items.Clear();
+                    EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+                    EventsCM.Show(Cursor.Position);
                 }
                 else if (e.Node.Tag is eventposdefEvent eventpos)
                 {
@@ -1330,6 +1414,46 @@ namespace EconomyPlugin
                     }
                     EventSpawnContextMenu.Show(Cursor.Position);
                 }
+                else if (e.Node.Tag.ToString() == "Attachments")
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewAttchementToolStripMenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "Cargo")
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewCargoToolStripMenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is cfgrandompresetsFile rpfile)
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                    
+                }
+                else if (e.Node.Tag is randompresetsAttachments)
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is randompresetsCargo)
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is randompresetsItem item)
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                }
+                
             }
         }
         private void editPropertyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1526,6 +1650,7 @@ namespace EconomyPlugin
 
             _selectedEventPos.x = (decimal)e.MapCoordinates.X;
             _selectedEventPos.z = (decimal)e.MapCoordinates.Y;
+            _economyManager.cfgeventspawnsConfig.isDirty = true;
 
             _mapControl.ClearDrawables();
 
@@ -1685,7 +1810,7 @@ namespace EconomyPlugin
                 if (!typefile.IsModded)
                 {
                     var result = MessageBox.Show(
-                                $"this is the Vanilla types file, I suggest you add new types to a custom type file......",
+                                $"This is the Vanilla types file, I suggest you add new types to a custom type file......\n\nIf you dont have any custom types yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new types.",
                                 "Vanilla Types File",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Question
@@ -1793,7 +1918,6 @@ namespace EconomyPlugin
                                 MessageBoxIcon.Question
                             );
                     if (result == DialogResult.No) { return; }
-                   ;
                 }
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
                 foreach (var node in selectedNodes)
@@ -1957,6 +2081,441 @@ namespace EconomyPlugin
             }
         }
 
+        private void AddNewEventsToolstripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is EventsFile eventfile)
+            {
+                if (!eventfile.IsModded)
+                {
+                    var result = MessageBox.Show(
+                                $"This is the Vanilla Events file, I suggest you add new Events to a custom Event file......\n\nIf you dont have any custom Events files yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new events.",
+                                "Vanilla Types File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.OK) { return; }
+                }
+                else
+                {
+                    eventsEvent neweventEvent = new eventsEvent()
+                    {
+                        name = "NewEvent",
+                        nominal = 0,
+                        min = 0,
+                        max = 0,
+                        lifetime = 0,
+                        restock = 0,
+                        saferadius = 0,
+                        distanceradius = 0,
+                        cleanupradius = 0,
+                        position = position.@fixed,
+                        limit = limit.child,
+                        active = 0,
+                        flags = new eventsEventFlags(),
+                        children = new BindingList<eventsEventChild>()
+                    };
+                    eventfile.Data.AddnewEvent(neweventEvent);
+                    eventfile.isDirty = true;
+                    currentTreeNode.Nodes.Add(new TreeNode(neweventEvent.name)
+                    {
+                        Tag = neweventEvent
+                    });
+                }
+            }
+            else
+            {
+                AddEventFile frm = new AddEventFile();
+                frm.StartPosition = FormStartPosition.CenterParent;
+                DialogResult dr = frm.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    string newmodPath = frm.moddir.Replace("/", "\\");
+                    string typesfile = frm.typesname + ".xml";
+                    string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+
+                    EventsFile newEventsfile = new EventsFile(newPath)
+                    {
+                        FileType = "events",
+                        IsModded = true,
+                        ModFolder = newmodPath
+                    };
+                    newEventsfile.CreateNew();
+                    newEventsfile.Data.@event = frm._entries;
+                    newEventsfile.isDirty = true;
+                    _economyManager.eonomyCoreConfig.AddCe(newEventsfile.ModFolder, newEventsfile.FileName, "events");
+                    _economyManager.eventsConfig.AllData.Add(newEventsfile);
+                    string relativePath = Path.GetRelativePath(_economyManager.basePath, newEventsfile.FilePath);
+                    AddFileToTree(EconomyTV.Nodes[0], relativePath, newEventsfile, CreateEventNodes);
+                    savefiles();
+                }
+            }
+        }
+        private void RemoveEventsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is EventsFile eventfile)
+            {
+                if (eventfile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"this is in the vanilla Events file, You cant delete it......",
+                                "Vanilla Event File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.OK) { return; }
+                }
+                else if (eventfile.IsModded == true)
+                {
+                    var result = MessageBox.Show(
+                               $"Are you sure you want to delete this full Events file?",
+                               "Modded event File",
+                               MessageBoxButtons.YesNo,
+                               MessageBoxIcon.Question
+                           );
+                    if (result == DialogResult.No) { return; }
+                }
+                //delete any eventspawns that go along with these events inside this file,
+                //we will check to make sure that no other events are using the eventspawn file prior to removing it.
+                var spawnresult = MessageBox.Show(
+                               $"Do you want me to remove any associated event spawn entries if they are not associated with any other events?",
+                               "remove events spawns",
+                               MessageBoxButtons.YesNo,
+                               MessageBoxIcon.Question
+                           );
+                if (spawnresult == DialogResult.Yes)
+                {
+                    foreach (eventsEvent evev in eventfile.Data.@event)
+                    {
+                        eventposdefEvent evevpoints = _economyManager.cfgeventspawnsConfig.Findevent(evev.name);
+                        int count = 0;
+                        foreach (EventsFile evfile in _economyManager.eventsConfig.AllData)
+                        {
+                            foreach (eventsEvent evev1 in evfile.Data.@event)
+                            {
+                                eventposdefEvent evevpoints1 = _economyManager.cfgeventspawnsConfig.Findevent(evev1.name);
+                                if (evevpoints1 != null && evevpoints1.name == evevpoints.name)
+                                    count++;
+                            }
+                        }
+                        if (count == 1)
+                        {
+                            _economyManager.cfgeventspawnsConfig.Data.@event.Remove(evevpoints);
+                            _economyManager.cfgeventspawnsConfig.isDirty = true;
+                        }
+                    }
+                }
+                bool deleteDirectory;
+                string folderPathRel;
+                string fileName;
+
+                _economyManager.eonomyCoreConfig.RemoveCe(
+                    eventfile.FileName,
+                    out folderPathRel,
+                    out fileName,
+                    out deleteDirectory
+                );
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                eventfile.isDirty = true;
+                eventfile.ToDelete = true;
+            }
+            else if (currentTreeNode.Tag is eventsEvent _event)
+            {
+                EventsFile _eventfile = currentTreeNode.Parent.Tag as EventsFile;
+                if (_eventfile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"Event entry(s) is in the vanilla types file, are you sure you want to delete it?\n perhaps just disabling would be better....",
+                                "Vanilla Events File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
+                var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
+                _eventfile.Data.@event.Remove(_event);
+                var parent = currentTreeNode.Parent;
+                eventposdefEvent points = _economyManager.cfgeventspawnsConfig.Findevent(_event.name);
+                if (points != null)
+                {
+                    int count = 0;
+                    foreach (EventsFile evfile in _economyManager.eventsConfig.AllData)
+                    {
+                        foreach (eventsEvent evev in evfile.Data.@event)
+                        {
+                            eventposdefEvent evevpoints = _economyManager.cfgeventspawnsConfig.Findevent(evev.name);
+                            if (evevpoints != null && evevpoints.name == points.name)
+                                count++;
+                        }
+                    }
+                    if (count == 0)
+                    {
+                        var result = MessageBox.Show(
+                                    $"i have found an associated event spawn, do yo uwant me to remove that as well?",
+                                    "Event Spawn Found.",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question
+                                );
+                        if (result == DialogResult.Yes)
+                        {
+                            _economyManager.cfgeventspawnsConfig.Data.@event.Remove(points);
+                            _economyManager.cfgeventspawnsConfig.isDirty = true;
+                        }
+                    }
+                }
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                _eventfile.isDirty = true;
+            }
+        }
+
+        private void addNewRandomPresetFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string newmodPath = "CustomMods\\Customdb";
+            string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_cfgrandompresets.xml");
+            if (File.Exists(newPath))
+            {
+                var result = MessageBox.Show(
+                                $"Custom cfgrandomPreset allready exists.\nDo you wish to add another one?",
+                                "Vanilla Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                if (result == DialogResult.No) { return; }
+                AddEventFile frm = new AddEventFile();
+                frm.SetTitle = "Add new Random Preset File";
+                frm.Button4visable = false;
+                frm.StartPosition = FormStartPosition.CenterParent;
+                DialogResult dr = frm.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    newmodPath = frm.moddir.Replace("/", "\\");
+                    string typesfile = frm.typesname + ".xml";
+                    newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+
+                    cfgrandompresetsFile newpresetfile = new cfgrandompresetsFile(newPath)
+                    {
+                        FileType = "randompresets",
+                        IsModded = true,
+                        ModFolder = newmodPath
+                    };
+                    newpresetfile.CreateNew();
+                    newpresetfile.isDirty = true;
+                    _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "randompresets");
+                    _economyManager.cfgrandompresetsConfig.AllData.Add(newpresetfile);
+                    string relativePath = Path.GetRelativePath(_economyManager.basePath, newpresetfile.FilePath);
+                    AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateRandomPresetsFileNodes);
+                    savefiles();
+                }
+            }
+            else
+            {
+                cfgrandompresetsFile newpresetfile = new cfgrandompresetsFile(newPath)
+                {
+                    FileType = "randompresets",
+                    IsModded = true,
+                    ModFolder = newmodPath
+                };
+                newpresetfile.CreateNew();
+                newpresetfile.isDirty = true;
+                _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "randompresets");
+                _economyManager.cfgrandompresetsConfig.AllData.Add(newpresetfile);
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, newpresetfile.FilePath);
+                AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateRandomPresetsFileNodes, true);
+                savefiles();
+            }
+        }
+        private void addNewAttchementToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+            if (!rpf.IsModded)
+            {
+                var ismoddedresult = MessageBox.Show(
+                                $"This is the Vanilla Random Preset file, I suggest you add new Attchemnts to a custom Random Preset file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Random Preset.",
+                                "Vanilla Random Presets File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                if (ismoddedresult == DialogResult.OK) { return; }
+            }
+            randompresetsAttachments newattachment = new randompresetsAttachments()
+            {
+                name = "New Attachment, Change Me!!!!",
+                chance = (decimal)1.0,
+                item = new BindingList<randompresetsItem>()
+            };
+            TreeNode IN = new TreeNode(GetpresetString(newattachment))
+            {
+                Tag = newattachment
+            };
+           
+            rpf.Data.Items.Add(newattachment);
+            currentTreeNode.Nodes.Add(IN);
+            EconomyTV.SelectedNode = currentTreeNode.LastNode;
+            rpf.isDirty = true;
+        }
+        private void addNewCargoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+            if (!rpf.IsModded)
+            {
+                var ismoddedresult = MessageBox.Show(
+                                $"This is the Vanilla Random Preset file, I suggest you add new Cargo items to a custom Random Preset file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Random Preset.",
+                                "Vanilla Random Presets File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                if (ismoddedresult == DialogResult.OK) { return; }
+            }
+            randompresetsCargo newcargo = new randompresetsCargo()
+            {
+                name = "New Cargo Change Me!!!!",
+                chance = (decimal)1.0,
+                item = new BindingList<randompresetsItem>()
+            };
+            TreeNode IN = new TreeNode(GetpresetString(newcargo))
+            {
+                Tag = newcargo
+            };
+            
+            rpf.Data.Items.Add(newcargo);
+            currentTreeNode.Nodes.Add(IN);
+            EconomyTV.SelectedNode = currentTreeNode.LastNode;
+            rpf.isDirty = true;
+        }
+        private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+            AddItemfromTypes form = new AddItemfromTypes();
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    randompresetsItem newitem = new randompresetsItem()
+                    {
+                        name = l,
+                        chance = (decimal)1.0
+                    };
+                    if (currentTreeNode.Tag is randompresetsAttachments attachments)
+                    {
+                        attachments.item.Add(newitem);
+                    }
+                    else if (currentTreeNode.Tag is randompresetsCargo cargo)
+                    {
+                        cargo.item.Add(newitem);
+                    }
+                    currentTreeNode.Nodes.Add(CreateRPItem(newitem));
+                }
+                EconomyTV.SelectedNode = currentTreeNode.LastNode;
+               
+                rpf.isDirty = true;
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+        }
+        private void removeSelectedToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is cfgrandompresetsFile randompresetsfile)
+            {
+                if (randompresetsfile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"This Random Preset file is in the vanilla file, You cant delete it......",
+                                "Vanilla Random Preset File",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.OK) { return; }
+                }
+                else if (randompresetsfile.IsModded == true)
+                {
+                    var result = MessageBox.Show(
+                               $"Are you sure you want to delete this full Random Preset file?",
+                               "Modded Random Preset File",
+                               MessageBoxButtons.YesNo,
+                               MessageBoxIcon.Question
+                           );
+                    if (result == DialogResult.No) { return; }
+                }
+                bool deleteDirectory;
+                string folderPathRel;
+                string fileName;
+
+                _economyManager.eonomyCoreConfig.RemoveCe(
+                    randompresetsfile.FileName,
+                    out folderPathRel,
+                    out fileName,
+                    out deleteDirectory
+                );
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                randompresetsfile.isDirty = true;
+                randompresetsfile.ToDelete = true;
+            }
+            else if (currentTreeNode.Tag is randompresetsAttachments randompresetsAttachments)
+            {
+                cfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+                if (_randompresetsfile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"Preset Attchment is in the vanilla Random Preset file, are you sure you want to delete it?",
+                                "Vanilla Random Preset File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
+                _randompresetsfile.Data.Items.Remove(randompresetsAttachments);
+                var parent = currentTreeNode.Parent;
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                _randompresetsfile.isDirty = true;
+            }
+            else if (currentTreeNode.Tag is randompresetsCargo randompresetsCargo)
+            {
+                cfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+                if (_randompresetsfile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"Preset Cargo is in the vanilla Random Preset file, are you sure you want to delete it?",
+                                "Vanilla Random Preset File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
+                _randompresetsfile.Data.Items.Remove(randompresetsCargo);
+                var parent = currentTreeNode.Parent;
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                _randompresetsfile.isDirty = true;
+            }
+            else if (currentTreeNode.Tag is randompresetsItem randompresetsItem)
+            {
+                cfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+                if (_randompresetsfile.IsModded == false)
+                {
+                    var result = MessageBox.Show(
+                                $"Preset Item is in the vanilla Random Preset file, are you sure you want to delete it?",
+                                "Vanilla Random Preset File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
+                if (currentTreeNode.Parent.Tag is randompresetsAttachments currentattchment)
+                {
+                    currentattchment.item.Remove(randompresetsItem);
+                }
+                else if (currentTreeNode.Parent.Tag is randompresetsCargo currentcargo)
+                {
+                    currentcargo.item.Remove(randompresetsItem);
+                }
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                _randompresetsfile.isDirty = true;
+            }
+            
+        }
+
         private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
                     where TFile : class
                     where TSection : class
@@ -2111,5 +2670,4 @@ namespace EconomyPlugin
             }
         }
     }
-
 }

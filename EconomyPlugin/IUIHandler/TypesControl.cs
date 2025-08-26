@@ -1,17 +1,77 @@
 ﻿using Day2eEditor;
 using System.ComponentModel;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EconomyPlugin
 {
     public partial class TypesControl : UserControl, IUIHandler
     {
-        private TypeEntry _data;
+        public Control GetControl() => this;
+        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        {
+            _currentdata = data as TypeEntry ?? throw new InvalidCastException();
+            _nodes = selectedNodes;
+            typesFile = _nodes.Last().FindParentOfType<TypesFile>();
+            LoadNodesTotypeslist(_nodes);
+            _originalData = CloneData(_entries); // Store original data for reset
+            _suppressEvents = true;
+
+            textBox1.Text = _currentdata.Name;
+            if (_currentdata.Category == null)
+                comboBox1.SelectedIndex = 0;
+            else
+                comboBox1.SelectedIndex = comboBox1.FindStringExact(_currentdata.Category.Name);
+            populateUsage();
+            PopulateCounts();
+            PopulateFlags();
+            PopulateTiers();
+            PopulateTags();
+            _suppressEvents = false;
+        }
+        public void ApplyChanges()
+        {
+            _originalData = CloneData(_entries);
+        }
+        public void Reset()
+        {
+        }
+        public void HasChanges()
+        {
+            typesFile.isDirty = IsDirty();
+        }
+        public bool IsDirty()
+        {
+            if (_entries.Count != _originalData.Count)
+                return true;
+
+            return !_entries.SequenceEqual(_originalData);
+        }
+        private TypesFile typesFile;
+        private TypeEntry _currentdata;
+        private BindingList<TypeEntry> _entries;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
-        private TypeEntry _originalData;
+        private BindingList<TypeEntry> _originalData;
 
-        public Control GetControl() => this;
+        public TypesControl()
+        {
+            InitializeComponent();
+            PopulateDefs();
+            setNumberofTiers();
+        }
+        private void LoadNodesTotypeslist(List<TreeNode> selectedNodes)
+        {
+            _entries = new BindingList<TypeEntry>();
+            foreach (TreeNode _node in selectedNodes)
+            {
+                _entries.Add(_node.Tag as TypeEntry);
+            }
+        }
+        private BindingList<TypeEntry> CloneData(BindingList<TypeEntry> data)
+        {
+            return new BindingList<TypeEntry>(data.Select(d => d.Clone()).ToList());
+        }
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             ListBox lb = sender as ListBox;
@@ -30,31 +90,6 @@ namespace EconomyPlugin
             e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
             e.DrawFocusRectangle();
         }
-        public TypesControl()
-        {
-            InitializeComponent();
-            PopulateDefs();
-            setNumberofTiers();
-        }
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
-        {
-            _data = data as TypeEntry ?? throw new InvalidCastException();
-            _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
-            _suppressEvents = true;
-
-            textBox1.Text = _data.Name;
-            if (_data.Category == null)
-                comboBox1.SelectedIndex = 0;
-            else
-                comboBox1.SelectedIndex = comboBox1.FindStringExact(_data.Category.Name);
-            populateUsage();
-            PopulateCounts();
-            PopulateFlags();
-            PopulateTiers();
-            PopulateTags();
-            _suppressEvents = false;
-        }
         private void PopulateTiers()
         {
             List<CheckBox> checkboxes = flowLayoutPanel1.Controls.OfType<CheckBox>().ToList();
@@ -67,20 +102,20 @@ namespace EconomyPlugin
             {
                 cb.Checked = false;
             }
-            if (_data != null && _data.Values != null)
+            if (_currentdata != null && _currentdata.Values != null)
             {
-                for (int i = 0; i < _data.Values.Count; i++)
+                for (int i = 0; i < _currentdata.Values.Count; i++)
                 {
-                    if (_data.Values[i].User != null && _data.Values[i].User.Count() > 0 && _data.Values[i].Name == null)
+                    if (_currentdata.Values[i].User != null && _currentdata.Values[i].User.Count() > 0 && _currentdata.Values[i].Name == null)
                     {
                         tabControl3.SelectedIndex = 1;
                         try
                         {
-                            flowLayoutPanel2.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _data.Values[i].User).Checked = true;
+                            flowLayoutPanel2.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _currentdata.Values[i].User).Checked = true;
                         }
                         catch
                         {
-                            _data.Values.RemoveAt(i);
+                            _currentdata.Values.RemoveAt(i);
                             i--;
                         }
                     }
@@ -90,11 +125,11 @@ namespace EconomyPlugin
 
                         try
                         {
-                            flowLayoutPanel1.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _data.Values[i].Name).Checked = true;
+                            flowLayoutPanel1.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _currentdata.Values[i].Name).Checked = true;
                         }
                         catch
                         {
-                            _data.Values.RemoveAt(i);
+                            _currentdata.Values.RemoveAt(i);
                             i--;
                         }
                     }
@@ -173,42 +208,42 @@ namespace EconomyPlugin
         }
         private void PopulateCounts()
         {
-            if (typeNomCountNUD.Visible = NomCountCB.Checked = _data.NominalSpecified)
-                typeNomCountNUD.Value = (decimal)_data.Nominal;
-            if (typeMinCountNUD.Visible = MinCountCB.Checked = _data.MinSpecified)
-                typeMinCountNUD.Value = (decimal)_data.Min;
+            if (typeNomCountNUD.Visible = NomCountCB.Checked = _currentdata.NominalSpecified)
+                typeNomCountNUD.Value = (decimal)_currentdata.Nominal;
+            if (typeMinCountNUD.Visible = MinCountCB.Checked = _currentdata.MinSpecified)
+                typeMinCountNUD.Value = (decimal)_currentdata.Min;
             typeLifetimeNUD.Visible = true;
-            typeLifetimeNUD.Value = (decimal)_data.Lifetime;
-            if (typeRestockNUD.Visible = RestockCB.Checked = _data.RestockSpecified)
-                typeRestockNUD.Value = (decimal)_data.Restock;
-            if (typeQuantMINNUD.Visible = QuanMinCB.Checked = _data.QuantMinSpecified)
-                typeQuantMINNUD.Value = (decimal)_data.QuantMin;
-            if (typeQuantMAXNUD.Visible = QuanMaxCB.Checked = _data.QuantMaxSpecified)
-                if (typeCostNUD.Visible = costCB.Checked = _data.CostSpecified)
-                    typeCostNUD.Value = (decimal)_data.Cost;
+            typeLifetimeNUD.Value = (decimal)_currentdata.Lifetime;
+            if (typeRestockNUD.Visible = RestockCB.Checked = _currentdata.RestockSpecified)
+                typeRestockNUD.Value = (decimal)_currentdata.Restock;
+            if (typeQuantMINNUD.Visible = QuanMinCB.Checked = _currentdata.QuantMinSpecified)
+                typeQuantMINNUD.Value = (decimal)_currentdata.QuantMin;
+            if (typeQuantMAXNUD.Visible = QuanMaxCB.Checked = _currentdata.QuantMaxSpecified)
+                if (typeCostNUD.Visible = costCB.Checked = _currentdata.CostSpecified)
+                    typeCostNUD.Value = (decimal)_currentdata.Cost;
         }
         private void populateUsage()
         {
             listBox1.DisplayMember = "Name";
             listBox1.ValueMember = "Value";
-            if (_data.Usages != null)
+            if (_currentdata.Usages != null)
             {
 
 
 
-                listBox1.DataSource = _data.Usages;
+                listBox1.DataSource = _currentdata.Usages;
             }
         }
         private void PopulateFlags()
         {
-            if (_data.Flags != null)
+            if (_currentdata.Flags != null)
             {
-                checkBox1.Checked = _data.Flags.count_in_cargo == 1 ? true : false;
-                checkBox2.Checked = _data.Flags.count_in_hoarder == 1 ? true : false;
-                checkBox3.Checked = _data.Flags.count_in_map == 1 ? true : false;
-                checkBox4.Checked = _data.Flags.count_in_player == 1 ? true : false;
-                checkBox5.Checked = _data.Flags.crafted == 1 ? true : false;
-                checkBox6.Checked = _data.Flags.deloot == 1 ? true : false;
+                checkBox1.Checked = _currentdata.Flags.count_in_cargo == 1 ? true : false;
+                checkBox2.Checked = _currentdata.Flags.count_in_hoarder == 1 ? true : false;
+                checkBox3.Checked = _currentdata.Flags.count_in_map == 1 ? true : false;
+                checkBox4.Checked = _currentdata.Flags.count_in_player == 1 ? true : false;
+                checkBox5.Checked = _currentdata.Flags.crafted == 1 ? true : false;
+                checkBox6.Checked = _currentdata.Flags.deloot == 1 ? true : false;
             }
             else
             {
@@ -224,109 +259,13 @@ namespace EconomyPlugin
         {
             listBox2.DisplayMember = "Name";
             listBox2.ValueMember = "Value";
-            listBox2.DataSource = _data.Tags;
+            listBox2.DataSource = _currentdata.Tags;
         }
-        public void ApplyChanges()
-        {
-
-        }
-        public void Reset()
-        {
-
-        }
-        public void HasChanges()
-        {
-            TypesFile tf = _nodes.Last().Parent.Parent.Tag as TypesFile;
-            // Compare current data with original data to check if changes were made
-            if (!_data.Equals(_originalData))
-            {
-                tf.isDirty = true;
-            }
-        }
-        private TypeEntry CloneData(TypeEntry data)
-        {
-            return new TypeEntry
-            {
-                Name = data.Name,
-                NameSpecified = data.NameSpecified,
-
-                Nominal = data.Nominal,
-                NominalSpecified = data.NominalSpecified,
-
-                Lifetime = data.Lifetime,
-                LifetimeSpecified = data.LifetimeSpecified,
-
-                Restock = data.Restock,
-                RestockSpecified = data.RestockSpecified,
-
-                Min = data.Min,
-                MinSpecified = data.MinSpecified,
-
-                QuantMin = data.QuantMin,
-                QuantMinSpecified = data.QuantMinSpecified,
-
-                QuantMax = data.QuantMax,
-                QuantMaxSpecified = data.QuantMaxSpecified,
-
-                Cost = data.Cost,
-                CostSpecified = data.CostSpecified,
-
-                Flags = data.Flags != null
-                    ? new Flags
-                    {
-                        count_in_cargo = data.Flags.count_in_cargo,
-                        count_in_hoarder = data.Flags.count_in_hoarder,
-                        count_in_map = data.Flags.count_in_map,
-                        count_in_player = data.Flags.count_in_player,
-                        crafted = data.Flags.crafted,
-                        deloot = data.Flags.deloot
-                    }
-                    : null,
-
-                Category = data.Category != null
-                    ? new Category
-                    {
-                        Name = data.Category.Name,
-                        NameSpecified = data.Category.NameSpecified
-                    }
-                    : null,
-
-                Usages = new BindingList<Usage>(
-                    data.Usages.Select(u => new Usage
-                    {
-                        Name = u.Name,
-                        NameSpecified = u.NameSpecified,
-                        User = u.User,
-                        UserSpecified = u.UserSpecified
-                    }).ToList()
-                ),
-
-                Tags = new BindingList<Tag>(
-                    data.Tags.Select(t => new Tag
-                    {
-                        Name = t.Name,
-                        NameSpecified = t.NameSpecified
-                    }).ToList()
-                ),
-
-                Values = new BindingList<Value>(
-                    data.Values.Select(v => new Value
-                    {
-                        Name = v.Name,
-                        NameSpecified = v.NameSpecified,
-                        User = v.User,
-                        UserSpecified = v.UserSpecified
-                    }).ToList()
-                )
-            };
-        }
-
         private void NomCountCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry typeentry = tn.Tag as TypeEntry;
                 typeNomCountNUD.Visible = typeentry.NominalSpecified = NomCountCB.Checked;
                 typeNomCountNUD.Value = 0;
                 typeentry.Nominal = (int)typeNomCountNUD.Value;
@@ -336,12 +275,11 @@ namespace EconomyPlugin
         private void typeNomCountNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                if (looptype.NominalSpecified)
+                if (typeentry.NominalSpecified)
                 {
-                    looptype.Nominal = (int)typeNomCountNUD.Value;
+                    typeentry.Nominal = (int)typeNomCountNUD.Value;
                 }
             }
             HasChanges();
@@ -349,9 +287,9 @@ namespace EconomyPlugin
         private void MinCountCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry typeentry = tn.Tag as TypeEntry;
+
                 typeMinCountNUD.Visible = typeentry.MinSpecified = MinCountCB.Checked;
                 typeMinCountNUD.Value = 0;
                 typeentry.Min = (int)typeMinCountNUD.Value;
@@ -361,12 +299,11 @@ namespace EconomyPlugin
         private void typeMinCountNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                if (looptype.MinSpecified)
+                if (typeentry.MinSpecified)
                 {
-                    looptype.Min = (int)typeMinCountNUD.Value;
+                    typeentry.Min = (int)typeMinCountNUD.Value;
                 }
             }
             HasChanges();
@@ -374,19 +311,19 @@ namespace EconomyPlugin
         private void typeLifetimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                looptype.Lifetime = (int)typeLifetimeNUD.Value;
+
+                typeentry.Lifetime = (int)typeLifetimeNUD.Value;
             }
             HasChanges();
         }
         private void RestockCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry typeentry = tn.Tag as TypeEntry;
+
                 typeRestockNUD.Visible = typeentry.RestockSpecified = RestockCB.Checked;
                 typeRestockNUD.Value = 0;
                 typeentry.Min = (int)typeRestockNUD.Value;
@@ -396,12 +333,12 @@ namespace EconomyPlugin
         private void typeRestockNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                if (looptype.RestockSpecified)
+
+                if (typeentry.RestockSpecified)
                 {
-                    looptype.Restock = (int)typeRestockNUD.Value;
+                    typeentry.Restock = (int)typeRestockNUD.Value;
                 }
             }
             HasChanges();
@@ -409,9 +346,9 @@ namespace EconomyPlugin
         private void QuanMinCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry typeentry = tn.Tag as TypeEntry;
+
                 typeQuantMINNUD.Visible = typeentry.QuantMinSpecified = QuanMinCB.Checked;
                 typeQuantMINNUD.Value = 0;
                 typeentry.QuantMin = (int)typeQuantMINNUD.Value;
@@ -421,12 +358,12 @@ namespace EconomyPlugin
         private void typeQuantMINNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                if (looptype.QuantMinSpecified)
+
+                if (typeentry.QuantMinSpecified)
                 {
-                    looptype.QuantMin = (int)typeQuantMINNUD.Value;
+                    typeentry.QuantMin = (int)typeQuantMINNUD.Value;
                 }
             }
             HasChanges();
@@ -434,9 +371,9 @@ namespace EconomyPlugin
         private void QuanMaxCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry typeentry = tn.Tag as TypeEntry;
+
                 typeQuantMAXNUD.Visible = typeentry.QuantMaxSpecified = QuanMaxCB.Checked;
                 typeQuantMAXNUD.Value = 0;
                 typeentry.QuantMax = (int)typeQuantMAXNUD.Value;
@@ -446,12 +383,12 @@ namespace EconomyPlugin
         private void typeQuantMAXNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                if (looptype.QuantMaxSpecified)
+
+                if (typeentry.QuantMaxSpecified)
                 {
-                    looptype.QuantMax = (int)typeQuantMAXNUD.Value;
+                    typeentry.QuantMax = (int)typeQuantMAXNUD.Value;
                 }
             }
             HasChanges();
@@ -459,9 +396,9 @@ namespace EconomyPlugin
         private void costCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry typeentry = tn.Tag as TypeEntry;
+
                 typeCostNUD.Visible = typeentry.CostSpecified = costCB.Checked;
                 typeCostNUD.Value = 0;
                 typeentry.Cost = (int)typeCostNUD.Value;
@@ -471,31 +408,30 @@ namespace EconomyPlugin
         private void typeCostNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                if (looptype.CostSpecified)
+
+                if (typeentry.CostSpecified)
                 {
-                    looptype.Cost = (int)typeCostNUD.Value;
+                    typeentry.Cost = (int)typeCostNUD.Value;
                 }
             }
             HasChanges();
         }
-
         private void TierCheckBoxchanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             CheckBox cb = sender as CheckBox;
             string tier = cb.Tag.ToString();
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
+
                 if (cb.Checked)
                 {
-                    looptype.AddTier(tier);
+                    typeentry.AddTier(tier);
                 }
                 else
-                    looptype.removetier(tier);
+                    typeentry.removetier(tier);
             }
             _suppressEvents = true;
             PopulateTiers();
@@ -507,19 +443,19 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             CheckBox cb = sender as CheckBox;
             string tier = cb.Tag.ToString();
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
+
                 if (cb.Checked)
                 {
-                    if (looptype.Values != null)
+                    if (typeentry.Values != null)
                     {
-                        looptype.removetiers();
+                        typeentry.removetiers();
                     }
-                    looptype.AdduserTier(tier);
+                    typeentry.AdduserTier(tier);
                 }
                 else
-                    looptype.removeusertier(tier);
+                    typeentry.removeusertier(tier);
             }
             _suppressEvents = true;
             PopulateTiers();
@@ -528,17 +464,16 @@ namespace EconomyPlugin
         }
         private void Button28_Click(object sender, EventArgs e)
         {
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                looptype.removetiers();
+
+                typeentry.removetiers();
             }
             _suppressEvents = true;
             PopulateTiers();
             _suppressEvents = false;
             HasChanges();
         }
-
         private void checkBox117_CheckedChanged(object sender, EventArgs e)
         {
             switch (checkBox117.Checked)
@@ -567,18 +502,18 @@ namespace EconomyPlugin
         {
             if (comboBox2.SelectedItem is listsUsage u)
             {
-                foreach (TreeNode tn in _nodes)
+                foreach (TypeEntry typeentry in _entries)
                 {
-                    TypeEntry looptype = tn.Tag as TypeEntry;
-                    looptype.AddnewUsage(u);
+    
+                    typeentry.AddnewUsage(u);
                 }
             }
             if (comboBox2.SelectedItem is user_listsUser uu)
             {
-                foreach (TreeNode tn in _nodes)
+                foreach (TypeEntry typeentry in _entries)
                 {
-                    TypeEntry looptype = tn.Tag as TypeEntry;
-                    looptype.AddnewUserUsage(uu);
+    
+                    typeentry.AddnewUserUsage(uu);
 
                 }
             }
@@ -587,66 +522,64 @@ namespace EconomyPlugin
         private void button4_Click(object sender, EventArgs e)
         {
             Usage u = listBox1.SelectedItem as Usage;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                looptype.removeusage(u);
+
+                typeentry.removeusage(u);
             }
             HasChanges();
         }
         private void button3_Click(object sender, EventArgs e)
         {
             listsTag t = comboBox4.SelectedItem as listsTag;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                looptype.Addnewtag(t);
+
+                typeentry.Addnewtag(t);
             }
             HasChanges();
         }
         private void button2_Click(object sender, EventArgs e)
         {
             Tag t = listBox2.SelectedItem as Tag;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                looptype.removetag(t);
+
+                typeentry.removetag(t);
             }
             HasChanges();
         }
-
         private void flags_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            foreach (TreeNode tn in _nodes)
+            foreach (TypeEntry typeentry in _entries)
             {
-                TypeEntry looptype = tn.Tag as TypeEntry;
+
                 CheckBox cb = sender as CheckBox;
                 switch (cb.Name)
                 {
                     case "checkBox1":
-                        looptype.Flags.count_in_cargo = checkBox1.Checked == true ? 1 : 0;
+                        typeentry.Flags.count_in_cargo = checkBox1.Checked == true ? 1 : 0;
                         break;
                     case "checkBox2":
-                        looptype.Flags.count_in_hoarder = checkBox2.Checked == true ? 1 : 0;
+                        typeentry.Flags.count_in_hoarder = checkBox2.Checked == true ? 1 : 0;
                         break;
                     case "checkBox3":
-                        looptype.Flags.count_in_map = checkBox3.Checked == true ? 1 : 0;
+                        typeentry.Flags.count_in_map = checkBox3.Checked == true ? 1 : 0;
                         break;
                     case "checkBox4":
-                        looptype.Flags.count_in_player = checkBox4.Checked == true ? 1 : 0;
+                        typeentry.Flags.count_in_player = checkBox4.Checked == true ? 1 : 0;
                         break;
                     case "checkBox5":
-                        looptype.Flags.crafted = checkBox5.Checked == true ? 1 : 0;
+                        typeentry.Flags.crafted = checkBox5.Checked == true ? 1 : 0;
                         break;
                     case "checkBox6":
-                        looptype.Flags.deloot = checkBox6.Checked == true ? 1 : 0;
+                        typeentry.Flags.deloot = checkBox6.Checked == true ? 1 : 0;
                         break;
                 }
             }
             HasChanges();
         }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -658,8 +591,8 @@ namespace EconomyPlugin
             foreach (TreeNode tn in _nodes.ToList()) // Avoid modifying collection during iteration
             {
                 _lastNode = tn;
-                TypeEntry looptype = tn.Tag as TypeEntry;
-                looptype.changecategory(c);
+                TypeEntry typeentry = tn.Tag as TypeEntry;
+                typeentry.changecategory(c);
 
                 // Save expanded state for the moving node
                 bool wasExpanded = tn.IsExpanded;

@@ -468,4 +468,19 @@ namespace Day2eEditor
 
         #endregion
     }
+    public static class TreeNodeExtensions
+    {
+        public static T FindParentOfType<T>(this TreeNode node) where T : class
+        {
+            while (node != null)
+            {
+                if (node.Tag is T match)
+                    return match;
+
+                node = node.Parent;
+            }
+
+            return null;
+        }
+    }
 }

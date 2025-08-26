@@ -41,16 +41,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Maps\Capare_Map.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="MapAddons\Capare_Map.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="Maps\Capare_Map.png.xyz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="MapAddons\Capare_Map.png.xyz">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="Maps\chernarusplus_Map.png">
+    <None Update="MapAddons\chernarusplus_Map.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Maps\chernarusplus_Map.png.xyz">
+    <None Update="MapAddons\chernarusplus_Map.png.xyz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\MapSizes.txt">

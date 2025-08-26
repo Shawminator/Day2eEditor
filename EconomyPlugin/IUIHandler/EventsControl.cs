@@ -6,39 +6,7 @@ namespace EconomyPlugin
 {
     public partial class EventsControl : UserControl, IUIHandler
     {
-        private eventsEvent _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private eventsEvent _originalData;
-        private Category Cat;
-        private bool isCat = false;
-
-        private eventsEventChild CurrentChild;
-        public BindingList<string> AllEvents;
-
         public Control GetControl() => this;
-        public EventsControl()
-        {
-            InitializeComponent();
-            _suppressEvents = true;
-            positionComboBox.DataSource = Enum.GetValues(typeof(position));
-            limitComboBox.DataSource = Enum.GetValues(typeof(limit));
-            AllEvents = new BindingList<string>();
-            foreach (EventsFile eventfile in AppServices.GetRequired<EconomyManager>().eventsConfig.AllData)
-            {
-                foreach (eventsEvent cevents in eventfile.Data.@event)
-                {
-                    if (!AllEvents.Contains(cevents.name))
-                        AllEvents.Add(cevents.name);
-                }
-            }
-            var sortedListInstance = new BindingList<string>(AllEvents.OrderBy(x => x).ToList());
-            sortedListInstance.Insert(0, "None");
-            SecondaryCB.DisplayMember = "DisplayName";
-            SecondaryCB.ValueMember = "Value";
-            SecondaryCB.DataSource = sortedListInstance;
-            _suppressEvents = false;
-        }
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             _data = data as eventsEvent ?? throw new InvalidCastException();
@@ -73,6 +41,74 @@ namespace EconomyPlugin
             ChildrenLB.DataSource = _data.children;
 
             _suppressEvents = false;
+        }
+        public void ApplyChanges()
+        {
+            _originalData = CloneData(_data);
+        }
+        public void Reset()
+        {
+
+        }
+        public void HasChanges()
+        {
+            EventsFile ef = _nodes.Last().FindParentOfType<EventsFile>();
+            ef.isDirty = !_data.Equals(_originalData);
+        }
+
+        private eventsEvent _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+        private eventsEvent _originalData;
+        private Category Cat;
+        private bool isCat = false;
+        private eventsEventChild CurrentChild;
+        public BindingList<string> AllEvents;
+
+        public EventsControl()
+        {
+            InitializeComponent();
+            _suppressEvents = true;
+            positionComboBox.DataSource = Enum.GetValues(typeof(position));
+            limitComboBox.DataSource = Enum.GetValues(typeof(limit));
+            AllEvents = new BindingList<string>();
+            foreach (EventsFile eventfile in AppServices.GetRequired<EconomyManager>().eventsConfig.AllData)
+            {
+                foreach (eventsEvent cevents in eventfile.Data.@event)
+                {
+                    if (!AllEvents.Contains(cevents.name))
+                        AllEvents.Add(cevents.name);
+                }
+            }
+            var sortedListInstance = new BindingList<string>(AllEvents.OrderBy(x => x).ToList());
+            sortedListInstance.Insert(0, "None");
+            SecondaryCB.DisplayMember = "DisplayName";
+            SecondaryCB.ValueMember = "Value";
+            SecondaryCB.DataSource = sortedListInstance;
+            _suppressEvents = false;
+        }
+        private void ClearChildren()
+        {
+            ChildrenLB.DataSource = null;
+            ChildGB.Visible = false;
+        }
+        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            ListBox lb = sender as ListBox;
+            e.DrawBackground();
+            if (lb.Items.Count == 0) return;
+            Brush myBrush = Brushes.Black;
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+            }
+            else
+            {
+                myBrush = Brushes.White;
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(60, 63, 65)), e.Bounds);
+            }
+            e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
+            e.DrawFocusRectangle();
         }
         private eventsEvent CloneData(eventsEvent source)
         {
@@ -127,45 +163,6 @@ namespace EconomyPlugin
             }
 
             return clone;
-        }
-        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            ListBox lb = sender as ListBox;
-            e.DrawBackground();
-            if (lb.Items.Count == 0) return;
-            Brush myBrush = Brushes.Black;
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-            {
-                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
-            }
-            else
-            {
-                myBrush = Brushes.White;
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(60, 63, 65)), e.Bounds);
-            }
-            e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
-            e.DrawFocusRectangle();
-        }
-        private void ClearChildren()
-        {
-            ChildrenLB.DataSource = null;
-            ChildGB.Visible = false;
-        }
-        public void ApplyChanges()
-        {
-
-        }
-        public void Reset()
-        {
-
-        }
-        public void HasChanges()
-        {
-            EventsFile ef = _nodes.Last().Parent.Tag as EventsFile;
-            if (!_data.Equals(_originalData))
-            {
-                ef.isDirty = true;
-            }
         }
         private void ChildrenLB_SelectedIndexChanged(object sender, EventArgs e)
         {

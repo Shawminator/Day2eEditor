@@ -59,11 +59,14 @@ namespace Day2eEditor
         {
             var savedFiles = new List<string>();
 
-            foreach (var data in AllData)
+            foreach (var data in AllData.ToList())
             {
-                if (data.isDirty)
+                var result = data.Save();
+                savedFiles.AddRange(result);
+
+                if (data.ToDelete)
                 {
-                    savedFiles.AddRange(data.Save());
+                    AllData.Remove(data); // cleanup after deleting
                 }
             }
 
@@ -95,6 +98,7 @@ namespace Day2eEditor
         public string FileType { get; set; }               // "types"
         public bool IsModded { get; set; }                 // true if modded, false if vanilla
         public string ModFolder { get; set; }
+        public bool ToDelete { get; set; }
 
         public cfgrandompresetsFile(string path)
         {
@@ -123,7 +127,19 @@ namespace Day2eEditor
         }
         public IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (ToDelete)
+            {
+                if (File.Exists(_path))
+                {
+                    File.Delete(_path);
+                    // Delete empty directories if needed
+                    ShellHelper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
+                    return new[] { FileName + " (deleted)" };
+                }
+                return Array.Empty<string>();
+            }
+
+            else if (isDirty)
             {
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
                 isDirty = false;
@@ -136,6 +152,14 @@ namespace Day2eEditor
         public bool needToSave()
         {
             return isDirty;
+        }
+
+        public void CreateNew()
+        {
+            Data = new randompresets()
+            {
+                Items = new BindingList<object>()
+            };
         }
     }
 
@@ -211,6 +235,16 @@ namespace Day2eEditor
         {
             return name;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not randompresetsAttachments other)
+                return false;
+
+            return chance == other.chance
+                && string.Equals(name, other.name, StringComparison.Ordinal)
+                && ((item == null && other.item == null)
+                    || (item != null && other.item != null && item.SequenceEqual(other.item)));
+        }
     }
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -262,6 +296,17 @@ namespace Day2eEditor
         {
             return name;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not randompresetsCargo other)
+                return false;
+
+            return chance == other.chance
+                && string.Equals(name, other.name, StringComparison.Ordinal)
+                && ((item == null && other.item == null)
+                    || (item != null && other.item != null && item.SequenceEqual(other.item)));
+        }
+
     }
 
     [System.SerializableAttribute()]
@@ -299,6 +344,15 @@ namespace Day2eEditor
         public override string ToString()
         {
             return name;
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is randompresetsItem other)
+            {
+                return this.name == other.name &&
+                       this.chance == other.chance;
+            }
+            return false;
         }
     }
 }

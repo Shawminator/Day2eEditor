@@ -28,6 +28,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="IUIHandler\SpawnabletypesDamageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\RandompresetsCargoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\RandompresetsAttchmentsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\RandomPresetItemControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="IUIHandler\EventsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

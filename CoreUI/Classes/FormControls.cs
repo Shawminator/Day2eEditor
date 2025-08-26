@@ -68,9 +68,12 @@ namespace Day2eEditor
             P.MouseMove += FormMove_MouseMove;
             P.MouseUp += FormMove_MouseUp;
 
-            P2.MouseDown += FormResize_MouseDown;
-            P2.MouseMove += FormResize_MouseMove;
-            P2.MouseUp += FormResize_MouseUp;
+            if (P2 != null)
+            {
+                P2.MouseDown += FormResize_MouseDown;
+                P2.MouseMove += FormResize_MouseMove;
+                P2.MouseUp += FormResize_MouseUp;
+            }
 
             L.MouseDoubleClick += FormMax_MouseDoubleClick;
             L.MouseDown += FormMove_MouseDown;

@@ -274,22 +274,7 @@ namespace ProjectsPlugin
                 CreateProjectbutton.Location = new Point(615, 167);
             }
         }
-        private int Getmapsizefrommissionpath(string mpmissionpath)
-        {
-            string[] MapSizeList = File.ReadAllLines("Data/MapSizes.txt");
-            Dictionary<string, int> maplist = new Dictionary<string, int>();
-            foreach (string line in MapSizeList)
-            {
-                maplist.Add(line.Split(':')[0], Convert.ToInt32(line.Split(':')[1]));
-            }
-            string currentmap = mpmissionpath.ToLower().Split('.')[1];
-            int size;
-            if (maplist.TryGetValue(currentmap, out size))
-            {
-                return size;
-            }
-            return 0;
-        }
+
         private void CreateProjectbutton_Click(object sender, EventArgs e)
         {
             string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
@@ -319,7 +304,7 @@ namespace ProjectsPlugin
 
                 Project project = new Project();
                 project.AddNames(ProjectName);
-                project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
+                project.MapSize = ShellHelper.Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
                 project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
@@ -349,7 +334,7 @@ namespace ProjectsPlugin
 
                 Project project = new Project();
                 project.AddNames(ProjectName);
-                project.MapSize = Getmapsizefrommissionpath(mpmissionpath);
+                project.MapSize = ShellHelper.Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
                 project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
