@@ -1453,7 +1453,13 @@ namespace EconomyPlugin
                     RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
                     RandomPresetsCM.Show(Cursor.Position);
                 }
-
+                else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem) 
+                {
+                    SpawnableTypesCM.Items.Clear();
+                    SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                }
             }
         }
         private void editPropertyToolStripMenuItem_Click(object sender, EventArgs e)
