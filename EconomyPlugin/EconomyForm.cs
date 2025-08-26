@@ -843,11 +843,11 @@ namespace EconomyPlugin
             };
             TreeNode Attatchnode = new TreeNode("Attachments")
             {
-                Tag = "Attachments"
+                Tag = "RandomPresetsAttachments"
             };
             TreeNode CargoNode = new TreeNode("Cargo")
             {
-                Tag = "Cargo"
+                Tag = "RandomPresetsCargo"
             };
             foreach (var RP in rpc.Data.Items)
             {
@@ -1257,7 +1257,7 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is SpawnableTypes spawnabletypes)
                 {
-                   
+
                 }
                 else if (e.Node.Tag is spawnableTypesHoarder spawnableTypesHoarder)
                 {
@@ -1265,15 +1265,15 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
                 {
-
+                    ShowHandler(new SpawnableTypesCargoControl(), spawnableTypeCargo, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
                 {
-
+                    ShowHandler(new SpawnableTypesAttachmentsControl(), spawnableTypeAttachment, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem)
                 {
-
+                    ShowHandler(new SpawnableTypesItemControl(), spawnableTypeItem, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeTag spawnableTypeTag)
                 {
@@ -1414,13 +1414,13 @@ namespace EconomyPlugin
                     }
                     EventSpawnContextMenu.Show(Cursor.Position);
                 }
-                else if (e.Node.Tag.ToString() == "Attachments")
+                else if (e.Node.Tag.ToString() == "RandomPresetsAttachments")
                 {
                     RandomPresetsCM.Items.Clear();
                     RandomPresetsCM.Items.Add(addNewAttchementToolStripMenuItem);
                     RandomPresetsCM.Show(Cursor.Position);
                 }
-                else if (e.Node.Tag.ToString() == "Cargo")
+                else if (e.Node.Tag.ToString() == "RandomPresetsCargo")
                 {
                     RandomPresetsCM.Items.Clear();
                     RandomPresetsCM.Items.Add(addNewCargoToolStripMenuItem);
@@ -1431,7 +1431,7 @@ namespace EconomyPlugin
                     RandomPresetsCM.Items.Clear();
                     RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
                     RandomPresetsCM.Show(Cursor.Position);
-                    
+
                 }
                 else if (e.Node.Tag is randompresetsAttachments)
                 {
@@ -1453,7 +1453,7 @@ namespace EconomyPlugin
                     RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
                     RandomPresetsCM.Show(Cursor.Position);
                 }
-                
+
             }
         }
         private void editPropertyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2346,7 +2346,7 @@ namespace EconomyPlugin
             {
                 Tag = newattachment
             };
-           
+
             rpf.Data.Items.Add(newattachment);
             currentTreeNode.Nodes.Add(IN);
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
@@ -2355,31 +2355,34 @@ namespace EconomyPlugin
         private void addNewCargoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
-            if (!rpf.IsModded)
+            if (rpf != null)
             {
-                var ismoddedresult = MessageBox.Show(
-                                $"This is the Vanilla Random Preset file, I suggest you add new Cargo items to a custom Random Preset file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Random Preset.",
-                                "Vanilla Random Presets File",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Question
-                            );
-                if (ismoddedresult == DialogResult.OK) { return; }
+                if (!rpf.IsModded)
+                {
+                    var ismoddedresult = MessageBox.Show(
+                                    $"This is the Vanilla Random Preset file, I suggest you add new Cargo items to a custom Random Preset file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Random Preset.",
+                                    "Vanilla Random Presets File",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Question
+                                );
+                    if (ismoddedresult == DialogResult.OK) { return; }
+                }
+                randompresetsCargo newcargo = new randompresetsCargo()
+                {
+                    name = "New Cargo Change Me!!!!",
+                    chance = (decimal)1.0,
+                    item = new BindingList<randompresetsItem>()
+                };
+                TreeNode IN = new TreeNode(GetpresetString(newcargo))
+                {
+                    Tag = newcargo
+                };
+
+                rpf.Data.Items.Add(newcargo);
+                currentTreeNode.Nodes.Add(IN);
+                EconomyTV.SelectedNode = currentTreeNode.LastNode;
+                rpf.isDirty = true;
             }
-            randompresetsCargo newcargo = new randompresetsCargo()
-            {
-                name = "New Cargo Change Me!!!!",
-                chance = (decimal)1.0,
-                item = new BindingList<randompresetsItem>()
-            };
-            TreeNode IN = new TreeNode(GetpresetString(newcargo))
-            {
-                Tag = newcargo
-            };
-            
-            rpf.Data.Items.Add(newcargo);
-            currentTreeNode.Nodes.Add(IN);
-            EconomyTV.SelectedNode = currentTreeNode.LastNode;
-            rpf.isDirty = true;
         }
         private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2407,7 +2410,7 @@ namespace EconomyPlugin
                     currentTreeNode.Nodes.Add(CreateRPItem(newitem));
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-               
+
                 rpf.isDirty = true;
             }
             else if (result == DialogResult.Cancel)
@@ -2513,8 +2516,47 @@ namespace EconomyPlugin
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
                 _randompresetsfile.isDirty = true;
             }
-            
+
         }
+
+        private void addNewSpawnableTypesFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewSpawnableTypeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewHoarderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewTagToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewDamageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewItemToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewCargoToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeSelectedToolStripMenuItem1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+
 
         private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
                     where TFile : class
@@ -2631,8 +2673,6 @@ namespace EconomyPlugin
             parent.Nodes.Add(newSectionNode);
             return newSectionNode;
         }
-
-
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]

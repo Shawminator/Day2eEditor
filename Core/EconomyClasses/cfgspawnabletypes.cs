@@ -421,6 +421,15 @@ namespace Day2eEditor
         {
             return "Attachments";
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not spawnableTypeAttachment other)
+                return false;
+
+            return chance == other.chance
+                && chanceSpecified == other.chanceSpecified
+                && string.Equals(preset, other.preset, StringComparison.Ordinal);
+        }
     }
 
     [System.SerializableAttribute()]
@@ -510,6 +519,15 @@ namespace Day2eEditor
         public override string ToString()
         {
             return "Cargo";
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is not spawnableTypeCargo other)
+                return false;
+
+            return chance == other.chance
+                && chanceSpecified == other.chanceSpecified
+                && string.Equals(preset, other.preset, StringComparison.Ordinal);
         }
     }
 
@@ -709,7 +727,20 @@ namespace Day2eEditor
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not spawnableTypeItem other)
+                return false;
 
-
+            return string.Equals(name, other.name, StringComparison.Ordinal)
+                && equip == other.equip
+                && equipSpecified == other.equipSpecified
+                && chance == other.chance
+                && chanceSpecified == other.chanceSpecified
+                && quantmin == other.quantmin
+                && quantminSpecified == other.quantminSpecified
+                && quantmax == other.quantmax
+                && quantmaxSpecified == other.quantmaxSpecified;
+        }
     }
 }

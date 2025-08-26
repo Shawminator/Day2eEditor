@@ -1,13 +1,13 @@
-﻿namespace Day2eEditor
+﻿namespace EconomyPlugin
 {
-    partial class Form1
+    partial class SpawnableTypesItemControl
     {
-        /// <summary>
+        /// <summary> 
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -20,10 +20,10 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Component Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -61,12 +61,12 @@
             // 
             groupBox34.Controls.Add(flowLayoutPanel5);
             groupBox34.ForeColor = SystemColors.ButtonHighlight;
-            groupBox34.Location = new Point(13, 12);
+            groupBox34.Location = new Point(0, 0);
             groupBox34.Margin = new Padding(4, 3, 4, 3);
             groupBox34.Name = "groupBox34";
             groupBox34.Padding = new Padding(4, 3, 4, 3);
             groupBox34.Size = new Size(282, 332);
-            groupBox34.TabIndex = 75;
+            groupBox34.TabIndex = 76;
             groupBox34.TabStop = false;
             groupBox34.Text = "Item";
             // 
@@ -107,6 +107,7 @@
             CargoChangeItemButton.Size = new Size(254, 31);
             CargoChangeItemButton.TabIndex = 5;
             CargoChangeItemButton.Text = "Change Item";
+            CargoChangeItemButton.Click += CargoChangeItemButton_Click;
             // 
             // ItemChanceGB
             // 
@@ -129,6 +130,7 @@
             UseItemchanceCB.TabIndex = 74;
             UseItemchanceCB.Text = "Use chance";
             UseItemchanceCB.UseVisualStyleBackColor = true;
+            UseItemchanceCB.CheckedChanged += UseItemchanceCB_CheckedChanged;
             // 
             // ItemChanceNUD
             // 
@@ -143,6 +145,7 @@
             ItemChanceNUD.Size = new Size(111, 23);
             ItemChanceNUD.TabIndex = 64;
             ItemChanceNUD.TextAlign = HorizontalAlignment.Center;
+            ItemChanceNUD.ValueChanged += ItemChanceNUD_ValueChanged;
             // 
             // checkBox49
             // 
@@ -155,6 +158,7 @@
             checkBox49.TabIndex = 79;
             checkBox49.Text = "Use quant Min/Max";
             checkBox49.UseVisualStyleBackColor = true;
+            checkBox49.CheckedChanged += checkBox49_CheckedChanged;
             // 
             // itemQuantGB
             // 
@@ -178,6 +182,7 @@
             numericUpDown4.Size = new Size(96, 23);
             numericUpDown4.TabIndex = 76;
             numericUpDown4.TextAlign = HorizontalAlignment.Center;
+            numericUpDown4.ValueChanged += numericUpDown4_ValueChanged;
             // 
             // label203
             // 
@@ -200,6 +205,7 @@
             numericUpDown3.Size = new Size(94, 23);
             numericUpDown3.TabIndex = 78;
             numericUpDown3.TextAlign = HorizontalAlignment.Center;
+            numericUpDown3.ValueChanged += numericUpDown3_ValueChanged;
             // 
             // label202
             // 
@@ -223,6 +229,7 @@
             isItemEquipCB.TabIndex = 62;
             isItemEquipCB.Text = "Is Random Preset";
             isItemEquipCB.UseVisualStyleBackColor = true;
+            isItemEquipCB.CheckedChanged += isItemEquipCB_CheckedChanged;
             // 
             // ItemPresetGB
             // 
@@ -267,18 +274,17 @@
             darkButton26.Size = new Size(238, 31);
             darkButton26.TabIndex = 5;
             darkButton26.Text = "Change Preset";
+            darkButton26.Click += darkButton26_Click;
             // 
-            // Form1
+            // SpawnableTypesItemControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            ClientSize = new Size(933, 698);
             Controls.Add(groupBox34);
             ForeColor = SystemColors.Control;
-            Margin = new Padding(4, 3, 4, 3);
-            Name = "Form1";
-            Text = "Form1";
+            Name = "SpawnableTypesItemControl";
+            Size = new Size(289, 342);
             groupBox34.ResumeLayout(false);
             flowLayoutPanel5.ResumeLayout(false);
             flowLayoutPanel5.PerformLayout();
@@ -292,27 +298,27 @@
             ItemPresetGB.ResumeLayout(false);
             ItemEquipGB.ResumeLayout(false);
             ResumeLayout(false);
-
         }
 
         #endregion
-        private System.Windows.Forms.GroupBox groupBox34;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel5;
-        private System.Windows.Forms.TextBox ItemNameTB;
-        private System.Windows.Forms.Button CargoChangeItemButton;
-        private System.Windows.Forms.Panel ItemChanceGB;
-        private System.Windows.Forms.CheckBox UseItemchanceCB;
-        private System.Windows.Forms.NumericUpDown ItemChanceNUD;
-        private System.Windows.Forms.CheckBox checkBox49;
-        private System.Windows.Forms.Panel itemQuantGB;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
-        private System.Windows.Forms.Label label203;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
-        private System.Windows.Forms.Label label202;
-        private System.Windows.Forms.CheckBox isItemEquipCB;
-        private System.Windows.Forms.Panel ItemPresetGB;
-        private System.Windows.Forms.GroupBox ItemEquipGB;
-        private System.Windows.Forms.ComboBox ItemPresetCB;
-        private System.Windows.Forms.Button darkButton26;
+
+        private GroupBox groupBox34;
+        private FlowLayoutPanel flowLayoutPanel5;
+        private TextBox ItemNameTB;
+        private Button CargoChangeItemButton;
+        private Panel ItemChanceGB;
+        private CheckBox UseItemchanceCB;
+        private NumericUpDown ItemChanceNUD;
+        private CheckBox checkBox49;
+        private Panel itemQuantGB;
+        private NumericUpDown numericUpDown4;
+        private Label label203;
+        private NumericUpDown numericUpDown3;
+        private Label label202;
+        private CheckBox isItemEquipCB;
+        private Panel ItemPresetGB;
+        private GroupBox ItemEquipGB;
+        private ComboBox ItemPresetCB;
+        private Button darkButton26;
     }
 }

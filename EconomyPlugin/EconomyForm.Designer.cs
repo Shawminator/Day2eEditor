@@ -62,6 +62,16 @@ namespace EconomyPlugin
             addNewCargoToolStripMenuItem = new ToolStripMenuItem();
             addNewItemToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedRandomPresetToolStripmenuItem = new ToolStripMenuItem();
+            SpawnableTypesCM = new ContextMenuStrip(components);
+            addNewSpawnableTypesFileToolStripMenuItem = new ToolStripMenuItem();
+            addNewSpawnableTypeToolStripMenuItem = new ToolStripMenuItem();
+            addNewHoarderToolStripMenuItem = new ToolStripMenuItem();
+            addNewTagToolStripMenuItem = new ToolStripMenuItem();
+            addNewDamageToolStripMenuItem = new ToolStripMenuItem();
+            addNewItemToolStripMenuItem1 = new ToolStripMenuItem();
+            addNewCargoToolStripMenuItem1 = new ToolStripMenuItem();
+            addNewAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            removeSelectedToolStripMenuItem1 = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -72,6 +82,7 @@ namespace EconomyPlugin
             TypesCM.SuspendLayout();
             EventsCM.SuspendLayout();
             RandomPresetsCM.SuspendLayout();
+            SpawnableTypesCM.SuspendLayout();
             SuspendLayout();
             // 
             // _mapControl
@@ -304,7 +315,7 @@ namespace EconomyPlugin
             RandomPresetsCM.Items.AddRange(new ToolStripItem[] { addNewRandomPresetFileToolStripMenuItem, addNewAttchementToolStripMenuItem, addNewCargoToolStripMenuItem, addNewItemToolStripMenuItem, removeSelectedRandomPresetToolStripmenuItem });
             RandomPresetsCM.Name = "TypesCM";
             RandomPresetsCM.ShowImageMargin = false;
-            RandomPresetsCM.Size = new Size(203, 136);
+            RandomPresetsCM.Size = new Size(203, 114);
             // 
             // addNewRandomPresetFileToolStripMenuItem
             // 
@@ -346,6 +357,86 @@ namespace EconomyPlugin
             removeSelectedRandomPresetToolStripmenuItem.Text = "Remove Selected";
             removeSelectedRandomPresetToolStripmenuItem.Click += removeSelectedToolStripMenuItem1_Click;
             // 
+            // SpawnableTypesCM
+            // 
+            SpawnableTypesCM.BackColor = Color.FromArgb(60, 63, 65);
+            SpawnableTypesCM.Items.AddRange(new ToolStripItem[] { addNewSpawnableTypesFileToolStripMenuItem, addNewSpawnableTypeToolStripMenuItem, addNewHoarderToolStripMenuItem, addNewTagToolStripMenuItem, addNewDamageToolStripMenuItem, addNewItemToolStripMenuItem1, addNewCargoToolStripMenuItem1, addNewAttachmentToolStripMenuItem, removeSelectedToolStripMenuItem1 });
+            SpawnableTypesCM.Name = "TypesCM";
+            SpawnableTypesCM.ShowImageMargin = false;
+            SpawnableTypesCM.Size = new Size(213, 224);
+            // 
+            // addNewSpawnableTypesFileToolStripMenuItem
+            // 
+            addNewSpawnableTypesFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewSpawnableTypesFileToolStripMenuItem.Name = "addNewSpawnableTypesFileToolStripMenuItem";
+            addNewSpawnableTypesFileToolStripMenuItem.Size = new Size(212, 22);
+            addNewSpawnableTypesFileToolStripMenuItem.Text = "Add New Spawnable Types File";
+            addNewSpawnableTypesFileToolStripMenuItem.Click += addNewSpawnableTypesFileToolStripMenuItem_Click;
+            // 
+            // addNewSpawnableTypeToolStripMenuItem
+            // 
+            addNewSpawnableTypeToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewSpawnableTypeToolStripMenuItem.Name = "addNewSpawnableTypeToolStripMenuItem";
+            addNewSpawnableTypeToolStripMenuItem.Size = new Size(212, 22);
+            addNewSpawnableTypeToolStripMenuItem.Text = "Add New Spawnable Type";
+            addNewSpawnableTypeToolStripMenuItem.Click += addNewSpawnableTypeToolStripMenuItem_Click;
+            // 
+            // addNewHoarderToolStripMenuItem
+            // 
+            addNewHoarderToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewHoarderToolStripMenuItem.Name = "addNewHoarderToolStripMenuItem";
+            addNewHoarderToolStripMenuItem.Size = new Size(212, 22);
+            addNewHoarderToolStripMenuItem.Text = "Add New Hoarder";
+            addNewHoarderToolStripMenuItem.Click += addNewHoarderToolStripMenuItem_Click;
+            // 
+            // addNewTagToolStripMenuItem
+            // 
+            addNewTagToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTagToolStripMenuItem.Name = "addNewTagToolStripMenuItem";
+            addNewTagToolStripMenuItem.Size = new Size(212, 22);
+            addNewTagToolStripMenuItem.Text = "Add New Tag";
+            addNewTagToolStripMenuItem.Click += addNewTagToolStripMenuItem_Click;
+            // 
+            // addNewDamageToolStripMenuItem
+            // 
+            addNewDamageToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewDamageToolStripMenuItem.Name = "addNewDamageToolStripMenuItem";
+            addNewDamageToolStripMenuItem.Size = new Size(212, 22);
+            addNewDamageToolStripMenuItem.Text = "Add New Damage";
+            addNewDamageToolStripMenuItem.Click += addNewDamageToolStripMenuItem_Click;
+            // 
+            // addNewItemToolStripMenuItem1
+            // 
+            addNewItemToolStripMenuItem1.ForeColor = SystemColors.Control;
+            addNewItemToolStripMenuItem1.Name = "addNewItemToolStripMenuItem1";
+            addNewItemToolStripMenuItem1.Size = new Size(212, 22);
+            addNewItemToolStripMenuItem1.Text = "Add New Item";
+            addNewItemToolStripMenuItem1.Click += addNewItemToolStripMenuItem1_Click;
+            // 
+            // addNewCargoToolStripMenuItem1
+            // 
+            addNewCargoToolStripMenuItem1.ForeColor = SystemColors.Control;
+            addNewCargoToolStripMenuItem1.Name = "addNewCargoToolStripMenuItem1";
+            addNewCargoToolStripMenuItem1.Size = new Size(212, 22);
+            addNewCargoToolStripMenuItem1.Text = "Add New Cargo";
+            addNewCargoToolStripMenuItem1.Click += addNewCargoToolStripMenuItem1_Click;
+            // 
+            // addNewAttachmentToolStripMenuItem
+            // 
+            addNewAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewAttachmentToolStripMenuItem.Name = "addNewAttachmentToolStripMenuItem";
+            addNewAttachmentToolStripMenuItem.Size = new Size(212, 22);
+            addNewAttachmentToolStripMenuItem.Text = "Add New Attachment";
+            addNewAttachmentToolStripMenuItem.Click += addNewAttachmentToolStripMenuItem_Click;
+            // 
+            // removeSelectedToolStripMenuItem1
+            // 
+            removeSelectedToolStripMenuItem1.ForeColor = SystemColors.Control;
+            removeSelectedToolStripMenuItem1.Name = "removeSelectedToolStripMenuItem1";
+            removeSelectedToolStripMenuItem1.Size = new Size(212, 22);
+            removeSelectedToolStripMenuItem1.Text = "Remove Selected";
+            removeSelectedToolStripMenuItem1.Click += removeSelectedToolStripMenuItem1_Click_1;
+            // 
             // EconomyForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -371,6 +462,7 @@ namespace EconomyPlugin
             TypesCM.ResumeLayout(false);
             EventsCM.ResumeLayout(false);
             RandomPresetsCM.ResumeLayout(false);
+            SpawnableTypesCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -405,5 +497,15 @@ namespace EconomyPlugin
         private ToolStripMenuItem addNewCargoToolStripMenuItem;
         private ToolStripMenuItem addNewItemToolStripMenuItem;
         private ToolStripMenuItem removeSelectedRandomPresetToolStripmenuItem;
+        private ContextMenuStrip SpawnableTypesCM;
+        private ToolStripMenuItem addNewSpawnableTypesFileToolStripMenuItem;
+        private ToolStripMenuItem addNewSpawnableTypeToolStripMenuItem;
+        private ToolStripMenuItem addNewHoarderToolStripMenuItem;
+        private ToolStripMenuItem addNewTagToolStripMenuItem;
+        private ToolStripMenuItem addNewDamageToolStripMenuItem;
+        private ToolStripMenuItem addNewItemToolStripMenuItem1;
+        private ToolStripMenuItem addNewCargoToolStripMenuItem1;
+        private ToolStripMenuItem addNewAttachmentToolStripMenuItem;
+        private ToolStripMenuItem removeSelectedToolStripMenuItem1;
     }
 }
