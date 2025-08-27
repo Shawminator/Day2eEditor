@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Day2eEditor
 {
-    public class CFGGameplayConfig: IConfigLoader
+    public class CFGGameplayConfig : IConfigLoader
     {
         private readonly string _path;
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"

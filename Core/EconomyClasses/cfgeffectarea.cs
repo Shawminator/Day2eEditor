@@ -6,6 +6,8 @@ namespace Day2eEditor
     public class cfgeffectareaConfig : IConfigLoader
     {
         private readonly string _path;
+        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
+        public string FilePath => _path;
         public cfgeffectarea Data { get; private set; }
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();

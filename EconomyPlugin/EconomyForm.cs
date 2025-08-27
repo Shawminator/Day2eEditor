@@ -1,11 +1,6 @@
 using Day2eEditor;
 using System.ComponentModel;
-using System.Reflection;
-using System.Security.Cryptography;
 using System.Text.Json;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EconomyPlugin
 {
@@ -168,10 +163,6 @@ namespace EconomyPlugin
                 AddFileToTree(rootNode, relativePath, gf, CreateGlobalsfileNodes);
             }
 
-            // Gameplay config
-            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.CFGGameplayConfig.Data, CreateGameplayConfigNodes);
-
             // Types config
             foreach (var tf in _economyManager.TypesConfig.AllData)
             {
@@ -199,30 +190,33 @@ namespace EconomyPlugin
                 string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
                 AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
             }
+            // Gameplay config
+            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.CFGGameplayConfig.Data, CreateGameplayConfigNodes);
+            // limitdefinitions
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionConfig, CreatelimitsDefininitionsConfigNodes);
 
+            // limitdefinitionsuser
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionuserConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionuserConfig, CreatelimitsDefininitionsUserConfigNodes);
 
-            //rootNode.Nodes.Add(CreateeconomyConfigNodes());
-            //rootNode.Nodes.Add(CreateGlobalsConfigNodes());
-            //rootNode.Nodes.Add(CreateGameplayConfigNodes());
-            //rootNode.Nodes.Add(CreateTypesConfigNodes());
-            //rootNode.Nodes.Add(CreateSpawnableTypesConfigNodes());
-            //rootNode.Nodes.Add(CreaterandomPresetsConfigNodes());
-            //rootNode.Nodes.Add(CreateeventConfigNodes());
+            // cfgeffectareaConfig
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgeffectareaConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgeffectareaConfig, CreatecfgeffectareaConfigConfigNodes);
+
+            // cfgundergroundtriggersConfig
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgundergroundtriggersConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgundergroundtriggersConfig, CreatecfgundergroundtriggersConfigUserConfigNodes);
+
             EconomyTV.Nodes.Add(rootNode);
         }
+
+
+
+
+
         //creating economy Nodes
-        private TreeNode CreateeconomyConfigNodes()
-        {
-            TreeNode Typesroot = new TreeNode("Economy")
-            {
-                Tag = _economyManager.economyConfig
-            };
-            foreach (economyFile ef in _economyManager.economyConfig.AllData)
-            {
-                Typesroot.Nodes.Add(CreateEconomyfileNodes(ef));
-            }
-            return Typesroot;
-        }
         private TreeNode CreateEconomyfileNodes(economyFile ef)
         {
             TreeNode EconomyRootNode = new TreeNode(ef.FileName)
@@ -293,18 +287,6 @@ namespace EconomyPlugin
             }
         }
         //creating globals Nodes
-        private TreeNode CreateGlobalsConfigNodes()
-        {
-            TreeNode Typesroot = new TreeNode("Globals")
-            {
-                Tag = _economyManager.globalsConfig
-            };
-            foreach (globalsFile gf in _economyManager.globalsConfig.AllData)
-            {
-                Typesroot.Nodes.Add(CreateGlobalsfileNodes(gf));
-            }
-            return Typesroot;
-        }
         private TreeNode CreateGlobalsfileNodes(globalsFile gf)
         {
             TreeNode GlobalsRootNode = new TreeNode(gf.FileName)
@@ -323,10 +305,6 @@ namespace EconomyPlugin
             return GlobalsRootNode;
         }
         //creating CFGGameplaynodes
-        private TreeNode CreateGameplayConfigNodes()
-        {
-            return CreateGameplayConfigNodes(_economyManager.CFGGameplayConfig.Data);
-        }
         private TreeNode CreateGameplayConfigNodes(cfggameplay ganmeplay)
         {
             TreeNode GameplayRootNode = new TreeNode("GamePlay")
@@ -580,18 +558,6 @@ namespace EconomyPlugin
             return areaNode;
         }
         //Creating Types Nodes
-        private TreeNode CreateTypesConfigNodes()
-        {
-            TreeNode Typesroot = new TreeNode("Types")
-            {
-                Tag = _economyManager.TypesConfig
-            };
-            foreach (TypesFile tf in _economyManager.TypesConfig.AllData)
-            {
-                Typesroot.Nodes.Add(CreateTypesfileNodes(tf));
-            }
-            return Typesroot;
-        }
         private TreeNode CreateTypesfileNodes(TypesFile tf)
         {
             TreeNode TypesrootNode = new TreeNode(tf.FileName)
@@ -626,18 +592,6 @@ namespace EconomyPlugin
             return TypesrootNode;
         }
         //Creating spawnableTypes Nodes
-        private TreeNode CreateSpawnableTypesConfigNodes()
-        {
-            TreeNode STypesroot = new TreeNode("Spawnable Types")
-            {
-                Tag = _economyManager.cfgspawnabletypesConfig
-            };
-            foreach (cfgspawnabletypesFile stf in _economyManager.cfgspawnabletypesConfig.AllData)
-            {
-                STypesroot.Nodes.Add(CreateSpawnableTypesfileNodes(stf));
-            }
-            return STypesroot;
-        }
         private TreeNode CreateSpawnableTypesfileNodes(cfgspawnabletypesFile stf)
         {
             TreeNode ConfigRoot = new TreeNode(Path.GetFileNameWithoutExtension(stf.FileName))
@@ -823,18 +777,6 @@ namespace EconomyPlugin
             return itemstring;
         }
         //Creating Random presets Nodes
-        private TreeNode CreaterandomPresetsConfigNodes()
-        {
-            TreeNode RandomPresetsroot = new TreeNode("Random Presets")
-            {
-                Tag = _economyManager.cfgrandompresetsConfig
-            };
-            foreach (cfgrandompresetsFile stf in _economyManager.cfgrandompresetsConfig.AllData)
-            {
-                RandomPresetsroot.Nodes.Add(CreateRandomPresetsFileNodes(stf));
-            }
-            return RandomPresetsroot;
-        }
         private TreeNode CreateRandomPresetsFileNodes(cfgrandompresetsFile rpc)
         {
             TreeNode ConfigRoot = new TreeNode(rpc.FileName)
@@ -910,18 +852,6 @@ namespace EconomyPlugin
             return $"Name = {item.name}, Chance = {item.chance}";
         }
         //Creating Event and event spawn Nodes
-        private TreeNode CreateeventConfigNodes()
-        {
-            TreeNode rootNode = new TreeNode("Events")
-            {
-                Tag = _economyManager.eventsConfig
-            };
-            foreach (EventsFile ef in _economyManager.eventsConfig.AllData)
-            {
-                rootNode.Nodes.Add(CreateEventNodes(ef));
-            }
-            return rootNode;
-        }
         private TreeNode CreateEventNodes(EventsFile ef)
         {
             TreeNode eventRoot = new TreeNode(ef.FileName)
@@ -990,6 +920,77 @@ namespace EconomyPlugin
                 eventspawnroot.Nodes.Add(eventposnodes);
             }
             return eventspawnroot;
+        }
+        //Creating Definntions
+        private TreeNode CreatelimitsDefininitionsConfigNodes(cfglimitsdefinitionConfig cfglimitsdefinitionConfig)
+        {
+            TreeNode eventRoot = new TreeNode(cfglimitsdefinitionConfig.FileName)
+            {
+                Tag = cfglimitsdefinitionConfig
+            };
+            return eventRoot;
+        }
+        private TreeNode CreatelimitsDefininitionsUserConfigNodes(cfglimitsdefinitionuserConfig cfglimitsdefinitionuserConfig)
+        {
+            TreeNode eventRoot = new TreeNode(cfglimitsdefinitionuserConfig.FileName)
+            {
+                Tag = cfglimitsdefinitionuserConfig
+            };
+            return eventRoot;
+        }
+        private TreeNode CreatecfgundergroundtriggersConfigUserConfigNodes(cfgundergroundtriggersConfig config)
+        {
+            TreeNode eventRoot = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+            return eventRoot;
+        }
+
+        private TreeNode CreatecfgeffectareaConfigConfigNodes(cfgeffectareaConfig config)
+        {
+            var root = new TreeNode(config.FileName) { Tag = config };
+
+            if (config.Data == null)
+                return root;
+
+            // --- Areas ---
+            var areasNode = new TreeNode("Areas");
+            if (config.Data.Areas != null)
+            {
+                foreach (var area in config.Data.Areas)
+                {
+                    var areaNode = new TreeNode(area.AreaName ?? "Unnamed Area")
+                    {
+                        Tag = area
+                    };
+
+                    // Only stop at Data + PlayerData
+                    areaNode.Nodes.Add(new TreeNode("Data") { Tag = area.Data });
+                    areaNode.Nodes.Add(new TreeNode("PlayerData") { Tag = area.PlayerData });
+
+                    areasNode.Nodes.Add(areaNode);
+                }
+            }
+            root.Nodes.Add(areasNode);
+
+            // --- SafePositions ---
+            var safePosNode = new TreeNode("SafePositions");
+            if (config.Data._positions != null)
+            {
+                int i = 1;
+                foreach (var pos in config.Data._positions)
+                {
+                    safePosNode.Nodes.Add(new TreeNode($"Position {i} ({pos.X}, {pos.Z})")
+                    {
+                        Tag = pos
+                    });
+                    i++;
+                }
+            }
+            root.Nodes.Add(safePosNode);
+
+            return root;
         }
         #endregion loading treeview
 

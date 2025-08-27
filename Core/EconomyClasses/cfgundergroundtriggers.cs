@@ -5,7 +5,8 @@ namespace Day2eEditor
     public class cfgundergroundtriggersConfig : IConfigLoader
     {
         private readonly string _path;
-
+        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
+        public string FilePath => _path;
         public cfgundergroundtriggers Data { get; private set; } = new cfgundergroundtriggers();
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();

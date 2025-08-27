@@ -51,7 +51,7 @@ namespace Day2eEditor
                 TitleLabel,
                 label1,
                 CloseButton,
-                null
+                MinimiseButton
             );
 
             slidePanel.Width = 30;
