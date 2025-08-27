@@ -149,9 +149,6 @@ namespace Day2eEditor
             CFGGameplayConfig = new CFGGameplayConfig(_paths["CFGGameplay"]);
             LoadConfigWithErrorReport("CFGGameplay", CFGGameplayConfig);
 
-            CFGGameplayConfig = new CFGGameplayConfig(_paths["CFGGameplay"]);
-            LoadConfigWithErrorReport("CFGGameplay", CFGGameplayConfig);
-
             cfgeffectareaConfig = new cfgeffectareaConfig(_paths["cfgeffectarea"]);
             LoadConfigWithErrorReport("cfgeffectarea", cfgeffectareaConfig);
 

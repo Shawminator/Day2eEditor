@@ -62,7 +62,7 @@ namespace Day2eEditor
         private void LoadSpawnGearFiles()
         {
             Data.SpawnGearPresetFiles = new BindingList<SpawnGearPresetFiles>();
-            Console.WriteLine("## Starting SpawnGearPresets ##");
+            Console.WriteLine("\t## Starting SpawnGearPresets ##");
 
             foreach (string filename in Data.PlayerData.spawnGearPresetFiles)
             {
@@ -81,7 +81,7 @@ namespace Day2eEditor
                 Data.SpawnGearPresetFiles.Add(preset);
             }
 
-            Console.WriteLine("## End SpawnGearPresets ##");
+            Console.WriteLine("\t## End SpawnGearPresets ##");
         }
 
         private void SaveSpawnGearPresetFiles()
@@ -113,7 +113,7 @@ namespace Day2eEditor
         private void LoadRestrictedFiles()
         {
             Data.RestrictedAreaFiles = new BindingList<PlayerRestrictedFiles>();
-            Console.WriteLine("## Starting Restricted Area Files ##");
+            Console.WriteLine("\t## Starting Restricted Area Files ##");
 
             foreach (string filename in Data.WorldsData.playerRestrictedAreaFiles)
             {
@@ -132,7 +132,7 @@ namespace Day2eEditor
                 Data.RestrictedAreaFiles.Add(restricted);
             }
 
-            Console.WriteLine("## End Restricted Area Files ##");
+            Console.WriteLine("\t## End Restricted Area Files ##");
         }
 
         private void SavePlayerRestrictedAreaFiles()
