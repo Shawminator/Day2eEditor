@@ -309,7 +309,7 @@ namespace EconomyPlugin
             };
             GameplayRootNode.Nodes.Add(new TreeNode($"Version:{_economyManager.CFGGameplayConfig.Data.version.ToString()}")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.version
+                Tag = "cfggameplayConfigVersion"
             });
             GameplayRootNode.Nodes.Add(new TreeNode($"GeneralData")
             {
@@ -319,9 +319,9 @@ namespace EconomyPlugin
             {
                 Tag = _economyManager.CFGGameplayConfig.Data.PlayerData
             };
-            TreeNode spawnGearNodes = new TreeNode("spawnGearPresets")
+            TreeNode spawnGearNodes = new TreeNode("SpawnGear Presets Files")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.PlayerData.spawnGearPresetFiles
+                Tag = "SpawnGear Presets Files"
             };
             foreach (string spawnfile in _economyManager.CFGGameplayConfig.Data.PlayerData.spawnGearPresetFiles)
             {
@@ -334,16 +334,26 @@ namespace EconomyPlugin
             {
                 Tag = _economyManager.CFGGameplayConfig.Data.WorldsData
             };
-            TreeNode playerRestrictedAreaFilesNodes = new TreeNode($"playerRestrictedAreaFiles")
+            TreeNode playerRestrictedAreaFilesNodes = new TreeNode($"Player Restricted Area Files")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.WorldsData.playerRestrictedAreaFiles
+                Tag = "playerRestrictedAreaFiles"
             };
             foreach (string restrictedfile in _economyManager.CFGGameplayConfig.Data.WorldsData.playerRestrictedAreaFiles)
             {
                 PlayerRestrictedFiles PlayerRestrictedFiles = _economyManager.CFGGameplayConfig.getRestrictedFiles(restrictedfile);
                 playerRestrictedAreaFilesNodes.Nodes.Add(CreateRestrictedfilesNodes(PlayerRestrictedFiles));
             }
+            TreeNode objectspawnerarrfilenodes = new TreeNode($"Object Spawner Arr Files")
+            {
+                Tag = "ObjectPawnerArrFiles"
+            };
+            foreach (string objectspawnerarrfile in _economyManager.CFGGameplayConfig.Data.WorldsData.objectSpawnersArr)
+            {
+                ObjectSpawnerArr ObjectSpawnerArr = _economyManager.CFGGameplayConfig.getobjectspawnerFiles(objectspawnerarrfile);
+                objectspawnerarrfilenodes.Nodes.Add(new TreeNode($"{ObjectSpawnerArr.Filename}") {Tag = ObjectSpawnerArr });
+            }
             WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
+            WorldsDataaNodes.Nodes.Add(objectspawnerarrfilenodes);
             GameplayRootNode.Nodes.Add(WorldsDataaNodes);
             GameplayRootNode.Nodes.Add(new TreeNode($"BaseBuildingData")
             {
@@ -1296,8 +1306,6 @@ namespace EconomyPlugin
                 else if (e.Node.Tag is eventposdefEvent)
                 {
                     ShowHandler<IUIHandler>(null, null, null);
-                    _mapControl.Visible = true;
-                    _mapControl.ClearDrawables();
                 }
                 else if (e.Node.Tag is eventposdefEventPos eventpos)
                 {
@@ -1316,25 +1324,29 @@ namespace EconomyPlugin
                 {
                     ShowHandler<IUIHandler>(null, null, null);
                 }
-                else if (e.Node.Tag is Generaldata)
+                else if (e.Node.Tag.ToString() == "cfggameplayConfigVersion")
                 {
                     ShowHandler<IUIHandler>(null, null, null);
                 }
-                else if (e.Node.Tag is Playerdata)
+                else if (e.Node.Tag is Generaldata Generaldata)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler(new cfggameplayGeneralDataControl(), Generaldata, selectedNodes);
                 }
-                else if (e.Node.Tag is Worldsdata)
+                else if (e.Node.Tag is Playerdata Playerdata)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler(new cfggameplayPlayerDataControl(), Playerdata, selectedNodes);
                 }
-                else if (e.Node.Tag is Basebuildingdata)
+                else if (e.Node.Tag is Worldsdata Worldsdata)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler(new cfggameplayWordlsDataControl(), Worldsdata, selectedNodes);
                 }
-                else if (e.Node.Tag is Uidata)
+                else if (e.Node.Tag is Basebuildingdata Basebuildingdata)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler(new cfggameplayBaseBuildingDataControl(), Basebuildingdata, selectedNodes);
+                }
+                else if (e.Node.Tag is Uidata Uidata)
+                {
+                    ShowHandler(new cfggameplayUIDataControl(), Uidata, selectedNodes);
                 }
                 else if (e.Node.Tag is CFGGameplayMapData)
                 {
@@ -1366,11 +1378,11 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is SpawnableTypes spawnabletypes)
                 {
-
+                    ShowHandler<IUIHandler>(null, null, null);
                 }
                 else if (e.Node.Tag is spawnableTypesHoarder spawnableTypesHoarder)
                 {
-
+                    ShowHandler<IUIHandler>(null, null, null);
                 }
                 else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
                 {

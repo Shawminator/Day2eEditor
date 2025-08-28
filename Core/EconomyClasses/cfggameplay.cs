@@ -34,6 +34,7 @@ namespace Day2eEditor
 
             LoadSpawnGearFiles();
             LoadRestrictedFiles();
+            LoadObjectSpawenArrFiles();
         }
         public IEnumerable<string> Save()
         {
@@ -41,11 +42,13 @@ namespace Day2eEditor
             {
                 UpdateSpawnGearFileList();
                 UpdateRestrictedFileList();
+                UpdateObjectSpawenArrList();
 
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
 
                 SaveSpawnGearPresetFiles();
                 SavePlayerRestrictedAreaFiles();
+                SaveObjectSpawenArrFiles();
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
@@ -159,6 +162,56 @@ namespace Day2eEditor
 
         #endregion
 
+        #region objects spwner arr files
+
+        private void LoadObjectSpawenArrFiles()
+        {
+            Data.ObjectSpawnerArrFiles = new BindingList<ObjectSpawnerArr>();
+            Console.WriteLine("\t## Starting Object Spawner Arr Files ##");
+
+            foreach (string filename in Data.WorldsData.playerRestrictedAreaFiles)
+            {
+                var fullPath = Path.Combine(BaseDirectory, filename);
+                var objectspawner = AppServices.GetRequired<FileService>().LoadOrCreateJson<ObjectSpawnerArr>(
+                    fullPath,
+                    createNew: () => new ObjectSpawnerArr(),
+                    onAfterLoad: _ => { },
+                    checkVersionAndUpdate: _ => false,
+                    onError: ex => LogError(filename, ex),
+                    configName: "ObjectSpawnerArr",
+                    useBoolConvertor: false
+                );
+
+                objectspawner.Filename = filename;
+                Data.ObjectSpawnerArrFiles.Add(objectspawner);
+            }
+
+            Console.WriteLine("\t## End Object Spawner Arr  Files ##");
+        }
+
+        private void SaveObjectSpawenArrFiles()
+        {
+            foreach (var restricted in Data.ObjectSpawnerArrFiles)
+            {
+                if (!restricted.isDirty) continue;
+
+                var fullPath = Path.Combine(BaseDirectory, restricted.Filename);
+                AppServices.GetRequired<FileService>().SaveJson(fullPath, restricted);
+                restricted.isDirty = false;
+            }
+        }
+
+        private void UpdateObjectSpawenArrList()
+        {
+            Data.WorldsData.objectSpawnersArr = new BindingList<string>();
+            foreach (var restricted in Data.RestrictedAreaFiles)
+            {
+                if (!string.IsNullOrWhiteSpace(restricted.Filename))
+                    Data.WorldsData.playerRestrictedAreaFiles.Add(restricted.Filename);
+            }
+        }
+        #endregion
+
         public void AddNewObjectSpawner(string spawner)
         {
             if (!string.IsNullOrWhiteSpace(spawner))
@@ -189,6 +242,11 @@ namespace Day2eEditor
         {
             return Data.RestrictedAreaFiles.FirstOrDefault(x => x.Filename == restrictedfile);
         }
+
+        public ObjectSpawnerArr getobjectspawnerFiles(string objectspawnerarrfile)
+        {
+            return Data.ObjectSpawnerArrFiles.FirstOrDefault(x => x.Filename == objectspawnerarrfile);
+        }
     }
     
     
@@ -209,6 +267,8 @@ namespace Day2eEditor
         public BindingList<SpawnGearPresetFiles> SpawnGearPresetFiles { get; set; }
         [JsonIgnore]
         public BindingList<PlayerRestrictedFiles> RestrictedAreaFiles { get; set; }
+        [JsonIgnore]
+        public BindingList<ObjectSpawnerArr> ObjectSpawnerArrFiles { get; set; }
 
         public cfggameplay()
         {
@@ -265,6 +325,16 @@ namespace Day2eEditor
             disableRespawnDialog = false;
             disableRespawnInUnconsciousness = false;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Generaldata other)
+                return false;
+
+            return disableBaseDamage == other.disableBaseDamage &&
+                   disableContainerDamage == other.disableContainerDamage &&
+                   disableRespawnDialog == other.disableRespawnDialog &&
+                   disableRespawnInUnconsciousness == other.disableRespawnInUnconsciousness;
+        }
     }
 
     public class Playerdata
@@ -287,6 +357,23 @@ namespace Day2eEditor
             DrowningData = new DrowningData();
             WeaponObstructionData = new WeaponObstructionData();
         }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Playerdata other)
+                return false;
+
+            return disablePersonalLight == other.disablePersonalLight &&
+                   Equals(StaminaData, other.StaminaData) &&
+                   Equals(ShockHandlingData, other.ShockHandlingData) &&
+                   Equals(MovementData, other.MovementData) &&
+                   Equals(DrowningData, other.DrowningData) &&
+                   Equals(WeaponObstructionData, other.WeaponObstructionData);
+            // spawnGearPresetFiles is intentionally ignored
+        }
+
+
     }
     public class Staminadata
     {
@@ -316,6 +403,25 @@ namespace Day2eEditor
             obstacleTraversalStaminaModifier = 1;
             holdBreathStaminaModifier = 1;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Staminadata other)
+                return false;
+
+            return sprintStaminaModifierErc == other.sprintStaminaModifierErc &&
+                   sprintStaminaModifierCro == other.sprintStaminaModifierCro &&
+                   staminaWeightLimitThreshold == other.staminaWeightLimitThreshold &&
+                   staminaMax == other.staminaMax &&
+                   staminaKgToStaminaPercentPenalty == other.staminaKgToStaminaPercentPenalty &&
+                   staminaMinCap == other.staminaMinCap &&
+                   sprintSwimmingStaminaModifier == other.sprintSwimmingStaminaModifier &&
+                   sprintLadderStaminaModifier == other.sprintLadderStaminaModifier &&
+                   meleeStaminaModifier == other.meleeStaminaModifier &&
+                   obstacleTraversalStaminaModifier == other.obstacleTraversalStaminaModifier &&
+                   holdBreathStaminaModifier == other.holdBreathStaminaModifier;
+        }
+
     }
     public class Shockhandlingdata
     {
@@ -329,6 +435,17 @@ namespace Day2eEditor
             shockRefillSpeedUnconscious = (decimal)1.0;
             allowRefillSpeedModifier = true;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Shockhandlingdata other)
+                return false;
+
+            return shockRefillSpeedConscious == other.shockRefillSpeedConscious &&
+                   shockRefillSpeedUnconscious == other.shockRefillSpeedUnconscious &&
+                   allowRefillSpeedModifier == other.allowRefillSpeedModifier;
+        }
+
     }
     public class MovementData
     {
@@ -348,6 +465,20 @@ namespace Day2eEditor
             rotationSpeedSprint = (decimal)0.15;
             allowStaminaAffectInertia = true;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not MovementData other)
+                return false;
+
+            return timeToStrafeJog == other.timeToStrafeJog &&
+                   rotationSpeedJog == other.rotationSpeedJog &&
+                   timeToSprint == other.timeToSprint &&
+                   timeToStrafeSprint == other.timeToStrafeSprint &&
+                   rotationSpeedSprint == other.rotationSpeedSprint &&
+                   allowStaminaAffectInertia == other.allowStaminaAffectInertia;
+        }
+
     }
     public class DrowningData
     {
@@ -361,6 +492,17 @@ namespace Day2eEditor
             healthDepletionSpeed = (decimal)10.0;
             shockDepletionSpeed = (decimal)10.0;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not DrowningData other)
+                return false;
+
+            return staminaDepletionSpeed == other.staminaDepletionSpeed &&
+                   healthDepletionSpeed == other.healthDepletionSpeed &&
+                   shockDepletionSpeed == other.shockDepletionSpeed;
+        }
+
     }
 
     public class WeaponObstructionData
@@ -373,6 +515,16 @@ namespace Day2eEditor
             staticMode = 1;
             dynamicMode = 1;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not WeaponObstructionData other)
+                return false;
+
+            return staticMode == other.staticMode &&
+                   dynamicMode == other.dynamicMode;
+        }
+
 
     }
     public class Worldsdata
@@ -397,6 +549,16 @@ namespace Day2eEditor
             playerRestrictedAreaFiles = new BindingList<string>();
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not Worldsdata other)
+                return false;
+
+            return lightingConfig == other.lightingConfig &&
+                   environmentMinTemps.SequenceEqual(other.environmentMinTemps) &&
+                   environmentMaxTemps.SequenceEqual(other.environmentMaxTemps) &&
+                   wetnessWeightModifiers.SequenceEqual(other.wetnessWeightModifiers);
+        }
 
     }
 
@@ -410,6 +572,30 @@ namespace Day2eEditor
             HologramData = new Hologramdata();
             ConstructionData = new Constructiondata();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Basebuildingdata other)
+                return false;
+
+            return
+                HologramData.disableIsCollidingBBoxCheck == other.HologramData.disableIsCollidingBBoxCheck &&
+                HologramData.disableIsCollidingPlayerCheck == other.HologramData.disableIsCollidingPlayerCheck &&
+                HologramData.disableIsClippingRoofCheck == other.HologramData.disableIsClippingRoofCheck &&
+                HologramData.disableIsBaseViableCheck == other.HologramData.disableIsBaseViableCheck &&
+                HologramData.disableIsCollidingGPlotCheck == other.HologramData.disableIsCollidingGPlotCheck &&
+                HologramData.disableIsCollidingAngleCheck == other.HologramData.disableIsCollidingAngleCheck &&
+                HologramData.disableIsPlacementPermittedCheck == other.HologramData.disableIsPlacementPermittedCheck &&
+                HologramData.disableHeightPlacementCheck == other.HologramData.disableHeightPlacementCheck &&
+                HologramData.disableIsUnderwaterCheck == other.HologramData.disableIsUnderwaterCheck &&
+                HologramData.disableIsInTerrainCheck == other.HologramData.disableIsInTerrainCheck &&
+                HologramData.disableColdAreaBuildingCheck == other.HologramData.disableColdAreaBuildingCheck &&
+                HologramData.disallowedTypesInUnderground.SequenceEqual(other.HologramData.disallowedTypesInUnderground) &&
+                ConstructionData.disablePerformRoofCheck == other.ConstructionData.disablePerformRoofCheck &&
+                ConstructionData.disableIsCollidingCheck == other.ConstructionData.disableIsCollidingCheck &&
+                ConstructionData.disableDistanceCheck == other.ConstructionData.disableDistanceCheck;
+        }
+
     }
     public class Hologramdata
     {
@@ -466,6 +652,16 @@ namespace Day2eEditor
             use3DMap = false;
             HitIndicationData = new Hitindicationdata();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Uidata other)
+                return false;
+
+            return use3DMap == other.use3DMap &&
+                   (HitIndicationData?.Equals(other.HitIndicationData) ?? other.HitIndicationData == null);
+        }
+
     }
     public class Hitindicationdata
     {
@@ -489,6 +685,22 @@ namespace Day2eEditor
             hitDirectionScatter = (decimal)10.0;
             hitIndicationPostProcessEnabled = true;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Hitindicationdata other)
+                return false;
+
+            return hitDirectionOverrideEnabled == other.hitDirectionOverrideEnabled &&
+                   hitDirectionBehaviour == other.hitDirectionBehaviour &&
+                   hitDirectionStyle == other.hitDirectionStyle &&
+                   hitDirectionIndicatorColorStr == other.hitDirectionIndicatorColorStr &&
+                   hitDirectionMaxDuration == other.hitDirectionMaxDuration &&
+                   hitDirectionBreakPointRelative == other.hitDirectionBreakPointRelative &&
+                   hitDirectionScatter == other.hitDirectionScatter &&
+                   hitIndicationPostProcessEnabled == other.hitIndicationPostProcessEnabled;
+        }
+
     }
 
     public class CFGGameplayMapData
@@ -614,6 +826,8 @@ namespace Day2eEditor
 
     public class ObjectSpawnerArr
     {
+        [JsonIgnore]
+        internal bool isDirty;
         [JsonIgnore]
         public string Filename { get; set; }
         public BindingList<SpawnObjects> Objects { get; set; }
