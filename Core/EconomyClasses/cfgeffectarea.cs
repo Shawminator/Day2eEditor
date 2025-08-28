@@ -51,10 +51,10 @@ namespace Day2eEditor
         {
             if (Data.SafePositions != null)
             {
-                Data._positions = new BindingList<Position>();
+                Data._positions = new BindingList<cfgeffectareaSafePosition>();
                 for (int i = 0; i < Data.SafePositions.Count; i++)
                 {
-                    Data._positions.Add(new Position()
+                    Data._positions.Add(new cfgeffectareaSafePosition()
                     {
                         X = Data.SafePositions[i][0],
                         Z = Data.SafePositions[i][1],
@@ -70,7 +70,7 @@ namespace Day2eEditor
             if (Data._positions != null)
             {
                 Data.SafePositions = new BindingList<decimal[]>();
-                foreach (Position pos in Data._positions)
+                foreach (cfgeffectareaSafePosition pos in Data._positions)
                 {
                     Data.SafePositions.Add(new decimal[] { pos.X, pos.Z });
                 }
@@ -96,9 +96,9 @@ namespace Day2eEditor
         public BindingList<Areas> Areas { get; set; }
         public BindingList<decimal[]> SafePositions { get; set; }
         [JsonIgnore]
-        public BindingList<Position> _positions { get; set; }
+        public BindingList<cfgeffectareaSafePosition> _positions { get; set; }
     }
-    public class Position
+    public class cfgeffectareaSafePosition
     {
         public decimal X { get; set; }
         public decimal Z { get; set; }

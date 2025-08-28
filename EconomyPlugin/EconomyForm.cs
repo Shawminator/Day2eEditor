@@ -1,6 +1,7 @@
 using Day2eEditor;
 using System.ComponentModel;
 using System.Text.Json;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace EconomyPlugin
 {
@@ -91,6 +92,7 @@ namespace EconomyPlugin
                 disposable.Dispose();
             }
         }
+  
         #region Loading treeview
         private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, TFile file, Func<TFile, TreeNode> createFileNode, bool expand = false)
         {
@@ -211,11 +213,6 @@ namespace EconomyPlugin
 
             EconomyTV.Nodes.Add(rootNode);
         }
-
-
-
-
-
         //creating economy Nodes
         private TreeNode CreateEconomyfileNodes(economyFile ef)
         {
@@ -946,7 +943,6 @@ namespace EconomyPlugin
             };
             return eventRoot;
         }
-
         private TreeNode CreatecfgeffectareaConfigConfigNodes(cfgeffectareaConfig config)
         {
             var root = new TreeNode(config.FileName) { Tag = config };
@@ -955,7 +951,10 @@ namespace EconomyPlugin
                 return root;
 
             // --- Areas ---
-            var areasNode = new TreeNode("Areas");
+            var areasNode = new TreeNode("Areas")
+            {
+                Tag = "cfgeffectareaareas"
+            };
             if (config.Data.Areas != null)
             {
                 foreach (var area in config.Data.Areas)
@@ -975,7 +974,10 @@ namespace EconomyPlugin
             root.Nodes.Add(areasNode);
 
             // --- SafePositions ---
-            var safePosNode = new TreeNode("SafePositions");
+            var safePosNode = new TreeNode("SafePositions")
+            {
+                Tag = "cfgeffectareaSafePositions"
+            };
             if (config.Data._positions != null)
             {
                 int i = 1;
@@ -994,6 +996,123 @@ namespace EconomyPlugin
         }
         #endregion loading treeview
 
+        /// <summary>
+        /// Treeview stuff
+        /// </summary>
+        private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
+                    where TFile : class
+                    where TSection : class
+        {
+            TreeNode parentNode = EconomyTV.Nodes[0];
+            TreeNode fileNode = FindOrCreateFileNodeFor(file, treeView, parentNode);
+            TreeNode sectionNode = FindOrCreateSectionNode(fileNode, sectionName, getSection(file));
+
+            treeView.SelectedNode = sectionNode;
+            sectionNode.EnsureVisible();
+        }
+        private TreeNode FindOrCreateFileNodeFor<T>(T data, TreeView treeView, TreeNode parentNode = null)
+        {
+            // First, try to find an existing node for this file anywhere in the tree
+            TreeNode foundNode = (parentNode != null)
+                ? FindNodeRecursive(parentNode.Nodes, data)
+                : FindNodeRecursive(treeView.Nodes, data);
+
+            if (foundNode != null)
+                return foundNode;
+
+            // If not found, create it using existing AddFileToTree logic
+            if (data is economyFile ecfile)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, ecfile.FilePath);
+
+                // We pass in either the provided parent node or the root
+                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
+
+                // This uses your *existing* implementation so nothing breaks
+                AddFileToTree(rootNode, relativePath, ecfile, CreateEconomyfileNodes);
+
+                // Return the node that was just added
+                return FindNodeRecursive(rootNode.Nodes, ecfile);
+            }
+            else if (data is globalsFile globalsFile)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, globalsFile.FilePath);
+
+                // We pass in either the provided parent node or the root
+                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
+
+                // Reuse AddFileToTree to respect folder structure
+                AddFileToTree(rootNode, relativePath, globalsFile, CreateGlobalsfileNodes);
+
+                return FindNodeRecursive(rootNode.Nodes, globalsFile);
+            }
+
+            return null;
+        }
+        private TreeNode FindNodeRecursive<T>(TreeNodeCollection nodes, T data)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Tag is T t && ReferenceEquals(t, data))
+                    return node;
+
+                TreeNode childResult = FindNodeRecursive(node.Nodes, data);
+                if (childResult != null)
+                    return childResult;
+            }
+            return null;
+        }
+        private TreeNode FindOrCreateSectionNode<T>(TreeNode parent, string nodeName, T sectionData)
+        {
+            foreach (TreeNode node in parent.Nodes)
+            {
+                // For EconomySection: check if node text starts with the section name and tag is same type
+                if (sectionData is EconomySection)
+                {
+                    if (node.Text.StartsWith(nodeName) && node.Tag is EconomySection)
+                        return node;
+                }
+                // For variablesVar: match exact name and type
+                else if (sectionData is variablesVar variablevar)
+                {
+                    if (node.Tag is variablesVar existingVar && existingVar.name == variablevar.name)
+                        return node;
+                }
+                // Fallback: match exact text and type
+                else
+                {
+                    if (node.Text == nodeName && node.Tag is T)
+                        return node;
+                }
+            }
+
+            // If no existing node found, create new node
+            TreeNode newSectionNode = null;
+            if (sectionData is EconomySection economysection)
+            {
+                newSectionNode = new TreeNode($"{nodeName} init:{economysection.init} load:{economysection.load} respawn:{economysection.respawn} save:{economysection.save}")
+                {
+                    Tag = sectionData
+                };
+            }
+            else if (sectionData is variablesVar variablevar)
+            {
+                newSectionNode = new TreeNode($"{variablevar.name} = {variablevar.value}")
+                {
+                    Tag = sectionData
+                };
+            }
+            else
+            {
+                newSectionNode = new TreeNode(nodeName)
+                {
+                    Tag = sectionData
+                };
+            }
+
+            parent.Nodes.Add(newSectionNode);
+            return newSectionNode;
+        }
         void ShowHandler<T>(T handler, object primaryData, List<TreeNode> selectedNodes)
         where T : IUIHandler
         {
@@ -1035,24 +1154,16 @@ namespace EconomyPlugin
             ctrl.BringToFront();
             ctrl.Visible = true;
         }
-        private void HideAllPanels()
-        {
-            foreach (Control ctrl in splitContainer1.Panel2.Controls.OfType<Control>().ToList())
-            {
-                if (ctrl != _mapControl)
-                {
-                    splitContainer1.Panel2.Controls.Remove(ctrl);
-                }
-            }
-        }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
             BeginInvoke(new Action(() =>
             {
                 _selectedEventPos = null;
                 _mapControl.Visible = false;
-                //HideAllPanels();
-                //EconomyTV.SelectedNode = e.Node;
+                _mapControl.MapDoubleClicked -= MapControl_EventSpawnDoubleclicked;
+                _mapControl.MapsingleClicked -= MapControl_EventSpawnSingleclicked;
+                _mapControl.MapDoubleClicked -= MapControl_EffectSafePositionsSingleclicked;
+                _mapControl.MapsingleClicked -= MapControl_EffectSafePositionsDoubleclicked;
                 currentTreeNode = e.Node;
 
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
@@ -1196,9 +1307,7 @@ namespace EconomyPlugin
                     _mapControl.ClearDrawables();
                     _selectedEventPos = eventpos;
 
-                    _mapControl.MapDoubleClicked -= MapControl_EventSpawnDoubleclicked;
                     _mapControl.MapDoubleClicked += MapControl_EventSpawnDoubleclicked;
-                    _mapControl.MapsingleClicked -= MapControl_EventSpawnSingleclicked;
                     _mapControl.MapsingleClicked += MapControl_EventSpawnSingleclicked;
 
                     eventposdefEvent defevent = e.Node.Parent.Parent.Tag as eventposdefEvent;
@@ -1284,32 +1393,23 @@ namespace EconomyPlugin
                 {
                     ShowHandler(new SpawnabletypesDamageControl(), spawnableTypeDamage, selectedNodes);
                 }
+                else if (e.Node.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                    _mapControl.Visible = true;
+                    _mapControl.ClearDrawables();
+                    _selectedEventPos = null;
+                    _selectedSafePosition = cfgeffectareaSafePosition;
+
+                    _mapControl.MapsingleClicked += MapControl_EffectSafePositionsSingleclicked;
+                    _mapControl.MapDoubleClicked += MapControl_EffectSafePositionsDoubleclicked;
+
+                    cfgeffectareaConfig cfgeffectareaConfig = e.Node.FindParentOfType<cfgeffectareaConfig>();
+                    DrawEffectSafePositions(cfgeffectareaConfig);
+                }
             }));
         }
-        private void DrawEventSpawns(eventposdefEvent defevent)
-        {
-            foreach (eventposdefEventPos pos in defevent.pos)
-            {
-                if (_selectedEventPos == pos)
-                {
-                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
-                    {
-                        Color = Color.LimeGreen,
-                        Radius = 8
-                    };
-                    _mapControl.RegisterDrawable(marker);
-                }
-                else
-                {
-                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
-                    {
-                        Color = Color.Red,
-                        Radius = 8
-                    };
-                    _mapControl.RegisterDrawable(marker);
-                }
-            }
-        }
+
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
         {
             foreach (TreeNode node in nodes)
@@ -1662,7 +1762,63 @@ namespace EconomyPlugin
             }
         }
 
+        /// <summary>
+        /// MapViewer Draw Mothods
+        /// </summary>
+        private void DrawEffectSafePositions(cfgeffectareaConfig cfgeffectareaConfig)
+        {
+            foreach (cfgeffectareaSafePosition pos in cfgeffectareaConfig.Data._positions)
+            {
+                if (_selectedSafePosition == pos)
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+        }
+        private void DrawEventSpawns(eventposdefEvent defevent)
+        {
+            foreach (eventposdefEventPos pos in defevent.pos)
+            {
+                if (_selectedEventPos == pos)
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+        }
+
+        /// <summary>
+        /// MapViewer clicks
+        /// </summary>
         private eventposdefEventPos _selectedEventPos;
+        private cfgeffectareaSafePosition _selectedSafePosition;
         private void MapControl_EventSpawnSingleclicked(object sender, MapClickEventArgs e)
         {
             if (currentTreeNode?.Parent == null)
@@ -1725,6 +1881,68 @@ namespace EconomyPlugin
 
             DrawEventSpawns(defevent);
             currentTreeNode.Text = _selectedEventPos.ToString();
+        }
+        private void MapControl_EffectSafePositionsSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            cfgeffectareaSafePosition closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is cfgeffectareaSafePosition pos)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.X, (float)pos.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        EconomyTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_EffectSafePositionsDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (_selectedSafePosition == null) return;
+
+            _selectedSafePosition.X = (decimal)e.MapCoordinates.X;
+            _selectedSafePosition.Z = (decimal)e.MapCoordinates.Y;
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+
+            _mapControl.ClearDrawables();
+
+            cfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<cfgeffectareaConfig>();
+            DrawEffectSafePositions(cfgeffectareaConfig);
+            currentTreeNode.Text = $"Position {currentTreeNode.Index+1} ({_selectedSafePosition.X}, {_selectedSafePosition.Z})";
         }
 
         /// <summary>
@@ -1870,6 +2088,11 @@ namespace EconomyPlugin
             return Path.Combine(modFolder, fileName);
         }
 
+        /// <summary>
+        /// Types Right click methods
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void addNewTypesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is TypesFile typefile)
@@ -1998,6 +2221,11 @@ namespace EconomyPlugin
             }
         }
 
+        /// <summary>
+        /// Event Right Click Methods
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void importPositionFromdzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
@@ -2147,7 +2375,6 @@ namespace EconomyPlugin
                 _economyManager.cfgeventspawnsConfig.isDirty = true;
             }
         }
-
         private void AddNewEventsToolstripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is EventsFile eventfile)
@@ -2334,6 +2561,9 @@ namespace EconomyPlugin
             }
         }
 
+        /// <summary>
+        /// Random Preset Right click methods
+        /// </summary>
         private void addNewRandomPresetFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string newmodPath = "CustomMods\\Customdb";
@@ -2586,6 +2816,9 @@ namespace EconomyPlugin
 
         }
 
+        /// <summary>
+        /// Spawnable types right click methods
+        /// </summary>
         private void addNewSpawnableTypesFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string newmodPath = "CustomMods\\Customdb";
@@ -2967,121 +3200,6 @@ namespace EconomyPlugin
 
 
 
-        private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
-                    where TFile : class
-                    where TSection : class
-        {
-            TreeNode parentNode = EconomyTV.Nodes[0];
-            TreeNode fileNode = FindOrCreateFileNodeFor(file, treeView, parentNode);
-            TreeNode sectionNode = FindOrCreateSectionNode(fileNode, sectionName, getSection(file));
-
-            treeView.SelectedNode = sectionNode;
-            sectionNode.EnsureVisible();
-        }
-        private TreeNode FindOrCreateFileNodeFor<T>(T data, TreeView treeView, TreeNode parentNode = null)
-        {
-            // First, try to find an existing node for this file anywhere in the tree
-            TreeNode foundNode = (parentNode != null)
-                ? FindNodeRecursive(parentNode.Nodes, data)
-                : FindNodeRecursive(treeView.Nodes, data);
-
-            if (foundNode != null)
-                return foundNode;
-
-            // If not found, create it using existing AddFileToTree logic
-            if (data is economyFile ecfile)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, ecfile.FilePath);
-
-                // We pass in either the provided parent node or the root
-                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
-
-                // This uses your *existing* implementation so nothing breaks
-                AddFileToTree(rootNode, relativePath, ecfile, CreateEconomyfileNodes);
-
-                // Return the node that was just added
-                return FindNodeRecursive(rootNode.Nodes, ecfile);
-            }
-            else if (data is globalsFile globalsFile)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, globalsFile.FilePath);
-
-                // We pass in either the provided parent node or the root
-                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
-
-                // Reuse AddFileToTree to respect folder structure
-                AddFileToTree(rootNode, relativePath, globalsFile, CreateGlobalsfileNodes);
-
-                return FindNodeRecursive(rootNode.Nodes, globalsFile);
-            }
-
-            return null;
-        }
-
-        private TreeNode FindNodeRecursive<T>(TreeNodeCollection nodes, T data)
-        {
-            foreach (TreeNode node in nodes)
-            {
-                if (node.Tag is T t && ReferenceEquals(t, data))
-                    return node;
-
-                TreeNode childResult = FindNodeRecursive(node.Nodes, data);
-                if (childResult != null)
-                    return childResult;
-            }
-            return null;
-        }
-        private TreeNode FindOrCreateSectionNode<T>(TreeNode parent, string nodeName, T sectionData)
-        {
-            foreach (TreeNode node in parent.Nodes)
-            {
-                // For EconomySection: check if node text starts with the section name and tag is same type
-                if (sectionData is EconomySection)
-                {
-                    if (node.Text.StartsWith(nodeName) && node.Tag is EconomySection)
-                        return node;
-                }
-                // For variablesVar: match exact name and type
-                else if (sectionData is variablesVar variablevar)
-                {
-                    if (node.Tag is variablesVar existingVar && existingVar.name == variablevar.name)
-                        return node;
-                }
-                // Fallback: match exact text and type
-                else
-                {
-                    if (node.Text == nodeName && node.Tag is T)
-                        return node;
-                }
-            }
-
-            // If no existing node found, create new node
-            TreeNode newSectionNode = null;
-            if (sectionData is EconomySection economysection)
-            {
-                newSectionNode = new TreeNode($"{nodeName} init:{economysection.init} load:{economysection.load} respawn:{economysection.respawn} save:{economysection.save}")
-                {
-                    Tag = sectionData
-                };
-            }
-            else if (sectionData is variablesVar variablevar)
-            {
-                newSectionNode = new TreeNode($"{variablevar.name} = {variablevar.value}")
-                {
-                    Tag = sectionData
-                };
-            }
-            else
-            {
-                newSectionNode = new TreeNode(nodeName)
-                {
-                    Tag = sectionData
-                };
-            }
-
-            parent.Nodes.Add(newSectionNode);
-            return newSectionNode;
-        }
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]
