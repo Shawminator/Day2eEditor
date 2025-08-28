@@ -1,7 +1,6 @@
 using Day2eEditor;
 using System.ComponentModel;
 using System.Text.Json;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace EconomyPlugin
 {
@@ -3197,9 +3196,6 @@ namespace EconomyPlugin
                 _spawnabletypesfile.isDirty = true;
             }
         }
-
-
-
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]
