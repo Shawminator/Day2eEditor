@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Text.Json.Serialization;
+using System.Xml.Linq;
 
 namespace Day2eEditor
 {
@@ -9,6 +11,10 @@ namespace Day2eEditor
         public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
         public string FilePath => _path;
         public cfggameplay Data { get; private set; } = new cfggameplay();
+        public SpawnGearPresetsConfig SpawnGearPresetconfigs { get; private set; }
+        public PlayerRestrictedFilesConfig PlayerRestrictedFilesConfig { get; private set; }
+        public ObjectSpawnerArrConfig ObjectSpawnerArrConfig { get; private set; }
+
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
@@ -38,6 +44,7 @@ namespace Day2eEditor
         }
         public IEnumerable<string> Save()
         {
+            List<string> filesnames = new List<string>();
             if (isDirty)
             {
                 UpdateSpawnGearFileList();
@@ -46,181 +53,104 @@ namespace Day2eEditor
 
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
 
-                SaveSpawnGearPresetFiles();
-                SavePlayerRestrictedAreaFiles();
-                SaveObjectSpawenArrFiles();
+                
                 isDirty = false;
-                return new[] { Path.GetFileName(_path) };
+                filesnames.Add(Path.GetFileName(_path));
             }
+            filesnames.AddRange(SpawnGearPresetconfigs.Save());
+            filesnames.AddRange(PlayerRestrictedFilesConfig.Save());
+            filesnames.AddRange(ObjectSpawnerArrConfig.Save());
 
-            return Array.Empty<string>();
+            return filesnames.ToArray();
         }
 
         public bool needToSave()
         {
             return isDirty;
         }
-        #region Spawn Gear Files
 
+
+        #region Spawn Gear Files
         private void LoadSpawnGearFiles()
         {
-            Data.SpawnGearPresetFiles = new BindingList<SpawnGearPresetFiles>();
             Console.WriteLine("\t## Starting SpawnGearPresets ##");
 
-            foreach (string filename in Data.PlayerData.spawnGearPresetFiles)
-            {
-                var fullPath = Path.Combine(BaseDirectory, filename);
-                var preset = AppServices.GetRequired<FileService>().LoadOrCreateJson<SpawnGearPresetFiles>(
-                    fullPath,
-                    createNew: () => new SpawnGearPresetFiles(),
-                    onAfterLoad: _ => { },
-                    checkVersionAndUpdate: _ => false,
-                    onError: ex => LogError(filename, ex),
-                    configName: "SpawnGearPreset",
-                    useBoolConvertor: false
-                );
-
-                preset.Filename = filename;
-                Data.SpawnGearPresetFiles.Add(preset);
-            }
+            SpawnGearPresetconfigs = new SpawnGearPresetsConfig();
+            SpawnGearPresetconfigs.Load(BaseDirectory, Data.PlayerData.spawnGearPresetFiles);
 
             Console.WriteLine("\t## End SpawnGearPresets ##");
         }
-
-        private void SaveSpawnGearPresetFiles()
-        {
-            foreach (var preset in Data.SpawnGearPresetFiles)
-            {
-                if (!preset.isDirty) continue;
-
-                var fullPath = Path.Combine(BaseDirectory, preset.Filename);
-                AppServices.GetRequired<FileService>().SaveJson(fullPath, preset);
-                preset.isDirty = false;
-            }
-        }
-
         private void UpdateSpawnGearFileList()
         {
             Data.PlayerData.spawnGearPresetFiles = new BindingList<string>();
-            foreach (var preset in Data.SpawnGearPresetFiles)
+            foreach (var preset in SpawnGearPresetconfigs.AllData)
             {
-                if (!string.IsNullOrWhiteSpace(preset.Filename))
-                    Data.PlayerData.spawnGearPresetFiles.Add(preset.Filename);
+                string _path = Path.Combine(preset.ModFolder, preset.FileName).Replace("\\", "/").Replace("//", "/");
+                Data.PlayerData.spawnGearPresetFiles.Add(_path);
             }
         }
-
+        public SpawnGearPresetFiles GetSpawnGearPreset(string spawnfile)
+        {
+            string filename = Path.GetFileName(spawnfile);
+            string modpath = Path.GetDirectoryName(spawnfile);
+            return SpawnGearPresetconfigs.AllData.FirstOrDefault(x => x.FileName == filename && x.ModFolder == modpath);
+        }
         #endregion
 
         #region Restricted Area Files
-
         private void LoadRestrictedFiles()
         {
-            Data.RestrictedAreaFiles = new BindingList<PlayerRestrictedFiles>();
             Console.WriteLine("\t## Starting Restricted Area Files ##");
 
-            foreach (string filename in Data.WorldsData.playerRestrictedAreaFiles)
-            {
-                var fullPath = Path.Combine(BaseDirectory, filename);
-                var restricted = AppServices.GetRequired<FileService>().LoadOrCreateJson<PlayerRestrictedFiles>(
-                    fullPath,
-                    createNew: () => new PlayerRestrictedFiles(),
-                    onAfterLoad: _ => { },
-                    checkVersionAndUpdate: _ => false,
-                    onError: ex => LogError(filename, ex),
-                    configName: "RestrictedArea",
-                    useBoolConvertor: false
-                );
-
-                restricted.Filename = filename;
-                Data.RestrictedAreaFiles.Add(restricted);
-            }
+            PlayerRestrictedFilesConfig = new PlayerRestrictedFilesConfig();
+            PlayerRestrictedFilesConfig.Load(BaseDirectory, Data.WorldsData.playerRestrictedAreaFiles);
 
             Console.WriteLine("\t## End Restricted Area Files ##");
         }
-
-        private void SavePlayerRestrictedAreaFiles()
-        {
-            foreach (var restricted in Data.RestrictedAreaFiles)
-            {
-                if (!restricted.isDirty) continue;
-
-                var fullPath = Path.Combine(BaseDirectory, restricted.Filename);
-                AppServices.GetRequired<FileService>().SaveJson(fullPath, restricted);
-                restricted.isDirty = false;
-            }
-        }
-
         private void UpdateRestrictedFileList()
         {
             Data.WorldsData.playerRestrictedAreaFiles = new BindingList<string>();
-            foreach (var restricted in Data.RestrictedAreaFiles)
+            foreach (var restricted in PlayerRestrictedFilesConfig.AllData)
             {
-                if (!string.IsNullOrWhiteSpace(restricted.Filename))
-                    Data.WorldsData.playerRestrictedAreaFiles.Add(restricted.Filename);
+                string _path = Path.Combine(restricted.ModFolder, restricted.FileName).Replace("\\", "/").Replace("//", "/");
+                Data.WorldsData.playerRestrictedAreaFiles.Add(_path);
             }
         }
-
+        public PlayerRestrictedFiles getRestrictedFiles(string restrictedfile)
+        {
+            string filename = Path.GetFileName(restrictedfile);
+            string modpath = Path.GetDirectoryName(restrictedfile);
+            return PlayerRestrictedFilesConfig.AllData.FirstOrDefault(x => x.FileName == filename && x.ModFolder == modpath);
+        }
         #endregion
 
         #region objects spwner arr files
-
         private void LoadObjectSpawenArrFiles()
         {
-            Data.ObjectSpawnerArrFiles = new BindingList<ObjectSpawnerArr>();
             Console.WriteLine("\t## Starting Object Spawner Arr Files ##");
 
-            foreach (string filename in Data.WorldsData.playerRestrictedAreaFiles)
-            {
-                var fullPath = Path.Combine(BaseDirectory, filename);
-                var objectspawner = AppServices.GetRequired<FileService>().LoadOrCreateJson<ObjectSpawnerArr>(
-                    fullPath,
-                    createNew: () => new ObjectSpawnerArr(),
-                    onAfterLoad: _ => { },
-                    checkVersionAndUpdate: _ => false,
-                    onError: ex => LogError(filename, ex),
-                    configName: "ObjectSpawnerArr",
-                    useBoolConvertor: false
-                );
-
-                objectspawner.Filename = filename;
-                Data.ObjectSpawnerArrFiles.Add(objectspawner);
-            }
-
+            ObjectSpawnerArrConfig = new ObjectSpawnerArrConfig();
+            ObjectSpawnerArrConfig.Load(BaseDirectory, Data.WorldsData.objectSpawnersArr);
+            
             Console.WriteLine("\t## End Object Spawner Arr  Files ##");
         }
-
-        private void SaveObjectSpawenArrFiles()
-        {
-            foreach (var restricted in Data.ObjectSpawnerArrFiles)
-            {
-                if (!restricted.isDirty) continue;
-
-                var fullPath = Path.Combine(BaseDirectory, restricted.Filename);
-                AppServices.GetRequired<FileService>().SaveJson(fullPath, restricted);
-                restricted.isDirty = false;
-            }
-        }
-
         private void UpdateObjectSpawenArrList()
         {
             Data.WorldsData.objectSpawnersArr = new BindingList<string>();
-            foreach (var restricted in Data.RestrictedAreaFiles)
+            foreach (var restricted in ObjectSpawnerArrConfig.AllData)
             {
-                if (!string.IsNullOrWhiteSpace(restricted.Filename))
-                    Data.WorldsData.playerRestrictedAreaFiles.Add(restricted.Filename);
+                string _path = Path.Combine(restricted.ModFolder, restricted.FileName).Replace("\\", "/").Replace("//", "/");
+                Data.WorldsData.objectSpawnersArr.Add(_path);
             }
+        }
+        public ObjectSpawnerArr getobjectspawnerFiles(string objectspawnerarrfile)
+        {
+            string filename = Path.GetFileName(objectspawnerarrfile);
+            string modpath = Path.GetDirectoryName(objectspawnerarrfile);
+            return ObjectSpawnerArrConfig.AllData.FirstOrDefault(x => x.FileName == filename && x.ModFolder == modpath);
         }
         #endregion
 
-        public void AddNewObjectSpawner(string spawner)
-        {
-            if (!string.IsNullOrWhiteSpace(spawner))
-            {
-                Data.WorldsData.objectSpawnersArr.Add(spawner);
-                isDirty = true;
-                Save();
-            }
-        }
 
         private void LogError(string context, Exception ex)
         {
@@ -231,21 +161,6 @@ namespace Day2eEditor
 
             Console.WriteLine(message);
             Errors.Add( message);
-        }
-
-        public SpawnGearPresetFiles GetSpawnGearPreset(string spawnfile)
-        {
-            return Data.SpawnGearPresetFiles.FirstOrDefault(x => x.Filename == spawnfile);
-        }
-
-        public PlayerRestrictedFiles getRestrictedFiles(string restrictedfile)
-        {
-            return Data.RestrictedAreaFiles.FirstOrDefault(x => x.Filename == restrictedfile);
-        }
-
-        public ObjectSpawnerArr getobjectspawnerFiles(string objectspawnerarrfile)
-        {
-            return Data.ObjectSpawnerArrFiles.FirstOrDefault(x => x.Filename == objectspawnerarrfile);
         }
     }
     
@@ -263,12 +178,7 @@ namespace Day2eEditor
 
         [JsonIgnore]
         const int currentversion = 123;
-        [JsonIgnore]
-        public BindingList<SpawnGearPresetFiles> SpawnGearPresetFiles { get; set; }
-        [JsonIgnore]
-        public BindingList<PlayerRestrictedFiles> RestrictedAreaFiles { get; set; }
-        [JsonIgnore]
-        public BindingList<ObjectSpawnerArr> ObjectSpawnerArrFiles { get; set; }
+
 
         public cfggameplay()
         {
@@ -280,23 +190,6 @@ namespace Day2eEditor
             UIData = new Uidata();
             MapData = new CFGGameplayMapData();
             VehicleData = new VehicleData();
-            SpawnGearPresetFiles = new BindingList<SpawnGearPresetFiles>();
-            RestrictedAreaFiles = new BindingList<PlayerRestrictedFiles>();
-        }
-
-        public void Addnewspawngearfile(string filename)
-        {
-            SpawnGearPresetFiles newSGPF = new SpawnGearPresetFiles()
-            {
-                isDirty = true,
-                Filename = filename,
-                name = Path.GetFileNameWithoutExtension(filename),
-                spawnWeight = 1,
-                characterTypes = new BindingList<string>(),
-                attachmentSlotItemSets = new BindingList<Attachmentslotitemset>(),
-                discreteUnsortedItemSets = new BindingList<Discreteunsorteditemset>(),
-            };
-            SpawnGearPresetFiles.Add(newSGPF);
         }
 
         internal bool checkver()
@@ -717,6 +610,16 @@ namespace Day2eEditor
             displayPlayerPosition = false;
             displayNavInfo = true;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not CFGGameplayMapData other)
+                return false;
+
+            return ignoreMapOwnership == other.ignoreMapOwnership &&
+                   ignoreNavItemsOwnership == other.ignoreNavItemsOwnership &&
+                   displayPlayerPosition == other.displayPlayerPosition &&
+                   displayNavInfo == other.displayNavInfo;
+        }
     }
 
     public class VehicleData
@@ -727,133 +630,12 @@ namespace Day2eEditor
         {
             boatDecayMultiplier = 1;
         }
-    }
-
-    public class SpawnGearPresetFiles
-    {
-        public int spawnWeight { get; set; }
-        public string name { get; set; }
-        public BindingList<string> characterTypes { get; set; }
-        public BindingList<Attachmentslotitemset> attachmentSlotItemSets { get; set; }
-        public BindingList<Discreteunsorteditemset> discreteUnsortedItemSets { get; set; }
-
-        [JsonIgnore]
-        public string Filename { get; set; }
-        [JsonIgnore]
-        public bool isDirty { get; set; }
-
-        public SpawnGearPresetFiles()
+        public override bool Equals(object obj)
         {
-            spawnWeight = 1;
-            name = "";
-            characterTypes = new BindingList<string>();
-            attachmentSlotItemSets = new BindingList<Attachmentslotitemset>();
-            discreteUnsortedItemSets = new BindingList<Discreteunsorteditemset>();
+            if (obj is not VehicleData other)
+                return false;
+
+            return boatDecayMultiplier == other.boatDecayMultiplier;
         }
-        public void SaveFile()
-        {
-
-        }
-        public override string ToString()
-        {
-            return name;
-        }
-    }
-
-    public class Attachmentslotitemset
-    {
-        public string slotName { get; set; }
-        public BindingList<Discreteitemset> discreteItemSets { get; set; }
-    }
-
-    public class Discreteitemset
-    {
-        public string itemType { get; set; }
-        public int spawnWeight { get; set; }
-        public Attributes attributes { get; set; }
-        public int quickBarSlot { get; set; }
-        public BindingList<Complexchildrentype> complexChildrenTypes { get; set; }
-        public bool simpleChildrenUseDefaultAttributes { get; set; }
-        public BindingList<string> simpleChildrenTypes { get; set; }
-
-        public Discreteitemset()
-        {
-            attributes = new Attributes();
-            complexChildrenTypes = new BindingList<Complexchildrentype>();
-            simpleChildrenTypes = new BindingList<string>();
-        }
-    }
-
-    public class Attributes
-    {
-        public decimal healthMin { get; set; }
-        public decimal healthMax { get; set; }
-        public decimal quantityMin { get; set; }
-        public decimal quantityMax { get; set; }
-    }
-
-    public class Complexchildrentype
-    {
-        public string itemType { get; set; }
-        public Attributes attributes { get; set; }
-        public int quickBarSlot { get; set; }
-        public bool simpleChildrenUseDefaultAttributes { get; set; }
-        public BindingList<string> simpleChildrenTypes { get; set; }
-
-        public Complexchildrentype()
-        {
-            attributes = new Attributes();
-            simpleChildrenTypes = new BindingList<string>();
-        }
-    }
-
-    public class Discreteunsorteditemset
-    {
-        public string name { get; set; }
-        public int spawnWeight { get; set; }
-        public Attributes attributes { get; set; }
-        public BindingList<Complexchildrentype> complexChildrenTypes { get; set; }
-        public bool simpleChildrenUseDefaultAttributes { get; set; }
-        public BindingList<string> simpleChildrenTypes { get; set; }
-
-        public Discreteunsorteditemset()
-        {
-            attributes = new Attributes();
-            complexChildrenTypes = new BindingList<Complexchildrentype>();
-            simpleChildrenTypes = new BindingList<string>();
-        }
-    }
-
-    public class ObjectSpawnerArr
-    {
-        [JsonIgnore]
-        internal bool isDirty;
-        [JsonIgnore]
-        public string Filename { get; set; }
-        public BindingList<SpawnObjects> Objects { get; set; }
-    }
-
-    public class SpawnObjects
-    {
-        public string name { get; set; }
-        public float[] pos { get; set; }
-        public float[] ypr { get; set; }
-        public float scale { get; set; }
-        public bool enableCEPersistency { get; set; }
-    }
-
-    public class PlayerRestrictedFiles
-    {
-        public string areaName { get; set; }
-        /// <summary>
-        /// Each PRABox = [ halfExtents [x,y,z], orientation [yaw,pitch,roll], position [x,y,z] ]
-        /// </summary>
-        public BindingList<BindingList<BindingList<double>>> PRABoxes { get; set; }
-        public BindingList<BindingList<double>> SafePositions3D { get; set; }
-
-        [JsonIgnore]
-        public bool isDirty;
-        [JsonIgnore]
-        public string Filename { get; internal set; }
     }
 }

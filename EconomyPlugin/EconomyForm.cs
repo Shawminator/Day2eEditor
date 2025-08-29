@@ -1,6 +1,7 @@
 using Day2eEditor;
 using System.ComponentModel;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace EconomyPlugin
 {
@@ -350,7 +351,7 @@ namespace EconomyPlugin
             foreach (string objectspawnerarrfile in _economyManager.CFGGameplayConfig.Data.WorldsData.objectSpawnersArr)
             {
                 ObjectSpawnerArr ObjectSpawnerArr = _economyManager.CFGGameplayConfig.getobjectspawnerFiles(objectspawnerarrfile);
-                objectspawnerarrfilenodes.Nodes.Add(new TreeNode($"{ObjectSpawnerArr.Filename}") {Tag = ObjectSpawnerArr });
+                objectspawnerarrfilenodes.Nodes.Add(new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName)) {Tag = ObjectSpawnerArr });
             }
             WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
             WorldsDataaNodes.Nodes.Add(objectspawnerarrfilenodes);
@@ -376,25 +377,25 @@ namespace EconomyPlugin
         }
         private TreeNode CreateSpawnGearFilesNodes(SpawnGearPresetFiles spawnGearPresetFiles)
         {
-            TreeNode rootNode = new TreeNode(spawnGearPresetFiles.Filename)
+            TreeNode rootNode = new TreeNode(Path.Combine(spawnGearPresetFiles.ModFolder, spawnGearPresetFiles.FileName))
             {
                 Tag = spawnGearPresetFiles
             };
-            rootNode.Nodes.Add(new TreeNode("Name")
+            rootNode.Nodes.Add(new TreeNode($"Name: {spawnGearPresetFiles.name}")
             {
-                Tag = "name"
+                Tag = "SpawnGearName"
             });
-            rootNode.Nodes.Add(new TreeNode("Spawn Weight")
+            rootNode.Nodes.Add(new TreeNode($"Spawn Weight: {spawnGearPresetFiles.spawnWeight}")
             {
-                Tag = "spawnWeight"
+                Tag = "SpawnGearSpawnWeight"
             });
             rootNode.Nodes.Add(new TreeNode("Character Types")
             {
-                Tag = "characterTypes"
+                Tag = "SpawnGearCharacterTypes"
             });
             TreeNode AttachmentslotitemsetNode = new TreeNode("Attachment slot item set")
             {
-                Tag = "attachmentSlotItemSetsParent"
+                Tag = "SpawnGearAttachmentSlotItemSetsParent"
             };
             foreach (Attachmentslotitemset Slot in spawnGearPresetFiles.attachmentSlotItemSets)
             {
@@ -403,7 +404,7 @@ namespace EconomyPlugin
             rootNode.Nodes.Add(AttachmentslotitemsetNode);
             TreeNode discreteUnsortedItemSets = new TreeNode("Discrete Unsorted Item Sets")
             {
-                Tag = "discreteUnsortedItemSetsParent"
+                Tag = "SpawnGearDiscreteUnsortedItemSetsParent"
             };
             foreach (Discreteunsorteditemset DUIS in spawnGearPresetFiles.discreteUnsortedItemSets)
             {
@@ -420,15 +421,15 @@ namespace EconomyPlugin
             };
             DUIS.Nodes.Add(new TreeNode("Spawn Weight")
             {
-                Tag = "spawnWeight"
+                Tag = "DiscreteunsorteditemsetSpawnWeight"
             });
             DUIS.Nodes.Add(new TreeNode("Attributes")
             {
-                Tag = "attributes"
+                Tag = "DiscreteunsorteditemsetAttributes"
             });
             TreeNode ComplexChildrenTypes = new TreeNode("Complex Children Types")
             {
-                Tag = "complexChildrenTypes"
+                Tag = "DiscreteunsorteditemsetComplexChildrenTypes"
             };
             foreach (Complexchildrentype CCT in dUIS.complexChildrenTypes)
             {
@@ -437,11 +438,11 @@ namespace EconomyPlugin
             DUIS.Nodes.Add(ComplexChildrenTypes);
             DUIS.Nodes.Add(new TreeNode("Simple Children Use Default Attributes")
             {
-                Tag = "simpleChildrenUseDefaultAttributes"
+                Tag = "DiscreteunsorteditemsetSimpleChildrenUseDefaultAttributes"
             });
             DUIS.Nodes.Add(new TreeNode("Simple Children Types")
             {
-                Tag = "simpleChildrenTypes"
+                Tag = "DiscreteunsorteditemsetSimpleChildrenTypes"
             });
 
             return DUIS;
@@ -467,19 +468,19 @@ namespace EconomyPlugin
             };
             DISNode.Nodes.Add(new TreeNode("Spawn Weight")
             {
-                Tag = "spawnWeight"
+                Tag = "DiscreteitemsetSpawnWeight"
             });
             DISNode.Nodes.Add(new TreeNode("Attributes")
             {
-                Tag = "attributes"
+                Tag = "DiscreteitemsetAttributes"
             });
             DISNode.Nodes.Add(new TreeNode("Quick Bar Slot")
             {
-                Tag = "quickBarSlot"
+                Tag = "DiscreteitemsetQuickBarSlot"
             });
             TreeNode ComplexChildrenTypes = new TreeNode("Complex Children Types")
             {
-                Tag = "complexChildrenTypes"
+                Tag = "DiscreteitemsetComplexChildrenTypes"
             };
             foreach (Complexchildrentype CCT in DIS.complexChildrenTypes)
             {
@@ -488,11 +489,11 @@ namespace EconomyPlugin
             DISNode.Nodes.Add(ComplexChildrenTypes);
             DISNode.Nodes.Add(new TreeNode("Simple Children Use Default Attributes")
             {
-                Tag = "simpleChildrenUseDefaultAttributes"
+                Tag = "DiscreteitemsetSimpleChildrenUseDefaultAttributes"
             });
             DISNode.Nodes.Add(new TreeNode("Simple Children Types")
             {
-                Tag = "simpleChildrenTypes"
+                Tag = "DiscreteitemsetSimpleChildrenTypes"
             });
 
             return DISNode;
@@ -506,25 +507,25 @@ namespace EconomyPlugin
             };
             CCTNode.Nodes.Add(new TreeNode("Attributes")
             {
-                Tag = "attributes"
+                Tag = "ComplexchildrentypeAttributes"
             });
             CCTNode.Nodes.Add(new TreeNode("Quick Bar Slot")
             {
-                Tag = "quickBarSlot"
+                Tag = "ComplexchildrentypeQuickBarSlot"
             });
             CCTNode.Nodes.Add(new TreeNode("Simple Children Use Default Attributes")
             {
-                Tag = "simpleChildrenUseDefaultAttributes"
+                Tag = "ComplexchildrentypeSimpleChildrenUseDefaultAttributes"
             });
             CCTNode.Nodes.Add(new TreeNode("Simple Children Types")
             {
-                Tag = "simpleChildrenTypes"
+                Tag = "ComplexchildrentypeSimpleChildrenTypes"
             });
             return CCTNode;
         }
         private TreeNode CreateRestrictedfilesNodes(PlayerRestrictedFiles playerRestrictedFiles)
         {
-            TreeNode areaNode = new TreeNode(playerRestrictedFiles.Filename)
+            TreeNode areaNode = new TreeNode(Path.Combine(playerRestrictedFiles.ModFolder, playerRestrictedFiles.FileName))
             {
                 Tag = playerRestrictedFiles
             };
@@ -1180,6 +1181,18 @@ namespace EconomyPlugin
                 {
                     switch (_string)
                     {
+                        case "SpawnGearName":
+                            var SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
+                            ShowHandler(new SpawnGearNameControl(), SpawnGearPresetFiles, selectedNodes);
+                            break;
+                        case "SpawnGearSpawnWeight":
+                            SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
+                            ShowHandler(new SpawnGearSpawnWeightControl(), SpawnGearPresetFiles, selectedNodes);
+                            break;
+                        case "SpawnGearCharacterTypes":
+                            SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
+                            ShowHandler(new SpawnGearCharacterTypesControl(), SpawnGearPresetFiles, selectedNodes);
+                            break;
                         default:
                             ShowHandler<IUIHandler>(null, null, null);
                             break;
@@ -1348,13 +1361,13 @@ namespace EconomyPlugin
                 {
                     ShowHandler(new cfggameplayUIDataControl(), Uidata, selectedNodes);
                 }
-                else if (e.Node.Tag is CFGGameplayMapData)
+                else if (e.Node.Tag is CFGGameplayMapData CFGGameplayMapData)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler(new cfggameplayMapDataControl(), CFGGameplayMapData, selectedNodes);
                 }
-                else if (e.Node.Tag is VehicleData)
+                else if (e.Node.Tag is VehicleData VehicleData)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler(new cfggameplayVehicleDataControl(), VehicleData, selectedNodes);
                 }
                 else if (e.Node.Tag is cfgspawnabletypesFile)
                 {
@@ -1417,6 +1430,10 @@ namespace EconomyPlugin
 
                     cfgeffectareaConfig cfgeffectareaConfig = e.Node.FindParentOfType<cfgeffectareaConfig>();
                     DrawEffectSafePositions(cfgeffectareaConfig);
+                }
+                else if (e.Node.Tag is Attachmentslotitemset Attachmentslotitemset)
+                {
+                    ShowHandler(new AttachmentslotitemsetControl(), Attachmentslotitemset, selectedNodes);
                 }
             }));
         }

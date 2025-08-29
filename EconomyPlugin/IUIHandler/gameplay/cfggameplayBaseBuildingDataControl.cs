@@ -128,17 +128,6 @@ namespace EconomyPlugin
             };
         }
 
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
-        private void UpdateTreeNodeText()
-        {
-            if (_nodes?.Any() != true)
-            {
-                // TODO: Update _nodes.Last().Text based on _data
-            }
-        }
-
         #endregion
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {

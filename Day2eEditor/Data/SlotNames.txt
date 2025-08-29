@@ -1,0 +1,16 @@
+﻿Armband
+Back
+Body
+Cargo
+Eyewear
+Feet
+Gloves
+Hands
+Headgear
+Hips
+LeftHand
+Legs
+Mask
+shoulderL
+shoulderR
+Vest

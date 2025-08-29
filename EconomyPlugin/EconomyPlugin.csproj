@@ -28,19 +28,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="IUIHandler\SpawnabletypesDamageControl.cs">
+    <Compile Update="IUIHandler\spawnabletypes\SpawnabletypesDamageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\RandompresetsCargoControl.cs">
+    <Compile Update="IUIHandler\randompresets\RandompresetsCargoControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\RandompresetsAttchmentsControl.cs">
+    <Compile Update="IUIHandler\randompresets\RandompresetsAttchmentsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\RandomPresetItemControl.cs">
+    <Compile Update="IUIHandler\randompresets\RandomPresetItemControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\EventsControl.cs">
+    <Compile Update="IUIHandler\db\events\EventsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\SpawnGear\SpawnGearCharacterTypesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\SpawnGear\SpawnGearSpawnWeightControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">

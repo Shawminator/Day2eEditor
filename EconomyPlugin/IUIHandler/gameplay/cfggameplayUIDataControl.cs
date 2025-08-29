@@ -183,7 +183,7 @@ namespace EconomyPlugin
                     _data.HitIndicationData.hitDirectionIndicatorColorStr = colorHex;
                     Color selectedColor = ColorTranslator.FromHtml(_data.HitIndicationData.hitDirectionIndicatorColorStr);
                     m_Color.BackColor = selectedColor;
-                    // Use the selected color
+                    HasChanges();
                 }
             }
         }
