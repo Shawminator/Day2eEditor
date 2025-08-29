@@ -29,7 +29,7 @@ namespace Day2eEditor
                 var preset = AppServices.GetRequired<FileService>().LoadOrCreateJson<ObjectSpawnerArr>(
                      fullPath,
                      createNew: () => new ObjectSpawnerArr(),
-                     configName: "RestrictedArea",
+                     configName: "ObjectSpawnerArr",
                      useBoolConvertor: false
                  );
                 preset.setpath(fullPath);
