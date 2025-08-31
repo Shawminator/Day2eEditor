@@ -10,14 +10,14 @@ namespace EconomyPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class SpawnGearSpawnWeightControl : UserControl, IUIHandler
+    public partial class SpawnGearsimpleChildrenUseDefaultAttributesControl : UserControl, IUIHandler
     {
-        private IHasSpawnWeight _data;
-        private IHasSpawnWeight _originalData;
+        private IHassimpleChildrenUseDefaultAttributes _data;
+        private IHassimpleChildrenUseDefaultAttributes _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public SpawnGearSpawnWeightControl()
+        public SpawnGearsimpleChildrenUseDefaultAttributesControl()
         {
             InitializeComponent();
         }
@@ -33,13 +33,13 @@ namespace EconomyPlugin
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             // TODO: Replace ClassType with your actual type
-            _data = data as IHasSpawnWeight ?? throw new InvalidCastException();
+            _data = data as IHassimpleChildrenUseDefaultAttributes ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
-            spawnWeightNUD.Value = _data.SpawnWeight;
+            simpleChildrenUseDefaultAttributesCB.Checked = _data.SimpleChildrenUseDefaultAttributes;
 
             _suppressEvents = false;
         }
@@ -70,7 +70,7 @@ namespace EconomyPlugin
             // TODO: Replace Parentfile with your actual parent type if different
             var ef = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
             if (ef != null)
-                ef.isDirty = _data.SpawnWeight != _originalData.SpawnWeight;
+                ef.isDirty = _data.SimpleChildrenUseDefaultAttributes != _originalData.SimpleChildrenUseDefaultAttributes;
         }
 
         #region Helper Methods
@@ -78,12 +78,12 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private IHasSpawnWeight CloneData(IHasSpawnWeight data)
+        private IHassimpleChildrenUseDefaultAttributes CloneData(IHassimpleChildrenUseDefaultAttributes data)
         {
             // TODO: Implement actual cloning logic
-            return new SimpleSpawnWeightSnapshot
+            return new SimpleIHassimpleChildrenUseDefaultAttributesSnapshot
             {
-                SpawnWeight = data.SpawnWeight
+                SimpleChildrenUseDefaultAttributes = data.SimpleChildrenUseDefaultAttributes
             };
         }
 
@@ -92,28 +92,23 @@ namespace EconomyPlugin
         /// </summary>
         private void UpdateTreeNodeText()
         {
-            if (_nodes?.Any() == true)
+            if (_nodes?.Any() != true)
             {
-                _nodes.Last().Text = $"Spawn Weight: {_data.SpawnWeight}";
+                // TODO: Update _nodes.Last().Text based on _data
             }
         }
 
         #endregion
 
-        private void spawnWeightNUD_ValueChanged(object sender, EventArgs e)
+        private void simpleChildrenUseDefaultAttributesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.SpawnWeight = (int)spawnWeightNUD.Value;
+            _data.SimpleChildrenUseDefaultAttributes = simpleChildrenUseDefaultAttributesCB.Checked;    
             HasChanges();
-            UpdateTreeNodeText();
         }
-
     }
-    /// <summary>
-    /// Helper class just to store a lightweight snapshot for comparison/reset
-    /// </summary>
-    internal class SimpleSpawnWeightSnapshot : IHasSpawnWeight
+    internal class SimpleIHassimpleChildrenUseDefaultAttributesSnapshot : IHassimpleChildrenUseDefaultAttributes
     {
-        public int SpawnWeight { get; set; }
+        public bool SimpleChildrenUseDefaultAttributes { get; set; }
     }
 }

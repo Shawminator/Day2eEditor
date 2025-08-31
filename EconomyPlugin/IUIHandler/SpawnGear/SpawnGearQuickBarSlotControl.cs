@@ -1,6 +1,7 @@
 ﻿using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,14 +11,14 @@ namespace EconomyPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class SpawnGearSpawnWeightControl : UserControl, IUIHandler
+    public partial class SpawnGearQuickBarSlotControl : UserControl, IUIHandler
     {
-        private IHasSpawnWeight _data;
-        private IHasSpawnWeight _originalData;
+        private IHasQuikBarSlot _data;
+        private IHasQuikBarSlot _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public SpawnGearSpawnWeightControl()
+        public SpawnGearQuickBarSlotControl()
         {
             InitializeComponent();
         }
@@ -33,13 +34,13 @@ namespace EconomyPlugin
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             // TODO: Replace ClassType with your actual type
-            _data = data as IHasSpawnWeight ?? throw new InvalidCastException();
+            _data = data as IHasQuikBarSlot ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
-            spawnWeightNUD.Value = _data.SpawnWeight;
+            quickBarSlotNUD.Value = _data.QuickBarSlot;
 
             _suppressEvents = false;
         }
@@ -70,7 +71,7 @@ namespace EconomyPlugin
             // TODO: Replace Parentfile with your actual parent type if different
             var ef = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
             if (ef != null)
-                ef.isDirty = _data.SpawnWeight != _originalData.SpawnWeight;
+                ef.isDirty = _data.QuickBarSlot != _originalData.QuickBarSlot;
         }
 
         #region Helper Methods
@@ -78,12 +79,13 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private IHasSpawnWeight CloneData(IHasSpawnWeight data)
+        private IHasQuikBarSlot CloneData(IHasQuikBarSlot data)
         {
             // TODO: Implement actual cloning logic
-            return new SimpleSpawnWeightSnapshot
+            // TODO: Implement actual cloning logic
+            return new SimpleQuickBArSlotSnapshot
             {
-                SpawnWeight = data.SpawnWeight
+                QuickBarSlot = data.QuickBarSlot
             };
         }
 
@@ -94,26 +96,21 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = $"Spawn Weight: {_data.SpawnWeight}";
+                // TODO: Update _nodes.Last().Text based on _data
             }
         }
 
         #endregion
 
-        private void spawnWeightNUD_ValueChanged(object sender, EventArgs e)
+        private void quickBarSlotNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.SpawnWeight = (int)spawnWeightNUD.Value;
+            _data.QuickBarSlot = (int)quickBarSlotNUD.Value;
             HasChanges();
-            UpdateTreeNodeText();
         }
-
     }
-    /// <summary>
-    /// Helper class just to store a lightweight snapshot for comparison/reset
-    /// </summary>
-    internal class SimpleSpawnWeightSnapshot : IHasSpawnWeight
+    internal class SimpleQuickBArSlotSnapshot : IHasQuikBarSlot
     {
-        public int SpawnWeight { get; set; }
+        public int QuickBarSlot { get; set; }
     }
 }

@@ -55,7 +55,7 @@ namespace Day2eEditor
             return savedFiles;
         }
     }
-    public class SpawnGearPresetFiles
+    public class SpawnGearPresetFiles : IHasSpawnWeight, IHasSpawnName
     {
         public string name { get; set; }
         public int spawnWeight { get; set; }
@@ -75,6 +75,10 @@ namespace Day2eEditor
         public bool ToDelete { get; set; }
         [JsonIgnore]
         public string ModFolder { get; set; }
+        [JsonIgnore]
+        public int SpawnWeight { get => spawnWeight; set => spawnWeight = value; }
+        [JsonIgnore]
+        public string Name { get => name; set => name = value; }
 
         public void setpath(string path)
         {
@@ -145,7 +149,7 @@ namespace Day2eEditor
 
     }
 
-    public class Discreteitemset
+    public class Discreteitemset : IHasSpawnWeight, IHasSpawnItemType, IHasSimpleChildren, IHasQuikBarSlot, IHassimpleChildrenUseDefaultAttributes
     {
         public string itemType { get; set; }
         public int spawnWeight { get; set; }
@@ -154,6 +158,17 @@ namespace Day2eEditor
         public BindingList<Complexchildrentype> complexChildrenTypes { get; set; }
         public bool simpleChildrenUseDefaultAttributes { get; set; }
         public BindingList<string> simpleChildrenTypes { get; set; }
+
+        [JsonIgnore]
+        public string ItemType { get => itemType; set => itemType = value; }
+        [JsonIgnore]
+        public int SpawnWeight { get => spawnWeight; set => spawnWeight = value; }
+        [JsonIgnore]
+        public int QuickBarSlot { get => quickBarSlot; set => quickBarSlot = value; }
+        [JsonIgnore]
+        public bool SimpleChildrenUseDefaultAttributes { get => simpleChildrenUseDefaultAttributes; set => simpleChildrenUseDefaultAttributes = value; }
+        [JsonIgnore]
+        public BindingList<string> SimpleChildrenTypes { get => simpleChildrenTypes; set => simpleChildrenTypes = value; }
 
         public Discreteitemset()
         {
@@ -195,13 +210,22 @@ namespace Day2eEditor
 
     }
 
-    public class Complexchildrentype
+    public class Complexchildrentype : IHasSpawnItemType, IHasSimpleChildren, IHasQuikBarSlot, IHassimpleChildrenUseDefaultAttributes
     {
         public string itemType { get; set; }
         public Attributes attributes { get; set; }
         public int quickBarSlot { get; set; }
         public bool simpleChildrenUseDefaultAttributes { get; set; }
         public BindingList<string> simpleChildrenTypes { get; set; }
+
+        [JsonIgnore]
+        public string ItemType { get => itemType; set => itemType = value; }
+        [JsonIgnore]
+        public int QuickBarSlot { get => quickBarSlot; set => quickBarSlot = value; }
+        [JsonIgnore]
+        public bool SimpleChildrenUseDefaultAttributes { get => simpleChildrenUseDefaultAttributes; set => simpleChildrenUseDefaultAttributes = value; }
+        [JsonIgnore]
+        public BindingList<string> SimpleChildrenTypes { get => simpleChildrenTypes; set => simpleChildrenTypes = value; }
 
         public Complexchildrentype()
         {
@@ -222,7 +246,7 @@ namespace Day2eEditor
 
     }
 
-    public class Discreteunsorteditemset
+    public class Discreteunsorteditemset : IHasSpawnWeight, IHasSpawnName, IHasSimpleChildren, IHassimpleChildrenUseDefaultAttributes
     {
         public string name { get; set; }
         public int spawnWeight { get; set; }
@@ -230,6 +254,15 @@ namespace Day2eEditor
         public BindingList<Complexchildrentype> complexChildrenTypes { get; set; }
         public bool simpleChildrenUseDefaultAttributes { get; set; }
         public BindingList<string> simpleChildrenTypes { get; set; }
+
+        [JsonIgnore]
+        public int SpawnWeight { get => spawnWeight; set => spawnWeight = value; }
+        [JsonIgnore]
+        public string Name { get => name; set => name = value; }
+        [JsonIgnore]
+        public bool SimpleChildrenUseDefaultAttributes { get => simpleChildrenUseDefaultAttributes; set => simpleChildrenUseDefaultAttributes = value; }
+        [JsonIgnore]
+        public BindingList<string> SimpleChildrenTypes { get => simpleChildrenTypes; set => simpleChildrenTypes = value; }
 
         public Discreteunsorteditemset()
         {
@@ -246,5 +279,30 @@ namespace Day2eEditor
                    spawnWeight == other.spawnWeight &&
                    simpleChildrenUseDefaultAttributes == other.simpleChildrenUseDefaultAttributes;
         }
+    }
+
+    public interface IHasSpawnWeight
+    {
+        int SpawnWeight { get; set; }
+    }
+    public interface IHasSpawnItemType
+    {
+        string ItemType { get; set; }
+    }
+    public interface IHasSpawnName
+    {
+        string Name { get; set; }
+    }
+    public interface IHasQuikBarSlot
+    {
+        int QuickBarSlot { get; set; }
+    }
+    public interface IHasSimpleChildren
+    {
+        BindingList<string> SimpleChildrenTypes { get; set; }
+    }
+    public interface IHassimpleChildrenUseDefaultAttributes
+    {
+        bool SimpleChildrenUseDefaultAttributes { get; set; }
     }
 }

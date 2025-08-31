@@ -12,8 +12,8 @@ namespace EconomyPlugin
     /// </summary>
     public partial class SpawnGearNameControl : UserControl, IUIHandler
     {
-        private SpawnGearPresetFiles _data;
-        private SpawnGearPresetFiles _originalData;
+        private IHasSpawnName _data;
+        private IHasSpawnName _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -33,13 +33,13 @@ namespace EconomyPlugin
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             // TODO: Replace ClassType with your actual type
-            _data = data as SpawnGearPresetFiles ?? throw new InvalidCastException();
+            _data = data as IHasSpawnName ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
-            SpawnGearNameTB.Text = _data.name;
+            SpawnGearNameTB.Text = _data.Name;
 
             _suppressEvents = false;
         }
@@ -70,7 +70,7 @@ namespace EconomyPlugin
             // TODO: Replace Parentfile with your actual parent type if different
             var ef = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
             if (ef != null)
-                ef.isDirty = !_data.Equals(_originalData);
+                ef.isDirty = _data.Name != _originalData.Name;
         }
 
         #region Helper Methods
@@ -78,14 +78,12 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private SpawnGearPresetFiles CloneData(SpawnGearPresetFiles data)
+        private IHasSpawnName CloneData(IHasSpawnName data)
         {
             // TODO: Implement actual cloning logic
-            return new SpawnGearPresetFiles
+            return new SimpleSpawnNameSnapshot
             {
-                name = data.name,
-                spawnWeight = data.spawnWeight,
-                characterTypes = data.characterTypes
+                Name = data.Name
             };
         }
 
@@ -96,7 +94,7 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = $"Name: {_data.name}";
+                _nodes.Last().Text = $"Name: {_data.Name}";
             }
         }
 
@@ -105,9 +103,13 @@ namespace EconomyPlugin
         private void SpawnGearNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.name = SpawnGearNameTB.Text;
+            _data.Name = SpawnGearNameTB.Text;
             HasChanges();
             UpdateTreeNodeText();
         }
+    }
+    internal class SimpleSpawnNameSnapshot : IHasSpawnName
+    {
+        public string Name { get; set; }
     }
 }

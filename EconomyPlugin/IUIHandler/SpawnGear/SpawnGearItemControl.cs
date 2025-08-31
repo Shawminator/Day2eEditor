@@ -10,14 +10,14 @@ namespace EconomyPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class SpawnGearSpawnWeightControl : UserControl, IUIHandler
+    public partial class SpawnGearItemControl : UserControl, IUIHandler
     {
-        private IHasSpawnWeight _data;
-        private IHasSpawnWeight _originalData;
+        private IHasSpawnItemType _data;
+        private IHasSpawnItemType _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public SpawnGearSpawnWeightControl()
+        public SpawnGearItemControl()
         {
             InitializeComponent();
         }
@@ -33,13 +33,13 @@ namespace EconomyPlugin
         public void LoadFromData(object data, List<TreeNode> selectedNodes)
         {
             // TODO: Replace ClassType with your actual type
-            _data = data as IHasSpawnWeight ?? throw new InvalidCastException();
+            _data = data as IHasSpawnItemType ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
-            spawnWeightNUD.Value = _data.SpawnWeight;
+            SpawnGearItemTypeTB.Text = _data.ItemType;
 
             _suppressEvents = false;
         }
@@ -70,7 +70,7 @@ namespace EconomyPlugin
             // TODO: Replace Parentfile with your actual parent type if different
             var ef = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
             if (ef != null)
-                ef.isDirty = _data.SpawnWeight != _originalData.SpawnWeight;
+                ef.isDirty = _data.ItemType != _originalData.ItemType;
         }
 
         #region Helper Methods
@@ -78,12 +78,11 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private IHasSpawnWeight CloneData(IHasSpawnWeight data)
+        private IHasSpawnItemType CloneData(IHasSpawnItemType data)
         {
-            // TODO: Implement actual cloning logic
-            return new SimpleSpawnWeightSnapshot
+            return new SimpleSpawnItemTypeSnapshot
             {
-                SpawnWeight = data.SpawnWeight
+                ItemType = data.ItemType
             };
         }
 
@@ -94,26 +93,41 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = $"Spawn Weight: {_data.SpawnWeight}";
+                _nodes.Last().Text = _data.ItemType;
             }
         }
 
         #endregion
 
-        private void spawnWeightNUD_ValueChanged(object sender, EventArgs e)
+        private void darkButton70_Click(object sender, EventArgs e)
         {
-            if (_suppressEvents) return;
-            _data.SpawnWeight = (int)spawnWeightNUD.Value;
-            HasChanges();
-            UpdateTreeNodeText();
+            string Classname = "";
+            AddItemfromTypes form = new AddItemfromTypes
+            {
+                UseOnlySingleItem = true
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    SpawnGearItemTypeTB.Text = _data.ItemType = l;
+                    HasChanges();
+                    UpdateTreeNodeText();
+                }
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                return;
+            }
         }
-
     }
     /// <summary>
     /// Helper class just to store a lightweight snapshot for comparison/reset
     /// </summary>
-    internal class SimpleSpawnWeightSnapshot : IHasSpawnWeight
+    internal class SimpleSpawnItemTypeSnapshot : IHasSpawnItemType
     {
-        public int SpawnWeight { get; set; }
+        public string ItemType { get; set; }
     }
 }

@@ -1177,10 +1177,18 @@ namespace EconomyPlugin
                 currentTreeNode = e.Node;
 
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
-                if (e.Node.Tag is string _string)
+
+                if(e.Node.Tag == null)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                }
+                else if (e.Node.Tag is string _string)
                 {
                     switch (_string)
                     {
+                        case "SpawnGearAttachmentSlotItemSetsParent":
+                            ShowHandler<IUIHandler>(null, null, null);
+                            break;
                         case "SpawnGearName":
                             var SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
                             ShowHandler(new SpawnGearNameControl(), SpawnGearPresetFiles, selectedNodes);
@@ -1192,6 +1200,64 @@ namespace EconomyPlugin
                         case "SpawnGearCharacterTypes":
                             SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
                             ShowHandler(new SpawnGearCharacterTypesControl(), SpawnGearPresetFiles, selectedNodes);
+                            break;
+                        case "DiscreteitemsetSpawnWeight":
+                            var Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
+                            ShowHandler(new SpawnGearSpawnWeightControl(), Discreteitemset, selectedNodes);
+                            break;
+                        case "DiscreteitemsetQuickBarSlot":
+                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
+                            ShowHandler(new SpawnGearQuickBarSlotControl(), Discreteitemset, selectedNodes);
+                            break;
+                        case "DiscreteitemsetComplexChildrenTypes":
+                            ShowHandler<IUIHandler>(null, null, null);
+                            break;
+                        case "DiscreteitemsetSimpleChildrenTypes":
+                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
+                            ShowHandler(new SpawnGearSimpleChildrenControl(), Discreteitemset, selectedNodes);
+                            break;
+                        case "DiscreteitemsetSimpleChildrenUseDefaultAttributes":
+                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
+                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), Discreteitemset, selectedNodes);
+                            break;
+                        case "DiscreteunsorteditemsetSpawnWeight":
+                            var Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
+                            ShowHandler(new SpawnGearSpawnWeightControl(), Discreteunsorteditemset, selectedNodes);
+                            break;
+                        case "DiscreteunsorteditemsetAttributes":
+                            Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
+                            ShowHandler(new SpawnGearAttributesControl(), Discreteunsorteditemset.attributes, selectedNodes);
+                            break;
+                        case "DiscreteitemsetAttributes":
+                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
+                            ShowHandler(new SpawnGearAttributesControl(), Discreteitemset.attributes, selectedNodes);
+                            break;
+                        case "DiscreteunsorteditemsetSimpleChildrenTypes":
+                            Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
+                            ShowHandler(new SpawnGearSimpleChildrenControl(), Discreteunsorteditemset, selectedNodes);
+                            break;
+                        case "DiscreteunsorteditemsetSimpleChildrenUseDefaultAttributes":
+                            Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
+                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), Discreteunsorteditemset, selectedNodes);
+                            break;
+                        case "DiscreteunsorteditemsetComplexChildrenTypes":
+                            ShowHandler<IUIHandler>(null, null, null);
+                            break;
+                        case "ComplexchildrentypeAttributes":
+                            var Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
+                            ShowHandler(new SpawnGearAttributesControl(), Complexchildrentype.attributes, selectedNodes);
+                            break;
+                        case "ComplexchildrentypeQuickBarSlot":
+                            Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
+                            ShowHandler(new SpawnGearQuickBarSlotControl(), Complexchildrentype, selectedNodes);
+                            break;
+                        case "ComplexchildrentypeSimpleChildrenUseDefaultAttributes":
+                            Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
+                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), Complexchildrentype, selectedNodes);
+                            break;
+                        case "ComplexchildrentypeSimpleChildrenTypes":
+                            Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
+                            ShowHandler(new SpawnGearSimpleChildrenControl(), Complexchildrentype, selectedNodes);
                             break;
                         default:
                             ShowHandler<IUIHandler>(null, null, null);
@@ -1434,6 +1500,18 @@ namespace EconomyPlugin
                 else if (e.Node.Tag is Attachmentslotitemset Attachmentslotitemset)
                 {
                     ShowHandler(new AttachmentslotitemsetControl(), Attachmentslotitemset, selectedNodes);
+                }
+                else if (e.Node.Tag is Discreteitemset Discreteitemset)
+                {
+                    ShowHandler(new SpawnGearItemControl(), Discreteitemset, selectedNodes);
+                }
+                else if (e.Node.Tag is Discreteunsorteditemset Discreteunsorteditemset)
+                {
+                    ShowHandler(new SpawnGearNameControl(), Discreteunsorteditemset, selectedNodes);
+                }
+                else if (e.Node.Tag is Complexchildrentype Complexchildrentype)
+                {
+                    ShowHandler(new SpawnGearItemControl(), Complexchildrentype, selectedNodes);
                 }
             }));
         }
