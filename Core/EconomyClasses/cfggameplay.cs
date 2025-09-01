@@ -85,6 +85,8 @@ namespace Day2eEditor
             Data.PlayerData.spawnGearPresetFiles = new BindingList<string>();
             foreach (var preset in SpawnGearPresetconfigs.AllData)
             {
+                if (preset.ToDelete)
+                    continue;
                 string _path = Path.Combine(preset.ModFolder, preset.FileName).Replace("\\", "/").Replace("//", "/");
                 Data.PlayerData.spawnGearPresetFiles.Add(_path);
             }
@@ -94,6 +96,22 @@ namespace Day2eEditor
             string filename = Path.GetFileName(spawnfile);
             string modpath = Path.GetDirectoryName(spawnfile);
             return SpawnGearPresetconfigs.AllData.FirstOrDefault(x => x.FileName == filename && x.ModFolder == modpath);
+        }
+        public bool AddNewSpawnGear(SpawnGearPresetFiles newfile)
+        {
+            string relativepath = Path.Combine(newfile.ModFolder, newfile.FileName).Replace("\\", "/");
+            if (Data.PlayerData.spawnGearPresetFiles.Contains(relativepath))
+                return false;
+            Data.PlayerData.spawnGearPresetFiles.Add(relativepath);
+            SpawnGearPresetconfigs.AllData.Add(newfile);
+            isDirty = true;
+            return true;
+        }
+        public void RemoveSpawnGearPreset(SpawnGearPresetFiles spawnGearPresetFiles)
+        {
+            string relativepath = Path.Combine(spawnGearPresetFiles.ModFolder, spawnGearPresetFiles.FileName).Replace("\\", "/");
+            Data.PlayerData.spawnGearPresetFiles.Remove(relativepath);
+            isDirty = true;
         }
         #endregion
 
@@ -162,6 +180,7 @@ namespace Day2eEditor
             Console.WriteLine(message);
             Errors.Add( message);
         }
+
     }
     
     

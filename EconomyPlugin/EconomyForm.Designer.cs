@@ -72,6 +72,13 @@ namespace EconomyPlugin
             addNewCargoToolStripMenuItem1 = new ToolStripMenuItem();
             addNewAttachmentToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedToolStripMenuItem1 = new ToolStripMenuItem();
+            SpawnGearPresetCM = new ContextMenuStrip(components);
+            addNewSpawnGEarPresetFileToolStripMenuItem = new ToolStripMenuItem();
+            addNewAttachmentSlotItemSetToolStripMenuItem = new ToolStripMenuItem();
+            addNewDisctreetItemSetToolStripMenuItem = new ToolStripMenuItem();
+            addNewComplexChildSetToolStripMenuItem = new ToolStripMenuItem();
+            addNewDiscreetUnsortedItemSetToolStripMenuItem = new ToolStripMenuItem();
+            SpawnGearremoveSelectedToolStripMenuItem2 = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -83,6 +90,7 @@ namespace EconomyPlugin
             EventsCM.SuspendLayout();
             RandomPresetsCM.SuspendLayout();
             SpawnableTypesCM.SuspendLayout();
+            SpawnGearPresetCM.SuspendLayout();
             SuspendLayout();
             // 
             // _mapControl
@@ -131,13 +139,13 @@ namespace EconomyPlugin
             EditPropertyCMS.Items.AddRange(new ToolStripItem[] { editPropertyToolStripMenuItem, setToDefaultToolStripMenuItem });
             EditPropertyCMS.Name = "contextMenuStrip1";
             EditPropertyCMS.ShowImageMargin = false;
-            EditPropertyCMS.Size = new Size(123, 48);
+            EditPropertyCMS.Size = new Size(122, 48);
             // 
             // editPropertyToolStripMenuItem
             // 
             editPropertyToolStripMenuItem.ForeColor = SystemColors.Control;
             editPropertyToolStripMenuItem.Name = "editPropertyToolStripMenuItem";
-            editPropertyToolStripMenuItem.Size = new Size(122, 22);
+            editPropertyToolStripMenuItem.Size = new Size(121, 22);
             editPropertyToolStripMenuItem.Text = "Edit Property";
             editPropertyToolStripMenuItem.Click += editPropertyToolStripMenuItem_Click;
             // 
@@ -145,7 +153,7 @@ namespace EconomyPlugin
             // 
             setToDefaultToolStripMenuItem.ForeColor = SystemColors.Control;
             setToDefaultToolStripMenuItem.Name = "setToDefaultToolStripMenuItem";
-            setToDefaultToolStripMenuItem.Size = new Size(122, 22);
+            setToDefaultToolStripMenuItem.Size = new Size(121, 22);
             setToDefaultToolStripMenuItem.Text = "Set To Default";
             setToDefaultToolStripMenuItem.Click += setToDefaultToolStripMenuItem_Click;
             // 
@@ -363,13 +371,13 @@ namespace EconomyPlugin
             SpawnableTypesCM.Items.AddRange(new ToolStripItem[] { addNewSpawnableTypesFileToolStripMenuItem, addNewSpawnableTypeToolStripMenuItem, addNewHoarderToolStripMenuItem, addNewTagToolStripMenuItem, addNewDamageToolStripMenuItem, addNewItemToolStripMenuItem1, addNewCargoToolStripMenuItem1, addNewAttachmentToolStripMenuItem, removeSelectedToolStripMenuItem1 });
             SpawnableTypesCM.Name = "TypesCM";
             SpawnableTypesCM.ShowImageMargin = false;
-            SpawnableTypesCM.Size = new Size(213, 224);
+            SpawnableTypesCM.Size = new Size(212, 202);
             // 
             // addNewSpawnableTypesFileToolStripMenuItem
             // 
             addNewSpawnableTypesFileToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewSpawnableTypesFileToolStripMenuItem.Name = "addNewSpawnableTypesFileToolStripMenuItem";
-            addNewSpawnableTypesFileToolStripMenuItem.Size = new Size(212, 22);
+            addNewSpawnableTypesFileToolStripMenuItem.Size = new Size(211, 22);
             addNewSpawnableTypesFileToolStripMenuItem.Text = "Add New Spawnable Types File";
             addNewSpawnableTypesFileToolStripMenuItem.Click += addNewSpawnableTypesFileToolStripMenuItem_Click;
             // 
@@ -377,7 +385,7 @@ namespace EconomyPlugin
             // 
             addNewSpawnableTypeToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewSpawnableTypeToolStripMenuItem.Name = "addNewSpawnableTypeToolStripMenuItem";
-            addNewSpawnableTypeToolStripMenuItem.Size = new Size(212, 22);
+            addNewSpawnableTypeToolStripMenuItem.Size = new Size(211, 22);
             addNewSpawnableTypeToolStripMenuItem.Text = "Add New Spawnable Type";
             addNewSpawnableTypeToolStripMenuItem.Click += addNewSpawnableTypeToolStripMenuItem_Click;
             // 
@@ -385,7 +393,7 @@ namespace EconomyPlugin
             // 
             addNewHoarderToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewHoarderToolStripMenuItem.Name = "addNewHoarderToolStripMenuItem";
-            addNewHoarderToolStripMenuItem.Size = new Size(212, 22);
+            addNewHoarderToolStripMenuItem.Size = new Size(211, 22);
             addNewHoarderToolStripMenuItem.Text = "Add New Hoarder";
             addNewHoarderToolStripMenuItem.Click += addNewHoarderToolStripMenuItem_Click;
             // 
@@ -393,7 +401,7 @@ namespace EconomyPlugin
             // 
             addNewTagToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewTagToolStripMenuItem.Name = "addNewTagToolStripMenuItem";
-            addNewTagToolStripMenuItem.Size = new Size(212, 22);
+            addNewTagToolStripMenuItem.Size = new Size(211, 22);
             addNewTagToolStripMenuItem.Text = "Add New Tag";
             addNewTagToolStripMenuItem.Click += addNewTagToolStripMenuItem_Click;
             // 
@@ -401,7 +409,7 @@ namespace EconomyPlugin
             // 
             addNewDamageToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewDamageToolStripMenuItem.Name = "addNewDamageToolStripMenuItem";
-            addNewDamageToolStripMenuItem.Size = new Size(212, 22);
+            addNewDamageToolStripMenuItem.Size = new Size(211, 22);
             addNewDamageToolStripMenuItem.Text = "Add New Damage";
             addNewDamageToolStripMenuItem.Click += addNewDamageToolStripMenuItem_Click;
             // 
@@ -409,7 +417,7 @@ namespace EconomyPlugin
             // 
             addNewItemToolStripMenuItem1.ForeColor = SystemColors.Control;
             addNewItemToolStripMenuItem1.Name = "addNewItemToolStripMenuItem1";
-            addNewItemToolStripMenuItem1.Size = new Size(212, 22);
+            addNewItemToolStripMenuItem1.Size = new Size(211, 22);
             addNewItemToolStripMenuItem1.Text = "Add New Item";
             addNewItemToolStripMenuItem1.Click += addNewItemToolStripMenuItem1_Click;
             // 
@@ -417,7 +425,7 @@ namespace EconomyPlugin
             // 
             addNewCargoToolStripMenuItem1.ForeColor = SystemColors.Control;
             addNewCargoToolStripMenuItem1.Name = "addNewCargoToolStripMenuItem1";
-            addNewCargoToolStripMenuItem1.Size = new Size(212, 22);
+            addNewCargoToolStripMenuItem1.Size = new Size(211, 22);
             addNewCargoToolStripMenuItem1.Text = "Add New Cargo";
             addNewCargoToolStripMenuItem1.Click += addNewCargoToolStripMenuItem1_Click;
             // 
@@ -425,7 +433,7 @@ namespace EconomyPlugin
             // 
             addNewAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewAttachmentToolStripMenuItem.Name = "addNewAttachmentToolStripMenuItem";
-            addNewAttachmentToolStripMenuItem.Size = new Size(212, 22);
+            addNewAttachmentToolStripMenuItem.Size = new Size(211, 22);
             addNewAttachmentToolStripMenuItem.Text = "Add New Attachment";
             addNewAttachmentToolStripMenuItem.Click += addNewAttachmentToolStripMenuItem_Click;
             // 
@@ -433,9 +441,65 @@ namespace EconomyPlugin
             // 
             removeSelectedToolStripMenuItem1.ForeColor = SystemColors.Control;
             removeSelectedToolStripMenuItem1.Name = "removeSelectedToolStripMenuItem1";
-            removeSelectedToolStripMenuItem1.Size = new Size(212, 22);
+            removeSelectedToolStripMenuItem1.Size = new Size(211, 22);
             removeSelectedToolStripMenuItem1.Text = "Remove Selected";
             removeSelectedToolStripMenuItem1.Click += removeSelectedToolStripMenuItem1_Click_1;
+            // 
+            // SpawnGearPresetCM
+            // 
+            SpawnGearPresetCM.BackColor = Color.FromArgb(60, 63, 65);
+            SpawnGearPresetCM.Items.AddRange(new ToolStripItem[] { addNewSpawnGEarPresetFileToolStripMenuItem, addNewAttachmentSlotItemSetToolStripMenuItem, addNewDisctreetItemSetToolStripMenuItem, addNewComplexChildSetToolStripMenuItem, addNewDiscreetUnsortedItemSetToolStripMenuItem, SpawnGearremoveSelectedToolStripMenuItem2 });
+            SpawnGearPresetCM.Name = "TypesCM";
+            SpawnGearPresetCM.ShowImageMargin = false;
+            SpawnGearPresetCM.Size = new Size(241, 158);
+            // 
+            // addNewSpawnGEarPresetFileToolStripMenuItem
+            // 
+            addNewSpawnGEarPresetFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewSpawnGEarPresetFileToolStripMenuItem.Name = "addNewSpawnGEarPresetFileToolStripMenuItem";
+            addNewSpawnGEarPresetFileToolStripMenuItem.Size = new Size(240, 22);
+            addNewSpawnGEarPresetFileToolStripMenuItem.Text = "Add New Spawn Gear Preset File";
+            addNewSpawnGEarPresetFileToolStripMenuItem.Click += addNewSpawnGEarPresetFileToolStripMenuItem_Click;
+            // 
+            // addNewAttachmentSlotItemSetToolStripMenuItem
+            // 
+            addNewAttachmentSlotItemSetToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewAttachmentSlotItemSetToolStripMenuItem.Name = "addNewAttachmentSlotItemSetToolStripMenuItem";
+            addNewAttachmentSlotItemSetToolStripMenuItem.Size = new Size(240, 22);
+            addNewAttachmentSlotItemSetToolStripMenuItem.Text = "Add New Attachment Slot Item Set";
+            addNewAttachmentSlotItemSetToolStripMenuItem.Click += addNewAttachmentSlotItemSetToolStripMenuItem_Click;
+            // 
+            // addNewDisctreetItemSetToolStripMenuItem
+            // 
+            addNewDisctreetItemSetToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewDisctreetItemSetToolStripMenuItem.Name = "addNewDisctreetItemSetToolStripMenuItem";
+            addNewDisctreetItemSetToolStripMenuItem.Size = new Size(240, 22);
+            addNewDisctreetItemSetToolStripMenuItem.Text = "Add New Disctreet Item Set";
+            addNewDisctreetItemSetToolStripMenuItem.Click += addNewDisctreetItemSetToolStripMenuItem_Click;
+            // 
+            // addNewComplexChildSetToolStripMenuItem
+            // 
+            addNewComplexChildSetToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewComplexChildSetToolStripMenuItem.Name = "addNewComplexChildSetToolStripMenuItem";
+            addNewComplexChildSetToolStripMenuItem.Size = new Size(240, 22);
+            addNewComplexChildSetToolStripMenuItem.Text = "Add New Complex Child Set";
+            addNewComplexChildSetToolStripMenuItem.Click += addNewComplexChildSetToolStripMenuItem_Click;
+            // 
+            // addNewDiscreetUnsortedItemSetToolStripMenuItem
+            // 
+            addNewDiscreetUnsortedItemSetToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewDiscreetUnsortedItemSetToolStripMenuItem.Name = "addNewDiscreetUnsortedItemSetToolStripMenuItem";
+            addNewDiscreetUnsortedItemSetToolStripMenuItem.Size = new Size(240, 22);
+            addNewDiscreetUnsortedItemSetToolStripMenuItem.Text = "Add New Discreet Unsorted Item Set";
+            addNewDiscreetUnsortedItemSetToolStripMenuItem.Click += addNewDiscreetUnsortedItemSetToolStripMenuItem_Click;
+            // 
+            // SpawnGearremoveSelectedToolStripMenuItem2
+            // 
+            SpawnGearremoveSelectedToolStripMenuItem2.ForeColor = SystemColors.Control;
+            SpawnGearremoveSelectedToolStripMenuItem2.Name = "SpawnGearremoveSelectedToolStripMenuItem2";
+            SpawnGearremoveSelectedToolStripMenuItem2.Size = new Size(240, 22);
+            SpawnGearremoveSelectedToolStripMenuItem2.Text = "Remove Selected";
+            SpawnGearremoveSelectedToolStripMenuItem2.Click += SpawnGearremoveSelectedToolStripMenuItem2_Click;
             // 
             // EconomyForm
             // 
@@ -463,6 +527,7 @@ namespace EconomyPlugin
             EventsCM.ResumeLayout(false);
             RandomPresetsCM.ResumeLayout(false);
             SpawnableTypesCM.ResumeLayout(false);
+            SpawnGearPresetCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -507,5 +572,12 @@ namespace EconomyPlugin
         private ToolStripMenuItem addNewCargoToolStripMenuItem1;
         private ToolStripMenuItem addNewAttachmentToolStripMenuItem;
         private ToolStripMenuItem removeSelectedToolStripMenuItem1;
+        private ContextMenuStrip SpawnGearPresetCM;
+        private ToolStripMenuItem addNewSpawnGEarPresetFileToolStripMenuItem;
+        private ToolStripMenuItem addNewAttachmentSlotItemSetToolStripMenuItem;
+        private ToolStripMenuItem addNewDisctreetItemSetToolStripMenuItem;
+        private ToolStripMenuItem addNewComplexChildSetToolStripMenuItem;
+        private ToolStripMenuItem addNewDiscreetUnsortedItemSetToolStripMenuItem;
+        private ToolStripMenuItem SpawnGearremoveSelectedToolStripMenuItem2;
     }
 }

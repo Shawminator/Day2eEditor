@@ -92,7 +92,7 @@ namespace EconomyPlugin
                 disposable.Dispose();
             }
         }
-  
+
         #region Loading treeview
         private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, TFile file, Func<TFile, TreeNode> createFileNode, bool expand = false)
         {
@@ -351,7 +351,7 @@ namespace EconomyPlugin
             foreach (string objectspawnerarrfile in _economyManager.CFGGameplayConfig.Data.WorldsData.objectSpawnersArr)
             {
                 ObjectSpawnerArr ObjectSpawnerArr = _economyManager.CFGGameplayConfig.getobjectspawnerFiles(objectspawnerarrfile);
-                objectspawnerarrfilenodes.Nodes.Add(new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName)) {Tag = ObjectSpawnerArr });
+                objectspawnerarrfilenodes.Nodes.Add(new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName)) { Tag = ObjectSpawnerArr });
             }
             WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
             WorldsDataaNodes.Nodes.Add(objectspawnerarrfilenodes);
@@ -1178,7 +1178,7 @@ namespace EconomyPlugin
 
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
 
-                if(e.Node.Tag == null)
+                if (e.Node.Tag == null)
                 {
                     ShowHandler<IUIHandler>(null, null, null);
                 }
@@ -1515,7 +1515,6 @@ namespace EconomyPlugin
                 }
             }));
         }
-
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
         {
             foreach (TreeNode node in nodes)
@@ -1711,7 +1710,7 @@ namespace EconomyPlugin
                 else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
                 {
                     SpawnableTypesCM.Items.Clear();
-                    if(spawnableTypeAttachment.damage == null)
+                    if (spawnableTypeAttachment.damage == null)
                         SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
                     SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
                     SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
@@ -1726,6 +1725,67 @@ namespace EconomyPlugin
                     SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
                     SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
                     SpawnableTypesCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "SpawnGear Presets Files")
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewSpawnGEarPresetFileToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "SpawnGearAttachmentSlotItemSetsParent")
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewAttachmentSlotItemSetToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is Attachmentslotitemset)
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewDisctreetItemSetToolStripMenuItem);
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "DiscreteitemsetComplexChildrenTypes")
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewComplexChildSetToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "DiscreteunsorteditemsetComplexChildrenTypes")
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewComplexChildSetToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "SpawnGearDiscreteUnsortedItemSetsParent")
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewDiscreetUnsortedItemSetToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is Discreteunsorteditemset)
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is Discreteitemset)
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is Complexchildrentype)
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
                 }
             }
         }
@@ -2048,7 +2108,7 @@ namespace EconomyPlugin
 
             cfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<cfgeffectareaConfig>();
             DrawEffectSafePositions(cfgeffectareaConfig);
-            currentTreeNode.Text = $"Position {currentTreeNode.Index+1} ({_selectedSafePosition.X}, {_selectedSafePosition.Z})";
+            currentTreeNode.Text = $"Position {currentTreeNode.Index + 1} ({_selectedSafePosition.X}, {_selectedSafePosition.Z})";
         }
 
         /// <summary>
@@ -3222,7 +3282,7 @@ namespace EconomyPlugin
                 SpawnableType _type = currentTreeNode.Parent.Tag as SpawnableType;
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
                 _spawnabletypesfile.isDirty = true;
-                
+
             }
             else if (currentTreeNode.Tag is spawnableTypeTag Tag)
             {
@@ -3301,6 +3361,182 @@ namespace EconomyPlugin
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
                 _spawnabletypesfile.isDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// Spawn Gear Right Click Methods
+        /// </summary>
+        private void addNewSpawnGEarPresetFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Spawn Gear Preset";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + ".json";
+                string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+                SpawnGearPresetFiles newfile = new SpawnGearPresetFiles()
+                {
+                    name = frm.typesname,
+                    ModFolder = newmodPath
+                };
+                newfile.setpath(newPath);
+                newfile.isDirty = true;
+                bool added = _economyManager.CFGGameplayConfig.AddNewSpawnGear(newfile);
+                if (added)
+                {
+                    currentTreeNode.Nodes.Add(CreateSpawnGearFilesNodes(newfile));
+                }
+                else
+                {
+                    MessageBox.Show($"File with the same modfolder and filename allready exist.\nPlease choose differently next time.");
+                }
+            }
+        }
+        private void addNewAttachmentSlotItemSetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            Attachmentslotitemset newASIS = new Attachmentslotitemset()
+            {
+                slotName = "CHANGE ME",
+                discreteItemSets = new BindingList<Discreteitemset>()
+            };
+            currentspawnGearPresetFiles.attachmentSlotItemSets.Add(newASIS);
+            currentTreeNode.Nodes.Add(AttachmentslotitemsetNodeTN(newASIS));
+            currentspawnGearPresetFiles.isDirty = true;
+            EconomyTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void addNewDisctreetItemSetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            Attachmentslotitemset Attachmentslotitemset = currentTreeNode.FindParentOfType<Attachmentslotitemset>();
+            Discreteitemset newDIS = new Discreteitemset()
+            {
+                itemType = "CHANGE ME",
+                spawnWeight = 1,
+                attributes = new Attributes()
+                {
+                    healthMin = 1,
+                    healthMax = 1,
+                    quantityMin = 1,
+                    quantityMax = 1
+                },
+                quickBarSlot = -1,
+                complexChildrenTypes = new BindingList<Complexchildrentype>(),
+                simpleChildrenUseDefaultAttributes = false,
+                simpleChildrenTypes = new BindingList<string>()
+            };
+            Attachmentslotitemset.discreteItemSets.Add(newDIS);
+            currentTreeNode.Nodes.Add(DiscreetItemSetsTN(newDIS));
+            currentspawnGearPresetFiles.isDirty = true;
+            EconomyTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void addNewComplexChildSetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            Complexchildrentype newCCIS = new Complexchildrentype()
+            {
+                itemType = "CHANGE ME",
+                attributes = new Attributes()
+                {
+                    healthMin = 1,
+                    healthMax = 1,
+                    quantityMin = 1,
+                    quantityMax = 1
+                },
+                quickBarSlot = -1,
+                simpleChildrenUseDefaultAttributes = false,
+                simpleChildrenTypes = new BindingList<string>()
+            };
+            if (currentTreeNode.Parent.Tag is Discreteunsorteditemset Discreteunsorteditemset)
+            {
+                Discreteunsorteditemset.complexChildrenTypes.Add(newCCIS);
+                currentTreeNode.Nodes.Add(ComplexChildrenTypesNodeTN(newCCIS));
+                currentspawnGearPresetFiles.isDirty = true;
+
+            }
+            else if (currentTreeNode.Parent.Tag is Discreteitemset Discreteitemset)
+            {
+                Discreteitemset.complexChildrenTypes.Add(newCCIS);
+                currentTreeNode.Nodes.Add(ComplexChildrenTypesNodeTN(newCCIS));
+                currentspawnGearPresetFiles.isDirty = true;
+            }
+            EconomyTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void addNewDiscreetUnsortedItemSetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            Discreteunsorteditemset newDUIS = new Discreteunsorteditemset()
+            {
+                name = "New Cargo - Change me",
+                spawnWeight = 1,
+                attributes = new Attributes()
+                {
+                    healthMin = 1,
+                    healthMax = 1,
+                    quantityMin = 1,
+                    quantityMax = 1
+                },
+                complexChildrenTypes = new BindingList<Complexchildrentype>(),
+                simpleChildrenUseDefaultAttributes = false,
+                simpleChildrenTypes = new BindingList<string>()
+            };
+            currentspawnGearPresetFiles.discreteUnsortedItemSets.Add(newDUIS);
+            currentTreeNode.Nodes.Add(DiscreteunsorteditemsetTN(newDUIS));
+            currentspawnGearPresetFiles.isDirty = true;
+            EconomyTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void SpawnGearremoveSelectedToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            
+            if (currentTreeNode.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
+            {
+                _economyManager.CFGGameplayConfig.RemoveSpawnGearPreset(SpawnGearPresetFiles);
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                SpawnGearPresetFiles.isDirty = true;
+                SpawnGearPresetFiles.ToDelete = true;
+            }
+            else if (currentTreeNode.Tag is Complexchildrentype complexchildrentype)
+            {
+                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+                if (currentTreeNode.Parent.Parent.Tag is Discreteunsorteditemset CurrentDiscreteunsorteditemset)
+                {
+                    CurrentDiscreteunsorteditemset.complexChildrenTypes.Remove(complexchildrentype);
+                    currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                    currentspawnGearPresetFiles.isDirty = true;
+                }
+                else if (currentTreeNode.Parent.Parent.Tag is Discreteitemset CurrentDiscreteitemset)
+                {
+                    CurrentDiscreteitemset.complexChildrenTypes.Remove(complexchildrentype);
+                    currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                    currentspawnGearPresetFiles.isDirty = true;
+                }
+            }
+            else if (currentTreeNode.Tag is Discreteitemset Discreteitemset)
+            {
+                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+                Attachmentslotitemset Attachmentslotitemset = currentTreeNode.FindParentOfType<Attachmentslotitemset>();
+                Attachmentslotitemset.discreteItemSets.Remove(Discreteitemset);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                currentspawnGearPresetFiles.isDirty = true;
+            }
+            else if (currentTreeNode.Tag is Discreteunsorteditemset Discreteunsorteditemset)
+            {
+                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+                currentspawnGearPresetFiles.discreteUnsortedItemSets.Remove(Discreteunsorteditemset);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                currentspawnGearPresetFiles.isDirty = true;
+            }
+            else if (currentTreeNode.Tag is Attachmentslotitemset Attachmentslotitemset)
+            {
+                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+                currentspawnGearPresetFiles.attachmentSlotItemSets.Remove(Attachmentslotitemset);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                currentspawnGearPresetFiles.isDirty = true;
             }
         }
     }
