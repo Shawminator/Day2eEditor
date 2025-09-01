@@ -533,26 +533,26 @@ namespace EconomyPlugin
             {
                 Tag = playerRestrictedFiles.PRABoxes
             };
-            for (int i = 0; i < playerRestrictedFiles.PRABoxes.Count; i++)
+            for (int i = 0; i < playerRestrictedFiles._PRABoxes.Count; i++)
             {
-                var box = playerRestrictedFiles.PRABoxes[i];
+                var box = playerRestrictedFiles._PRABoxes[i];
                 TreeNode boxNode = new TreeNode($"Box {i + 1}")
                 {
                     Tag = box
                 };
 
-                boxNode.Nodes.Add("HalfExtents: [" + string.Join(", ", box[0]) + "]");
-                boxNode.Nodes.Add("Orientation: [" + string.Join(", ", box[1]) + "]");
-                boxNode.Nodes.Add("Position: [" + string.Join(", ", box[2]) + "]");
+                boxNode.Nodes.Add("HalfExtents: [" + string.Join(", ", box.HalfExtents) + "]");
+                boxNode.Nodes.Add("Orientation: [" + string.Join(", ", box.Orientation) + "]");
+                boxNode.Nodes.Add("Position: [" + string.Join(", ", box.Position) + "]");
 
                 praBoxesNode.Nodes.Add(boxNode);
             }
             TreeNode safePositionsNode = new TreeNode("SafePositions3D");
-            safePositionsNode.Tag = playerRestrictedFiles.SafePositions3D;
+            safePositionsNode.Tag = "PRASafePositions3D";
 
-            for (int i = 0; i < playerRestrictedFiles.SafePositions3D.Count; i++)
+            for (int i = 0; i < playerRestrictedFiles._SafePositions3D.Count; i++)
             {
-                var pos = playerRestrictedFiles.SafePositions3D[i];
+                var pos = playerRestrictedFiles._SafePositions3D[i];
                 TreeNode posNode = new TreeNode($"Position {i + 1}: [{string.Join(", ", pos)}]")
                 {
                     Tag = pos
@@ -1174,6 +1174,8 @@ namespace EconomyPlugin
                 _mapControl.MapsingleClicked -= MapControl_EventSpawnSingleclicked;
                 _mapControl.MapDoubleClicked -= MapControl_EffectSafePositionsSingleclicked;
                 _mapControl.MapsingleClicked -= MapControl_EffectSafePositionsDoubleclicked;
+                _mapControl.MapDoubleClicked -= MapControl_EffectPRASafePositionsSingleclicked;
+                _mapControl.MapsingleClicked -= MapControl_EffectPRASafePositionsDoubleclicked;
                 currentTreeNode = e.Node;
 
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
@@ -1392,6 +1394,8 @@ namespace EconomyPlugin
                     _mapControl.Visible = true;
                     _mapControl.ClearDrawables();
                     _selectedEventPos = eventpos;
+                    _selectedRPASafePosition = null;
+                    _selectedSafePosition = null;
 
                     _mapControl.MapDoubleClicked += MapControl_EventSpawnDoubleclicked;
                     _mapControl.MapsingleClicked += MapControl_EventSpawnSingleclicked;
@@ -1489,6 +1493,7 @@ namespace EconomyPlugin
                     _mapControl.Visible = true;
                     _mapControl.ClearDrawables();
                     _selectedEventPos = null;
+                    _selectedRPASafePosition = null;
                     _selectedSafePosition = cfgeffectareaSafePosition;
 
                     _mapControl.MapsingleClicked += MapControl_EffectSafePositionsSingleclicked;
@@ -1496,6 +1501,37 @@ namespace EconomyPlugin
 
                     cfgeffectareaConfig cfgeffectareaConfig = e.Node.FindParentOfType<cfgeffectareaConfig>();
                     DrawEffectSafePositions(cfgeffectareaConfig);
+                }
+                else if (e.Node.Tag is PRABoxes PRABoxes)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                    _mapControl.Visible = true;
+                    _mapControl.ClearDrawables();
+                    _selectedEventPos = null;
+                    _selectedSafePosition = null;
+                    _selectedRPASafePosition = null;
+
+                    //_mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
+                    //_mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
+
+                    PlayerRestrictedFiles PlayerRestrictedFiles = e.Node.FindParentOfType<PlayerRestrictedFiles>();
+                    DrawPRABoxesPOsitions(PlayerRestrictedFiles);
+                }
+                else if (e.Node.Tag is PRASafePosition PRASafePosition)
+                {
+                    ShowHandler<IUIHandler>(null, null, null);
+                    _mapControl.Visible = true;
+                    _mapControl.ClearDrawables();
+                    _selectedEventPos = null;
+                    _selectedSafePosition = null;
+                    _selectedRPASafePosition = PRASafePosition;
+
+                    _mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
+                    _mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
+
+                    PlayerRestrictedFiles PlayerRestrictedFiles = e.Node.FindParentOfType<PlayerRestrictedFiles>();
+                    DrawEffectPRASafePositions(PlayerRestrictedFiles);
+
                 }
                 else if (e.Node.Tag is Attachmentslotitemset Attachmentslotitemset)
                 {
@@ -1931,6 +1967,41 @@ namespace EconomyPlugin
         /// <summary>
         /// MapViewer Draw Mothods
         /// </summary>
+        private void DrawPRABoxesPOsitions(PlayerRestrictedFiles PlayerRestrictedFiles)
+        {
+            foreach (PRABoxes pos in PlayerRestrictedFiles._PRABoxes)
+            {
+                var marker = new PRABoxDrawable(pos.HalfExtents,pos.Orientation,pos.Position, _mapControl.MapSize)
+                {
+                    Color = Color.LimeGreen
+                };
+                _mapControl.RegisterDrawable(marker);
+            }
+        }
+        private void DrawEffectPRASafePositions(PlayerRestrictedFiles PlayerRestrictedFiles)
+        {
+            foreach (PRASafePosition pos in PlayerRestrictedFiles._SafePositions3D)
+            {
+                if (_selectedRPASafePosition == pos)
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = 8
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+        }
         private void DrawEffectSafePositions(cfgeffectareaConfig cfgeffectareaConfig)
         {
             foreach (cfgeffectareaSafePosition pos in cfgeffectareaConfig.Data._positions)
@@ -1985,6 +2056,7 @@ namespace EconomyPlugin
         /// </summary>
         private eventposdefEventPos _selectedEventPos;
         private cfgeffectareaSafePosition _selectedSafePosition;
+        private PRASafePosition _selectedRPASafePosition;
         private void MapControl_EventSpawnSingleclicked(object sender, MapClickEventArgs e)
         {
             if (currentTreeNode?.Parent == null)
@@ -2109,6 +2181,69 @@ namespace EconomyPlugin
             cfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<cfgeffectareaConfig>();
             DrawEffectSafePositions(cfgeffectareaConfig);
             currentTreeNode.Text = $"Position {currentTreeNode.Index + 1} ({_selectedSafePosition.X}, {_selectedSafePosition.Z})";
+        }
+        private void MapControl_EffectPRASafePositionsSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            PRASafePosition closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is PRASafePosition pos)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.X, (float)pos.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        EconomyTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_EffectPRASafePositionsDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (_selectedRPASafePosition == null) return;
+
+            _selectedRPASafePosition.X = (decimal)e.MapCoordinates.X;
+            _selectedRPASafePosition.Z = (decimal)e.MapCoordinates.Y;
+            _selectedRPASafePosition.Name = _selectedRPASafePosition.X.ToString("0.##") + "," + _selectedRPASafePosition.Y.ToString("0.##") + "," + _selectedRPASafePosition.Z.ToString("0.##");
+
+            _mapControl.ClearDrawables();
+
+            PlayerRestrictedFiles PlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PlayerRestrictedFiles.isDirty = true;
+            DrawEffectPRASafePositions(PlayerRestrictedFiles);
+            currentTreeNode.Text = $"Position {currentTreeNode.Index + 1}: [{string.Join(", ", _selectedRPASafePosition)}]";
         }
 
         /// <summary>

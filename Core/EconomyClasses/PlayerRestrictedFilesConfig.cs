@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace Day2eEditor
                  );
                 preset.setpath(fullPath);
                 preset.ModFolder = Path.GetRelativePath(_basepath, Path.GetDirectoryName(fullPath));
+                preset.convertpositionstolist();
                 AllData.Add(preset);
             }
         }
@@ -43,6 +45,7 @@ namespace Day2eEditor
 
             foreach (var data in AllData.ToList())
             {
+                data.convertlisttopositions();
                 var result = data.Save();
                 savedFiles.AddRange(result);
 
@@ -54,6 +57,7 @@ namespace Day2eEditor
 
             return savedFiles;
         }
+
     }
     public class PlayerRestrictedFiles
     {
@@ -69,10 +73,15 @@ namespace Day2eEditor
         public bool ToDelete { get; set; }
         [JsonIgnore]
         public string ModFolder { get; set; }
+        [JsonIgnore]
+        public BindingList<PRABoxes> _PRABoxes { get; set; }
+        [JsonIgnore]
+        public BindingList<PRASafePosition> _SafePositions3D { get; set; }
+
 
         public string areaName { get; set; }
-        public BindingList<BindingList<BindingList<double>>> PRABoxes { get; set; }
-        public BindingList<BindingList<double>> SafePositions3D { get; set; }
+        public BindingList<BindingList<BindingList<decimal>>> PRABoxes { get; set; }
+        public BindingList<BindingList<decimal>> SafePositions3D { get; set; }
 
         public void setpath(string path)
         {
@@ -100,6 +109,73 @@ namespace Day2eEditor
             }
 
             return Array.Empty<string>();
+        }
+        public void convertpositionstolist()
+        {
+            if(PRABoxes != null)
+            {
+                _PRABoxes = new BindingList<PRABoxes>();
+                for (int i = 0; i < PRABoxes.Count; i++)
+                {
+                    _PRABoxes.Add(new PRABoxes()
+                    {
+                        HalfExtents = new Vector3(Convert.ToSingle(PRABoxes[i][0][0]), Convert.ToSingle(PRABoxes[i][0][1]), Convert.ToSingle(PRABoxes[i][0][2])),
+                        Orientation = new Vector3(Convert.ToSingle(PRABoxes[i][1][0]), Convert.ToSingle(PRABoxes[i][1][1]), Convert.ToSingle(PRABoxes[i][1][2])),
+                        Position = new Vector3(Convert.ToSingle(PRABoxes[i][2][0]), Convert.ToSingle(PRABoxes[i][2][1]), Convert.ToSingle(PRABoxes[i][2][2]))
+                    }
+                    );
+                }
+                PRABoxes = null;
+
+            }
+            if (SafePositions3D != null)
+            {
+                _SafePositions3D = new BindingList<PRASafePosition>();
+                for (int i = 0; i < SafePositions3D.Count; i++)
+                {
+                    _SafePositions3D.Add(new PRASafePosition()
+                    {
+                        X = SafePositions3D[i][0],
+                        Y = SafePositions3D[i][1],
+                        Z = SafePositions3D[i][2],
+                        Name = SafePositions3D[i][0].ToString("0.##") + "," + SafePositions3D[i][1].ToString("0.##") + "," + SafePositions3D[i][2].ToString("0.##")
+                    }
+                    );
+                }
+                SafePositions3D = null;
+            }
+        }
+        public void convertlisttopositions()
+        {
+            if (_SafePositions3D != null)
+            {
+                SafePositions3D = new BindingList<BindingList<decimal>>();
+                foreach (PRASafePosition pos in _SafePositions3D)
+                {
+                    SafePositions3D.Add(new BindingList<decimal> { pos.X, pos.Y, pos.Z });
+                }
+            }
+            else
+            {
+                SafePositions3D = null;
+            }
+        }
+    }
+    public class PRABoxes
+    {
+        public Vector3 HalfExtents { get;set; }
+        public Vector3 Orientation { get; set; }
+        public Vector3 Position { get; set; }
+    }
+    public class PRASafePosition
+    {
+        public decimal X { get; set; }
+        public decimal Y { get; set; }
+        public decimal Z { get; set; }
+        public string Name { get; set; }
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
