@@ -119,9 +119,9 @@ namespace Day2eEditor
                 {
                     _PRABoxes.Add(new PRABoxes()
                     {
-                        HalfExtents = new Vector3(Convert.ToSingle(PRABoxes[i][0][0]), Convert.ToSingle(PRABoxes[i][0][1]), Convert.ToSingle(PRABoxes[i][0][2])),
-                        Orientation = new Vector3(Convert.ToSingle(PRABoxes[i][1][0]), Convert.ToSingle(PRABoxes[i][1][1]), Convert.ToSingle(PRABoxes[i][1][2])),
-                        Position = new Vector3(Convert.ToSingle(PRABoxes[i][2][0]), Convert.ToSingle(PRABoxes[i][2][1]), Convert.ToSingle(PRABoxes[i][2][2]))
+                        HalfExtents = new Vec3(Convert.ToSingle(PRABoxes[i][0][0]), Convert.ToSingle(PRABoxes[i][0][1]), Convert.ToSingle(PRABoxes[i][0][2])),
+                        Orientation = new Vec3(Convert.ToSingle(PRABoxes[i][1][0]), Convert.ToSingle(PRABoxes[i][1][1]), Convert.ToSingle(PRABoxes[i][1][2])),
+                        Position = new Vec3(Convert.ToSingle(PRABoxes[i][2][0]), Convert.ToSingle(PRABoxes[i][2][1]), Convert.ToSingle(PRABoxes[i][2][2]))
                     }
                     );
                 }
@@ -135,10 +135,7 @@ namespace Day2eEditor
                 {
                     _SafePositions3D.Add(new PRASafePosition()
                     {
-                        X = SafePositions3D[i][0],
-                        Y = SafePositions3D[i][1],
-                        Z = SafePositions3D[i][2],
-                        Name = SafePositions3D[i][0].ToString("0.##") + "," + SafePositions3D[i][1].ToString("0.##") + "," + SafePositions3D[i][2].ToString("0.##")
+                        Position = new Vec3(SafePositions3D[i][0], SafePositions3D[i][1], SafePositions3D[i][2])
                     }
                     );
                 }
@@ -147,12 +144,31 @@ namespace Day2eEditor
         }
         public void convertlisttopositions()
         {
+            if(_PRABoxes != null)
+            {
+                PRABoxes = new BindingList<BindingList<BindingList<decimal>>>();
+
+                foreach (var box in _PRABoxes)
+                {
+                    var halfExtents = new BindingList<decimal> { Convert.ToDecimal(box.HalfExtents.X), Convert.ToDecimal(box.HalfExtents.Y), Convert.ToDecimal(box.HalfExtents.Z) };
+                    var orientation = new BindingList<decimal> { Convert.ToDecimal(box.Orientation.X), Convert.ToDecimal(box.Orientation.Y), Convert.ToDecimal(box.Orientation.Z) };
+                    var position = new BindingList<decimal> { Convert.ToDecimal(box.Position.X), Convert.ToDecimal(box.Position.Y), Convert.ToDecimal(box.Position.Z) };
+
+                    var boxList = new BindingList<BindingList<decimal>> { halfExtents, orientation, position };
+                    PRABoxes.Add(boxList);
+                }
+
+            }
+            else
+            {
+                PRABoxes = null;
+            }
             if (_SafePositions3D != null)
             {
                 SafePositions3D = new BindingList<BindingList<decimal>>();
-                foreach (PRASafePosition pos in _SafePositions3D)
+                foreach (PRASafePosition safeposition in _SafePositions3D)
                 {
-                    SafePositions3D.Add(new BindingList<decimal> { pos.X, pos.Y, pos.Z });
+                    SafePositions3D.Add(new BindingList<decimal>(safeposition.Position.getDecimalArray()));
                 }
             }
             else
@@ -163,19 +179,14 @@ namespace Day2eEditor
     }
     public class PRABoxes
     {
-        public Vector3 HalfExtents { get;set; }
-        public Vector3 Orientation { get; set; }
-        public Vector3 Position { get; set; }
+        public Vec3 HalfExtents { get;set; }
+        public Vec3 Orientation { get; set; }
+        public Vec3 Position { get; set; }
+
+        
     }
     public class PRASafePosition
     {
-        public decimal X { get; set; }
-        public decimal Y { get; set; }
-        public decimal Z { get; set; }
-        public string Name { get; set; }
-        public override string ToString()
-        {
-            return Name;
-        }
+        public Vec3 Position { get; set; }
     }
 }

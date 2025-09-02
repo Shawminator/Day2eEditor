@@ -10,13 +10,13 @@ namespace Day2eEditor
     public class PRABoxDrawable : IMapDrawable
     {
 
-        public Vector3 HalfExtents { get; }
-        public Vector3 Orientation { get; }
-        public Vector3 Position { get; }
+        public Vec3 HalfExtents { get; }
+        public Vec3 Orientation { get; }
+        public Vec3 Position { get; }
         private readonly Size _mapSize;
         public Color Color { get; set; } = Color.Green;
 
-        public PRABoxDrawable(Vector3 halfExtents, Vector3 orientation, Vector3 position, Size mapSize)
+        public PRABoxDrawable(Vec3 halfExtents, Vec3 orientation, Vec3 position, Size mapSize)
         {
             HalfExtents = halfExtents;
             Orientation = orientation;

@@ -108,8 +108,8 @@ namespace Day2eEditor
             {
                 SpawnObjects newobject = new SpawnObjects();
                 newobject.name = obj.Type;
-                newobject.pos = obj.Position;
-                newobject.ypr = obj.Orientation;
+                newobject.pos = (float[])obj.Position.Clone();
+                newobject.ypr = (float[])obj.Orientation.Clone();
                 newobject.scale = obj.Scale;
                 newobject.enableCEPersistency = false;
                 newobjectspawner.Objects.Add(newobject);

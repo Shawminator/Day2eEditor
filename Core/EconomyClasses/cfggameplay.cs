@@ -130,6 +130,8 @@ namespace Day2eEditor
             Data.WorldsData.playerRestrictedAreaFiles = new BindingList<string>();
             foreach (var restricted in PlayerRestrictedFilesConfig.AllData)
             {
+                if (restricted.ToDelete)
+                    continue;
                 string _path = Path.Combine(restricted.ModFolder, restricted.FileName).Replace("\\", "/").Replace("//", "/");
                 Data.WorldsData.playerRestrictedAreaFiles.Add(_path);
             }
@@ -139,6 +141,22 @@ namespace Day2eEditor
             string filename = Path.GetFileName(restrictedfile);
             string modpath = Path.GetDirectoryName(restrictedfile);
             return PlayerRestrictedFilesConfig.AllData.FirstOrDefault(x => x.FileName == filename && x.ModFolder == modpath);
+        }
+        public bool AddNewPlayerRestrictedAreaFIle(PlayerRestrictedFiles newfile)
+        {
+            string relativepath = Path.Combine(newfile.ModFolder, newfile.FileName).Replace("\\", "/");
+            if (Data.WorldsData.playerRestrictedAreaFiles.Contains(relativepath))
+                return false;
+            Data.WorldsData.playerRestrictedAreaFiles.Add(relativepath);
+            PlayerRestrictedFilesConfig.AllData.Add(newfile);
+            isDirty = true;
+            return true;
+        }
+        public void RemovePlayerRestrictedAreaFile(PlayerRestrictedFiles PlayerRestrictedFiles)
+        {
+            string relativepath = Path.Combine(PlayerRestrictedFiles.ModFolder, PlayerRestrictedFiles.FileName).Replace("\\", "/");
+            Data.WorldsData.playerRestrictedAreaFiles.Remove(relativepath);
+            isDirty = true;
         }
         #endregion
 
@@ -155,9 +173,11 @@ namespace Day2eEditor
         private void UpdateObjectSpawenArrList()
         {
             Data.WorldsData.objectSpawnersArr = new BindingList<string>();
-            foreach (var restricted in ObjectSpawnerArrConfig.AllData)
+            foreach (var ObjectSpawnerArr in ObjectSpawnerArrConfig.AllData)
             {
-                string _path = Path.Combine(restricted.ModFolder, restricted.FileName).Replace("\\", "/").Replace("//", "/");
+                if (ObjectSpawnerArr.ToDelete)
+                    continue;
+                string _path = Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName).Replace("\\", "/").Replace("//", "/");
                 Data.WorldsData.objectSpawnersArr.Add(_path);
             }
         }
@@ -166,6 +186,22 @@ namespace Day2eEditor
             string filename = Path.GetFileName(objectspawnerarrfile);
             string modpath = Path.GetDirectoryName(objectspawnerarrfile);
             return ObjectSpawnerArrConfig.AllData.FirstOrDefault(x => x.FileName == filename && x.ModFolder == modpath);
+        }
+        public bool AddNewObjectSpawnerArrFile(ObjectSpawnerArr newfile)
+        {
+            string relativepath = Path.Combine(newfile.ModFolder, newfile.FileName).Replace("\\", "/");
+            if (Data.WorldsData.playerRestrictedAreaFiles.Contains(relativepath))
+                return false;
+            Data.WorldsData.playerRestrictedAreaFiles.Add(relativepath);
+            ObjectSpawnerArrConfig.AllData.Add(newfile);
+            isDirty = true;
+            return true;
+        }
+        public void RemoveObjectSpawnerArrFile(ObjectSpawnerArr objectSpawnerArr)
+        {
+            string relativepath = Path.Combine(objectSpawnerArr.ModFolder, objectSpawnerArr.FileName).Replace("\\", "/");
+            Data.WorldsData.objectSpawnersArr.Remove(relativepath);
+            isDirty = true;
         }
         #endregion
 
@@ -180,6 +216,7 @@ namespace Day2eEditor
             Console.WriteLine(message);
             Errors.Add( message);
         }
+
 
     }
     

@@ -36,8 +36,4 @@ namespace Day2eEditor
         bool SimpleChildrenUseDefaultAttributes { get; set; }
     }
 
-    public interface IHasVector3
-    {
-        public Vector3 Vector3 { get; set; }
-    }
 }

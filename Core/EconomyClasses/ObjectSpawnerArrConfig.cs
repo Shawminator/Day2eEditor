@@ -108,5 +108,18 @@ namespace Day2eEditor
         public float[] ypr { get; set; }
         public float scale { get; set; }
         public bool enableCEPersistency { get; set; }
+
+        public SpawnObjects()
+        {
+
+        }
+        public SpawnObjects(SpawnObjects other)
+        {
+            name = other.name;
+            pos = (float[])other.pos.Clone();
+            ypr = (float[])other.ypr.Clone();
+            scale = other.scale;
+            enableCEPersistency = other.enableCEPersistency;
+        }
     }
 }

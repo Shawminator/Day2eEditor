@@ -531,39 +531,59 @@ namespace EconomyPlugin
             };
             TreeNode praBoxesNode = new TreeNode("PRABoxes")
             {
-                Tag = playerRestrictedFiles.PRABoxes
+                Tag = "PRABoxes"
             };
             for (int i = 0; i < playerRestrictedFiles._PRABoxes.Count; i++)
             {
                 var box = playerRestrictedFiles._PRABoxes[i];
-                TreeNode boxNode = new TreeNode($"Box {i + 1}")
-                {
-                    Tag = box
-                };
-
-                boxNode.Nodes.Add("HalfExtents: [" + string.Join(", ", box.HalfExtents) + "]");
-                boxNode.Nodes.Add("Orientation: [" + string.Join(", ", box.Orientation) + "]");
-                boxNode.Nodes.Add("Position: [" + string.Join(", ", box.Position) + "]");
-
-                praBoxesNode.Nodes.Add(boxNode);
+                praBoxesNode.Nodes.Add(CreatePRABoxesNodes(i, box));
             }
-            TreeNode safePositionsNode = new TreeNode("SafePositions3D");
-            safePositionsNode.Tag = "PRASafePositions3D";
+            TreeNode safePositionsNode = new TreeNode("SafePositions3D")
+            {
+                Tag = "PRASafePositions3D"
+            };
 
             for (int i = 0; i < playerRestrictedFiles._SafePositions3D.Count; i++)
             {
-                var pos = playerRestrictedFiles._SafePositions3D[i];
-                TreeNode posNode = new TreeNode($"Position {i + 1}: [{string.Join(", ", pos)}]")
-                {
-                    Tag = pos
-                };
-                safePositionsNode.Nodes.Add(posNode);
+                var PRASafePosition = playerRestrictedFiles._SafePositions3D[i];
+                safePositionsNode.Nodes.Add(CreatePRASafePositionNodes(PRASafePosition, i));
             }
 
             areaNode.Nodes.Add(praBoxesNode);
             areaNode.Nodes.Add(safePositionsNode);
             return areaNode;
         }
+        private static TreeNode CreatePRASafePositionNodes(PRASafePosition PRASafePosition, int i)
+        {
+
+            TreeNode posNode = new TreeNode($"Position {i + 1}: {PRASafePosition.Position.GetString()}")
+            {
+                Tag = PRASafePosition
+            };
+            return posNode;
+        }
+        private static TreeNode CreatePRABoxesNodes(int i, PRABoxes box)
+        {
+            TreeNode boxNode = new TreeNode($"Box {i + 1}")
+            {
+                Tag = box
+            };
+
+            boxNode.Nodes.Add(new TreeNode("HalfExtents: [" + string.Join(", ", box.HalfExtents) + "]")
+            {
+                Tag = box.HalfExtents
+            });
+            boxNode.Nodes.Add(new TreeNode("Orientation: [" + string.Join(", ", box.Orientation) + "]")
+            {
+                Tag = box.Orientation
+            });
+            boxNode.Nodes.Add(new TreeNode("Position: [" + string.Join(", ", box.Position) + "]")
+            {
+                Tag = box.Position
+            });
+            return boxNode;
+        }
+
         //Creating Types Nodes
         private TreeNode CreateTypesfileNodes(TypesFile tf)
         {
@@ -1212,7 +1232,7 @@ namespace EconomyPlugin
                             ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
                             break;
                         case "DiscreteitemsetComplexChildrenTypes":
-                            ShowHandler<IUIHandler>(null,null, null, null);
+                            ShowHandler<IUIHandler>(null, null, null, null);
                             break;
                         case "DiscreteitemsetSimpleChildrenTypes":
                             Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
@@ -1510,6 +1530,7 @@ namespace EconomyPlugin
                     _selectedEventPos = null;
                     _selectedSafePosition = null;
                     _selectedRPASafePosition = null;
+                    _selectedRPABox = PRABoxes;
 
                     //_mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
                     //_mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
@@ -1524,6 +1545,7 @@ namespace EconomyPlugin
                     _mapControl.ClearDrawables();
                     _selectedEventPos = null;
                     _selectedSafePosition = null;
+                    _selectedRPABox = null;
                     _selectedRPASafePosition = PRASafePosition;
 
                     _mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
@@ -1549,8 +1571,36 @@ namespace EconomyPlugin
                 {
                     ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
                 }
+                else if (e.Node.Tag is Vec3 Vec3)
+                {
+                    PlayerRestrictedFiles PlayerRestrictedFiles = e.Node.FindParentOfType<PlayerRestrictedFiles>();
+                    if (PlayerRestrictedFiles != null)
+                    {
+                        ShowHandler(new Vector3Control(), typeof(PlayerRestrictedFiles), Vec3, selectedNodes);
+                    }
+                }
+                else if (e.Node.Tag is Areas Areas)
+                {
+                    ShowHandler<IUIHandler>(null, null, null, null);
+                    _mapControl.Visible = true;
+                    _mapControl.ClearDrawables();
+                    _selectedEventPos = null;
+                    _selectedSafePosition = null;
+                    _selectedRPABox = null;
+                    _selectedRPASafePosition = null;
+                    _selectedeffectarea = Areas;
+
+                    //_mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
+                    //_mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
+
+                    cfgeffectareaConfig cfgeffectareaConfig = e.Node.FindParentOfType<cfgeffectareaConfig>();
+                    DrawEffectEffectArea(cfgeffectareaConfig);
+                }
             }));
         }
+
+
+
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
         {
             foreach (TreeNode node in nodes)
@@ -1823,6 +1873,55 @@ namespace EconomyPlugin
                     SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
                     SpawnGearPresetCM.Show(Cursor.Position);
                 }
+                else if (e.Node.Tag.ToString() == "PRABoxes")
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRABoxToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+
+                }
+                else if (e.Node.Tag is PRABoxes)
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "PRASafePositions3D")
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRASafePositionToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is PRASafePosition)
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "playerRestrictedAreaFiles")
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRAFileToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is PlayerRestrictedFiles)
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag.ToString() == "ObjectPawnerArrFiles")
+                {
+                    ObjectSpawnerArrCM.Items.Clear();
+                    ObjectSpawnerArrCM.Items.Add(addNewObjectSpawnerArrFileToolStripMenuItem);
+                    ObjectSpawnerArrCM.Show(Cursor.Position);
+                }
+                else if (e.Node.Tag is ObjectSpawnerArr)
+                {
+                    ObjectSpawnerArrCM.Items.Clear();
+                    ObjectSpawnerArrCM.Items.Add(removeSelectedObjectSpawnerArrToolStripMenuItem);
+                    ObjectSpawnerArrCM.Show(Cursor.Position);
+                }
             }
         }
         private void editPropertyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1971,20 +2070,32 @@ namespace EconomyPlugin
         {
             foreach (PRABoxes pos in PlayerRestrictedFiles._PRABoxes)
             {
-                var marker = new PRABoxDrawable(pos.HalfExtents,pos.Orientation,pos.Position, _mapControl.MapSize)
+                if (_selectedRPABox == pos)
                 {
-                    Color = Color.LimeGreen
-                };
-                _mapControl.RegisterDrawable(marker);
+                    var marker = new PRABoxDrawable(pos.HalfExtents, pos.Orientation, pos.Position, _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new PRABoxDrawable(pos.HalfExtents, pos.Orientation, pos.Position, _mapControl.MapSize)
+                    {
+                        Color = Color.Red
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+
             }
         }
         private void DrawEffectPRASafePositions(PlayerRestrictedFiles PlayerRestrictedFiles)
         {
-            foreach (PRASafePosition pos in PlayerRestrictedFiles._SafePositions3D)
+            foreach (PRASafePosition safeposition in PlayerRestrictedFiles._SafePositions3D)
             {
-                if (_selectedRPASafePosition == pos)
+                if (_selectedRPASafePosition == safeposition)
                 {
-                    var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    var marker = new MarkerDrawable(new PointF(safeposition.Position.X, safeposition.Position.Z), _mapControl.MapSize)
                     {
                         Color = Color.LimeGreen,
                         Radius = 8
@@ -1993,7 +2104,7 @@ namespace EconomyPlugin
                 }
                 else
                 {
-                    var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    var marker = new MarkerDrawable(new PointF(safeposition.Position.X, safeposition.Position.Z), _mapControl.MapSize)
                     {
                         Color = Color.Red,
                         Radius = 8
@@ -2050,6 +2161,32 @@ namespace EconomyPlugin
                 }
             }
         }
+        private void DrawEffectEffectArea(cfgeffectareaConfig cfgeffectareaConfig)
+        {
+            foreach (Areas area in cfgeffectareaConfig.Data.Areas)
+            {
+                if (_selectedeffectarea == area)
+                {
+                    var marker = new MarkerDrawable(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]), _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen,
+                        Radius = (float)area.Data.Radius,
+                        Scaleradius = true
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = (float)area.Data.Radius,
+                        Scaleradius = true
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+        }
 
         /// <summary>
         /// MapViewer clicks
@@ -2057,6 +2194,9 @@ namespace EconomyPlugin
         private eventposdefEventPos _selectedEventPos;
         private cfgeffectareaSafePosition _selectedSafePosition;
         private PRASafePosition _selectedRPASafePosition;
+        private Areas _selectedeffectarea;
+        private PRABoxes _selectedRPABox;
+
         private void MapControl_EventSpawnSingleclicked(object sender, MapClickEventArgs e)
         {
             if (currentTreeNode?.Parent == null)
@@ -2197,10 +2337,10 @@ namespace EconomyPlugin
             // Loop through all child nodes of the parent
             foreach (TreeNode child in parentNode.Nodes)
             {
-                if (child.Tag is PRASafePosition pos)
+                if (child.Tag is PRASafePosition safeposition)
                 {
                     // Node position in screen space
-                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.X, (float)pos.Z));
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(safeposition.Position.X, safeposition.Position.Z));
 
                     double dx = clickScreen.X - posScreen.X;
                     double dy = clickScreen.Y - posScreen.Y;
@@ -2209,7 +2349,7 @@ namespace EconomyPlugin
                     if (distance < closestDistance)
                     {
                         closestDistance = distance;
-                        closestPos = pos;
+                        closestPos = safeposition;
                     }
                 }
             }
@@ -2234,9 +2374,8 @@ namespace EconomyPlugin
         {
             if (_selectedRPASafePosition == null) return;
 
-            _selectedRPASafePosition.X = (decimal)e.MapCoordinates.X;
-            _selectedRPASafePosition.Z = (decimal)e.MapCoordinates.Y;
-            _selectedRPASafePosition.Name = _selectedRPASafePosition.X.ToString("0.##") + "," + _selectedRPASafePosition.Y.ToString("0.##") + "," + _selectedRPASafePosition.Z.ToString("0.##");
+            _selectedRPASafePosition.Position.X = e.MapCoordinates.X;
+            _selectedRPASafePosition.Position.Z = e.MapCoordinates.Y;
 
             _mapControl.ClearDrawables();
 
@@ -3627,7 +3766,7 @@ namespace EconomyPlugin
         }
         private void SpawnGearremoveSelectedToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            
+
             if (currentTreeNode.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
             {
                 _economyManager.CFGGameplayConfig.RemoveSpawnGearPreset(SpawnGearPresetFiles);
@@ -3673,6 +3812,172 @@ namespace EconomyPlugin
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
                 currentspawnGearPresetFiles.isDirty = true;
             }
+        }
+
+        /// <summary>
+        /// Player Restricted Areas Right Click Methods
+        /// </summary>
+        private void addNewPRAFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Player Restricted Area File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + ".json";
+                string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+                PlayerRestrictedFiles newfile = new PlayerRestrictedFiles()
+                {
+                    areaName = frm.typesname,
+                    ModFolder = newmodPath,
+                    _PRABoxes = new BindingList<PRABoxes>(),
+                    _SafePositions3D = new BindingList<PRASafePosition>()
+                };
+                newfile.setpath(newPath);
+                newfile.isDirty = true;
+                bool added = _economyManager.CFGGameplayConfig.AddNewPlayerRestrictedAreaFIle(newfile);
+                if (added)
+                {
+                    currentTreeNode.Nodes.Add(CreateRestrictedfilesNodes(newfile));
+                }
+                else
+                {
+                    MessageBox.Show($"File with the same modfolder and filename allready exist.\nPlease choose differently next time.");
+                }
+            }
+        }
+        private void addNewPRABoxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PlayerRestrictedFiles currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PRABoxes newbox = new PRABoxes()
+            {
+                HalfExtents = new Vec3(20f, 20f, 20f),
+                Orientation = new Vec3(0m, 0m, 0m),
+                Position = new Vec3((float)_projectManager.CurrentProject.MapSize / 2, 0, (float)_projectManager.CurrentProject.MapSize / 2)
+            };
+            currentTreeNode.Nodes.Add(CreatePRABoxesNodes(currentPlayerRestrictedFiles._PRABoxes.Count(), newbox));
+            currentPlayerRestrictedFiles._PRABoxes.Add(newbox);
+            currentPlayerRestrictedFiles.isDirty = true;
+        }
+        private void addNewPRASafePositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PlayerRestrictedFiles currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PRASafePosition newsafeposition = new PRASafePosition()
+            {
+                Position = new Vec3((float)_projectManager.CurrentProject.MapSize / 2, 0, (float)_projectManager.CurrentProject.MapSize / 2)
+            };
+            currentTreeNode.Nodes.Add(CreatePRASafePositionNodes(newsafeposition, currentPlayerRestrictedFiles._SafePositions3D.Count()));
+            currentPlayerRestrictedFiles._SafePositions3D.Add(newsafeposition);
+            currentPlayerRestrictedFiles.isDirty = true;
+        }
+        private void removePRASelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PlayerRestrictedFiles currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            if (currentTreeNode.Tag is PRABoxes prabox)
+            {
+                currentPlayerRestrictedFiles._PRABoxes.Remove(prabox);
+                currentPlayerRestrictedFiles.isDirty = true;
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
+            else if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
+            {
+                currentPlayerRestrictedFiles._SafePositions3D.Remove(PRASafePosition);
+                currentPlayerRestrictedFiles.isDirty = true;
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
+            else if (currentTreeNode.Tag is PlayerRestrictedFiles PlayerRestrictedFiles)
+            {
+                _economyManager.CFGGameplayConfig.RemovePlayerRestrictedAreaFile(PlayerRestrictedFiles);
+                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                PlayerRestrictedFiles.isDirty = true;
+                PlayerRestrictedFiles.ToDelete = true;
+            }
+        }
+
+        /// <summary>
+        /// objectspawner arr right click methods
+        /// </summary>
+        private void addNewObjectSpawnerArrFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Import DZE, JSON, Map file to Object spawner";
+            openFileDialog.Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                AddEventFile frm = new AddEventFile();
+                frm.SetTitle = "Add New Object Spawner File";
+                frm.Button4visable = false;
+                frm.StartPosition = FormStartPosition.CenterParent;
+                frm.typesname = Path.GetFileNameWithoutExtension(filePath);
+                DialogResult dr = frm.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    string newmodPath = frm.moddir.Replace("/", "\\");
+                    string typesfile = frm.typesname + ".json";
+                    string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+                    ObjectSpawnerArr newfile = new ObjectSpawnerArr()
+                    {
+                        ModFolder = newmodPath,
+                        Objects = new BindingList<SpawnObjects>()
+                    };
+                    newfile.setpath(newPath);
+                    newfile.isDirty = true;
+
+                    switch (openFileDialog.FilterIndex)
+                    {
+                        case 1://.Map File
+                            string[] fileContent = File.ReadAllLines(filePath);
+                            for (int i = 0; i < fileContent.Length; i++)
+                            {
+                                if (fileContent[i] == "") continue;
+                                string[] linesplit = fileContent[i].Split('|');
+                                string[] XYZ = linesplit[1].Split(' ');
+                                string[] YPR = linesplit[2].Split(' ');
+                                SpawnObjects newso = new SpawnObjects()
+                                {
+                                    name = linesplit[0],
+                                    pos = new float[] { Convert.ToSingle(XYZ[0]), Convert.ToSingle(XYZ[1]), Convert.ToSingle(XYZ[2]) },
+                                    ypr = new float[] { Convert.ToSingle(YPR[0]), Convert.ToSingle(YPR[1]), Convert.ToSingle(YPR[2]) },
+                                    scale = 1,
+                                    enableCEPersistency = false
+                                };
+                                newfile.Objects.Add(newso);
+                            }
+                            break;
+                        case 2://.Json
+                            ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
+                            newfile.Objects = new BindingList<SpawnObjects>(newobjectspawner.Objects.Select(obj => new SpawnObjects(obj)).ToList());
+
+                            break;
+                        case 3://.DZE
+                            DZE importfile = DZEHelpers.LoadFile(filePath);
+                            ObjectSpawnerArr newobjectspawnerarr = importfile.convertToObjectSpawner();
+                            newfile.Objects = new BindingList<SpawnObjects>(newobjectspawnerarr.Objects.Select(obj => new SpawnObjects(obj)).ToList());
+                            break;
+                    }
+                    bool added = _economyManager.CFGGameplayConfig.AddNewObjectSpawnerArrFile(newfile);
+                    if (added)
+                    {
+                        currentTreeNode.Nodes.Add(new TreeNode(Path.Combine(newfile.ModFolder, newfile.FileName)) { Tag = newfile });
+                    }
+                    else
+                    {
+                        MessageBox.Show($"File with the same modfolder and filename allready exist.\nPlease choose differently next time.");
+                    }
+                }
+            }
+        }
+        private void removeSelectedObjectSpawnerArrToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ObjectSpawnerArr ObjectSpawnerArr = currentTreeNode.FindParentOfType<ObjectSpawnerArr>();
+            _economyManager.CFGGameplayConfig.RemoveObjectSpawnerArrFile(ObjectSpawnerArr);
+            RemoveTreeNodeAndEmptyParents(currentTreeNode);
+            ObjectSpawnerArr.isDirty = true;
+            ObjectSpawnerArr.ToDelete = true;
         }
     }
 
