@@ -42,7 +42,7 @@ namespace Day2eEditor
             var state = g.Save();
 
             g.TranslateTransform(screenX, screenY);
-            g.RotateTransform(Orientation.X); // Only Z rotation for 2D
+            g.RotateTransform(Orientation.X); // Only X rotation for 2D
 
             using (var pen = new Pen(Color, 2))
             {
