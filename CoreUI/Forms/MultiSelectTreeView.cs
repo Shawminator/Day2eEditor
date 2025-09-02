@@ -470,6 +470,20 @@ namespace Day2eEditor
     }
     public static class TreeNodeExtensions
     {
+
+        public static object FindParentOfType(this TreeNode node, Type type)
+        {
+            while (node != null)
+            {
+                if (node.Tag != null && type.IsInstanceOfType(node.Tag))
+                    return node.Tag;
+
+                node = node.Parent;
+            }
+
+            return null;
+        }
+
         public static T FindParentOfType<T>(this TreeNode node) where T : class
         {
             while (node != null)

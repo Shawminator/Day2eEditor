@@ -10,6 +10,7 @@ namespace EconomyPlugin
     /// </summary>
     public partial class SpawnableTypesAttachmentsControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         private spawnableTypeAttachment _data;
         private spawnableTypeAttachment _originalData;
         private List<TreeNode> _nodes;
@@ -42,9 +43,9 @@ namespace EconomyPlugin
         /// <summary>
         /// Loads data into the control and stores the selected tree nodes
         /// </summary>
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
-            // TODO: Replace ClassType with your actual type
+            _parentType = parentType;
             _data = data as spawnableTypeAttachment ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
@@ -82,12 +83,12 @@ namespace EconomyPlugin
         /// </summary>
         public void HasChanges()
         {
-            if (_nodes?.Any() != true) return;
-
-            // TODO: Replace Parentfile with your actual parent type if different
-            var ef = _nodes.Last().FindParentOfType<cfgspawnabletypesFile>();
-            if (ef != null)
-                ef.isDirty = !_data.Equals(_originalData);
+            var parentObj = _nodes.Last().FindParentOfType(_parentType);
+            if (parentObj != null)
+            {
+                dynamic parent = parentObj;
+                parent.isDirty = !_data.Equals(_originalData);
+            }
         }
 
         #region Helper Methods

@@ -13,6 +13,7 @@ namespace EconomyPlugin
     /// </summary>
     public partial class SpawnGearQuickBarSlotControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         private IHasQuikBarSlot _data;
         private IHasQuikBarSlot _originalData;
         private List<TreeNode> _nodes;
@@ -31,9 +32,9 @@ namespace EconomyPlugin
         /// <summary>
         /// Loads data into the control and stores the selected tree nodes
         /// </summary>
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
-            // TODO: Replace ClassType with your actual type
+            _parentType = parentType;
             _data = data as IHasQuikBarSlot ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
@@ -66,12 +67,12 @@ namespace EconomyPlugin
         /// </summary>
         public void HasChanges()
         {
-            if (_nodes?.Any() != true) return;
-
-            // TODO: Replace Parentfile with your actual parent type if different
-            var ef = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
-            if (ef != null)
-                ef.isDirty = _data.QuickBarSlot != _originalData.QuickBarSlot;
+            var parentObj = _nodes.Last().FindParentOfType(_parentType);
+            if (parentObj != null)
+            {
+                dynamic parent = parentObj;
+                parent.isDirty = _data.QuickBarSlot != _originalData.QuickBarSlot;
+            }
         }
 
         #region Helper Methods

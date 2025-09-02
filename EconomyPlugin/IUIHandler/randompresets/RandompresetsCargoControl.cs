@@ -5,9 +5,11 @@ namespace EconomyPlugin
 {
     public partial class RandompresetsCargoControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         public Control GetControl() => this;
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
+            _parentType = parentType;
             _data = data as randompresetsCargo ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
@@ -28,8 +30,12 @@ namespace EconomyPlugin
         }
         public void HasChanges()
         {
-            cfgrandompresetsFile ef = _nodes.Last().FindParentOfType<cfgrandompresetsFile>();
-            ef.isDirty = !_data.Equals(_originalData);
+            var parentObj = _nodes.Last().FindParentOfType(_parentType);
+            if (parentObj != null)
+            {
+                dynamic parent = parentObj;
+                parent.isDirty = !_data.Equals(_originalData);
+            }
         }
 
         private randompresetsCargo _data;

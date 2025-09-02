@@ -14,9 +14,11 @@ namespace EconomyPlugin
 {
     public partial class TypesCollectionControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         public Control GetControl() => this;
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
+            _parentType = parentType;
             _data = data as TypesFile ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             if (selectedNodes[0].Tag is Category)

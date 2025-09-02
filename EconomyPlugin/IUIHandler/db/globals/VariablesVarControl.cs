@@ -13,9 +13,11 @@ namespace EconomyPlugin
 {
     public partial class VariablesVarControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         public Control GetControl() => this;
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
+            _parentType = parentType;
             _data = data as variablesVar ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
@@ -54,8 +56,12 @@ namespace EconomyPlugin
         }
         public void HasChanges()
         {
-            globalsFile gf = _nodes.Last().FindParentOfType<globalsFile>();
-            gf.isDirty = !_data.Equals(_originalData);
+            var parentObj = _nodes.Last().FindParentOfType(_parentType);
+            if (parentObj != null)
+            {
+                dynamic parent = parentObj;
+                parent.isDirty = !_data.Equals(_originalData);
+            }
         }
 
         private variablesVar _data;

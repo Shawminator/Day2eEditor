@@ -63,6 +63,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IUIHandler\Vector3\" />
+  </ItemGroup>
+
   <Target Name="copyToPluginsFolder" AfterTargets="Build">
     <MakeDir Directories="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" SkipUnchangedFiles="true" />

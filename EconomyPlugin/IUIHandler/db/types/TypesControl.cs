@@ -7,9 +7,11 @@ namespace EconomyPlugin
 {
     public partial class TypesControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         public Control GetControl() => this;
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
+            _parentType = parentType;
             _currentdata = data as TypeEntry ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             typesFile = _nodes.Last().FindParentOfType<TypesFile>();

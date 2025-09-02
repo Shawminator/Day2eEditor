@@ -281,28 +281,5 @@ namespace Day2eEditor
         }
     }
 
-    public interface IHasSpawnWeight
-    {
-        int SpawnWeight { get; set; }
-    }
-    public interface IHasSpawnItemType
-    {
-        string ItemType { get; set; }
-    }
-    public interface IHasSpawnName
-    {
-        string Name { get; set; }
-    }
-    public interface IHasQuikBarSlot
-    {
-        int QuickBarSlot { get; set; }
-    }
-    public interface IHasSimpleChildren
-    {
-        BindingList<string> SimpleChildrenTypes { get; set; }
-    }
-    public interface IHassimpleChildrenUseDefaultAttributes
-    {
-        bool SimpleChildrenUseDefaultAttributes { get; set; }
-    }
+    
 }

@@ -1,14 +1,17 @@
 ﻿using Day2eEditor;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace EconomyPlugin
 {
     public partial class EventsControl : UserControl, IUIHandler
     {
+        private Type _parentType;
         public Control GetControl() => this;
-        public void LoadFromData(object data, List<TreeNode> selectedNodes)
+        public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
+            _parentType = parentType;
             _data = data as eventsEvent ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data);
@@ -52,8 +55,12 @@ namespace EconomyPlugin
         }
         public void HasChanges()
         {
-            EventsFile ef = _nodes.Last().FindParentOfType<EventsFile>();
-            ef.isDirty = !_data.Equals(_originalData);
+            var parentObj = _nodes.Last().FindParentOfType(_parentType);
+            if (parentObj != null)
+            {
+                dynamic parent = parentObj;
+                parent.isDirty = !_data.Equals(_originalData);
+            }
         }
 
         private eventsEvent _data;

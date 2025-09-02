@@ -1123,8 +1123,8 @@ namespace EconomyPlugin
             parent.Nodes.Add(newSectionNode);
             return newSectionNode;
         }
-        void ShowHandler<T>(T handler, object primaryData, List<TreeNode> selectedNodes)
-        where T : IUIHandler
+        void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
+        where THandler : IUIHandler
         {
             if (handler == null)
             {
@@ -1140,9 +1140,9 @@ namespace EconomyPlugin
             }
 
             // If same type → just reload
-            if (_currentHandler != null && _currentHandler.GetType() == typeof(T))
+            if (_currentHandler != null && _currentHandler.GetType() == typeof(THandler))
             {
-                _currentHandler.LoadFromData(primaryData, selectedNodes);
+                _currentHandler.LoadFromData(parent, primaryData, selectedNodes);
                 return;
             }
 
@@ -1157,7 +1157,7 @@ namespace EconomyPlugin
 
             // Set new handler
             _currentHandler = handler;
-            handler.LoadFromData(primaryData, selectedNodes);
+            handler.LoadFromData(parent, primaryData, selectedNodes);
 
             var ctrl = handler.GetControl();
             splitContainer1.Panel2.Controls.Add(ctrl);
@@ -1182,118 +1182,118 @@ namespace EconomyPlugin
 
                 if (e.Node.Tag == null)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is string _string)
                 {
                     switch (_string)
                     {
                         case "SpawnGearAttachmentSlotItemSetsParent":
-                            ShowHandler<IUIHandler>(null, null, null);
+                            ShowHandler<IUIHandler>(null, null, null, null);
                             break;
                         case "SpawnGearName":
-                            var SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
-                            ShowHandler(new SpawnGearNameControl(), SpawnGearPresetFiles, selectedNodes);
+                            var spawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
+                            ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), spawnGearPresetFiles, selectedNodes);
                             break;
                         case "SpawnGearSpawnWeight":
-                            SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
-                            ShowHandler(new SpawnGearSpawnWeightControl(), SpawnGearPresetFiles, selectedNodes);
+                            spawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
+                            ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), spawnGearPresetFiles, selectedNodes);
                             break;
                         case "SpawnGearCharacterTypes":
-                            SpawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
-                            ShowHandler(new SpawnGearCharacterTypesControl(), SpawnGearPresetFiles, selectedNodes);
+                            spawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
+                            ShowHandler(new SpawnGearCharacterTypesControl(), typeof(SpawnGearPresetFiles), spawnGearPresetFiles, selectedNodes);
                             break;
                         case "DiscreteitemsetSpawnWeight":
                             var Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearSpawnWeightControl(), Discreteitemset, selectedNodes);
+                            ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
                             break;
                         case "DiscreteitemsetQuickBarSlot":
                             Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearQuickBarSlotControl(), Discreteitemset, selectedNodes);
+                            ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
                             break;
                         case "DiscreteitemsetComplexChildrenTypes":
-                            ShowHandler<IUIHandler>(null, null, null);
+                            ShowHandler<IUIHandler>(null,null, null, null);
                             break;
                         case "DiscreteitemsetSimpleChildrenTypes":
                             Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearSimpleChildrenControl(), Discreteitemset, selectedNodes);
+                            ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
                             break;
                         case "DiscreteitemsetSimpleChildrenUseDefaultAttributes":
                             Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), Discreteitemset, selectedNodes);
+                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
                             break;
                         case "DiscreteunsorteditemsetSpawnWeight":
                             var Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearSpawnWeightControl(), Discreteunsorteditemset, selectedNodes);
+                            ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
                             break;
                         case "DiscreteunsorteditemsetAttributes":
                             Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearAttributesControl(), Discreteunsorteditemset.attributes, selectedNodes);
+                            ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset.attributes, selectedNodes);
                             break;
                         case "DiscreteitemsetAttributes":
                             Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearAttributesControl(), Discreteitemset.attributes, selectedNodes);
+                            ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), Discreteitemset.attributes, selectedNodes);
                             break;
                         case "DiscreteunsorteditemsetSimpleChildrenTypes":
                             Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearSimpleChildrenControl(), Discreteunsorteditemset, selectedNodes);
+                            ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
                             break;
                         case "DiscreteunsorteditemsetSimpleChildrenUseDefaultAttributes":
                             Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), Discreteunsorteditemset, selectedNodes);
+                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
                             break;
                         case "DiscreteunsorteditemsetComplexChildrenTypes":
-                            ShowHandler<IUIHandler>(null, null, null);
+                            ShowHandler<IUIHandler>(null, null, null, null);
                             break;
                         case "ComplexchildrentypeAttributes":
                             var Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearAttributesControl(), Complexchildrentype.attributes, selectedNodes);
+                            ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), Complexchildrentype.attributes, selectedNodes);
                             break;
                         case "ComplexchildrentypeQuickBarSlot":
                             Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearQuickBarSlotControl(), Complexchildrentype, selectedNodes);
+                            ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
                             break;
                         case "ComplexchildrentypeSimpleChildrenUseDefaultAttributes":
                             Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), Complexchildrentype, selectedNodes);
+                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
                             break;
                         case "ComplexchildrentypeSimpleChildrenTypes":
                             Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearSimpleChildrenControl(), Complexchildrentype, selectedNodes);
+                            ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
                             break;
                         default:
-                            ShowHandler<IUIHandler>(null, null, null);
+                            ShowHandler<IUIHandler>(null, null, null, null);
                             break;
                     }
                 }
                 else if (e.Node.Tag is economyFile)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is globalsFile)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is EconomySection economydata)
                 {
                     economyFile ef = e.Node.Parent.Tag as economyFile;
                     if (ef.IsModded)
-                        ShowHandler(new economyControl(), economydata, selectedNodes);
+                        ShowHandler(new economyControl(), typeof(economyFile), economydata, selectedNodes);
                 }
                 else if (e.Node.Tag is variablesVar varData)
                 {
                     globalsFile gf = e.Node.Parent.Tag as globalsFile;
                     if (gf.IsModded)
-                        ShowHandler(new VariablesVarControl(), varData, selectedNodes);
+                        ShowHandler(new VariablesVarControl(), typeof(globalsFile), varData, selectedNodes);
                 }
                 else if (e.Node.Tag is TypesFile typefile)
                 {
-                    ShowHandler(new TypesCollectionControl(), typefile, selectedNodes);
+                    ShowHandler(new TypesCollectionControl(), typeof(TypesFile), typefile, selectedNodes);
                 }
                 else if (e.Node.Tag is Category cat)
                 {
                     if (e.Node.Parent == null) { return; }
-                    ShowHandler(new TypesCollectionControl(), e.Node.Parent.Tag as TypesFile, selectedNodes);
+                    ShowHandler(new TypesCollectionControl(), typeof(TypesFile), e.Node.Parent.Tag as TypesFile, selectedNodes);
                 }
                 else if (e.Node.Tag is TypeEntry typentry)
                 {
@@ -1326,22 +1326,22 @@ namespace EconomyPlugin
                         else
                         {
                             // User chose No — show current entry
-                            ShowHandler(new TypesControl(), typentry, selectedNodes);
+                            ShowHandler(new TypesControl(), typeof(TypesFile), typentry, selectedNodes);
                         }
                     }
                     else
                     {
                         // Already latest — show control
-                        ShowHandler(new TypesControl(), typentry, selectedNodes);
+                        ShowHandler(new TypesControl(), typeof(TypesFile), typentry, selectedNodes);
                     }
                 }
                 else if (e.Node.Tag is EventsFile)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is events)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is eventsEvent _event)
                 {
@@ -1375,22 +1375,22 @@ namespace EconomyPlugin
                         else
                         {
                             // User chose No — show current entry
-                            ShowHandler(new EventsControl(), _event, selectedNodes);
+                            ShowHandler(new EventsControl(), typeof(EventsFile), _event, selectedNodes);
                         }
                     }
                     else
                     {
                         // Already latest — show control
-                        ShowHandler(new EventsControl(), _event, selectedNodes);
+                        ShowHandler(new EventsControl(), typeof(EventsFile), _event, selectedNodes);
                     }
                 }
                 else if (e.Node.Tag is eventposdefEvent)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is eventposdefEventPos eventpos)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                     _mapControl.Visible = true;
                     _mapControl.ClearDrawables();
                     _selectedEventPos = eventpos;
@@ -1405,91 +1405,91 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is CFGGameplayConfig)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag.ToString() == "cfggameplayConfigVersion")
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is Generaldata Generaldata)
                 {
-                    ShowHandler(new cfggameplayGeneralDataControl(), Generaldata, selectedNodes);
+                    ShowHandler(new cfggameplayGeneralDataControl(), typeof(CFGGameplayConfig), Generaldata, selectedNodes);
                 }
                 else if (e.Node.Tag is Playerdata Playerdata)
                 {
-                    ShowHandler(new cfggameplayPlayerDataControl(), Playerdata, selectedNodes);
+                    ShowHandler(new cfggameplayPlayerDataControl(), typeof(CFGGameplayConfig), Playerdata, selectedNodes);
                 }
                 else if (e.Node.Tag is Worldsdata Worldsdata)
                 {
-                    ShowHandler(new cfggameplayWordlsDataControl(), Worldsdata, selectedNodes);
+                    ShowHandler(new cfggameplayWordlsDataControl(), typeof(CFGGameplayConfig), Worldsdata, selectedNodes);
                 }
                 else if (e.Node.Tag is Basebuildingdata Basebuildingdata)
                 {
-                    ShowHandler(new cfggameplayBaseBuildingDataControl(), Basebuildingdata, selectedNodes);
+                    ShowHandler(new cfggameplayBaseBuildingDataControl(), typeof(CFGGameplayConfig), Basebuildingdata, selectedNodes);
                 }
                 else if (e.Node.Tag is Uidata Uidata)
                 {
-                    ShowHandler(new cfggameplayUIDataControl(), Uidata, selectedNodes);
+                    ShowHandler(new cfggameplayUIDataControl(), typeof(CFGGameplayConfig), Uidata, selectedNodes);
                 }
                 else if (e.Node.Tag is CFGGameplayMapData CFGGameplayMapData)
                 {
-                    ShowHandler(new cfggameplayMapDataControl(), CFGGameplayMapData, selectedNodes);
+                    ShowHandler(new cfggameplayMapDataControl(), typeof(CFGGameplayConfig), CFGGameplayMapData, selectedNodes);
                 }
                 else if (e.Node.Tag is VehicleData VehicleData)
                 {
-                    ShowHandler(new cfggameplayVehicleDataControl(), VehicleData, selectedNodes);
+                    ShowHandler(new cfggameplayVehicleDataControl(), typeof(CFGGameplayConfig), VehicleData, selectedNodes);
                 }
                 else if (e.Node.Tag is cfgspawnabletypesFile)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is randompresetsAttachments PresetAttachment)
                 {
-                    ShowHandler(new RandompresetsAttchmentsControl(), PresetAttachment, selectedNodes);
+                    ShowHandler(new RandompresetsAttchmentsControl(), typeof(cfgrandompresetsFile), PresetAttachment, selectedNodes);
                 }
                 else if (e.Node.Tag is randompresetsCargo PresetCargo)
                 {
-                    ShowHandler(new RandompresetsCargoControl(), PresetCargo, selectedNodes);
+                    ShowHandler(new RandompresetsCargoControl(), typeof(cfgrandompresetsFile), PresetCargo, selectedNodes);
                 }
                 else if (e.Node.Tag is randompresetsItem item)
                 {
-                    ShowHandler(new RandomPresetItemControl(), item, selectedNodes);
+                    ShowHandler(new RandomPresetItemControl(), typeof(cfgrandompresetsFile), item, selectedNodes);
                 }
                 else if (e.Node.Tag is SpawnableType spawnabletype)
                 {
-                    ShowHandler(new SpawnabletypesControl(), spawnabletype, selectedNodes);
+                    ShowHandler(new SpawnabletypesControl(), typeof(cfgspawnabletypesFile), spawnabletype, selectedNodes);
                 }
                 else if (e.Node.Tag is SpawnableTypes spawnabletypes)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is spawnableTypesHoarder spawnableTypesHoarder)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                 }
                 else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
                 {
-                    ShowHandler(new SpawnableTypesCargoControl(), spawnableTypeCargo, selectedNodes);
+                    ShowHandler(new SpawnableTypesCargoControl(), typeof(cfgspawnabletypesFile), spawnableTypeCargo, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
                 {
-                    ShowHandler(new SpawnableTypesAttachmentsControl(), spawnableTypeAttachment, selectedNodes);
+                    ShowHandler(new SpawnableTypesAttachmentsControl(), typeof(cfgspawnabletypesFile), spawnableTypeAttachment, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem)
                 {
-                    ShowHandler(new SpawnableTypesItemControl(), spawnableTypeItem, selectedNodes);
+                    ShowHandler(new SpawnableTypesItemControl(), typeof(cfgspawnabletypesFile), spawnableTypeItem, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeTag spawnableTypeTag)
                 {
-                    ShowHandler(new SpawnabletypesTagsControl(), spawnableTypeTag, selectedNodes);
+                    ShowHandler(new SpawnabletypesTagsControl(), typeof(cfgspawnabletypesFile), spawnableTypeTag, selectedNodes);
                 }
                 else if (e.Node.Tag is spawnableTypeDamage spawnableTypeDamage)
                 {
-                    ShowHandler(new SpawnabletypesDamageControl(), spawnableTypeDamage, selectedNodes);
+                    ShowHandler(new SpawnabletypesDamageControl(), typeof(cfgspawnabletypesFile), spawnableTypeDamage, selectedNodes);
                 }
                 else if (e.Node.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                     _mapControl.Visible = true;
                     _mapControl.ClearDrawables();
                     _selectedEventPos = null;
@@ -1504,7 +1504,7 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is PRABoxes PRABoxes)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                     _mapControl.Visible = true;
                     _mapControl.ClearDrawables();
                     _selectedEventPos = null;
@@ -1519,7 +1519,7 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is PRASafePosition PRASafePosition)
                 {
-                    ShowHandler<IUIHandler>(null, null, null);
+                    ShowHandler<IUIHandler>(null, null, null, null);
                     _mapControl.Visible = true;
                     _mapControl.ClearDrawables();
                     _selectedEventPos = null;
@@ -1535,19 +1535,19 @@ namespace EconomyPlugin
                 }
                 else if (e.Node.Tag is Attachmentslotitemset Attachmentslotitemset)
                 {
-                    ShowHandler(new AttachmentslotitemsetControl(), Attachmentslotitemset, selectedNodes);
+                    ShowHandler(new AttachmentslotitemsetControl(), typeof(SpawnGearPresetFiles), Attachmentslotitemset, selectedNodes);
                 }
                 else if (e.Node.Tag is Discreteitemset Discreteitemset)
                 {
-                    ShowHandler(new SpawnGearItemControl(), Discreteitemset, selectedNodes);
+                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
                 }
                 else if (e.Node.Tag is Discreteunsorteditemset Discreteunsorteditemset)
                 {
-                    ShowHandler(new SpawnGearNameControl(), Discreteunsorteditemset, selectedNodes);
+                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
                 }
                 else if (e.Node.Tag is Complexchildrentype Complexchildrentype)
                 {
-                    ShowHandler(new SpawnGearItemControl(), Complexchildrentype, selectedNodes);
+                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
                 }
             }));
         }
