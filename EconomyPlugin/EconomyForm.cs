@@ -248,13 +248,42 @@ namespace EconomyPlugin
                 [typeof(playerspawnpointsGroup_params)] = (node, selected) =>
                     ShowHandler<IUIHandler>(new cfgplayerspawnGroupParamsControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsGroup_params, selected),
                 [typeof(playerspawnpointsGroup)] = (node, selected) =>
-                    ShowHandler<IUIHandler>(new cfgplayerspawngroupControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsGroup, selected)
+                    ShowHandler<IUIHandler>(new cfgplayerspawngroupControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsGroup, selected),
+
+                //weather xml
+                [typeof(weatherOvercast)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgweatherOvercastControl(), typeof(cfgweatherConfig), node.Tag as weatherOvercast, selected),
+                [typeof(weatherFog)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgweatherFogControl(), typeof(cfgweatherConfig), node.Tag as weatherFog, selected),
+                [typeof(weatherRain)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgweatherRainControl(), typeof(cfgweatherConfig), node.Tag as weatherRain, selected),
+                [typeof(weatherWindMagnitude)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgweatherWindMagnitudeControl(), typeof(cfgweatherConfig), node.Tag as weatherWindMagnitude, selected),
+                [typeof(weatherWindDirection)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgweatherWindDirectionControl(), typeof(cfgweatherConfig), node.Tag as weatherWindDirection, selected),
+                [typeof(weatherSnowfall)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgweatherSnowfallControl(), typeof(cfgweatherConfig), node.Tag as weatherSnowfall, selected),
+                [typeof(weatherStorm)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgweatherStormControl(), typeof(cfgweatherConfig), node.Tag as weatherStorm, selected)
+
+
+
             };
             // ----------------------
             // String handlers
             // ----------------------
             _stringHandlers = new Dictionary<string, Action<TreeNode, List<TreeNode>>>
             {
+                ["weatherEnable"] = (node, selected) =>
+                {
+                    cfgweatherConfig cfg = node.FindParentOfType<cfgweatherConfig>();
+                    ShowHandler<IUIHandler>(new cfgweatherEnableControl(), typeof(cfgweatherConfig), cfg.Data, selected);
+                },
+                ["wetaherReset"] = (node, selected) =>
+                {
+                    cfgweatherConfig cfg = node.FindParentOfType<cfgweatherConfig>();
+                    ShowHandler<IUIHandler>(new cfgweatherresetControl(), typeof(cfgweatherConfig), cfg.Data, selected);
+                },
                 ["DefsUserUsageFlags"] = (node, selected) =>
                 {
                     var cfg = node.FindParentOfType<cfglimitsdefinitionuserConfig>();
@@ -915,9 +944,13 @@ namespace EconomyPlugin
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgundergroundtriggersConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgundergroundtriggersConfig, CreatecfgundergroundtriggersConfigUserConfigNodes);
 
-            // cfgundergroundtriggersConfig
+            // cfgplayerspawnconfig
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgplayerspawnpointsConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgplayerspawnpointsConfig, CreatecfgPlayerSpawnPointNodes);
+
+            // cfgweatherconfig
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgweatherConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgweatherConfig, CreatecfgweatherNodes);
 
             EconomyTV.Nodes.Add(rootNode);
         }
@@ -1859,6 +1892,29 @@ namespace EconomyPlugin
             if (area.PlayerData != null)
                 areaNode.Nodes.Add(new TreeNode("PlayerData") { Tag = area.PlayerData });
             return areaNode;
+        }
+        //creating weather Nodes
+        private TreeNode CreatecfgweatherNodes(cfgweatherConfig config)
+        {
+            TreeNode weatherrootNode = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+
+            if (config.Data != null) // assuming cfgweatherConfig has a Weather property
+            {
+                weatherrootNode.Nodes.Add(new TreeNode($"Enable: {(config.Data.enable != 0)}") { Tag = "weatherEnable" });
+                weatherrootNode.Nodes.Add(new TreeNode($"Reset: {(config.Data.reset != 0)}") { Tag = "wetaherReset" });
+                weatherrootNode.Nodes.Add(new TreeNode("Overcast") { Tag = config.Data.overcast });
+                weatherrootNode.Nodes.Add(new TreeNode("Fog") { Tag = config.Data.fog });
+                weatherrootNode.Nodes.Add(new TreeNode("Rain") { Tag = config.Data.rain });
+                weatherrootNode.Nodes.Add(new TreeNode("WindMagnitude") { Tag = config.Data.windMagnitude });
+                weatherrootNode.Nodes.Add(new TreeNode("WindDirection") { Tag = config.Data.windDirection });
+                weatherrootNode.Nodes.Add(new TreeNode("Snowfall") { Tag = config.Data.snowfall });
+                weatherrootNode.Nodes.Add(new TreeNode("Storm") { Tag = config.Data.storm });
+            }
+
+            return weatherrootNode;
         }
         #endregion loading treeview
 

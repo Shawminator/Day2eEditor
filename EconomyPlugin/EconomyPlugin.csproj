@@ -49,6 +49,9 @@
     <Compile Update="IUIHandler\SpawnGear\SpawnGearSpawnWeightControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="IUIHandler\weather\cfgweatherresetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

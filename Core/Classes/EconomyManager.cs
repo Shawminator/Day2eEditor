@@ -50,9 +50,10 @@ namespace Day2eEditor
         public cfgeffectareaConfig cfgeffectareaConfig { get; set; }
         public cfgundergroundtriggersConfig cfgundergroundtriggersConfig { get; set; }
         public cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig { get; set; }
+        public cfgweatherConfig cfgweatherConfig { get; set; }
 
         //public cfgignorelist cfgignorelist { get; set; }
-        //public weatherconfig weatherconfig { get; set; }
+
         //public mapgroupproto mapgroupproto { get; set; }
         //public mapgrouppos mapgrouppos { get; set; }
         //public BindingList<territoriesConfig> territoriesList;
@@ -75,6 +76,7 @@ namespace Day2eEditor
             _paths["cfgeffectarea"] = Path.Combine(basePath, "cfgeffectarea.json");
             _paths["cfgundergroundtriggers"] = Path.Combine(basePath, "cfgundergroundtriggers.json");
             _paths["cfgplayerspawnpoints"] = Path.Combine(basePath, "cfgplayerspawnpoints.xml");
+            _paths["cfgweather"] = Path.Combine(basePath, "cfgweather.xml");
 
             _paths["VanillaTypes"] = Path.Combine(basePath, "db", "types.xml");
             _paths["VanillaEvents"] = Path.Combine(basePath, "db", "events.xml");
@@ -159,6 +161,9 @@ namespace Day2eEditor
             cfgplayerspawnpointsConfig = new cfgplayerspawnpointsConfig(_paths["cfgplayerspawnpoints"]);
             LoadConfigWithErrorReport("cfgplayerspawnpoints", cfgplayerspawnpointsConfig);
 
+            cfgweatherConfig = new cfgweatherConfig(_paths["cfgweather"]);
+            LoadConfigWithErrorReport("cfgweather", cfgweatherConfig);
+
             Console.WriteLine($"\n**** Starting load of EconomyCore Files Including Vanilla ****");
 
             economyConfig = new economyConfig();
@@ -202,7 +207,8 @@ namespace Day2eEditor
                 eventsConfig,
                 cfgspawnabletypesConfig,
                 cfgrandompresetsConfig,
-                cfgplayerspawnpointsConfig
+                cfgplayerspawnpointsConfig,
+                cfgweatherConfig
             };
 
             var savedFiles = new List<string>();
