@@ -120,6 +120,14 @@ namespace Day2eEditor
         {
             return AreaName;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Areas other)
+                return false;
+
+            return AreaName == other.AreaName && Type == other.Type && TriggerType == other.TriggerType;
+        }
     }
     public class Data
     {
@@ -147,11 +155,40 @@ namespace Day2eEditor
         {
             GetType().GetProperty(mytype).SetValue(this, myvalue, null);
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Data other) return false;
+
+            return
+                (Pos?.SequenceEqual(other.Pos) ?? other.Pos == null) &&
+                Radius == other.Radius &&
+                PosHeight == other.PosHeight &&
+                NegHeight == other.NegHeight &&
+                InnerRingCount == other.InnerRingCount &&
+                InnerPartDist == other.InnerPartDist &&
+                OuterRingToggle == other.OuterRingToggle &&
+                OuterPartDist == other.OuterPartDist &&
+                OuterOffset == other.OuterOffset &&
+                VerticalLayers == other.VerticalLayers &&
+                VerticalOffset == other.VerticalOffset &&
+                ParticleName == other.ParticleName &&
+                EffectInterval == other.EffectInterval &&
+                EffectDuration == other.EffectDuration &&
+                EffectModifier == other.EffectModifier;
+        }
     }
     public class PlayerData
     {
         public string AroundPartName { get; set; }
         public string TinyPartName { get; set; }
         public string PPERequesterType { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not PlayerData other)
+                return false;
+
+            return AroundPartName == other.AroundPartName && TinyPartName == other.TinyPartName && PPERequesterType == other.PPERequesterType;
+        }
     }
 }

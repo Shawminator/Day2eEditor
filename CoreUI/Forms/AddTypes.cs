@@ -304,6 +304,7 @@ namespace Day2eEditor
         private void SelectProjectFolderbutton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.InitialDirectory = AppServices.GetRequired<EconomyManager>().basePath;
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 textBox2.Text = dialog.SelectedPath.Replace(AppServices.GetRequired<EconomyManager>().basePath + "\\", "").Replace("\\", "/");

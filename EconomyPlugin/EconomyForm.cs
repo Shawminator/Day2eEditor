@@ -1,7 +1,11 @@
 using Day2eEditor;
+using DayZeLib;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using System.Xml.Linq;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace EconomyPlugin
 {
@@ -15,12 +19,643 @@ namespace EconomyPlugin
         private IPluginForm _plugin;
         private TreeNode? currentTreeNode;
 
+        #region Ditionarys
+        private Dictionary<Type, Action<TreeNode, List<TreeNode>>> _typeHandlers;
+        private Dictionary<string, Action<TreeNode, List<TreeNode>>> _stringHandlers;
+        private Dictionary<Type, Action<TreeNode>> _typeContextMenus;
+        private Dictionary<string, Action<TreeNode>> _stringContextMenus;
+        #endregion Dictionarys
         public EconomyForm(IPluginForm plugin)
         {
             InitializeComponent();
             _plugin = plugin;
             _economyManager = AppServices.GetRequired<EconomyManager>();
             _projectManager = AppServices.GetRequired<ProjectManager>();
+            initializeShowControlHandlers();
+            InitializeContextMenuHandlers();
+        }
+        private void initializeShowControlHandlers()
+        {
+            // ----------------------
+            // Type handlers
+            // ----------------------
+            _typeHandlers = new Dictionary<Type, Action<TreeNode, List<TreeNode>>>
+            {
+                // Core files
+                [typeof(economyFile)] = (node, selected) => ShowHandler<IUIHandler>(null, null, null, selected),
+                [typeof(EconomySection)] = (node, selected) =>
+                {
+                    economyFile ef = node.Parent.Tag as economyFile;
+                    if (ef.IsModded)
+                        ShowHandler(new economyControl(), typeof(economyFile), node.Tag as EconomySection, selected);
+                    else
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                },
+                [typeof(globalsFile)] = (node, selected) => ShowHandler<IUIHandler>(null, null, null, selected),
+                [typeof(variablesVar)] = (node, selected) =>
+                {
+                    globalsFile ef = node.Parent.Tag as globalsFile;
+                    if (ef.IsModded)
+                        ShowHandler(new VariablesVarControl(), typeof(globalsFile), node.Tag as variablesVar, selected);
+                    else
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                },
+                [typeof(TypesFile)] = (node, selected) =>
+                    ShowHandler(new TypesCollectionControl(), typeof(TypesFile), node.Tag as TypesFile, selected),
+                [typeof(Category)] = (node, selected) =>
+                {
+                    if (node.Parent != null)
+                        ShowHandler(new TypesCollectionControl(), typeof(TypesFile), node.Parent.Tag as TypesFile, selected);
+                },
+                [typeof(TypeEntry)] = (node, selected) =>
+                {
+                    var typentry = node.Tag as TypeEntry;
+                    var matches = _economyManager.TypesConfig.AllData
+                        .SelectMany(tf => tf.Data.TypeList.Select(te => (File: tf, Entry: te)))
+                        .Where(x => x.Entry.Name == typentry.Name)
+                        .ToList();
+
+                    var latest = matches.LastOrDefault();
+                    if (latest != default && !ReferenceEquals(latest.Entry, typentry))
+                    {
+                        if (MessageBox.Show(
+                                $"This type is overridden by a later definition in:\n{latest.File.FileName}\n\nJump to it?",
+                                "Type Override Found", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            var foundNode = FindNodeByTag(EconomyTV.Nodes, latest.Entry);
+                            if (foundNode != null) EconomyTV.SelectedNode = foundNode;
+                        }
+                        else
+                            ShowHandler(new TypesControl(), typeof(TypesFile), typentry, selected);
+                    }
+                    else
+                        ShowHandler(new TypesControl(), typeof(TypesFile), typentry, selected);
+                },
+
+                // Events
+                [typeof(eventsEvent)] = (node, selected) =>
+                {
+                    var ev = node.Tag as eventsEvent;
+                    var matches = _economyManager.eventsConfig.AllData
+                        .SelectMany(tf => tf.Data.@event.Select(te => (File: tf, Event: te)))
+                        .Where(x => x.Event.name == ev.name)
+                        .ToList();
+
+                    var latest = matches.LastOrDefault();
+                    if (latest != default && !ReferenceEquals(latest.Event, ev))
+                    {
+                        if (MessageBox.Show(
+                                $"This Event is overridden by a later definition in:\n{latest.File.FileName}\n\nJump to it?",
+                                "Event Override Found", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            var foundNode = FindNodeByTag(EconomyTV.Nodes, latest.Event);
+                            if (foundNode != null) EconomyTV.SelectedNode = foundNode;
+                        }
+                        else
+                            ShowHandler(new EventsControl(), typeof(EventsFile), ev, selected);
+                    }
+                    else
+                        ShowHandler(new EventsControl(), typeof(EventsFile), ev, selected);
+                },
+                [typeof(eventposdefEventZone)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new eventspawnZoneControl(), typeof(cfgeventspawnsConfig), node.Tag as eventposdefEventZone, selected);
+                },
+                [typeof(eventgroupdefGroup)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new eventspawngroupnameControl(), typeof(cfgeventgroupsConfig), node.Tag as eventgroupdefGroup, selected);
+                },
+                [typeof(eventgroupdefGroupChild)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new eventspawngroupchildinfoControl(), typeof(cfgeventgroupsConfig), node.Tag as eventgroupdefGroupChild, selected);
+                },
+                // Map-related
+                [typeof(eventposdefEventPos)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new eventgroupsspawnpositionControl(), typeof(cfgeventspawnsConfig), node.Tag as eventposdefEventPos, selected);
+                    SetupEventPosMap(node.Tag as eventposdefEventPos, node);
+                },
+                [typeof(cfgeffectareaSafePosition)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupSafePosMap(node.Tag as cfgeffectareaSafePosition, node);
+                },
+                [typeof(PRABoxes)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupPRABoxMap(node.Tag as PRABoxes, node);
+                },
+                [typeof(PRASafePosition)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupPRASafePosMap(node.Tag as PRASafePosition, node);
+                },
+                [typeof(Areas)] = (node, selected) =>
+                {
+                    ShowHandler(new cfgeffectAreaMainControl(), typeof(cfgeffectareaConfig), node.Tag as Areas, selected);
+                    SetupEffectAreaMap(node.Tag as Areas, node);
+                },
+                [typeof(playerspawnpointsGroupPos)] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupPlayerSpawnPosMap(node.Tag as playerspawnpointsGroupPos, node);
+                },
+
+                // SpawnGear / Discrete / Complex
+                [typeof(Discreteitemset)] = (node, selected) =>
+                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), node.Tag as Discreteitemset, selected),
+                [typeof(Discreteunsorteditemset)] = (node, selected) =>
+                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), node.Tag as Discreteunsorteditemset, selected),
+                [typeof(Complexchildrentype)] = (node, selected) =>
+                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), node.Tag as Complexchildrentype, selected),
+                [typeof(Attachmentslotitemset)] = (node, selected) =>
+                    ShowHandler(new AttachmentslotitemsetControl(), typeof(SpawnGearPresetFiles), node.Tag as Attachmentslotitemset, selected),
+
+                // SpawnableTypes
+                [typeof(SpawnableType)] = (node, selected) =>
+                    ShowHandler(new SpawnabletypesControl(), typeof(cfgspawnabletypesFile), node.Tag as SpawnableType, selected),
+                [typeof(spawnableTypeItem)] = (node, selected) =>
+                    ShowHandler(new SpawnableTypesItemControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeItem, selected),
+                [typeof(spawnableTypeAttachment)] = (node, selected) =>
+                    ShowHandler(new SpawnableTypesAttachmentsControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeAttachment, selected),
+                [typeof(spawnableTypeCargo)] = (node, selected) =>
+                    ShowHandler(new SpawnableTypesCargoControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeCargo, selected),
+                [typeof(spawnableTypeDamage)] = (node, selected) =>
+                    ShowHandler(new SpawnabletypesDamageControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeDamage, selected),
+                [typeof(spawnableTypeTag)] = (node, selected) =>
+                    ShowHandler(new SpawnabletypesTagsControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeTag, selected),
+
+                // CFG Gameplay
+                [typeof(Generaldata)] = (node, selected) =>
+                    ShowHandler(new cfggameplayGeneralDataControl(), typeof(CFGGameplayConfig), node.Tag as Generaldata, selected),
+                [typeof(Playerdata)] = (node, selected) =>
+                    ShowHandler(new cfggameplayPlayerDataControl(), typeof(CFGGameplayConfig), node.Tag as Playerdata, selected),
+                [typeof(Worldsdata)] = (node, selected) =>
+                    ShowHandler(new cfggameplayWordlsDataControl(), typeof(CFGGameplayConfig), node.Tag as Worldsdata, selected),
+                [typeof(Basebuildingdata)] = (node, selected) =>
+                    ShowHandler(new cfggameplayBaseBuildingDataControl(), typeof(CFGGameplayConfig), node.Tag as Basebuildingdata, selected),
+                [typeof(Uidata)] = (node, selected) =>
+                    ShowHandler(new cfggameplayUIDataControl(), typeof(CFGGameplayConfig), node.Tag as Uidata, selected),
+                [typeof(CFGGameplayMapData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayMapDataControl(), typeof(CFGGameplayConfig), node.Tag as CFGGameplayMapData, selected),
+                [typeof(VehicleData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayVehicleDataControl(), typeof(CFGGameplayConfig), node.Tag as VehicleData, selected),
+
+                // Random Presets
+                [typeof(randompresetsAttachments)] = (node, selected) =>
+                    ShowHandler(new RandompresetsAttchmentsControl(), typeof(cfgrandompresetsFile), node.Tag as randompresetsAttachments, selected),
+                [typeof(randompresetsCargo)] = (node, selected) =>
+                    ShowHandler(new RandompresetsCargoControl(), typeof(cfgrandompresetsFile), node.Tag as randompresetsCargo, selected),
+                [typeof(randompresetsItem)] = (node, selected) =>
+                    ShowHandler(new RandomPresetItemControl(), typeof(cfgrandompresetsFile), node.Tag as randompresetsItem, selected),
+
+                // Vector / Areas
+                [typeof(Vec3)] = (node, selected) =>
+                {
+                    var parent = node.FindParentOfType<PlayerRestrictedFiles>();
+                    if (parent != null)
+                        ShowHandler(new Vector3Control(), typeof(PlayerRestrictedFiles), node.Tag as Vec3, selected);
+                },
+                [typeof(Data)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgeffectAreaDataControl(), typeof(cfgeffectareaConfig), node.Tag as Data, selected),
+                [typeof(PlayerData)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgeffectAreaPlayerDataControl(), typeof(cfgeffectareaConfig), node.Tag as PlayerData, selected),
+
+                // Player spawns
+                [typeof(playerspawnpointsSpawn_params)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgplayerspawnSpawnParamControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsSpawn_params, selected),
+                [typeof(playerspawnpointsGenerator_params)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgplayerspawnGeneratorParamsControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsGenerator_params, selected),
+                [typeof(playerspawnpointsGroup_params)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgplayerspawnGroupParamsControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsGroup_params, selected),
+                [typeof(playerspawnpointsGroup)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new cfgplayerspawngroupControl(), typeof(cfgplayerspawnpointsConfig), node.Tag as playerspawnpointsGroup, selected)
+            };
+            // ----------------------
+            // String handlers
+            // ----------------------
+            _stringHandlers = new Dictionary<string, Action<TreeNode, List<TreeNode>>>
+            {
+                ["DefsUserUsageFlags"] = (node, selected) =>
+                {
+                    var cfg = node.FindParentOfType<cfglimitsdefinitionuserConfig>();
+                    ShowHandler(new cfglimitsdefinitionuserUsageControl(), typeof(cfglimitsdefinitionuserConfig), cfg, selected);
+                },
+                ["DefsUserValueFlags"] = (node, selected) =>
+                {
+                    var cfg = node.FindParentOfType<cfglimitsdefinitionuserConfig>();
+                    ShowHandler(new cfglimitsdefinitionuserValueControl(), typeof(cfglimitsdefinitionuserConfig), cfg, selected);
+                },
+                ["SpawnGearAttachmentSlotItemSetsParent"] = (node, selected) =>
+                    ShowHandler<IUIHandler>(null, null, null, selected),
+
+                ["SpawnGearName"] = (node, selected) =>
+                {
+                    var preset = node.FindParentOfType<SpawnGearPresetFiles>();
+                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), preset, selected);
+                },
+                ["SpawnGearSpawnWeight"] = (node, selected) =>
+                {
+                    var preset = node.FindParentOfType<SpawnGearPresetFiles>();
+                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), preset, selected);
+                },
+                ["SpawnGearCharacterTypes"] = (node, selected) =>
+                {
+                    var preset = node.FindParentOfType<SpawnGearPresetFiles>();
+                    ShowHandler(new SpawnGearCharacterTypesControl(), typeof(SpawnGearPresetFiles), preset, selected);
+                },
+
+                ["DiscreteitemsetSpawnWeight"] = (node, selected) =>
+                {
+                    var ds = node.FindParentOfType<Discreteitemset>();
+                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                },
+                ["DiscreteitemsetQuickBarSlot"] = (node, selected) =>
+                {
+                    var ds = node.FindParentOfType<Discreteitemset>();
+                    ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                },
+                ["DiscreteitemsetComplexChildrenTypes"] = (node, selected) =>
+                    ShowHandler<IUIHandler>(null, null, null, selected),
+
+                ["DiscreteitemsetSimpleChildrenTypes"] = (node, selected) =>
+                {
+                    var ds = node.FindParentOfType<Discreteitemset>();
+                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                },
+                ["DiscreteitemsetSimpleChildrenUseDefaultAttributes"] = (node, selected) =>
+                {
+                    var ds = node.FindParentOfType<Discreteitemset>();
+                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                },
+
+                ["DiscreteunsorteditemsetSpawnWeight"] = (node, selected) =>
+                {
+                    var dsu = node.FindParentOfType<Discreteunsorteditemset>();
+                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), dsu, selected);
+                },
+                ["DiscreteunsorteditemsetAttributes"] = (node, selected) =>
+                {
+                    var dsu = node.FindParentOfType<Discreteunsorteditemset>();
+                    ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), dsu.attributes, selected);
+                },
+                ["DiscreteunsorteditemsetSimpleChildrenTypes"] = (node, selected) =>
+                {
+                    var dsu = node.FindParentOfType<Discreteunsorteditemset>();
+                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), dsu, selected);
+                },
+                ["DiscreteunsorteditemsetSimpleChildrenUseDefaultAttributes"] = (node, selected) =>
+                {
+                    var dsu = node.FindParentOfType<Discreteunsorteditemset>();
+                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), dsu, selected);
+                },
+                ["DiscreteunsorteditemsetComplexChildrenTypes"] = (node, selected) =>
+                    ShowHandler<IUIHandler>(null, null, null, selected),
+
+                ["ComplexchildrentypeAttributes"] = (node, selected) =>
+                {
+                    var cc = node.FindParentOfType<Complexchildrentype>();
+                    ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), cc.attributes, selected);
+                },
+                ["ComplexchildrentypeQuickBarSlot"] = (node, selected) =>
+                {
+                    var cc = node.FindParentOfType<Complexchildrentype>();
+                    ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                },
+                ["ComplexchildrentypeSimpleChildrenUseDefaultAttributes"] = (node, selected) =>
+                {
+                    var cc = node.FindParentOfType<Complexchildrentype>();
+                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                },
+                ["ComplexchildrentypeSimpleChildrenTypes"] = (node, selected) =>
+                {
+                    var cc = node.FindParentOfType<Complexchildrentype>();
+                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                }
+
+            };
+        }
+        private void InitializeContextMenuHandlers()
+        {
+            // ----------------------
+            // Type handlers
+            // ----------------------
+            _typeContextMenus = new Dictionary<Type, Action<TreeNode>>
+            {
+                // Economy / Globals
+                [typeof(EconomySection)] = node =>
+                {
+                    var ef = node.Parent.Tag as economyFile;
+                    editPropertyToolStripMenuItem.Visible = !ef.IsModded;
+                    setToDefaultToolStripMenuItem.Visible = ef.IsModded;
+                    EditPropertyCMS.Show(Cursor.Position);
+                },
+                [typeof(variablesVar)] = node =>
+                {
+                    var gf = node.Parent.Tag as globalsFile;
+                    editPropertyToolStripMenuItem.Visible = !gf.IsModded;
+                    setToDefaultToolStripMenuItem.Visible = gf.IsModded;
+                    EditPropertyCMS.Show(Cursor.Position);
+                },
+
+                // Types
+                [typeof(TypesFile)] = node =>
+                {
+                    TypesCM.Items.Clear();
+                    TypesCM.Items.Add(addNewTypesToolStripMenuItem);
+                    TypesCM.Items.Add(removeSelectedToolStripMenuItem);
+                    TypesCM.Show(Cursor.Position);
+                },
+                [typeof(TypeEntry)] = node =>
+                {
+                    TypesCM.Items.Clear();
+                    TypesCM.Items.Add(removeSelectedToolStripMenuItem);
+                    TypesCM.Show(Cursor.Position);
+                },
+
+                // Events
+                [typeof(EventsFile)] = node =>
+                {
+                    EventsCM.Items.Clear();
+                    EventsCM.Items.Add(AddNewEventsToolstripMenuItem);
+                    EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+                    EventsCM.Show(Cursor.Position);
+                },
+                [typeof(eventsEvent)] = node =>
+                {
+                    EventsCM.Items.Clear();
+                    EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+                    EventsCM.Show(Cursor.Position);
+                },
+                [typeof(eventposdefEvent)] = node =>
+                {
+                    foreach (ToolStripMenuItem TSMI in EventSpawnContextMenu.Items)
+                        TSMI.Visible = false;
+
+                    var evt = node.Tag as eventposdefEvent;
+                    addNewPosirtionToolStripMenuItem.Visible = true;
+                    importPositionFromdzeToolStripMenuItem.Visible = true;
+                    importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Visible = true;
+                    deleteSelectedEventSpawnToolStripMenuItem.Visible = true;
+
+                    if (evt.pos != null && evt.pos.Count > 0)
+                    {
+                        removeAllPositionToolStripMenuItem.Visible = true;
+                        exportPositionTodzeToolStripMenuItem.Visible = true;
+                    }
+
+                    EventSpawnContextMenu.Show(Cursor.Position);
+                },
+
+                // Random Presets
+                [typeof(cfgrandompresetsFile)] = node =>
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                },
+                [typeof(randompresetsAttachments)] = node =>
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                },
+                [typeof(randompresetsCargo)] = node =>
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                },
+                [typeof(randompresetsItem)] = node =>
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                },
+
+                // Spawnable Types
+                [typeof(cfgspawnabletypesFile)] = node =>
+                {
+                    SpawnableTypesCM.Items.Clear();
+                    SpawnableTypesCM.Items.Add(addNewSpawnableTypeToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(SpawnableType)] = node =>
+                {
+                    var st = node.Tag as SpawnableType;
+                    SpawnableTypesCM.Items.Clear();
+                    if (!st.Items.OfType<spawnableTypesHoarder>().Any())
+                        SpawnableTypesCM.Items.Add(addNewHoarderToolStripMenuItem);
+                    if (!st.Items.OfType<spawnableTypeDamage>().Any())
+                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(addNewTagToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
+                    SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(spawnableTypesHoarder)] = node =>
+                {
+                    SpawnableTypesCM.Items.Clear();
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(spawnableTypeDamage)] = node =>
+                {
+                    SpawnableTypesCM.Items.Clear();
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(spawnableTypeCargo)] = node =>
+                {
+                    var cargo = node.Tag as spawnableTypeCargo;
+                    SpawnableTypesCM.Items.Clear();
+                    if (cargo.damage == null)
+                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(spawnableTypeAttachment)] = node =>
+                {
+                    var attach = node.Tag as spawnableTypeAttachment;
+                    SpawnableTypesCM.Items.Clear();
+                    if (attach.damage == null)
+                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(spawnableTypeItem)] = node =>
+                {
+                    var item = node.Tag as spawnableTypeItem;
+                    SpawnableTypesCM.Items.Clear();
+                    if (item.damage == null)
+                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
+                    SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
+
+                // Spawn Gear
+                [typeof(SpawnGearPresetFiles)] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+                [typeof(Attachmentslotitemset)] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewDisctreetItemSetToolStripMenuItem);
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+                [typeof(Discreteitemset)] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+                [typeof(Discreteunsorteditemset)] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+                [typeof(Complexchildrentype)] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+
+                // Player Restricted Areas
+                [typeof(PRABoxes)] = node =>
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                },
+                [typeof(PRASafePosition)] = node =>
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                },
+                [typeof(PlayerRestrictedFiles)] = node =>
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                },
+
+                // Effects Area
+                [typeof(Areas)] = node =>
+                {
+                    var area = node.Tag as Areas;
+                    cfgEffectsAreaCM.Items.Clear();
+                    if (area.PlayerData == null)
+                        cfgEffectsAreaCM.Items.Add(usePlayerDataToolStripMenuItem);
+                    cfgEffectsAreaCM.Items.Add(removeEffectAreaToolStripMenuItem);
+                    cfgEffectsAreaCM.Show(Cursor.Position);
+                },
+                [typeof(PlayerData)] = node =>
+                {
+                    cfgEffectsAreaCM.Items.Clear();
+                    cfgEffectsAreaCM.Items.Add(removePlayerDataToolStripMenuItem);
+                    cfgEffectsAreaCM.Show(Cursor.Position);
+                },
+                [typeof(cfgeffectareaSafePosition)] = node =>
+                {
+                    cfgEffectsAreaCM.Items.Clear();
+                    cfgEffectsAreaCM.Items.Add(removeSafePositionToolStripMenuItem);
+                    cfgEffectsAreaCM.Show(Cursor.Position);
+                },
+            };
+
+            // ----------------------
+            // String handlers
+            // ----------------------
+            _stringContextMenus = new Dictionary<string, Action<TreeNode>>
+            {
+                ["RootNode"] = node =>
+                {
+                    TypesCM.Items.Clear();
+                    TypesCM.Items.Add(addNewTypesToolStripMenuItem);
+                    TypesCM.Items.Add(new ToolStripSeparator());
+                    TypesCM.Items.Add(AddNewEventsToolstripMenuItem);
+                    TypesCM.Items.Add(new ToolStripSeparator());
+                    TypesCM.Items.Add(addNewRandomPresetFileToolStripMenuItem);
+                    TypesCM.Items.Add(new ToolStripSeparator());
+                    TypesCM.Items.Add(addNewSpawnableTypesFileToolStripMenuItem);
+                    TypesCM.Show(Cursor.Position);
+                },
+                ["RandomPresetsAttachments"] = node =>
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewAttchementToolStripMenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                },
+                ["RandomPresetsCargo"] = node =>
+                {
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(addNewCargoToolStripMenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
+                },
+                ["SpawnGearAttachmentSlotItemSetsParent"] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewAttachmentSlotItemSetToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+                ["SpawnGearDiscreteUnsortedItemSetsParent"] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewDiscreetUnsortedItemSetToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
+                ["PRABoxes"] = node =>
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRABoxToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                },
+                ["PRASafePositions3D"] = node =>
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRASafePositionToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                },
+                ["playerRestrictedAreaFiles"] = node =>
+                {
+                    PlayerRestrictedAreaCM.Items.Clear();
+                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRAFileToolStripMenuItem);
+                    PlayerRestrictedAreaCM.Show(Cursor.Position);
+                },
+                ["ObjectPawnerArrFiles"] = node =>
+                {
+                    ObjectSpawnerArrCM.Items.Clear();
+                    ObjectSpawnerArrCM.Items.Add(addNewObjectSpawnerArrFileToolStripMenuItem);
+                    ObjectSpawnerArrCM.Show(Cursor.Position);
+                },
+                ["cfgeffectareaareas"] = node =>
+                {
+                    cfgEffectsAreaCM.Items.Clear();
+                    cfgEffectsAreaCM.Items.Add(addNewEffectAreaToolStripMenuItem);
+                    cfgEffectsAreaCM.Show(Cursor.Position);
+                },
+                ["cfgeffectareaSafePositions"] = node =>
+                {
+                    cfgEffectsAreaCM.Items.Clear();
+                    cfgEffectsAreaCM.Items.Add(addNewSafePositionToolStripMenuItem);
+                    cfgEffectsAreaCM.Show(Cursor.Position);
+                }
+            };
         }
         private void EconomyForm_Load(object sender, EventArgs e)
         {
@@ -34,6 +669,7 @@ namespace EconomyPlugin
             }
             Image mapImage = Image.FromFile(imagePath);
             _mapControl.LoadMap(mapImage, _projectManager.CurrentProject.MapSize);
+
             LoadTreeview();
         }
         private void SaveButton_Click(object sender, EventArgs e)
@@ -211,8 +847,13 @@ namespace EconomyPlugin
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgundergroundtriggersConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgundergroundtriggersConfig, CreatecfgundergroundtriggersConfigUserConfigNodes);
 
+            // cfgundergroundtriggersConfig
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgplayerspawnpointsConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgplayerspawnpointsConfig, CreatecfgPlayerSpawnPointNodes);
+
             EconomyTV.Nodes.Add(rootNode);
         }
+
         //creating economy Nodes
         private TreeNode CreateEconomyfileNodes(economyFile ef)
         {
@@ -583,7 +1224,6 @@ namespace EconomyPlugin
             });
             return boxNode;
         }
-
         //Creating Types Nodes
         private TreeNode CreateTypesfileNodes(TypesFile tf)
         {
@@ -948,6 +1588,94 @@ namespace EconomyPlugin
             }
             return eventspawnroot;
         }
+        //creating playerspawnpoint Nodes
+        private TreeNode CreatecfgPlayerSpawnPointNodes(cfgplayerspawnpointsConfig config)
+        {
+            TreeNode PlayerSpawnPointrootNode = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+            if (config.Data.fresh != null)
+            {
+                PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.fresh, "Fresh"));
+            }
+            if (config.Data.hop != null)
+            {
+                 PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.hop, "Hop"));
+            };
+            if (config.Data.travel != null)
+            {
+                 PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.travel, "Travel"));
+            };
+            return PlayerSpawnPointrootNode;
+        }
+        private TreeNode createPlayerspawnNodes(playerspawnpointssection Spawntype, string TypeofSpawn)
+        {
+            TreeNode Spawntypenode = new TreeNode(TypeofSpawn)
+            {
+                Tag = Spawntype
+            };
+            Spawntypenode.Nodes.Add(new TreeNode("Spawn Params")
+            {
+                Tag = Spawntype.spawn_params
+            });
+            Spawntypenode.Nodes.Add(new TreeNode("Generator Params")
+            {
+                Tag = Spawntype.generator_params
+            });
+            Spawntypenode.Nodes.Add(new TreeNode("Group Params")
+            {
+                Tag = Spawntype.group_params
+            });
+            TreeNode Bubbles = new TreeNode("Generator Posbubbles");
+            if (Spawntype.generator_posbubbles != null && Spawntype.generator_posbubbles.Count > 0)
+            {
+                // Handle groups
+                var groups = new BindingList<playerspawnpointsGroup>(
+                    Spawntype.generator_posbubbles.OfType<playerspawnpointsGroup>().ToList()
+                );
+                if (groups.Count > 0)
+                    CreateGeneratorPosBubblesGroups(Bubbles, groups);
+
+                // Handle positions
+                var positions = new BindingList<playerspawnpointsGroupPos>(
+                    Spawntype.generator_posbubbles.OfType<playerspawnpointsGroupPos>().ToList()
+                );
+                if (positions.Count > 0)
+                    CreateGeneratorPosBubblesPoints(Bubbles, positions);
+            }
+
+            Spawntypenode.Nodes.Add(Bubbles);
+            return Spawntypenode;
+        }
+        private void CreateGeneratorPosBubblesPoints(TreeNode bubbles, BindingList<playerspawnpointsGroupPos> generator_posbubbles)
+        {
+            foreach (playerspawnpointsGroupPos point in generator_posbubbles)
+            {
+                bubbles.Nodes.Add(new TreeNode(point.ToString())
+                {
+                    Tag = point
+                });
+            }
+        }
+        private void CreateGeneratorPosBubblesGroups(TreeNode bubbles, BindingList<playerspawnpointsGroup> generator_posbubbles)
+        {
+            foreach (playerspawnpointsGroup group in generator_posbubbles)
+            {
+                TreeNode groupnode = new TreeNode($"Group Name: {group.name}")
+                {
+                    Tag = group
+                };
+                foreach (playerspawnpointsGroupPos point in group.pos)
+                {
+                    groupnode.Nodes.Add(new TreeNode(point.ToString())
+                    {
+                        Tag = point
+                    });
+                }
+                bubbles.Nodes.Add(groupnode);
+            }
+        }
         //Creating Definntions
         private TreeNode CreatelimitsDefininitionsConfigNodes(cfglimitsdefinitionConfig cfglimitsdefinitionConfig)
         {
@@ -955,6 +1683,26 @@ namespace EconomyPlugin
             {
                 Tag = cfglimitsdefinitionConfig
             };
+            TreeNode Cat = new TreeNode("Categories")
+            {
+                Tag = "DefsCategories"
+            };
+            TreeNode Tag = new TreeNode("Tags")
+            {
+                Tag = "DefsTags"
+            };
+            TreeNode UsageFlag = new TreeNode("Usage Flags")
+            {
+                Tag = "DefsUsageFlags"
+            };
+            TreeNode ValueFlag = new TreeNode("Value Flags")
+            {
+                Tag = "DefsValueFlags"
+            };
+            eventRoot.Nodes.Add(Cat);
+            eventRoot.Nodes.Add(Tag);
+            eventRoot.Nodes.Add(UsageFlag);
+            eventRoot.Nodes.Add(ValueFlag);
             return eventRoot;
         }
         private TreeNode CreatelimitsDefininitionsUserConfigNodes(cfglimitsdefinitionuserConfig cfglimitsdefinitionuserConfig)
@@ -963,6 +1711,16 @@ namespace EconomyPlugin
             {
                 Tag = cfglimitsdefinitionuserConfig
             };
+            TreeNode UsageFlag = new TreeNode("Usage Flags")
+            {
+                Tag = "DefsUserUsageFlags"
+            };
+            TreeNode ValueFlag = new TreeNode("Value Flags")
+            {
+                Tag = "DefsUserValueFlags"
+            };
+            eventRoot.Nodes.Add(UsageFlag);
+            eventRoot.Nodes.Add(ValueFlag);
             return eventRoot;
         }
         private TreeNode CreatecfgundergroundtriggersConfigUserConfigNodes(cfgundergroundtriggersConfig config)
@@ -989,16 +1747,7 @@ namespace EconomyPlugin
             {
                 foreach (var area in config.Data.Areas)
                 {
-                    var areaNode = new TreeNode(area.AreaName ?? "Unnamed Area")
-                    {
-                        Tag = area
-                    };
-
-                    // Only stop at Data + PlayerData
-                    areaNode.Nodes.Add(new TreeNode("Data") { Tag = area.Data });
-                    areaNode.Nodes.Add(new TreeNode("PlayerData") { Tag = area.PlayerData });
-
-                    areasNode.Nodes.Add(areaNode);
+                    areasNode.Nodes.Add(createeffectareanodes(area));
                 }
             }
             root.Nodes.Add(areasNode);
@@ -1023,6 +1772,20 @@ namespace EconomyPlugin
             root.Nodes.Add(safePosNode);
 
             return root;
+        }
+        private static TreeNode createeffectareanodes(Areas area)
+        {
+            var areaNode = new TreeNode(area.AreaName ?? "Unnamed Area")
+            {
+                Tag = area
+            };
+
+            // Only stop at Data + PlayerData
+            if (area.Data != null)
+                areaNode.Nodes.Add(new TreeNode("Data") { Tag = area.Data });
+            if (area.PlayerData != null)
+                areaNode.Nodes.Add(new TreeNode("PlayerData") { Tag = area.PlayerData });
+            return areaNode;
         }
         #endregion loading treeview
 
@@ -1181,424 +1944,74 @@ namespace EconomyPlugin
 
             var ctrl = handler.GetControl();
             splitContainer1.Panel2.Controls.Add(ctrl);
+            ctrl.Location = new Point(2, 2);
             ctrl.BringToFront();
             ctrl.Visible = true;
+        }
+        private void ResetMapControl()
+        {
+            // Hide and clear map until a handler explicitly sets it up
+            _mapControl.Visible = false;
+            _mapControl.ClearDrawables();
+
+            // Remove all event subscriptions to avoid duplicates
+            _mapControl.MapDoubleClicked -= MapControl_EventSpawnDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_EventSpawnSingleclicked;
+
+            _mapControl.MapDoubleClicked -= MapControl_EffectSafePositionsDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_EffectSafePositionsSingleclicked;
+
+            _mapControl.MapDoubleClicked -= MapControl_EffectPRABoxDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_EffectPRABoxSingleclicked;
+
+            _mapControl.MapDoubleClicked -= MapControl_EffectPRASafePositionsDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_EffectPRASafePositionsSingleclicked;
+
+            _mapControl.MapDoubleClicked -= MapControl_EffectAreaDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_EffectAreaSingleclicked;
+
+            _mapControl.MapDoubleClicked -= MapControl_PlayerSpawnDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_PlayerSpawnSingleclicked;
+
+            // Reset "selected" state objects
+            _selectedEventPos = null;
+            _selectedSafePosition = null;
+            _selectedRPABox = null;
+            _selectedRPASafePosition = null;
+            _selectedeffectarea = null;
+            _selectedSpawnpointPosition = null;
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
             BeginInvoke(new Action(() =>
             {
-                _selectedEventPos = null;
-                _mapControl.Visible = false;
-                _mapControl.MapDoubleClicked -= MapControl_EventSpawnDoubleclicked;
-                _mapControl.MapsingleClicked -= MapControl_EventSpawnSingleclicked;
-                _mapControl.MapDoubleClicked -= MapControl_EffectSafePositionsSingleclicked;
-                _mapControl.MapsingleClicked -= MapControl_EffectSafePositionsDoubleclicked;
-                _mapControl.MapDoubleClicked -= MapControl_EffectPRASafePositionsSingleclicked;
-                _mapControl.MapsingleClicked -= MapControl_EffectPRASafePositionsDoubleclicked;
-                currentTreeNode = e.Node;
+                ResetMapControl();
 
+                currentTreeNode = e.Node;
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
 
                 if (e.Node.Tag == null)
                 {
                     ShowHandler<IUIHandler>(null, null, null, null);
+                    return;
                 }
-                else if (e.Node.Tag is string _string)
-                {
-                    switch (_string)
-                    {
-                        case "SpawnGearAttachmentSlotItemSetsParent":
-                            ShowHandler<IUIHandler>(null, null, null, null);
-                            break;
-                        case "SpawnGearName":
-                            var spawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
-                            ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), spawnGearPresetFiles, selectedNodes);
-                            break;
-                        case "SpawnGearSpawnWeight":
-                            spawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
-                            ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), spawnGearPresetFiles, selectedNodes);
-                            break;
-                        case "SpawnGearCharacterTypes":
-                            spawnGearPresetFiles = e.Node.FindParentOfType<SpawnGearPresetFiles>();
-                            ShowHandler(new SpawnGearCharacterTypesControl(), typeof(SpawnGearPresetFiles), spawnGearPresetFiles, selectedNodes);
-                            break;
-                        case "DiscreteitemsetSpawnWeight":
-                            var Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
-                            break;
-                        case "DiscreteitemsetQuickBarSlot":
-                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
-                            break;
-                        case "DiscreteitemsetComplexChildrenTypes":
-                            ShowHandler<IUIHandler>(null, null, null, null);
-                            break;
-                        case "DiscreteitemsetSimpleChildrenTypes":
-                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
-                            break;
-                        case "DiscreteitemsetSimpleChildrenUseDefaultAttributes":
-                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
-                            break;
-                        case "DiscreteunsorteditemsetSpawnWeight":
-                            var Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
-                            break;
-                        case "DiscreteunsorteditemsetAttributes":
-                            Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset.attributes, selectedNodes);
-                            break;
-                        case "DiscreteitemsetAttributes":
-                            Discreteitemset = e.Node.FindParentOfType<Discreteitemset>();
-                            ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), Discreteitemset.attributes, selectedNodes);
-                            break;
-                        case "DiscreteunsorteditemsetSimpleChildrenTypes":
-                            Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
-                            break;
-                        case "DiscreteunsorteditemsetSimpleChildrenUseDefaultAttributes":
-                            Discreteunsorteditemset = e.Node.FindParentOfType<Discreteunsorteditemset>();
-                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
-                            break;
-                        case "DiscreteunsorteditemsetComplexChildrenTypes":
-                            ShowHandler<IUIHandler>(null, null, null, null);
-                            break;
-                        case "ComplexchildrentypeAttributes":
-                            var Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), Complexchildrentype.attributes, selectedNodes);
-                            break;
-                        case "ComplexchildrentypeQuickBarSlot":
-                            Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
-                            break;
-                        case "ComplexchildrentypeSimpleChildrenUseDefaultAttributes":
-                            Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
-                            break;
-                        case "ComplexchildrentypeSimpleChildrenTypes":
-                            Complexchildrentype = e.Node.FindParentOfType<Complexchildrentype>();
-                            ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
-                            break;
-                        default:
-                            ShowHandler<IUIHandler>(null, null, null, null);
-                            break;
-                    }
-                }
-                else if (e.Node.Tag is economyFile)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is globalsFile)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is EconomySection economydata)
-                {
-                    economyFile ef = e.Node.Parent.Tag as economyFile;
-                    if (ef.IsModded)
-                        ShowHandler(new economyControl(), typeof(economyFile), economydata, selectedNodes);
-                }
-                else if (e.Node.Tag is variablesVar varData)
-                {
-                    globalsFile gf = e.Node.Parent.Tag as globalsFile;
-                    if (gf.IsModded)
-                        ShowHandler(new VariablesVarControl(), typeof(globalsFile), varData, selectedNodes);
-                }
-                else if (e.Node.Tag is TypesFile typefile)
-                {
-                    ShowHandler(new TypesCollectionControl(), typeof(TypesFile), typefile, selectedNodes);
-                }
-                else if (e.Node.Tag is Category cat)
-                {
-                    if (e.Node.Parent == null) { return; }
-                    ShowHandler(new TypesCollectionControl(), typeof(TypesFile), e.Node.Parent.Tag as TypesFile, selectedNodes);
-                }
-                else if (e.Node.Tag is TypeEntry typentry)
-                {
-                    // Build a flattened list of (File, Entry) tuples
-                    var matchingEntries = _economyManager.TypesConfig.AllData
-                        .SelectMany(tf => tf.Data.TypeList.Select(te => (File: tf, Entry: te)))
-                        .Where(x => x.Entry.Name == typentry.Name)
-                        .ToList();
 
-                    // Get the latest match (file + entry)
-                    var latestMatch = matchingEntries.LastOrDefault();
+                if (e.Node.Tag is string key && _stringHandlers.TryGetValue(key, out var stringHandler))
+                {
+                    stringHandler(e.Node, selectedNodes);
+                    return;
+                }
 
-                    if (latestMatch != default && !ReferenceEquals(latestMatch.Entry, typentry))
-                    {
-                        var result = MessageBox.Show(
-                            $"This type is overridden by a later definition in:\n{latestMatch.File.FileName}\n\nJump to it?",
-                            "Type Override Found",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question
-                        );
-                        if (result == DialogResult.Yes)
-                        {
-                            Console.WriteLine($"Jumping to latest override in file: {latestMatch.File.FileName}");
-                            var foundNode = FindNodeByTag(EconomyTV.Nodes, latestMatch.Entry);
-                            if (foundNode != null)
-                            {
-                                EconomyTV.SelectedNode = foundNode; // triggers AfterSelect again
-                            }
-                        }
-                        else
-                        {
-                            // User chose No — show current entry
-                            ShowHandler(new TypesControl(), typeof(TypesFile), typentry, selectedNodes);
-                        }
-                    }
-                    else
-                    {
-                        // Already latest — show control
-                        ShowHandler(new TypesControl(), typeof(TypesFile), typentry, selectedNodes);
-                    }
-                }
-                else if (e.Node.Tag is EventsFile)
+                var nodeType = e.Node.Tag.GetType();
+                if (_typeHandlers.TryGetValue(nodeType, out var typeHandler))
                 {
-                    ShowHandler<IUIHandler>(null, null, null, null);
+                    typeHandler(e.Node, selectedNodes);
+                    return;
                 }
-                else if (e.Node.Tag is events)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is eventsEvent _event)
-                {
-                    // Build a flattened list of (File, Entry) tuples
-                    var matchingEntries = _economyManager.eventsConfig.AllData
-                        .SelectMany(tf => tf.Data.@event.Select(te => (File: tf, Event: te)))
-                        .Where(x => x.Event.name == _event.name)
-                        .ToList();
 
-                    // Get the latest match (file + entry)
-                    var latestMatch = matchingEntries.LastOrDefault();
-
-
-                    if (latestMatch != default && !ReferenceEquals(latestMatch.Event, _event))
-                    {
-                        var result = MessageBox.Show(
-                            $"This Event is overridden by a later definition in:\n{latestMatch.File.FileName}\n\nJump to it?",
-                            "Type Override Found",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question
-                        );
-                        if (result == DialogResult.Yes)
-                        {
-                            Console.WriteLine($"Jumping to latest override in file: {latestMatch.File.FileName}");
-                            var foundNode = FindNodeByTag(EconomyTV.Nodes, latestMatch.Event);
-                            if (foundNode != null)
-                            {
-                                EconomyTV.SelectedNode = foundNode; // triggers AfterSelect again
-                            }
-                        }
-                        else
-                        {
-                            // User chose No — show current entry
-                            ShowHandler(new EventsControl(), typeof(EventsFile), _event, selectedNodes);
-                        }
-                    }
-                    else
-                    {
-                        // Already latest — show control
-                        ShowHandler(new EventsControl(), typeof(EventsFile), _event, selectedNodes);
-                    }
-                }
-                else if (e.Node.Tag is eventposdefEvent)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is eventposdefEventPos eventpos)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                    _mapControl.Visible = true;
-                    _mapControl.ClearDrawables();
-                    _selectedEventPos = eventpos;
-                    _selectedRPASafePosition = null;
-                    _selectedSafePosition = null;
-
-                    _mapControl.MapDoubleClicked += MapControl_EventSpawnDoubleclicked;
-                    _mapControl.MapsingleClicked += MapControl_EventSpawnSingleclicked;
-
-                    eventposdefEvent defevent = e.Node.Parent.Parent.Tag as eventposdefEvent;
-                    DrawEventSpawns(defevent);
-                }
-                else if (e.Node.Tag is CFGGameplayConfig)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag.ToString() == "cfggameplayConfigVersion")
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is Generaldata Generaldata)
-                {
-                    ShowHandler(new cfggameplayGeneralDataControl(), typeof(CFGGameplayConfig), Generaldata, selectedNodes);
-                }
-                else if (e.Node.Tag is Playerdata Playerdata)
-                {
-                    ShowHandler(new cfggameplayPlayerDataControl(), typeof(CFGGameplayConfig), Playerdata, selectedNodes);
-                }
-                else if (e.Node.Tag is Worldsdata Worldsdata)
-                {
-                    ShowHandler(new cfggameplayWordlsDataControl(), typeof(CFGGameplayConfig), Worldsdata, selectedNodes);
-                }
-                else if (e.Node.Tag is Basebuildingdata Basebuildingdata)
-                {
-                    ShowHandler(new cfggameplayBaseBuildingDataControl(), typeof(CFGGameplayConfig), Basebuildingdata, selectedNodes);
-                }
-                else if (e.Node.Tag is Uidata Uidata)
-                {
-                    ShowHandler(new cfggameplayUIDataControl(), typeof(CFGGameplayConfig), Uidata, selectedNodes);
-                }
-                else if (e.Node.Tag is CFGGameplayMapData CFGGameplayMapData)
-                {
-                    ShowHandler(new cfggameplayMapDataControl(), typeof(CFGGameplayConfig), CFGGameplayMapData, selectedNodes);
-                }
-                else if (e.Node.Tag is VehicleData VehicleData)
-                {
-                    ShowHandler(new cfggameplayVehicleDataControl(), typeof(CFGGameplayConfig), VehicleData, selectedNodes);
-                }
-                else if (e.Node.Tag is cfgspawnabletypesFile)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is randompresetsAttachments PresetAttachment)
-                {
-                    ShowHandler(new RandompresetsAttchmentsControl(), typeof(cfgrandompresetsFile), PresetAttachment, selectedNodes);
-                }
-                else if (e.Node.Tag is randompresetsCargo PresetCargo)
-                {
-                    ShowHandler(new RandompresetsCargoControl(), typeof(cfgrandompresetsFile), PresetCargo, selectedNodes);
-                }
-                else if (e.Node.Tag is randompresetsItem item)
-                {
-                    ShowHandler(new RandomPresetItemControl(), typeof(cfgrandompresetsFile), item, selectedNodes);
-                }
-                else if (e.Node.Tag is SpawnableType spawnabletype)
-                {
-                    ShowHandler(new SpawnabletypesControl(), typeof(cfgspawnabletypesFile), spawnabletype, selectedNodes);
-                }
-                else if (e.Node.Tag is SpawnableTypes spawnabletypes)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is spawnableTypesHoarder spawnableTypesHoarder)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                }
-                else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
-                {
-                    ShowHandler(new SpawnableTypesCargoControl(), typeof(cfgspawnabletypesFile), spawnableTypeCargo, selectedNodes);
-                }
-                else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
-                {
-                    ShowHandler(new SpawnableTypesAttachmentsControl(), typeof(cfgspawnabletypesFile), spawnableTypeAttachment, selectedNodes);
-                }
-                else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem)
-                {
-                    ShowHandler(new SpawnableTypesItemControl(), typeof(cfgspawnabletypesFile), spawnableTypeItem, selectedNodes);
-                }
-                else if (e.Node.Tag is spawnableTypeTag spawnableTypeTag)
-                {
-                    ShowHandler(new SpawnabletypesTagsControl(), typeof(cfgspawnabletypesFile), spawnableTypeTag, selectedNodes);
-                }
-                else if (e.Node.Tag is spawnableTypeDamage spawnableTypeDamage)
-                {
-                    ShowHandler(new SpawnabletypesDamageControl(), typeof(cfgspawnabletypesFile), spawnableTypeDamage, selectedNodes);
-                }
-                else if (e.Node.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                    _mapControl.Visible = true;
-                    _mapControl.ClearDrawables();
-                    _selectedEventPos = null;
-                    _selectedRPASafePosition = null;
-                    _selectedSafePosition = cfgeffectareaSafePosition;
-
-                    _mapControl.MapsingleClicked += MapControl_EffectSafePositionsSingleclicked;
-                    _mapControl.MapDoubleClicked += MapControl_EffectSafePositionsDoubleclicked;
-
-                    cfgeffectareaConfig cfgeffectareaConfig = e.Node.FindParentOfType<cfgeffectareaConfig>();
-                    DrawEffectSafePositions(cfgeffectareaConfig);
-                }
-                else if (e.Node.Tag is PRABoxes PRABoxes)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                    _mapControl.Visible = true;
-                    _mapControl.ClearDrawables();
-                    _selectedEventPos = null;
-                    _selectedSafePosition = null;
-                    _selectedRPASafePosition = null;
-                    _selectedRPABox = PRABoxes;
-
-                    //_mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
-                    //_mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
-
-                    PlayerRestrictedFiles PlayerRestrictedFiles = e.Node.FindParentOfType<PlayerRestrictedFiles>();
-                    DrawPRABoxesPOsitions(PlayerRestrictedFiles);
-                }
-                else if (e.Node.Tag is PRASafePosition PRASafePosition)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                    _mapControl.Visible = true;
-                    _mapControl.ClearDrawables();
-                    _selectedEventPos = null;
-                    _selectedSafePosition = null;
-                    _selectedRPABox = null;
-                    _selectedRPASafePosition = PRASafePosition;
-
-                    _mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
-                    _mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
-
-                    PlayerRestrictedFiles PlayerRestrictedFiles = e.Node.FindParentOfType<PlayerRestrictedFiles>();
-                    DrawEffectPRASafePositions(PlayerRestrictedFiles);
-
-                }
-                else if (e.Node.Tag is Attachmentslotitemset Attachmentslotitemset)
-                {
-                    ShowHandler(new AttachmentslotitemsetControl(), typeof(SpawnGearPresetFiles), Attachmentslotitemset, selectedNodes);
-                }
-                else if (e.Node.Tag is Discreteitemset Discreteitemset)
-                {
-                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), Discreteitemset, selectedNodes);
-                }
-                else if (e.Node.Tag is Discreteunsorteditemset Discreteunsorteditemset)
-                {
-                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), Discreteunsorteditemset, selectedNodes);
-                }
-                else if (e.Node.Tag is Complexchildrentype Complexchildrentype)
-                {
-                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), Complexchildrentype, selectedNodes);
-                }
-                else if (e.Node.Tag is Vec3 Vec3)
-                {
-                    PlayerRestrictedFiles PlayerRestrictedFiles = e.Node.FindParentOfType<PlayerRestrictedFiles>();
-                    if (PlayerRestrictedFiles != null)
-                    {
-                        ShowHandler(new Vector3Control(), typeof(PlayerRestrictedFiles), Vec3, selectedNodes);
-                    }
-                }
-                else if (e.Node.Tag is Areas Areas)
-                {
-                    ShowHandler<IUIHandler>(null, null, null, null);
-                    _mapControl.Visible = true;
-                    _mapControl.ClearDrawables();
-                    _selectedEventPos = null;
-                    _selectedSafePosition = null;
-                    _selectedRPABox = null;
-                    _selectedRPASafePosition = null;
-                    _selectedeffectarea = Areas;
-
-                    //_mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
-                    //_mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
-
-                    cfgeffectareaConfig cfgeffectareaConfig = e.Node.FindParentOfType<cfgeffectareaConfig>();
-                    DrawEffectEffectArea(cfgeffectareaConfig);
-                }
+                ShowHandler<IUIHandler>(null, null, null, selectedNodes);
             }));
         }
-
 
 
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
@@ -1618,311 +2031,358 @@ namespace EconomyPlugin
         {
             EconomyTV.SelectedNode = e.Node;
             currentTreeNode = e.Node;
-            if (e.Button == MouseButtons.Right)
+
+            if (e.Button != MouseButtons.Right) return;
+
+            // Try type-based
+            if (e.Node.Tag != null && _typeContextMenus.TryGetValue(e.Node.Tag.GetType(), out var typeHandler))
             {
-                if (e.Node.Tag.ToString() == "RootNode")
-                {
-                    TypesCM.Items.Clear();
-                    TypesCM.Items.Add(addNewTypesToolStripMenuItem);
-                    TypesCM.Items.Add(new ToolStripSeparator());
-                    TypesCM.Items.Add(AddNewEventsToolstripMenuItem);
-                    TypesCM.Items.Add(new ToolStripSeparator());
-                    TypesCM.Items.Add(addNewRandomPresetFileToolStripMenuItem);
-                    TypesCM.Items.Add(new ToolStripSeparator());
-                    TypesCM.Items.Add(addNewSpawnableTypesFileToolStripMenuItem);
-                    TypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is EconomySection economydata)
-                {
-                    economyFile ef = e.Node.Parent.Tag as economyFile;
-                    if (!ef.IsModded)
-                    {
-                        editPropertyToolStripMenuItem.Visible = true;
-                        setToDefaultToolStripMenuItem.Visible = false;
-                        EditPropertyCMS.Show(Cursor.Position);
-                    }
-                    else if (ef.IsModded)
-                    {
-                        editPropertyToolStripMenuItem.Visible = false;
-                        setToDefaultToolStripMenuItem.Visible = true;
-                        EditPropertyCMS.Show(Cursor.Position);
-                    }
-                }
-                else if (e.Node.Tag is variablesVar varData)
-                {
-                    globalsFile gf = e.Node.Parent.Tag as globalsFile;
-                    if (!gf.IsModded)
-                    {
-                        editPropertyToolStripMenuItem.Visible = true;
-                        setToDefaultToolStripMenuItem.Visible = false;
-                        EditPropertyCMS.Show(Cursor.Position);
-                    }
-                    else if (gf.IsModded)
-                    {
-                        editPropertyToolStripMenuItem.Visible = false;
-                        setToDefaultToolStripMenuItem.Visible = true;
-                        EditPropertyCMS.Show(Cursor.Position);
-                    }
-                }
-                else if (e.Node.Tag is TypesFile TypeFile)
-                {
-                    TypesCM.Items.Clear();
-                    TypesCM.Items.Add(addNewTypesToolStripMenuItem);
-                    TypesCM.Items.Add(removeSelectedToolStripMenuItem);
-                    TypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is TypeEntry typeentry)
-                {
-                    TypesCM.Items.Clear();
-                    TypesCM.Items.Add(removeSelectedToolStripMenuItem);
-                    TypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is EventsFile eventfile)
-                {
-                    EventsCM.Items.Clear();
-                    EventsCM.Items.Add(AddNewEventsToolstripMenuItem);
-                    EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
-                    EventsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is eventsEvent)
-                {
-                    EventsCM.Items.Clear();
-                    EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
-                    EventsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is eventposdefEvent eventpos)
-                {
-                    foreach (ToolStripMenuItem TSMI in EventSpawnContextMenu.Items)
-                    {
-                        TSMI.Visible = false;
-                    }
-                    addNewPosirtionToolStripMenuItem.Visible = true;
-                    importPositionFromdzeToolStripMenuItem.Visible = true;
-                    importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Visible = true;
-                    deleteSelectedEventSpawnToolStripMenuItem.Visible = true;
-                    if (eventpos.pos != null && eventpos.pos.Count > 0)
-                    {
-                        removeAllPositionToolStripMenuItem.Visible = true;
-                        exportPositionTodzeToolStripMenuItem.Visible = true;
-                    }
-                    EventSpawnContextMenu.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "RandomPresetsAttachments")
-                {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(addNewAttchementToolStripMenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "RandomPresetsCargo")
-                {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(addNewCargoToolStripMenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is cfgrandompresetsFile)
-                {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
-
-                }
-                else if (e.Node.Tag is randompresetsAttachments)
-                {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
-                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is randompresetsCargo)
-                {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
-                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is randompresetsItem)
-                {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is cfgspawnabletypesFile typefile)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    SpawnableTypesCM.Items.Add(addNewSpawnableTypeToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is SpawnableType SpawnableType)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    if (!SpawnableType.Items.OfType<spawnableTypesHoarder>().Any())
-                        SpawnableTypesCM.Items.Add(addNewHoarderToolStripMenuItem);
-                    if (!SpawnableType.Items.OfType<spawnableTypeDamage>().Any())
-                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(addNewTagToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
-                    SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is spawnableTypesHoarder)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is spawnableTypeTag)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is spawnableTypeDamage)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    if (spawnableTypeCargo.damage == null)
-                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    if (spawnableTypeAttachment.damage == null)
-                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem)
-                {
-                    SpawnableTypesCM.Items.Clear();
-                    if (spawnableTypeItem.damage == null)
-                        SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
-                    SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    SpawnableTypesCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "SpawnGear Presets Files")
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(addNewSpawnGEarPresetFileToolStripMenuItem);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "SpawnGearAttachmentSlotItemSetsParent")
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(addNewAttachmentSlotItemSetToolStripMenuItem);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is Attachmentslotitemset)
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(addNewDisctreetItemSetToolStripMenuItem);
-                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "DiscreteitemsetComplexChildrenTypes")
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(addNewComplexChildSetToolStripMenuItem);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "DiscreteunsorteditemsetComplexChildrenTypes")
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(addNewComplexChildSetToolStripMenuItem);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "SpawnGearDiscreteUnsortedItemSetsParent")
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(addNewDiscreetUnsortedItemSetToolStripMenuItem);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is Discreteunsorteditemset)
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is Discreteitemset)
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is Complexchildrentype)
-                {
-                    SpawnGearPresetCM.Items.Clear();
-                    SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
-                    SpawnGearPresetCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "PRABoxes")
-                {
-                    PlayerRestrictedAreaCM.Items.Clear();
-                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRABoxToolStripMenuItem);
-                    PlayerRestrictedAreaCM.Show(Cursor.Position);
-
-                }
-                else if (e.Node.Tag is PRABoxes)
-                {
-                    PlayerRestrictedAreaCM.Items.Clear();
-                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
-                    PlayerRestrictedAreaCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "PRASafePositions3D")
-                {
-                    PlayerRestrictedAreaCM.Items.Clear();
-                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRASafePositionToolStripMenuItem);
-                    PlayerRestrictedAreaCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is PRASafePosition)
-                {
-                    PlayerRestrictedAreaCM.Items.Clear();
-                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
-                    PlayerRestrictedAreaCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "playerRestrictedAreaFiles")
-                {
-                    PlayerRestrictedAreaCM.Items.Clear();
-                    PlayerRestrictedAreaCM.Items.AddRange(addNewPRAFileToolStripMenuItem);
-                    PlayerRestrictedAreaCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is PlayerRestrictedFiles)
-                {
-                    PlayerRestrictedAreaCM.Items.Clear();
-                    PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
-                    PlayerRestrictedAreaCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag.ToString() == "ObjectPawnerArrFiles")
-                {
-                    ObjectSpawnerArrCM.Items.Clear();
-                    ObjectSpawnerArrCM.Items.Add(addNewObjectSpawnerArrFileToolStripMenuItem);
-                    ObjectSpawnerArrCM.Show(Cursor.Position);
-                }
-                else if (e.Node.Tag is ObjectSpawnerArr)
-                {
-                    ObjectSpawnerArrCM.Items.Clear();
-                    ObjectSpawnerArrCM.Items.Add(removeSelectedObjectSpawnerArrToolStripMenuItem);
-                    ObjectSpawnerArrCM.Show(Cursor.Position);
-                }
+                typeHandler.Invoke(e.Node);
             }
+            // Try string-based
+            else if (e.Node.Tag is string s && _stringContextMenus.TryGetValue(s, out var stringHandler))
+            {
+                stringHandler.Invoke(e.Node);
+            }
+            //EconomyTV.SelectedNode = e.Node;
+            //currentTreeNode = e.Node;
+            //if (e.Button == MouseButtons.Right)
+            //{
+            //    if (e.Node.Tag.ToString() == "RootNode")
+            //    {
+            //        TypesCM.Items.Clear();
+            //        TypesCM.Items.Add(addNewTypesToolStripMenuItem);
+            //        TypesCM.Items.Add(new ToolStripSeparator());
+            //        TypesCM.Items.Add(AddNewEventsToolstripMenuItem);
+            //        TypesCM.Items.Add(new ToolStripSeparator());
+            //        TypesCM.Items.Add(addNewRandomPresetFileToolStripMenuItem);
+            //        TypesCM.Items.Add(new ToolStripSeparator());
+            //        TypesCM.Items.Add(addNewSpawnableTypesFileToolStripMenuItem);
+            //        TypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is EconomySection economydata)
+            //    {
+            //        economyFile ef = e.Node.Parent.Tag as economyFile;
+            //        if (!ef.IsModded)
+            //        {
+            //            editPropertyToolStripMenuItem.Visible = true;
+            //            setToDefaultToolStripMenuItem.Visible = false;
+            //            EditPropertyCMS.Show(Cursor.Position);
+            //        }
+            //        else if (ef.IsModded)
+            //        {
+            //            editPropertyToolStripMenuItem.Visible = false;
+            //            setToDefaultToolStripMenuItem.Visible = true;
+            //            EditPropertyCMS.Show(Cursor.Position);
+            //        }
+            //    }
+            //    else if (e.Node.Tag is variablesVar varData)
+            //    {
+            //        globalsFile gf = e.Node.Parent.Tag as globalsFile;
+            //        if (!gf.IsModded)
+            //        {
+            //            editPropertyToolStripMenuItem.Visible = true;
+            //            setToDefaultToolStripMenuItem.Visible = false;
+            //            EditPropertyCMS.Show(Cursor.Position);
+            //        }
+            //        else if (gf.IsModded)
+            //        {
+            //            editPropertyToolStripMenuItem.Visible = false;
+            //            setToDefaultToolStripMenuItem.Visible = true;
+            //            EditPropertyCMS.Show(Cursor.Position);
+            //        }
+            //    }
+            //    else if (e.Node.Tag is TypesFile TypeFile)
+            //    {
+            //        TypesCM.Items.Clear();
+            //        TypesCM.Items.Add(addNewTypesToolStripMenuItem);
+            //        TypesCM.Items.Add(removeSelectedToolStripMenuItem);
+            //        TypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is TypeEntry typeentry)
+            //    {
+            //        TypesCM.Items.Clear();
+            //        TypesCM.Items.Add(removeSelectedToolStripMenuItem);
+            //        TypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is EventsFile eventfile)
+            //    {
+            //        EventsCM.Items.Clear();
+            //        EventsCM.Items.Add(AddNewEventsToolstripMenuItem);
+            //        EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+            //        EventsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is eventsEvent)
+            //    {
+            //        EventsCM.Items.Clear();
+            //        EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+            //        EventsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is eventposdefEvent eventpos)
+            //    {
+            //        foreach (ToolStripMenuItem TSMI in EventSpawnContextMenu.Items)
+            //        {
+            //            TSMI.Visible = false;
+            //        }
+            //        addNewPosirtionToolStripMenuItem.Visible = true;
+            //        importPositionFromdzeToolStripMenuItem.Visible = true;
+            //        importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Visible = true;
+            //        deleteSelectedEventSpawnToolStripMenuItem.Visible = true;
+            //        if (eventpos.pos != null && eventpos.pos.Count > 0)
+            //        {
+            //            removeAllPositionToolStripMenuItem.Visible = true;
+            //            exportPositionTodzeToolStripMenuItem.Visible = true;
+            //        }
+            //        EventSpawnContextMenu.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "RandomPresetsAttachments")
+            //    {
+            //        RandomPresetsCM.Items.Clear();
+            //        RandomPresetsCM.Items.Add(addNewAttchementToolStripMenuItem);
+            //        RandomPresetsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "RandomPresetsCargo")
+            //    {
+            //        RandomPresetsCM.Items.Clear();
+            //        RandomPresetsCM.Items.Add(addNewCargoToolStripMenuItem);
+            //        RandomPresetsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is cfgrandompresetsFile)
+            //    {
+            //        RandomPresetsCM.Items.Clear();
+            //        RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+            //        RandomPresetsCM.Show(Cursor.Position);
+
+            //    }
+            //    else if (e.Node.Tag is randompresetsAttachments)
+            //    {
+            //        RandomPresetsCM.Items.Clear();
+            //        RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
+            //        RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+            //        RandomPresetsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is randompresetsCargo)
+            //    {
+            //        RandomPresetsCM.Items.Clear();
+            //        RandomPresetsCM.Items.Add(addNewItemToolStripMenuItem);
+            //        RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+            //        RandomPresetsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is randompresetsItem)
+            //    {
+            //        RandomPresetsCM.Items.Clear();
+            //        RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+            //        RandomPresetsCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is cfgspawnabletypesFile typefile)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        SpawnableTypesCM.Items.Add(addNewSpawnableTypeToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is SpawnableType SpawnableType)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        if (!SpawnableType.Items.OfType<spawnableTypesHoarder>().Any())
+            //            SpawnableTypesCM.Items.Add(addNewHoarderToolStripMenuItem);
+            //        if (!SpawnableType.Items.OfType<spawnableTypeDamage>().Any())
+            //            SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(addNewTagToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
+            //        SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is spawnableTypesHoarder)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is spawnableTypeTag)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is spawnableTypeDamage)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is spawnableTypeCargo spawnableTypeCargo)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        if (spawnableTypeCargo.damage == null)
+            //            SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is spawnableTypeAttachment spawnableTypeAttachment)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        if (spawnableTypeAttachment.damage == null)
+            //            SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(addNewItemToolStripMenuItem1);
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is spawnableTypeItem spawnableTypeItem)
+            //    {
+            //        SpawnableTypesCM.Items.Clear();
+            //        if (spawnableTypeItem.damage == null)
+            //            SpawnableTypesCM.Items.Add(addNewDamageToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
+            //        SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
+            //        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+            //        SpawnableTypesCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "SpawnGear Presets Files")
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(addNewSpawnGEarPresetFileToolStripMenuItem);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "SpawnGearAttachmentSlotItemSetsParent")
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(addNewAttachmentSlotItemSetToolStripMenuItem);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is Attachmentslotitemset)
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(addNewDisctreetItemSetToolStripMenuItem);
+            //        SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "DiscreteitemsetComplexChildrenTypes")
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(addNewComplexChildSetToolStripMenuItem);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "DiscreteunsorteditemsetComplexChildrenTypes")
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(addNewComplexChildSetToolStripMenuItem);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "SpawnGearDiscreteUnsortedItemSetsParent")
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(addNewDiscreetUnsortedItemSetToolStripMenuItem);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is Discreteunsorteditemset)
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is Discreteitemset)
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is Complexchildrentype)
+            //    {
+            //        SpawnGearPresetCM.Items.Clear();
+            //        SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
+            //        SpawnGearPresetCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "PRABoxes")
+            //    {
+            //        PlayerRestrictedAreaCM.Items.Clear();
+            //        PlayerRestrictedAreaCM.Items.AddRange(addNewPRABoxToolStripMenuItem);
+            //        PlayerRestrictedAreaCM.Show(Cursor.Position);
+
+            //    }
+            //    else if (e.Node.Tag is PRABoxes)
+            //    {
+            //        PlayerRestrictedAreaCM.Items.Clear();
+            //        PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+            //        PlayerRestrictedAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "PRASafePositions3D")
+            //    {
+            //        PlayerRestrictedAreaCM.Items.Clear();
+            //        PlayerRestrictedAreaCM.Items.AddRange(addNewPRASafePositionToolStripMenuItem);
+            //        PlayerRestrictedAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is PRASafePosition)
+            //    {
+            //        PlayerRestrictedAreaCM.Items.Clear();
+            //        PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+            //        PlayerRestrictedAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "playerRestrictedAreaFiles")
+            //    {
+            //        PlayerRestrictedAreaCM.Items.Clear();
+            //        PlayerRestrictedAreaCM.Items.AddRange(addNewPRAFileToolStripMenuItem);
+            //        PlayerRestrictedAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is PlayerRestrictedFiles)
+            //    {
+            //        PlayerRestrictedAreaCM.Items.Clear();
+            //        PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
+            //        PlayerRestrictedAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "ObjectPawnerArrFiles")
+            //    {
+            //        ObjectSpawnerArrCM.Items.Clear();
+            //        ObjectSpawnerArrCM.Items.Add(addNewObjectSpawnerArrFileToolStripMenuItem);
+            //        ObjectSpawnerArrCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is ObjectSpawnerArr)
+            //    {
+            //        ObjectSpawnerArrCM.Items.Clear();
+            //        ObjectSpawnerArrCM.Items.Add(removeSelectedObjectSpawnerArrToolStripMenuItem);
+            //        ObjectSpawnerArrCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "cfgeffectareaareas")
+            //    {
+            //        cfgEffectsAreaCM.Items.Clear();
+            //        cfgEffectsAreaCM.Items.Add(addNewEffectAreaToolStripMenuItem);
+            //        cfgEffectsAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is Areas area)
+            //    {
+            //        cfgEffectsAreaCM.Items.Clear();
+            //        if(area.PlayerData == null)
+            //            cfgEffectsAreaCM.Items.Add(usePlayerDataToolStripMenuItem);
+            //        cfgEffectsAreaCM.Items.Add(removeEffectAreaToolStripMenuItem);
+            //        cfgEffectsAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is PlayerData)
+            //    {
+            //        cfgEffectsAreaCM.Items.Clear();
+            //        cfgEffectsAreaCM.Items.Add(removePlayerDataToolStripMenuItem);
+            //        cfgEffectsAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag.ToString() == "cfgeffectareaSafePositions")
+            //    {
+            //        cfgEffectsAreaCM.Items.Clear();
+            //        cfgEffectsAreaCM.Items.Add(addNewSafePositionToolStripMenuItem);
+            //        cfgEffectsAreaCM.Show(Cursor.Position);
+            //    }
+            //    else if (e.Node.Tag is cfgeffectareaSafePosition)
+            //    {
+            //        cfgEffectsAreaCM.Items.Clear();
+            //        cfgEffectsAreaCM.Items.Add(removeSafePositionToolStripMenuItem);
+            //        cfgEffectsAreaCM.Show(Cursor.Position);
+            //    }
+            //}
         }
         private void editPropertyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2066,6 +2526,145 @@ namespace EconomyPlugin
         /// <summary>
         /// MapViewer Draw Mothods
         /// </summary>
+        // Generic map reset + show
+        private void SetupMap(Action config)
+        {
+            _mapControl.Visible = true;
+            _mapControl.ClearDrawables();
+            config?.Invoke();
+        }
+        // Specific helpers for different map cases
+        private void SetupEventPosMap(eventposdefEventPos pos, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedEventPos = pos;
+                _mapControl.MapDoubleClicked += MapControl_EventSpawnDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_EventSpawnSingleclicked;
+
+                var defEvent = node.Parent?.Parent?.Tag as eventposdefEvent;
+                if (defEvent != null)
+                    DrawEventSpawns(defEvent);
+            });
+        }
+        private void SetupSafePosMap(cfgeffectareaSafePosition safe, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedSafePosition = safe;
+                _mapControl.MapsingleClicked += MapControl_EffectSafePositionsSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_EffectSafePositionsDoubleclicked;
+
+                var cfg = node.FindParentOfType<cfgeffectareaConfig>();
+                if (cfg != null)
+                    DrawEffectSafePositions(cfg);
+            });
+        }
+        private void SetupPRABoxMap(PRABoxes box, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedRPABox = box;
+                _mapControl.MapsingleClicked += MapControl_EffectPRABoxSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_EffectPRABoxDoubleclicked;
+
+                var files = node.FindParentOfType<PlayerRestrictedFiles>();
+                if (files != null)
+                    DrawPRABoxesPOsitions(files);
+            });
+        }
+        private void SetupPRASafePosMap(PRASafePosition safe, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedRPASafePosition = safe;
+                _mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
+
+                var files = node.FindParentOfType<PlayerRestrictedFiles>();
+                if (files != null)
+                    DrawEffectPRASafePositions(files);
+            });
+        }
+        private void SetupEffectAreaMap(Areas area, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedeffectarea = area;
+                _mapControl.MapsingleClicked += MapControl_EffectAreaSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_EffectAreaDoubleclicked;
+
+                var cfg = node.FindParentOfType<cfgeffectareaConfig>();
+                if (cfg != null)
+                    DrawEffectEffectArea(cfg);
+            });
+        }
+        private void SetupPlayerSpawnPosMap(playerspawnpointsGroupPos pos, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedSpawnpointPosition = pos;
+                _mapControl.MapsingleClicked += MapControl_PlayerSpawnSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_PlayerSpawnDoubleclicked;
+
+                var section = node.FindParentOfType<playerspawnpointssection>();
+                if (section != null)
+                    DrawEffectPlayerSpawnPointPositions(section);
+            });
+        }
+        //Draw Methods
+        private void DrawEffectPlayerSpawnPointPositions(playerspawnpointssection playerspawnpointssection)
+        {
+            foreach(playerspawnpointsGroupPos pos in playerspawnpointssection.Positions)
+            {
+                if (_selectedSpawnpointPosition == pos)
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.LimeGreen,
+                        Radius = 8,
+                        Scaleradius = false
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = 8,
+                        Scaleradius = false
+                    };
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+            foreach (playerspawnpointsGroup group in playerspawnpointssection.Groups)
+            {
+                foreach (playerspawnpointsGroupPos pos in group.pos)
+                {
+                    if (_selectedSpawnpointPosition == pos)
+                    {
+                        var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                        {
+                            Color = Color.LimeGreen,
+                            Radius = 8,
+                            Scaleradius = false
+                        };
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                    else
+                    {
+                        var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                        {
+                            Color = Color.Red,
+                            Radius = 8,
+                            Scaleradius = false
+                        };
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+            }
+        }
         private void DrawPRABoxesPOsitions(PlayerRestrictedFiles PlayerRestrictedFiles)
         {
             foreach (PRABoxes pos in PlayerRestrictedFiles._PRABoxes)
@@ -2098,7 +2697,8 @@ namespace EconomyPlugin
                     var marker = new MarkerDrawable(new PointF(safeposition.Position.X, safeposition.Position.Z), _mapControl.MapSize)
                     {
                         Color = Color.LimeGreen,
-                        Radius = 8
+                        Radius = 8,
+                        Scaleradius = false
                     };
                     _mapControl.RegisterDrawable(marker);
                 }
@@ -2107,7 +2707,8 @@ namespace EconomyPlugin
                     var marker = new MarkerDrawable(new PointF(safeposition.Position.X, safeposition.Position.Z), _mapControl.MapSize)
                     {
                         Color = Color.Red,
-                        Radius = 8
+                        Radius = 8,
+                        Scaleradius = false
                     };
                     _mapControl.RegisterDrawable(marker);
                 }
@@ -2122,7 +2723,8 @@ namespace EconomyPlugin
                     var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
                     {
                         Color = Color.LimeGreen,
-                        Radius = 8
+                        Radius = 8,
+                        Scaleradius = false
                     };
                     _mapControl.RegisterDrawable(marker);
                 }
@@ -2131,7 +2733,8 @@ namespace EconomyPlugin
                     var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
                     {
                         Color = Color.Red,
-                        Radius = 8
+                        Radius = 8,
+                        Scaleradius = false
                     };
                     _mapControl.RegisterDrawable(marker);
                 }
@@ -2146,7 +2749,8 @@ namespace EconomyPlugin
                     var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
                     {
                         Color = Color.LimeGreen,
-                        Radius = 8
+                        Radius = 8,
+                        Scaleradius = false
                     };
                     _mapControl.RegisterDrawable(marker);
                 }
@@ -2155,7 +2759,8 @@ namespace EconomyPlugin
                     var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
                     {
                         Color = Color.Red,
-                        Radius = 8
+                        Radius = 8,
+                        Scaleradius = false
                     };
                     _mapControl.RegisterDrawable(marker);
                 }
@@ -2188,12 +2793,11 @@ namespace EconomyPlugin
             }
         }
 
-        /// <summary>
-        /// MapViewer clicks
-        /// </summary>
+        // MapViewer clicks
         private eventposdefEventPos _selectedEventPos;
         private cfgeffectareaSafePosition _selectedSafePosition;
         private PRASafePosition _selectedRPASafePosition;
+        private playerspawnpointsGroupPos _selectedSpawnpointPosition;
         private Areas _selectedeffectarea;
         private PRABoxes _selectedRPABox;
 
@@ -2256,7 +2860,7 @@ namespace EconomyPlugin
             _mapControl.ClearDrawables();
 
             eventposdefEvent defevent = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
-
+            ShowHandler<IUIHandler>(new eventgroupsspawnpositionControl(), typeof(cfgeventspawnsConfig), _selectedEventPos, new List<TreeNode>() { currentTreeNode });
             DrawEventSpawns(defevent);
             currentTreeNode.Text = _selectedEventPos.ToString();
         }
@@ -2322,6 +2926,67 @@ namespace EconomyPlugin
             DrawEffectSafePositions(cfgeffectareaConfig);
             currentTreeNode.Text = $"Position {currentTreeNode.Index + 1} ({_selectedSafePosition.X}, {_selectedSafePosition.Z})";
         }
+        private void MapControl_EffectAreaSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            Areas closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is Areas area)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = area;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        EconomyTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_EffectAreaDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (_selectedeffectarea == null) return;
+
+            _selectedeffectarea.Data.Pos[0] = (decimal)e.MapCoordinates.X;
+            _selectedeffectarea.Data.Pos[2] = (decimal)e.MapCoordinates.Y;
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+
+            _mapControl.ClearDrawables();
+
+            cfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<cfgeffectareaConfig>();
+            DrawEffectEffectArea(cfgeffectareaConfig);
+        }
         private void MapControl_EffectPRASafePositionsSingleclicked(object sender, MapClickEventArgs e)
         {
             if (currentTreeNode?.Parent == null)
@@ -2383,6 +3048,177 @@ namespace EconomyPlugin
             PlayerRestrictedFiles.isDirty = true;
             DrawEffectPRASafePositions(PlayerRestrictedFiles);
             currentTreeNode.Text = $"Position {currentTreeNode.Index + 1}: [{string.Join(", ", _selectedRPASafePosition)}]";
+        }
+        private void MapControl_EffectPRABoxSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            PRABoxes closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is PRABoxes box)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(box.Position.X, box.Position.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = box;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        EconomyTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_EffectPRABoxDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (_selectedRPABox == null) return;
+
+            _selectedRPABox.Position.X = e.MapCoordinates.X;
+            _selectedRPABox.Position.Z = e.MapCoordinates.Y;
+
+            _mapControl.ClearDrawables();
+
+            PlayerRestrictedFiles PlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PlayerRestrictedFiles.isDirty = true;
+            DrawPRABoxesPOsitions(PlayerRestrictedFiles);
+        }
+        private void MapControl_PlayerSpawnSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+          
+
+            playerspawnpointsGroupPos closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            if (currentTreeNode.Parent.Tag is playerspawnpointsGroup)
+            {
+                TreeNode parentNode = currentTreeNode.Parent.Parent;
+                foreach (TreeNode childp in parentNode.Nodes)
+                {
+                    foreach (TreeNode child in childp.Nodes)
+                    {
+                        if (child.Tag is playerspawnpointsGroupPos pos)
+                        {
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode childp in parentNode.Nodes)
+                    {
+                        foreach (TreeNode child in childp.Nodes)
+                        {
+                            if (child.Tag == closestPos)
+                            {
+                                EconomyTV.SelectedNode = child;
+                                break;
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+            else
+            {
+                TreeNode parentNode = currentTreeNode.Parent;
+                // Loop through all child nodes of the parent
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag is playerspawnpointsGroupPos pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode child in parentNode.Nodes)
+                    {
+                        if (child.Tag == closestPos)
+                        {
+                            EconomyTV.SelectedNode = child;
+                            break;
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+        }
+        private void MapControl_PlayerSpawnDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (_selectedSpawnpointPosition == null) return;
+
+            _selectedSpawnpointPosition.x = (decimal)e.MapCoordinates.X;
+            _selectedSpawnpointPosition.z = (decimal)e.MapCoordinates.Y;
+
+            _mapControl.ClearDrawables();
+
+            cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig = currentTreeNode.FindParentOfType<cfgplayerspawnpointsConfig>();
+            cfgplayerspawnpointsConfig.isDirty = true;
+            playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
+            DrawEffectPlayerSpawnPointPositions(playerspawnpointssection);
+            currentTreeNode.Text = _selectedSpawnpointPosition.ToString();
         }
 
         /// <summary>
@@ -3978,6 +4814,84 @@ namespace EconomyPlugin
             RemoveTreeNodeAndEmptyParents(currentTreeNode);
             ObjectSpawnerArr.isDirty = true;
             ObjectSpawnerArr.ToDelete = true;
+        }
+
+        /// <summary>
+        /// cfgeffectarea right click mehtods
+        /// </summary>
+        private void addNewEffectAreaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Data newdata = new Data()
+            {
+                Pos = new decimal[] { _projectManager.CurrentProject.MapSize/2, 0, _projectManager.CurrentProject.MapSize/2 },
+                Radius = 0,
+                PosHeight = 0,
+                NegHeight = 0,
+            };
+            Areas newArea = new Areas()
+            {
+                AreaName = "New-Trigger-Area",
+                Type = "",
+                TriggerType = "",
+                Data = newdata
+            };
+            _economyManager.cfgeffectareaConfig.Data.Areas.Add(newArea);
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(createeffectareanodes(newArea));
+        }
+        private void usePlayerDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Areas areas = currentTreeNode.Tag as Areas;
+            PlayerData newPlayerData = new PlayerData()
+            {
+                AroundPartName = "",
+                TinyPartName = "",
+                PPERequesterType = ""
+            };
+            areas.PlayerData = newPlayerData;
+            currentTreeNode.Nodes.Add(new TreeNode("PlayerData")
+            {
+                Tag = newPlayerData
+            });
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+        }
+        private void removePlayerDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Areas areas = currentTreeNode.Parent.Tag as Areas;
+            areas.PlayerData = null;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+        }
+        private void removeEffectAreaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Areas area = currentTreeNode.Tag as Areas;
+            _economyManager.cfgeffectareaConfig.Data.Areas.Remove(area);
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewSafePositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            decimal middle = _projectManager.CurrentProject.MapSize / 2;
+            cfgeffectareaSafePosition newpos = new cfgeffectareaSafePosition()
+            {
+                Name = $"{middle.ToString()},{middle.ToString()}",
+                X = middle,
+                Z = middle
+            };
+            _economyManager.cfgeffectareaConfig.Data._positions.Add(newpos);
+            _economyManager.cfgeffectareaConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(new TreeNode($"Position {currentTreeNode.Nodes.Count + 1} ({newpos.X}, {newpos.Z})")
+            {
+                Tag = newpos
+            });
+
+        }
+        private void removeSafePositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cfgeffectareaSafePosition sp = currentTreeNode.Tag as cfgeffectareaSafePosition;
+            _economyManager.cfgeffectareaConfig.Data._positions.Remove(sp);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _economyManager.cfgeffectareaConfig.isDirty = true;
         }
     }
 

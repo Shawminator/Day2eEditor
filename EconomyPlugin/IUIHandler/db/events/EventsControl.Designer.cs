@@ -578,6 +578,7 @@
             nameTB.Name = "nameTB";
             nameTB.Size = new Size(328, 23);
             nameTB.TabIndex = 57;
+            nameTB.TextChanged += nameTB_TextChanged;
             nameTB.Validated += nameTB_Validated;
             // 
             // restockNUD

@@ -254,6 +254,14 @@ namespace Day2eEditor
                 this.rField = value;
             }
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not eventposdefEventZone other)
+                return false;
+
+            return smin == other.smin && smax == other.smax && dmin == other.dmin && dmax == other.dmax && r == other.r;
+        }
     }
 
     /// <remarks/>

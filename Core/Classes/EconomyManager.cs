@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DayZeLib;
+using System.Collections.Generic;
 
 namespace Day2eEditor
 {
@@ -48,9 +49,8 @@ namespace Day2eEditor
         public CFGGameplayConfig CFGGameplayConfig { get; set; }
         public cfgeffectareaConfig cfgeffectareaConfig { get; set; }
         public cfgundergroundtriggersConfig cfgundergroundtriggersConfig { get; set; }
+        public cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig { get; set; }
 
-        //public cfgplayerspawnpoints cfgplayerspawnpoints { get; set; }
-        //public cfgeventspawns cfgeventspawns { get; set; }
         //public cfgignorelist cfgignorelist { get; set; }
         //public weatherconfig weatherconfig { get; set; }
         //public mapgroupproto mapgroupproto { get; set; }
@@ -74,6 +74,7 @@ namespace Day2eEditor
             _paths["CFGGameplay"] = Path.Combine(basePath, "cfggameplay.json");
             _paths["cfgeffectarea"] = Path.Combine(basePath, "cfgeffectarea.json");
             _paths["cfgundergroundtriggers"] = Path.Combine(basePath, "cfgundergroundtriggers.json");
+            _paths["cfgplayerspawnpoints"] = Path.Combine(basePath, "cfgplayerspawnpoints.xml");
 
             _paths["VanillaTypes"] = Path.Combine(basePath, "db", "types.xml");
             _paths["VanillaEvents"] = Path.Combine(basePath, "db", "events.xml");
@@ -155,6 +156,9 @@ namespace Day2eEditor
             cfgundergroundtriggersConfig = new cfgundergroundtriggersConfig(_paths["cfgundergroundtriggers"]);
             LoadConfigWithErrorReport("cfgundergroundtriggers", cfgundergroundtriggersConfig);
 
+            cfgplayerspawnpointsConfig = new cfgplayerspawnpointsConfig(_paths["cfgplayerspawnpoints"]);
+            LoadConfigWithErrorReport("cfgplayerspawnpoints", cfgplayerspawnpointsConfig);
+
             Console.WriteLine($"\n**** Starting load of EconomyCore Files Including Vanilla ****");
 
             economyConfig = new economyConfig();
@@ -197,7 +201,8 @@ namespace Day2eEditor
                 TypesConfig,
                 eventsConfig,
                 cfgspawnabletypesConfig,
-                cfgrandompresetsConfig
+                cfgrandompresetsConfig,
+                cfgplayerspawnpointsConfig
             };
 
             var savedFiles = new List<string>();
@@ -241,6 +246,67 @@ namespace Day2eEditor
                     needtosave = true;
             }
             return needtosave;
+        }
+
+        public void CheckallTypes(string uuname, string name)
+        {
+            foreach (TypesFile ft in TypesConfig.AllData)
+            {
+                foreach (TypeEntry type in ft.Data.TypeList)
+                {
+                    Usage typeusage = type.Usages.FirstOrDefault(x => x.User == uuname);
+                    if (typeusage != null)
+                    {
+                        typeusage.User = name;
+                        ft.isDirty = true;
+                    }
+                }
+            }
+        }
+        public void CheckallTypes(string uuname)
+        {
+            foreach (TypesFile ft in TypesConfig.AllData)
+            {
+                foreach (TypeEntry type in ft.Data.TypeList)
+                {
+                    Usage typeusage = type.Usages.FirstOrDefault(x => x.User == uuname);
+                    if (typeusage != null)
+                    {
+                        type.Usages.Remove(typeusage);
+                        ft.isDirty = true;
+                    }
+                }
+            }
+        }
+        public void CheckallTypesValues(string uuname)
+        {
+            foreach (TypesFile ft in TypesConfig.AllData)
+            {
+                foreach (TypeEntry type in ft.Data.TypeList)
+                {
+                    Value typevalue = type.Values.FirstOrDefault(x => x.User == uuname);
+                    if (typevalue != null)
+                    {
+                        type.Values.Remove(typevalue);
+                        ft.isDirty = true;
+                    }
+                }
+            }
+        }
+        public void CheckallTypesValues(string uuname, string name)
+        {
+            foreach (TypesFile ft in TypesConfig.AllData)
+            {
+                foreach (TypeEntry type in ft.Data.TypeList)
+                {
+                    Value typevalue = type.Values.FirstOrDefault(x => x.User == uuname);
+                    if (typevalue != null)
+                    {
+                        typevalue.User = name;
+                        ft.isDirty = true;
+                    }
+                }
+            }
         }
     }
 }

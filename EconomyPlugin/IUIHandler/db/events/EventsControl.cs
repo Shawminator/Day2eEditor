@@ -199,6 +199,15 @@ namespace EconomyPlugin
             });
             AppServices.GetRequired<EconomyManager>().cfgeventspawnsConfig.AddNewEventSpawn(newvenspawn);
         }
+        private void nameTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+
+            _data.name = nameTB.Text;
+            _nodes[0].Text = _data.name;
+
+            HasChanges();
+        }
         private void nameTB_Validated(object sender, EventArgs e)
         {
             ApplyNameChange();
@@ -206,10 +215,21 @@ namespace EconomyPlugin
         private void ApplyNameChange()
         {
             if (_suppressEvents) return;
-            eventposdefEvent points = AppServices.GetRequired<EconomyManager>().cfgeventspawnsConfig.Findevent(_data.name);
-            if(points != null)
+
+
+
+            eventposdefEvent points = _nodes.Last().FindChildOfType<eventposdefEvent>();
+
+            if (points != null)
             {
-                DialogResult dialogResult = MessageBox.Show("Exisitng Event spawn found, Do you want me to rename that as well?", "Rename Event Spawn", MessageBoxButtons.YesNo);
+                // Skip if name hasn't actually changed
+                if (string.Equals(_data.name, points.name, StringComparison.Ordinal))
+                    return;
+                DialogResult dialogResult = MessageBox.Show(
+                    "You renamed this event and i have found existing Event spawn , do you want me to rename that as well?",
+                    "Rename Event Spawn",
+                    MessageBoxButtons.YesNo);
+
                 if (dialogResult == DialogResult.Yes)
                 {
                     points.name = nameTB.Text;
@@ -217,10 +237,8 @@ namespace EconomyPlugin
                     AppServices.GetRequired<EconomyManager>().cfgeventspawnsConfig.isDirty = true;
                 }
             }
-            _data.name = nameTB.Text;
-            _nodes[0].Text = _data.name;
-            
-            HasChanges();
+
+
         }
         private void EventsNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -326,5 +344,7 @@ namespace EconomyPlugin
             ChildrenLB.Invalidate();
             HasChanges();
         }
+
+
     }
 }

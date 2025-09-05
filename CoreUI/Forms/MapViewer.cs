@@ -180,13 +180,9 @@ namespace Day2eEditor
             // Add mouse position coordinates display in the top-left corner
             if (_image != null)
             {
-                // Convert the mouse screen position to map coordinates
                 var mapCoord = GetMapCoordinate(_mousePosition);
-
-                // Prepare the text to display
                 string coordText = $"X: {mapCoord.X:0.##}, Y: {mapCoord.Y:0.##}";
 
-                // Set the font and brush for drawing the text
                 using var font = new Font("Segoe UI", 9);
                 using var brush = new SolidBrush(Color.White);
                 using var backBrush = new SolidBrush(Color.FromArgb(128, 0, 0, 0)); // Semi-transparent background
@@ -194,12 +190,16 @@ namespace Day2eEditor
                 // Measure the size of the text
                 var textSize = e.Graphics.MeasureString(coordText, font);
 
-                // Draw background rectangle for the label
-                var textRect = new RectangleF(4, 4, textSize.Width + 8, textSize.Height + 4);
+                float padding = 4; // padding from edges
+                float textX = Width - textSize.Width - padding * 2; // top-right x-coordinate
+                float textY = padding; // top padding
+
+                // Draw background rectangle
+                var textRect = new RectangleF(textX, textY, textSize.Width + padding * 2, textSize.Height + padding);
                 e.Graphics.FillRectangle(backBrush, textRect);
 
-                // Draw the text with padding
-                e.Graphics.DrawString(coordText, font, brush, new PointF(8, 6));
+                // Draw the text inside the rectangle
+                e.Graphics.DrawString(coordText, font, brush, new PointF(textX + padding, textY + padding / 2));
             }
         }
         protected override void OnMouseDown(MouseEventArgs e)

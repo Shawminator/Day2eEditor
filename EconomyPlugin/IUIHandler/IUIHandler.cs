@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EconomyPlugin
 {
@@ -13,5 +14,9 @@ namespace EconomyPlugin
         void ApplyChanges();
         void Reset(); // Revert changes to the initial state
         void HasChanges(); // Check if any changes have been made
+    }
+    public interface ITreeNodeHandler
+    {
+        void Show(TreeNode node, List<TreeNode> selected, EconomyForm form);
     }
 }

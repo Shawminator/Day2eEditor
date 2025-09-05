@@ -470,7 +470,24 @@ namespace Day2eEditor
     }
     public static class TreeNodeExtensions
     {
+        public static object FindChildOfType(this TreeNode node, Type type)
+        {
+            if (node == null)
+                return null;
 
+            foreach (TreeNode child in node.Nodes)
+            {
+                if (child.Tag != null && type.IsInstanceOfType(child.Tag))
+                    return child.Tag;
+
+                // recurse into children
+                var result = child.FindChildOfType(type);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
         public static object FindParentOfType(this TreeNode node, Type type)
         {
             while (node != null)
@@ -483,7 +500,24 @@ namespace Day2eEditor
 
             return null;
         }
+        public static T FindChildOfType<T>(this TreeNode node) where T : class
+        {
+            if (node == null)
+                return null;
 
+            foreach (TreeNode child in node.Nodes)
+            {
+                if (child.Tag is T match)
+                    return match;
+
+                // recurse into grandchildren
+                var result = child.FindChildOfType<T>();
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
         public static T FindParentOfType<T>(this TreeNode node) where T : class
         {
             while (node != null)
