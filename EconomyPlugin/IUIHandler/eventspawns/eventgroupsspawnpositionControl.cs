@@ -13,6 +13,7 @@ namespace EconomyPlugin
     /// </summary>
     public partial class eventgroupsspawnpositionControl : UserControl, IUIHandler
     {
+        public event Action<eventposdefEventPos> PositionChanged;
         private Type _parentType;
         private eventposdefEventPos _data;
         private eventposdefEventPos _originalData;
@@ -92,12 +93,12 @@ namespace EconomyPlugin
             // TODO: Implement actual cloning logic
             return new eventposdefEventPos
             {
-               x = data.x,
-               z = data.z,
-               ySpecified = data.ySpecified,
-               y = data.y,
-               aSpecified = data.aSpecified,
-               a = data.a
+                x = data.x,
+                z = data.z,
+                ySpecified = data.ySpecified,
+                y = data.y,
+                aSpecified = data.aSpecified,
+                a = data.a
             };
         }
 
@@ -108,10 +109,95 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.ToString();
             }
         }
 
         #endregion
+
+        private void EventSpawnPosXNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.x = EventSpawnPosXNUD.Value;
+            HasChanges();
+            UpdateTreeNodeText();
+            PositionChanged?.Invoke(_data);
+        }
+
+        private void EventSpawnPosZNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.z = EventSpawnPosZNUD.Value;
+            HasChanges();
+            UpdateTreeNodeText();
+            PositionChanged?.Invoke(_data);
+        }
+
+        private void checkBox50_CheckedChanged(object sender, EventArgs e)
+        {
+            EventSpawnPosYNUD.Visible = checkBox50.Checked;
+            if (_suppressEvents) return;
+
+            if (checkBox50.Checked)
+            {
+                _data.y = 0;
+                _data.ySpecified = true;
+                EventSpawnPosYNUD.Value = _data.y;
+            }
+            else
+            {
+                _data.ySpecified = false;
+            }
+            HasChanges();
+        }
+
+        private void EventSpawnPosYNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.y = EventSpawnPosYNUD.Value;
+            HasChanges();
+            UpdateTreeNodeText();
+        }
+
+        private void checkBox51_CheckedChanged(object sender, EventArgs e)
+        {
+            EventSpawnPosANUD.Visible = checkBox51.Checked;
+            if (_suppressEvents) return;
+            if (checkBox51.Checked)
+            {
+                _data.a = 0;
+                _data.aSpecified = true;
+                EventSpawnPosANUD.Value = _data.a;
+            }
+            else
+            {
+                _data.aSpecified = false;
+            }
+            HasChanges();
+        }
+
+        private void EventSpawnPosANUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+
+            _suppressEvents = true;
+            if (EventSpawnPosANUD.Value < 0)
+            {
+                while (EventSpawnPosANUD.Value < 0)
+                {
+                    EventSpawnPosANUD.Value += 360;
+                }
+            }
+            else if (EventSpawnPosANUD.Value >= 360)
+            {
+                while (EventSpawnPosANUD.Value >= 360)
+                {
+                    EventSpawnPosANUD.Value -= 360;
+                }
+            }
+            _suppressEvents = false;
+            _data.a = EventSpawnPosANUD.Value;
+            HasChanges();
+        }
     }
 }

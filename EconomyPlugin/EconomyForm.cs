@@ -132,33 +132,52 @@ namespace EconomyPlugin
                 // Map-related
                 [typeof(eventposdefEventPos)] = (node, selected) =>
                 {
-                    ShowHandler<IUIHandler>(new eventgroupsspawnpositionControl(), typeof(cfgeventspawnsConfig), node.Tag as eventposdefEventPos, selected);
-                    SetupEventPosMap(node.Tag as eventposdefEventPos, node);
+                    var data = node.Tag as eventposdefEventPos;
+                    var control = new eventgroupsspawnpositionControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawEventSpawns(node.Parent.Parent.Tag as eventposdefEvent);
+                    };
+
+                    ShowHandler<IUIHandler>(control, typeof(cfgeventspawnsConfig), data, selected);
+                    SetupEventPosMap(data, node);
+                    _mapControl.EnsureVisible(new PointF((float)data.x, (float)data.z));
                 },
                 [typeof(cfgeffectareaSafePosition)] = (node, selected) =>
                 {
+                    cfgeffectareaSafePosition cfgeffectareaSafePosition = node.Tag as cfgeffectareaSafePosition;
                     ShowHandler<IUIHandler>(null, null, null, selected);
-                    SetupSafePosMap(node.Tag as cfgeffectareaSafePosition, node);
+                    SetupSafePosMap(cfgeffectareaSafePosition, node);
+                    _mapControl.EnsureVisible(new PointF((float)cfgeffectareaSafePosition.X, (float)cfgeffectareaSafePosition.Z));
                 },
                 [typeof(PRABoxes)] = (node, selected) =>
                 {
+                    PRABoxes PRABoxes = node.Tag as PRABoxes;
                     ShowHandler<IUIHandler>(null, null, null, selected);
-                    SetupPRABoxMap(node.Tag as PRABoxes, node);
+                    SetupPRABoxMap(PRABoxes, node);
+                    _mapControl.EnsureVisible(new PointF((float)PRABoxes.Position.X, (float)PRABoxes.Position.Z));
                 },
                 [typeof(PRASafePosition)] = (node, selected) =>
                 {
+                    PRASafePosition PRASafePosition = node.Tag as PRASafePosition;
                     ShowHandler<IUIHandler>(null, null, null, selected);
-                    SetupPRASafePosMap(node.Tag as PRASafePosition, node);
+                    SetupPRASafePosMap(PRASafePosition, node);
+                    _mapControl.EnsureVisible(new PointF((float)PRASafePosition.Position.X, (float)PRASafePosition.Position.Z));
                 },
                 [typeof(Areas)] = (node, selected) =>
                 {
-                    ShowHandler(new cfgeffectAreaMainControl(), typeof(cfgeffectareaConfig), node.Tag as Areas, selected);
+                    Areas area = node.Tag as Areas;
+                    ShowHandler(new cfgeffectAreaMainControl(), typeof(cfgeffectareaConfig), area, selected);
                     SetupEffectAreaMap(node.Tag as Areas, node);
+                    _mapControl.EnsureVisible(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]));
                 },
                 [typeof(playerspawnpointsGroupPos)] = (node, selected) =>
                 {
+                    playerspawnpointsGroupPos pos = node.Tag as playerspawnpointsGroupPos;
                     ShowHandler<IUIHandler>(null, null, null, selected);
-                    SetupPlayerSpawnPosMap(node.Tag as playerspawnpointsGroupPos, node);
+                    SetupPlayerSpawnPosMap(pos, node);
+                    _mapControl.EnsureVisible(new PointF((float)pos.x, (float)pos.z));
                 },
 
                 // SpawnGear / Discrete / Complex
@@ -576,6 +595,21 @@ namespace EconomyPlugin
                     cfgEffectsAreaCM.Items.Add(removeSafePositionToolStripMenuItem);
                     cfgEffectsAreaCM.Show(Cursor.Position);
                 },
+
+                // Player spawns
+                [typeof(playerspawnpointsGroup)] = node =>
+                {
+                    PlayerSpawnsCM.Items.Clear();
+                    PlayerSpawnsCM.Items.Add(addNewSpawnPositionToolStripMenuItem);
+                    PlayerSpawnsCM.Items.Add(removeSpawnGroupToolStripMenuItem);
+                    PlayerSpawnsCM.Show(Cursor.Position);
+                },
+                [typeof(playerspawnpointsGroupPos)] = node =>
+                {
+                    PlayerSpawnsCM.Items.Clear();
+                    PlayerSpawnsCM.Items.Add(removeSpawnPositionToolStripMenuItem);
+                    PlayerSpawnsCM.Show(Cursor.Position);
+                }
             };
 
             // ----------------------
@@ -654,8 +688,42 @@ namespace EconomyPlugin
                     cfgEffectsAreaCM.Items.Clear();
                     cfgEffectsAreaCM.Items.Add(addNewSafePositionToolStripMenuItem);
                     cfgEffectsAreaCM.Show(Cursor.Position);
+                },
+                ["PlayerSpawnGenPosBubbles"] = node =>
+                {
+                    if (NodeHasChildOfType<playerspawnpointsGroup>(node))
+                    {
+                        PlayerSpawnsCM.Items.Clear();
+                        PlayerSpawnsCM.Items.Add(addNewSpawnGroupToolStripMenuItem);
+                        PlayerSpawnsCM.Show(Cursor.Position);
+                    }
+                    else if (NodeHasChildOfType<playerspawnpointsGroupPos>(node))
+                    {
+                        PlayerSpawnsCM.Items.Clear();
+                        PlayerSpawnsCM.Items.Add(addNewSpawnPositionToolStripMenuItem);
+                        PlayerSpawnsCM.Show(Cursor.Position);
+                    }
+                    else
+                    {
+                        PlayerSpawnsCM.Items.Clear();
+                        PlayerSpawnsCM.Items.Add(addNewSpawnGroupToolStripMenuItem);
+                        PlayerSpawnsCM.Items.Add(addNewSpawnPositionToolStripMenuItem);
+                        PlayerSpawnsCM.Show(Cursor.Position);
+                    }
                 }
             };
+        }
+        public bool NodeHasChildOfType<T>(TreeNode node)
+        {
+            if (node == null) return false;
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                if (child.Tag is T)
+                    return true;
+            }
+
+            return false;
         }
         private void EconomyForm_Load(object sender, EventArgs e)
         {
@@ -1601,12 +1669,14 @@ namespace EconomyPlugin
             }
             if (config.Data.hop != null)
             {
-                 PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.hop, "Hop"));
-            };
+                PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.hop, "Hop"));
+            }
+            ;
             if (config.Data.travel != null)
             {
-                 PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.travel, "Travel"));
-            };
+                PlayerSpawnPointrootNode.Nodes.Add(createPlayerspawnNodes(config.Data.travel, "Travel"));
+            }
+            ;
             return PlayerSpawnPointrootNode;
         }
         private TreeNode createPlayerspawnNodes(playerspawnpointssection Spawntype, string TypeofSpawn)
@@ -1627,7 +1697,10 @@ namespace EconomyPlugin
             {
                 Tag = Spawntype.group_params
             });
-            TreeNode Bubbles = new TreeNode("Generator Posbubbles");
+            TreeNode Bubbles = new TreeNode("Generator Posbubbles")
+            {
+                Tag = "PlayerSpawnGenPosBubbles"
+            };
             if (Spawntype.generator_posbubbles != null && Spawntype.generator_posbubbles.Count > 0)
             {
                 // Handle groups
@@ -2609,13 +2682,13 @@ namespace EconomyPlugin
 
                 var section = node.FindParentOfType<playerspawnpointssection>();
                 if (section != null)
-                    DrawEffectPlayerSpawnPointPositions(section);
+                    DrawPlayerSpawnPointPositions(section);
             });
         }
         //Draw Methods
-        private void DrawEffectPlayerSpawnPointPositions(playerspawnpointssection playerspawnpointssection)
+        private void DrawPlayerSpawnPointPositions(playerspawnpointssection playerspawnpointssection)
         {
-            foreach(playerspawnpointsGroupPos pos in playerspawnpointssection.Positions)
+            foreach (playerspawnpointsGroupPos pos in playerspawnpointssection.Positions)
             {
                 if (_selectedSpawnpointPosition == pos)
                 {
@@ -3114,7 +3187,7 @@ namespace EconomyPlugin
         {
             if (currentTreeNode?.Parent == null)
                 return;
-          
+
 
             playerspawnpointsGroupPos closestPos = null;
             double closestDistance = double.MaxValue;
@@ -3217,7 +3290,7 @@ namespace EconomyPlugin
             cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig = currentTreeNode.FindParentOfType<cfgplayerspawnpointsConfig>();
             cfgplayerspawnpointsConfig.isDirty = true;
             playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
-            DrawEffectPlayerSpawnPointPositions(playerspawnpointssection);
+            DrawPlayerSpawnPointPositions(playerspawnpointssection);
             currentTreeNode.Text = _selectedSpawnpointPosition.ToString();
         }
 
@@ -4823,7 +4896,7 @@ namespace EconomyPlugin
         {
             Data newdata = new Data()
             {
-                Pos = new decimal[] { _projectManager.CurrentProject.MapSize/2, 0, _projectManager.CurrentProject.MapSize/2 },
+                Pos = new decimal[] { _projectManager.CurrentProject.MapSize / 2, 0, _projectManager.CurrentProject.MapSize / 2 },
                 Radius = 0,
                 PosHeight = 0,
                 NegHeight = 0,
@@ -4892,6 +4965,86 @@ namespace EconomyPlugin
             _economyManager.cfgeffectareaConfig.Data._positions.Remove(sp);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _economyManager.cfgeffectareaConfig.isDirty = true;
+        }
+
+
+        /// <summary>
+        /// PlayerSpawn Right Click Methods
+        /// </summary>
+        private void addNewSpawnPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
+            playerspawnpointsGroupPos newpos = new playerspawnpointsGroupPos()
+            {
+                x = _projectManager.CurrentProject.MapSize / 2,
+                z = _projectManager.CurrentProject.MapSize / 2
+            };
+            if(currentTreeNode.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+            {
+                playerspawnpointsGroup.pos.Add(newpos);
+            }
+            else
+            {
+                if (playerspawnpointssection.generator_posbubbles.Count == 0)
+                {
+                    playerspawnpointssection.group_params.enablegroups = false;
+                    playerspawnpointssection.group_params.lifetime = 0;
+                    playerspawnpointssection.group_params.counter = 0;
+                }
+                playerspawnpointssection.generator_posbubbles.Add(newpos);
+                
+            }
+            currentTreeNode.Nodes.Add(new TreeNode(newpos.ToString())
+            {
+                Tag = newpos
+            });
+            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
+        }
+        private void removeSpawnPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            playerspawnpointsGroupPos pos = currentTreeNode.Tag as playerspawnpointsGroupPos;
+            if(currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+            {
+                playerspawnpointsGroup.pos.Remove(pos);
+            }
+            else
+            {
+                playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
+                playerspawnpointssection.generator_posbubbles.Remove(pos);
+            }
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
+        }
+        private void addNewSpawnGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
+            playerspawnpointsGroup newgroup = new playerspawnpointsGroup()
+            {
+                name = "Change Me",
+                lifetimeSpecified = false,
+                counterSpecified = false,
+                pos = new BindingList<playerspawnpointsGroupPos>()
+            };
+            currentTreeNode.Nodes.Add(new TreeNode($"Group Name: {newgroup.name}")
+            {
+                Tag = newgroup
+            });
+            if (playerspawnpointssection.generator_posbubbles.Count == 0)
+            {
+                playerspawnpointssection.group_params.enablegroups = true;
+                playerspawnpointssection.group_params.lifetime = 240;
+                playerspawnpointssection.group_params.counter = -1;
+            }
+            playerspawnpointssection.generator_posbubbles.Add(newgroup);
+            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
+        }
+        private void removeSpawnGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
+            playerspawnpointsGroup group = currentTreeNode.Tag as playerspawnpointsGroup;
+            playerspawnpointssection.generator_posbubbles.Remove(group);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
         }
     }
 

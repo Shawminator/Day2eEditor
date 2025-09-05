@@ -391,5 +391,21 @@ namespace Day2eEditor
         {
             return x.ToString() + " " + y + " " + z.ToString() + "|" + a.ToString() + " 0.0 0.0";
         }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj is not eventposdefEventPos other)
+                return false;
+
+            return this.x == other.x
+                   && this.y == other.y
+                   && this.yFieldSpecified == other.yFieldSpecified
+                   && this.z == other.z
+                   && this.a == other.a
+                   && this.aFieldSpecified == other.aFieldSpecified
+                   && this.group == other.group;
+        }
     }
 }

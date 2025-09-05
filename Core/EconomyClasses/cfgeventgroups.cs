@@ -369,5 +369,28 @@ namespace Day2eEditor
         {
             return type;
         }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj is not eventgroupdefGroupChild other)
+                return false;
+
+            return this.type == other.type
+                   && this.spawnsecondary == other.spawnsecondary
+                   && this.spawnsecondarySpecified == other.spawnsecondarySpecified
+                   && this.deloot == other.deloot
+                   && this.delootSpecified == other.delootSpecified
+                   && this.lootmax == other.lootmax
+                   && this.lootmaxSpecified == other.lootmaxSpecified
+                   && this.lootmin == other.lootmin
+                   && this.lootminSpecified == other.lootminSpecified
+                   && this.x == other.x
+                   && this.y == other.y
+                   && this.yFieldSpecified == other.yFieldSpecified
+                   && this.z == other.z
+                   && this.a == other.a;
+        }
     }
 }

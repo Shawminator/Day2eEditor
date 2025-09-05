@@ -52,6 +52,8 @@ namespace EconomyPlugin
             eventgroupSecondarySpawnRB.Checked = _data.spawnsecondarySpecified;
             eventgroupLootoptionRB.Checked = !_data.spawnsecondarySpecified;
 
+            
+
             _suppressEvents = false;
         }
 
@@ -94,7 +96,20 @@ namespace EconomyPlugin
             // TODO: Implement actual cloning logic
             return new eventgroupdefGroupChild
             {
-                // Copy properties here
+                type = data.type,
+                x = data.x,
+                ySpecified = data.ySpecified,
+                y = data.y,
+                z = data.z,
+                a = data.a,
+                lootmax = data.lootmax,
+                lootmaxSpecified = data.lootmaxSpecified,
+                lootmin = data.lootmin,
+                lootminSpecified = data.lootminSpecified,
+                deloot = data.deloot,
+                delootSpecified = data.delootSpecified,
+                spawnsecondarySpecified = data.spawnsecondarySpecified,
+                spawnsecondary = data.spawnsecondary
             };
         }
 
@@ -142,13 +157,14 @@ namespace EconomyPlugin
                         eventgrouplootmaxNUD.Visible = true;
                         label129.Visible = true;
                         label130.Visible = true;
-                        if (_suppressEvents) return;
+                        if (!_suppressEvents)
+                        {
 
-                        _data.delootSpecified = true;
-                        _data.lootminSpecified = true;
-                        _data.lootmaxSpecified = true;
-                        HasChanges();
-
+                            _data.delootSpecified = true;
+                            _data.lootminSpecified = true;
+                            _data.lootmaxSpecified = true;
+                            HasChanges();
+                        }
                     }
                     else
                     {
@@ -157,13 +173,13 @@ namespace EconomyPlugin
                         eventgrouplootmaxNUD.Visible = false;
                         label129.Visible = false;
                         label130.Visible = false;
-                        if (_suppressEvents) return;
-
-                        _data.delootSpecified = false;
-                        _data.lootminSpecified = false;
-                        _data.lootmaxSpecified = false;
-                        HasChanges();
-
+                        if (!_suppressEvents)
+                        {
+                            _data.delootSpecified = false;
+                            _data.lootminSpecified = false;
+                            _data.lootmaxSpecified = false;
+                            HasChanges();
+                        }
                     }
                     break;
             }

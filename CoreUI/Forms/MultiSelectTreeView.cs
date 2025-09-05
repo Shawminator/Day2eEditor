@@ -530,5 +530,6 @@ namespace Day2eEditor
 
             return null;
         }
+        
     }
 }

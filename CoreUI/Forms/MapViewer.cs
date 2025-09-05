@@ -151,15 +151,12 @@ namespace Day2eEditor
 
             if (_image != null)
             {
-                // Image size after scaling
                 float drawWidth = _image.Width * _zoom;
                 float drawHeight = _image.Height * _zoom;
 
-                // Final position after panning
                 float drawX = _panOffset.X;
                 float drawY = _panOffset.Y;
 
-                // Save this for later coordinate conversion
                 _drawnImageBounds = new RectangleF(drawX, drawY, drawWidth, drawHeight);
 
                 e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -171,13 +168,11 @@ namespace Day2eEditor
                 drawable.Draw(e.Graphics, _drawnImageBounds, _zoom, _panOffset);
             }
 
-            // Optional: draw control border (for visibility)
             using (var pen = new Pen(Color.Gray, 1))
             {
                 e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
             }
 
-            // Add mouse position coordinates display in the top-left corner
             if (_image != null)
             {
                 var mapCoord = GetMapCoordinate(_mousePosition);
@@ -187,18 +182,13 @@ namespace Day2eEditor
                 using var brush = new SolidBrush(Color.White);
                 using var backBrush = new SolidBrush(Color.FromArgb(128, 0, 0, 0)); // Semi-transparent background
 
-                // Measure the size of the text
                 var textSize = e.Graphics.MeasureString(coordText, font);
 
                 float padding = 4; // padding from edges
                 float textX = Width - textSize.Width - padding * 2; // top-right x-coordinate
                 float textY = padding; // top padding
-
-                // Draw background rectangle
                 var textRect = new RectangleF(textX, textY, textSize.Width + padding * 2, textSize.Height + padding);
                 e.Graphics.FillRectangle(backBrush, textRect);
-
-                // Draw the text inside the rectangle
                 e.Graphics.DrawString(coordText, font, brush, new PointF(textX + padding, textY + padding / 2));
             }
         }
@@ -225,7 +215,6 @@ namespace Day2eEditor
                 }
                 else
                 {
-                    // Second click within double-click time & area
                     if ((Math.Abs(e.X - _lastClick.X) <= SystemInformation.DoubleClickSize.Width / 2) &&
                         (Math.Abs(e.Y - _lastClick.Y) <= SystemInformation.DoubleClickSize.Height / 2))
                     {
@@ -268,11 +257,8 @@ namespace Day2eEditor
             float oldZoom = _zoom;
             float zoomFactor = e.Delta > 0 ? 1.1f : 0.9f;
             _zoom *= zoomFactor;
-
-            // Clamp zoom
             _zoom = Math.Clamp(_zoom, 0.1f, 10f);
 
-            // Adjust pan to keep zoom centered under mouse
             var mouseBeforeZoom = new PointF(
                 (e.X - _panOffset.X) / oldZoom,
                 (e.Y - _panOffset.Y) / oldZoom
@@ -292,6 +278,29 @@ namespace Day2eEditor
         {
             base.OnResize(e);
             Invalidate();
+        }
+        public void CenterOn(PointF mapCoord)
+        {
+            if (_image == null) return;
+
+            var screenPoint = MapToScreen(mapCoord);
+            var controlCenter = new PointF(Width / 2f, Height / 2f);
+            float dx = controlCenter.X - screenPoint.X;
+            float dy = controlCenter.Y - screenPoint.Y;
+            _panOffset.X += dx;
+            _panOffset.Y += dy;
+            Invalidate();
+        }
+        public void EnsureVisible(PointF mapCoord)
+        {
+            if (_image == null) return;
+
+            var screenPoint = MapToScreen(mapCoord);
+            var visibleRect = new RectangleF(0, 0, Width, Height);
+            if (visibleRect.Contains(screenPoint))
+                return;
+
+            CenterOn(mapCoord);
         }
     }
     public class MapClickEventArgs : EventArgs

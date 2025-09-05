@@ -41,7 +41,14 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            generatorparamsgrid_densityNUD.Value = _data.grid_density;
+            generatorparamsgrid_widthNUD.Value = _data.grid_width;
+            generatorparamsgrid_heightNUD.Value = _data.grid_height;
+            generatorparamsmin_dist_staticNUD.Value = _data.min_dist_static;
+            generatorparamsmax_dist_staticNUD.Value = _data.max_dist_static;
+            generatorparamsmin_steepnessNUD.Value = _data.min_steepness;
+            generatorparamsmax_steepnessNUD.Value = _data.max_steepness;
+            generatorparamsallow_in_waterCB.Checked = _data.allow_in_water;
 
             _suppressEvents = false;
         }
@@ -85,7 +92,14 @@ namespace EconomyPlugin
             // TODO: Implement actual cloning logic
             return new playerspawnpointsGenerator_params
             {
-                // Copy properties here
+                grid_density = data.grid_density,
+                grid_width = data.grid_width,
+                grid_height = data.grid_height,
+                min_dist_static = data.min_dist_static,
+                max_dist_static = _data.max_dist_static,
+                min_steepness = data.min_steepness,
+                max_steepness = _data.max_steepness,
+                allow_in_water = data.allow_in_water
             };
         }
 
@@ -101,5 +115,61 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void generatorparamsgrid_densityNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.grid_density = (int)generatorparamsgrid_densityNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsgrid_widthNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.grid_width = (int)generatorparamsgrid_widthNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsgrid_heightNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.grid_height = (int)generatorparamsgrid_heightNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsmin_dist_staticNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.min_dist_static = (int)generatorparamsmin_dist_staticNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsmax_dist_staticNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.max_dist_static = (int)generatorparamsmax_dist_staticNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsmin_steepnessNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.min_steepness = (int)generatorparamsmin_steepnessNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsmax_steepnessNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.max_steepness = (int)generatorparamsmax_steepnessNUD.Value;
+            HasChanges();
+        }
+
+        private void generatorparamsallow_in_waterCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.allow_in_water = generatorparamsallow_in_waterCB.Checked;
+            HasChanges();
+        }
     }
 }

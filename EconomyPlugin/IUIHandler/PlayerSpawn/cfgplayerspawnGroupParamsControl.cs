@@ -41,7 +41,10 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            GroupParamsenablegroupsCB.Checked = _data.enablegroups;
+            GroupParamgroups_as_regularCB.Checked = _data.groups_as_regular;
+            GroupParamslifetimeNUD.Value = _data.lifetime;
+            GroupParamscounterNUD.Value = _data.counter;
 
             _suppressEvents = false;
         }
@@ -107,7 +110,30 @@ namespace EconomyPlugin
 
         private void GroupParamsenablegroupsCB_CheckedChanged(object sender, EventArgs e)
         {
+            if (_suppressEvents) return;
+            _data.enablegroups = GroupParamsenablegroupsCB.Checked;
+            HasChanges();
+        }
 
+        private void GroupParamgroups_as_regularCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.groups_as_regular = GroupParamgroups_as_regularCB.Checked;
+            HasChanges();
+        }
+
+        private void GroupParamslifetimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.lifetime = (int)GroupParamslifetimeNUD.Value;
+            HasChanges();
+        }
+
+        private void GroupParamscounterNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.counter = (int)GroupParamscounterNUD.Value;
+            HasChanges();
         }
     }
 }

@@ -75,6 +75,7 @@
             checkBox51.TabIndex = 6;
             checkBox51.Text = "Use A";
             checkBox51.UseVisualStyleBackColor = true;
+            checkBox51.CheckedChanged += checkBox51_CheckedChanged;
             // 
             // checkBox50
             // 
@@ -87,6 +88,7 @@
             checkBox50.TabIndex = 4;
             checkBox50.Text = "Use Y";
             checkBox50.UseVisualStyleBackColor = true;
+            checkBox50.CheckedChanged += checkBox50_CheckedChanged;
             // 
             // EventSpawnPosXNUD
             // 
@@ -101,6 +103,7 @@
             EventSpawnPosXNUD.Size = new Size(115, 23);
             EventSpawnPosXNUD.TabIndex = 1;
             EventSpawnPosXNUD.TextAlign = HorizontalAlignment.Center;
+            EventSpawnPosXNUD.ValueChanged += EventSpawnPosXNUD_ValueChanged;
             // 
             // label116
             // 
@@ -126,6 +129,7 @@
             EventSpawnPosYNUD.Size = new Size(115, 23);
             EventSpawnPosYNUD.TabIndex = 5;
             EventSpawnPosYNUD.TextAlign = HorizontalAlignment.Center;
+            EventSpawnPosYNUD.ValueChanged += EventSpawnPosYNUD_ValueChanged;
             // 
             // EventSpawnPosZNUD
             // 
@@ -140,6 +144,7 @@
             EventSpawnPosZNUD.Size = new Size(115, 23);
             EventSpawnPosZNUD.TabIndex = 3;
             EventSpawnPosZNUD.TextAlign = HorizontalAlignment.Center;
+            EventSpawnPosZNUD.ValueChanged += EventSpawnPosZNUD_ValueChanged;
             // 
             // label118
             // 
@@ -165,6 +170,7 @@
             EventSpawnPosANUD.Size = new Size(115, 23);
             EventSpawnPosANUD.TabIndex = 7;
             EventSpawnPosANUD.TextAlign = HorizontalAlignment.Center;
+            EventSpawnPosANUD.ValueChanged += EventSpawnPosANUD_ValueChanged;
             // 
             // eventgroupsspawnpositionControl
             // 

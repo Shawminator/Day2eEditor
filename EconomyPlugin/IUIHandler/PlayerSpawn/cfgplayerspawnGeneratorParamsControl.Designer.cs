@@ -92,6 +92,7 @@
             generatorparamsallow_in_waterCB.Size = new Size(15, 14);
             generatorparamsallow_in_waterCB.TabIndex = 15;
             generatorparamsallow_in_waterCB.UseVisualStyleBackColor = true;
+            generatorparamsallow_in_waterCB.CheckedChanged += generatorparamsallow_in_waterCB_CheckedChanged;
             // 
             // label204
             // 
@@ -117,6 +118,7 @@
             generatorparamsmax_steepnessNUD.Size = new Size(79, 23);
             generatorparamsmax_steepnessNUD.TabIndex = 18;
             generatorparamsmax_steepnessNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsmax_steepnessNUD.ValueChanged += generatorparamsmax_steepnessNUD_ValueChanged;
             // 
             // generatorparamsgrid_densityNUD
             // 
@@ -130,6 +132,7 @@
             generatorparamsgrid_densityNUD.Size = new Size(79, 23);
             generatorparamsgrid_densityNUD.TabIndex = 6;
             generatorparamsgrid_densityNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsgrid_densityNUD.ValueChanged += generatorparamsgrid_densityNUD_ValueChanged;
             // 
             // label38
             // 
@@ -165,6 +168,7 @@
             generatorparamsmax_dist_staticNUD.Size = new Size(79, 23);
             generatorparamsmax_dist_staticNUD.TabIndex = 16;
             generatorparamsmax_dist_staticNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsmax_dist_staticNUD.ValueChanged += generatorparamsmax_dist_staticNUD_ValueChanged;
             // 
             // label36
             // 
@@ -200,6 +204,7 @@
             generatorparamsgrid_widthNUD.Size = new Size(79, 23);
             generatorparamsgrid_widthNUD.TabIndex = 8;
             generatorparamsgrid_widthNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsgrid_widthNUD.ValueChanged += generatorparamsgrid_widthNUD_ValueChanged;
             // 
             // generatorparamsmin_dist_staticNUD
             // 
@@ -213,6 +218,7 @@
             generatorparamsmin_dist_staticNUD.Size = new Size(79, 23);
             generatorparamsmin_dist_staticNUD.TabIndex = 14;
             generatorparamsmin_dist_staticNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsmin_dist_staticNUD.ValueChanged += generatorparamsmin_dist_staticNUD_ValueChanged;
             // 
             // label35
             // 
@@ -248,6 +254,7 @@
             generatorparamsgrid_heightNUD.Size = new Size(79, 23);
             generatorparamsgrid_heightNUD.TabIndex = 10;
             generatorparamsgrid_heightNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsgrid_heightNUD.ValueChanged += generatorparamsgrid_heightNUD_ValueChanged;
             // 
             // generatorparamsmin_steepnessNUD
             // 
@@ -262,6 +269,7 @@
             generatorparamsmin_steepnessNUD.Size = new Size(79, 23);
             generatorparamsmin_steepnessNUD.TabIndex = 12;
             generatorparamsmin_steepnessNUD.TextAlign = HorizontalAlignment.Center;
+            generatorparamsmin_steepnessNUD.ValueChanged += generatorparamsmin_steepnessNUD_ValueChanged;
             // 
             // label34
             // 

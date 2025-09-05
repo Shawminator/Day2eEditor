@@ -96,6 +96,7 @@
             numericUpDown1.Size = new Size(79, 23);
             numericUpDown1.TabIndex = 20;
             numericUpDown1.TextAlign = HorizontalAlignment.Center;
+            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
             // 
             // label191
             // 
@@ -120,6 +121,7 @@
             numericUpDown2.Size = new Size(79, 23);
             numericUpDown2.TabIndex = 18;
             numericUpDown2.TextAlign = HorizontalAlignment.Center;
+            numericUpDown2.ValueChanged += numericUpDown2_ValueChanged;
             // 
             // label192
             // 
@@ -144,6 +146,7 @@
             SpawnParamsmax_dist_staticNUD.Size = new Size(79, 23);
             SpawnParamsmax_dist_staticNUD.TabIndex = 16;
             SpawnParamsmax_dist_staticNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnParamsmax_dist_staticNUD.ValueChanged += SpawnParamsmax_dist_staticNUD_ValueChanged;
             // 
             // SpawnParamsmin_dist_infectedNUD
             // 
@@ -157,6 +160,7 @@
             SpawnParamsmin_dist_infectedNUD.Size = new Size(79, 23);
             SpawnParamsmin_dist_infectedNUD.TabIndex = 6;
             SpawnParamsmin_dist_infectedNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnParamsmin_dist_infectedNUD.ValueChanged += SpawnParamsmin_dist_infectedNUD_ValueChanged;
             // 
             // label30
             // 
@@ -192,6 +196,7 @@
             SpawnParamsmin_dist_staticNUD.Size = new Size(79, 23);
             SpawnParamsmin_dist_staticNUD.TabIndex = 14;
             SpawnParamsmin_dist_staticNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnParamsmin_dist_staticNUD.ValueChanged += SpawnParamsmin_dist_staticNUD_ValueChanged;
             // 
             // label26
             // 
@@ -227,6 +232,7 @@
             SpawnParamsmax_dist_infectedNUD.Size = new Size(79, 23);
             SpawnParamsmax_dist_infectedNUD.TabIndex = 8;
             SpawnParamsmax_dist_infectedNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnParamsmax_dist_infectedNUD.ValueChanged += SpawnParamsmax_dist_infectedNUD_ValueChanged;
             // 
             // SpawnParamsmax_dist_playerNUD
             // 
@@ -240,6 +246,7 @@
             SpawnParamsmax_dist_playerNUD.Size = new Size(79, 23);
             SpawnParamsmax_dist_playerNUD.TabIndex = 12;
             SpawnParamsmax_dist_playerNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnParamsmax_dist_playerNUD.ValueChanged += SpawnParamsmax_dist_playerNUD_ValueChanged;
             // 
             // label29
             // 
@@ -275,6 +282,7 @@
             SpawnParamsmin_dist_playerNUD.Size = new Size(79, 23);
             SpawnParamsmin_dist_playerNUD.TabIndex = 10;
             SpawnParamsmin_dist_playerNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnParamsmin_dist_playerNUD.ValueChanged += SpawnParamsmin_dist_playerNUD_ValueChanged;
             // 
             // cfgplayerspawnSpawnParamControl
             // 

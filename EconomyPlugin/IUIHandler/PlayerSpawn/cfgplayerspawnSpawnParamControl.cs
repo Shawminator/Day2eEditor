@@ -92,7 +92,16 @@ namespace EconomyPlugin
             // TODO: Implement actual cloning logic
             return new playerspawnpointsSpawn_params
             {
-                // Copy properties here
+                min_dist_infected = data.min_dist_infected,
+                max_dist_infected = data.max_dist_infected,
+                min_dist_player = data.min_dist_player,
+                max_dist_player= data.max_dist_player,
+                min_dist_static = data.min_dist_static,
+                max_dist_static= data.max_dist_static,
+                min_dist_triggerSpecified = data.min_dist_triggerSpecified,
+                min_dist_trigger = data.min_dist_trigger,
+                max_dist_triggerSpecified = data.max_dist_triggerSpecified,
+                max_dist_trigger= data.max_dist_trigger
             };
         }
 
@@ -108,5 +117,60 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void SpawnParamsmin_dist_infectedNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.min_dist_infected = (int)SpawnParamsmin_dist_infectedNUD.Value;
+            HasChanges();
+        }
+        private void SpawnParamsmax_dist_infectedNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.max_dist_infected = (int)SpawnParamsmax_dist_infectedNUD.Value;
+            HasChanges();
+        }
+
+        private void SpawnParamsmin_dist_playerNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.min_dist_player = (int)SpawnParamsmin_dist_playerNUD.Value;
+            HasChanges();
+        }
+
+        private void SpawnParamsmax_dist_playerNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.max_dist_player = (int)SpawnParamsmax_dist_playerNUD.Value;
+            HasChanges();
+        }
+
+        private void SpawnParamsmin_dist_staticNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.min_dist_static = (int)SpawnParamsmin_dist_staticNUD.Value;
+            HasChanges();
+        }
+
+        private void SpawnParamsmax_dist_staticNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.max_dist_static = (int)SpawnParamsmax_dist_staticNUD.Value;
+            HasChanges();
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.max_dist_trigger = (int)numericUpDown2.Value;
+            HasChanges();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.min_dist_trigger = (int)numericUpDown1.Value;
+            HasChanges();
+        }
     }
 }

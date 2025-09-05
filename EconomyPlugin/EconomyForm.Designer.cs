@@ -94,6 +94,11 @@ namespace EconomyPlugin
             removeEffectAreaToolStripMenuItem = new ToolStripMenuItem();
             addNewSafePositionToolStripMenuItem = new ToolStripMenuItem();
             removeSafePositionToolStripMenuItem = new ToolStripMenuItem();
+            PlayerSpawnsCM = new ContextMenuStrip(components);
+            addNewSpawnPositionToolStripMenuItem = new ToolStripMenuItem();
+            removeSpawnPositionToolStripMenuItem = new ToolStripMenuItem();
+            addNewSpawnGroupToolStripMenuItem = new ToolStripMenuItem();
+            removeSpawnGroupToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -109,6 +114,7 @@ namespace EconomyPlugin
             PlayerRestrictedAreaCM.SuspendLayout();
             ObjectSpawnerArrCM.SuspendLayout();
             cfgEffectsAreaCM.SuspendLayout();
+            PlayerSpawnsCM.SuspendLayout();
             SuspendLayout();
             // 
             // _mapControl
@@ -639,6 +645,46 @@ namespace EconomyPlugin
             removeSafePositionToolStripMenuItem.Text = "Remove Safe Position";
             removeSafePositionToolStripMenuItem.Click += removeSafePositionToolStripMenuItem_Click;
             // 
+            // PlayerSpawnsCM
+            // 
+            PlayerSpawnsCM.BackColor = Color.FromArgb(60, 63, 65);
+            PlayerSpawnsCM.Items.AddRange(new ToolStripItem[] { addNewSpawnPositionToolStripMenuItem, removeSpawnPositionToolStripMenuItem, addNewSpawnGroupToolStripMenuItem, removeSpawnGroupToolStripMenuItem });
+            PlayerSpawnsCM.Name = "TypesCM";
+            PlayerSpawnsCM.ShowImageMargin = false;
+            PlayerSpawnsCM.Size = new Size(183, 114);
+            // 
+            // addNewSpawnPositionToolStripMenuItem
+            // 
+            addNewSpawnPositionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewSpawnPositionToolStripMenuItem.Name = "addNewSpawnPositionToolStripMenuItem";
+            addNewSpawnPositionToolStripMenuItem.Size = new Size(182, 22);
+            addNewSpawnPositionToolStripMenuItem.Text = "Add New Spawn Position";
+            addNewSpawnPositionToolStripMenuItem.Click += addNewSpawnPositionToolStripMenuItem_Click;
+            // 
+            // removeSpawnPositionToolStripMenuItem
+            // 
+            removeSpawnPositionToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeSpawnPositionToolStripMenuItem.Name = "removeSpawnPositionToolStripMenuItem";
+            removeSpawnPositionToolStripMenuItem.Size = new Size(182, 22);
+            removeSpawnPositionToolStripMenuItem.Text = "Remove Spawn Position";
+            removeSpawnPositionToolStripMenuItem.Click += removeSpawnPositionToolStripMenuItem_Click;
+            // 
+            // addNewSpawnGroupToolStripMenuItem
+            // 
+            addNewSpawnGroupToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewSpawnGroupToolStripMenuItem.Name = "addNewSpawnGroupToolStripMenuItem";
+            addNewSpawnGroupToolStripMenuItem.Size = new Size(182, 22);
+            addNewSpawnGroupToolStripMenuItem.Text = "Add New Spawn Group";
+            addNewSpawnGroupToolStripMenuItem.Click += addNewSpawnGroupToolStripMenuItem_Click;
+            // 
+            // removeSpawnGroupToolStripMenuItem
+            // 
+            removeSpawnGroupToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeSpawnGroupToolStripMenuItem.Name = "removeSpawnGroupToolStripMenuItem";
+            removeSpawnGroupToolStripMenuItem.Size = new Size(182, 22);
+            removeSpawnGroupToolStripMenuItem.Text = "Remove Spawn Group";
+            removeSpawnGroupToolStripMenuItem.Click += removeSpawnGroupToolStripMenuItem_Click;
+            // 
             // EconomyForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -669,6 +715,7 @@ namespace EconomyPlugin
             PlayerRestrictedAreaCM.ResumeLayout(false);
             ObjectSpawnerArrCM.ResumeLayout(false);
             cfgEffectsAreaCM.ResumeLayout(false);
+            PlayerSpawnsCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -736,5 +783,10 @@ namespace EconomyPlugin
         private ToolStripMenuItem removeEffectAreaToolStripMenuItem;
         private ToolStripMenuItem addNewSafePositionToolStripMenuItem;
         private ToolStripMenuItem removeSafePositionToolStripMenuItem;
+        private ContextMenuStrip PlayerSpawnsCM;
+        private ToolStripMenuItem addNewSpawnPositionToolStripMenuItem;
+        private ToolStripMenuItem removeSpawnPositionToolStripMenuItem;
+        private ToolStripMenuItem addNewSpawnGroupToolStripMenuItem;
+        private ToolStripMenuItem removeSpawnGroupToolStripMenuItem;
     }
 }

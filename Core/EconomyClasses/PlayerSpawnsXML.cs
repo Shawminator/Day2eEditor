@@ -317,6 +317,23 @@ namespace DayZeLib
                 this.max_dist_triggerField = value;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not playerspawnpointsSpawn_params other)
+                return false;
+
+            return this.min_dist_infected == other.min_dist_infected
+                && this.max_dist_infected == other.max_dist_infected
+                && this.min_dist_player == other.min_dist_player
+                && this.max_dist_player == other.max_dist_player
+                && this.min_dist_static == other.min_dist_static
+                && this.max_dist_static == other.max_dist_static
+                && this.min_dist_triggerSpecified == other.min_dist_triggerSpecified
+                && this.min_dist_trigger == other.min_dist_trigger
+                && this.max_dist_triggerSpecified == other.max_dist_triggerSpecified
+                && this.max_dist_trigger == other.max_dist_trigger;
+        }
     }
 
     /// <remarks/>
@@ -437,6 +454,20 @@ namespace DayZeLib
                 this.allow_in_waterfield = value;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not playerspawnpointsGenerator_params other)
+                return false;
+
+            return this.grid_density == other.grid_density
+                && this.grid_width == other.grid_width
+                && this.grid_height == other.grid_height
+                && this.min_dist_static == other.min_dist_static
+                && this.max_dist_static == other.max_dist_static
+                && this.min_steepness == other.min_steepness
+                && this.allow_in_water == other.allow_in_water;
+        }
     }
 
     /// <remarks/>
@@ -504,6 +535,17 @@ namespace DayZeLib
         public playerspawnpointsGroup_params()
         {
             groups_as_regular = true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not playerspawnpointsGroup_params other)
+                return false;
+
+            return this.enablegroups == other.enablegroups
+                && this.groups_as_regular == other.groups_as_regular
+                && this.lifetime == other.lifetime
+                && this.counter == other.counter;
         }
     }
 

@@ -82,6 +82,7 @@
             GroupParamgroups_as_regularCB.Size = new Size(15, 14);
             GroupParamgroups_as_regularCB.TabIndex = 12;
             GroupParamgroups_as_regularCB.UseVisualStyleBackColor = true;
+            GroupParamgroups_as_regularCB.CheckedChanged += GroupParamgroups_as_regularCB_CheckedChanged;
             // 
             // GroupParamsenablegroupsCB
             // 
@@ -117,6 +118,7 @@
             GroupParamscounterNUD.Size = new Size(79, 23);
             GroupParamscounterNUD.TabIndex = 10;
             GroupParamscounterNUD.TextAlign = HorizontalAlignment.Center;
+            GroupParamscounterNUD.ValueChanged += GroupParamscounterNUD_ValueChanged;
             // 
             // label164
             // 
@@ -152,6 +154,7 @@
             GroupParamslifetimeNUD.Size = new Size(79, 23);
             GroupParamslifetimeNUD.TabIndex = 8;
             GroupParamslifetimeNUD.TextAlign = HorizontalAlignment.Center;
+            GroupParamslifetimeNUD.ValueChanged += GroupParamslifetimeNUD_ValueChanged;
             // 
             // cfgplayerspawnGroupParamsControl
             // 
