@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 
@@ -264,8 +265,13 @@ namespace EconomyPlugin
                 [typeof(weatherSnowfall)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new cfgweatherSnowfallControl(), typeof(cfgweatherConfig), node.Tag as weatherSnowfall, selected),
                 [typeof(weatherStorm)] = (node, selected) =>
-                   ShowHandler<IUIHandler>(new cfgweatherStormControl(), typeof(cfgweatherConfig), node.Tag as weatherStorm, selected)
+                   ShowHandler<IUIHandler>(new cfgweatherStormControl(), typeof(cfgweatherConfig), node.Tag as weatherStorm, selected),
 
+                //cfgundergroundtriggers
+                [typeof(Trigger)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgundergroundtriggersTriggerControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Trigger, selected),
+                [typeof(Breadcrumb)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new cfgundergroundtriggersBreadCrumbControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Breadcrumb, selected)
 
 
             };
@@ -284,7 +290,7 @@ namespace EconomyPlugin
                     cfgweatherConfig cfg = node.FindParentOfType<cfgweatherConfig>();
                     ShowHandler<IUIHandler>(new cfgweatherresetControl(), typeof(cfgweatherConfig), cfg.Data, selected);
                 },
-                ["DefsCategories"] = (node, selected) => 
+                ["DefsCategories"] = (node, selected) =>
                 {
                     var cfg = node.FindParentOfType<cfglimitsdefinitionConfig>();
                     ShowHandler(new cfglimitsdefinitionCategoryControl(), typeof(cfglimitsdefinitionConfig), cfg, selected);
@@ -658,6 +664,20 @@ namespace EconomyPlugin
                     PlayerSpawnsCM.Items.Clear();
                     PlayerSpawnsCM.Items.Add(removeSpawnPositionToolStripMenuItem);
                     PlayerSpawnsCM.Show(Cursor.Position);
+                },
+
+                // IgnoreList
+                [typeof(cfgignorelistConfig)] = node =>
+                {
+                    IgnoreListCM.Items.Clear();
+                    IgnoreListCM.Items.Add(addClassnameToolStripMenuItem);
+                    IgnoreListCM.Show(Cursor.Position);
+                },
+                [typeof(ignoreType)] = node =>
+                {
+                    IgnoreListCM.Items.Clear();
+                    IgnoreListCM.Items.Add(removeClassnameToolStripMenuItem);
+                    IgnoreListCM.Show(Cursor.Position);
                 }
             };
 
@@ -971,6 +991,10 @@ namespace EconomyPlugin
             // cfgweatherconfig
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgweatherConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgweatherConfig, CreatecfgweatherNodes);
+
+            // cfgignorelist
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgignorelistConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgignorelistConfig, CreatecfgignorelistNodes);
 
             EconomyTV.Nodes.Add(rootNode);
         }
@@ -1849,14 +1873,33 @@ namespace EconomyPlugin
             eventRoot.Nodes.Add(ValueFlag);
             return eventRoot;
         }
+        //creating ubergroundnodes
         private TreeNode CreatecfgundergroundtriggersConfigUserConfigNodes(cfgundergroundtriggersConfig config)
         {
-            TreeNode eventRoot = new TreeNode(config.FileName)
+            TreeNode rootNode = new TreeNode(config.FileName)
             {
                 Tag = config
             };
-            return eventRoot;
+            foreach (Trigger t in _economyManager.cfgundergroundtriggersConfig.Data.Triggers)
+            {
+                string triggeryype = t.gettriggertype();
+                TreeNode triggernode = new TreeNode($"{triggeryype}")
+                {
+                    Tag = t
+                };
+                for (int i = 0; i < t.Breadcrumbs.Count; i++)
+                {
+                    TreeNode bredcrumb = new TreeNode($"BreadCrumb:{i}")
+                    {
+                        Tag = t.Breadcrumbs[i]
+                    };
+                    triggernode.Nodes.Add(bredcrumb);
+                }
+                rootNode.Nodes.Add(triggernode);
+            }
+            return rootNode;
         }
+        //creating trigger effect nodes
         private TreeNode CreatecfgeffectareaConfigConfigNodes(cfgeffectareaConfig config)
         {
             var root = new TreeNode(config.FileName) { Tag = config };
@@ -1935,6 +1978,24 @@ namespace EconomyPlugin
             }
 
             return weatherrootNode;
+        }
+        //creating weather Nodes
+        private TreeNode CreatecfgignorelistNodes(cfgignorelistConfig config)
+        {
+            TreeNode ignorelistrootNode = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+            foreach (ignoreType ignoreType in config.Data.type)
+            {
+                TreeNode typenode = new TreeNode(ignoreType.name)
+                {
+                    Tag = ignoreType
+                };
+                ignorelistrootNode.Nodes.Add(typenode);
+            }
+
+            return ignorelistrootNode;
         }
         #endregion loading treeview
 
@@ -5055,7 +5116,7 @@ namespace EconomyPlugin
                 x = _projectManager.CurrentProject.MapSize / 2,
                 z = _projectManager.CurrentProject.MapSize / 2
             };
-            if(currentTreeNode.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+            if (currentTreeNode.Tag is playerspawnpointsGroup playerspawnpointsGroup)
             {
                 playerspawnpointsGroup.pos.Add(newpos);
             }
@@ -5068,7 +5129,7 @@ namespace EconomyPlugin
                     playerspawnpointssection.group_params.counter = 0;
                 }
                 playerspawnpointssection.generator_posbubbles.Add(newpos);
-                
+
             }
             currentTreeNode.Nodes.Add(new TreeNode(newpos.ToString())
             {
@@ -5079,7 +5140,7 @@ namespace EconomyPlugin
         private void removeSpawnPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             playerspawnpointsGroupPos pos = currentTreeNode.Tag as playerspawnpointsGroupPos;
-            if(currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+            if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
             {
                 playerspawnpointsGroup.pos.Remove(pos);
             }
@@ -5121,6 +5182,55 @@ namespace EconomyPlugin
             playerspawnpointssection.generator_posbubbles.Remove(group);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
+        }
+
+        /// <summary>
+        /// ignorelist right click methods
+        /// </summary>
+        private void removeClassnameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ignoreType ignotrtype = currentTreeNode.Tag as ignoreType;
+            _economyManager.cfgignorelistConfig.Data.type.Remove(ignotrtype);
+            _economyManager.cfgignorelistConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addClassnameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes
+            {
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    ignoreType newignoretype = new ignoreType()
+                    {
+                        name = l
+                    };
+                    if (!_economyManager.cfgignorelistConfig.Data.type.Any(x => x.name == newignoretype.name))
+                    {
+                        _economyManager.cfgignorelistConfig.Data.type.Add(newignoretype);
+                        TreeNode typenode = new TreeNode(newignoretype.name)
+                        {
+                            Tag = newignoretype
+                        };
+                        currentTreeNode.Nodes.Add(typenode);
+                        currentTreeNode.ExpandAll();
+                    }
+                    else
+                    {
+                        MessageBox.Show(newignoretype.name + " Allready exists.....");
+                    }
+                }
+                _economyManager.cfgignorelistConfig.isDirty = true;
+                
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                return;
+            }
         }
     }
 

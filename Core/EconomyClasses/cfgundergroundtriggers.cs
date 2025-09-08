@@ -32,7 +32,7 @@ namespace Day2eEditor
         {
             if (isDirty)
             {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
@@ -71,6 +71,8 @@ namespace Day2eEditor
         public decimal[] Orientation { get; set; }
         public decimal[] Size { get; set; }
         public decimal EyeAccommodation { get; set; }
+        public int? UseLinePointFade { get; set; }	        // simple fade between points which are defined using existing breadcrumbs array. is bool
+        public string? AmbientSoundType { get; set; }       // type of ambient sound which will be played by sound controller. is string
         public BindingList<Breadcrumb> Breadcrumbs { get; set; }
         public decimal? InterpolationSpeed { get; set; }
 
@@ -104,14 +106,34 @@ namespace Day2eEditor
                 return "Transition";
             }
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Trigger other) return false;
+
+            if (Position?.Length != other.Position?.Length) return false;
+            if (Position != null)
+                for (int i = 0; i < Position.Length; i++)
+                    if (Position[i] != other.Position[i]) return false;
+
+            if (Size?.Length != other.Size?.Length) return false;
+            if (Size != null)
+                for (int i = 0; i < Size.Length; i++)
+                    if (Size[i] != other.Size[i]) return false;
+
+            return EyeAccommodation == other.EyeAccommodation &&
+                   UseLinePointFade == other.UseLinePointFade &&
+                   AmbientSoundType == other.AmbientSoundType &&
+                   InterpolationSpeed == other.InterpolationSpeed;
+        }
     }
 
     public class Breadcrumb
     {
         public decimal[] Position { get; set; }
         public decimal EyeAccommodation { get; set; }
-        public int UseRaycast { get; set; }
-        public decimal Radius { get; set; }
+        public int? UseRaycast { get; set; }
+        public decimal? Radius { get; set; }
+        public int? LightLerp { get; set; }                 // only used in LinePointFade. is bool
 
         public Breadcrumb()
         {
@@ -128,5 +150,23 @@ namespace Day2eEditor
                     return "Transition";
             }
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Breadcrumb other) return false;
+
+            if (Position?.Length != other.Position?.Length) return false;
+            if (Position != null)
+            {
+                for (int i = 0; i < Position.Length; i++)
+                    if (Position[i] != other.Position[i])
+                        return false;
+            }
+
+            return EyeAccommodation == other.EyeAccommodation &&
+                   UseRaycast == other.UseRaycast &&
+                   Radius == other.Radius &&
+                   LightLerp == other.LightLerp;
+        }
+
     }
 }

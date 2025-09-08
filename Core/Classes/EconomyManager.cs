@@ -51,8 +51,7 @@ namespace Day2eEditor
         public cfgundergroundtriggersConfig cfgundergroundtriggersConfig { get; set; }
         public cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig { get; set; }
         public cfgweatherConfig cfgweatherConfig { get; set; }
-
-        //public cfgignorelist cfgignorelist { get; set; }
+        public cfgignorelistConfig cfgignorelistConfig { get; set; }
 
         //public mapgroupproto mapgroupproto { get; set; }
         //public mapgrouppos mapgrouppos { get; set; }
@@ -77,6 +76,7 @@ namespace Day2eEditor
             _paths["cfgundergroundtriggers"] = Path.Combine(basePath, "cfgundergroundtriggers.json");
             _paths["cfgplayerspawnpoints"] = Path.Combine(basePath, "cfgplayerspawnpoints.xml");
             _paths["cfgweather"] = Path.Combine(basePath, "cfgweather.xml");
+            _paths["cfgignorelist"] = Path.Combine(basePath, "cfgignorelist.xml");
 
             _paths["VanillaTypes"] = Path.Combine(basePath, "db", "types.xml");
             _paths["VanillaEvents"] = Path.Combine(basePath, "db", "events.xml");
@@ -164,6 +164,9 @@ namespace Day2eEditor
             cfgweatherConfig = new cfgweatherConfig(_paths["cfgweather"]);
             LoadConfigWithErrorReport("cfgweather", cfgweatherConfig);
 
+            cfgignorelistConfig = new cfgignorelistConfig(_paths["cfgignorelist"]);
+            LoadConfigWithErrorReport("cfgignorelist", cfgignorelistConfig);
+
             Console.WriteLine($"\n**** Starting load of EconomyCore Files Including Vanilla ****");
 
             economyConfig = new economyConfig();
@@ -208,7 +211,8 @@ namespace Day2eEditor
                 cfgspawnabletypesConfig,
                 cfgrandompresetsConfig,
                 cfgplayerspawnpointsConfig,
-                cfgweatherConfig
+                cfgweatherConfig,
+                cfgignorelistConfig
             };
 
             var savedFiles = new List<string>();
