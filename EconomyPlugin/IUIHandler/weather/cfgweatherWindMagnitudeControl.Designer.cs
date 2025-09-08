@@ -127,6 +127,7 @@
             WMCLmaxNUD.Size = new Size(91, 23);
             WMCLmaxNUD.TabIndex = 72;
             WMCLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            WMCLmaxNUD.ValueChanged += WMCLmaxNUD_ValueChanged;
             // 
             // WMCLminNUD
             // 
@@ -142,6 +143,7 @@
             WMCLminNUD.Size = new Size(91, 23);
             WMCLminNUD.TabIndex = 71;
             WMCLminNUD.TextAlign = HorizontalAlignment.Center;
+            WMCLminNUD.ValueChanged += WMCLminNUD_ValueChanged;
             // 
             // label93
             // 
@@ -201,6 +203,7 @@
             WMTLmaxNUD.Size = new Size(91, 23);
             WMTLmaxNUD.TabIndex = 72;
             WMTLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            WMTLmaxNUD.ValueChanged += WMTLmaxNUD_ValueChanged;
             // 
             // WMTLminNUD
             // 
@@ -214,6 +217,7 @@
             WMTLminNUD.Size = new Size(91, 23);
             WMTLminNUD.TabIndex = 71;
             WMTLminNUD.TextAlign = HorizontalAlignment.Center;
+            WMTLminNUD.ValueChanged += WMTLminNUD_ValueChanged;
             // 
             // label98
             // 
@@ -275,6 +279,7 @@
             WMLmaxNUD.Size = new Size(91, 23);
             WMLmaxNUD.TabIndex = 72;
             WMLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            WMLmaxNUD.ValueChanged += WMLmaxNUD_ValueChanged;
             // 
             // WMLminNUD
             // 
@@ -290,6 +295,7 @@
             WMLminNUD.Size = new Size(91, 23);
             WMLminNUD.TabIndex = 71;
             WMLminNUD.TextAlign = HorizontalAlignment.Center;
+            WMLminNUD.ValueChanged += WMLminNUD_ValueChanged;
             // 
             // label162
             // 
@@ -351,6 +357,7 @@
             WMCdurationNUD.Size = new Size(91, 23);
             WMCdurationNUD.TabIndex = 73;
             WMCdurationNUD.TextAlign = HorizontalAlignment.Center;
+            WMCdurationNUD.ValueChanged += WMCdurationNUD_ValueChanged;
             // 
             // WMCtimeNUD
             // 
@@ -364,6 +371,7 @@
             WMCtimeNUD.Size = new Size(91, 23);
             WMCtimeNUD.TabIndex = 72;
             WMCtimeNUD.TextAlign = HorizontalAlignment.Center;
+            WMCtimeNUD.ValueChanged += WMCtimeNUD_ValueChanged;
             // 
             // WMCactualNUD
             // 
@@ -378,6 +386,7 @@
             WMCactualNUD.Size = new Size(91, 23);
             WMCactualNUD.TabIndex = 71;
             WMCactualNUD.TextAlign = HorizontalAlignment.Center;
+            WMCactualNUD.ValueChanged += WMCactualNUD_ValueChanged;
             // 
             // label167
             // 

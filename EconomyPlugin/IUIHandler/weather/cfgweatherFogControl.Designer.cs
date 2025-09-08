@@ -127,6 +127,7 @@
             FCLmaxNUD.Size = new Size(91, 23);
             FCLmaxNUD.TabIndex = 72;
             FCLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            FCLmaxNUD.ValueChanged += FCLmaxNUD_ValueChanged;
             // 
             // FCLminNUD
             // 
@@ -142,6 +143,7 @@
             FCLminNUD.Size = new Size(91, 23);
             FCLminNUD.TabIndex = 71;
             FCLminNUD.TextAlign = HorizontalAlignment.Center;
+            FCLminNUD.ValueChanged += FCLminNUD_ValueChanged;
             // 
             // label72
             // 
@@ -201,6 +203,7 @@
             FTLmaxNUD.Size = new Size(91, 23);
             FTLmaxNUD.TabIndex = 72;
             FTLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            FTLmaxNUD.ValueChanged += FTLmaxNUD_ValueChanged;
             // 
             // FTLminNUD
             // 
@@ -214,6 +217,7 @@
             FTLminNUD.Size = new Size(91, 23);
             FTLminNUD.TabIndex = 71;
             FTLminNUD.TextAlign = HorizontalAlignment.Center;
+            FTLminNUD.ValueChanged += FTLminNUD_ValueChanged;
             // 
             // label74
             // 
@@ -275,6 +279,7 @@
             FLmaxNUD.Size = new Size(91, 23);
             FLmaxNUD.TabIndex = 72;
             FLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            FLmaxNUD.ValueChanged += FLmaxNUD_ValueChanged;
             // 
             // FLminNUD
             // 
@@ -290,6 +295,7 @@
             FLminNUD.Size = new Size(91, 23);
             FLminNUD.TabIndex = 71;
             FLminNUD.TextAlign = HorizontalAlignment.Center;
+            FLminNUD.ValueChanged += FLminNUD_ValueChanged;
             // 
             // label76
             // 
@@ -351,6 +357,7 @@
             FCdurationNUD.Size = new Size(91, 23);
             FCdurationNUD.TabIndex = 73;
             FCdurationNUD.TextAlign = HorizontalAlignment.Center;
+            FCdurationNUD.ValueChanged += FCdurationNUD_ValueChanged;
             // 
             // FCtimeNUD
             // 
@@ -364,6 +371,7 @@
             FCtimeNUD.Size = new Size(91, 23);
             FCtimeNUD.TabIndex = 72;
             FCtimeNUD.TextAlign = HorizontalAlignment.Center;
+            FCtimeNUD.ValueChanged += FCtimeNUD_ValueChanged;
             // 
             // FCactualNUD
             // 
@@ -378,6 +386,7 @@
             FCactualNUD.Size = new Size(91, 23);
             FCactualNUD.TabIndex = 71;
             FCactualNUD.TextAlign = HorizontalAlignment.Center;
+            FCactualNUD.ValueChanged += FCactualNUD_ValueChanged;
             // 
             // label78
             // 

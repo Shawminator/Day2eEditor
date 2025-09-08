@@ -89,10 +89,31 @@ namespace EconomyPlugin
         /// </summary>
         private weatherFog CloneData(weatherFog data)
         {
-            // TODO: Implement actual cloning logic
+            if (data == null) return null;
+
             return new weatherFog
             {
-                // Copy properties here
+                current = data.current == null ? null : new weatherFogCurrent
+                {
+                    actual = data.current.actual,
+                    time = data.current.time,
+                    duration = data.current.duration
+                },
+                limits = data.limits == null ? null : new weatherFogLimits
+                {
+                    min = data.limits.min,
+                    max = data.limits.max
+                },
+                timelimits = data.timelimits == null ? null : new weatherFogTimelimits
+                {
+                    min = data.timelimits.min,
+                    max = data.timelimits.max
+                },
+                changelimits = data.changelimits == null ? null : new weatherFogChangelimits
+                {
+                    min = data.changelimits.min,
+                    max = data.changelimits.max
+                }
             };
         }
 
@@ -108,5 +129,60 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void FCactualNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.current.actual = FCactualNUD.Value;
+            HasChanges();
+        }
+        private void FCtimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.current.time = (int)FCtimeNUD.Value;
+            HasChanges();
+        }
+        private void FCdurationNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.current.duration = (int)FCdurationNUD.Value;
+            HasChanges();
+        }
+        private void FLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.limits.min = FLminNUD.Value;
+            HasChanges();
+        }
+        private void FLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.limits.max = FLmaxNUD.Value;
+            HasChanges();
+        }
+        private void FTLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.timelimits.min = (int)FTLminNUD.Value;
+            HasChanges();
+        }
+        private void FTLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.timelimits.max = (int)FTLmaxNUD.Value;
+            HasChanges();
+        }
+        private void FCLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.changelimits.min = FCLminNUD.Value;
+            HasChanges();
+        }
+        private void FCLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+           _data.changelimits.max = FCLmaxNUD.Value;
+            HasChanges();
+        }
     }
 }

@@ -92,10 +92,37 @@ namespace EconomyPlugin
         /// </summary>
         private weatherRain CloneData(weatherRain data)
         {
-            // TODO: Implement actual cloning logic
+            if (data == null) return null;
+
             return new weatherRain
             {
-                // Copy properties here
+                current = data.current == null ? null : new weatherRainCurrent
+                {
+                    actual = data.current.actual,
+                    time = data.current.time,
+                    duration = data.current.duration
+                },
+                limits = data.limits == null ? null : new weatherRainLimits
+                {
+                    min = data.limits.min,
+                    max = data.limits.max
+                },
+                timelimits = data.timelimits == null ? null : new weatherRainTimelimits
+                {
+                    min = data.timelimits.min,
+                    max = data.timelimits.max
+                },
+                changelimits = data.changelimits == null ? null : new weatherRainChangelimits
+                {
+                    min = data.changelimits.min,
+                    max = data.changelimits.max
+                },
+                thresholds = data.thresholds == null ? null : new weatherRainThresholds
+                {
+                    min = data.thresholds.min,
+                    max = data.thresholds.max,
+                    end = data.thresholds.end
+                }
             };
         }
 
@@ -111,5 +138,78 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void RCactualNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.actual = RCactualNUD.Value;
+            HasChanges();
+        }
+        private void RCtimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.time = (int)RCtimeNUD.Value;
+            HasChanges();
+        }
+        private void RCdurationNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.duration = (int)RCdurationNUD.Value;
+            HasChanges();
+        }
+        private void RLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.limits.min = RLminNUD.Value;
+            HasChanges();
+        }
+        private void RLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.limits.min = RLmaxNUD.Value;
+            HasChanges();
+        }
+        private void RTLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timelimits.min = (int)RTLminNUD.Value;
+            HasChanges();
+        }
+        private void RTLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timelimits.max = (int)RTLmaxNUD.Value;
+            HasChanges();
+        }
+        private void RCLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.changelimits.min = RCLminNUD.Value;
+            HasChanges();
+        }
+        private void RCLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.changelimits.max = RCLmaxNUD.Value;
+            HasChanges();
+        }
+        private void RTminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.thresholds.min = RTminNUD.Value;
+            HasChanges();
+        }
+        private void RTmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.thresholds.max = RTmaxNUD.Value;
+            HasChanges();
+        }
+        private void RTendNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.thresholds.end = (int)RTendNUD.Value;
+            HasChanges();
+        }
     }
 }

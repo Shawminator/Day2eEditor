@@ -127,6 +127,7 @@
             OCLmaxNUD.Size = new Size(91, 23);
             OCLmaxNUD.TabIndex = 72;
             OCLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            OCLmaxNUD.ValueChanged += OCLmaxNUD_ValueChanged;
             // 
             // OCLminNUD
             // 
@@ -142,6 +143,7 @@
             OCLminNUD.Size = new Size(91, 23);
             OCLminNUD.TabIndex = 71;
             OCLminNUD.TextAlign = HorizontalAlignment.Center;
+            OCLminNUD.ValueChanged += OCLminNUD_ValueChanged;
             // 
             // label70
             // 
@@ -201,6 +203,7 @@
             OTLmaxNUD.Size = new Size(91, 23);
             OTLmaxNUD.TabIndex = 72;
             OTLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            OTLmaxNUD.ValueChanged += OTLmaxNUD_ValueChanged;
             // 
             // OTLminNUD
             // 
@@ -214,6 +217,7 @@
             OTLminNUD.Size = new Size(91, 23);
             OTLminNUD.TabIndex = 71;
             OTLminNUD.TextAlign = HorizontalAlignment.Center;
+            OTLminNUD.ValueChanged += OTLminNUD_ValueChanged;
             // 
             // label66
             // 
@@ -275,6 +279,7 @@
             OLmaxNUD.Size = new Size(91, 23);
             OLmaxNUD.TabIndex = 72;
             OLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            OLmaxNUD.ValueChanged += OLmaxNUD_ValueChanged;
             // 
             // OLminNUD
             // 
@@ -290,6 +295,7 @@
             OLminNUD.Size = new Size(91, 23);
             OLminNUD.TabIndex = 71;
             OLminNUD.TextAlign = HorizontalAlignment.Center;
+            OLminNUD.ValueChanged += OLminNUD_ValueChanged;
             // 
             // label67
             // 
@@ -351,6 +357,7 @@
             OCdurationNUD.Size = new Size(91, 23);
             OCdurationNUD.TabIndex = 73;
             OCdurationNUD.TextAlign = HorizontalAlignment.Center;
+            OCdurationNUD.ValueChanged += OCdurationNUD_ValueChanged;
             // 
             // OCtimeNUD
             // 
@@ -364,6 +371,7 @@
             OCtimeNUD.Size = new Size(91, 23);
             OCtimeNUD.TabIndex = 72;
             OCtimeNUD.TextAlign = HorizontalAlignment.Center;
+            OCtimeNUD.ValueChanged += OCtimeNUD_ValueChanged;
             // 
             // OCactualNUD
             // 
@@ -378,6 +386,7 @@
             OCactualNUD.Size = new Size(91, 23);
             OCactualNUD.TabIndex = 71;
             OCactualNUD.TextAlign = HorizontalAlignment.Center;
+            OCactualNUD.ValueChanged += OCactualNUD_ValueChanged;
             // 
             // label65
             // 

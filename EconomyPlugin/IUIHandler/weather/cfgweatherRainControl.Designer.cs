@@ -140,6 +140,7 @@
             RTendNUD.Size = new Size(91, 23);
             RTendNUD.TabIndex = 73;
             RTendNUD.TextAlign = HorizontalAlignment.Center;
+            RTendNUD.ValueChanged += RTendNUD_ValueChanged;
             // 
             // RTmaxNUD
             // 
@@ -154,6 +155,7 @@
             RTmaxNUD.Size = new Size(91, 23);
             RTmaxNUD.TabIndex = 72;
             RTmaxNUD.TextAlign = HorizontalAlignment.Center;
+            RTmaxNUD.ValueChanged += RTmaxNUD_ValueChanged;
             // 
             // RTminNUD
             // 
@@ -168,6 +170,7 @@
             RTminNUD.Size = new Size(91, 23);
             RTminNUD.TabIndex = 71;
             RTminNUD.TextAlign = HorizontalAlignment.Center;
+            RTminNUD.ValueChanged += RTminNUD_ValueChanged;
             // 
             // label90
             // 
@@ -239,6 +242,7 @@
             RCLmaxNUD.Size = new Size(91, 23);
             RCLmaxNUD.TabIndex = 72;
             RCLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            RCLmaxNUD.ValueChanged += RCLmaxNUD_ValueChanged;
             // 
             // RCLminNUD
             // 
@@ -254,6 +258,7 @@
             RCLminNUD.Size = new Size(91, 23);
             RCLminNUD.TabIndex = 71;
             RCLminNUD.TextAlign = HorizontalAlignment.Center;
+            RCLminNUD.ValueChanged += RCLminNUD_ValueChanged;
             // 
             // label81
             // 
@@ -313,6 +318,7 @@
             RTLmaxNUD.Size = new Size(91, 23);
             RTLmaxNUD.TabIndex = 72;
             RTLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            RTLmaxNUD.ValueChanged += RTLmaxNUD_ValueChanged;
             // 
             // RTLminNUD
             // 
@@ -326,6 +332,7 @@
             RTLminNUD.Size = new Size(91, 23);
             RTLminNUD.TabIndex = 71;
             RTLminNUD.TextAlign = HorizontalAlignment.Center;
+            RTLminNUD.ValueChanged += RTLminNUD_ValueChanged;
             // 
             // label83
             // 
@@ -387,6 +394,7 @@
             RLmaxNUD.Size = new Size(91, 23);
             RLmaxNUD.TabIndex = 72;
             RLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            RLmaxNUD.ValueChanged += RLmaxNUD_ValueChanged;
             // 
             // RLminNUD
             // 
@@ -402,6 +410,7 @@
             RLminNUD.Size = new Size(91, 23);
             RLminNUD.TabIndex = 71;
             RLminNUD.TextAlign = HorizontalAlignment.Center;
+            RLminNUD.ValueChanged += RLminNUD_ValueChanged;
             // 
             // label85
             // 
@@ -463,6 +472,7 @@
             RCdurationNUD.Size = new Size(91, 23);
             RCdurationNUD.TabIndex = 73;
             RCdurationNUD.TextAlign = HorizontalAlignment.Center;
+            RCdurationNUD.ValueChanged += RCdurationNUD_ValueChanged;
             // 
             // RCtimeNUD
             // 
@@ -476,6 +486,7 @@
             RCtimeNUD.Size = new Size(91, 23);
             RCtimeNUD.TabIndex = 72;
             RCtimeNUD.TextAlign = HorizontalAlignment.Center;
+            RCtimeNUD.ValueChanged += RCtimeNUD_ValueChanged;
             // 
             // RCactualNUD
             // 
@@ -490,6 +501,7 @@
             RCactualNUD.Size = new Size(91, 23);
             RCactualNUD.TabIndex = 71;
             RCactualNUD.TextAlign = HorizontalAlignment.Center;
+            RCactualNUD.ValueChanged += RCactualNUD_ValueChanged;
             // 
             // label87
             // 

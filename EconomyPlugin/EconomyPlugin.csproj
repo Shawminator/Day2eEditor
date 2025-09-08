@@ -28,6 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="IUIHandler\definitions\cfglimitsdefinitionValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\definitions\cfglimitsdefinitionUsageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\definitions\cfglimitsdefinitionTagsControl.cs" />
     <Compile Update="IUIHandler\spawnabletypes\SpawnabletypesDamageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

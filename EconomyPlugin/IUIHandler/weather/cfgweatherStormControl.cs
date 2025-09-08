@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace EconomyPlugin
 {
@@ -86,7 +87,9 @@ namespace EconomyPlugin
             // TODO: Implement actual cloning logic
             return new weatherStorm
             {
-                // Copy properties here
+                density = data.density,
+                threshold = data.threshold,
+                timeout = data.timeout
             };
         }
 
@@ -102,5 +105,26 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void SdensityNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.density = SdensityNUD.Value;
+            HasChanges();
+        }
+
+        private void SthresholdNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.threshold = SthresholdNUD.Value;
+            HasChanges();
+        }
+
+        private void StimeoutNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timeout = (int)StimeoutNUD.Value;
+            HasChanges();
+        }
     }
 }

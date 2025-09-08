@@ -120,6 +120,16 @@ namespace Day2eEditor
                 this.valueflagsField = value;
             }
         }
+
+        public bool Equals(cfglimitsdefinition other)
+        {
+            if (other is null) return false;
+
+            return Enumerable.SequenceEqual(categories ?? new BindingList<listsCategory>(), other.categories ?? new BindingList<listsCategory>()) &&
+                   Enumerable.SequenceEqual(tags ?? new BindingList<listsTag>(), other.tags ?? new BindingList<listsTag>()) &&
+                   Enumerable.SequenceEqual(usageflags ?? new BindingList<listsUsage>(), other.usageflags ?? new BindingList<listsUsage>()) &&
+                   Enumerable.SequenceEqual(valueflags ?? new BindingList<listsValue>(), other.valueflags ?? new BindingList<listsValue>());
+        }
     }
 
     /// <remarks/>
@@ -148,6 +158,8 @@ namespace Day2eEditor
         {
             return name;
         }
+        public override bool Equals(object obj) =>
+            obj is listsCategory other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
     /// <remarks/>
@@ -176,6 +188,8 @@ namespace Day2eEditor
         {
             return name;
         }
+        public override bool Equals(object obj) =>
+            obj is listsTag other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
     /// <remarks/>
@@ -203,6 +217,8 @@ namespace Day2eEditor
         {
             return name;
         }
+        public override bool Equals(object obj) =>
+            obj is listsUsage other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
     /// <remarks/>
@@ -231,6 +247,8 @@ namespace Day2eEditor
         {
             return name;
         }
+        public override bool Equals(object obj) =>
+            obj is listsValue other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
 

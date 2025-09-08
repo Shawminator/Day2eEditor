@@ -30,31 +30,31 @@
         {
             groupBox84 = new GroupBox();
             groupBox85 = new GroupBox();
+            label4 = new Label();
             WDCLmaxNUD = new NumericUpDown();
             WDCLminNUD = new NumericUpDown();
             label170 = new Label();
             label171 = new Label();
             groupBox86 = new GroupBox();
+            label3 = new Label();
             WDTLmaxNUD = new NumericUpDown();
             WDTLminNUD = new NumericUpDown();
             label172 = new Label();
             label173 = new Label();
             groupBox87 = new GroupBox();
+            label2 = new Label();
             WDLmaxNUD = new NumericUpDown();
             WDLminNUD = new NumericUpDown();
             label174 = new Label();
             label175 = new Label();
             groupBox88 = new GroupBox();
+            label1 = new Label();
             WDCdurationNUD = new NumericUpDown();
             WDCtimeNUD = new NumericUpDown();
             WDCactualNUD = new NumericUpDown();
             label176 = new Label();
             label177 = new Label();
             label178 = new Label();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
             groupBox84.SuspendLayout();
             groupBox85.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)WDCLmaxNUD).BeginInit();
@@ -104,6 +104,15 @@
             groupBox85.TabStop = false;
             groupBox85.Text = "Change Limits";
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(7, 19);
+            label4.Name = "label4";
+            label4.Size = new Size(246, 15);
+            label4.TabIndex = 73;
+            label4.Text = "How much should the wind change direction";
+            // 
             // WDCLmaxNUD
             // 
             WDCLmaxNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -118,6 +127,7 @@
             WDCLmaxNUD.Size = new Size(91, 23);
             WDCLmaxNUD.TabIndex = 72;
             WDCLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            WDCLmaxNUD.ValueChanged += WDCLmaxNUD_ValueChanged;
             // 
             // WDCLminNUD
             // 
@@ -133,6 +143,7 @@
             WDCLminNUD.Size = new Size(91, 23);
             WDCLminNUD.TabIndex = 71;
             WDCLminNUD.TextAlign = HorizontalAlignment.Center;
+            WDCLminNUD.ValueChanged += WDCLminNUD_ValueChanged;
             // 
             // label170
             // 
@@ -171,6 +182,15 @@
             groupBox86.TabStop = false;
             groupBox86.Text = "Time Limits";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(7, 19);
+            label3.Name = "label3";
+            label3.Size = new Size(513, 15);
+            label3.TabIndex = 73;
+            label3.Text = "How long does it take to the wind direction to change from one value to other (time in seconds)";
+            // 
             // WDTLmaxNUD
             // 
             WDTLmaxNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -183,6 +203,7 @@
             WDTLmaxNUD.Size = new Size(91, 23);
             WDTLmaxNUD.TabIndex = 72;
             WDTLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            WDTLmaxNUD.ValueChanged += WDTLmaxNUD_ValueChanged;
             // 
             // WDTLminNUD
             // 
@@ -196,6 +217,7 @@
             WDTLminNUD.Size = new Size(91, 23);
             WDTLminNUD.TabIndex = 71;
             WDTLminNUD.TextAlign = HorizontalAlignment.Center;
+            WDTLminNUD.ValueChanged += WDTLminNUD_ValueChanged;
             // 
             // label172
             // 
@@ -234,6 +256,15 @@
             groupBox87.TabStop = false;
             groupBox87.Text = "Limits";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(7, 19);
+            label2.Name = "label2";
+            label2.Size = new Size(302, 15);
+            label2.TabIndex = 73;
+            label2.Text = "What is the range of the wind direction (angle in radians";
+            // 
             // WDLmaxNUD
             // 
             WDLmaxNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -248,6 +279,7 @@
             WDLmaxNUD.Size = new Size(91, 23);
             WDLmaxNUD.TabIndex = 72;
             WDLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            WDLmaxNUD.ValueChanged += WDLmaxNUD_ValueChanged;
             // 
             // WDLminNUD
             // 
@@ -263,6 +295,7 @@
             WDLminNUD.Size = new Size(91, 23);
             WDLminNUD.TabIndex = 71;
             WDLminNUD.TextAlign = HorizontalAlignment.Center;
+            WDLminNUD.ValueChanged += WDLminNUD_ValueChanged;
             // 
             // label174
             // 
@@ -303,6 +336,15 @@
             groupBox88.TabStop = false;
             groupBox88.Text = "Current";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(7, 19);
+            label1.Name = "label1";
+            label1.Size = new Size(673, 15);
+            label1.TabIndex = 74;
+            label1.Text = "Initial conditions of the wind direction(target value, time to change, how long will it stay), restricted by thresholds (see below)1";
+            // 
             // WDCdurationNUD
             // 
             WDCdurationNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -315,6 +357,7 @@
             WDCdurationNUD.Size = new Size(91, 23);
             WDCdurationNUD.TabIndex = 73;
             WDCdurationNUD.TextAlign = HorizontalAlignment.Center;
+            WDCdurationNUD.ValueChanged += WDCdurationNUD_ValueChanged;
             // 
             // WDCtimeNUD
             // 
@@ -328,6 +371,7 @@
             WDCtimeNUD.Size = new Size(91, 23);
             WDCtimeNUD.TabIndex = 72;
             WDCtimeNUD.TextAlign = HorizontalAlignment.Center;
+            WDCtimeNUD.ValueChanged += WDCtimeNUD_ValueChanged;
             // 
             // WDCactualNUD
             // 
@@ -342,6 +386,7 @@
             WDCactualNUD.Size = new Size(91, 23);
             WDCactualNUD.TabIndex = 71;
             WDCactualNUD.TextAlign = HorizontalAlignment.Center;
+            WDCactualNUD.ValueChanged += WDCactualNUD_ValueChanged;
             // 
             // label176
             // 
@@ -372,42 +417,6 @@
             label178.Size = new Size(39, 15);
             label178.TabIndex = 0;
             label178.Text = "actual";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(7, 19);
-            label1.Name = "label1";
-            label1.Size = new Size(673, 15);
-            label1.TabIndex = 74;
-            label1.Text = "Initial conditions of the wind direction(target value, time to change, how long will it stay), restricted by thresholds (see below)1";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(7, 19);
-            label2.Name = "label2";
-            label2.Size = new Size(302, 15);
-            label2.TabIndex = 73;
-            label2.Text = "What is the range of the wind direction (angle in radians";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(7, 19);
-            label3.Name = "label3";
-            label3.Size = new Size(513, 15);
-            label3.TabIndex = 73;
-            label3.Text = "How long does it take to the wind direction to change from one value to other (time in seconds)";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(7, 19);
-            label4.Name = "label4";
-            label4.Size = new Size(246, 15);
-            label4.TabIndex = 73;
-            label4.Text = "How much should the wind change direction";
             // 
             // cfgweatherWindDirectionControl
             // 

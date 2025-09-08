@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace EconomyPlugin
 {
@@ -92,10 +93,37 @@ namespace EconomyPlugin
         /// </summary>
         private weatherSnowfall CloneData(weatherSnowfall data)
         {
-            // TODO: Implement actual cloning logic
+            if (data == null) return null;
+
             return new weatherSnowfall
             {
-                // Copy properties here
+                current = data.current == null ? null : new weatherSnowfallCurrent
+                {
+                    actual = data.current.actual,
+                    time = data.current.time,
+                    duration = data.current.duration
+                },
+                limits = data.limits == null ? null : new weatherSnowfallLimits
+                {
+                    min = data.limits.min,
+                    max = data.limits.max
+                },
+                timelimits = data.timelimits == null ? null : new weatherSnowfallTimelimits
+                {
+                    min = data.timelimits.min,
+                    max = data.timelimits.max
+                },
+                changelimits = data.changelimits == null ? null : new weatherSnowfallChangelimits
+                {
+                    min = data.changelimits.min,
+                    max = data.changelimits.max
+                },
+                thresholds = data.thresholds == null ? null : new weatherSnowfallThresholds
+                {
+                    min = data.thresholds.min,
+                    max = data.thresholds.max,
+                    end = data.thresholds.end
+                }
             };
         }
 
@@ -111,5 +139,78 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void SCactualNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.actual = SCactualNUD.Value;
+            HasChanges();
+        }
+        private void SCtimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.time = (int)SCtimeNUD.Value;
+            HasChanges();
+        }
+        private void SCdurationNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.duration = (int)SCdurationNUD.Value;
+            HasChanges();
+        }
+        private void SLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.limits.min = SLminNUD.Value;
+            HasChanges();
+        }
+        private void SLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.limits.max = SLmaxNUD.Value;
+            HasChanges();
+        }
+        private void STLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timelimits.min = (int)STLminNUD.Value;
+            HasChanges();
+        }
+        private void STLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timelimits.max = (int)STLmaxNUD.Value;
+            HasChanges();
+        }
+        private void SCLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.changelimits.min = SCLminNUD.Value;
+            HasChanges();
+        }
+        private void SCLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.changelimits.max = SCLmaxNUD.Value;
+            HasChanges();
+        }
+        private void STminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.thresholds.min = STminNUD.Value;
+            HasChanges();
+        }
+        private void STmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.thresholds.max = STmaxNUD.Value;
+            HasChanges();
+        }
+        private void STendNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.thresholds.end = (int)STendNUD.Value;
+            HasChanges();
+        }
     }
 }

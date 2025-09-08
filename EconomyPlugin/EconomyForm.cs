@@ -284,6 +284,26 @@ namespace EconomyPlugin
                     cfgweatherConfig cfg = node.FindParentOfType<cfgweatherConfig>();
                     ShowHandler<IUIHandler>(new cfgweatherresetControl(), typeof(cfgweatherConfig), cfg.Data, selected);
                 },
+                ["DefsCategories"] = (node, selected) => 
+                {
+                    var cfg = node.FindParentOfType<cfglimitsdefinitionConfig>();
+                    ShowHandler(new cfglimitsdefinitionCategoryControl(), typeof(cfglimitsdefinitionConfig), cfg, selected);
+                },
+                ["DefsTags"] = (node, selected) =>
+                {
+                    var cfg = node.FindParentOfType<cfglimitsdefinitionConfig>();
+                    ShowHandler(new cfglimitsdefinitionTagsControl(), typeof(cfglimitsdefinitionConfig), cfg, selected);
+                },
+                ["DefsUsageFlags"] = (node, selected) =>
+                {
+                    var cfg = node.FindParentOfType<cfglimitsdefinitionConfig>();
+                    ShowHandler(new cfglimitsdefinitionUagesControl(), typeof(cfglimitsdefinitionConfig), cfg, selected);
+                },
+                ["DefsValueFlags"] = (node, selected) =>
+                {
+                    var cfg = node.FindParentOfType<cfglimitsdefinitionConfig>();
+                    ShowHandler(new cfglimitsdefinitionValueControl(), typeof(cfglimitsdefinitionConfig), cfg, selected);
+                },
                 ["DefsUserUsageFlags"] = (node, selected) =>
                 {
                     var cfg = node.FindParentOfType<cfglimitsdefinitionuserConfig>();

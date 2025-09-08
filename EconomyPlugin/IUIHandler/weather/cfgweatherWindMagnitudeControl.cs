@@ -89,10 +89,31 @@ namespace EconomyPlugin
         /// </summary>
         private weatherWindMagnitude CloneData(weatherWindMagnitude data)
         {
-            // TODO: Implement actual cloning logic
+            if (data == null) return null;
+
             return new weatherWindMagnitude
             {
-                // Copy properties here
+                current = data.current == null ? null : new weatherWindMagnitudeCurrent
+                {
+                    actual = data.current.actual,
+                    time = data.current.time,
+                    duration = data.current.duration
+                },
+                limits = data.limits == null ? null : new weatherWindMagnitudeLimits
+                {
+                    min = data.limits.min,
+                    max = data.limits.max
+                },
+                timelimits = data.timelimits == null ? null : new weatherWindMagnitudeTimelimits
+                {
+                    min = data.timelimits.min,
+                    max = data.timelimits.max
+                },
+                changelimits = data.changelimits == null ? null : new weatherWindMagnitudeChangelimits
+                {
+                    min = data.changelimits.min,
+                    max = data.changelimits.max
+                }
             };
         }
 
@@ -108,5 +129,60 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void WMCactualNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.actual = WMCactualNUD.Value;
+            HasChanges();
+        }
+        private void WMCtimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.time = (int)WMCtimeNUD.Value;
+            HasChanges();
+        }
+        private void WMCdurationNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.current.duration = (int)WMCdurationNUD.Value;
+            HasChanges();
+        }
+        private void WMLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.limits.min = WMLminNUD.Value;
+            HasChanges();
+        }
+        private void WMLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.limits.max = WMLmaxNUD.Value;
+            HasChanges();
+        }
+        private void WMTLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timelimits.min = (int)WMTLminNUD.Value;
+            HasChanges();
+        }
+        private void WMTLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.timelimits.max = (int)WMTLmaxNUD.Value;
+            HasChanges();
+        }
+        private void WMCLminNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.changelimits.min = WMCLminNUD.Value;
+            HasChanges();
+        }
+        private void WMCLmaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.changelimits.max = WMCLmaxNUD.Value;
+            HasChanges();
+        }
     }
 }

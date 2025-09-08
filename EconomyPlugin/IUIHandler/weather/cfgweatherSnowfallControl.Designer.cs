@@ -30,6 +30,7 @@
         {
             groupBox89 = new GroupBox();
             groupBox90 = new GroupBox();
+            label5 = new Label();
             STendNUD = new NumericUpDown();
             STmaxNUD = new NumericUpDown();
             STminNUD = new NumericUpDown();
@@ -37,32 +38,31 @@
             label180 = new Label();
             label181 = new Label();
             groupBox91 = new GroupBox();
+            label4 = new Label();
             SCLmaxNUD = new NumericUpDown();
             SCLminNUD = new NumericUpDown();
             label182 = new Label();
             label183 = new Label();
             groupBox92 = new GroupBox();
+            label3 = new Label();
             STLmaxNUD = new NumericUpDown();
             STLminNUD = new NumericUpDown();
             label184 = new Label();
             label185 = new Label();
             groupBox93 = new GroupBox();
+            label2 = new Label();
             SLmaxNUD = new NumericUpDown();
             SLminNUD = new NumericUpDown();
             label186 = new Label();
             label187 = new Label();
             groupBox94 = new GroupBox();
+            label1 = new Label();
             SCdurationNUD = new NumericUpDown();
             SCtimeNUD = new NumericUpDown();
             SCactualNUD = new NumericUpDown();
             label188 = new Label();
             label189 = new Label();
             label190 = new Label();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
             groupBox89.SuspendLayout();
             groupBox90.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)STendNUD).BeginInit();
@@ -119,6 +119,15 @@
             groupBox90.TabStop = false;
             groupBox90.Text = "Thresholds";
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(7, 19);
+            label5.Name = "label5";
+            label5.Size = new Size(967, 15);
+            label5.TabIndex = 74;
+            label5.Text = "What range of the overcast value allows the snowfall to be preset (min, max overcast value, time in seconds it takes for snowfall to stop if the overcast is outside of the specified range)";
+            // 
             // STendNUD
             // 
             STendNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -131,6 +140,7 @@
             STendNUD.Size = new Size(91, 23);
             STendNUD.TabIndex = 73;
             STendNUD.TextAlign = HorizontalAlignment.Center;
+            STendNUD.ValueChanged += STendNUD_ValueChanged;
             // 
             // STmaxNUD
             // 
@@ -145,6 +155,7 @@
             STmaxNUD.Size = new Size(91, 23);
             STmaxNUD.TabIndex = 72;
             STmaxNUD.TextAlign = HorizontalAlignment.Center;
+            STmaxNUD.ValueChanged += STmaxNUD_ValueChanged;
             // 
             // STminNUD
             // 
@@ -159,6 +170,7 @@
             STminNUD.Size = new Size(91, 23);
             STminNUD.TabIndex = 71;
             STminNUD.TextAlign = HorizontalAlignment.Center;
+            STminNUD.ValueChanged += STminNUD_ValueChanged;
             // 
             // label179
             // 
@@ -207,6 +219,15 @@
             groupBox91.TabStop = false;
             groupBox91.Text = "Change Limits";
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(7, 19);
+            label4.Name = "label4";
+            label4.Size = new Size(243, 15);
+            label4.TabIndex = 73;
+            label4.Text = "How much should the snowfall change (0..1)";
+            // 
             // SCLmaxNUD
             // 
             SCLmaxNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -221,6 +242,7 @@
             SCLmaxNUD.Size = new Size(91, 23);
             SCLmaxNUD.TabIndex = 72;
             SCLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            SCLmaxNUD.ValueChanged += SCLmaxNUD_ValueChanged;
             // 
             // SCLminNUD
             // 
@@ -236,6 +258,7 @@
             SCLminNUD.Size = new Size(91, 23);
             SCLminNUD.TabIndex = 71;
             SCLminNUD.TextAlign = HorizontalAlignment.Center;
+            SCLminNUD.ValueChanged += SCLminNUD_ValueChanged;
             // 
             // label182
             // 
@@ -274,6 +297,15 @@
             groupBox92.TabStop = false;
             groupBox92.Text = "Time Limits";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(7, 19);
+            label3.Name = "label3";
+            label3.Size = new Size(481, 15);
+            label3.TabIndex = 73;
+            label3.Text = "How long does it take to the snowfall to change from one value to other (time in seconds)";
+            // 
             // STLmaxNUD
             // 
             STLmaxNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -286,6 +318,7 @@
             STLmaxNUD.Size = new Size(91, 23);
             STLmaxNUD.TabIndex = 72;
             STLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            STLmaxNUD.ValueChanged += STLmaxNUD_ValueChanged;
             // 
             // STLminNUD
             // 
@@ -299,6 +332,7 @@
             STLminNUD.Size = new Size(91, 23);
             STLminNUD.TabIndex = 71;
             STLminNUD.TextAlign = HorizontalAlignment.Center;
+            STLminNUD.ValueChanged += STLminNUD_ValueChanged;
             // 
             // label184
             // 
@@ -337,6 +371,15 @@
             groupBox93.TabStop = false;
             groupBox93.Text = "Limits";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(7, 19);
+            label2.Name = "label2";
+            label2.Size = new Size(240, 15);
+            label2.TabIndex = 73;
+            label2.Text = "What is the range of the snowfall value (0..1)";
+            // 
             // SLmaxNUD
             // 
             SLmaxNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -351,6 +394,7 @@
             SLmaxNUD.Size = new Size(91, 23);
             SLmaxNUD.TabIndex = 72;
             SLmaxNUD.TextAlign = HorizontalAlignment.Center;
+            SLmaxNUD.ValueChanged += SLmaxNUD_ValueChanged;
             // 
             // SLminNUD
             // 
@@ -366,6 +410,7 @@
             SLminNUD.Size = new Size(91, 23);
             SLminNUD.TabIndex = 71;
             SLminNUD.TextAlign = HorizontalAlignment.Center;
+            SLminNUD.ValueChanged += SLminNUD_ValueChanged;
             // 
             // label186
             // 
@@ -406,6 +451,15 @@
             groupBox94.TabStop = false;
             groupBox94.Text = "Current";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(7, 19);
+            label1.Name = "label1";
+            label1.Size = new Size(638, 15);
+            label1.TabIndex = 74;
+            label1.Text = "Initial conditions of the snowfall (target value, time to change, how long will it stay), restricted by thresholds (see below)";
+            // 
             // SCdurationNUD
             // 
             SCdurationNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -418,6 +472,7 @@
             SCdurationNUD.Size = new Size(91, 23);
             SCdurationNUD.TabIndex = 73;
             SCdurationNUD.TextAlign = HorizontalAlignment.Center;
+            SCdurationNUD.ValueChanged += SCdurationNUD_ValueChanged;
             // 
             // SCtimeNUD
             // 
@@ -431,6 +486,7 @@
             SCtimeNUD.Size = new Size(91, 23);
             SCtimeNUD.TabIndex = 72;
             SCtimeNUD.TextAlign = HorizontalAlignment.Center;
+            SCtimeNUD.ValueChanged += SCtimeNUD_ValueChanged;
             // 
             // SCactualNUD
             // 
@@ -445,6 +501,7 @@
             SCactualNUD.Size = new Size(91, 23);
             SCactualNUD.TabIndex = 71;
             SCactualNUD.TextAlign = HorizontalAlignment.Center;
+            SCactualNUD.ValueChanged += SCactualNUD_ValueChanged;
             // 
             // label188
             // 
@@ -475,51 +532,6 @@
             label190.Size = new Size(39, 15);
             label190.TabIndex = 0;
             label190.Text = "actual";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(7, 19);
-            label1.Name = "label1";
-            label1.Size = new Size(638, 15);
-            label1.TabIndex = 74;
-            label1.Text = "Initial conditions of the snowfall (target value, time to change, how long will it stay), restricted by thresholds (see below)";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(7, 19);
-            label2.Name = "label2";
-            label2.Size = new Size(240, 15);
-            label2.TabIndex = 73;
-            label2.Text = "What is the range of the snowfall value (0..1)";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(7, 19);
-            label3.Name = "label3";
-            label3.Size = new Size(481, 15);
-            label3.TabIndex = 73;
-            label3.Text = "How long does it take to the snowfall to change from one value to other (time in seconds)";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(7, 19);
-            label4.Name = "label4";
-            label4.Size = new Size(243, 15);
-            label4.TabIndex = 73;
-            label4.Text = "How much should the snowfall change (0..1)";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(7, 19);
-            label5.Name = "label5";
-            label5.Size = new Size(967, 15);
-            label5.TabIndex = 74;
-            label5.Text = "What range of the overcast value allows the snowfall to be preset (min, max overcast value, time in seconds it takes for snowfall to stop if the overcast is outside of the specified range)";
             // 
             // cfgweatherSnowfallControl
             // 
