@@ -945,6 +945,41 @@ namespace EconomyPlugin
                 AddFileToTree(rootNode, relativePath, tf, CreateTypesfileNodes);
             }
 
+            // Events config
+            foreach (var ef in _economyManager.eventsConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
+                AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
+            }
+
+            // cfgeffectareaConfig
+            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgeffectareaConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgeffectareaConfig, CreatecfgeffectareaConfigConfigNodes);
+
+            //Enviroment
+
+            //still to do......
+
+            // Gameplay config
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.CFGGameplayConfig, CreateGameplayConfigNodes);
+
+            // cfgignorelist
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgignorelistConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgignorelistConfig, CreatecfgignorelistNodes);
+
+            // limitdefinitions
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionConfig, CreatelimitsDefininitionsConfigNodes);
+
+            // limitdefinitionsuser
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionuserConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionuserConfig, CreatelimitsDefininitionsUserConfigNodes);
+
+            // cfgplayerspawnconfig
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgplayerspawnpointsConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgplayerspawnpointsConfig, CreatecfgPlayerSpawnPointNodes);
+
             // SpawnableTypes config
             foreach (var sf in _economyManager.cfgspawnabletypesConfig.AllData)
             {
@@ -959,42 +994,15 @@ namespace EconomyPlugin
                 AddFileToTree(rootNode, relativePath, rf, CreateRandomPresetsFileNodes);
             }
 
-            // Events config
-            foreach (var ef in _economyManager.eventsConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
-                AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
-            }
-            // Gameplay config
-            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.CFGGameplayConfig.Data, CreateGameplayConfigNodes);
-            // limitdefinitions
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionConfig, CreatelimitsDefininitionsConfigNodes);
-
-            // limitdefinitionsuser
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionuserConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionuserConfig, CreatelimitsDefininitionsUserConfigNodes);
-
-            // cfgeffectareaConfig
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgeffectareaConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgeffectareaConfig, CreatecfgeffectareaConfigConfigNodes);
-
             // cfgundergroundtriggersConfig
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgundergroundtriggersConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgundergroundtriggersConfig, CreatecfgundergroundtriggersConfigUserConfigNodes);
-
-            // cfgplayerspawnconfig
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgplayerspawnpointsConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgplayerspawnpointsConfig, CreatecfgPlayerSpawnPointNodes);
 
             // cfgweatherconfig
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgweatherConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgweatherConfig, CreatecfgweatherNodes);
 
-            // cfgignorelist
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgignorelistConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgignorelistConfig, CreatecfgignorelistNodes);
+           
 
             EconomyTV.Nodes.Add(rootNode);
         }
@@ -1088,55 +1096,55 @@ namespace EconomyPlugin
             return GlobalsRootNode;
         }
         //creating CFGGameplaynodes
-        private TreeNode CreateGameplayConfigNodes(cfggameplay ganmeplay)
+        private TreeNode CreateGameplayConfigNodes(CFGGameplayConfig ganmeplay)
         {
-            TreeNode GameplayRootNode = new TreeNode("GamePlay")
+            TreeNode GameplayRootNode = new TreeNode(ganmeplay.FileName)
             {
-                Tag = _economyManager.CFGGameplayConfig
+                Tag = ganmeplay
             };
-            GameplayRootNode.Nodes.Add(new TreeNode($"Version:{_economyManager.CFGGameplayConfig.Data.version.ToString()}")
+            GameplayRootNode.Nodes.Add(new TreeNode($"Version:{ganmeplay.Data.version.ToString()}")
             {
                 Tag = "cfggameplayConfigVersion"
             });
             GameplayRootNode.Nodes.Add(new TreeNode($"GeneralData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.GeneralData
+                Tag = ganmeplay.Data.GeneralData
             });
             TreeNode PlayerDataNodes = new TreeNode($"PlayerData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.PlayerData
+                Tag = ganmeplay.Data.PlayerData
             };
             TreeNode spawnGearNodes = new TreeNode("SpawnGear Presets Files")
             {
                 Tag = "SpawnGear Presets Files"
             };
-            foreach (string spawnfile in _economyManager.CFGGameplayConfig.Data.PlayerData.spawnGearPresetFiles)
+            foreach (string spawnfile in ganmeplay.Data.PlayerData.spawnGearPresetFiles)
             {
-                SpawnGearPresetFiles spawnGearPresetFiles = _economyManager.CFGGameplayConfig.GetSpawnGearPreset(spawnfile);
+                SpawnGearPresetFiles spawnGearPresetFiles = ganmeplay.GetSpawnGearPreset(spawnfile);
                 spawnGearNodes.Nodes.Add(CreateSpawnGearFilesNodes(spawnGearPresetFiles));
             }
             PlayerDataNodes.Nodes.Add(spawnGearNodes);
             GameplayRootNode.Nodes.Add(PlayerDataNodes);
             TreeNode WorldsDataaNodes = new TreeNode($"WorldsData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.WorldsData
+                Tag = ganmeplay.Data.WorldsData
             };
             TreeNode playerRestrictedAreaFilesNodes = new TreeNode($"Player Restricted Area Files")
             {
                 Tag = "playerRestrictedAreaFiles"
             };
-            foreach (string restrictedfile in _economyManager.CFGGameplayConfig.Data.WorldsData.playerRestrictedAreaFiles)
+            foreach (string restrictedfile in ganmeplay.Data.WorldsData.playerRestrictedAreaFiles)
             {
-                PlayerRestrictedFiles PlayerRestrictedFiles = _economyManager.CFGGameplayConfig.getRestrictedFiles(restrictedfile);
+                PlayerRestrictedFiles PlayerRestrictedFiles = ganmeplay.getRestrictedFiles(restrictedfile);
                 playerRestrictedAreaFilesNodes.Nodes.Add(CreateRestrictedfilesNodes(PlayerRestrictedFiles));
             }
             TreeNode objectspawnerarrfilenodes = new TreeNode($"Object Spawner Arr Files")
             {
                 Tag = "ObjectPawnerArrFiles"
             };
-            foreach (string objectspawnerarrfile in _economyManager.CFGGameplayConfig.Data.WorldsData.objectSpawnersArr)
+            foreach (string objectspawnerarrfile in ganmeplay.Data.WorldsData.objectSpawnersArr)
             {
-                ObjectSpawnerArr ObjectSpawnerArr = _economyManager.CFGGameplayConfig.getobjectspawnerFiles(objectspawnerarrfile);
+                ObjectSpawnerArr ObjectSpawnerArr = ganmeplay.getobjectspawnerFiles(objectspawnerarrfile);
                 objectspawnerarrfilenodes.Nodes.Add(new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName)) { Tag = ObjectSpawnerArr });
             }
             WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
@@ -1144,19 +1152,19 @@ namespace EconomyPlugin
             GameplayRootNode.Nodes.Add(WorldsDataaNodes);
             GameplayRootNode.Nodes.Add(new TreeNode($"BaseBuildingData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.BaseBuildingData
+                Tag = ganmeplay.Data.BaseBuildingData
             });
             GameplayRootNode.Nodes.Add(new TreeNode($"UIData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.UIData
+                Tag = ganmeplay.Data.UIData
             });
             GameplayRootNode.Nodes.Add(new TreeNode($"MapData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.MapData
+                Tag = ganmeplay.Data.MapData
             });
             GameplayRootNode.Nodes.Add(new TreeNode($"VehicleData")
             {
-                Tag = _economyManager.CFGGameplayConfig.Data.VehicleData
+                Tag = ganmeplay.Data.VehicleData
             });
 
             return GameplayRootNode;
@@ -1406,7 +1414,7 @@ namespace EconomyPlugin
         //Creating spawnableTypes Nodes
         private TreeNode CreateSpawnableTypesfileNodes(cfgspawnabletypesFile stf)
         {
-            TreeNode ConfigRoot = new TreeNode(Path.GetFileNameWithoutExtension(stf.FileName))
+            TreeNode ConfigRoot = new TreeNode(stf.FileName)
             {
                 Tag = stf
             };
