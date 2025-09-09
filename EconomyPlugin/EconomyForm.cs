@@ -2,6 +2,7 @@ using Day2eEditor;
 using DayZeLib;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -180,6 +181,23 @@ namespace EconomyPlugin
                     SetupPlayerSpawnPosMap(pos, node);
                     _mapControl.EnsureVisible(new PointF((float)pos.x, (float)pos.z));
                 },
+                [typeof(mapgroupposConfig)] = (node, selected) =>
+                {
+                    mapgroupposConfig pos = node.Tag as mapgroupposConfig;
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupMapGroupMap(pos, node);
+                },
+                [typeof(mapGroup)] = (node, selected) =>
+                {
+                    mapGroup pos = node.Tag as mapGroup;
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupMapGroupPosMap(pos, node);
+                    _mapControl.EnsureVisible(new PointF(Convert.ToSingle(pos.pos.Split(' ')[0]), Convert.ToSingle(pos.pos.Split(' ')[2])));
+                },
+
+                //Economycore preview
+                [typeof(economyCoreConfig)] = (node, selected) =>
+                    ShowHandler(new cfgeconomycorePreviewControl(), typeof(economyCoreConfig), node.Tag as economyCoreConfig, selected),
 
                 // SpawnGear / Discrete / Complex
                 [typeof(Discreteitemset)] = (node, selected) =>
@@ -678,6 +696,14 @@ namespace EconomyPlugin
                     IgnoreListCM.Items.Clear();
                     IgnoreListCM.Items.Add(removeClassnameToolStripMenuItem);
                     IgnoreListCM.Show(Cursor.Position);
+                },
+
+                //MapgroupPos
+                [typeof(mapGroup)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(removeSelectedPositionsToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
                 }
             };
 
@@ -952,8 +978,13 @@ namespace EconomyPlugin
                 AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
             }
 
+            //cfgeconomycore preview
+
+            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.eonomyCoreConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.eonomyCoreConfig, CreatecfgeconomycoreConfigConfigNodes);
+
             // cfgeffectareaConfig
-            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgeffectareaConfig.FilePath);
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgeffectareaConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgeffectareaConfig, CreatecfgeffectareaConfigConfigNodes);
 
             //Enviroment
@@ -1002,7 +1033,9 @@ namespace EconomyPlugin
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgweatherConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgweatherConfig, CreatecfgweatherNodes);
 
-           
+            // mapgroupos
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.mapgroupposConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.mapgroupposConfig, CreatemapgeroupposNodes);
 
             EconomyTV.Nodes.Add(rootNode);
         }
@@ -1741,6 +1774,15 @@ namespace EconomyPlugin
             }
             return eventspawnroot;
         }
+        //CreatecfgeconomycoreConfigConfigNodes
+        private TreeNode CreatecfgeconomycoreConfigConfigNodes(economyCoreConfig config)
+        {
+            TreeNode PlayerSpawnPointrootNode = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+            return PlayerSpawnPointrootNode;
+        }
         //creating playerspawnpoint Nodes
         private TreeNode CreatecfgPlayerSpawnPointNodes(cfgplayerspawnpointsConfig config)
         {
@@ -2005,6 +2047,28 @@ namespace EconomyPlugin
 
             return ignorelistrootNode;
         }
+        //CreatemapgeroupposNodes
+        private TreeNode CreatemapgeroupposNodes(mapgroupposConfig config)
+        {
+            TreeNode ignorelistrootNode = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+            foreach (mapGroup MGPM in config.Data.group)
+            {
+                if (!ignorelistrootNode.Nodes.ContainsKey(MGPM.name))
+                {
+                    ignorelistrootNode.Nodes.Add(new TreeNode(MGPM.name)
+                    {
+                        Name = MGPM.name,
+                        Tag = "MapGroup:" + MGPM.name
+                    });
+                }
+                ignorelistrootNode.Nodes[MGPM.name].Nodes.Add(new TreeNode(MGPM.name) { Tag = MGPM });
+            }
+
+            return ignorelistrootNode;
+        }
         #endregion loading treeview
 
         /// <summary>
@@ -2165,6 +2229,11 @@ namespace EconomyPlugin
             ctrl.Location = new Point(2, 2);
             ctrl.BringToFront();
             ctrl.Visible = true;
+
+            if (parent == typeof(economyCoreConfig))
+            {
+                ctrl.Dock = DockStyle.Fill;
+            }
         }
         private void ResetMapControl()
         {
@@ -2191,6 +2260,9 @@ namespace EconomyPlugin
             _mapControl.MapDoubleClicked -= MapControl_PlayerSpawnDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_PlayerSpawnSingleclicked;
 
+            _mapControl.MapDoubleClicked -= MapControl_MapGroupPosDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_MapGroupPosSingleclicked;
+
             // Reset "selected" state objects
             _selectedEventPos = null;
             _selectedSafePosition = null;
@@ -2198,6 +2270,7 @@ namespace EconomyPlugin
             _selectedRPASafePosition = null;
             _selectedeffectarea = null;
             _selectedSpawnpointPosition = null;
+            _selectedMapGroupPosPosition = null;
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -2213,12 +2286,23 @@ namespace EconomyPlugin
                     ShowHandler<IUIHandler>(null, null, null, null);
                     return;
                 }
-
-                if (e.Node.Tag is string key && _stringHandlers.TryGetValue(key, out var stringHandler))
+                if (e.Node.Tag is string key)
                 {
-                    stringHandler(e.Node, selectedNodes);
-                    return;
+                    if (_stringHandlers.TryGetValue(key, out var stringHandler))
+                    {
+                        stringHandler(e.Node, selectedNodes);
+                        return;
+                    }
+                    // Fallback: handle "MapGroup:*"
+                    if (key.StartsWith("MapGroup:"))
+                    {
+                        mapgroupposConfig pos = e.Node.Parent.Tag as mapgroupposConfig;
+                        ShowHandler<IUIHandler>(null, null, null, null);
+                        SetupMapGroupMap(pos, e.Node);
+                        return;
+                    }
                 }
+                
 
                 var nodeType = e.Node.Tag.GetType();
                 if (_typeHandlers.TryGetValue(nodeType, out var typeHandler))
@@ -2830,6 +2914,28 @@ namespace EconomyPlugin
                     DrawPlayerSpawnPointPositions(section);
             });
         }
+        private void SetupMapGroupMap(mapgroupposConfig pos, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _mapControl.MapsingleClicked += MapControl_MapGroupPosSingleclicked;
+
+                DrawMapGroupPosPositions(pos);
+            });
+        }
+        private void SetupMapGroupPosMap(mapGroup pos, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedMapGroupPosPosition = pos;
+                _mapControl.MapsingleClicked += MapControl_MapGroupPosSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_MapGroupPosDoubleclicked;
+
+                var config = node.Parent.Parent.Tag as mapgroupposConfig;
+                if (config != null)
+                    DrawMapGroupPosPositions(config);
+            });
+        }
         //Draw Methods
         private void DrawPlayerSpawnPointPositions(playerspawnpointssection playerspawnpointssection)
         {
@@ -3010,6 +3116,28 @@ namespace EconomyPlugin
                 }
             }
         }
+        private void DrawMapGroupPosPositions(mapgroupposConfig mapgroupposConfig)
+        {
+            List<mapGroup> nodestodraw = new List<mapGroup>();
+            foreach (TreeNode tn in EconomyTV.SelectedNodes)
+            {
+                nodestodraw.Add(tn.Tag as mapGroup);
+            }
+            foreach (mapGroup MGPMG in mapgroupposConfig.Data.group)
+            {
+                var marker = new MarkerDrawable(new PointF(Convert.ToSingle(MGPMG.pos.Split(' ')[0]), Convert.ToSingle(MGPMG.pos.Split(' ')[2])), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = 8,
+                    Scaleradius = false
+                };
+                if (nodestodraw.Contains(MGPMG))
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
+            }
+        }
 
         // MapViewer clicks
         private eventposdefEventPos _selectedEventPos;
@@ -3018,6 +3146,7 @@ namespace EconomyPlugin
         private playerspawnpointsGroupPos _selectedSpawnpointPosition;
         private Areas _selectedeffectarea;
         private PRABoxes _selectedRPABox;
+        private mapGroup _selectedMapGroupPosPosition;
 
         private void MapControl_EventSpawnSingleclicked(object sender, MapClickEventArgs e)
         {
@@ -3424,6 +3553,164 @@ namespace EconomyPlugin
             }
         }
         private void MapControl_PlayerSpawnDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (_selectedSpawnpointPosition == null) return;
+
+            _selectedSpawnpointPosition.x = (decimal)e.MapCoordinates.X;
+            _selectedSpawnpointPosition.z = (decimal)e.MapCoordinates.Y;
+
+            _mapControl.ClearDrawables();
+
+            cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig = currentTreeNode.FindParentOfType<cfgplayerspawnpointsConfig>();
+            cfgplayerspawnpointsConfig.isDirty = true;
+            playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
+            DrawPlayerSpawnPointPositions(playerspawnpointssection);
+            currentTreeNode.Text = _selectedSpawnpointPosition.ToString();
+        }
+        private void MapControl_MapGroupPosSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+
+            mapGroup closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            if (currentTreeNode.Tag is mapgroupposConfig)
+            {
+                foreach (TreeNode childp in currentTreeNode.Nodes)
+                {
+                    foreach (TreeNode child in childp.Nodes)
+                    {
+                        if (child.Tag is mapGroup pos)
+                        {
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF(Convert.ToSingle(pos.pos.Split(' ')[0]), Convert.ToSingle(pos.pos.Split(' ')[2])));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode childp in currentTreeNode.Nodes)
+                    {
+                        foreach (TreeNode child in childp.Nodes)
+                        {
+                            if (child.Tag == closestPos)
+                            {
+                                EconomyTV.SelectedNode = child;
+                                break;
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+            else if (currentTreeNode.Parent.Tag is mapgroupposConfig)
+            {
+                foreach (TreeNode childp in currentTreeNode.Parent.Nodes)
+                {
+                    foreach (TreeNode child in childp.Nodes)
+                    {
+                        if (child.Tag is mapGroup pos)
+                        {
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF(Convert.ToSingle(pos.pos.Split(' ')[0]), Convert.ToSingle(pos.pos.Split(' ')[2])));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode childp in currentTreeNode.Parent.Nodes)
+                    {
+                        foreach (TreeNode child in childp.Nodes)
+                        {
+                            if (child.Tag == closestPos)
+                            {
+                                EconomyTV.SelectedNode = child;
+                                break;
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+            else
+            {
+                TreeNode parentNode = currentTreeNode.Parent.Parent;
+                // Loop through all child nodes of the parent
+                foreach (TreeNode childp in parentNode.Nodes)
+                {
+                    foreach (TreeNode child in childp.Nodes)
+                    {
+                        if (child.Tag is mapGroup pos)
+                        {
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF(Convert.ToSingle(pos.pos.Split(' ')[0]), Convert.ToSingle(pos.pos.Split(' ')[2])));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode childp in parentNode.Nodes)
+                    {
+                        foreach (TreeNode child in childp.Nodes)
+                        {
+                            if (child.Tag == closestPos)
+                            {
+                                EconomyTV.SelectedNode = child;
+                                break;
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+        }
+        private void MapControl_MapGroupPosDoubleclicked(object? sender, MapClickEventArgs e)
         {
             if (_selectedSpawnpointPosition == null) return;
 
@@ -5233,12 +5520,41 @@ namespace EconomyPlugin
                     }
                 }
                 _economyManager.cfgignorelistConfig.isDirty = true;
-                
+
             }
             else if (result == DialogResult.Cancel)
             {
                 return;
             }
+        }
+
+
+        /// <summary>
+        /// MapGroupPos Right Click Methods
+        /// </summary>
+        private void removeSelectedPositionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<TreeNode> nodestoremove = new List<TreeNode>();
+            foreach (TreeNode tn in EconomyTV.SelectedNodes)
+            {
+                nodestoremove.Add(tn);
+            }
+
+            EconomyTV.SelectedNode = currentTreeNode.Parent.Parent;
+
+            foreach (TreeNode tnode in nodestoremove)
+            {
+                mapGroup mapGroup = tnode.Tag as mapGroup;
+                if (mapGroup != null)
+                {
+                    _economyManager.mapgroupposConfig.Data.group.Remove(mapGroup);
+                    TreeNode Parent = tnode.Parent;
+                    Parent.Nodes.Remove(tnode);
+                    if (Parent.Nodes.Count == 0)
+                        Parent.Parent.Nodes.Remove(Parent);
+                }
+            }
+            _economyManager.mapgroupposConfig.isDirty = true;
         }
     }
 

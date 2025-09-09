@@ -102,6 +102,8 @@ namespace EconomyPlugin
             IgnoreListCM = new ContextMenuStrip(components);
             removeClassnameToolStripMenuItem = new ToolStripMenuItem();
             addClassnameToolStripMenuItem = new ToolStripMenuItem();
+            MapGroupPosCM = new ContextMenuStrip(components);
+            removeSelectedPositionsToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -119,6 +121,7 @@ namespace EconomyPlugin
             cfgEffectsAreaCM.SuspendLayout();
             PlayerSpawnsCM.SuspendLayout();
             IgnoreListCM.SuspendLayout();
+            MapGroupPosCM.SuspendLayout();
             SuspendLayout();
             // 
             // _mapControl
@@ -695,13 +698,13 @@ namespace EconomyPlugin
             IgnoreListCM.Items.AddRange(new ToolStripItem[] { removeClassnameToolStripMenuItem, addClassnameToolStripMenuItem });
             IgnoreListCM.Name = "TypesCM";
             IgnoreListCM.ShowImageMargin = false;
-            IgnoreListCM.Size = new Size(156, 70);
+            IgnoreListCM.Size = new Size(153, 48);
             // 
             // removeClassnameToolStripMenuItem
             // 
             removeClassnameToolStripMenuItem.ForeColor = SystemColors.Control;
             removeClassnameToolStripMenuItem.Name = "removeClassnameToolStripMenuItem";
-            removeClassnameToolStripMenuItem.Size = new Size(155, 22);
+            removeClassnameToolStripMenuItem.Size = new Size(152, 22);
             removeClassnameToolStripMenuItem.Text = "Remove Classname";
             removeClassnameToolStripMenuItem.Click += removeClassnameToolStripMenuItem_Click;
             // 
@@ -709,9 +712,25 @@ namespace EconomyPlugin
             // 
             addClassnameToolStripMenuItem.ForeColor = SystemColors.Control;
             addClassnameToolStripMenuItem.Name = "addClassnameToolStripMenuItem";
-            addClassnameToolStripMenuItem.Size = new Size(155, 22);
+            addClassnameToolStripMenuItem.Size = new Size(152, 22);
             addClassnameToolStripMenuItem.Text = "Add Classname";
             addClassnameToolStripMenuItem.Click += addClassnameToolStripMenuItem_Click;
+            // 
+            // MapGroupPosCM
+            // 
+            MapGroupPosCM.BackColor = Color.FromArgb(60, 63, 65);
+            MapGroupPosCM.Items.AddRange(new ToolStripItem[] { removeSelectedPositionsToolStripMenuItem });
+            MapGroupPosCM.Name = "TypesCM";
+            MapGroupPosCM.ShowImageMargin = false;
+            MapGroupPosCM.Size = new Size(190, 48);
+            // 
+            // removeSelectedPositionsToolStripMenuItem
+            // 
+            removeSelectedPositionsToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeSelectedPositionsToolStripMenuItem.Name = "removeSelectedPositionsToolStripMenuItem";
+            removeSelectedPositionsToolStripMenuItem.Size = new Size(189, 22);
+            removeSelectedPositionsToolStripMenuItem.Text = "Remove selected Positions";
+            removeSelectedPositionsToolStripMenuItem.Click += removeSelectedPositionsToolStripMenuItem_Click;
             // 
             // EconomyForm
             // 
@@ -745,6 +764,7 @@ namespace EconomyPlugin
             cfgEffectsAreaCM.ResumeLayout(false);
             PlayerSpawnsCM.ResumeLayout(false);
             IgnoreListCM.ResumeLayout(false);
+            MapGroupPosCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -820,5 +840,7 @@ namespace EconomyPlugin
         private ContextMenuStrip IgnoreListCM;
         private ToolStripMenuItem removeClassnameToolStripMenuItem;
         private ToolStripMenuItem addClassnameToolStripMenuItem;
+        private ContextMenuStrip MapGroupPosCM;
+        private ToolStripMenuItem removeSelectedPositionsToolStripMenuItem;
     }
 }

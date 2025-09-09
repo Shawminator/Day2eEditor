@@ -161,7 +161,7 @@ namespace Day2eEditor
                 this.m_lastNode = e.Node;
 
                 // allow multi for this batch only if the first node is a TypeEntry
-                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry);
+                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry)||(e.Node.Tag is mapGroup);
 
                 // let OnAfterSelect run normally (it will add the node as single select)
                 return;
@@ -172,7 +172,7 @@ namespace Day2eEditor
             if (this.m_firstNode == null)
             {
                 this.m_firstNode = e.Node;
-                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry);
+                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry)||(e.Node.Tag is mapGroup);
             }
 
             // If the current batch does NOT allow multi select, treat this click as a single-select
@@ -193,7 +193,7 @@ namespace Day2eEditor
                 this.paintSelectedNodes();
                 return;
             }
-            if (e.Node.Tag is TypeEntry == false)
+            if ((e.Node.Tag is TypeEntry == false) && (e.Node.Tag is mapGroup == false))
             {
                 e.Cancel = true; // keep toggle behavior
                 this.removePaintFromNodes();
@@ -264,10 +264,11 @@ namespace Day2eEditor
                 {
                     for (TreeNode i = bottomnode; i != uppernode.Parent; i = i.Parent)
                     {
-                        if (!this.m_coll.Contains(i) && i.Tag is TypeEntry)
+                        if (!this.m_coll.Contains(i) && (i.Tag is TypeEntry||i.Tag is mapGroup))
                         {
                             myQueue.Enqueue(i);
                         }
+                        
                     }
                 }
                 else
@@ -290,7 +291,7 @@ namespace Day2eEditor
                         TreeNode j = uppernode;
                         while (nIndexUpper <= nIndexBottom)
                         {
-                            if (!this.m_coll.Contains(j) && j.Tag is TypeEntry)
+                            if (!this.m_coll.Contains(j) && (j.Tag is TypeEntry||j.Tag is mapGroup))
                             {
                                 myQueue.Enqueue(j);
                             }
@@ -300,11 +301,11 @@ namespace Day2eEditor
                     }
                     else
                     {
-                        if (!this.m_coll.Contains(uppernode) && uppernode.Tag is TypeEntry)
+                        if (!this.m_coll.Contains(uppernode) && (uppernode.Tag is TypeEntry || uppernode.Tag is mapGroup))
                         {
                             myQueue.Enqueue(uppernode);
                         }
-                        if (!this.m_coll.Contains(bottomnode) && bottomnode.Tag is TypeEntry)
+                        if (!this.m_coll.Contains(bottomnode) && (bottomnode.Tag is TypeEntry || bottomnode.Tag is mapGroup))
                         {
                             myQueue.Enqueue(bottomnode);
                         }
