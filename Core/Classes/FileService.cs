@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Xml;
 using System.Xml.Serialization;
 
 public class FileService
@@ -150,11 +151,20 @@ public class FileService
     {
         try
         {
-            using var stream = File.Create(path);
             var serializer = new XmlSerializer(typeof(T));
             var ns = new XmlSerializerNamespaces();
             ns.Add("", ""); // no prefix, no namespace
-            serializer.Serialize(stream, data, ns);
+
+            var settings = new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "\t",
+                NewLineOnAttributes = false,
+                OmitXmlDeclaration = false
+            };
+
+            using var writer = XmlWriter.Create(path, settings);
+            serializer.Serialize(writer, data, ns);
         }
         catch (Exception ex)
         {
