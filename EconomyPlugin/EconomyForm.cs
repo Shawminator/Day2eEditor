@@ -978,6 +978,13 @@ namespace EconomyPlugin
                 AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
             }
 
+            //Territories
+            foreach (territorytype tt in _economyManager.territoriesConfig.AllData)
+            {
+                string relativePath = Path.GetRelativePath(_economyManager.basePath, tt.FilePath);
+                AddFileToTree(rootNode, relativePath, tt, CreateTerritoryNodes);
+            }
+
             //cfgeconomycore preview
 
             string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.eonomyCoreConfig.FilePath);
@@ -989,7 +996,11 @@ namespace EconomyPlugin
 
             //Enviroment
 
-            //still to do......
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgenvironmentConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.cfgenvironmentConfig, CreateEnviromentConfigNodes);
+
+            
+
 
             // Gameplay config
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
@@ -1126,6 +1137,51 @@ namespace EconomyPlugin
 
             }
 
+            return GlobalsRootNode;
+        }
+        //create enviroment config nodes
+        private TreeNode CreateEnviromentConfigNodes(cfgenvironmentConfig gf)
+        {
+            TreeNode GlobalsRootNode = new TreeNode(gf.FileName)
+            {
+                Tag = gf
+            };
+            foreach(envTerritoriesTerritory ett in gf.Data.territories.territory)
+            {
+                TreeNode ettnode = new TreeNode(ett.name)
+                {
+                    Tag = ett
+                };
+                envTerritoriesFile etv = gf.Data.territories.GetUsableFile(ett.file.usable);
+                if(etv != null)
+                {
+                    TreeNode etfnode = new TreeNode($"Usable File: {etv.path}")
+                    {
+                        Tag = etv
+                    };
+                    ettnode.Nodes.Add(etfnode);
+                }
+                GlobalsRootNode.Nodes.Add(ettnode);
+            }
+            return GlobalsRootNode;
+        }
+        // create territory nodes 
+        private TreeNode CreateTerritoryNodes(territorytype tf)
+        {
+            TreeNode GlobalsRootNode = new TreeNode(tf.FileName)
+            {
+                Tag = tf
+            };
+            int name = 1;
+            foreach (territorytypeTerritory territorytypeTerritory in tf.territory)
+            {
+                TreeNode typeterritorynode = new TreeNode("Territory" + name.ToString())
+                {
+                    Tag = territorytypeTerritory
+                };
+                name++;
+                GlobalsRootNode.Nodes.Add(typeterritorynode);
+            }
             return GlobalsRootNode;
         }
         //creating CFGGameplaynodes

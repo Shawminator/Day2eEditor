@@ -53,10 +53,8 @@ namespace Day2eEditor
         public cfgweatherConfig cfgweatherConfig { get; set; }
         public cfgignorelistConfig cfgignorelistConfig { get; set; }
         public mapgroupposConfig mapgroupposConfig { get; set; }
-
+        public TerritoriesConfig territoriesConfig { get; set; }
         //public mapgroupproto mapgroupproto { get; set; }
-
-        //public BindingList<territoriesConfig> territoriesList;
 
         public EconomyManager() 
         {
@@ -70,6 +68,7 @@ namespace Day2eEditor
             _paths["cfglimitsdefinition"] = Path.Combine(basePath, "cfglimitsdefinition.xml");
             _paths["cfglimitsdefinitionuser"] = Path.Combine(basePath, "cfglimitsdefinitionuser.xml");
             _paths["cfgenvironment"] = Path.Combine(basePath, "cfgenvironment.xml");
+            _paths["territoriesConfig"] = Path.Combine(basePath, "");
             _paths["cfgeventspawns"] = Path.Combine(basePath, "cfgeventspawns.xml");
             _paths["cfgeventgroups"] = Path.Combine(basePath, "cfgeventgroups.xml");
             _paths["CFGGameplay"] = Path.Combine(basePath, "cfggameplay.json");
@@ -86,6 +85,7 @@ namespace Day2eEditor
             _paths["VanillaGlobals"] = Path.Combine(basePath, "db", "globals.xml");
             _paths["VanillaSpawnableTypes"] = Path.Combine(basePath, "cfgspawnabletypes.xml");
             _paths["VanillaRandomPresets"] = Path.Combine(basePath, "cfgrandompresets.xml");
+
             LoadFiles(basePath);
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -144,6 +144,9 @@ namespace Day2eEditor
 
             cfgenvironmentConfig = new cfgenvironmentConfig(_paths["cfgenvironment"]);
             LoadConfigWithErrorReport("cfgenvironment", cfgenvironmentConfig);
+
+            territoriesConfig = new TerritoriesConfig(_paths["territoriesConfig"]);
+            LoadConfigWithErrorReport("territoriesConfig", territoriesConfig);
 
             cfgeventspawnsConfig = new cfgeventspawnsConfig(_paths["cfgeventspawns"]);
             LoadConfigWithErrorReport("cfgeventspawns", cfgeventspawnsConfig);

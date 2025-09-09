@@ -6,6 +6,8 @@ namespace Day2eEditor
     public class cfgenvironmentConfig : IConfigLoader
     {
         private readonly string _path;
+        public string FileName => Path.GetFileName(_path);
+        public string FilePath => _path;
         public env Data { get; private set; }
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
@@ -62,6 +64,7 @@ namespace Day2eEditor
             get => _territories ??= new envTerritories();
             set => _territories = value;
         }
+
     }
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -99,6 +102,12 @@ namespace Day2eEditor
             {
                 this.territoryField = value;
             }
+        }
+
+        public envTerritoriesFile GetUsableFile(string usable)
+        {
+            envTerritoriesFile etf = file.FirstOrDefault(x => Path.GetFileNameWithoutExtension(x.path) == usable);
+            return etf;
         }
     }
     /// <remarks/>
