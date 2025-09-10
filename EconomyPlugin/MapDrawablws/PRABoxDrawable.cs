@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Day2eEditor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Day2eEditor
+namespace EconomyPlugin
 {
     public class PRABoxDrawable : IMapDrawable
     {

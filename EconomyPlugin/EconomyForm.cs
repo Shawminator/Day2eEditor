@@ -194,6 +194,15 @@ namespace EconomyPlugin
                     SetupMapGroupPosMap(pos, node);
                     _mapControl.EnsureVisible(new PointF(Convert.ToSingle(pos.pos.Split(' ')[0]), Convert.ToSingle(pos.pos.Split(' ')[2])));
                 },
+                // territories 
+                [typeof(territorytypeTerritoryZone)] = (node, selected) =>
+                {
+                    territorytypeTerritoryZone zone = node.Tag as territorytypeTerritoryZone;
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupTerritoriesMap(zone, node);
+                    _mapControl.EnsureVisible(new PointF((float)zone.x, (float)zone.z));
+                },
+
 
                 //Economycore preview
                 [typeof(economyCoreConfig)] = (node, selected) =>
@@ -1180,6 +1189,14 @@ namespace EconomyPlugin
                     Tag = territorytypeTerritory
                 };
                 name++;
+                foreach (territorytypeTerritoryZone zone in territorytypeTerritory.zone)
+                {
+                    TreeNode tn = new TreeNode(zone.ToString())
+                    {
+                        Tag = zone
+                    };
+                    typeterritorynode.Nodes.Add(tn);
+                }
                 GlobalsRootNode.Nodes.Add(typeterritorynode);
             }
             return GlobalsRootNode;
@@ -2319,6 +2336,9 @@ namespace EconomyPlugin
             _mapControl.MapDoubleClicked -= MapControl_MapGroupPosDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_MapGroupPosSingleclicked;
 
+            _mapControl.MapDoubleClicked -= MapControl_TerritoriesDoubleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_TerritoriesSingleclicked;
+
             // Reset "selected" state objects
             _selectedEventPos = null;
             _selectedSafePosition = null;
@@ -2327,6 +2347,7 @@ namespace EconomyPlugin
             _selectedeffectarea = null;
             _selectedSpawnpointPosition = null;
             _selectedMapGroupPosPosition = null;
+            _selectedterritory = null;
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -2992,6 +3013,19 @@ namespace EconomyPlugin
                     DrawMapGroupPosPositions(config);
             });
         }
+        private void SetupTerritoriesMap(territorytypeTerritoryZone zone, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedterritory = zone;
+                _mapControl.MapDoubleClicked += MapControl_TerritoriesDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_TerritoriesSingleclicked;
+
+                var config = node.Parent.Tag as territorytypeTerritory;
+                if (config != null)
+                    DrawTerritoriesPositions(config);
+            });
+        }
         //Draw Methods
         private void DrawPlayerSpawnPointPositions(playerspawnpointssection playerspawnpointssection)
         {
@@ -3124,26 +3158,17 @@ namespace EconomyPlugin
         {
             foreach (eventposdefEventPos pos in defevent.pos)
             {
+                var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = 8,
+                    Scaleradius = false
+                };
                 if (_selectedEventPos == pos)
                 {
-                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
-                    {
-                        Color = Color.LimeGreen,
-                        Radius = 8,
-                        Scaleradius = false
-                    };
-                    _mapControl.RegisterDrawable(marker);
+                    marker.Color = Color.LimeGreen;
                 }
-                else
-                {
-                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
-                    {
-                        Color = Color.Red,
-                        Radius = 8,
-                        Scaleradius = false
-                    };
-                    _mapControl.RegisterDrawable(marker);
-                }
+                _mapControl.RegisterDrawable(marker);
             }
         }
         private void DrawEffectEffectArea(cfgeffectareaConfig cfgeffectareaConfig)
@@ -3194,6 +3219,24 @@ namespace EconomyPlugin
                 _mapControl.RegisterDrawable(marker);
             }
         }
+        private void DrawTerritoriesPositions(territorytypeTerritory territorytypeTerritory)
+        {
+            foreach (territorytypeTerritoryZone zone in territorytypeTerritory.zone)
+            {
+                string col = string.Format("{0:X}", territorytypeTerritory.color);
+                var territory = new TerritoryDrawable(new PointF((float)zone.x, (float)zone.z), _mapControl.MapSize)
+                {
+                    Color = ColorTranslator.FromHtml("#" + col.Substring(2)),
+                    Radius = (float)zone.r,
+                    Scaleradius = true
+                };
+                if (_selectedterritory == zone)
+                {
+                    territory.IsSelected = true;
+                }
+                _mapControl.RegisterDrawable(territory);
+            }
+        }
 
         // MapViewer clicks
         private eventposdefEventPos _selectedEventPos;
@@ -3203,6 +3246,7 @@ namespace EconomyPlugin
         private Areas _selectedeffectarea;
         private PRABoxes _selectedRPABox;
         private mapGroup _selectedMapGroupPosPosition;
+        private territorytypeTerritoryZone _selectedterritory;
 
         private void MapControl_EventSpawnSingleclicked(object sender, MapClickEventArgs e)
         {
@@ -3780,6 +3824,70 @@ namespace EconomyPlugin
             playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
             DrawPlayerSpawnPointPositions(playerspawnpointssection);
             currentTreeNode.Text = _selectedSpawnpointPosition.ToString();
+        }
+        private void MapControl_TerritoriesSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+
+            territorytypeTerritoryZone closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            if (currentTreeNode.Tag is territorytypeTerritoryZone)
+            {
+                foreach (TreeNode child in currentTreeNode.Parent.Nodes)
+                {
+                    if (child.Tag is territorytypeTerritoryZone pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode child in currentTreeNode.Parent.Nodes)
+                    {
+                        if (child.Tag == closestPos)
+                        {
+                            EconomyTV.SelectedNode = child;
+                            break;
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+        }
+        private void MapControl_TerritoriesDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (_selectedterritory == null) return;
+
+            _selectedterritory.x = (decimal)e.MapCoordinates.X;
+            _selectedterritory.z = (decimal)e.MapCoordinates.Y;
+
+            _mapControl.ClearDrawables();
+
+            territorytype territorytype = currentTreeNode.FindParentOfType<territorytype>();
+            territorytype.isDirty = true;
+            territorytypeTerritory territorytypeTerritory = currentTreeNode.FindParentOfType<territorytypeTerritory>();
+            DrawTerritoriesPositions(territorytypeTerritory);
+            currentTreeNode.Text = _selectedterritory.ToString();
         }
 
         /// <summary>

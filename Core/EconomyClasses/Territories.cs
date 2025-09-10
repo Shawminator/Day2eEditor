@@ -353,7 +353,7 @@ namespace Day2eEditor
         }
         public override string ToString()
         {
-            return name;
+            return $"Name:{name}, X:{x.ToString()}, Z:{z.ToString()}";
         }
         public bool Equals(territorytypeTerritoryZone p)
         {

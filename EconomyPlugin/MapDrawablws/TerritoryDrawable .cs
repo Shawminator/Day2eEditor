@@ -5,19 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Day2eEditor
+namespace EconomyPlugin
 {
-    public class MarkerDrawable : IMapDrawable
+    public class TerritoryDrawable : IMapDrawable
     {
         public PointF MapPosition { get; set; }
         public Color Color { get; set; } = Color.Red;
         public float Radius { get; set; } = 5f;
 
         public bool Scaleradius { get; set; } = false;
+        public bool IsSelected { get; set;  } = false;
 
         private readonly Size _mapSize;
 
-        public MarkerDrawable(PointF mapPosition, Size mapSize)
+        public TerritoryDrawable(PointF mapPosition, Size mapSize)
         {
             MapPosition = mapPosition;
             _mapSize = mapSize;
@@ -68,16 +69,35 @@ namespace Day2eEditor
                     screenRadius * 2);
             }
 
-            // Inner dot
-            //float dotRadius = 5f * 0.3f; // adjust as needed
-            float dotRadius = 2f; // adjust as needed
-            using (var brush = new SolidBrush(Color))
+            // Selected Square around circle
+            if (IsSelected)
             {
-                g.FillEllipse(brush,
-                    screenX - dotRadius,
-                    screenY - dotRadius,
-                    dotRadius * 2,
-                    dotRadius * 2);
+
+                g.DrawLine(Pens.LimeGreen, screenX - 5, screenY, screenX + 5, screenY);
+                g.DrawLine(Pens.LimeGreen, screenX, screenY - 5, screenX, screenY + 5);
+
+                // Padding to keep the selection box outside the circle
+                float padding = 4f;
+
+                using (var pen = new Pen(Color.LimeGreen) { Width = 2, DashStyle = System.Drawing.Drawing2D.DashStyle.Dash })
+                {
+                    g.DrawRectangle(pen,
+                        screenX - screenRadius - padding,
+                        screenY - screenRadius - padding,
+                        (screenRadius * 2) + (padding * 2),
+                        (screenRadius * 2) + (padding * 2));
+
+                }
+
+                using (var brush = new SolidBrush(Color.FromArgb(25, Color.LimeGreen)))
+                {
+                    g.FillRectangle(brush,
+                        screenX - screenRadius - padding,
+                        screenY - screenRadius - padding,
+                        (screenRadius * 2) + (padding * 2),
+                        (screenRadius * 2) + (padding * 2));
+                }
+
             }
         }
     }
