@@ -20,6 +20,16 @@ namespace EconomyPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
         public eventgroupsspawnpositionControl()
         {
             InitializeComponent();

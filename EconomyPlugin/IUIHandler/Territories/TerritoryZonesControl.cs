@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Windows.Forms;
 
 namespace EconomyPlugin
@@ -11,15 +10,25 @@ namespace EconomyPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class Vector3Control : UserControl, IUIHandler
+    public partial class TerritoryZonesControl : UserControl, IUIHandler
     {
+        public event Action<territorytypeTerritoryZone> PositionChanged;
         private Type _parentType;
-        private Vec3 _data;
-        private Vec3 _originalData;
+        private territorytypeTerritoryZone _data;
+        private territorytypeTerritoryZone _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public Vector3Control()
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+        public TerritoryZonesControl()
         {
             InitializeComponent();
         }
@@ -35,16 +44,31 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data is Vec3 v ? v : throw new InvalidCastException();
+            _data = data as territorytypeTerritoryZone ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
-            POSXNUD.Value = (decimal)_data.X;
-            POSYNUD.Value = (decimal)_data.Y;
-            POSZNUD.Value = (decimal)_data.Z;
-
+            TerritoriesZonesRadiusNUD.Value = _data.r;
+            TerritoriesZonesStaticMInNUD.Value = _data.smin;
+            TerritoriesZonesStaticMaxNUD.Value = _data.smax;
+            TerritoriesZonesDynamicMinNUD.Value = _data.dmin;
+            TerritoriesZonesDynamicMaxNUD.Value = _data.dmax;
+            TerritoriesZonesPOSXNUD.Value = _data.x;
+            TerritoriesZonesPOSZNUD.Value = _data.z;
+            TerritoriesZonesUseYCB.Checked = TerritoriesZonesPOSYNUD.Visible = _data.ySpecified;
+            TerritoriesZonesPOSYNUD.Value = _data.y;
+            RadioButton rb = groupBox74.Controls
+                              .OfType<RadioButton>()
+                              .FirstOrDefault(x => x.Text == _data.name);
+            if (rb != null)
+                rb.Checked = true;
+            else
+            {
+                TerritoriesZonesDynamicRB.Checked = true;
+                TerritoriesZonesDynamicTB.Text = _data.name;
+            }
 
             _suppressEvents = false;
         }
@@ -83,14 +107,12 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private Vec3 CloneData(Vec3 data)
+        private territorytypeTerritoryZone CloneData(territorytypeTerritoryZone data)
         {
             // TODO: Implement actual cloning logic
-            return new Vec3
+            return new territorytypeTerritoryZone
             {
-                X = data.X,
-                Y = data.Y,
-                Z = data.Z
+                // Copy properties here
             };
         }
 
@@ -101,35 +123,34 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                string split = _nodes.Last().Text.Split(':')[0];
-                _nodes.Last().Text = split + ": [" + string.Join(", ", _data) + "]";
+                // TODO: Update _nodes.Last().Text based on _data
             }
         }
 
         #endregion
 
-        private void POSXNUD_ValueChanged(object sender, EventArgs e)
+        private void TerritoriesZonesPOSXNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.X = (float)POSXNUD.Value;
+            _data.x = TerritoriesZonesPOSXNUD.Value;
             HasChanges();
-            UpdateTreeNodeText();
+            PositionChanged?.Invoke(_data);
         }
 
-        private void POSYNUD_ValueChanged(object sender, EventArgs e)
+        private void TerritoriesZonesPOSZNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.Y= (float)POSYNUD.Value;
+            _data.z = TerritoriesZonesPOSZNUD.Value;
             HasChanges();
-            UpdateTreeNodeText();
+            PositionChanged?.Invoke(_data);
         }
 
-        private void POSZNUD_ValueChanged(object sender, EventArgs e)
+        private void TerritoriesZonesRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.Z = (float)POSZNUD.Value;
+            _data.r = TerritoriesZonesRadiusNUD.Value;
             HasChanges();
-            UpdateTreeNodeText();
+            PositionChanged?.Invoke(_data);
         }
     }
 }

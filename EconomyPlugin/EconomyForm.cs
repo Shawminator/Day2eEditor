@@ -27,6 +27,16 @@ namespace EconomyPlugin
         private Dictionary<Type, Action<TreeNode>> _typeContextMenus;
         private Dictionary<string, Action<TreeNode>> _stringContextMenus;
         #endregion Dictionarys
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
         public EconomyForm(IPluginForm plugin)
         {
             InitializeComponent();
@@ -197,8 +207,14 @@ namespace EconomyPlugin
                 // territories 
                 [typeof(territorytypeTerritoryZone)] = (node, selected) =>
                 {
+                    var control = new TerritoryZonesControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawTerritoriesPositions(node.Parent.Tag as territorytypeTerritory);
+                    };
                     territorytypeTerritoryZone zone = node.Tag as territorytypeTerritoryZone;
-                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    ShowHandler<IUIHandler>(control, typeof(territorytype), zone, selected);
                     SetupTerritoriesMap(zone, node);
                     _mapControl.EnsureVisible(new PointF((float)zone.x, (float)zone.z));
                 },
@@ -1008,7 +1024,7 @@ namespace EconomyPlugin
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgenvironmentConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgenvironmentConfig, CreateEnviromentConfigNodes);
 
-            
+
 
 
             // Gameplay config
@@ -1155,14 +1171,14 @@ namespace EconomyPlugin
             {
                 Tag = gf
             };
-            foreach(envTerritoriesTerritory ett in gf.Data.territories.territory)
+            foreach (envTerritoriesTerritory ett in gf.Data.territories.territory)
             {
                 TreeNode ettnode = new TreeNode(ett.name)
                 {
                     Tag = ett
                 };
                 envTerritoriesFile etv = gf.Data.territories.GetUsableFile(ett.file.usable);
-                if(etv != null)
+                if (etv != null)
                 {
                     TreeNode etfnode = new TreeNode($"Usable File: {etv.path}")
                     {
@@ -2348,6 +2364,8 @@ namespace EconomyPlugin
             _selectedSpawnpointPosition = null;
             _selectedMapGroupPosPosition = null;
             _selectedterritory = null;
+
+            TerritorieszonesCB.Visible = false;
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -2379,7 +2397,7 @@ namespace EconomyPlugin
                         return;
                     }
                 }
-                
+
 
                 var nodeType = e.Node.Tag.GetType();
                 if (_typeHandlers.TryGetValue(nodeType, out var typeHandler))
@@ -3021,6 +3039,8 @@ namespace EconomyPlugin
                 _mapControl.MapDoubleClicked += MapControl_TerritoriesDoubleclicked;
                 _mapControl.MapsingleClicked += MapControl_TerritoriesSingleclicked;
 
+                TerritorieszonesCB.Visible = true;
+
                 var config = node.Parent.Tag as territorytypeTerritory;
                 if (config != null)
                     DrawTerritoriesPositions(config);
@@ -3221,21 +3241,52 @@ namespace EconomyPlugin
         }
         private void DrawTerritoriesPositions(territorytypeTerritory territorytypeTerritory)
         {
-            foreach (territorytypeTerritoryZone zone in territorytypeTerritory.zone)
+            _mapControl.ClearDrawables();
+            if (TerritorieszonesCB.Checked)
             {
-                string col = string.Format("{0:X}", territorytypeTerritory.color);
-                var territory = new TerritoryDrawable(new PointF((float)zone.x, (float)zone.z), _mapControl.MapSize)
+                territorytype territorytype = currentTreeNode.FindParentOfType<territorytype>();
+                foreach(territorytypeTerritory ttt in territorytype.territory)
                 {
-                    Color = ColorTranslator.FromHtml("#" + col.Substring(2)),
-                    Radius = (float)zone.r,
-                    Scaleradius = true
-                };
-                if (_selectedterritory == zone)
-                {
-                    territory.IsSelected = true;
+                    foreach (territorytypeTerritoryZone zone in ttt.zone)
+                    {
+                        string col = string.Format("{0:X}", ttt.color);
+                        var territory = new TerritoryDrawable(new PointF((float)zone.x, (float)zone.z), _mapControl.MapSize)
+                        {
+                            Color = ColorTranslator.FromHtml("#" + col.Substring(2)),
+                            Radius = (float)zone.r,
+                            Scaleradius = true
+                        };
+                        if (_selectedterritory == zone)
+                        {
+                            territory.IsSelected = true;
+                        }
+                        _mapControl.RegisterDrawable(territory);
+                    }
                 }
-                _mapControl.RegisterDrawable(territory);
             }
+            else
+            {
+                foreach (territorytypeTerritoryZone zone in territorytypeTerritory.zone)
+                {
+                    string col = string.Format("{0:X}", territorytypeTerritory.color);
+                    var territory = new TerritoryDrawable(new PointF((float)zone.x, (float)zone.z), _mapControl.MapSize)
+                    {
+                        Color = ColorTranslator.FromHtml("#" + col.Substring(2)),
+                        Radius = (float)zone.r,
+                        Scaleradius = true
+                    };
+                    if (_selectedterritory == zone)
+                    {
+                        territory.IsSelected = true;
+                    }
+                    _mapControl.RegisterDrawable(territory);
+                }
+            }
+        }
+        private void TerritorieszonesCB_CheckedChanged(object sender, EventArgs e)
+        {
+            territorytypeTerritory ttt = currentTreeNode.FindParentOfType<territorytypeTerritory>();
+            DrawTerritoriesPositions(ttt);
         }
 
         // MapViewer clicks
@@ -3838,35 +3889,39 @@ namespace EconomyPlugin
 
             if (currentTreeNode.Tag is territorytypeTerritoryZone)
             {
-                foreach (TreeNode child in currentTreeNode.Parent.Nodes)
+                foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
                 {
-                    if (child.Tag is territorytypeTerritoryZone pos)
+                    foreach (TreeNode child in childp.Nodes)
                     {
-                        // Node position in screen space
-                        PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
-
-                        double dx = clickScreen.X - posScreen.X;
-                        double dy = clickScreen.Y - posScreen.Y;
-                        double distance = Math.Sqrt(dx * dx + dy * dy);
-
-                        if (distance < closestDistance)
+                        if (child.Tag is territorytypeTerritoryZone pos)
                         {
-                            closestDistance = distance;
-                            closestPos = pos;
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
                         }
                     }
                 }
-
                 // Optional: choose only if within some "click radius"
                 if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
                 {
-                    // Select that tree node in the TreeView
-                    foreach (TreeNode child in currentTreeNode.Parent.Nodes)
+                    foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
                     {
-                        if (child.Tag == closestPos)
+                        foreach (TreeNode child in childp.Nodes)
                         {
-                            EconomyTV.SelectedNode = child;
-                            break;
+                            if (child.Tag == closestPos)
+                            {
+                                EconomyTV.SelectedNode = child;
+                                break;
+                            }
                         }
                     }
 
@@ -5720,6 +5775,8 @@ namespace EconomyPlugin
             }
             _economyManager.mapgroupposConfig.isDirty = true;
         }
+
+
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]
