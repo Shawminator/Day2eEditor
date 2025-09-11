@@ -41,6 +41,7 @@
             btnOK = new Button();
             panel1 = new Panel();
             panel2 = new Panel();
+            lblColorCodeints = new Label();
             TitlePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarAlpha).BeginInit();
             panel1.SuspendLayout();
@@ -177,6 +178,7 @@
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel2.BackColor = Color.FromArgb(60, 63, 65);
+            panel2.Controls.Add(lblColorCodeints);
             panel2.Controls.Add(btnPickColor);
             panel2.Controls.Add(btnOK);
             panel2.Controls.Add(panelPreview);
@@ -187,6 +189,15 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(322, 254);
             panel2.TabIndex = 15;
+            // 
+            // lblColorCodeints
+            // 
+            lblColorCodeints.AutoSize = true;
+            lblColorCodeints.Location = new Point(124, 127);
+            lblColorCodeints.Name = "lblColorCodeints";
+            lblColorCodeints.Size = new Size(103, 15);
+            lblColorCodeints.TabIndex = 14;
+            lblColorCodeints.Text = "ARGB: 0xFFFF0000";
             // 
             // AdvancedColorPickerForm
             // 
@@ -224,5 +235,6 @@
         private Button btnOK;
         private Panel panel1;
         private Panel panel2;
+        private Label lblColorCodeints;
     }
 }

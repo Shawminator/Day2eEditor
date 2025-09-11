@@ -19,18 +19,10 @@ namespace EconomyPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
-                return cp;
-            }
-        }
         public TerritoryZonesControl()
         {
             InitializeComponent();
+
         }
 
         /// <summary>
@@ -112,7 +104,17 @@ namespace EconomyPlugin
             // TODO: Implement actual cloning logic
             return new territorytypeTerritoryZone
             {
-                // Copy properties here
+                name = data.name,
+                smin = data.smin,
+                smax = data.smax,
+                dmin = data.dmin,
+                dmax = data.dmax,
+                x = data.x,
+                ySpecified = data.ySpecified,
+                y = data.y,
+                z = data.z,
+                r = data.r
+
             };
         }
 
@@ -123,7 +125,7 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.ToString();
             }
         }
 
@@ -136,7 +138,6 @@ namespace EconomyPlugin
             HasChanges();
             PositionChanged?.Invoke(_data);
         }
-
         private void TerritoriesZonesPOSZNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -144,13 +145,77 @@ namespace EconomyPlugin
             HasChanges();
             PositionChanged?.Invoke(_data);
         }
-
         private void TerritoriesZonesRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.r = TerritoriesZonesRadiusNUD.Value;
             HasChanges();
             PositionChanged?.Invoke(_data);
+        }
+        private void TerritoriesZonesStaticMInNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.smin = (int)TerritoriesZonesStaticMInNUD.Value;
+            HasChanges();
+        }
+        private void TerritoriesZonesStaticMaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.smax = (int)TerritoriesZonesStaticMaxNUD.Value;
+            HasChanges();
+        }
+        private void TerritoriesZonesDynamicMinNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.dmin = (int)TerritoriesZonesDynamicMinNUD.Value;
+            HasChanges();
+        }
+        private void TerritoriesZonesDynamicMaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.dmax = (int)TerritoriesZonesDynamicMaxNUD.Value;
+            HasChanges();
+        }
+        private void TerritoriesZonesUseYCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ySpecified = TerritoriesZonesUseYCB.Checked;
+            HasChanges();
+        }
+        private void TerritoriesZonesPOSYNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.y = TerritoriesZonesPOSYNUD.Value;
+            HasChanges();
+        }
+        private void TerritoriesZonesDynamicTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.name = TerritoriesZonesDynamicTB.Text;
+            UpdateTreeNodeText();
+            HasChanges();
+        }
+        private void TerritoriesZonesAIUSage_CheckedChanged(object sender, EventArgs e)
+        {
+            if (TerritoriesZonesDynamicRB.Checked)
+            {
+                TerritoriesZonesDynamicTB.Visible = true;
+            }
+            else
+            {
+                TerritoriesZonesDynamicTB.Visible = false;
+            }
+            if (_suppressEvents) return;
+            RadioButton rb = groupBox74.Controls
+                              .OfType<RadioButton>()
+                              .FirstOrDefault(x => x.Checked == true);
+            if (rb.Text == "Dynamic")
+                _data.name = TerritoriesZonesDynamicTB.Text;
+            else
+                _data.name = rb.Text;
+            UpdateTreeNodeText();
+            HasChanges();
+
         }
     }
 }

@@ -131,11 +131,10 @@
             // 
             // label1
             // 
-            label1.Dock = DockStyle.Fill;
             label1.ForeColor = Color.FromArgb(75, 110, 175);
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(1130, 28);
+            label1.Size = new Size(655, 28);
             label1.TabIndex = 8;
             label1.Text = "Add Types";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -196,7 +195,7 @@
             // 
             quantmax.HeaderText = "quantmax";
             quantmax.Name = "quantmax";
-            quantmax.Width = 85;
+            quantmax.Width = 86;
             // 
             // cost
             // 
@@ -224,7 +223,7 @@
             // 
             Tags.HeaderText = "Tags";
             Tags.Name = "Tags";
-            Tags.Width = 56;
+            Tags.Width = 55;
             // 
             // Usages
             // 
@@ -250,9 +249,10 @@
             // 
             // SelectProjectFolderbutton
             // 
-            SelectProjectFolderbutton.BackColor = SystemColors.Control;
+            SelectProjectFolderbutton.BackColor = Color.FromArgb(60, 63, 65);
+            SelectProjectFolderbutton.FlatStyle = FlatStyle.Flat;
             SelectProjectFolderbutton.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SelectProjectFolderbutton.ForeColor = SystemColors.ActiveCaptionText;
+            SelectProjectFolderbutton.ForeColor = SystemColors.Control;
             SelectProjectFolderbutton.Location = new Point(483, 94);
             SelectProjectFolderbutton.Name = "SelectProjectFolderbutton";
             SelectProjectFolderbutton.Size = new Size(23, 23);
@@ -272,6 +272,8 @@
             // 
             // textBox1
             // 
+            textBox1.BackColor = Color.FromArgb(60, 63, 65);
+            textBox1.ForeColor = SystemColors.Control;
             textBox1.Location = new Point(100, 66);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(406, 23);
@@ -280,6 +282,8 @@
             // 
             // textBox2
             // 
+            textBox2.BackColor = Color.FromArgb(60, 63, 65);
+            textBox2.ForeColor = SystemColors.Control;
             textBox2.Location = new Point(100, 95);
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;

@@ -151,6 +151,7 @@
             TerritoriesZonesUseYCB.TabIndex = 169;
             TerritoriesZonesUseYCB.Text = ":Use Y";
             TerritoriesZonesUseYCB.UseVisualStyleBackColor = true;
+            TerritoriesZonesUseYCB.CheckedChanged += TerritoriesZonesUseYCB_CheckedChanged;
             // 
             // TerritoriesZonesPOSXNUD
             // 
@@ -196,6 +197,7 @@
             TerritoriesZonesPOSYNUD.TabIndex = 164;
             TerritoriesZonesPOSYNUD.TextAlign = HorizontalAlignment.Center;
             TerritoriesZonesPOSYNUD.Visible = false;
+            TerritoriesZonesPOSYNUD.ValueChanged += TerritoriesZonesPOSYNUD_ValueChanged;
             // 
             // label193
             // 
@@ -247,6 +249,7 @@
             TerritoriesZonesDynamicMaxNUD.Size = new Size(79, 23);
             TerritoriesZonesDynamicMaxNUD.TabIndex = 132;
             TerritoriesZonesDynamicMaxNUD.TextAlign = HorizontalAlignment.Center;
+            TerritoriesZonesDynamicMaxNUD.ValueChanged += TerritoriesZonesDynamicMaxNUD_ValueChanged;
             // 
             // TerritoriesZonesDynamicMinNUD
             // 
@@ -260,6 +263,7 @@
             TerritoriesZonesDynamicMinNUD.Size = new Size(79, 23);
             TerritoriesZonesDynamicMinNUD.TabIndex = 131;
             TerritoriesZonesDynamicMinNUD.TextAlign = HorizontalAlignment.Center;
+            TerritoriesZonesDynamicMinNUD.ValueChanged += TerritoriesZonesDynamicMinNUD_ValueChanged;
             // 
             // label150
             // 
@@ -311,6 +315,7 @@
             TerritoriesZonesStaticMaxNUD.Size = new Size(79, 23);
             TerritoriesZonesStaticMaxNUD.TabIndex = 132;
             TerritoriesZonesStaticMaxNUD.TextAlign = HorizontalAlignment.Center;
+            TerritoriesZonesStaticMaxNUD.ValueChanged += TerritoriesZonesStaticMaxNUD_ValueChanged;
             // 
             // TerritoriesZonesStaticMInNUD
             // 
@@ -324,6 +329,7 @@
             TerritoriesZonesStaticMInNUD.Size = new Size(79, 23);
             TerritoriesZonesStaticMInNUD.TabIndex = 131;
             TerritoriesZonesStaticMInNUD.TextAlign = HorizontalAlignment.Center;
+            TerritoriesZonesStaticMInNUD.ValueChanged += TerritoriesZonesStaticMInNUD_ValueChanged;
             // 
             // label152
             // 
@@ -376,6 +382,7 @@
             TerritoriesZonesDynamicRB.TabStop = true;
             TerritoriesZonesDynamicRB.Text = "Dynamic";
             TerritoriesZonesDynamicRB.UseVisualStyleBackColor = true;
+            TerritoriesZonesDynamicRB.CheckedChanged += TerritoriesZonesAIUSage_CheckedChanged;
             // 
             // TerritoriesZonesHuntingGroundRB
             // 
@@ -388,6 +395,7 @@
             TerritoriesZonesHuntingGroundRB.TabStop = true;
             TerritoriesZonesHuntingGroundRB.Text = "HuntingGround";
             TerritoriesZonesHuntingGroundRB.UseVisualStyleBackColor = true;
+            TerritoriesZonesHuntingGroundRB.CheckedChanged += TerritoriesZonesAIUSage_CheckedChanged;
             // 
             // TerritoriesZonesGrazeRB
             // 
@@ -400,6 +408,7 @@
             TerritoriesZonesGrazeRB.TabStop = true;
             TerritoriesZonesGrazeRB.Text = "Graze";
             TerritoriesZonesGrazeRB.UseVisualStyleBackColor = true;
+            TerritoriesZonesGrazeRB.CheckedChanged += TerritoriesZonesAIUSage_CheckedChanged;
             // 
             // TerritoriesZonesWaterRB
             // 
@@ -412,6 +421,7 @@
             TerritoriesZonesWaterRB.TabStop = true;
             TerritoriesZonesWaterRB.Text = "Water";
             TerritoriesZonesWaterRB.UseVisualStyleBackColor = true;
+            TerritoriesZonesWaterRB.CheckedChanged += TerritoriesZonesAIUSage_CheckedChanged;
             // 
             // TerritoriesZonesRestRB
             // 
@@ -424,6 +434,7 @@
             TerritoriesZonesRestRB.TabStop = true;
             TerritoriesZonesRestRB.Text = "Rest";
             TerritoriesZonesRestRB.UseVisualStyleBackColor = true;
+            TerritoriesZonesRestRB.CheckedChanged += TerritoriesZonesAIUSage_CheckedChanged;
             // 
             // TerritoriesZonesDynamicTB
             // 
@@ -435,6 +446,7 @@
             TerritoriesZonesDynamicTB.Name = "TerritoriesZonesDynamicTB";
             TerritoriesZonesDynamicTB.Size = new Size(264, 23);
             TerritoriesZonesDynamicTB.TabIndex = 2;
+            TerritoriesZonesDynamicTB.TextChanged += TerritoriesZonesDynamicTB_TextChanged;
             // 
             // TerritoryZonesControl
             // 

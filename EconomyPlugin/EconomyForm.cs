@@ -221,6 +221,10 @@ namespace EconomyPlugin
                 [typeof(territorytypeTerritory)] = (node, selected) =>
                     ShowHandler(new territorytypeTerritoryColourControl(), typeof(territorytype), node.Tag as territorytypeTerritory, selected),
 
+                //economy
+                [typeof(envTerritoriesTerritory)] = (node, selected) =>
+                    ShowHandler(new envTerritoriesTerritoryControl(), typeof(cfgenvironmentConfig), node.Tag as envTerritoriesTerritory, selected),
+
                 //Economycore preview
                 [typeof(economyCoreConfig)] = (node, selected) =>
                     ShowHandler(new cfgeconomycorePreviewControl(), typeof(economyCoreConfig), node.Tag as economyCoreConfig, selected),
@@ -449,10 +453,25 @@ namespace EconomyPlugin
                 {
                     var cc = node.FindParentOfType<Complexchildrentype>();
                     ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                },
+                ["INITC"] = (node, selected ) =>
+                {
+                    OpenWithExternalEditor frm = new OpenWithExternalEditor();
+                    frm.StartPosition = FormStartPosition.CenterParent;
+                    frm.filePath = Path.Combine(_economyManager.basePath, "init.c");
+                    DialogResult dr = frm.ShowDialog();
+
+                    //ShowOpenWithDialog(Path.Combine(_economyManager.basePath, "init.c"));
                 }
 
             };
         }
+
+        public static void ShowOpenWithDialog(string filePath)
+        {
+            Process.Start("rundll32.exe", $"shell32.dll,OpenAs_RunDLL {filePath}");
+        }
+
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -1069,6 +1088,10 @@ namespace EconomyPlugin
             // cfgweatherconfig
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgweatherConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.cfgweatherConfig, CreatecfgweatherNodes);
+
+            TreeNode initnode = new TreeNode("init.c")
+            { Tag = "INITC" };
+            rootNode.Nodes.Add(initnode);
 
             // mapgroupos
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.mapgroupposConfig.FilePath);
@@ -3246,7 +3269,7 @@ namespace EconomyPlugin
             if (TerritorieszonesCB.Checked)
             {
                 territorytype territorytype = currentTreeNode.FindParentOfType<territorytype>();
-                foreach(territorytypeTerritory ttt in territorytype.territory)
+                foreach (territorytypeTerritory ttt in territorytype.territory)
                 {
                     foreach (territorytypeTerritoryZone zone in ttt.zone)
                     {
@@ -5777,7 +5800,10 @@ namespace EconomyPlugin
             _economyManager.mapgroupposConfig.isDirty = true;
         }
 
-
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            TerritorieszonesCB.Location = new Point(14 + EconomyTV.Width + 10, 9);
+        }
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin")]

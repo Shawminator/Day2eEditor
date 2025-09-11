@@ -36,9 +36,11 @@
             xmlPreview.Dock = DockStyle.Fill;
             xmlPreview.Location = new Point(0, 0);
             xmlPreview.Name = "xmlPreview";
+            xmlPreview.ReadOnly = true;
             xmlPreview.Size = new Size(647, 287);
             xmlPreview.TabIndex = 0;
             xmlPreview.Text = "";
+            xmlPreview.TextChanged += xmlPreview_TextChanged;
             // 
             // cfgeconomycorePreviewControl
             // 

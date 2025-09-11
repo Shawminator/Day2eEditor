@@ -36,7 +36,7 @@ namespace CoreUI.Forms
 
             trackBarAlpha.Value = alpha;
             lblAlphaValue.Text = $"Alpha: {alpha}";
-
+            
             this.Disposed += (s, e) => controller.Dispose();
         }
         private void btnPickColor_Click(object sender, EventArgs e)
@@ -64,6 +64,7 @@ namespace CoreUI.Forms
             panelPreview.BackColor = finalColor;
             SelectedColorHex = $"0x{finalColor.ToArgb():X8}";
             lblColorCode.Text = $"ARGB: {SelectedColorHex}";
+            lblColorCodeints.Text = $"A:{alpha}, R:{baseColor.R}, G:{baseColor.G}, B:{baseColor.B}";
         }
 
         private void btnOK_Click(object sender, EventArgs e)

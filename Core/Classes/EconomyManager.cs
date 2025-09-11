@@ -221,7 +221,8 @@ namespace Day2eEditor
                 cfgplayerspawnpointsConfig,
                 cfgweatherConfig,
                 cfgignorelistConfig,
-                mapgroupposConfig
+                mapgroupposConfig,
+                territoriesConfig
             };
 
             var savedFiles = new List<string>();
@@ -259,7 +260,8 @@ namespace Day2eEditor
                 cfgplayerspawnpointsConfig,
                 cfgweatherConfig,
                 cfgignorelistConfig,
-                mapgroupposConfig
+                mapgroupposConfig,
+                territoriesConfig
             };
             foreach (var obj in configs)
             {

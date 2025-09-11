@@ -1,6 +1,4 @@
-﻿using CoreUI.Forms;
-using Day2eEditor;
-using Microsoft.VisualBasic.Devices;
+﻿using Day2eEditor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +10,15 @@ namespace EconomyPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class territorytypeTerritoryColourControl : UserControl, IUIHandler
+    public partial class envTerritoriesTerritoryControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private territorytypeTerritory _data;
-        private territorytypeTerritory _originalData;
+        private envTerritoriesTerritory _data;
+        private envTerritoriesTerritory _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public territorytypeTerritoryColourControl()
+        public envTerritoriesTerritoryControl()
         {
             InitializeComponent();
         }
@@ -36,15 +34,15 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as territorytypeTerritory ?? throw new InvalidCastException();
+            _data = data as envTerritoriesTerritory ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
-            string col = string.Format("{0:X}", _data.color);
-            Color initialColor = ColorTranslator.FromHtml("#" + col.Substring(2));
-            m_Color.BackColor = initialColor;
+            nameTB.Text = _data.name;
+            TypeTB.Text = _data.type;
+            BehaviorTB.Text = _data.behavior;
 
             _suppressEvents = false;
         }
@@ -74,7 +72,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = _data.color != _originalData.color;
+                parent.isDirty = !_data.Equals(_originalData);
             }
         }
 
@@ -83,12 +81,12 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private territorytypeTerritory CloneData(territorytypeTerritory data)
+        private envTerritoriesTerritory CloneData(envTerritoriesTerritory data)
         {
             // TODO: Implement actual cloning logic
-            return new territorytypeTerritory
+            return new envTerritoriesTerritory
             {
-                color = data.color
+                // Copy properties here
             };
         }
 
@@ -99,29 +97,32 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.name;
             }
         }
 
         #endregion
 
-        private void m_Color_Click(object sender, EventArgs e)
+        private void nameTB_TextChanged(object sender, EventArgs e)
         {
-            string col = string.Format("{0:X}", _data.color);
-            Color initialColor = ColorTranslator.FromHtml("#" + col.Substring(2));
-            using (AdvancedColorPickerForm picker = new AdvancedColorPickerForm(initialColor))
-            {
-                picker.StartPosition = FormStartPosition.CenterParent;
-                if (picker.ShowDialog() == DialogResult.OK)
-                {
-                    string colorHex = picker.SelectedColorHex;
-                    long answer = Convert.ToInt64(colorHex.ToLower(), 16);
-                    _data.color = answer;
-                    Color selectedColor = ColorTranslator.FromHtml(colorHex);
-                    m_Color.BackColor = selectedColor;
-                    HasChanges();
-                }
-            }
+            if (_suppressEvents) return;
+            _data.name = nameTB.Text;
+            HasChanges();
+            UpdateTreeNodeText();
+        }
+
+        private void TypeTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.type = TypeTB.Text;
+            HasChanges();
+        }
+
+        private void BehaviorTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.behavior = BehaviorTB.Text;
+            HasChanges();
         }
     }
 }

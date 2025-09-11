@@ -360,7 +360,7 @@ namespace Day2eEditor
             if ((object)p == null)
                 return false;
 
-            return (name == p.name) && (smin == p.smin) && (smax == p.smax) && (dmin == p.dmin) && (dmax == p.dmax) && (x == p.x) && (z == p.z) && (r == p.r);
+            return (name == p.name) && (smin == p.smin) && (smax == p.smax) && (dmin == p.dmin) && (dmax == p.dmax) && (x == p.x) && (z == p.z) && (r == p.r) && (ySpecified == p.yFieldSpecified) && (y ==p.y);
         }
     }
 }

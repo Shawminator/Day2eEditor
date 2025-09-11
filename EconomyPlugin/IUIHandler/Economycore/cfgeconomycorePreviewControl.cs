@@ -134,5 +134,9 @@ namespace EconomyPlugin
                 parent.isDirty = !_data.Equals(_originalData);
             }
         }
+
+        private void xmlPreview_TextChanged(object sender, EventArgs e)
+        {
+        }
     }
 }

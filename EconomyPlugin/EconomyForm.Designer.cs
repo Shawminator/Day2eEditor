@@ -151,6 +151,7 @@ namespace EconomyPlugin
             splitContainer1.SplitterDistance = 380;
             splitContainer1.SplitterWidth = 10;
             splitContainer1.TabIndex = 3;
+            splitContainer1.SplitterMoved += splitContainer1_SplitterMoved;
             // 
             // EconomyTV
             // 
