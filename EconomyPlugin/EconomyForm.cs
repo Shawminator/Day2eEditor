@@ -218,7 +218,8 @@ namespace EconomyPlugin
                     SetupTerritoriesMap(zone, node);
                     _mapControl.EnsureVisible(new PointF((float)zone.x, (float)zone.z));
                 },
-
+                [typeof(territorytypeTerritory)] = (node, selected) =>
+                    ShowHandler(new territorytypeTerritoryColourControl(), typeof(territorytype), node.Tag as territorytypeTerritory, selected),
 
                 //Economycore preview
                 [typeof(economyCoreConfig)] = (node, selected) =>
@@ -3911,7 +3912,7 @@ namespace EconomyPlugin
                     }
                 }
                 // Optional: choose only if within some "click radius"
-                if (closestPos != null && closestDistance < 10.0) // 10 units tolerance
+                if (closestPos != null && closestDistance < (double)closestPos.r) // 10 units tolerance
                 {
                     foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
                     {
