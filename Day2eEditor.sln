@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EconomyPlugin", "EconomyPlu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreUI", "CoreUI\CoreUI.csproj", "{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicWeatherPlugin", "DynamicWeatherPlugin\DynamicWeatherPlugin.csproj", "{718E14D8-5D54-4F62-A267-E4DC476AE3DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

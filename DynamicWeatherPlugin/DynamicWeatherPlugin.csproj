@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <FileVersion>0.0.2</FileVersion>
+    <AssemblyVersion>0.0.2</AssemblyVersion>
+    <ProductVersion>0.0.2</ProductVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
+  </ItemGroup>
+
+  <Target Name="copyToPluginsFolder" AfterTargets="Build">
+    <MakeDir Directories="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

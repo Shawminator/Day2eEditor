@@ -130,14 +130,14 @@ namespace EconomyPlugin
             _mapControl.Dock = DockStyle.Fill;
             _mapControl.Location = new Point(0, 0);
             _mapControl.Name = "_mapControl";
-            _mapControl.Size = new Size(756, 593);
+            _mapControl.Size = new Size(773, 611);
             _mapControl.TabIndex = 1;
             _mapControl.Text = "mapViewerControl1";
             // 
             // splitContainer1
             // 
-            splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            splitContainer1.Location = new Point(12, 37);
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 31);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -147,8 +147,8 @@ namespace EconomyPlugin
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(_mapControl);
-            splitContainer1.Size = new Size(1146, 593);
-            splitContainer1.SplitterDistance = 380;
+            splitContainer1.Size = new Size(1170, 611);
+            splitContainer1.SplitterDistance = 387;
             splitContainer1.SplitterWidth = 10;
             splitContainer1.TabIndex = 3;
             splitContainer1.SplitterMoved += splitContainer1_SplitterMoved;
@@ -161,7 +161,7 @@ namespace EconomyPlugin
             EconomyTV.LineColor = Color.FromArgb(240, 240, 240);
             EconomyTV.Location = new Point(0, 0);
             EconomyTV.Name = "EconomyTV";
-            EconomyTV.Size = new Size(380, 593);
+            EconomyTV.Size = new Size(387, 611);
             EconomyTV.TabIndex = 0;
             EconomyTV.AfterSelect += EconomyTV_AfterSelect;
             EconomyTV.NodeMouseClick += EconomyTV_NodeMouseClick;
@@ -753,8 +753,8 @@ namespace EconomyPlugin
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1170, 642);
-            Controls.Add(panel1);
             Controls.Add(splitContainer1);
+            Controls.Add(panel1);
             ForeColor = SystemColors.Control;
             FormBorderStyle = FormBorderStyle.None;
             Name = "EconomyForm";
