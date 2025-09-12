@@ -14,7 +14,6 @@ namespace EconomyPlugin
     public partial class EconomyForm : Form
     {
         private IUIHandler? _currentHandler;
-        private EventGuard _eventGuard = new EventGuard();
         public MapViewerControl MapControl => _mapControl;
         private EconomyManager _economyManager;
         private readonly ProjectManager _projectManager;
@@ -466,7 +465,6 @@ namespace EconomyPlugin
 
             };
         }
-
         public static void ShowOpenWithDialog(string filePath)
         {
             Process.Start("rundll32.exe", $"shell32.dll,OpenAs_RunDLL {filePath}");

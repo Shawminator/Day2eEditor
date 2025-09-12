@@ -132,8 +132,6 @@ namespace Day2eEditor
             pluginEntries.Clear();
 
             // Add static entries (e.g., Donate, Discord)
-
-
             string pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
             if (!Directory.Exists(pluginPath))
             {
@@ -163,8 +161,17 @@ namespace Day2eEditor
                                 Identifier = pluginInfo.Identifier,
                                 PluginType = type
                             };
-                            pluginEntries.Add(pe);
-                            entries.Add(pe);
+                            if (pe.Identifier == "EconomyPlugin" || pe.Identifier == "ProjectsPlugin")
+                            {
+                                pluginEntries.Insert(0, pe);
+                                entries.Insert(0, pe);
+                            }
+                            else
+                            {
+                                pluginEntries.Add(pe);
+                                entries.Add(pe);
+                            }
+                            
                         }
                         
                     }
@@ -192,7 +199,7 @@ namespace Day2eEditor
                 availbeentries.Add(pluginEntries.First(x => x.Identifier == "ProjectsPlugin"));
 
             }
-                pluginListbox.DataSource = null;
+            pluginListbox.DataSource = null;
             pluginListbox.DataSource = availbeentries;
         }
         private void timer1_Tick(object sender, EventArgs e)

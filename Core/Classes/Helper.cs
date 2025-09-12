@@ -5,38 +5,6 @@ using System.Text;
 
 namespace Day2eEditor
 {
-    public class EventGuard
-    {
-        private bool _isSuppressed = false;
-
-        public bool IsUserInteraction => !_isSuppressed;
-
-        public IDisposable Suppress()
-        {
-            _isSuppressed = true;
-            return new Suppressor(() => _isSuppressed = false);
-        }
-
-        private class Suppressor : IDisposable
-        {
-            private readonly Action _onDispose;
-            private bool _disposed;
-
-            public Suppressor(Action onDispose)
-            {
-                _onDispose = onDispose;
-            }
-
-            public void Dispose()
-            {
-                if (!_disposed)
-                {
-                    _onDispose();
-                    _disposed = true;
-                }
-            }
-        }
-    }
     public static class ShellHelper
     {
         public static void DeleteEmptyFoldersUpToBase(string startDir, string stopDir)
@@ -171,6 +139,31 @@ namespace Day2eEditor
                 return size;
             }
             return 0;
+        }
+        public static void SetStringValue(object src, string mytype, string myvalue)
+        {
+            src.GetType().GetProperty(mytype).SetValue(src, myvalue, null);
+        }
+        public static void SetIntValue(object src, string mytype, int myvalue)
+        {
+            src.GetType().GetProperty(mytype).SetValue(src, myvalue, null);
+        }
+        public static void SetDecimalValue(object src, string mytype, decimal myvalue)
+        {
+            src.GetType().GetProperty(mytype).SetValue(src, myvalue, null);
+        }
+        public static void SetSingleValue(object src, string mytype, float myvalue)
+        {
+            src.GetType().GetProperty(mytype).SetValue(src, myvalue, null);
+        }
+        public static void SetFakeBoolValue(object src, string mytype, bool myvalue)
+        {
+            int myvalueasint = myvalue == true ? 1 : 0;
+            src.GetType().GetProperty(mytype).SetValue(src, myvalueasint, null);
+        }
+        public static void SetBoolValue(object src, string mytype, bool myvalue)
+        {
+            src.GetType().GetProperty(mytype).SetValue(src, myvalue, null);
         }
     }
 }

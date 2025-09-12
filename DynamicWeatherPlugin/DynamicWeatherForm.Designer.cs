@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DynamicWeatherForm));
             splitContainer1 = new SplitContainer();
             DynamicWeatherTV = new Day2eEditor.MultiSelectTreeView();
@@ -115,6 +116,9 @@
             label68 = new Label();
             SaveButton = new Button();
             panel1 = new Panel();
+            DynamicWeatherCM = new ContextMenuStrip(components);
+            addNewWeatherToolStripMenuItem = new ToolStripMenuItem();
+            removeWeatherToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -162,6 +166,7 @@
             ((System.ComponentModel.ISupportInitialize)transition_maxNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)transition_minNUD).BeginInit();
             panel1.SuspendLayout();
+            DynamicWeatherCM.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -203,6 +208,8 @@
             DynamicWeatherTV.Name = "DynamicWeatherTV";
             DynamicWeatherTV.Size = new Size(414, 697);
             DynamicWeatherTV.TabIndex = 0;
+            DynamicWeatherTV.AfterSelect += DynamicWeatherTV_AfterSelect;
+            DynamicWeatherTV.NodeMouseClick += DynamicWeatherTV_NodeMouseClick;
             // 
             // groupBox9
             // 
@@ -229,6 +236,7 @@
             use_global_temperatureCB.TabIndex = 75;
             use_global_temperatureCB.Text = "Use Global Temp";
             use_global_temperatureCB.UseVisualStyleBackColor = true;
+            use_global_temperatureCB.CheckedChanged += DWPBoolsCB_CheckedChanged;
             // 
             // global_temperature_overrideNUD
             // 
@@ -242,6 +250,7 @@
             global_temperature_overrideNUD.Size = new Size(91, 23);
             global_temperature_overrideNUD.TabIndex = 72;
             global_temperature_overrideNUD.TextAlign = HorizontalAlignment.Center;
+            global_temperature_overrideNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label22
             // 
@@ -281,6 +290,7 @@
             thunder_thresholdNUD.Size = new Size(91, 23);
             thunder_thresholdNUD.TabIndex = 77;
             thunder_thresholdNUD.TextAlign = HorizontalAlignment.Center;
+            thunder_thresholdNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label23
             // 
@@ -302,6 +312,7 @@
             stormCB.TabIndex = 75;
             stormCB.Text = "Use Storm";
             stormCB.UseVisualStyleBackColor = true;
+            stormCB.CheckedChanged += DWPBoolsCB_CheckedChanged;
             // 
             // thunder_timeoutNUD
             // 
@@ -314,6 +325,7 @@
             thunder_timeoutNUD.Size = new Size(91, 23);
             thunder_timeoutNUD.TabIndex = 72;
             thunder_timeoutNUD.TextAlign = HorizontalAlignment.Center;
+            thunder_timeoutNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label19
             // 
@@ -352,6 +364,7 @@
             use_snowflake_scaleCB.TabIndex = 74;
             use_snowflake_scaleCB.Text = "Use Snowflake Scale";
             use_snowflake_scaleCB.UseVisualStyleBackColor = true;
+            use_snowflake_scaleCB.CheckedChanged += DWPBoolsCB_CheckedChanged;
             // 
             // snowflake_scale_maxNUD
             // 
@@ -365,6 +378,7 @@
             snowflake_scale_maxNUD.Size = new Size(91, 23);
             snowflake_scale_maxNUD.TabIndex = 72;
             snowflake_scale_maxNUD.TextAlign = HorizontalAlignment.Center;
+            snowflake_scale_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // snowflake_scale_minNUD
             // 
@@ -378,6 +392,7 @@
             snowflake_scale_minNUD.Size = new Size(91, 23);
             snowflake_scale_minNUD.TabIndex = 71;
             snowflake_scale_minNUD.TextAlign = HorizontalAlignment.Center;
+            snowflake_scale_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label17
             // 
@@ -434,6 +449,7 @@
             snowfall_threshold_maxNUD.Size = new Size(91, 23);
             snowfall_threshold_maxNUD.TabIndex = 83;
             snowfall_threshold_maxNUD.TextAlign = HorizontalAlignment.Center;
+            snowfall_threshold_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // snowfall_threshold_minNUD
             // 
@@ -448,6 +464,7 @@
             snowfall_threshold_minNUD.Size = new Size(91, 23);
             snowfall_threshold_minNUD.TabIndex = 82;
             snowfall_threshold_minNUD.TextAlign = HorizontalAlignment.Center;
+            snowfall_threshold_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label25
             // 
@@ -480,6 +497,7 @@
             snowfall_threshold_timeoutNUD.Size = new Size(91, 23);
             snowfall_threshold_timeoutNUD.TabIndex = 79;
             snowfall_threshold_timeoutNUD.TextAlign = HorizontalAlignment.Center;
+            snowfall_threshold_timeoutNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label24
             // 
@@ -504,6 +522,7 @@
             snowfall_maxNUD.Size = new Size(91, 23);
             snowfall_maxNUD.TabIndex = 72;
             snowfall_maxNUD.TextAlign = HorizontalAlignment.Center;
+            snowfall_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // snowfall_minNUD
             // 
@@ -518,6 +537,7 @@
             snowfall_minNUD.Size = new Size(91, 23);
             snowfall_minNUD.TabIndex = 71;
             snowfall_minNUD.TextAlign = HorizontalAlignment.Center;
+            snowfall_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label15
             // 
@@ -568,6 +588,7 @@
             rain_maxNUD.Size = new Size(91, 23);
             rain_maxNUD.TabIndex = 72;
             rain_maxNUD.TextAlign = HorizontalAlignment.Center;
+            rain_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // rain_minNUD
             // 
@@ -582,6 +603,7 @@
             rain_minNUD.Size = new Size(91, 23);
             rain_minNUD.TabIndex = 71;
             rain_minNUD.TextAlign = HorizontalAlignment.Center;
+            rain_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label13
             // 
@@ -635,6 +657,7 @@
             wind_dir_maxNUD.Size = new Size(91, 23);
             wind_dir_maxNUD.TabIndex = 76;
             wind_dir_maxNUD.TextAlign = HorizontalAlignment.Center;
+            wind_dir_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // wind_dir_minNUD
             // 
@@ -648,6 +671,7 @@
             wind_dir_minNUD.Size = new Size(91, 23);
             wind_dir_minNUD.TabIndex = 75;
             wind_dir_minNUD.TextAlign = HorizontalAlignment.Center;
+            wind_dir_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label20
             // 
@@ -681,6 +705,7 @@
             wind_speed_maxNUD.Size = new Size(91, 23);
             wind_speed_maxNUD.TabIndex = 72;
             wind_speed_maxNUD.TextAlign = HorizontalAlignment.Center;
+            wind_speed_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // wind_speed_minNUD
             // 
@@ -694,6 +719,7 @@
             wind_speed_minNUD.Size = new Size(91, 23);
             wind_speed_minNUD.TabIndex = 71;
             wind_speed_minNUD.TextAlign = HorizontalAlignment.Center;
+            wind_speed_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label11
             // 
@@ -746,6 +772,7 @@
             fog_minNUD.Size = new Size(91, 23);
             fog_minNUD.TabIndex = 86;
             fog_minNUD.TextAlign = HorizontalAlignment.Center;
+            fog_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // fog_transition_timeNUD
             // 
@@ -760,6 +787,7 @@
             fog_transition_timeNUD.Size = new Size(91, 23);
             fog_transition_timeNUD.TabIndex = 83;
             fog_transition_timeNUD.TextAlign = HorizontalAlignment.Center;
+            fog_transition_timeNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label8
             // 
@@ -784,6 +812,7 @@
             fog_maxNUD.Size = new Size(91, 23);
             fog_maxNUD.TabIndex = 87;
             fog_maxNUD.TextAlign = HorizontalAlignment.Center;
+            fog_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label10
             // 
@@ -843,6 +872,7 @@
             dyn_vol_fog_biasNUD.Size = new Size(91, 23);
             dyn_vol_fog_biasNUD.TabIndex = 81;
             dyn_vol_fog_biasNUD.TextAlign = HorizontalAlignment.Center;
+            dyn_vol_fog_biasNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label7
             // 
@@ -887,6 +917,7 @@
             dyn_vol_fog_height_maxNUD.Size = new Size(91, 23);
             dyn_vol_fog_height_maxNUD.TabIndex = 77;
             dyn_vol_fog_height_maxNUD.TextAlign = HorizontalAlignment.Center;
+            dyn_vol_fog_height_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // dyn_vol_fog_height_minNUD
             // 
@@ -901,6 +932,7 @@
             dyn_vol_fog_height_minNUD.Size = new Size(91, 23);
             dyn_vol_fog_height_minNUD.TabIndex = 76;
             dyn_vol_fog_height_minNUD.TextAlign = HorizontalAlignment.Center;
+            dyn_vol_fog_height_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label3
             // 
@@ -932,6 +964,7 @@
             use_dyn_vol_fogCB.TabIndex = 73;
             use_dyn_vol_fogCB.Text = "Use Dyn Vol Fog";
             use_dyn_vol_fogCB.UseVisualStyleBackColor = true;
+            use_dyn_vol_fogCB.CheckedChanged += DWPBoolsCB_CheckedChanged;
             // 
             // dyn_vol_fog_dist_maxNUD
             // 
@@ -946,6 +979,7 @@
             dyn_vol_fog_dist_maxNUD.Size = new Size(91, 23);
             dyn_vol_fog_dist_maxNUD.TabIndex = 72;
             dyn_vol_fog_dist_maxNUD.TextAlign = HorizontalAlignment.Center;
+            dyn_vol_fog_dist_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // dyn_vol_fog_dist_minNUD
             // 
@@ -960,6 +994,7 @@
             dyn_vol_fog_dist_minNUD.Size = new Size(91, 23);
             dyn_vol_fog_dist_minNUD.TabIndex = 71;
             dyn_vol_fog_dist_minNUD.TextAlign = HorizontalAlignment.Center;
+            dyn_vol_fog_dist_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label1
             // 
@@ -1010,6 +1045,7 @@
             overcast_maxNUD.Size = new Size(91, 23);
             overcast_maxNUD.TabIndex = 72;
             overcast_maxNUD.TextAlign = HorizontalAlignment.Center;
+            overcast_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // overcast_minNUD
             // 
@@ -1024,6 +1060,7 @@
             overcast_minNUD.Size = new Size(91, 23);
             overcast_minNUD.TabIndex = 71;
             overcast_minNUD.TextAlign = HorizontalAlignment.Center;
+            overcast_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label70
             // 
@@ -1081,6 +1118,7 @@
             nameTB.Name = "nameTB";
             nameTB.Size = new Size(250, 23);
             nameTB.TabIndex = 120;
+            nameTB.TextChanged += DWPstringTB_TextChanged;
             // 
             // notify_messageCB
             // 
@@ -1092,6 +1130,7 @@
             notify_messageCB.TabIndex = 0;
             notify_messageCB.Text = "Notify Message Enabled";
             notify_messageCB.UseVisualStyleBackColor = true;
+            notify_messageCB.CheckedChanged += DWPBoolsCB_CheckedChanged;
             // 
             // chat_messageCB
             // 
@@ -1103,6 +1142,7 @@
             chat_messageCB.TabIndex = 1;
             chat_messageCB.Text = "Chat Message Enabled";
             chat_messageCB.UseVisualStyleBackColor = true;
+            chat_messageCB.CheckedChanged += DWPBoolsCB_CheckedChanged;
             // 
             // groupBox41
             // 
@@ -1133,6 +1173,7 @@
             duration_maxNUD.Size = new Size(91, 23);
             duration_maxNUD.TabIndex = 72;
             duration_maxNUD.TextAlign = HorizontalAlignment.Center;
+            duration_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // duration_minNUD
             // 
@@ -1147,6 +1188,7 @@
             duration_minNUD.Size = new Size(91, 23);
             duration_minNUD.TabIndex = 71;
             duration_minNUD.TextAlign = HorizontalAlignment.Center;
+            duration_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label66
             // 
@@ -1197,6 +1239,7 @@
             transition_maxNUD.Size = new Size(91, 23);
             transition_maxNUD.TabIndex = 72;
             transition_maxNUD.TextAlign = HorizontalAlignment.Center;
+            transition_maxNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // transition_minNUD
             // 
@@ -1211,6 +1254,7 @@
             transition_minNUD.Size = new Size(91, 23);
             transition_minNUD.TabIndex = 71;
             transition_minNUD.TextAlign = HorizontalAlignment.Center;
+            transition_minNUD.ValueChanged += DWPDecimalsNUD_ValueChanged;
             // 
             // label67
             // 
@@ -1243,6 +1287,7 @@
             SaveButton.TabIndex = 0;
             SaveButton.TextImageRelation = TextImageRelation.ImageAboveText;
             SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
             // 
             // panel1
             // 
@@ -1253,6 +1298,30 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1249, 31);
             panel1.TabIndex = 5;
+            // 
+            // DynamicWeatherCM
+            // 
+            DynamicWeatherCM.BackColor = Color.FromArgb(60, 63, 65);
+            DynamicWeatherCM.Items.AddRange(new ToolStripItem[] { addNewWeatherToolStripMenuItem, removeWeatherToolStripMenuItem });
+            DynamicWeatherCM.Name = "TypesCM";
+            DynamicWeatherCM.ShowImageMargin = false;
+            DynamicWeatherCM.Size = new Size(146, 48);
+            // 
+            // addNewWeatherToolStripMenuItem
+            // 
+            addNewWeatherToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewWeatherToolStripMenuItem.Name = "addNewWeatherToolStripMenuItem";
+            addNewWeatherToolStripMenuItem.Size = new Size(145, 22);
+            addNewWeatherToolStripMenuItem.Text = "Add New Weather";
+            addNewWeatherToolStripMenuItem.Click += addNewWeatherToolStripMenuItem_Click;
+            // 
+            // removeWeatherToolStripMenuItem
+            // 
+            removeWeatherToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeWeatherToolStripMenuItem.Name = "removeWeatherToolStripMenuItem";
+            removeWeatherToolStripMenuItem.Size = new Size(145, 22);
+            removeWeatherToolStripMenuItem.Text = "Remove Weather";
+            removeWeatherToolStripMenuItem.Click += removeWeatherToolStripMenuItem_Click;
             // 
             // DynamicWeatherForm
             // 
@@ -1266,6 +1335,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "DynamicWeatherForm";
             Text = "Form1";
+            FormClosing += DynamicWeatherForm_FormClosing;
             Load += DynamicWeatherForm_Load;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
@@ -1326,6 +1396,7 @@
             ((System.ComponentModel.ISupportInitialize)transition_maxNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)transition_minNUD).EndInit();
             panel1.ResumeLayout(false);
+            DynamicWeatherCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1417,5 +1488,8 @@
         private NumericUpDown transition_minNUD;
         private Label label67;
         private Label label68;
+        private ContextMenuStrip DynamicWeatherCM;
+        private ToolStripMenuItem addNewWeatherToolStripMenuItem;
+        private ToolStripMenuItem removeWeatherToolStripMenuItem;
     }
 }
