@@ -54,7 +54,7 @@ namespace Day2eEditor
         public cfgignorelistConfig cfgignorelistConfig { get; set; }
         public mapgroupposConfig mapgroupposConfig { get; set; }
         public TerritoriesConfig territoriesConfig { get; set; }
-        //public mapgroupproto mapgroupproto { get; set; }
+        public mapgroupprotoConfig mapgroupprotoConfig { get; set; }
 
         public EconomyManager() 
         {
@@ -78,6 +78,7 @@ namespace Day2eEditor
             _paths["cfgweather"] = Path.Combine(basePath, "cfgweather.xml");
             _paths["cfgignorelist"] = Path.Combine(basePath, "cfgignorelist.xml"); 
             _paths["mapgrouppos"] = Path.Combine(basePath, "mapgrouppos.xml");
+            _paths["mapgroupproto"] = Path.Combine(basePath, "mapgroupproto.xml");
 
             _paths["VanillaTypes"] = Path.Combine(basePath, "db", "types.xml");
             _paths["VanillaEvents"] = Path.Combine(basePath, "db", "events.xml");
@@ -175,6 +176,9 @@ namespace Day2eEditor
             mapgroupposConfig = new mapgroupposConfig(_paths["mapgrouppos"]);
             LoadConfigWithErrorReport("mapgrouppos", mapgroupposConfig);
 
+            mapgroupprotoConfig = new mapgroupprotoConfig(_paths["mapgroupproto"]);
+            LoadConfigWithErrorReport("mapgroupproto", mapgroupprotoConfig);
+
             Console.WriteLine($"\n**** Starting load of EconomyCore Files Including Vanilla ****");
 
             economyConfig = new economyConfig();
@@ -222,7 +226,8 @@ namespace Day2eEditor
                 cfgweatherConfig,
                 cfgignorelistConfig,
                 mapgroupposConfig,
-                territoriesConfig
+                territoriesConfig,
+                mapgroupprotoConfig
             };
 
             var savedFiles = new List<string>();
@@ -261,7 +266,8 @@ namespace Day2eEditor
                 cfgweatherConfig,
                 cfgignorelistConfig,
                 mapgroupposConfig,
-                territoriesConfig
+                territoriesConfig,
+                mapgroupprotoConfig
             };
             foreach (var obj in configs)
             {

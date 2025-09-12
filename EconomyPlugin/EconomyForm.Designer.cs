@@ -206,9 +206,9 @@ namespace EconomyPlugin
             TerritorieszonesCB.AutoSize = true;
             TerritorieszonesCB.Location = new Point(402, 9);
             TerritorieszonesCB.Name = "TerritorieszonesCB";
-            TerritorieszonesCB.Size = new Size(153, 19);
+            TerritorieszonesCB.Size = new Size(190, 19);
             TerritorieszonesCB.TabIndex = 2;
-            TerritorieszonesCB.Text = "Show All Territory Zones";
+            TerritorieszonesCB.Text = "Show All Zones in This Territory";
             TerritorieszonesCB.UseVisualStyleBackColor = true;
             TerritorieszonesCB.Visible = false;
             TerritorieszonesCB.CheckedChanged += TerritorieszonesCB_CheckedChanged;

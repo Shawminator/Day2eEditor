@@ -1095,6 +1095,10 @@ namespace EconomyPlugin
             _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.mapgroupposConfig.FilePath);
             AddFileToTree(rootNode, _relativePath, _economyManager.mapgroupposConfig, CreatemapgeroupposNodes);
 
+            // mapgroupproto
+            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.mapgroupprotoConfig.FilePath);
+            AddFileToTree(rootNode, _relativePath, _economyManager.mapgroupprotoConfig, CreatemapgeroupprotoNodes);
+
             EconomyTV.Nodes.Add(rootNode);
         }
 
@@ -2179,6 +2183,39 @@ namespace EconomyPlugin
             }
 
             return ignorelistrootNode;
+        }
+        //CreatemapgeroupprotoNodes
+        private TreeNode CreatemapgeroupprotoNodes(mapgroupprotoConfig config)
+        {
+            TreeNode mapgroupprotoNodes = new TreeNode(config.FileName)
+            {
+                Tag = config
+            };
+            TreeNode Defaultnodes = new TreeNode("Defaults")
+            {
+                Tag = "mapgroupprotoDefaults"
+            };
+            foreach (prototypeDefault prototypeDefault in config.Data.defaults)
+            {
+                Defaultnodes.Nodes.Add(new TreeNode(prototypeDefault.ToString())
+                {
+                    Tag = prototypeDefault
+                });
+            }
+            mapgroupprotoNodes.Nodes.Add(Defaultnodes);
+            TreeNode Groupnodes = new TreeNode("Groups")
+            {
+                Tag = "mapgroupprotoGroups"
+            };
+            foreach (prototypeGroup prototypeGroup in config.Data.group)
+            {
+                Groupnodes.Nodes.Add(new TreeNode(prototypeGroup.ToString())
+                {
+                    Tag = prototypeGroup
+                });
+            }
+            mapgroupprotoNodes.Nodes.Add(Groupnodes);
+            return mapgroupprotoNodes;
         }
         #endregion loading treeview
 
