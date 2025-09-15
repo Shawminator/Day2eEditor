@@ -1,5 +1,6 @@
 using Day2eEditor;
 using DayZeLib;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -318,8 +319,11 @@ namespace EconomyPlugin
                 [typeof(Trigger)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new cfgundergroundtriggersTriggerControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Trigger, selected),
                 [typeof(Breadcrumb)] = (node, selected) =>
-                   ShowHandler<IUIHandler>(new cfgundergroundtriggersBreadCrumbControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Breadcrumb, selected)
+                   ShowHandler<IUIHandler>(new cfgundergroundtriggersBreadCrumbControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Breadcrumb, selected),
 
+
+                [typeof(prototypeGroup)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected)
 
             };
             // ----------------------
@@ -2353,7 +2357,8 @@ namespace EconomyPlugin
             }
 
             // If same type → just reload
-            if (_currentHandler != null && _currentHandler.GetType() == typeof(THandler))
+            Type handlerType = handler.GetType();
+            if (_currentHandler != null && _currentHandler.GetType() == handlerType)
             {
                 _currentHandler.LoadFromData(parent, primaryData, selectedNodes);
                 return;

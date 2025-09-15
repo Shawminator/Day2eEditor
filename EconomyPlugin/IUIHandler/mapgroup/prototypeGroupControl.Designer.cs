@@ -32,9 +32,9 @@
             darkButton63 = new Button();
             tabControl24 = new TabControl();
             tabPage20 = new TabPage();
-            flowLayoutPanel2 = new FlowLayoutPanel();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             tabPage21 = new TabPage();
-            flowLayoutPanel3 = new FlowLayoutPanel();
+            flowLayoutPanel2 = new FlowLayoutPanel();
             groupBox68 = new GroupBox();
             MapGroupProtoGroupUseLootMaxNUD = new NumericUpDown();
             MapGroupprotoGroupUseLootmaxCB = new CheckBox();
@@ -96,7 +96,7 @@
             // tabPage20
             // 
             tabPage20.BackColor = Color.FromArgb(60, 63, 65);
-            tabPage20.Controls.Add(flowLayoutPanel2);
+            tabPage20.Controls.Add(flowLayoutPanel1);
             tabPage20.Location = new Point(4, 27);
             tabPage20.Margin = new Padding(4, 3, 4, 3);
             tabPage20.Name = "tabPage20";
@@ -104,6 +104,28 @@
             tabPage20.Size = new Size(456, 151);
             tabPage20.TabIndex = 0;
             tabPage20.Text = "Set definitions";
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanel1.Location = new Point(4, 3);
+            flowLayoutPanel1.Margin = new Padding(4, 3, 4, 3);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(448, 145);
+            flowLayoutPanel1.TabIndex = 0;
+            // 
+            // tabPage21
+            // 
+            tabPage21.BackColor = Color.FromArgb(60, 63, 65);
+            tabPage21.Controls.Add(flowLayoutPanel2);
+            tabPage21.Location = new Point(4, 27);
+            tabPage21.Margin = new Padding(4, 3, 4, 3);
+            tabPage21.Name = "tabPage21";
+            tabPage21.Padding = new Padding(4, 3, 4, 3);
+            tabPage21.Size = new Size(456, 151);
+            tabPage21.TabIndex = 1;
+            tabPage21.Text = "User Definitions";
             // 
             // flowLayoutPanel2
             // 
@@ -114,28 +136,6 @@
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Size = new Size(448, 145);
             flowLayoutPanel2.TabIndex = 0;
-            // 
-            // tabPage21
-            // 
-            tabPage21.BackColor = Color.FromArgb(60, 63, 65);
-            tabPage21.Controls.Add(flowLayoutPanel3);
-            tabPage21.Location = new Point(4, 27);
-            tabPage21.Margin = new Padding(4, 3, 4, 3);
-            tabPage21.Name = "tabPage21";
-            tabPage21.Padding = new Padding(4, 3, 4, 3);
-            tabPage21.Size = new Size(456, 151);
-            tabPage21.TabIndex = 1;
-            tabPage21.Text = "User Definitions";
-            // 
-            // flowLayoutPanel3
-            // 
-            flowLayoutPanel3.Dock = DockStyle.Fill;
-            flowLayoutPanel3.FlowDirection = FlowDirection.TopDown;
-            flowLayoutPanel3.Location = new Point(4, 3);
-            flowLayoutPanel3.Margin = new Padding(4, 3, 4, 3);
-            flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(448, 145);
-            flowLayoutPanel3.TabIndex = 0;
             // 
             // groupBox68
             // 
@@ -312,5 +312,6 @@
         private ComboBox MapGroupProtoUsageCB;
         private ListBox MapGroupProtoGroupUsageLB;
         private Button darkButton58;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }

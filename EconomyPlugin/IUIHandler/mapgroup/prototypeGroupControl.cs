@@ -21,6 +21,39 @@ namespace EconomyPlugin
         public prototypeGroupControl()
         {
             InitializeComponent();
+            SetTiers();
+            SetUsageCB();
+        }
+
+        private void SetUsageCB()
+        {
+            
+        }
+
+        private void SetTiers()
+        {
+            _suppressEvents = true;
+
+            foreach (listsValue value in AppServices.GetRequired<EconomyManager>().cfglimitsdefinitionConfig.Data.valueflags)
+            {
+                CheckBox cb = new CheckBox();
+                cb.Tag = value.name;
+                cb.Checked = false;
+                cb.Visible = true;
+                cb.Text = value.name;
+                flowLayoutPanel1.Controls.Add(cb);
+            }
+
+            foreach (user_listsUser1 user in AppServices.GetRequired<EconomyManager>().cfglimitsdefinitionuserConfig.Data.valueflags)
+            {
+                CheckBox cb = new CheckBox();
+                cb.Tag = user.name;
+                cb.Visible = true;
+                cb.Checked = false;
+                cb.Text = user.name;
+                flowLayoutPanel2.Controls.Add(cb);
+            }
+            _suppressEvents = false;
         }
 
         /// <summary>
@@ -40,9 +73,50 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            MapgroupprotoGroupNameTB.Text = _data.name;
+            MapGroupProtoGroupUseLootMaxNUD.Visible = MapGroupprotoGroupUseLootmaxCB.Checked = _data.lootmaxSpecified;
+            MapGroupProtoGroupUseLootMaxNUD.Value = _data.lootmax;
+
+            MapgroupProtoPopulateTiers();
 
             _suppressEvents = false;
+        }
+
+        private void MapgroupProtoPopulateTiers()
+        {
+            if (_data.value != null)
+            {
+                for (int i = 0; i < _data.value.Count; i++)
+                {
+                    if (_data.value[i].user != null && _data.value[i].user.Count() > 0 && _data.value[i].name == null)
+                    {
+                        tabControl24.SelectedIndex = 1;
+                        try
+                        {
+                            flowLayoutPanel2.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _data.value[i].user).Checked = true;
+                        }
+                        catch
+                        {
+                            _data.value.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    else
+                    {
+                        tabControl24.SelectedIndex = 0;
+
+                        try
+                        {
+                            flowLayoutPanel1.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _data.value[i].name).Checked = true;
+                        }
+                        catch
+                        {
+                            _data.value.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -102,5 +176,43 @@ namespace EconomyPlugin
         }
 
         #endregion
+
+        private void mapgroupprotoTierCheckBoxchanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            CheckBox cb = sender as CheckBox;
+            string tier = cb.Tag.ToString();
+            if (cb.Checked)
+                currentmapgroupprotoGroup.AddTier(tier);
+            else
+                currentmapgroupprotoGroup.removetier(tier);
+            currentproject.mapgroupproto.isDirty = true;
+            isUserInteraction = false;
+            MapgroupProtoPopulateTiers();
+            isUserInteraction = true;
+        }
+
+        private void MapgroupProtoUserdefiniedTiersChanged(object sender, EventArgs e)
+        {
+            if (isUserInteraction)
+            {
+                CheckBox cb = sender as CheckBox;
+                string tier = cb.Tag.ToString();
+                if (cb.Checked)
+                {
+                    if (currentmapgroupprotoGroup.value != null)
+                    {
+                        currentmapgroupprotoGroup.removetiers();
+                    }
+                    currentmapgroupprotoGroup.AdduserTier(tier);
+                }
+                else
+                    currentmapgroupprotoGroup.removeusertier(tier);
+                currentproject.mapgroupproto.isDirty = true;
+                isUserInteraction = false;
+                MapgroupProtoPopulateTiers();
+                isUserInteraction = true;
+            }
+        }
     }
 }
