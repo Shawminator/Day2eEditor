@@ -46,6 +46,7 @@
             MapGroupProtoUsageCB = new ComboBox();
             MapGroupProtoGroupUsageLB = new ListBox();
             darkButton58 = new Button();
+            groupBox1 = new GroupBox();
             groupBox70.SuspendLayout();
             tabControl24.SuspendLayout();
             tabPage20.SuspendLayout();
@@ -54,6 +55,7 @@
             ((System.ComponentModel.ISupportInitialize)MapGroupProtoGroupUseLootMaxNUD).BeginInit();
             groupBox64.SuspendLayout();
             groupBox62.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox70
@@ -61,7 +63,7 @@
             groupBox70.Controls.Add(darkButton63);
             groupBox70.Controls.Add(tabControl24);
             groupBox70.ForeColor = SystemColors.ButtonHighlight;
-            groupBox70.Location = new Point(0, 88);
+            groupBox70.Location = new Point(7, 110);
             groupBox70.Margin = new Padding(4, 3, 4, 3);
             groupBox70.Name = "groupBox70";
             groupBox70.Padding = new Padding(4, 3, 4, 3);
@@ -144,7 +146,7 @@
             groupBox68.Controls.Add(MapgroupprotoGroupNameTB);
             groupBox68.Controls.Add(label147);
             groupBox68.ForeColor = SystemColors.Control;
-            groupBox68.Location = new Point(0, 0);
+            groupBox68.Location = new Point(7, 22);
             groupBox68.Margin = new Padding(4, 3, 4, 3);
             groupBox68.Name = "groupBox68";
             groupBox68.Padding = new Padding(4, 3, 4, 3);
@@ -164,6 +166,7 @@
             MapGroupProtoGroupUseLootMaxNUD.Size = new Size(79, 23);
             MapGroupProtoGroupUseLootMaxNUD.TabIndex = 10;
             MapGroupProtoGroupUseLootMaxNUD.TextAlign = HorizontalAlignment.Center;
+            MapGroupProtoGroupUseLootMaxNUD.ValueChanged += MapGroupProtoGroupUseLootMaxNUD_ValueChanged;
             // 
             // MapGroupprotoGroupUseLootmaxCB
             // 
@@ -171,10 +174,11 @@
             MapGroupprotoGroupUseLootmaxCB.Location = new Point(11, 46);
             MapGroupprotoGroupUseLootmaxCB.Margin = new Padding(4, 3, 4, 3);
             MapGroupprotoGroupUseLootmaxCB.Name = "MapGroupprotoGroupUseLootmaxCB";
-            MapGroupprotoGroupUseLootmaxCB.Size = new Size(95, 19);
+            MapGroupprotoGroupUseLootmaxCB.Size = new Size(94, 19);
             MapGroupprotoGroupUseLootmaxCB.TabIndex = 2;
             MapGroupprotoGroupUseLootmaxCB.Text = "Use Lootmax";
             MapGroupprotoGroupUseLootmaxCB.UseVisualStyleBackColor = true;
+            MapGroupprotoGroupUseLootmaxCB.CheckedChanged += MapGroupprotoGroupUseLootmaxCB_CheckedChanged;
             // 
             // MapgroupprotoGroupNameTB
             // 
@@ -186,6 +190,7 @@
             MapgroupprotoGroupNameTB.Name = "MapgroupprotoGroupNameTB";
             MapgroupprotoGroupNameTB.Size = new Size(406, 23);
             MapgroupprotoGroupNameTB.TabIndex = 1;
+            MapgroupprotoGroupNameTB.TextChanged += MapgroupprotoGroupNameTB_TextChanged;
             // 
             // label147
             // 
@@ -203,7 +208,7 @@
             groupBox64.Controls.Add(MapGroupProtoGroupUsageLB);
             groupBox64.Controls.Add(darkButton58);
             groupBox64.ForeColor = SystemColors.Control;
-            groupBox64.Location = new Point(0, 298);
+            groupBox64.Location = new Point(7, 320);
             groupBox64.Margin = new Padding(4, 3, 4, 3);
             groupBox64.Name = "groupBox64";
             groupBox64.Padding = new Padding(4, 3, 4, 3);
@@ -235,6 +240,7 @@
             darkButton56.Size = new Size(221, 51);
             darkButton56.TabIndex = 3;
             darkButton56.Text = "Add Selected";
+            darkButton56.Click += darkButton56_Click;
             // 
             // MapGroupProtoUsageCB
             // 
@@ -258,6 +264,7 @@
             MapGroupProtoGroupUsageLB.Name = "MapGroupProtoGroupUsageLB";
             MapGroupProtoGroupUsageLB.Size = new Size(213, 84);
             MapGroupProtoGroupUsageLB.TabIndex = 59;
+            MapGroupProtoGroupUsageLB.DrawItem += listBox_DrawItem;
             // 
             // darkButton58
             // 
@@ -268,18 +275,30 @@
             darkButton58.Size = new Size(214, 27);
             darkButton58.TabIndex = 60;
             darkButton58.Text = "Remove Selected";
+            darkButton58.Click += darkButton58_Click;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(groupBox68);
+            groupBox1.Controls.Add(groupBox70);
+            groupBox1.Controls.Add(groupBox64);
+            groupBox1.ForeColor = SystemColors.Control;
+            groupBox1.Location = new Point(0, 0);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(493, 486);
+            groupBox1.TabIndex = 76;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Group Info";
             // 
             // prototypeGroupControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            Controls.Add(groupBox70);
-            Controls.Add(groupBox68);
-            Controls.Add(groupBox64);
+            Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "prototypeGroupControl";
-            Size = new Size(1165, 613);
+            Size = new Size(501, 496);
             groupBox70.ResumeLayout(false);
             tabControl24.ResumeLayout(false);
             tabPage20.ResumeLayout(false);
@@ -289,6 +308,7 @@
             ((System.ComponentModel.ISupportInitialize)MapGroupProtoGroupUseLootMaxNUD).EndInit();
             groupBox64.ResumeLayout(false);
             groupBox62.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -313,5 +333,6 @@
         private ListBox MapGroupProtoGroupUsageLB;
         private Button darkButton58;
         private FlowLayoutPanel flowLayoutPanel1;
+        private GroupBox groupBox1;
     }
 }

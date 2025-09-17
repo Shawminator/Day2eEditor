@@ -323,7 +323,11 @@ namespace EconomyPlugin
 
 
                 [typeof(prototypeGroup)] = (node, selected) =>
-                   ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected)
+                   ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected),
+                [typeof(prototypeGroupContainer)] = (node, selected) =>
+                   ShowHandler<IUIHandler>(new prototypeGroupContainerControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroupContainer, selected)
+
+                   
 
             };
             // ----------------------
@@ -549,9 +553,9 @@ namespace EconomyPlugin
                 // Random Presets
                 [typeof(cfgrandompresetsFile)] = node =>
                 {
-                    RandomPresetsCM.Items.Clear();
-                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
-                    RandomPresetsCM.Show(Cursor.Position);
+                    //RandomPresetsCM.Items.Clear();
+                    //RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    //RandomPresetsCM.Show(Cursor.Position);
                 },
                 [typeof(randompresetsAttachments)] = node =>
                 {
@@ -579,7 +583,8 @@ namespace EconomyPlugin
                 {
                     SpawnableTypesCM.Items.Clear();
                     SpawnableTypesCM.Items.Add(addNewSpawnableTypeToolStripMenuItem);
-                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    if((node.Tag as cfgspawnabletypesFile).IsModded)
+                        SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
                     SpawnableTypesCM.Show(Cursor.Position);
                 },
                 [typeof(SpawnableType)] = node =>
@@ -2213,10 +2218,19 @@ namespace EconomyPlugin
             };
             foreach (prototypeGroup prototypeGroup in config.Data.group)
             {
-                Groupnodes.Nodes.Add(new TreeNode(prototypeGroup.ToString())
+                TreeNode groupnode = new TreeNode(prototypeGroup.ToString())
                 {
                     Tag = prototypeGroup
-                });
+                };
+                foreach(prototypeGroupContainer container in prototypeGroup.container)
+                {
+                    TreeNode containernode = new TreeNode(container.ToString())
+                    {
+                        Tag = container
+                    };
+                    groupnode.Nodes.Add(containernode);
+                }
+                Groupnodes.Nodes.Add(groupnode);
             }
             mapgroupprotoNodes.Nodes.Add(Groupnodes);
             return mapgroupprotoNodes;
@@ -2378,8 +2392,8 @@ namespace EconomyPlugin
             handler.LoadFromData(parent, primaryData, selectedNodes);
 
             var ctrl = handler.GetControl();
-            splitContainer1.Panel2.Controls.Add(ctrl);
             ctrl.Location = new Point(2, 2);
+            splitContainer1.Panel2.Controls.Add(ctrl);
             ctrl.BringToFront();
             ctrl.Visible = true;
 

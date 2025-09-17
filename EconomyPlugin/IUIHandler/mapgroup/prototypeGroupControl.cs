@@ -1,8 +1,10 @@
 ﻿using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace EconomyPlugin
 {
@@ -18,6 +20,25 @@ namespace EconomyPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
+        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            ListBox lb = sender as ListBox;
+            e.DrawBackground();
+            if (lb.Items.Count == 0) return;
+            Brush myBrush = Brushes.Black;
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+            }
+            else
+            {
+                myBrush = Brushes.White;
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(60, 63, 65)), e.Bounds);
+            }
+            e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
+            e.DrawFocusRectangle();
+        }
+
         public prototypeGroupControl()
         {
             InitializeComponent();
@@ -27,7 +48,9 @@ namespace EconomyPlugin
 
         private void SetUsageCB()
         {
-            
+            List<object> usagelist = new List<object>();
+            usagelist.AddRange(AppServices.GetRequired<EconomyManager>().cfglimitsdefinitionConfig.Data.usageflags);
+            MapGroupProtoUsageCB.DataSource = usagelist;
         }
 
         private void SetTiers()
@@ -41,6 +64,7 @@ namespace EconomyPlugin
                 cb.Checked = false;
                 cb.Visible = true;
                 cb.Text = value.name;
+                cb.CheckedChanged += mapgroupprotoTierCheckBoxchanged;
                 flowLayoutPanel1.Controls.Add(cb);
             }
 
@@ -51,6 +75,7 @@ namespace EconomyPlugin
                 cb.Visible = true;
                 cb.Checked = false;
                 cb.Text = user.name;
+                cb.CheckedChanged += MapgroupProtoUserdefiniedTiersChanged;
                 flowLayoutPanel2.Controls.Add(cb);
             }
             _suppressEvents = false;
@@ -78,12 +103,25 @@ namespace EconomyPlugin
             MapGroupProtoGroupUseLootMaxNUD.Value = _data.lootmax;
 
             MapgroupProtoPopulateTiers();
-
+            MapgroupProtopopulateUsage();
             _suppressEvents = false;
         }
-
+        private void MapgroupProtopopulateUsage()
+        {
+            MapGroupProtoGroupUsageLB.DisplayMember = "DisplayName";
+            MapGroupProtoGroupUsageLB.ValueMember = "Value";
+            MapGroupProtoGroupUsageLB.DataSource = _data.usage;
+        }
         private void MapgroupProtoPopulateTiers()
         {
+            foreach (CheckBox cb in flowLayoutPanel1.Controls)
+            {
+                cb.Checked = false;
+            }
+            foreach (CheckBox cb in flowLayoutPanel2.Controls)
+            {
+                cb.Checked = false;
+            }
             if (_data.value != null)
             {
                 for (int i = 0; i < _data.value.Count; i++)
@@ -155,12 +193,75 @@ namespace EconomyPlugin
         /// </summary>
         private prototypeGroup CloneData(prototypeGroup data)
         {
-            // TODO: Implement actual cloning logic
+            if (data == null) return null;
+
             return new prototypeGroup
             {
                 name = data.name,
                 lootmax = data.lootmax,
-                lootmaxSpecified = data.lootmaxSpecified
+                lootmaxSpecified = data.lootmaxSpecified,
+
+                value = data.value == null
+                    ? null
+                    : new BindingList<prototypeGroupValue>(
+                        data.value.Select(v => new prototypeGroupValue
+                        {
+                            name = v.name,
+                            user = v.user
+                        }).ToList()),
+
+                usage = data.usage == null
+                    ? null
+                    : new BindingList<prototypeGroupUsage>(
+                        data.usage.Select(u => new prototypeGroupUsage
+                        {
+                            name = u.name
+                        }).ToList()),
+
+                container = data.container == null
+                    ? null
+                    : new BindingList<prototypeGroupContainer>(
+                        data.container.Select(c => new prototypeGroupContainer
+                        {
+                            name = c.name,
+                            lootmax = c.lootmax,
+                            lootmaxSpecified = c.lootmaxSpecified,
+                            category = c.category == null
+                                ? null
+                                : new BindingList<prototypeGroupContainerCategory>(
+                                    c.category.Select(cat => new prototypeGroupContainerCategory
+                                    {
+                                        name = cat.name
+                                    }).ToList()),
+                            tag = c.tag == null
+                                ? null
+                                : new BindingList<prototypeGroupContainerTag>(
+                                    c.tag.Select(t => new prototypeGroupContainerTag
+                                    {
+                                        name = t.name
+                                    }).ToList()),
+                            point = c.point == null
+                                ? null
+                                : new BindingList<prototypeGroupContainerPoint>(
+                                    c.point.Select(p => new prototypeGroupContainerPoint
+                                    {
+                                        pos = p.pos,
+                                        range = p.range,
+                                        height = p.height,
+                                        flags = p.flags,
+                                        flagsSpecified = p.flagsSpecified
+                                    }).ToList())
+                        }).ToList()),
+
+                dispatch = data.dispatch == null
+                    ? null
+                    : new BindingList<prototypeGroupProxy>(
+                        data.dispatch.Select(d => new prototypeGroupProxy
+                        {
+                            type = d.type,
+                            pos = d.pos,
+                            rpy = d.rpy
+                        }).ToList())
             };
         }
 
@@ -171,7 +272,7 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.name;
             }
         }
 
@@ -183,36 +284,57 @@ namespace EconomyPlugin
             CheckBox cb = sender as CheckBox;
             string tier = cb.Tag.ToString();
             if (cb.Checked)
-                currentmapgroupprotoGroup.AddTier(tier);
+                _data.AddTier(tier);
             else
-                currentmapgroupprotoGroup.removetier(tier);
-            currentproject.mapgroupproto.isDirty = true;
-            isUserInteraction = false;
-            MapgroupProtoPopulateTiers();
-            isUserInteraction = true;
+                _data.removetier(tier);
+            HasChanges();
         }
-
         private void MapgroupProtoUserdefiniedTiersChanged(object sender, EventArgs e)
         {
-            if (isUserInteraction)
+            if (_suppressEvents) return;
+            CheckBox cb = sender as CheckBox;
+            string tier = cb.Tag.ToString();
+            if (cb.Checked)
             {
-                CheckBox cb = sender as CheckBox;
-                string tier = cb.Tag.ToString();
-                if (cb.Checked)
+                if (_data.value != null)
                 {
-                    if (currentmapgroupprotoGroup.value != null)
-                    {
-                        currentmapgroupprotoGroup.removetiers();
-                    }
-                    currentmapgroupprotoGroup.AdduserTier(tier);
+                    _data.removetiers();
                 }
-                else
-                    currentmapgroupprotoGroup.removeusertier(tier);
-                currentproject.mapgroupproto.isDirty = true;
-                isUserInteraction = false;
-                MapgroupProtoPopulateTiers();
-                isUserInteraction = true;
+                _data.AdduserTier(tier);
             }
+            else
+                _data.removeusertier(tier);
+            HasChanges();
+        }
+        private void MapgroupprotoGroupNameTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.name = MapgroupprotoGroupNameTB.Text;
+            HasChanges();
+            UpdateTreeNodeText();
+        }
+        private void MapGroupprotoGroupUseLootmaxCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            MapGroupProtoGroupUseLootMaxNUD.Visible = _data.lootmaxSpecified = MapGroupprotoGroupUseLootmaxCB.Checked;
+            HasChanges();
+        }
+        private void MapGroupProtoGroupUseLootMaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.lootmax = (int)MapGroupProtoGroupUseLootMaxNUD.Value;
+            HasChanges();
+        }
+        private void darkButton56_Click(object sender, EventArgs e)
+        {
+            _data.AddnewUsage(MapGroupProtoUsageCB.SelectedItem as listsUsage);
+            HasChanges();
+        }
+        private void darkButton58_Click(object sender, EventArgs e)
+        {
+            prototypeGroupUsage u = MapGroupProtoGroupUsageLB.SelectedItem as prototypeGroupUsage;
+            _data.removeusage(u);
+            HasChanges();
         }
     }
 }

@@ -247,10 +247,35 @@ namespace Day2eEditor
         }
         public override string ToString()
         {
-            if(de != null)
-                return $"name:{name}, de:{de}";
-            else 
-                return $"name:{name}";
+            string toname = "";
+            toname += $"name : {name}";
+            if (de != null)
+                toname += $", de : {de}";
+            if(lootmaxSpecified)
+                toname += $", lootmax : {lootmax}";
+            if (enabled != null)
+                toname += $", enabled : {enabled}";
+            if (widthSpecified)
+                toname += $", width : {width}";
+            if (heightSpecified)
+                toname += $", height : {height}";
+
+            return toname;
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeDefault other)
+                return false;
+
+            return string.Equals(this.name, other.name, StringComparison.Ordinal) &&
+                   this.lootmax == other.lootmax &&
+                   this.lootmaxSpecified == other.lootmaxSpecified &&
+                   string.Equals(this.enabled, other.enabled, StringComparison.Ordinal) &&
+                   string.Equals(this.de, other.de, StringComparison.Ordinal) &&
+                   this.width == other.width &&
+                   this.widthSpecified == other.widthSpecified &&
+                   this.height == other.height &&
+                   this.heightSpecified == other.heightSpecified;
         }
     }
 
@@ -318,7 +343,7 @@ namespace Day2eEditor
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("proxy", IsNullable = false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("proxy", IsNullable = true)]
         public BindingList<prototypeGroupProxy> dispatch
         {
             get
@@ -399,8 +424,8 @@ namespace Day2eEditor
             if (value == null) return;
             if (value.Any(x => x.name == tier))
                 value.Remove(value.First(X => X.name == tier));
-            if (value.Count == 0)
-                value = null;
+            //if (value.Count == 0)
+            //    value = null;
         }
         public void AdduserTier(string tier)
         {
@@ -423,10 +448,10 @@ namespace Day2eEditor
             if (value == null) return;
             if (value.Any(x => x.user == tier))
                 value.Remove(value.First(X => X.user == tier));
-            if (value.Count == 0)
-            {
-                value = null;
-            }
+            //if (value.Count == 0)
+            //{
+            //    value = null;
+            //}
         }
         public void removetiers()
         {
@@ -449,6 +474,31 @@ namespace Day2eEditor
             if (usagetoremove != null)
                 usage.Remove(usagetoremove);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroup other)
+                return false;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   lootmax == other.lootmax &&
+                   lootmaxSpecified == other.lootmaxSpecified &&
+                   SequenceEqual(value, other.value) &&
+                   SequenceEqual(usage, other.usage) &&
+                   SequenceEqual(container, other.container) &&
+                   SequenceEqual(dispatch, other.dispatch);
+        }
+        private static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            if (a is null || b is null) return false;
+            return a.SequenceEqual(b);
+        }
+        public bool ShouldSerializedispatch()
+        {
+            return dispatch != null && dispatch.Count > 0;
+        }
+
     }
 
     /// <remarks/>
@@ -494,6 +544,15 @@ namespace Day2eEditor
         {
             return name;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupValue other)
+                return false;
+
+            return string.Equals(user, other.user, StringComparison.Ordinal) &&
+                   string.Equals(name, other.name, StringComparison.Ordinal);
+        }
     }
 
 
@@ -522,6 +581,14 @@ namespace Day2eEditor
         public override string ToString()
         {
             return name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupUsage other)
+                return false;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
     }
 
@@ -664,6 +731,25 @@ namespace Day2eEditor
             if (tagtoremove != null)
                 tag.Remove(tagtoremove);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupContainer other)
+                return false;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   lootmax == other.lootmax &&
+                   lootmaxSpecified == other.lootmaxSpecified &&
+                   SequenceEqual(category, other.category) &&
+                   SequenceEqual(tag, other.tag) &&
+                   SequenceEqual(point, other.point);
+        }
+        private static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            if (a is null || b is null) return false;
+            return a.SequenceEqual(b);
+        }
     }
 
     /// <remarks/>
@@ -691,6 +777,14 @@ namespace Day2eEditor
         public override string ToString()
         {
             return name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupContainerCategory other)
+                return false;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
     }
 
@@ -720,6 +814,14 @@ namespace Day2eEditor
         public override string ToString()
         {
             return name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupContainerTag other)
+                return false;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
     }
 
@@ -809,6 +911,18 @@ namespace Day2eEditor
                 this.flagsFieldSpecified = value;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupContainerPoint other)
+                return false;
+
+            return string.Equals(pos, other.pos, StringComparison.Ordinal) &&
+                   range == other.range &&
+                   height == other.height &&
+                   flags == other.flags &&
+                   flagsSpecified == other.flagsSpecified;
+        }
     }
 
     /// <remarks/>
@@ -864,6 +978,16 @@ namespace Day2eEditor
             {
                 this.rpyField = value;
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not prototypeGroupProxy other)
+                return false;
+
+            return string.Equals(type, other.type, StringComparison.Ordinal) &&
+                   string.Equals(pos, other.pos, StringComparison.Ordinal) &&
+                   string.Equals(rpy, other.rpy, StringComparison.Ordinal);
         }
     }
 }
