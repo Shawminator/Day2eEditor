@@ -25,10 +25,19 @@ namespace DynamicWeatherPlugin
         {
             DynamicWeatherPluginPath = Path.Combine(AppServices.GetRequired<EconomyManager>().basePath, "weather.json");
             DynamicWeatherPlugin = new DynamicWeatherPluginConfig();
-
-            DynamicWeatherPlugin.m_Dynamics = new BindingList<WeatherDynamic>(JsonSerializer.Deserialize<WeatherDynamic[]>(File.ReadAllText(DynamicWeatherPluginPath), new JsonSerializerOptions { Converters = { new BoolConverter() } }).ToList());
-            DynamicWeatherPlugin.isDirty = false;
             DynamicWeatherPlugin.Filename = DynamicWeatherPluginPath;
+            if (File.Exists(DynamicWeatherPluginPath))
+            {
+                DynamicWeatherPlugin.m_Dynamics = new BindingList<WeatherDynamic>(JsonSerializer.Deserialize<WeatherDynamic[]>(File.ReadAllText(DynamicWeatherPluginPath), new JsonSerializerOptions { Converters = { new BoolConverter() } }).ToList());
+                DynamicWeatherPlugin.isDirty = false;
+            }
+            else
+            {
+                DynamicWeatherPlugin.CreateDefaults();
+                DynamicWeatherPlugin.Save();
+                MessageBox.Show("No Config Found, default Config Created....");
+            }
+
             _originalData = CloneData(DynamicWeatherPlugin);
             TreeNode Root = new TreeNode("Dynamic Weather")
             {
