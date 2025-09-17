@@ -1,0 +1,97 @@
+﻿using Day2eEditor;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExpansionPlugin
+{
+    public class ExpansionManager
+    {
+        private readonly Dictionary<string, string> _paths = new();
+
+        public string basePath { get; set; }
+        public string profilePath { get; set; }
+
+        public bool HasErrors { get; set; }
+        public List<string> Errors = new List<string>();
+
+        public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
+        public ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig { get; set; }
+        public ExpansionBookConfig ExpansionBookConfig { get; set; }
+        //public ExpansionChatSettings ChatSettings { get; set; }
+        //public ExpansionDamageSystemSettings DamageSystemSettings { get; set; }
+        //public ExpansionDebugSettings DebugSettings { get; set; }
+        //public ExpansionGarageSettings GarageSettings { get; set; }
+        //public ExpansionGeneralSettings GeneralSettings { get; set; }
+        //public ExpansionHardlineSettings HardLineSettings { get; set; }
+        //public ExpansionHardlinePlayerDataList ExpansionHardlinePlayerDataList { get; set; }
+        //public ExpansionLogSettings LogSettings { get; set; }
+        //public ExpansionMapSettings MapSettings { get; set; }
+        //public MarketSettings marketsettings { get; set; }
+        //public ExpansionMissionSettings MissionSettings { get; set; }
+        //public ExpansionMonitoringSettings MonitoringSettings { get; set; }
+        //public ExpansionNameTagsSettings NameTagSettings { get; set; }
+        //public ExpansionNotificationSchedulerSettings NotificationSchedulerSettings { get; set; }
+        //public ExpansionNotificationSettings NotificationSettings { get; set; }
+        //public ExpansionPartySettings PartySettings { get; set; }
+        //public ExpansionPersonalStorageList PersonalStorageList { get; set; }
+        //public ExpansionPersonalStorageNewSettings PersonalStorageSettingsNew { get; set; }
+        //public ExpansionPersonalStorageSettings PersonalStorageSettings { get; set; }
+        //public ExpansionPlayerListSettings PlayerListSettings { get; set; }
+        //public ExpansionRaidSettings RaidSettings { get; set; }
+        //public ExpansionSafeZoneSettings SafeZoneSettings { get; set; }
+        //public ExpansionSocialMediaSettings SocialMediaSettings { get; set; }
+        //public ExpansionSpawnSettings SpawnSettings { get; set; }
+        //public ExpansionTerritorySettings TerritorySettings { get; set; }
+        //public ExpansionVehicleSettings VehicleSettings { get; set; }
+
+        public ExpansionManager() { }
+        public void SetExpansionStuff()
+        {
+            basePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, "mpmissions", AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath);
+            profilePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName);
+
+            //profile files
+            _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
+            _paths["BookSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "BookSettings.json");
+            
+            
+            
+            // missions files
+            _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
+
+
+            
+
+            LoadFiles(basePath);
+        }
+        private void LoadFiles(string basePath)
+        {
+            Console.WriteLine($"\n[Load Expansion] Loading all files associated with the Expansion Mod.");
+
+            ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
+            LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
+
+            ExpansionBookConfig = new ExpansionBookConfig(_paths["BookSettings"]);
+            LoadConfigWithErrorReport("BookSettings", ExpansionBookConfig);
+
+            ExpansionBaseBuildingConfig = new ExpansionBaseBuildingConfig(_paths["BaseBuildingSettings"]);
+            LoadConfigWithErrorReport("BaseBuildingSettings", ExpansionBaseBuildingConfig);
+        }
+        private void LoadConfigWithErrorReport(string name, IConfigLoader config)
+        {
+            if (config is IConfigLoader loader)
+            {
+                config.Load();
+            }
+
+            if (config.HasErrors)
+            {
+                HasErrors = true;
+                Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
+            }
+        }
+    }
+}

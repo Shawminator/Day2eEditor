@@ -25,7 +25,6 @@ namespace Day2eEditor
     public class EconomyManager
     {
         private readonly Dictionary<string, string> _paths = new();
-        private readonly ProjectManager _projectManager;
 
         public string basePath { get; set; }
 
@@ -58,7 +57,6 @@ namespace Day2eEditor
 
         public EconomyManager() 
         {
-            _projectManager = AppServices.GetRequired<ProjectManager>();
         }
         public void SetProject(Project project)
         {
@@ -87,7 +85,7 @@ namespace Day2eEditor
             _paths["VanillaSpawnableTypes"] = Path.Combine(basePath, "cfgspawnabletypes.xml");
             _paths["VanillaRandomPresets"] = Path.Combine(basePath, "cfgrandompresets.xml");
 
-            LoadFiles(basePath);
+            LoadFiles();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
         {
@@ -130,7 +128,7 @@ namespace Day2eEditor
                 Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
             }
         }
-        private void LoadFiles(string basePath)
+        private void LoadFiles()
         {
             Console.WriteLine($"\n[Load Economy] Loading all base economy files associated with the current Project.");
 

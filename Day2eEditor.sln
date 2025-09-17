@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreUI", "CoreUI\CoreUI.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicWeatherPlugin", "DynamicWeatherPlugin\DynamicWeatherPlugin.csproj", "{718E14D8-5D54-4F62-A267-E4DC476AE3DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpansionPlugin", "ExpansionPlugin\ExpansionPlugin.csproj", "{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
