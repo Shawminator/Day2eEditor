@@ -18,6 +18,7 @@ namespace ExpansionPlugin
         public List<string> Errors = new List<string>();
 
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
+        public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig { get; set; }
         public ExpansionBookConfig ExpansionBookConfig { get; set; }
         //public ExpansionChatSettings ChatSettings { get; set; }
@@ -55,6 +56,7 @@ namespace ExpansionPlugin
 
             //profile files
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
+            _paths["AISettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AISettings.json");
             _paths["BookSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "BookSettings.json");
             
             
@@ -73,6 +75,9 @@ namespace ExpansionPlugin
 
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
+
+            ExpansionAIConfig = new ExpansionAIConfig(_paths["AISettings"]);
+            LoadConfigWithErrorReport("AISettings", ExpansionAIConfig);
 
             ExpansionBookConfig = new ExpansionBookConfig(_paths["BookSettings"]);
             LoadConfigWithErrorReport("BookSettings", ExpansionBookConfig);

@@ -24,5 +24,9 @@ namespace Day2eEditor
             throw new InvalidOperationException($"Service of type {typeof(T)} not registered.");
 
         }
+        public static bool Unregister<T>()
+        {
+            return _services.TryRemove(typeof(T), out _);
+        }
     }
 }

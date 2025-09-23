@@ -91,6 +91,8 @@
             ExpansionTV.Name = "ExpansionTV";
             ExpansionTV.Size = new Size(394, 657);
             ExpansionTV.TabIndex = 0;
+            ExpansionTV.AfterSelect += ExpansionTV_AfterSelect;
+            ExpansionTV.NodeMouseClick += ExpansionTV_NodeMouseClick;
             // 
             // _mapControl
             // 
@@ -113,6 +115,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "ExpansionForm";
             Text = "Form1";
+            FormClosed += ExpansionForm_FormClosed;
             Load += ExpansionForm_Load;
             panel1.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);

@@ -16,5 +16,15 @@ namespace DayZeEditor
         {
             InitializeComponent();
         }
+
+        private void PosXNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void listBox8_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

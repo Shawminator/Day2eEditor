@@ -49,7 +49,7 @@ namespace ExpansionPlugin
         {
             if (isDirty)
             {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
