@@ -20,7 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DayzEconomy.png" />
     <None Remove="IUIHandler\TypesCollectionControl.cs~RF1909030.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DayzEconomy.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -39,8 +39,8 @@
             label1 = new Label();
             ResizePanel = new Panel();
             ShowConsoleCB = new CheckBox();
-            pluginListbox = new ListBox();
             slidePanel = new Panel();
+            listView1 = new ListView();
             HidePBox = new Label();
             Slidelabel = new Label();
             timer1 = new System.Windows.Forms.Timer(components);
@@ -155,33 +155,31 @@
             ShowConsoleCB.UseVisualStyleBackColor = true;
             ShowConsoleCB.CheckedChanged += ShowConsoleCB_CheckedChanged;
             // 
-            // pluginListbox
-            // 
-            pluginListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            pluginListbox.BackColor = SystemColors.ControlDarkDark;
-            pluginListbox.BorderStyle = BorderStyle.None;
-            pluginListbox.DrawMode = DrawMode.OwnerDrawFixed;
-            pluginListbox.ForeColor = SystemColors.Control;
-            pluginListbox.FormattingEnabled = true;
-            pluginListbox.Location = new Point(31, 29);
-            pluginListbox.Name = "pluginListbox";
-            pluginListbox.Size = new Size(166, 608);
-            pluginListbox.TabIndex = 10;
-            pluginListbox.Click += pluginListbox_Click;
-            pluginListbox.DrawItem += listBox_DrawItem;
-            // 
             // slidePanel
             // 
             slidePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             slidePanel.BackColor = SystemColors.ControlDarkDark;
+            slidePanel.Controls.Add(listView1);
             slidePanel.Controls.Add(HidePBox);
             slidePanel.Controls.Add(Slidelabel);
-            slidePanel.Controls.Add(pluginListbox);
             slidePanel.Location = new Point(0, 28);
             slidePanel.Name = "slidePanel";
-            slidePanel.Size = new Size(200, 635);
+            slidePanel.Size = new Size(235, 635);
             slidePanel.TabIndex = 12;
             slidePanel.Click += label2_Click;
+            // 
+            // listView1
+            // 
+            listView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listView1.BackColor = SystemColors.ControlDarkDark;
+            listView1.BorderStyle = BorderStyle.None;
+            listView1.ForeColor = SystemColors.Control;
+            listView1.Location = new Point(31, 29);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(185, 587);
+            listView1.TabIndex = 13;
+            listView1.UseCompatibleStateImageBehavior = false;
+            listView1.MouseClick += listView1_MouseClick;
             // 
             // HidePBox
             // 
@@ -206,7 +204,7 @@
             // 
             // timer1
             // 
-            timer1.Interval = 15;
+            timer1.Interval = 1;
             timer1.Tick += timer1_Tick;
             // 
             // Form1
@@ -247,10 +245,10 @@
         private Panel ResizePanel;
         public ToolStripStatusLabel toolStripStatusLabel1;
         private CheckBox ShowConsoleCB;
-        private ListBox pluginListbox;
         private Panel slidePanel;
         private Label Slidelabel;
         private Label HidePBox;
         private System.Windows.Forms.Timer timer1;
+        private ListView listView1;
     }
 }

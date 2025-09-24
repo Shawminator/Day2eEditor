@@ -15,6 +15,7 @@ namespace Day2eEditor
         public string Name { get; set; }
         public string Identifier { get; set; }
         public Type PluginType { get; set; }
+        public Image Icon { get; set; }
 
         public override string ToString() => Name;
     }
@@ -24,11 +25,13 @@ namespace Day2eEditor
     {
         public string Name { get; }
         public string Identifier { get; }
+        public string IconResourceName { get; }
 
-        public PluginInfoAttribute(string name, string identifier)
+        public PluginInfoAttribute(string name, string identifier, string iconResourceName = null)
         {
             Name = name;
             Identifier = identifier;
+            IconResourceName = iconResourceName;
         }
     }
 }

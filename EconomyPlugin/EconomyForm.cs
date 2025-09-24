@@ -5521,7 +5521,7 @@ namespace EconomyPlugin
         }
     }
 
-    [PluginInfo("Economy Manager", "EconomyPlugin")]
+    [PluginInfo("Economy Manager", "EconomyPlugin", "EconomyPlugin.DayzEconomy.png")]
     public class PluginEconomy : IPluginForm, IDisposable
     {
         private bool disposed = false;

@@ -312,7 +312,7 @@ namespace DynamicWeatherPlugin
         }
     }
 
-    [PluginInfo("Dynamic Weather Manager", "DynamicWeatherPlugin")]
+    [PluginInfo("Dynamic Weather Manager", "DynamicWeatherPlugin", "DynamicWeatherPlugin.DynamicWeather.png")]
     public class PluginDynamicWeather : IPluginForm, IDisposable
     {
         private bool disposed = false;

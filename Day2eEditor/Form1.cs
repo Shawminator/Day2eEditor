@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Day2eEditor
 {
@@ -147,19 +148,21 @@ namespace Day2eEditor
                     var types = asm.GetTypes()
                                    .Where(t => typeof(IPluginForm).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
-                    
+
                     foreach (var type in types)
                     {
                         // Get the PluginInfo attribute
                         var pluginInfo = type.GetCustomAttribute<PluginInfoAttribute>();
                         if (pluginInfo != null)
                         {
+                            var icon = LoadPluginIcon(type);
                             // Add the plugin info to the list
-                            PluginEntry pe =  new PluginEntry
+                            PluginEntry pe = new PluginEntry
                             {
                                 Name = pluginInfo.Name,
                                 Identifier = pluginInfo.Identifier,
-                                PluginType = type
+                                PluginType = type,
+                                Icon = icon,
                             };
                             if (pe.Identifier == "EconomyPlugin" || pe.Identifier == "ProjectsPlugin")
                             {
@@ -171,9 +174,9 @@ namespace Day2eEditor
                                 pluginEntries.Add(pe);
                                 entries.Add(pe);
                             }
-                            
+
                         }
-                        
+
                     }
                 }
                 catch (Exception ex)
@@ -199,29 +202,52 @@ namespace Day2eEditor
                 availbeentries.Add(pluginEntries.First(x => x.Identifier == "ProjectsPlugin"));
 
             }
-            pluginListbox.DataSource = null;
-            pluginListbox.DataSource = availbeentries;
+
+            listView1.Items.Clear();
+            listView1.LargeImageList = new ImageList();
+            listView1.LargeImageList.ImageSize = new Size(150, 150);
+            listView1.LargeImageList.TransparentColor = Color.Magenta;
+            for (int i = 0; i < availbeentries.Count; i++)
+            {
+
+                var entry = availbeentries[i];
+                listView1.LargeImageList.Images.Add(entry.Icon ?? SystemIcons.Application.ToBitmap());
+
+                var item = new ListViewItem(entry.Name, i)
+                {
+                    Tag = entry
+                };
+
+                listView1.Items.Add(item);
+
+            }
+
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (hidden)
             {
-                slidePanel.Width = slidePanel.Width + 10;
-                if (slidePanel.Width == 200)
+                slidePanel.Width = slidePanel.Width + 100;
+                //slidePanel.Width = Width;
+                if (slidePanel.Width >= Width)
                 {
                     timer1.Stop();
                     hidden = false;
                     Refresh();
+                    listView1.Visible = true;
                 }
             }
             else
             {
-                slidePanel.Width = slidePanel.Width - 10;
-                if (slidePanel.Width == 30)
+                listView1.Visible = false;
+                slidePanel.Width = slidePanel.Width - 100;
+                if (slidePanel.Width <= 30)
                 {
                     timer1.Stop();
+                    slidePanel.Width = 30;
                     hidden = true;
                     Refresh();
+                    
                 }
             }
         }
@@ -276,59 +302,83 @@ namespace Day2eEditor
                 Console.WriteLine("Could not open URL: " + ex.Message);
             }
         }
-        private void pluginListbox_Click(object sender, EventArgs e)
+        private void listView1_MouseClick(object sender, MouseEventArgs e)
         {
-            var selectedEntry = pluginListbox.SelectedItem as PluginEntry;
-            if (selectedEntry == null) return;
+            ListViewHitTestInfo info = listView1.HitTest(e.X, e.Y);
+            ListViewItem clickedItem = info.Item;
 
-            switch (selectedEntry.Identifier)
+            if (clickedItem != null)
             {
-                case "Donate":
-                    OpenUrl("https://www.paypal.me/ADecadeOfdecay");
-                    break;
+                var selectedEntry = clickedItem.Tag as PluginEntry;
+                if (selectedEntry == null) return;
 
-                case "Discord":
-                    OpenUrl("https://discord.gg/5EHE49Kjsv");
-                    break;
+                switch (selectedEntry.Identifier)
+                {
+                    case "Donate":
+                        OpenUrl("https://www.paypal.me/ADecadeOfdecay");
+                        break;
 
-                default:
-                    var openForm = Application.OpenForms[selectedEntry.Identifier];
-                    if (openForm != null)
-                    {
-                        openForm.WindowState = FormWindowState.Normal;
-                        openForm.BringToFront();
-                        openForm.Activate();
-                    }
-                    else
-                    {
-                        closeMdiChildren();
+                    case "Discord":
+                        OpenUrl("https://discord.gg/5EHE49Kjsv");
+                        break;
 
-                        
-
-                        // Instantiate the plugin only when needed
-                        if (Activator.CreateInstance(selectedEntry.PluginType) is IPluginForm plugin)
+                    default:
+                        var openForm = Application.OpenForms[selectedEntry.Identifier];
+                        if (openForm != null)
                         {
-                            var form = plugin.GetForm();
-                            form.MdiParent = this;
-                            form.Name = plugin.pluginIdentifier;
-                            form.Location = new Point(30, 0);
-                            form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                            form.Size = this.Size - new Size(40, 65);
-                            form.Show();
-
-                            Console.WriteLine($"[INFO] Loading {plugin.pluginName}...");
-                            label1.Text = plugin.pluginName;
+                            openForm.WindowState = FormWindowState.Normal;
+                            openForm.BringToFront();
+                            openForm.Activate();
                         }
                         else
                         {
-                            MessageBox.Show($"Failed to load plugin: {selectedEntry.Name}");
-                        }
-                    }
-                    break;
-            }
+                            closeMdiChildren();
 
-            timer1.Start();
+
+
+                            // Instantiate the plugin only when needed
+                            if (Activator.CreateInstance(selectedEntry.PluginType) is IPluginForm plugin)
+                            {
+                                var form = plugin.GetForm();
+                                form.MdiParent = this;
+                                form.Name = plugin.pluginIdentifier;
+                                form.Location = new Point(30, 0);
+                                form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                                form.Size = this.Size - new Size(40, 65);
+                                form.Show();
+
+                                Console.WriteLine($"[INFO] Loading {plugin.pluginName}...");
+                                label1.Text = plugin.pluginName;
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Failed to load plugin: {selectedEntry.Name}");
+                            }
+                        }
+                        break;
+                }
+
+                timer1.Start();
+            }
         }
+        public static Image LoadPluginIcon(Type pluginType)
+        {
+            var attr = pluginType.GetCustomAttribute<PluginInfoAttribute>();
+            if (attr?.IconResourceName == null)
+                return null;
+
+            var assembly = pluginType.Assembly;
+
+
+            var names = assembly.GetManifestResourceNames();
+            foreach (var name in names)
+                Console.WriteLine(name);
+
+
+            using var stream = assembly.GetManifestResourceStream(attr.IconResourceName);
+            return stream != null ? Image.FromStream(stream) : null;
+        }
+
         private void closeMdiChildren()
         {
             foreach (var mdiChild in MdiChildren)
@@ -336,6 +386,8 @@ namespace Day2eEditor
                 mdiChild.Close();  // Close the form
             }
         }
+
+
     }
 }
 

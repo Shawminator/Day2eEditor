@@ -83,6 +83,15 @@ namespace Day2eEditor
             }
             return false;
         }
+
+        public TypeEntry Gettypebyname(string name)
+        {
+            return AllData
+                    .SelectMany(tf => tf.Data.TypeList)
+                    .Where(te => te.Name == name)
+                    .LastOrDefault();
+
+        }
     }
     public class TypesFile : IConfigLoader
     {

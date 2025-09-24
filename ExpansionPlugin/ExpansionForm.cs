@@ -64,6 +64,13 @@ namespace ExpansionPlugin
             // ----------------------
             _stringHandlers = new Dictionary<string, Action<TreeNode, List<TreeNode>>>
             {
+                //Airdrops
+                ["AirdropContainersLoot"] = (node, selected) =>
+                {
+                    ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
+                    ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionAirdropConfig), cfg.Loot, selected);
+                },
+                //Basebuilding
                 ["BaseBuildingNoBuldZones"] = (node, selected) =>
                 {
                     ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
@@ -227,56 +234,22 @@ namespace ExpansionPlugin
                 {
                     Tag = alc
                 };
-                foreach (ExpansionLoot EL in alc.Loot)
+                TreeNode alcinodes = new TreeNode("Infected")
                 {
-                    alcnodes.Nodes.Add(CreateLootNode(EL));
-                }
+                    Tag = "AirdropContainersInfected"
+                };
+                alcnodes.Nodes.Add(alcinodes);
+                
+                TreeNode alclnodes = new TreeNode("Loot")
+                {
+                    Tag = "AirdropContainersLoot"
+                };
+                alcnodes.Nodes.Add(alclnodes);
+                
                 acnodes.Nodes.Add(alcnodes);
+
             }
             EconomyRootNode.Nodes.Add(acnodes);
-        }
-        private TreeNode CreateLootNode(ExpansionLoot eL)
-        {
-            TreeNode ExpansionLootTN = new TreeNode(eL.Name)
-            {
-                Tag = eL
-            };
-            TreeNode AttachmentTN = new TreeNode("Attachments")
-            {
-                Tag = "Attachments"
-            };
-            foreach (ExpansionLootVariant elv in eL.Attachments)
-            {
-                AttachmentTN.Nodes.Add(getLootVarients(elv));
-            }
-            TreeNode VariantsTN = new TreeNode("Variants")
-            {
-                Tag = "Variants"
-            };
-            foreach (ExpansionLootVariant elv in eL.Variants)
-            {
-                VariantsTN.Nodes.Add(getLootVarients(elv));
-            }
-            ExpansionLootTN.Nodes.Add(AttachmentTN);
-            ExpansionLootTN.Nodes.Add(VariantsTN);
-            return ExpansionLootTN;
-        }
-        private TreeNode getLootVarients(ExpansionLootVariant elv)
-        {
-            TreeNode ExpansionLootVarientTN = new TreeNode(elv.Name)
-            {
-                Tag = elv
-            };
-            TreeNode AttachmentTN = new TreeNode("Attachments")
-            {
-                Tag = "Attachments"
-            };
-            foreach (ExpansionLootVariant elv2 in elv.Attachments)
-            {
-                AttachmentTN.Nodes.Add(getLootVarients(elv2));
-            }
-            ExpansionLootVarientTN.Nodes.Add(AttachmentTN);
-            return ExpansionLootVarientTN;
         }
         //AI
         private TreeNode CreateExpansionAIConfigNodes(ExpansionAIConfig ef)
@@ -664,7 +637,7 @@ namespace ExpansionPlugin
         }
     }
 
-    [PluginInfo("Exspansion Manager", "ExspansionPlugin")]
+    [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]
     public class PluginExspansion : IPluginForm, IDisposable
     {
         private bool disposed = false;
