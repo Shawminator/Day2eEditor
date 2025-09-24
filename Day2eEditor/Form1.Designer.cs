@@ -176,6 +176,7 @@
             listView1.ForeColor = SystemColors.Control;
             listView1.Location = new Point(31, 29);
             listView1.Name = "listView1";
+            listView1.ShowItemToolTips = true;
             listView1.Size = new Size(185, 587);
             listView1.TabIndex = 13;
             listView1.UseCompatibleStateImageBehavior = false;

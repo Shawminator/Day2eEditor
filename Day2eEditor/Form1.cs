@@ -217,7 +217,7 @@ namespace Day2eEditor
                 {
                     Tag = entry
                 };
-
+                item.ToolTipText = entry.Name;
                 listView1.Items.Add(item);
 
             }
@@ -227,8 +227,8 @@ namespace Day2eEditor
         {
             if (hidden)
             {
-                slidePanel.Width = slidePanel.Width + 100;
-                //slidePanel.Width = Width;
+                //slidePanel.Width = slidePanel.Width + 100;
+                slidePanel.Width = Width;
                 if (slidePanel.Width >= Width)
                 {
                     timer1.Stop();
@@ -240,7 +240,8 @@ namespace Day2eEditor
             else
             {
                 listView1.Visible = false;
-                slidePanel.Width = slidePanel.Width - 100;
+                //slidePanel.Width = slidePanel.Width - 100;
+                slidePanel.Width = 30;
                 if (slidePanel.Width <= 30)
                 {
                     timer1.Stop();
