@@ -22,6 +22,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Projects.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Projects.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
   </ItemGroup>

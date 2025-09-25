@@ -534,7 +534,7 @@ namespace ProjectsPlugin
             button3.Enabled = false;
         }
     }
-    [PluginInfo("Project Manager", "ProjectsPlugin")]
+    [PluginInfo("Project Manager", "ProjectsPlugin", "ProjectsPlugin.Projects.png")]
     public class PluginProject : IPluginForm, IDisposable
     {
         private bool disposed = false;

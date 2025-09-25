@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Day2eEditor
@@ -191,8 +192,8 @@ namespace Day2eEditor
         private void Setlistbox()
         {
             List<PluginEntry> availbeentries = new List<PluginEntry>();
-            availbeentries.Add(new PluginEntry { Name = "Donate", Identifier = "Donate" });
-            availbeentries.Add(new PluginEntry { Name = "Discord", Identifier = "Discord" });
+            availbeentries.Add(new PluginEntry { Name = "Donate", Identifier = "Donate", Icon = Loadicon("Day2eEditor.Paypal.png") });
+            availbeentries.Add(new PluginEntry { Name = "Discord", Identifier = "Discord", Icon = Loadicon("Day2eEditor.Discord.png") });
             if (AppServices.GetRequired<ProjectManager>().CurrentProject != null)
             {
                 availbeentries.AddRange(pluginEntries);
@@ -361,6 +362,13 @@ namespace Day2eEditor
 
                 timer1.Start();
             }
+        }
+        public static Image Loadicon(string name)
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream(name);
+            return stream != null ? Image.FromStream(stream) : null;
+
         }
         public static Image LoadPluginIcon(Type pluginType)
         {

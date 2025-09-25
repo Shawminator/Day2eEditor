@@ -20,6 +20,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Discord.png" />
+    <None Remove="Paypal.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Discord.png" />
+    <EmbeddedResource Include="Paypal.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CoreUI\CoreUI.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Updater\Updater.csproj" />
