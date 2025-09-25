@@ -377,17 +377,9 @@ namespace Day2eEditor
                 return null;
 
             var assembly = pluginType.Assembly;
-
-
-            var names = assembly.GetManifestResourceNames();
-            foreach (var name in names)
-                Console.WriteLine(name);
-
-
             using var stream = assembly.GetManifestResourceStream(attr.IconResourceName);
             return stream != null ? Image.FromStream(stream) : null;
         }
-
         private void closeMdiChildren()
         {
             foreach (var mdiChild in MdiChildren)
@@ -395,8 +387,6 @@ namespace Day2eEditor
                 mdiChild.Close();  // Close the form
             }
         }
-
-
     }
 }
 

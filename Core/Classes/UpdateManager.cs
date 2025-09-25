@@ -18,12 +18,11 @@ namespace Day2eEditor
         public string manifestUrl = "https://raw.githubusercontent.com/Shawminator/Day2eEditor/refs/heads/master/Manifest.json";
         private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin", "EconomyPlugin"};
 
-        public UpdateManager(string pluginsDirectory = "Plugins", string mapAddonsDirectory = "MapAddons", string tempDirectory = "Temp", string DownloadDirectory = "Downloads", string appDirectory = "")
+        public UpdateManager(string pluginsDirectory = "Plugins", string mapAddonsDirectory = "MapAddons", string tempDirectory = "Temp", string appDirectory = "")
         {
             _pluginsDirectory = pluginsDirectory;
             _mapAddonsDirectory = mapAddonsDirectory;
             _mapAddonsManifestPath = Path.Combine(_mapAddonsDirectory, "mapaddons.json");
-            _downloadDirectory = DownloadDirectory;
             _tempDirectory = tempDirectory;
             _appDirectory = appDirectory == string.Empty ? Directory.GetCurrentDirectory() : appDirectory; // Default to current directory
             Directory.CreateDirectory(_pluginsDirectory);
@@ -224,7 +223,7 @@ namespace Day2eEditor
         private async Task CheckAndUpdateMapAddonsAsync(List<MapAddonInfo> remoteAddons)
         {
             List<MapAddonInfo> localAddons = new();
-
+            Console.WriteLine("[MapAddons] Checking for updates......");
             // If file doesn't exist, just save it and return
             if (!File.Exists(_mapAddonsManifestPath))
             {
@@ -252,7 +251,7 @@ namespace Day2eEditor
                 string localXyzPath = Path.Combine(_mapAddonsDirectory, remoteAddon.MapInfo.MapXYZ);
 
                 // Skip if addon is not installed (missing either file)
-                if (!File.Exists(localPngPath) || !File.Exists(localXyzPath))
+                if (!File.Exists(localPngPath) && !File.Exists(localXyzPath))
                 {
                     continue;
                 }
@@ -262,11 +261,12 @@ namespace Day2eEditor
                 bool needsUpdate =
                     localAddon == null ||
                     localAddon.Version != remoteAddon.Version ||
-                    localAddon.Checksum != remoteAddon.Checksum;
+                    localAddon.Checksum != remoteAddon.Checksum ||
+                    !File.Exists(localPngPath) || !File.Exists(localXyzPath);
 
                 if (needsUpdate)
                 {
-                    string addonpath = Path.Combine(_downloadDirectory, $"{remoteAddon.Name}.zip");
+                    string addonpath = Path.Combine(_tempDirectory, $"{remoteAddon.Name}.zip");
                     Console.WriteLine($"{remoteAddon.Name} needs update (local: {localAddon?.Version ?? "none"}, remote: {remoteAddon.Version})");
                     Console.WriteLine($"Downloading {remoteAddon.Name}...");
                     byte[] data = await _http.GetByteArrayAsync(remoteAddon.Url);
@@ -283,6 +283,7 @@ namespace Day2eEditor
                             ExtractToDirectory(zip, _mapAddonsDirectory, true);
                         }
                     }
+                    File.Delete(addonpath);
                     Console.WriteLine($"{remoteAddon.Name} updated successfully.");
                 }
             }
@@ -322,7 +323,7 @@ namespace Day2eEditor
         }
         public async Task DownloadMapAddonAsync(MapAddonInfo addon)
         {
-            string addonpath = Path.Combine(_downloadDirectory, $"{addon.Name}.zip");
+            string addonpath = Path.Combine(_tempDirectory, $"{addon.Name}.zip");
 
             Console.WriteLine($"Downloading {addon.Name}...");
             byte[] data = await _http.GetByteArrayAsync(addon.Url);

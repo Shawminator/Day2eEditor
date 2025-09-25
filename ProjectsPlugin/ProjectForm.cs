@@ -67,11 +67,12 @@ namespace ProjectsPlugin
 
         private async void downloadAndInstallToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Cursor.Current = Cursors.WaitCursor;
+            this.Cursor = Cursors.WaitCursor;
+            Application.DoEvents();
             if (_clickedItem?.Tag is PluginInfo plugin)
             {
                 await AppServices.GetRequired<UpdateManager>().DownloadNewPluginAsync(plugin);
-                Cursor.Current = Cursors.Default;
+                this.Cursor = Cursors.Default;
                 MessageBox.Show($"{plugin.Name} Downloaded.", "Plugin Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 _clickedItem.SubItems.Add("Installed");
@@ -79,8 +80,8 @@ namespace ProjectsPlugin
             else if(_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
             {
                 await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddoninfo);
-                Cursor.Current = Cursors.Default;
-                MessageBox.Show($"{mapaddoninfo.Name} Downloaded.", "Plugin Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Cursor = Cursors.Default;
+                MessageBox.Show($"{mapaddoninfo.Name} Downloaded.", "MapAddon Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 _clickedItem.SubItems.Add("Installed");
             }
             
@@ -243,7 +244,7 @@ namespace ProjectsPlugin
 
                 CreateProjectbutton.Location = new Point(615, 167);
             }
-            else if (projecttype == "Connect to Exisiting Server")
+            else if (projecttype == "Create Project to Existing Project Files")
             {
                 ProjectNameLabel.Visible = true;
                 ProjectNameTB.Visible = true;
@@ -319,7 +320,7 @@ namespace ProjectsPlugin
             else if (projecttype == "Create Local from FTP/SFTP")
             {
             }
-            else if (projecttype == "Connect to Exisiting Server")
+            else if (projecttype == "Create Project to Existing Project Files")
             {
                 string ProjectPath = ProjectFolderTB.Text;
                 string ProjectName = ProjectNameTB.Text;

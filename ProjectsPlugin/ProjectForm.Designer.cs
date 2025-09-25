@@ -250,7 +250,7 @@
             SelectsetupTypeLabel.AutoSize = true;
             SelectsetupTypeLabel.Location = new Point(202, 25);
             SelectsetupTypeLabel.Name = "SelectsetupTypeLabel";
-            SelectsetupTypeLabel.Size = new Size(72, 15);
+            SelectsetupTypeLabel.Size = new Size(71, 15);
             SelectsetupTypeLabel.TabIndex = 6;
             SelectsetupTypeLabel.Text = "Project Type";
             // 
@@ -259,7 +259,7 @@
             ProjectTypeComboBox.BackColor = Color.FromArgb(60, 63, 65);
             ProjectTypeComboBox.ForeColor = SystemColors.Control;
             ProjectTypeComboBox.FormattingEnabled = true;
-            ProjectTypeComboBox.Items.AddRange(new object[] { "Create Blank", "Create Local from FTP/SFTP", "Connect to Exisiting Server" });
+            ProjectTypeComboBox.Items.AddRange(new object[] { "Create Blank", "Create Project to Existing Project Files" });
             ProjectTypeComboBox.Location = new Point(334, 22);
             ProjectTypeComboBox.Name = "ProjectTypeComboBox";
             ProjectTypeComboBox.Size = new Size(452, 23);

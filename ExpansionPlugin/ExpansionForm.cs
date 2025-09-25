@@ -634,6 +634,7 @@ namespace ExpansionPlugin
         private void ExpansionForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             AppServices.Unregister<ExpansionManager>();
+            _mapControl.ClearMap();
         }
     }
 

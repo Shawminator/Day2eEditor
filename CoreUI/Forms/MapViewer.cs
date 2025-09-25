@@ -108,6 +108,14 @@ namespace Day2eEditor
             _panOffset = new PointF(0, 0);
             Invalidate();
         }
+        public void ClearMap()
+        {
+            if (_image != null)
+            {
+                _image.Dispose();
+                _image = null;
+            }
+        }
         public PointF GetMapCoordinate(Point screenPoint)
         {
             if (_image == null || _image.Width == 0 || _image.Height == 0)
@@ -302,6 +310,8 @@ namespace Day2eEditor
 
             CenterOn(mapCoord);
         }
+
+
     }
     public class MapClickEventArgs : EventArgs
     {
