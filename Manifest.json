@@ -9,19 +9,19 @@
       "name": "ProjectsPlugin",
       "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ProjectsPlugin.dll",
-      "checksum": "sha256-030f5ed6b4d97f9f8954f7c4d702898198c82728135ac5cc6b18d74116c7fe7b"
+      "checksum": "sha256-2a01ac631299bc6a41a59c10f4229db5cc6e0f7f38002b7472b515d7be2783af"
     },
     {
       "name": "EconomyPlugin",
       "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/EconomyPlugin.dll",
-      "checksum": "sha256-d176a20c7b6c8b4c49e4e9995866b022ac5570825cc3cd706fd2175ff8e46779"
+      "checksum": "sha256-e7a3a0b3a49fddc7c4bb1bd44a315929427d9aa083559e9d61d9534460e5f213"
     },
     {
       "name": "DynamicWeatherPlugin",
       "version": "1.0.0",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/DynamicWeatherPlugin.dll",
-      "checksum": "sha256-cc83f0833cff4520e59f558a04e6fce3067bafe446427392458fb17670802e51"
+      "checksum": "sha256-9f59ec7747880f45c6e95fe036b8c7778138e197b96b903c0baaf60f8006b392"
     }
   ],
   "mapaddons": [
