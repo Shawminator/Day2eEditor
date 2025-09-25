@@ -62,6 +62,7 @@
             SaveButton.TabIndex = 0;
             SaveButton.TextImageRelation = TextImageRelation.ImageAboveText;
             SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
             // 
             // splitContainer1
             // 
@@ -115,6 +116,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "ExpansionForm";
             Text = "Form1";
+            FormClosing += ExpansionForm_FormClosing;
             FormClosed += ExpansionForm_FormClosed;
             Load += ExpansionForm_Load;
             panel1.ResumeLayout(false);

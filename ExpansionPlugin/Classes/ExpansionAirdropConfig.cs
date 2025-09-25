@@ -564,6 +564,39 @@ namespace ExpansionPlugin
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionLoot other)
+                return false;
+
+            return Name == other.Name &&
+                   Chance == other.Chance &&
+                   QuantityPercent == other.QuantityPercent &&
+                   Max == other.Max &&
+                   Min == other.Min &&
+                   ListsAreEqual(Attachments, other.Attachments) &&
+                   ListsAreEqual(Variants, other.Variants);
+        }
+
+        private bool ListsAreEqual(BindingList<ExpansionLootVariant> list1, BindingList<ExpansionLootVariant> list2)
+        {
+            if (list1 == null || list2 == null)
+                return list1 == list2;
+
+            if (list1.Count != list2.Count)
+                return false;
+
+            for (int i = 0; i < list1.Count; i++)
+            {
+                if (!list1[i].Equals(list2[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+
     }
     public class ExpansionLootVariant
     {
@@ -590,6 +623,34 @@ namespace ExpansionPlugin
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionLootVariant other)
+                return false;
+
+            return Name == other.Name &&
+                   Chance == other.Chance &&
+                   ListsAreEqual(Attachments, other.Attachments);
+        }
+
+        private bool ListsAreEqual(BindingList<ExpansionLootVariant> list1, BindingList<ExpansionLootVariant> list2)
+        {
+            if (list1 == null || list2 == null)
+                return list1 == list2;
+
+            if (list1.Count != list2.Count)
+                return false;
+
+            for (int i = 0; i < list1.Count; i++)
+            {
+                if (!list1[i].Equals(list2[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
     }
     public enum ContainerTypes
     {

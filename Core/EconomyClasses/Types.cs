@@ -92,6 +92,19 @@ namespace Day2eEditor
                     .LastOrDefault();
 
         }
+        public List<TypeEntry> SerachTypes(string Searchterm, bool exact = false)
+        {
+            if (exact)
+                return AllData
+                    .SelectMany(tf => tf.Data.TypeList)
+                    .Where(te => te.Name == Searchterm)
+                    .ToList();
+            else
+                return AllData
+                    .SelectMany(tf => tf.Data.TypeList)
+                    .Where(te => te.Name.ToLower().Contains(Searchterm.ToLower()))
+                    .ToList();
+        }
     }
     public class TypesFile : IConfigLoader
     {

@@ -1,12 +1,7 @@
 ﻿using Day2eEditor;
-using ExpansionPlugin;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
 
-namespace EconomyPlugin
+namespace ExpansionPlugin
 {
     /// <summary>
     /// Template for a UI Control implementing IUIHandler
@@ -128,8 +123,25 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
+                parent.isDirty = !AreLootListsEqual(_data, _originalData);
             }
+        }
+
+        private bool AreLootListsEqual(BindingList<ExpansionLoot> list1, BindingList<ExpansionLoot> list2)
+        {
+            if (list1 == null || list2 == null)
+                return list1 == list2;
+
+            if (list1.Count != list2.Count)
+                return false;
+
+            for (int i = 0; i < list1.Count; i++)
+            {
+                if (!list1[i].Equals(list2[i]))
+                    return false;
+            }
+
+            return true;
         }
 
         #region Helper Methods
@@ -137,14 +149,49 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
+
         private BindingList<ExpansionLoot> CloneData(BindingList<ExpansionLoot> data)
         {
-            // TODO: Implement actual cloning logic
-            return new BindingList<ExpansionLoot>
+            var clonedList = new BindingList<ExpansionLoot>();
+
+            foreach (var loot in data)
             {
-                // Copy properties here
-            };
+                var clonedLoot = new ExpansionLoot
+                {
+                    Name = loot.Name,
+                    Chance = loot.Chance,
+                    QuantityPercent = loot.QuantityPercent,
+                    Max = loot.Max,
+                    Min = loot.Min,
+                    Attachments = CloneVariants(loot.Attachments),
+                    Variants = CloneVariants(loot.Variants)
+                };
+
+                clonedList.Add(clonedLoot);
+            }
+
+            return clonedList;
         }
+
+        private BindingList<ExpansionLootVariant> CloneVariants(BindingList<ExpansionLootVariant> variants)
+        {
+            var clonedVariants = new BindingList<ExpansionLootVariant>();
+
+            foreach (var variant in variants)
+            {
+                var clonedVariant = new ExpansionLootVariant
+                {
+                    Name = variant.Name,
+                    Chance = variant.Chance,
+                    Attachments = CloneVariants(variant.Attachments)
+                };
+
+                clonedVariants.Add(clonedVariant);
+            }
+
+            return clonedVariants;
+        }
+
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -236,7 +283,47 @@ namespace EconomyPlugin
         }
         private void ExpansionLootTV_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            ExpansionLootTV.SelectedNode = e.Node;
+            currentTreeNode = e.Node;
 
+            if (e.Button != MouseButtons.Right) return;
+
+            if (e.Node.Tag.ToString() == "LootParent")
+            {
+                ExpansionLootCM.Items.Clear();
+                ExpansionLootCM.Items.Add(addLootItemsToolStripMenuItem);
+                ExpansionLootCM.Show(Cursor.Position);
+            }
+            else if (e.Node.Tag.ToString() == "Attachments")
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    ExpansionLootCM.Items.Clear();
+                    ExpansionLootCM.Items.Add(addAttachmentToolStripMenuItem);
+                    ExpansionLootCM.Show(Cursor.Position);
+                }
+            }
+            else  if (e.Node.Tag.ToString() == "Variants")
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    ExpansionLootCM.Items.Clear();
+                    ExpansionLootCM.Items.Add(addLootVarientsToolStripMenuItem);
+                    ExpansionLootCM.Show(Cursor.Position);
+                }
+            }
+            else if (e.Node.Tag is ExpansionLoot)
+            {
+                ExpansionLootCM.Items.Clear();
+                ExpansionLootCM.Items.Add(removeToolStripMenuItem);
+                ExpansionLootCM.Show(Cursor.Position);
+            }
+            else if (e.Node.Tag is ExpansionLootVariant)
+            {
+                ExpansionLootCM.Items.Clear();
+                ExpansionLootCM.Items.Add(removeToolStripMenuItem);
+                ExpansionLootCM.Show(Cursor.Position);
+            }
         }
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
@@ -318,17 +405,174 @@ namespace EconomyPlugin
 
         private void numericUpDown31_ValueChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            currentExpanionLootItem.QuantityPercent = (int)numericUpDown31.Value;
+            HasChanges();
         }
 
         private void numericUpDown12_ValueChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            currentExpanionLootItem.Max = (int)numericUpDown12.Value;
+            HasChanges();
         }
 
         private void numericUpDown33_ValueChanged(object sender, EventArgs e)
         {
+            if (_suppressEvents) return;
+            currentExpanionLootItem.Min = (int)numericUpDown33.Value;
+            HasChanges();
+        }
 
+        private void addLootItemsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes
+            {
+                UseMultipleOfSameItem = true
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                TreeNode FocusNode = new TreeNode();
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    ExpansionLoot Newloot = new ExpansionLoot()
+                    {
+                        Name = l,
+                        Attachments = new BindingList<ExpansionLootVariant>(),
+                        Chance = (decimal)0.5,
+                        Max = -1,
+                        Min = 0,
+                        Variants = new BindingList<ExpansionLootVariant>()
+                    };
+                    _data.Add(Newloot);
+                    TreeNode tn = CreateLootNode(Newloot);
+                    ExpansionLootTV.SelectedNode.Nodes.Add(tn);
+                    FocusNode = tn;
+                    HasChanges();
+                }
+                ExpansionLootTV.SelectedNode = FocusNode;
+                ExpansionLootTV.Focus();
+                currentExpanionLootItem = ExpansionLootTV.SelectedNode.Tag as ExpansionLoot;
+                SetLootitem();
+            }
+        }
+
+        private void addLootVarientsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes
+            {
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                TreeNode FocusNode = new TreeNode();
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
+                    ExpansionLoot loot = currentTreeNode.Parent.Tag as ExpansionLoot;
+                    loot.Variants.Add(Newloot);
+                    TreeNode tn = getLootVarients(Newloot);
+                    ExpansionLootTV.SelectedNode.Nodes.Add(tn);
+                    FocusNode = tn;
+                    HasChanges();
+                }
+                ExpansionLootTV.SelectedNode = FocusNode;
+                ExpansionLootTV.Focus();
+                expansionLootVarientGB.Visible = true;
+                CurrentLootVArient = currentTreeNode.Tag as ExpansionLootVariant;
+                setvarient();
+                if (currentTreeNode.Parent.Tag.ToString() == "Attachments")
+                {
+                    expansionLootVarientGB.Text = "Expansion Loot Attachment";
+                }
+                else if (currentTreeNode.Parent.Tag.ToString() == "Variants")
+                {
+                    expansionLootVarientGB.Text = "Expansion Loot Variant";
+                }
+            }
+        }
+
+        private void addAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes
+            {
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                TreeNode FocusNode = new TreeNode();
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (currentTreeNode.Parent.Tag is ExpansionLoot)
+                    {
+                        ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
+                        ExpansionLoot loot = currentTreeNode.Parent.Tag as ExpansionLoot;
+                        loot.Attachments.Add(Newloot);
+                        TreeNode tn = getLootVarients(Newloot);
+                        ExpansionLootTV.SelectedNode.Nodes.Add(tn);
+                        FocusNode = tn;
+                    }
+                    else if (currentTreeNode.Parent.Tag is ExpansionLootVariant)
+                    {
+                        ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
+                        ExpansionLootVariant loot = currentTreeNode.Parent.Tag as ExpansionLootVariant;
+                        loot.Attachments.Add(Newloot);
+                        TreeNode tn = getLootVarients(Newloot);
+                        ExpansionLootTV.SelectedNode.Nodes.Add(tn);
+                        FocusNode = tn;
+                    }
+                    HasChanges();
+                }
+                ExpansionLootTV.SelectedNode = FocusNode;
+                ExpansionLootTV.Focus();
+                expansionLootVarientGB.Visible = true;
+                CurrentLootVArient = ExpansionLootTV.SelectedNode.Tag as ExpansionLootVariant;
+                setvarient();
+                if (currentTreeNode.Parent.Tag.ToString() == "Attachments")
+                {
+                    expansionLootVarientGB.Text = "Expansion Loot Attachment";
+                }
+                else if (currentTreeNode.Parent.Tag.ToString() == "Variants")
+                {
+                    expansionLootVarientGB.Text = "Expansion Loot Variant";
+                }
+            }
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Tag.ToString() == "LootParent")
+            {
+                _data.Remove(currentExpanionLootItem);
+                ExpansionLootTV.SelectedNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Tag.ToString() == "Variants")
+            {
+                ExpansionLoot loot = currentTreeNode.Parent.Parent.Tag as ExpansionLoot;
+                loot.Variants.Remove(CurrentLootVArient);
+                ExpansionLootTV.SelectedNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Tag.ToString() == "Attachments")
+            {
+                if (currentTreeNode.Parent.Parent.Tag is ExpansionLoot)
+                {
+                    ExpansionLoot loot = currentTreeNode.Parent.Parent.Tag as ExpansionLoot;
+                    loot.Attachments.Remove(CurrentLootVArient);
+                    ExpansionLootTV.SelectedNode.Remove();
+                }
+                else if (currentTreeNode.Parent.Parent.Tag is ExpansionLootVariant)
+                {
+                    ExpansionLootVariant loot = currentTreeNode.Parent.Parent.Tag as ExpansionLootVariant;
+                    loot.Attachments.Remove(CurrentLootVArient);
+                    ExpansionLootTV.SelectedNode.Remove();
+                }
+            }
+
+            HasChanges();
         }
     }
 }

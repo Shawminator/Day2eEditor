@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using DayZeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,13 +60,8 @@ namespace ExpansionPlugin
             _paths["AISettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AISettings.json");
             _paths["BookSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "BookSettings.json");
             
-            
-            
             // missions files
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
-
-
-            
 
             LoadFiles(basePath);
         }
@@ -97,6 +93,48 @@ namespace ExpansionPlugin
                 HasErrors = true;
                 Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
             }
+        }
+
+        public IEnumerable<string> Save()
+        {
+            var configs = new object[]
+            {
+                ExpansionAirdropConfig,
+                ExpansionAIConfig,
+                ExpansionBookConfig,
+                ExpansionBaseBuildingConfig
+            };
+
+            var savedFiles = new List<string>();
+
+            foreach (var obj in configs)
+            {
+                if (obj is IConfigLoader config)
+                {
+                    savedFiles.AddRange(config.Save());
+                }
+            }
+
+            return savedFiles;
+        }
+        public bool needToSave()
+        {
+            bool needtosave = false;
+            var configs = new object[]
+            {
+                ExpansionAirdropConfig,
+                ExpansionAIConfig,
+                ExpansionBookConfig,
+                ExpansionBaseBuildingConfig
+            };
+            foreach (var obj in configs)
+            {
+                if (obj is not IConfigLoader config)
+                    continue;
+                if (config.needToSave())
+                    needtosave = true;
+            }
+            return needtosave;
         }
     }
 }

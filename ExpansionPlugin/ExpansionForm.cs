@@ -1,5 +1,4 @@
 using Day2eEditor;
-using EconomyPlugin;
 
 namespace ExpansionPlugin
 {
@@ -9,7 +8,7 @@ namespace ExpansionPlugin
         public MapViewerControl MapControl => _mapControl;
         private IPluginForm _plugin;
         private TreeNode? currentTreeNode;
-        private ExpansionManager ExpansionManager { get; set; }
+        private ExpansionManager _expansionManager { get; set; }
 
         #region Ditionarys
         private Dictionary<Type, Action<TreeNode, List<TreeNode>>> _typeHandlers;
@@ -33,9 +32,9 @@ namespace ExpansionPlugin
         {
             InitializeComponent();
             _plugin = plugin;
-            ExpansionManager = new ExpansionManager();
-            ExpansionManager.SetExpansionStuff();
-            AppServices.Register(ExpansionManager);
+            _expansionManager = new ExpansionManager();
+            _expansionManager.SetExpansionStuff();
+            AppServices.Register(_expansionManager);
             initializeShowControlHandlers();
             InitializeContextMenuHandlers();
         }
@@ -69,6 +68,11 @@ namespace ExpansionPlugin
                 {
                     ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
                     ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionAirdropConfig), cfg.Loot, selected);
+                },
+                ["AirdropContainersInfected"] = (node, selected) =>
+                {
+                    ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
+                    ShowHandler<IUIHandler>(new ExpansionInfectedControl(), typeof(ExpansionAirdropConfig), cfg.Infected, selected);
                 },
                 //Basebuilding
                 ["BaseBuildingNoBuldZones"] = (node, selected) =>
@@ -197,10 +201,10 @@ namespace ExpansionPlugin
             {
                 Tag = "SettingsNode",
             };
-            AddFileToTree(SettingsNode, "", "", ExpansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
-            AddFileToTree(SettingsNode, "", "", ExpansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
-            AddFileToTree(SettingsNode, "", "", ExpansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
-            AddFileToTree(SettingsNode, "", "", ExpansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
 
 
             rootNode.Nodes.Add(SettingsNode);
@@ -239,13 +243,13 @@ namespace ExpansionPlugin
                     Tag = "AirdropContainersInfected"
                 };
                 alcnodes.Nodes.Add(alcinodes);
-                
+
                 TreeNode alclnodes = new TreeNode("Loot")
                 {
                     Tag = "AirdropContainersLoot"
                 };
                 alcnodes.Nodes.Add(alclnodes);
-                
+
                 acnodes.Nodes.Add(alcnodes);
 
             }
@@ -635,6 +639,56 @@ namespace ExpansionPlugin
         {
             AppServices.Unregister<ExpansionManager>();
             _mapControl.ClearMap();
+        }
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            savefiles();
+        }
+        public void savefiles(bool updated = false)
+        {
+            var savedFiles = _expansionManager.Save();
+            if (_currentHandler != null)
+                _currentHandler.ApplyChanges();
+            Console.WriteLine("Saved files:");
+            foreach (var file in savedFiles)
+            {
+                Console.WriteLine(file);
+            }
+            if (savedFiles.Count() > 0)
+            {
+                ShowSavedFilesMessage(savedFiles);
+            }
+        }
+        private void ShowSavedFilesMessage(IEnumerable<string> files)
+        {
+            // Build a nice multiline string
+            var fileListText = string.Join(Environment.NewLine, files);
+
+            // Limit length so the box doesn't get too tall
+            if (files.Count() > 15)
+            {
+                fileListText = string.Join(Environment.NewLine, files.Take(15)) +
+                               Environment.NewLine + $"...and {files.Count() - 15} more";
+            }
+
+            MessageBox.Show(
+                $"The following files were saved successfully:\n\n{fileListText}",
+                "Save Complete",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+        }
+
+        private void ExpansionForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_expansionManager.needToSave())
+            {
+                DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    savefiles();
+                }
+            }
         }
     }
 
