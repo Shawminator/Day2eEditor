@@ -1,4 +1,6 @@
 ﻿using Day2eEditor;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace ExpansionPlugin
 {
@@ -81,14 +83,53 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
+
         private ExpansionBaseBuildingSettings CloneData(ExpansionBaseBuildingSettings data)
         {
-            // TODO: Implement actual cloning logic
             return new ExpansionBaseBuildingSettings
             {
-                // Copy properties here
+                m_Version = data.m_Version,
+                CanBuildAnywhere = data.CanBuildAnywhere,
+                AllowBuildingWithoutATerritory = data.AllowBuildingWithoutATerritory,
+                DeployableOutsideATerritory = new BindingList<string>(data.DeployableOutsideATerritory.ToList()),
+                DeployableInsideAEnemyTerritory = new BindingList<string>(data.DeployableInsideAEnemyTerritory.ToList()),
+                CanCraftVanillaBasebuilding = data.CanCraftVanillaBasebuilding,
+                CanCraftExpansionBasebuilding = data.CanCraftExpansionBasebuilding,
+                DestroyFlagOnDismantle = data.DestroyFlagOnDismantle,
+                DismantleOutsideTerritory = data.DismantleOutsideTerritory,
+                DismantleInsideTerritory = data.DismantleInsideTerritory,
+                DismantleAnywhere = data.DismantleAnywhere,
+                CodelockActionsAnywhere = data.CodelockActionsAnywhere,
+                CodeLockLength = data.CodeLockLength,
+                DoDamageWhenEnterWrongCodeLock = data.DoDamageWhenEnterWrongCodeLock,
+                DamageWhenEnterWrongCodeLock = data.DamageWhenEnterWrongCodeLock,
+                RememberCode = data.RememberCode,
+                CanCraftTerritoryFlagKit = data.CanCraftTerritoryFlagKit,
+                SimpleTerritory = data.SimpleTerritory,
+                AutomaticFlagOnCreation = data.AutomaticFlagOnCreation,
+                GetTerritoryFlagKitAfterBuild = data.GetTerritoryFlagKitAfterBuild,
+                BuildZoneRequiredCustomMessage = data.BuildZoneRequiredCustomMessage,
+                ZonesAreNoBuildZones = data.ZonesAreNoBuildZones,
+                CodelockAttachMode = data.CodelockAttachMode,
+                DismantleFlagMode = data.DismantleFlagMode,
+                FlagMenuMode = data.FlagMenuMode,
+                PreventItemAccessThroughObstructingItems = data.PreventItemAccessThroughObstructingItems,
+                EnableVirtualStorage = data.EnableVirtualStorage,
+                VirtualStorageExcludedContainers = new BindingList<string>(data.VirtualStorageExcludedContainers.ToList()),
+                Zones = new BindingList<ExpansionBuildNoBuildZone>(
+                    data.Zones.Select(zone => new ExpansionBuildNoBuildZone
+                    {
+                        Name = zone.Name,
+                        Center = (float[])zone.Center.Clone(),
+                        Radius = zone.Radius,
+                        Items = new BindingList<string>(zone.Items.ToList()),
+                        IsWhitelist = zone.IsWhitelist,
+                        CustomMessage = zone.CustomMessage
+                    }).ToList()
+                )
             };
         }
+
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -102,5 +143,48 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void CodelockAttachModeCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            ExpansionCodelockAttachMode cacl = (ExpansionCodelockAttachMode)CodelockAttachModeCB.SelectedItem;
+            _data.CodelockAttachMode = (int)cacl;
+            HasChanges();
+        }
+
+        private void CodelockActionsAnywhereCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CodelockActionsAnywhere = CodelockActionsAnywhereCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void CodeLockLengthNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CodeLockLength = (int)CodeLockLengthNUD.Value;
+            HasChanges();
+        }
+
+        private void DoDamageWhenEnterWrongCodeLockCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DoDamageWhenEnterWrongCodeLock = DoDamageWhenEnterWrongCodeLockCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void DamageWhenEnterWrongCodeLockNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DamageWhenEnterWrongCodeLock = (decimal)DamageWhenEnterWrongCodeLockNUD.Value;
+            HasChanges();
+        }
+
+        private void RememberCodeCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.RememberCode = RememberCodeCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
     }
 }

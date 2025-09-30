@@ -77,6 +77,7 @@
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(262, 23);
             textBox3.TabIndex = 114;
+            textBox3.TextChanged += textBox3_TextChanged;
             // 
             // numericUpDown16
             // 
@@ -91,6 +92,7 @@
             numericUpDown16.Size = new Size(83, 23);
             numericUpDown16.TabIndex = 117;
             numericUpDown16.TextAlign = HorizontalAlignment.Center;
+            numericUpDown16.ValueChanged += numericUpDown16_ValueChanged;
             // 
             // checkBox6
             // 
@@ -103,6 +105,7 @@
             checkBox6.TabIndex = 119;
             checkBox6.Text = "Is Whitelist";
             checkBox6.UseVisualStyleBackColor = true;
+            checkBox6.CheckedChanged += checkBox6_CheckedChanged;
             // 
             // numericUpDown15
             // 
@@ -117,6 +120,7 @@
             numericUpDown15.Size = new Size(83, 23);
             numericUpDown15.TabIndex = 116;
             numericUpDown15.TextAlign = HorizontalAlignment.Center;
+            numericUpDown15.ValueChanged += numericUpDown15_ValueChanged;
             // 
             // darkLabel32
             // 
@@ -142,6 +146,7 @@
             numericUpDown14.Size = new Size(83, 23);
             numericUpDown14.TabIndex = 115;
             numericUpDown14.TextAlign = HorizontalAlignment.Center;
+            numericUpDown14.ValueChanged += numericUpDown14_ValueChanged;
             // 
             // textBox4
             // 
@@ -152,6 +157,7 @@
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(262, 23);
             textBox4.TabIndex = 120;
+            textBox4.TextChanged += textBox4_TextChanged;
             // 
             // darkLabel67
             // 
@@ -198,6 +204,7 @@
             numericUpDown13.Size = new Size(83, 23);
             numericUpDown13.TabIndex = 118;
             numericUpDown13.TextAlign = HorizontalAlignment.Center;
+            numericUpDown13.ValueChanged += numericUpDown13_ValueChanged;
             // 
             // ExpansionBuildNoBuildZoneControl
             // 

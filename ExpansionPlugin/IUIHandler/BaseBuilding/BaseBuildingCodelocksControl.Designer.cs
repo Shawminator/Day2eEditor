@@ -85,6 +85,7 @@
             CodelockAttachModeCB.Name = "CodelockAttachModeCB";
             CodelockAttachModeCB.Size = new Size(304, 23);
             CodelockAttachModeCB.TabIndex = 0;
+            CodelockAttachModeCB.SelectedIndexChanged += CodelockAttachModeCB_SelectedIndexChanged;
             // 
             // label2
             // 
@@ -106,6 +107,7 @@
             DamageWhenEnterWrongCodeLockNUD.Size = new Size(86, 23);
             DamageWhenEnterWrongCodeLockNUD.TabIndex = 4;
             DamageWhenEnterWrongCodeLockNUD.TextAlign = HorizontalAlignment.Center;
+            DamageWhenEnterWrongCodeLockNUD.ValueChanged += DamageWhenEnterWrongCodeLockNUD_ValueChanged;
             // 
             // label1
             // 
@@ -128,6 +130,7 @@
             CodeLockLengthNUD.Size = new Size(86, 23);
             CodeLockLengthNUD.TabIndex = 2;
             CodeLockLengthNUD.TextAlign = HorizontalAlignment.Center;
+            CodeLockLengthNUD.ValueChanged += CodeLockLengthNUD_ValueChanged;
             // 
             // CodelockActionsAnywhereCB
             // 
@@ -141,6 +144,7 @@
             CodelockActionsAnywhereCB.Text = "Codelock Actions Anywhere";
             CodelockActionsAnywhereCB.TextAlign = ContentAlignment.MiddleRight;
             CodelockActionsAnywhereCB.UseVisualStyleBackColor = true;
+            CodelockActionsAnywhereCB.CheckedChanged += CodelockActionsAnywhereCB_CheckedChanged;
             // 
             // DoDamageWhenEnterWrongCodeLockCB
             // 
@@ -154,6 +158,7 @@
             DoDamageWhenEnterWrongCodeLockCB.Text = "Do Damage When Enter Wrong Code";
             DoDamageWhenEnterWrongCodeLockCB.TextAlign = ContentAlignment.MiddleRight;
             DoDamageWhenEnterWrongCodeLockCB.UseVisualStyleBackColor = true;
+            DoDamageWhenEnterWrongCodeLockCB.CheckedChanged += DoDamageWhenEnterWrongCodeLockCB_CheckedChanged;
             // 
             // RememberCodeCB
             // 
@@ -167,6 +172,7 @@
             RememberCodeCB.Text = "Remember Code";
             RememberCodeCB.TextAlign = ContentAlignment.MiddleRight;
             RememberCodeCB.UseVisualStyleBackColor = true;
+            RememberCodeCB.CheckedChanged += RememberCodeCB_CheckedChanged;
             // 
             // BaseBuildingCodelocksControl
             // 

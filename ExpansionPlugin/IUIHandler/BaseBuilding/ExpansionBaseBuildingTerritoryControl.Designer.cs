@@ -69,11 +69,12 @@
             PreventItemAccessThroughObstructingItemsCB.Location = new Point(22, 226);
             PreventItemAccessThroughObstructingItemsCB.Margin = new Padding(4, 3, 4, 3);
             PreventItemAccessThroughObstructingItemsCB.Name = "PreventItemAccessThroughObstructingItemsCB";
-            PreventItemAccessThroughObstructingItemsCB.Size = new Size(279, 19);
+            PreventItemAccessThroughObstructingItemsCB.Size = new Size(278, 19);
             PreventItemAccessThroughObstructingItemsCB.TabIndex = 7;
             PreventItemAccessThroughObstructingItemsCB.Text = "Prevent Item Access Through Obstructing Items";
             PreventItemAccessThroughObstructingItemsCB.TextAlign = ContentAlignment.MiddleRight;
             PreventItemAccessThroughObstructingItemsCB.UseVisualStyleBackColor = true;
+            PreventItemAccessThroughObstructingItemsCB.CheckedChanged += PreventItemAccessThroughObstructingItemsCB_CheckedChanged;
             // 
             // darkLabel129
             // 
@@ -96,6 +97,7 @@
             FlagMenuModeComboBox.Name = "FlagMenuModeComboBox";
             FlagMenuModeComboBox.Size = new Size(288, 23);
             FlagMenuModeComboBox.TabIndex = 3;
+            FlagMenuModeComboBox.SelectedIndexChanged += FlagMenuModeComboBox_SelectedIndexChanged;
             // 
             // SimpleTerritoryCB
             // 
@@ -104,11 +106,12 @@
             SimpleTerritoryCB.Location = new Point(22, 18);
             SimpleTerritoryCB.Margin = new Padding(4, 3, 4, 3);
             SimpleTerritoryCB.Name = "SimpleTerritoryCB";
-            SimpleTerritoryCB.Size = new Size(109, 19);
+            SimpleTerritoryCB.Size = new Size(108, 19);
             SimpleTerritoryCB.TabIndex = 0;
             SimpleTerritoryCB.Text = "Simple Territory";
             SimpleTerritoryCB.TextAlign = ContentAlignment.MiddleRight;
             SimpleTerritoryCB.UseVisualStyleBackColor = true;
+            SimpleTerritoryCB.CheckedChanged += SimpleTerritoryCB_CheckedChanged;
             // 
             // AllowBuildingWithoutATerritoryCB
             // 
@@ -117,11 +120,12 @@
             AllowBuildingWithoutATerritoryCB.Location = new Point(22, 45);
             AllowBuildingWithoutATerritoryCB.Margin = new Padding(4, 3, 4, 3);
             AllowBuildingWithoutATerritoryCB.Name = "AllowBuildingWithoutATerritoryCB";
-            AllowBuildingWithoutATerritoryCB.Size = new Size(204, 19);
+            AllowBuildingWithoutATerritoryCB.Size = new Size(203, 19);
             AllowBuildingWithoutATerritoryCB.TabIndex = 1;
             AllowBuildingWithoutATerritoryCB.Text = "AllowBuilding Without A Territory";
             AllowBuildingWithoutATerritoryCB.TextAlign = ContentAlignment.MiddleRight;
             AllowBuildingWithoutATerritoryCB.UseVisualStyleBackColor = true;
+            AllowBuildingWithoutATerritoryCB.CheckedChanged += AllowBuildingWithoutATerritoryCB_CheckedChanged;
             // 
             // CanBuildAnywhereCB
             // 
@@ -135,6 +139,7 @@
             CanBuildAnywhereCB.Text = "Can Build Anywhere";
             CanBuildAnywhereCB.TextAlign = ContentAlignment.MiddleRight;
             CanBuildAnywhereCB.UseVisualStyleBackColor = true;
+            CanBuildAnywhereCB.CheckedChanged += CanBuildAnywhereCB_CheckedChanged;
             // 
             // DismantleInsideTerritoryCB
             // 
@@ -143,11 +148,12 @@
             DismantleInsideTerritoryCB.Location = new Point(22, 202);
             DismantleInsideTerritoryCB.Margin = new Padding(4, 3, 4, 3);
             DismantleInsideTerritoryCB.Name = "DismantleInsideTerritoryCB";
-            DismantleInsideTerritoryCB.Size = new Size(160, 19);
+            DismantleInsideTerritoryCB.Size = new Size(159, 19);
             DismantleInsideTerritoryCB.TabIndex = 6;
             DismantleInsideTerritoryCB.Text = "Dismantle Inside Territory";
             DismantleInsideTerritoryCB.TextAlign = ContentAlignment.MiddleRight;
             DismantleInsideTerritoryCB.UseVisualStyleBackColor = true;
+            DismantleInsideTerritoryCB.CheckedChanged += DismantleInsideTerritoryCB_CheckedChanged;
             // 
             // DismantleOutsideTerritoryCB
             // 
@@ -156,11 +162,12 @@
             DismantleOutsideTerritoryCB.Location = new Point(22, 175);
             DismantleOutsideTerritoryCB.Margin = new Padding(4, 3, 4, 3);
             DismantleOutsideTerritoryCB.Name = "DismantleOutsideTerritoryCB";
-            DismantleOutsideTerritoryCB.Size = new Size(170, 19);
+            DismantleOutsideTerritoryCB.Size = new Size(169, 19);
             DismantleOutsideTerritoryCB.TabIndex = 5;
             DismantleOutsideTerritoryCB.Text = "Dismantle Outside Territory";
             DismantleOutsideTerritoryCB.TextAlign = ContentAlignment.MiddleRight;
             DismantleOutsideTerritoryCB.UseVisualStyleBackColor = true;
+            DismantleOutsideTerritoryCB.CheckedChanged += DismantleOutsideTerritoryCB_CheckedChanged;
             // 
             // AutomaticFlagOnCreationCB
             // 
@@ -174,6 +181,7 @@
             AutomaticFlagOnCreationCB.Text = "Automatic Flag On Creation";
             AutomaticFlagOnCreationCB.TextAlign = ContentAlignment.MiddleRight;
             AutomaticFlagOnCreationCB.UseVisualStyleBackColor = true;
+            AutomaticFlagOnCreationCB.CheckedChanged += AutomaticFlagOnCreationCB_CheckedChanged;
             // 
             // ExpansionBaseBuildingTerritoryControl
             // 

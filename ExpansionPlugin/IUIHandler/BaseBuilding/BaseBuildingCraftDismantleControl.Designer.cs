@@ -81,6 +81,7 @@
             DismantleFlagModeComboBox.Name = "DismantleFlagModeComboBox";
             DismantleFlagModeComboBox.Size = new Size(304, 23);
             DismantleFlagModeComboBox.TabIndex = 4;
+            DismantleFlagModeComboBox.SelectedIndexChanged += DismantleFlagModeComboBox_SelectedIndexChanged;
             // 
             // CanCraftVanillaBasebuildingCB
             // 
@@ -94,6 +95,7 @@
             CanCraftVanillaBasebuildingCB.Text = "Can Craft Vanilla Basebuilding";
             CanCraftVanillaBasebuildingCB.TextAlign = ContentAlignment.MiddleRight;
             CanCraftVanillaBasebuildingCB.UseVisualStyleBackColor = true;
+            CanCraftVanillaBasebuildingCB.CheckedChanged += CanCraftVanillaBasebuildingCB_CheckedChanged;
             // 
             // CanCraftExpansionBasebuildingCB
             // 
@@ -102,11 +104,12 @@
             CanCraftExpansionBasebuildingCB.Location = new Point(20, 53);
             CanCraftExpansionBasebuildingCB.Margin = new Padding(4, 3, 4, 3);
             CanCraftExpansionBasebuildingCB.Name = "CanCraftExpansionBasebuildingCB";
-            CanCraftExpansionBasebuildingCB.Size = new Size(203, 19);
+            CanCraftExpansionBasebuildingCB.Size = new Size(204, 19);
             CanCraftExpansionBasebuildingCB.TabIndex = 1;
             CanCraftExpansionBasebuildingCB.Text = "Can Craft Expansion Basebuilding";
             CanCraftExpansionBasebuildingCB.TextAlign = ContentAlignment.MiddleRight;
             CanCraftExpansionBasebuildingCB.UseVisualStyleBackColor = true;
+            CanCraftExpansionBasebuildingCB.CheckedChanged += CanCraftExpansionBasebuildingCB_CheckedChanged;
             // 
             // CanCraftTerritoryFlagKitCB
             // 
@@ -115,11 +118,12 @@
             CanCraftTerritoryFlagKitCB.Location = new Point(20, 80);
             CanCraftTerritoryFlagKitCB.Margin = new Padding(4, 3, 4, 3);
             CanCraftTerritoryFlagKitCB.Name = "CanCraftTerritoryFlagKitCB";
-            CanCraftTerritoryFlagKitCB.Size = new Size(165, 19);
+            CanCraftTerritoryFlagKitCB.Size = new Size(164, 19);
             CanCraftTerritoryFlagKitCB.TabIndex = 2;
             CanCraftTerritoryFlagKitCB.Text = "Can Craft Territory Flag Kit";
             CanCraftTerritoryFlagKitCB.TextAlign = ContentAlignment.MiddleRight;
             CanCraftTerritoryFlagKitCB.UseVisualStyleBackColor = true;
+            CanCraftTerritoryFlagKitCB.CheckedChanged += CanCraftTerritoryFlagKitCB_CheckedChanged;
             // 
             // DestroyFlagOnDismantleCB
             // 
@@ -133,6 +137,7 @@
             DestroyFlagOnDismantleCB.Text = "Destroy Flag On Dismantle";
             DestroyFlagOnDismantleCB.TextAlign = ContentAlignment.MiddleRight;
             DestroyFlagOnDismantleCB.UseVisualStyleBackColor = true;
+            DestroyFlagOnDismantleCB.CheckedChanged += DestroyFlagOnDismantleCB_CheckedChanged;
             // 
             // GetTerritoryFlagKitAfterBuildCB
             // 
@@ -141,11 +146,12 @@
             GetTerritoryFlagKitAfterBuildCB.Location = new Point(20, 217);
             GetTerritoryFlagKitAfterBuildCB.Margin = new Padding(4, 3, 4, 3);
             GetTerritoryFlagKitAfterBuildCB.Name = "GetTerritoryFlagKitAfterBuildCB";
-            GetTerritoryFlagKitAfterBuildCB.Size = new Size(192, 19);
+            GetTerritoryFlagKitAfterBuildCB.Size = new Size(191, 19);
             GetTerritoryFlagKitAfterBuildCB.TabIndex = 6;
             GetTerritoryFlagKitAfterBuildCB.Text = "Get Territory Flag Kit After Build";
             GetTerritoryFlagKitAfterBuildCB.TextAlign = ContentAlignment.MiddleRight;
             GetTerritoryFlagKitAfterBuildCB.UseVisualStyleBackColor = true;
+            GetTerritoryFlagKitAfterBuildCB.CheckedChanged += GetTerritoryFlagKitAfterBuildCB_CheckedChanged;
             // 
             // DismantleAnywhereCB
             // 
@@ -159,6 +165,7 @@
             DismantleAnywhereCB.Text = "Dismantle Anywhere";
             DismantleAnywhereCB.TextAlign = ContentAlignment.MiddleRight;
             DismantleAnywhereCB.UseVisualStyleBackColor = true;
+            DismantleAnywhereCB.CheckedChanged += DismantleAnywhereCB_CheckedChanged;
             // 
             // BaseBuildingCraftDismantleControl
             // 

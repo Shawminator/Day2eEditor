@@ -1,4 +1,5 @@
 using Day2eEditor;
+using System.Windows.Forms;
 
 namespace ExpansionPlugin
 {
@@ -48,7 +49,13 @@ namespace ExpansionPlugin
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
                 {
                     ExpansionBuildNoBuildZone ExpansionBuildNoBuildZone = node.Tag as ExpansionBuildNoBuildZone;
-                    ShowHandler(new ExpansionBuildNoBuildZoneControl(), typeof(ExpansionBaseBuildingConfig), node.Tag as ExpansionBuildNoBuildZone, selected);
+                    var control = new ExpansionBuildNoBuildZoneControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbasebuildingNoBuildZones(node.FindParentOfType<ExpansionBaseBuildingConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionBaseBuildingConfig), node.Tag as ExpansionBuildNoBuildZone, selected);
                     SetupBaseBuildingNoBuildZone(ExpansionBuildNoBuildZone, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
                 },

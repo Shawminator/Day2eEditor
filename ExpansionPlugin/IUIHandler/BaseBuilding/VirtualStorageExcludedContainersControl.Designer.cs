@@ -58,6 +58,7 @@
             EnableVirtualStorageCB.Text = "Enable Virtual Storage";
             EnableVirtualStorageCB.TextAlign = ContentAlignment.MiddleRight;
             EnableVirtualStorageCB.UseVisualStyleBackColor = true;
+            EnableVirtualStorageCB.CheckedChanged += EnableVirtualStorageCB_CheckedChanged;
             // 
             // VirtualStorageExcludedContainersControl
             // 

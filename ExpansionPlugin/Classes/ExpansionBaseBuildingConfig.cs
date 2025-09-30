@@ -255,6 +255,44 @@ namespace ExpansionPlugin
             };
 
         }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionBaseBuildingSettings other)
+                return false;
+
+            return m_Version == other.m_Version &&
+                   CanBuildAnywhere == other.CanBuildAnywhere &&
+                   AllowBuildingWithoutATerritory == other.AllowBuildingWithoutATerritory &&
+                   CanCraftVanillaBasebuilding == other.CanCraftVanillaBasebuilding &&
+                   CanCraftExpansionBasebuilding == other.CanCraftExpansionBasebuilding &&
+                   DestroyFlagOnDismantle == other.DestroyFlagOnDismantle &&
+                   DismantleOutsideTerritory == other.DismantleOutsideTerritory &&
+                   DismantleInsideTerritory == other.DismantleInsideTerritory &&
+                   DismantleAnywhere == other.DismantleAnywhere &&
+                   CodelockActionsAnywhere == other.CodelockActionsAnywhere &&
+                   CodeLockLength == other.CodeLockLength &&
+                   DoDamageWhenEnterWrongCodeLock == other.DoDamageWhenEnterWrongCodeLock &&
+                   DamageWhenEnterWrongCodeLock == other.DamageWhenEnterWrongCodeLock &&
+                   RememberCode == other.RememberCode &&
+                   CanCraftTerritoryFlagKit == other.CanCraftTerritoryFlagKit &&
+                   SimpleTerritory == other.SimpleTerritory &&
+                   AutomaticFlagOnCreation == other.AutomaticFlagOnCreation &&
+                   GetTerritoryFlagKitAfterBuild == other.GetTerritoryFlagKitAfterBuild &&
+                   BuildZoneRequiredCustomMessage == other.BuildZoneRequiredCustomMessage &&
+                   ZonesAreNoBuildZones == other.ZonesAreNoBuildZones &&
+                   CodelockAttachMode == other.CodelockAttachMode &&
+                   DismantleFlagMode == other.DismantleFlagMode &&
+                   FlagMenuMode == other.FlagMenuMode &&
+                   PreventItemAccessThroughObstructingItems == other.PreventItemAccessThroughObstructingItems &&
+                   EnableVirtualStorage == other.EnableVirtualStorage &&
+                   DeployableOutsideATerritory.SequenceEqual(other.DeployableOutsideATerritory) &&
+                   DeployableInsideAEnemyTerritory.SequenceEqual(other.DeployableInsideAEnemyTerritory) &&
+                   VirtualStorageExcludedContainers.SequenceEqual(other.VirtualStorageExcludedContainers) &&
+                   Zones.SequenceEqual(other.Zones);
+        }
+
     }
     public class ExpansionBuildNoBuildZone
     {
@@ -274,5 +312,20 @@ namespace ExpansionPlugin
         {
             return Name;
         }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionBuildNoBuildZone other)
+                return false;
+
+            return Name == other.Name &&
+                   Radius == other.Radius &&
+                   IsWhitelist == other.IsWhitelist &&
+                   CustomMessage == other.CustomMessage &&
+                   Center.SequenceEqual(other.Center) &&
+                   Items.SequenceEqual(other.Items);
+        }
+
     }
 }

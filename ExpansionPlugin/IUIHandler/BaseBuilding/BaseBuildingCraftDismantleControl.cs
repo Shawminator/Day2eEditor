@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using System.ComponentModel;
 
 namespace ExpansionPlugin
 {
@@ -84,10 +85,47 @@ namespace ExpansionPlugin
         /// </summary>
         private ExpansionBaseBuildingSettings CloneData(ExpansionBaseBuildingSettings data)
         {
-            // TODO: Implement actual cloning logic
             return new ExpansionBaseBuildingSettings
             {
-                // Copy properties here
+                m_Version = data.m_Version,
+                CanBuildAnywhere = data.CanBuildAnywhere,
+                AllowBuildingWithoutATerritory = data.AllowBuildingWithoutATerritory,
+                DeployableOutsideATerritory = new BindingList<string>(data.DeployableOutsideATerritory.ToList()),
+                DeployableInsideAEnemyTerritory = new BindingList<string>(data.DeployableInsideAEnemyTerritory.ToList()),
+                CanCraftVanillaBasebuilding = data.CanCraftVanillaBasebuilding,
+                CanCraftExpansionBasebuilding = data.CanCraftExpansionBasebuilding,
+                DestroyFlagOnDismantle = data.DestroyFlagOnDismantle,
+                DismantleOutsideTerritory = data.DismantleOutsideTerritory,
+                DismantleInsideTerritory = data.DismantleInsideTerritory,
+                DismantleAnywhere = data.DismantleAnywhere,
+                CodelockActionsAnywhere = data.CodelockActionsAnywhere,
+                CodeLockLength = data.CodeLockLength,
+                DoDamageWhenEnterWrongCodeLock = data.DoDamageWhenEnterWrongCodeLock,
+                DamageWhenEnterWrongCodeLock = data.DamageWhenEnterWrongCodeLock,
+                RememberCode = data.RememberCode,
+                CanCraftTerritoryFlagKit = data.CanCraftTerritoryFlagKit,
+                SimpleTerritory = data.SimpleTerritory,
+                AutomaticFlagOnCreation = data.AutomaticFlagOnCreation,
+                GetTerritoryFlagKitAfterBuild = data.GetTerritoryFlagKitAfterBuild,
+                BuildZoneRequiredCustomMessage = data.BuildZoneRequiredCustomMessage,
+                ZonesAreNoBuildZones = data.ZonesAreNoBuildZones,
+                CodelockAttachMode = data.CodelockAttachMode,
+                DismantleFlagMode = data.DismantleFlagMode,
+                FlagMenuMode = data.FlagMenuMode,
+                PreventItemAccessThroughObstructingItems = data.PreventItemAccessThroughObstructingItems,
+                EnableVirtualStorage = data.EnableVirtualStorage,
+                VirtualStorageExcludedContainers = new BindingList<string>(data.VirtualStorageExcludedContainers.ToList()),
+                Zones = new BindingList<ExpansionBuildNoBuildZone>(
+                    data.Zones.Select(zone => new ExpansionBuildNoBuildZone
+                    {
+                        Name = zone.Name,
+                        Center = (float[])zone.Center.Clone(),
+                        Radius = zone.Radius,
+                        Items = new BindingList<string>(zone.Items.ToList()),
+                        IsWhitelist = zone.IsWhitelist,
+                        CustomMessage = zone.CustomMessage
+                    }).ToList()
+                )
             };
         }
 
@@ -103,5 +141,55 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void CanCraftVanillaBasebuildingCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CanCraftVanillaBasebuilding = CanCraftVanillaBasebuildingCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void CanCraftExpansionBasebuildingCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CanCraftExpansionBasebuilding = CanCraftExpansionBasebuildingCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void CanCraftTerritoryFlagKitCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CanCraftTerritoryFlagKit = CanCraftTerritoryFlagKitCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void DestroyFlagOnDismantleCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DestroyFlagOnDismantle = DestroyFlagOnDismantleCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void DismantleFlagModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            ExpansionDismantleFlagMode cacl = (ExpansionDismantleFlagMode)DismantleFlagModeComboBox.SelectedItem;
+            _data.DismantleFlagMode = (int)cacl;
+            HasChanges();
+        }
+
+        private void DismantleAnywhereCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DismantleAnywhere = DismantleAnywhereCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void GetTerritoryFlagKitAfterBuildCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.GetTerritoryFlagKitAfterBuild = GetTerritoryFlagKitAfterBuildCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
     }
 }

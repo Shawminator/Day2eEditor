@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using System.ComponentModel;
 
 namespace ExpansionPlugin
 {
@@ -8,6 +9,7 @@ namespace ExpansionPlugin
     /// </summary>
     public partial class ExpansionBuildNoBuildZoneControl : UserControl, IUIHandler
     {
+        public event Action<ExpansionBuildNoBuildZone> PositionChanged;
         private Type _parentType;
         private ExpansionBuildNoBuildZone _data;
         private ExpansionBuildNoBuildZone _originalData;
@@ -84,11 +86,17 @@ namespace ExpansionPlugin
         /// </summary>
         private ExpansionBuildNoBuildZone CloneData(ExpansionBuildNoBuildZone data)
         {
-            // TODO: Implement actual cloning logic
+
             return new ExpansionBuildNoBuildZone
             {
-                // Copy properties here
+                Name = data.Name,
+                Center = (float[])data.Center.Clone(),
+                Radius = data.Radius,
+                Items = new BindingList<string>(data.Items.ToList()),
+                IsWhitelist = data.IsWhitelist,
+                CustomMessage = data.CustomMessage
             };
+
         }
 
         /// <summary>
@@ -98,10 +106,62 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.Name;
             }
         }
 
         #endregion
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Name = textBox3.Text;
+            UpdateTreeNodeText();
+            HasChanges();
+        }
+
+        private void numericUpDown14_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Center[0] = (float)numericUpDown14.Value;
+            HasChanges();
+            PositionChanged?.Invoke(_data);
+        }
+
+        private void numericUpDown15_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Center[1] = (float)numericUpDown15.Value;
+            HasChanges();
+        }
+
+        private void numericUpDown16_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Center[2] = (float)numericUpDown16.Value;
+            HasChanges();
+            PositionChanged?.Invoke(_data);
+        }
+
+        private void numericUpDown13_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Radius = (float)numericUpDown13.Value;
+            HasChanges();
+        }
+
+        private void checkBox6_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.IsWhitelist = checkBox6.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CustomMessage = textBox4.Text;
+            HasChanges();
+        }
     }
 }
