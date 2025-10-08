@@ -18,7 +18,9 @@ namespace ExpansionPlugin
         public ExpansionBaseBuildingTerritoryControl()
         {
             InitializeComponent();
+            _suppressEvents = true;
             FlagMenuModeComboBox.DataSource = Enum.GetValues(typeof(ExpansionFlagMenuMode));
+            _suppressEvents = false;
         }
 
         /// <summary>

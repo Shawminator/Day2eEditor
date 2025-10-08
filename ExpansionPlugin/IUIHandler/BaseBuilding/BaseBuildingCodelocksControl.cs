@@ -19,7 +19,9 @@ namespace ExpansionPlugin
         public BaseBuildingCodelocksControl()
         {
             InitializeComponent();
+            _suppressEvents = true;
             CodelockAttachModeCB.DataSource = Enum.GetValues(typeof(ExpansionCodelockAttachMode));
+            _suppressEvents = false;
         }
 
         /// <summary>

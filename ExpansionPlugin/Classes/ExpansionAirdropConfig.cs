@@ -123,6 +123,31 @@ namespace ExpansionPlugin
             DefaultMilitary();
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionAirdropSettings other)
+                return false;
+
+            return m_Version == other.m_Version &&
+                   ServerMarkerOnDropLocation == other.ServerMarkerOnDropLocation &&
+                   Server3DMarkerOnDropLocation == other.Server3DMarkerOnDropLocation &&
+                   ShowAirdropTypeOnMarker == other.ShowAirdropTypeOnMarker &&
+                   HideCargoWhileParachuteIsDeployed == other.HideCargoWhileParachuteIsDeployed &&
+                   HeightIsRelativeToGroundLevel == other.HeightIsRelativeToGroundLevel &&
+                   Height == other.Height &&
+                   DropZoneHeight == other.DropZoneHeight &&
+                   FollowTerrainFraction == other.FollowTerrainFraction &&
+                   Speed == other.Speed &&
+                   DropZoneSpeed == other.DropZoneSpeed &&
+                   Radius == other.Radius &&
+                   InfectedSpawnRadius == other.InfectedSpawnRadius &&
+                   InfectedSpawnInterval == other.InfectedSpawnInterval &&
+                   ItemCount == other.ItemCount &&
+                   AirdropPlaneClassName == other.AirdropPlaneClassName &&
+                   DropZoneProximityDistance == other.DropZoneProximityDistance &&
+                   ExplodeAirVehiclesOnCollision == other.ExplodeAirVehiclesOnCollision;
+        }
+
 
         void DefaultRegular()
         {
@@ -523,6 +548,24 @@ namespace ExpansionPlugin
         {
             return Container;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionLootContainer other)
+                return false;
+
+            return Container == other.Container &&
+                   FallSpeed == other.FallSpeed &&
+                   Usage == other.Usage &&
+                   Weight == other.Weight &&
+                   ItemCount == other.ItemCount &&
+                   InfectedCount == other.InfectedCount &&
+                   SpawnInfectedForPlayerCalledDrops == other.SpawnInfectedForPlayerCalledDrops &&
+                   ExplodeAirVehiclesOnCollision == other.ExplodeAirVehiclesOnCollision &&
+                   Infected.SequenceEqual(other.Infected) &&
+                   Loot.SequenceEqual(other.Loot);
+        }
+
     }
     public class ExpansionLoot
     {

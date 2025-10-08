@@ -18,7 +18,9 @@ namespace ExpansionPlugin
         public BaseBuildingCraftDismantleControl()
         {
             InitializeComponent();
+            _suppressEvents = true;
             DismantleFlagModeComboBox.DataSource = Enum.GetValues(typeof(ExpansionDismantleFlagMode));
+            _suppressEvents = false;
         }
 
         /// <summary>
@@ -36,8 +38,8 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
-            _suppressEvents = true;
-
+            
+            
             CanCraftVanillaBasebuildingCB.Checked = _data.CanCraftVanillaBasebuilding == 1 ? true : false;
             CanCraftExpansionBasebuildingCB.Checked = _data.CanCraftExpansionBasebuilding == 1 ? true : false;
             DestroyFlagOnDismantleCB.Checked = _data.DestroyFlagOnDismantle == 1 ? true : false;
@@ -46,7 +48,7 @@ namespace ExpansionPlugin
             CanCraftTerritoryFlagKitCB.Checked = _data.CanCraftTerritoryFlagKit == 1 ? true : false;
             GetTerritoryFlagKitAfterBuildCB.Checked = _data.GetTerritoryFlagKitAfterBuild == 1 ? true : false;
 
-            _suppressEvents = false;
+           
         }
 
         /// <summary>

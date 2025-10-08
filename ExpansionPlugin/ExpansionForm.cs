@@ -1,4 +1,5 @@
 using Day2eEditor;
+using EconomyPlugin;
 using System.Windows.Forms;
 
 namespace ExpansionPlugin
@@ -46,6 +47,16 @@ namespace ExpansionPlugin
             // ----------------------
             _typeHandlers = new Dictionary<Type, Action<TreeNode, List<TreeNode>>>
             {
+                [typeof(ExpansionAirdropSettings)] = (node, selected) =>
+                {
+                    ExpansionAirdropSettings ExpansionAirdropSettings = node.Tag as ExpansionAirdropSettings;
+                    ShowHandler(new ExpansionAirdropSettingsControl(), typeof(ExpansionAirdropConfig), ExpansionAirdropSettings, selected);
+                },
+                [typeof(ExpansionLootContainer)] = (node, selected) =>
+                {
+                    ExpansionLootContainer ExpansionLootContainer = node.Tag as ExpansionLootContainer;
+                    ShowHandler(new ExpansionLootContainerControl(), typeof(ExpansionAirdropConfig), ExpansionLootContainer, selected);
+                },
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
                 {
                     ExpansionBuildNoBuildZone ExpansionBuildNoBuildZone = node.Tag as ExpansionBuildNoBuildZone;
@@ -59,10 +70,10 @@ namespace ExpansionPlugin
                     SetupBaseBuildingNoBuildZone(ExpansionBuildNoBuildZone, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
                 },
-                [typeof(ExpansionAIConfig)] = (node, selected) =>
+                [typeof(ExpansionAISettings)] = (node, selected) =>
                 {
-                    ExpansionAIConfig ExpansionAIConfig = node.Tag as ExpansionAIConfig;
-                    ShowHandler(new AISettingsConfigControl(), typeof(ExpansionAIConfig), ExpansionAIConfig.Data, selected);
+                    ExpansionAISettings ExpansionAISettings = node.Tag as ExpansionAISettings;
+                    ShowHandler(new AISettingsConfigControl(), typeof(ExpansionAIConfig), ExpansionAISettings, selected);
                 }
             };
             // ----------------------
@@ -233,7 +244,7 @@ namespace ExpansionPlugin
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
             {
-                Tag = "AirdropGeneral"
+                Tag = ef.Data
             });
             TreeNode acnodes = new TreeNode("Containers")
             {
@@ -269,6 +280,10 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
+            AIRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
             TreeNode AISettingsAdminsNodes = new TreeNode("Admins")
             {
                 Tag = "AISettingsAdmins"
