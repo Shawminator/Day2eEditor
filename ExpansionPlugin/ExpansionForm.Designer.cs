@@ -38,6 +38,12 @@
             ExpansionSettingsCM = new ContextMenuStrip(components);
             addNewAirdropContainerToolStripMenuItem = new ToolStripMenuItem();
             removeAirdropContainerToolStripMenuItem = new ToolStripMenuItem();
+            addAIAdminToolStripMenuItem = new ToolStripMenuItem();
+            addAIPreventClimbToolStripMenuItem = new ToolStripMenuItem();
+            addAIPlayerFactionToolStripMenuItem = new ToolStripMenuItem();
+            removeAIAdminToolStripMenuItem = new ToolStripMenuItem();
+            removeAIPreventClimbToolStripMenuItem = new ToolStripMenuItem();
+            removeAIPlayerFactionToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -112,10 +118,10 @@
             // ExpansionSettingsCM
             // 
             ExpansionSettingsCM.BackColor = Color.FromArgb(60, 63, 65);
-            ExpansionSettingsCM.Items.AddRange(new ToolStripItem[] { addNewAirdropContainerToolStripMenuItem, removeAirdropContainerToolStripMenuItem });
+            ExpansionSettingsCM.Items.AddRange(new ToolStripItem[] { addNewAirdropContainerToolStripMenuItem, removeAirdropContainerToolStripMenuItem, addAIAdminToolStripMenuItem, addAIPreventClimbToolStripMenuItem, addAIPlayerFactionToolStripMenuItem, removeAIAdminToolStripMenuItem, removeAIPreventClimbToolStripMenuItem, removeAIPlayerFactionToolStripMenuItem });
             ExpansionSettingsCM.Name = "TypesCM";
             ExpansionSettingsCM.ShowImageMargin = false;
-            ExpansionSettingsCM.Size = new Size(197, 70);
+            ExpansionSettingsCM.Size = new Size(197, 202);
             // 
             // addNewAirdropContainerToolStripMenuItem
             // 
@@ -132,6 +138,54 @@
             removeAirdropContainerToolStripMenuItem.Size = new Size(196, 22);
             removeAirdropContainerToolStripMenuItem.Text = "Remove Airdrop Container";
             removeAirdropContainerToolStripMenuItem.Click += removeAirdropContainerToolStripMenuItem_Click;
+            // 
+            // addAIAdminToolStripMenuItem
+            // 
+            addAIAdminToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAIAdminToolStripMenuItem.Name = "addAIAdminToolStripMenuItem";
+            addAIAdminToolStripMenuItem.Size = new Size(196, 22);
+            addAIAdminToolStripMenuItem.Text = "Add AI Admin";
+            addAIAdminToolStripMenuItem.Click += addAIAdminToolStripMenuItem_Click;
+            // 
+            // addAIPreventClimbToolStripMenuItem
+            // 
+            addAIPreventClimbToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAIPreventClimbToolStripMenuItem.Name = "addAIPreventClimbToolStripMenuItem";
+            addAIPreventClimbToolStripMenuItem.Size = new Size(196, 22);
+            addAIPreventClimbToolStripMenuItem.Text = "Add AI Prevent Climb";
+            addAIPreventClimbToolStripMenuItem.Click += addAIPreventClimbToolStripMenuItem_Click;
+            // 
+            // addAIPlayerFactionToolStripMenuItem
+            // 
+            addAIPlayerFactionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAIPlayerFactionToolStripMenuItem.Name = "addAIPlayerFactionToolStripMenuItem";
+            addAIPlayerFactionToolStripMenuItem.Size = new Size(196, 22);
+            addAIPlayerFactionToolStripMenuItem.Text = "Add AI Player Faction";
+            addAIPlayerFactionToolStripMenuItem.Click += addAIPlayerFactionToolStripMenuItem_Click;
+            // 
+            // removeAIAdminToolStripMenuItem
+            // 
+            removeAIAdminToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAIAdminToolStripMenuItem.Name = "removeAIAdminToolStripMenuItem";
+            removeAIAdminToolStripMenuItem.Size = new Size(196, 22);
+            removeAIAdminToolStripMenuItem.Text = "Remove AI Admin";
+            removeAIAdminToolStripMenuItem.Click += removeAIAdminToolStripMenuItem_Click;
+            // 
+            // removeAIPreventClimbToolStripMenuItem
+            // 
+            removeAIPreventClimbToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAIPreventClimbToolStripMenuItem.Name = "removeAIPreventClimbToolStripMenuItem";
+            removeAIPreventClimbToolStripMenuItem.Size = new Size(196, 22);
+            removeAIPreventClimbToolStripMenuItem.Text = "Remove AI Prevent Climb";
+            removeAIPreventClimbToolStripMenuItem.Click += removeAIPreventClimbToolStripMenuItem_Click;
+            // 
+            // removeAIPlayerFactionToolStripMenuItem
+            // 
+            removeAIPlayerFactionToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAIPlayerFactionToolStripMenuItem.Name = "removeAIPlayerFactionToolStripMenuItem";
+            removeAIPlayerFactionToolStripMenuItem.Size = new Size(196, 22);
+            removeAIPlayerFactionToolStripMenuItem.Text = "Remove AI Player Faction";
+            removeAIPlayerFactionToolStripMenuItem.Click += removeAIPlayerFactionToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -168,5 +222,11 @@
         private ContextMenuStrip ExpansionSettingsCM;
         private ToolStripMenuItem addNewAirdropContainerToolStripMenuItem;
         private ToolStripMenuItem removeAirdropContainerToolStripMenuItem;
+        private ToolStripMenuItem addAIAdminToolStripMenuItem;
+        private ToolStripMenuItem addAIPreventClimbToolStripMenuItem;
+        private ToolStripMenuItem addAIPlayerFactionToolStripMenuItem;
+        private ToolStripMenuItem removeAIAdminToolStripMenuItem;
+        private ToolStripMenuItem removeAIPreventClimbToolStripMenuItem;
+        private ToolStripMenuItem removeAIPlayerFactionToolStripMenuItem;
     }
 }

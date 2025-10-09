@@ -63,10 +63,13 @@ namespace Day2eEditor
             L = _L;
             L2 = _L2;
 
-            P.MouseDoubleClick += FormMax_MouseDoubleClick;
-            P.MouseDown += FormMove_MouseDown;
-            P.MouseMove += FormMove_MouseMove;
-            P.MouseUp += FormMove_MouseUp;
+            if (P != null)
+            {
+                P.MouseDoubleClick += FormMax_MouseDoubleClick;
+                P.MouseDown += FormMove_MouseDown;
+                P.MouseMove += FormMove_MouseMove;
+                P.MouseUp += FormMove_MouseUp;
+            }
 
             if (P2 != null)
             {
@@ -82,11 +85,13 @@ namespace Day2eEditor
                 L.MouseMove += FormMove_MouseMove;
                 L.MouseUp += FormMove_MouseUp;
             }
-
-            L2.MouseDoubleClick += FormMax_MouseDoubleClick;
-            L2.MouseDown += FormMove_MouseDown;
-            L2.MouseMove += FormMove_MouseMove;
-            L2.MouseUp += FormMove_MouseUp;
+            if (L2 != null)
+            {
+                L2.MouseDoubleClick += FormMax_MouseDoubleClick;
+                L2.MouseDown += FormMove_MouseDown;
+                L2.MouseMove += FormMove_MouseMove;
+                L2.MouseUp += FormMove_MouseUp;
+            }
 
             if (_B != null)
                 B.Click += FormClose_Click;

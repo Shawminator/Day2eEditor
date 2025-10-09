@@ -1,6 +1,7 @@
 using Day2eEditor;
 using EconomyPlugin;
 using System.ComponentModel;
+using System.Runtime;
 using System.Windows.Forms;
 
 namespace ExpansionPlugin
@@ -141,12 +142,52 @@ namespace ExpansionPlugin
             // ----------------------
             _stringContextMenus = new Dictionary<string, Action<TreeNode>>
             {
+                // Airdrops
                 ["AirdropContainers"] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewAirdropContainerToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //AI
+                ["AISettingsAdmins"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAIAdminToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AISettingsPreventClimb"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAIPreventClimbToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AISettingsPlayerFactions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAIPlayerFactionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AISettingsAdminString"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAIAdminToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AISettingsPreventClimbString"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAIPreventClimbToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AISettingsPlayerFactionsString"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAIPlayerFactionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+
+
             };
         }
 
@@ -744,7 +785,7 @@ namespace ExpansionPlugin
         /// <summary>
         /// Treeview right click methods
         /// </summary>
-        
+
         // Airdrops 
         private void addNewAirdropContainerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -773,6 +814,72 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionAirdropConfig.Data.Containers.Remove(currentTreeNode.Tag as ExpansionLootContainer);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionAirdropConfig.isDirty = true;
+        }
+        //AI Settings
+        private void addAIAdminToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Admin Steam ID";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    _expansionManager.ExpansionAIConfig.Data.Admins.Add(l.ToLower());
+                    currentTreeNode.Nodes.Add(new TreeNode(l.ToLower())
+                    {
+                        Tag = "AISettingsAdminString"
+                    });
+                }
+                _expansionManager.ExpansionAIConfig.isDirty = true;
+            }
+        }
+
+        private void addAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Prevent Climb String";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    _expansionManager.ExpansionAIConfig.Data.PreventClimb.Add(l);
+                    currentTreeNode.Nodes.Add(new TreeNode(l)
+                    {
+                        Tag = "AISettingsPreventClimbString"
+                    });
+                }
+                _expansionManager.ExpansionAIConfig.isDirty = true;
+            }
+        }
+
+        private void addAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeAIAdminToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionAIConfig.Data.Admins.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionAIConfig.isDirty = true;
+        }
+
+        private void removeAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionAIConfig.Data.PreventClimb.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionAIConfig.isDirty = true;
+        }
+
+        private void removeAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionAIConfig.Data.PlayerFactions.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionAIConfig.isDirty = true;
         }
     }
 
