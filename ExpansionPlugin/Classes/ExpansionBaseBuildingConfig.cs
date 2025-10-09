@@ -19,7 +19,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        const int CurrentVersion = 5;
+        public const int CurrentVersion = 5;
 
         public ExpansionBaseBuildingConfig(string path)
         {
@@ -46,6 +46,19 @@ namespace ExpansionPlugin
                 },
                 configName: "ExpansionBaseBuilding"
             );
+            
+            var missingFields = Data.FixMissingOrInvalidFields();
+            if (missingFields.Any())
+            {
+                HasErrors = true;
+                Errors.AddRange(missingFields);
+                Console.WriteLine("Validation issues in " + FileName + ":");
+                foreach (var issue in missingFields)
+                {
+                    Console.WriteLine("- " + issue);
+                }
+                isDirty = true;
+            }
         }
         public IEnumerable<string> Save()
         {
@@ -96,33 +109,33 @@ namespace ExpansionPlugin
     public class ExpansionBaseBuildingSettings
     {
         public int m_Version { get; set; }  // Current Version is 3
-        public int CanBuildAnywhere { get; set; }
-        public int AllowBuildingWithoutATerritory { get; set; }
+        public int? CanBuildAnywhere { get; set; }
+        public int? AllowBuildingWithoutATerritory { get; set; }
         public BindingList<string> DeployableOutsideATerritory { get; set; }
         public BindingList<string> DeployableInsideAEnemyTerritory { get; set; }
-        public int CanCraftVanillaBasebuilding { get; set; }
-        public int CanCraftExpansionBasebuilding { get; set; }
-        public int DestroyFlagOnDismantle { get; set; }
-        public int DismantleOutsideTerritory { get; set; }
-        public int DismantleInsideTerritory { get; set; }
-        public int DismantleAnywhere { get; set; }
-        public int CodelockActionsAnywhere { get; set; }
-        public int CodeLockLength { get; set; }
-        public int DoDamageWhenEnterWrongCodeLock { get; set; }
-        public decimal DamageWhenEnterWrongCodeLock { get; set; }
-        public int RememberCode { get; set; }
-        public int CanCraftTerritoryFlagKit { get; set; }
-        public int SimpleTerritory { get; set; }
-        public int AutomaticFlagOnCreation { get; set; }
-        public int GetTerritoryFlagKitAfterBuild { get; set; }
-        public string BuildZoneRequiredCustomMessage { get; set; }
+        public int? CanCraftVanillaBasebuilding { get; set; }
+        public int? CanCraftExpansionBasebuilding { get; set; }
+        public int? DestroyFlagOnDismantle { get; set; }
+        public int? DismantleOutsideTerritory { get; set; }
+        public int? DismantleInsideTerritory { get; set; }
+        public int? DismantleAnywhere { get; set; }
+        public int? CodelockActionsAnywhere { get; set; }
+        public int? CodeLockLength { get; set; }
+        public int? DoDamageWhenEnterWrongCodeLock { get; set; }
+        public decimal? DamageWhenEnterWrongCodeLock { get; set; }
+        public int? RememberCode { get; set; }
+        public int? CanCraftTerritoryFlagKit { get; set; }
+        public int? SimpleTerritory { get; set; }
+        public int? AutomaticFlagOnCreation { get; set; }
+        public int? GetTerritoryFlagKitAfterBuild { get; set; }
+        public string? BuildZoneRequiredCustomMessage { get; set; }
         public BindingList<ExpansionBuildNoBuildZone> Zones { get; set; }
-        public int ZonesAreNoBuildZones { get; set; }
-        public int CodelockAttachMode { get; set; }
-        public int DismantleFlagMode { get; set; }
-        public int FlagMenuMode { get; set; }
-        public int PreventItemAccessThroughObstructingItems { get; set; }
-        public int EnableVirtualStorage { get; set; }
+        public int? ZonesAreNoBuildZones { get; set; }
+        public int? CodelockAttachMode { get; set; }
+        public int? DismantleFlagMode { get; set; }
+        public int? FlagMenuMode { get; set; }
+        public int? PreventItemAccessThroughObstructingItems { get; set; }
+        public int? EnableVirtualStorage { get; set; }
         public BindingList<string> VirtualStorageExcludedContainers { get; set; }
 
         public ExpansionBaseBuildingSettings()
@@ -292,6 +305,195 @@ namespace ExpansionPlugin
                    VirtualStorageExcludedContainers.SequenceEqual(other.VirtualStorageExcludedContainers) &&
                    Zones.SequenceEqual(other.Zones);
         }
+
+
+        public List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+            // Version check
+            if (m_Version < ExpansionBaseBuildingConfig.CurrentVersion)
+            {
+                fixes.Add($"Updated version from {m_Version} to {ExpansionBaseBuildingConfig.CurrentVersion}");
+                m_Version = ExpansionBaseBuildingConfig.CurrentVersion;
+            }
+            if (CanBuildAnywhere != 0 && CanBuildAnywhere != 1)
+            {
+                CanBuildAnywhere = 0;
+                fixes.Add("Corrected CanBuildAnywhere");
+            }
+            if (AllowBuildingWithoutATerritory != 0 && AllowBuildingWithoutATerritory != 1)
+            {
+                AllowBuildingWithoutATerritory = 0;
+                fixes.Add("Corrected AllowBuildingWithoutATerritory");
+            }
+            if (DeployableOutsideATerritory == null)
+            {
+                DeployableOutsideATerritory = new BindingList<string>(){
+                "ExpansionSatchel",
+                "Fireplace",
+                "TerritoryFlagKit",
+                "MediumTent",
+                "LargeTent",
+                "CarTent",
+                "PartyTent",
+                "ExpansionCamoTentKit",
+                "ExpansionCamoBoxKit",
+                "ShelterKit",
+                "LandMineTrap",
+                "BearTrap",
+                "FishNetTrap",
+                "RabbitSnareTrap",
+                "SmallFishTrap",
+                "TripwireTrap",
+                "ExpansionSafeLarge",
+                "ExpansionSafeMedium",
+                "ExpansionSafeSmall",
+                "SeaChest",
+                "WoodenCrate",
+                "GardenPlot" };
+                fixes.Add("Initialized DeployableOutsideATerritory");
+            }
+            if (DeployableInsideAEnemyTerritory == null)
+            {
+                DeployableInsideAEnemyTerritory = new BindingList<string>() {
+                "ExpansionSatchel",
+                "LandMineTrap",
+                "BearTrap",
+                "FishNetTrap",
+                "RabbitSnareTrap",
+                "SmallFishTrap",
+                "TripwireTrap"};
+                fixes.Add("Initialized DeployableInsideAEnemyTerritory");
+            }
+            if (CanCraftVanillaBasebuilding != 0 && CanCraftVanillaBasebuilding != 1)
+            {
+                CanCraftVanillaBasebuilding = 1;
+                fixes.Add("Corrected CanCraftVanillaBasebuilding");
+            }
+
+            if (CanCraftExpansionBasebuilding != 0 && CanCraftExpansionBasebuilding != 1)
+            {
+                CanCraftExpansionBasebuilding = 1;
+                fixes.Add("Corrected CanCraftExpansionBasebuilding");
+            }
+
+            if (DestroyFlagOnDismantle != 0 && DestroyFlagOnDismantle != 1)
+            {
+                DestroyFlagOnDismantle = 0;
+                fixes.Add("Corrected DestroyFlagOnDismantle");
+            }
+
+            if (DismantleOutsideTerritory != 0 && DismantleOutsideTerritory != 1)
+            {
+                DismantleOutsideTerritory = 1;
+                fixes.Add("Corrected DismantleOutsideTerritory");
+            }
+
+            if (DismantleInsideTerritory != 0 && DismantleInsideTerritory != 1)
+            {
+                DismantleInsideTerritory = 1;
+                fixes.Add("Corrected DismantleInsideTerritory");
+            }
+            if (DismantleAnywhere != 0 && DismantleAnywhere != 1)
+            {
+                DismantleAnywhere = 0;
+                fixes.Add("Corrected DismantleAnywhere");
+            }
+
+            if (CodelockActionsAnywhere != 0 && CodelockActionsAnywhere != 1)
+            {
+                CodelockActionsAnywhere = 0;
+                fixes.Add("Corrected CodelockActionsAnywhere");
+            }
+            if (CodeLockLength == null)
+            {
+                CodeLockLength = 4;
+                fixes.Add("Set default CodeLockLength");
+            }
+            if (DoDamageWhenEnterWrongCodeLock != 0 && DoDamageWhenEnterWrongCodeLock != 1)
+            {
+                DoDamageWhenEnterWrongCodeLock = 1;
+                fixes.Add("Corrected DoDamageWhenEnterWrongCodeLock");
+            }
+            if (DamageWhenEnterWrongCodeLock == null)
+            {
+                DamageWhenEnterWrongCodeLock = 10.0m;
+                fixes.Add("Set default DamageWhenEnterWrongCodeLock");
+            }
+            if (RememberCode != 0 && RememberCode != 1)
+            {
+                RememberCode = 1;
+                fixes.Add("Corrected RememberCode");
+            }
+            if (CanCraftTerritoryFlagKit != 0 && CanCraftTerritoryFlagKit != 1)
+            {
+                CanCraftTerritoryFlagKit = 1;
+                fixes.Add("Corrected CanCraftTerritoryFlagKit");
+            }
+            if (SimpleTerritory != 0 && SimpleTerritory != 1)
+            {
+                SimpleTerritory = 0;
+                fixes.Add("Corrected SimpleTerritory");
+            }
+            if (AutomaticFlagOnCreation != 0 && AutomaticFlagOnCreation != 1)
+            {
+                AutomaticFlagOnCreation = 1;
+                fixes.Add("Corrected AutomaticFlagOnCreation");
+            }
+            if (GetTerritoryFlagKitAfterBuild != 0 && GetTerritoryFlagKitAfterBuild != 1)
+            {
+                GetTerritoryFlagKitAfterBuild = 0;
+                fixes.Add("Corrected GetTerritoryFlagKitAfterBuild");
+            }
+            if (BuildZoneRequiredCustomMessage == null)
+            {
+                BuildZoneRequiredCustomMessage = "You cannot build here.";
+                fixes.Add("Set default BuildZoneRequiredCustomMessage");
+            }
+            if (Zones == null)
+            {
+                Zones = new BindingList<ExpansionBuildNoBuildZone>();
+                fixes.Add("Initialized Zones");
+            }
+            if (ZonesAreNoBuildZones != 0 && ZonesAreNoBuildZones != 1)
+            {
+                ZonesAreNoBuildZones = 1;
+                fixes.Add("Corrected ZonesAreNoBuildZones");
+            }
+
+            if (CodelockAttachMode == null || CodelockAttachMode < 0 || CodelockAttachMode > 2)
+            {
+                CodelockAttachMode = 0;
+                fixes.Add("Corrected CodelockAttachMode");
+            }
+            if (DismantleFlagMode == null || DismantleFlagMode < 0 || DismantleFlagMode > 2)
+            {
+                DismantleFlagMode = 0;
+                fixes.Add("Corrected DismantleFlagMode");
+            }
+            if (FlagMenuMode == null || FlagMenuMode < 0 || FlagMenuMode > 2)
+            {
+                FlagMenuMode = 0;
+                fixes.Add("Corrected FlagMenuMode");
+            }
+            if (PreventItemAccessThroughObstructingItems != 0 && PreventItemAccessThroughObstructingItems != 1)
+            {
+                PreventItemAccessThroughObstructingItems = 1;
+                fixes.Add("Corrected PreventItemAccessThroughObstructingItems");
+            }
+            if (EnableVirtualStorage != 0 && EnableVirtualStorage != 1)
+            {
+                EnableVirtualStorage = 1;
+                fixes.Add("Corrected EnableVirtualStorage");
+            }
+            if (VirtualStorageExcludedContainers == null)
+            {
+                VirtualStorageExcludedContainers = new BindingList<string>() { "ExpansionAirdropContainerBase" };
+                fixes.Add("Initialized VirtualStorageExcludedContainers");
+            }
+            return fixes;
+        }
+
 
     }
     public class ExpansionBuildNoBuildZone

@@ -196,6 +196,8 @@ namespace Day2eEditor
 
             cfgrandompresetsConfig = new cfgrandompresetsConfig();
             LoadConfigWithErrorReport("RandomPresets", cfgrandompresetsConfig);
+
+            Save();
         }
         public void Reset()
         {

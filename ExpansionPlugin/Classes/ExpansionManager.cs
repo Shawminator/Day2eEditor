@@ -80,6 +80,8 @@ namespace ExpansionPlugin
 
             ExpansionBaseBuildingConfig = new ExpansionBaseBuildingConfig(_paths["BaseBuildingSettings"]);
             LoadConfigWithErrorReport("BaseBuildingSettings", ExpansionBaseBuildingConfig);
+
+            Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
         {

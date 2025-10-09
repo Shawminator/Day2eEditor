@@ -43,7 +43,7 @@ namespace ExpansionPlugin
 
             CodelockAttachModeCB.SelectedItem = (ExpansionCodelockAttachMode)_data.CodelockAttachMode;
             CodelockActionsAnywhereCB.Checked = _data.CodelockActionsAnywhere == 1 ? true : false;
-            CodeLockLengthNUD.Value = _data.CodeLockLength;
+            CodeLockLengthNUD.Value = (decimal)_data.CodeLockLength;
             DoDamageWhenEnterWrongCodeLockCB.Checked = _data.DoDamageWhenEnterWrongCodeLock == 1 ? true : false;
             DamageWhenEnterWrongCodeLockNUD.Value = (decimal)_data.DamageWhenEnterWrongCodeLock;
             RememberCodeCB.Checked = _data.RememberCode == 1 ? true : false;

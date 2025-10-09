@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using System.ComponentModel;
 
 namespace ExpansionPlugin
 {
@@ -36,14 +37,15 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            AccuracyMinNUD.Value = _data.AccuracyMin;
-            AccuracyMaxNUD.Value = _data.AccuracyMax;
-            ThreatDistanceLimitNUD.Value = _data.ThreatDistanceLimit;
-            NoiseInvestigationDistanceLimitNUD.Value = _data.NoiseInvestigationDistanceLimit;
-            DamageMultiplierNUD.Value = _data.DamageMultiplier;
-            FormationScaleNUD.Value = _data.FormationScale;
-            SniperProneDistanceThresholdNUD.Value = _data.SniperProneDistanceThreshold;
-            DamageReceivedMultiplierNUD.Value = _data.DamageReceivedMultiplier;
+            AccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
+            AccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
+            ThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
+            NoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
+            DamageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
+            FormationScaleNUD.Value = (decimal)_data.FormationScale;
+            SniperProneDistanceThresholdNUD.Value = (decimal)_data.SniperProneDistanceThreshold;
+            DamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
+            MemeLevelNUD.Value = (int)_data.MemeLevel;
             VaultingCB.Checked = _data.Vaulting == 1 ? true : false;
             MannersCB.Checked = _data.Manners == 1 ? true : false;
             CanRecruitGuardsCB.Checked = _data.CanRecruitGuards == 1 ? true : false;
@@ -91,14 +93,44 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
+
         private ExpansionAISettings CloneData(ExpansionAISettings data)
         {
-            // TODO: Implement actual cloning logic
             return new ExpansionAISettings
             {
-                // Copy properties here
+                m_Version = data.m_Version,
+                AccuracyMin = data.AccuracyMin,
+                AccuracyMax = data.AccuracyMax,
+                ThreatDistanceLimit = data.ThreatDistanceLimit,
+                NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
+                DamageMultiplier = data.DamageMultiplier,
+                DamageReceivedMultiplier = data.DamageReceivedMultiplier,
+                Vaulting = data.Vaulting,
+                SniperProneDistanceThreshold = data.SniperProneDistanceThreshold,
+                Manners = data.Manners,
+                MemeLevel = data.MemeLevel,
+                CanRecruitFriendly = data.CanRecruitFriendly,
+                CanRecruitGuards = data.CanRecruitGuards,
+                FormationScale = data.FormationScale,
+                LogAIHitBy = data.LogAIHitBy,
+                LogAIKilled = data.LogAIKilled,
+                EnableZombieVehicleAttackHandler = data.EnableZombieVehicleAttackHandler,
+                EnableZombieVehicleAttackPhysics = data.EnableZombieVehicleAttackPhysics,
+
+                Admins = new BindingList<string>(data.Admins.ToList()),
+                PreventClimb = new BindingList<string>(data.PreventClimb.ToList()),
+                PlayerFactions = new BindingList<string>(data.PlayerFactions.ToList()),
+
+                AILightEntries = new BindingList<AILightEntries>(
+                    data.AILightEntries.Select(e => new AILightEntries
+                    {
+                        Key = e.Key,
+                        Value = e.Value
+                    }).ToList()
+                )
             };
         }
+
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -112,5 +144,113 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void AccuracyMinNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AccuracyMin = AccuracyMinNUD.Value;
+            HasChanges();
+        }
+        private void AccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AccuracyMax = AccuracyMaxNUD.Value;
+            HasChanges();
+        }
+        private void ThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ThreatDistanceLimit = ThreatDistanceLimitNUD.Value;
+            HasChanges();
+        }
+        private void NoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.NoiseInvestigationDistanceLimit = NoiseInvestigationDistanceLimitNUD.Value;
+            HasChanges();
+        }
+        private void DamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DamageMultiplier = DamageMultiplierNUD.Value;
+            HasChanges();
+        }
+        private void FormationScaleNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.FormationScale = FormationScaleNUD.Value;
+            HasChanges();
+        }
+        private void SniperProneDistanceThresholdNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.SniperProneDistanceThreshold = SniperProneDistanceThresholdNUD.Value;
+            HasChanges();
+        }
+        private void DamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DamageReceivedMultiplier = DamageReceivedMultiplierNUD.Value;
+            HasChanges();
+        }
+        private void MemeLevelNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MemeLevel = (int)MemeLevelNUD.Value;
+            HasChanges();
+        }
+        private void VaultingCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Vaulting = VaultingCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void MannersCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Manners = MannersCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void CanRecruitFriendlyCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CanRecruitFriendly = CanRecruitFriendlyCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void CanRecruitGuardsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CanRecruitGuards = CanRecruitGuardsCB.Checked == true ? 1 : 0;
+            HasChanges();
+
+        }
+
+        private void LogAIHitByCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.LogAIHitBy = LogAIHitByCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void LogAIKilledCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.LogAIKilled = LogAIKilledCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void EnableZombieVehicleAttackHandlerCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EnableZombieVehicleAttackHandler = EnableZombieVehicleAttackHandlerCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void EnableZombieVehicleAttackPhysicsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EnableZombieVehicleAttackPhysics = EnableZombieVehicleAttackPhysicsCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+
     }
 }

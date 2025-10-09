@@ -113,6 +113,7 @@
             radioButton6.TabStop = true;
             radioButton6.Text = "Inherit from Main Settings";
             radioButton6.UseVisualStyleBackColor = true;
+            radioButton6.CheckedChanged += ExplodeAirVehiclesOnCollision_CheckedChanged;
             // 
             // radioButton5
             // 
@@ -125,6 +126,7 @@
             radioButton5.TabStop = true;
             radioButton5.Text = "No";
             radioButton5.UseVisualStyleBackColor = true;
+            radioButton5.CheckedChanged += ExplodeAirVehiclesOnCollision_CheckedChanged;
             // 
             // radioButton4
             // 
@@ -137,6 +139,7 @@
             radioButton4.TabStop = true;
             radioButton4.Text = "Yes";
             radioButton4.UseVisualStyleBackColor = true;
+            radioButton4.CheckedChanged += ExplodeAirVehiclesOnCollision_CheckedChanged;
             // 
             // numericUpDown32
             // 

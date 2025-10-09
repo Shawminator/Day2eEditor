@@ -28,17 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExpansionForm));
             panel1 = new Panel();
             SaveButton = new Button();
             splitContainer1 = new SplitContainer();
             ExpansionTV = new Day2eEditor.MultiSelectTreeView();
             _mapControl = new Day2eEditor.MapViewerControl();
+            ExpansionSettingsCM = new ContextMenuStrip(components);
+            addNewAirdropContainerToolStripMenuItem = new ToolStripMenuItem();
+            removeAirdropContainerToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            ExpansionSettingsCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -104,6 +109,30 @@
             _mapControl.TabIndex = 1;
             _mapControl.Text = "mapViewerControl1";
             // 
+            // ExpansionSettingsCM
+            // 
+            ExpansionSettingsCM.BackColor = Color.FromArgb(60, 63, 65);
+            ExpansionSettingsCM.Items.AddRange(new ToolStripItem[] { addNewAirdropContainerToolStripMenuItem, removeAirdropContainerToolStripMenuItem });
+            ExpansionSettingsCM.Name = "TypesCM";
+            ExpansionSettingsCM.ShowImageMargin = false;
+            ExpansionSettingsCM.Size = new Size(197, 70);
+            // 
+            // addNewAirdropContainerToolStripMenuItem
+            // 
+            addNewAirdropContainerToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewAirdropContainerToolStripMenuItem.Name = "addNewAirdropContainerToolStripMenuItem";
+            addNewAirdropContainerToolStripMenuItem.Size = new Size(196, 22);
+            addNewAirdropContainerToolStripMenuItem.Text = "Add New Airdrop Container";
+            addNewAirdropContainerToolStripMenuItem.Click += addNewAirdropContainerToolStripMenuItem_Click;
+            // 
+            // removeAirdropContainerToolStripMenuItem
+            // 
+            removeAirdropContainerToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAirdropContainerToolStripMenuItem.Name = "removeAirdropContainerToolStripMenuItem";
+            removeAirdropContainerToolStripMenuItem.Size = new Size(196, 22);
+            removeAirdropContainerToolStripMenuItem.Text = "Remove Airdrop Container";
+            removeAirdropContainerToolStripMenuItem.Click += removeAirdropContainerToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -124,6 +153,7 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            ExpansionSettingsCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -135,5 +165,8 @@
         private SplitContainer splitContainer1;
         private Day2eEditor.MultiSelectTreeView ExpansionTV;
         private Day2eEditor.MapViewerControl _mapControl;
+        private ContextMenuStrip ExpansionSettingsCM;
+        private ToolStripMenuItem addNewAirdropContainerToolStripMenuItem;
+        private ToolStripMenuItem removeAirdropContainerToolStripMenuItem;
     }
 }

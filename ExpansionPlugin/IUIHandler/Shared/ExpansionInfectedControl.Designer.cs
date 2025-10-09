@@ -78,6 +78,7 @@
             button2.Size = new Size(625, 27);
             button2.TabIndex = 228;
             button2.Text = "Add String";
+            button2.Click += button2_Click;
             // 
             // label3
             // 
@@ -97,6 +98,7 @@
             button1.Size = new Size(311, 27);
             button1.TabIndex = 226;
             button1.Text = "Add Selected";
+            button1.Click += button1_Click;
             // 
             // ExpansionLootitemSetAllChanceButton
             // 
@@ -107,6 +109,7 @@
             ExpansionLootitemSetAllChanceButton.Size = new Size(308, 27);
             ExpansionLootitemSetAllChanceButton.TabIndex = 225;
             ExpansionLootitemSetAllChanceButton.Text = "Remove Selected";
+            ExpansionLootitemSetAllChanceButton.Click += ExpansionLootitemSetAllChanceButton_Click;
             // 
             // listBox2
             // 
@@ -116,6 +119,7 @@
             listBox2.FormattingEnabled = true;
             listBox2.Location = new Point(323, 37);
             listBox2.Name = "listBox2";
+            listBox2.SelectionMode = SelectionMode.MultiExtended;
             listBox2.Size = new Size(311, 468);
             listBox2.TabIndex = 3;
             listBox2.DrawItem += listBox_DrawItem;
@@ -128,6 +132,7 @@
             listBox1.FormattingEnabled = true;
             listBox1.Location = new Point(6, 37);
             listBox1.Name = "listBox1";
+            listBox1.SelectionMode = SelectionMode.MultiExtended;
             listBox1.Size = new Size(311, 468);
             listBox1.TabIndex = 2;
             listBox1.DrawItem += listBox_DrawItem;

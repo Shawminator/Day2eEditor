@@ -1,5 +1,6 @@
 using Day2eEditor;
 using EconomyPlugin;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace ExpansionPlugin
@@ -128,12 +129,24 @@ namespace ExpansionPlugin
             // ----------------------
             _typeContextMenus = new Dictionary<Type, Action<TreeNode>>
             {
+                [typeof(ExpansionLootContainer)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAirdropContainerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
             // ----------------------
             // String handlers
             // ----------------------
             _stringContextMenus = new Dictionary<string, Action<TreeNode>>
             {
+                ["AirdropContainers"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewAirdropContainerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
         }
 
@@ -320,6 +333,20 @@ namespace ExpansionPlugin
                 });
             }
             AIRootNode.Nodes.Add(AISettingsPlayerFactionsNodes);
+            TreeNode LightingConfigMinNightVisibilityMetersNodes = new TreeNode("Lighting Config Min Night Visibility Meters")
+            {
+                Tag = "LightingConfigMinNightVisibilityMeters"
+            };
+            int count = 1;
+            foreach (AILightEntries AILightEntries in ef.Data.AILightEntries)
+            {
+                LightingConfigMinNightVisibilityMetersNodes.Nodes.Add(new TreeNode($"AILightEntries_{count}")
+                {
+                    Tag = "AILightEntries"
+                });
+                count++;
+            }
+            AIRootNode.Nodes.Add(LightingConfigMinNightVisibilityMetersNodes);
             return AIRootNode;
         }
         //Basebuilding
@@ -711,6 +738,41 @@ namespace ExpansionPlugin
                     savefiles();
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Treeview right click methods
+        /// </summary>
+        
+        // Airdrops 
+        private void addNewAirdropContainerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionLootContainer NewContainer = new ExpansionLootContainer();
+            _expansionManager.ExpansionAirdropConfig.Data.Containers.Add(NewContainer);
+            _expansionManager.ExpansionAirdropConfig.isDirty = true;
+            TreeNode alcnodes = new TreeNode(NewContainer.Container)
+            {
+                Tag = NewContainer
+            };
+            TreeNode alcinodes = new TreeNode("Infected")
+            {
+                Tag = "AirdropContainersInfected"
+            };
+            alcnodes.Nodes.Add(alcinodes);
+
+            TreeNode alclnodes = new TreeNode("Loot")
+            {
+                Tag = "AirdropContainersLoot"
+            };
+            alcnodes.Nodes.Add(alclnodes);
+            currentTreeNode.Nodes.Add(alcnodes);
+        }
+        private void removeAirdropContainerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionAirdropConfig.Data.Containers.Remove(currentTreeNode.Tag as ExpansionLootContainer);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionAirdropConfig.isDirty = true;
         }
     }
 

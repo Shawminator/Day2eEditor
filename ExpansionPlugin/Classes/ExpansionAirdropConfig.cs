@@ -18,7 +18,7 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-        const int CurrentVersion = 8;
+        public const int CurrentVersion = 8;
         public ExpansionAirdropConfig(string path)
         {
             _path = path;
@@ -44,6 +44,18 @@ namespace ExpansionPlugin
                 },
                 configName: "ExpansionAirdrop"
             );
+            var missingFields = Data.FixMissingOrInvalidFields();
+            if (missingFields.Any())
+            {
+                HasErrors = true;
+                Errors.AddRange(missingFields);
+                Console.WriteLine("Validation issues in " + FileName + ":");
+                foreach (var issue in missingFields)
+                {
+                    Console.WriteLine("- " + issue);
+                }
+                isDirty = true;
+            }
         }
         public IEnumerable<string> Save()
         {
@@ -76,23 +88,23 @@ namespace ExpansionPlugin
     public class ExpansionAirdropSettings
     {
         public int m_Version { get; set; }
-        public int ServerMarkerOnDropLocation { get; set; }
-        public int Server3DMarkerOnDropLocation { get; set; }
-        public int ShowAirdropTypeOnMarker { get; set; }
-        public int HideCargoWhileParachuteIsDeployed { get; set; }
-        public int HeightIsRelativeToGroundLevel { get; set; }
-        public decimal Height { get; set; }
-        public decimal DropZoneHeight { get; set; }
-        public decimal FollowTerrainFraction { get; set; }
-        public decimal Speed { get; set; }
-        public decimal DropZoneSpeed { get; set; }
-        public decimal Radius { get; set; }
-        public decimal InfectedSpawnRadius { get; set; }
-        public int InfectedSpawnInterval { get; set; }
-        public int ItemCount { get; set; }
-        public string AirdropPlaneClassName { get; set; }
-        public decimal DropZoneProximityDistance { get; set; }
-        public int ExplodeAirVehiclesOnCollision { get; set; }
+        public int? ServerMarkerOnDropLocation { get; set; }
+        public int? Server3DMarkerOnDropLocation { get; set; }
+        public int? ShowAirdropTypeOnMarker { get; set; }
+        public int? HideCargoWhileParachuteIsDeployed { get; set; }
+        public int? HeightIsRelativeToGroundLevel { get; set; }
+        public decimal? Height { get; set; }
+        public decimal? DropZoneHeight { get; set; }
+        public decimal? FollowTerrainFraction { get; set; }
+        public decimal? Speed { get; set; }
+        public decimal? DropZoneSpeed { get; set; }
+        public decimal? Radius { get; set; }
+        public decimal? InfectedSpawnRadius { get; set; }
+        public int? InfectedSpawnInterval { get; set; }
+        public int? ItemCount { get; set; }
+        public string? AirdropPlaneClassName { get; set; }
+        public decimal? DropZoneProximityDistance { get; set; }
+        public int? ExplodeAirVehiclesOnCollision { get; set; }
         public BindingList<ExpansionLootContainer> Containers { get; set; }
 
         public ExpansionAirdropSettings() 
@@ -500,6 +512,131 @@ namespace ExpansionPlugin
             {
                 Containers.Add(new ExpansionLootContainer("ExpansionAirdropContainer_Military", 0, 20, Loot, Infected, itemCount, infectedCount));
             }
+        }
+        public List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+
+            if (m_Version < ExpansionAirdropConfig.CurrentVersion)
+            {
+                fixes.Add($"Updated version from {m_Version} to {ExpansionAirdropConfig.CurrentVersion}");
+                m_Version = ExpansionAirdropConfig.CurrentVersion;
+            }
+
+            if (ServerMarkerOnDropLocation != 0 && ServerMarkerOnDropLocation != 1)
+            {
+                ServerMarkerOnDropLocation = 1;
+                fixes.Add("Corrected ServerMarkerOnDropLocation");
+            }
+
+            if (Server3DMarkerOnDropLocation != 0 && Server3DMarkerOnDropLocation != 1)
+            {
+                Server3DMarkerOnDropLocation = 1;
+                fixes.Add("Corrected Server3DMarkerOnDropLocation");
+            }
+
+            if (ShowAirdropTypeOnMarker != 0 && ShowAirdropTypeOnMarker != 1)
+            {
+                ShowAirdropTypeOnMarker = 1;
+                fixes.Add("Corrected ShowAirdropTypeOnMarker");
+            }
+
+            if (HideCargoWhileParachuteIsDeployed != 0 && HideCargoWhileParachuteIsDeployed != 1)
+            {
+                HideCargoWhileParachuteIsDeployed = 1;
+                fixes.Add("Corrected HideCargoWhileParachuteIsDeployed");
+            }
+
+            if (HeightIsRelativeToGroundLevel != 0 && HeightIsRelativeToGroundLevel != 1)
+            {
+                HeightIsRelativeToGroundLevel = 1;
+                fixes.Add("Corrected HeightIsRelativeToGroundLevel");
+            }
+
+            if (Height == null)
+            {
+                Height = 250.0m;
+                fixes.Add("Set default Height");
+            }
+
+            if (DropZoneHeight == null)
+            {
+                DropZoneHeight = 250.0m;
+                fixes.Add("Set default DropZoneHeight");
+            }
+
+            if (FollowTerrainFraction == null)
+            {
+                FollowTerrainFraction = 0.5m;
+                fixes.Add("Set default FollowTerrainFraction");
+            }
+
+            if (Speed == null)
+            {
+                Speed = 50.0m;
+                fixes.Add("Set default Speed");
+            }
+
+            if (DropZoneSpeed == null)
+            {
+                DropZoneSpeed = 25.0m;
+                fixes.Add("Set default DropZoneSpeed");
+            }
+
+            if (Radius == null)
+            {
+                Radius = 100.0m;
+                fixes.Add("Set default Radius");
+            }
+
+            if (InfectedSpawnRadius == null)
+            {
+                InfectedSpawnRadius = 50.0m;
+                fixes.Add("Set default InfectedSpawnRadius");
+            }
+
+            if (InfectedSpawnInterval == null)
+            {
+                InfectedSpawnInterval = 30;
+                fixes.Add("Set default InfectedSpawnInterval");
+            }
+
+            if (ItemCount == null)
+            {
+                ItemCount = 10;
+                fixes.Add("Set default ItemCount");
+            }
+
+            if (AirdropPlaneClassName == null)
+            {
+                AirdropPlaneClassName = "";
+                fixes.Add("Set default AirdropPlaneClassName");
+            }
+
+            if (DropZoneProximityDistance == null)
+            {
+                DropZoneProximityDistance = 100.0m;
+                fixes.Add("Set default DropZoneProximityDistance");
+            }
+
+            if (ExplodeAirVehiclesOnCollision == null || (ExplodeAirVehiclesOnCollision != -1  && ExplodeAirVehiclesOnCollision != 0 && ExplodeAirVehiclesOnCollision != 1))
+            {
+                ExplodeAirVehiclesOnCollision = -1;
+                fixes.Add("Corrected ExplodeAirVehiclesOnCollision");
+            }
+
+            if(Containers == null)
+            {
+                Containers = new BindingList<ExpansionLootContainer>();
+                DefaultRegular();
+                DefaultMedical();
+                DefaultBaseBuilding();
+                DefaultMilitary();
+                fixes.Add("Set default Containers");
+            }
+
+
+            return fixes;
         }
 
     }

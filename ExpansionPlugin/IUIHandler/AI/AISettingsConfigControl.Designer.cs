@@ -53,6 +53,8 @@
             darkLabel2 = new Label();
             FormationScaleNUD = new NumericUpDown();
             darkLabel17 = new Label();
+            MemeLevelNUD = new NumericUpDown();
+            label1 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DamageReceivedMultiplierNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)NoiseInvestigationDistanceLimitNUD).BeginInit();
@@ -62,10 +64,13 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(MemeLevelNUD);
+            groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(EnableZombieVehicleAttackHandlerCB);
             groupBox1.Controls.Add(EnableZombieVehicleAttackPhysicsCB);
             groupBox1.Controls.Add(LogAIHitByCB);
@@ -95,7 +100,7 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(755, 208);
+            groupBox1.Size = new Size(755, 235);
             groupBox1.TabIndex = 131;
             groupBox1.TabStop = false;
             groupBox1.Text = "AI Settings";
@@ -105,52 +110,56 @@
             EnableZombieVehicleAttackHandlerCB.AutoSize = true;
             EnableZombieVehicleAttackHandlerCB.CheckAlign = ContentAlignment.MiddleRight;
             EnableZombieVehicleAttackHandlerCB.ForeColor = SystemColors.Control;
-            EnableZombieVehicleAttackHandlerCB.Location = new Point(16, 173);
+            EnableZombieVehicleAttackHandlerCB.Location = new Point(17, 201);
             EnableZombieVehicleAttackHandlerCB.Margin = new Padding(4, 3, 4, 3);
             EnableZombieVehicleAttackHandlerCB.Name = "EnableZombieVehicleAttackHandlerCB";
             EnableZombieVehicleAttackHandlerCB.Size = new Size(227, 19);
             EnableZombieVehicleAttackHandlerCB.TabIndex = 205;
             EnableZombieVehicleAttackHandlerCB.Text = "Enable Zombie Vehicle Attack Handler";
             EnableZombieVehicleAttackHandlerCB.UseVisualStyleBackColor = true;
+            EnableZombieVehicleAttackHandlerCB.CheckedChanged += EnableZombieVehicleAttackHandlerCB_CheckedChanged;
             // 
             // EnableZombieVehicleAttackPhysicsCB
             // 
             EnableZombieVehicleAttackPhysicsCB.AutoSize = true;
             EnableZombieVehicleAttackPhysicsCB.CheckAlign = ContentAlignment.MiddleRight;
             EnableZombieVehicleAttackPhysicsCB.ForeColor = SystemColors.Control;
-            EnableZombieVehicleAttackPhysicsCB.Location = new Point(285, 173);
+            EnableZombieVehicleAttackPhysicsCB.Location = new Point(286, 201);
             EnableZombieVehicleAttackPhysicsCB.Margin = new Padding(4, 3, 4, 3);
             EnableZombieVehicleAttackPhysicsCB.Name = "EnableZombieVehicleAttackPhysicsCB";
             EnableZombieVehicleAttackPhysicsCB.Size = new Size(186, 19);
             EnableZombieVehicleAttackPhysicsCB.TabIndex = 204;
             EnableZombieVehicleAttackPhysicsCB.Text = "Zombie Vehicle Attack Physics";
             EnableZombieVehicleAttackPhysicsCB.UseVisualStyleBackColor = true;
+            EnableZombieVehicleAttackPhysicsCB.CheckedChanged += EnableZombieVehicleAttackPhysicsCB_CheckedChanged;
             // 
             // LogAIHitByCB
             // 
             LogAIHitByCB.AutoSize = true;
             LogAIHitByCB.CheckAlign = ContentAlignment.MiddleRight;
             LogAIHitByCB.ForeColor = SystemColors.Control;
-            LogAIHitByCB.Location = new Point(500, 147);
+            LogAIHitByCB.Location = new Point(501, 175);
             LogAIHitByCB.Margin = new Padding(4, 3, 4, 3);
             LogAIHitByCB.Name = "LogAIHitByCB";
             LogAIHitByCB.Size = new Size(95, 19);
             LogAIHitByCB.TabIndex = 203;
             LogAIHitByCB.Text = "Log AI Hit By";
             LogAIHitByCB.UseVisualStyleBackColor = true;
+            LogAIHitByCB.CheckedChanged += LogAIHitByCB_CheckedChanged;
             // 
             // LogAIKilledCB
             // 
             LogAIKilledCB.AutoSize = true;
             LogAIKilledCB.CheckAlign = ContentAlignment.MiddleRight;
             LogAIKilledCB.ForeColor = SystemColors.Control;
-            LogAIKilledCB.Location = new Point(617, 147);
+            LogAIKilledCB.Location = new Point(618, 175);
             LogAIKilledCB.Margin = new Padding(4, 3, 4, 3);
             LogAIKilledCB.Name = "LogAIKilledCB";
             LogAIKilledCB.Size = new Size(92, 19);
             LogAIKilledCB.TabIndex = 202;
             LogAIKilledCB.Text = "Log AI Killed";
             LogAIKilledCB.UseVisualStyleBackColor = true;
+            LogAIKilledCB.CheckedChanged += LogAIKilledCB_CheckedChanged;
             // 
             // DamageReceivedMultiplierNUD
             // 
@@ -165,6 +174,7 @@
             DamageReceivedMultiplierNUD.Size = new Size(124, 23);
             DamageReceivedMultiplierNUD.TabIndex = 200;
             DamageReceivedMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            DamageReceivedMultiplierNUD.ValueChanged += DamageReceivedMultiplierNUD_ValueChanged;
             // 
             // darkLabel73
             // 
@@ -191,6 +201,7 @@
             NoiseInvestigationDistanceLimitNUD.Size = new Size(124, 23);
             NoiseInvestigationDistanceLimitNUD.TabIndex = 199;
             NoiseInvestigationDistanceLimitNUD.TextAlign = HorizontalAlignment.Center;
+            NoiseInvestigationDistanceLimitNUD.ValueChanged += NoiseInvestigationDistanceLimitNUD_ValueChanged;
             // 
             // darkLabel72
             // 
@@ -208,13 +219,14 @@
             CanRecruitFriendlyCB.AutoSize = true;
             CanRecruitFriendlyCB.CheckAlign = ContentAlignment.MiddleRight;
             CanRecruitFriendlyCB.ForeColor = SystemColors.Control;
-            CanRecruitFriendlyCB.Location = new Point(192, 147);
+            CanRecruitFriendlyCB.Location = new Point(193, 175);
             CanRecruitFriendlyCB.Margin = new Padding(4, 3, 4, 3);
             CanRecruitFriendlyCB.Name = "CanRecruitFriendlyCB";
             CanRecruitFriendlyCB.Size = new Size(132, 19);
             CanRecruitFriendlyCB.TabIndex = 142;
             CanRecruitFriendlyCB.Text = "Can Recruit Friendly";
             CanRecruitFriendlyCB.UseVisualStyleBackColor = true;
+            CanRecruitFriendlyCB.CheckedChanged += CanRecruitFriendlyCB_CheckedChanged;
             // 
             // SniperProneDistanceThresholdNUD
             // 
@@ -229,6 +241,7 @@
             SniperProneDistanceThresholdNUD.Size = new Size(124, 23);
             SniperProneDistanceThresholdNUD.TabIndex = 140;
             SniperProneDistanceThresholdNUD.TextAlign = HorizontalAlignment.Center;
+            SniperProneDistanceThresholdNUD.ValueChanged += SniperProneDistanceThresholdNUD_ValueChanged;
             // 
             // darkLabel66
             // 
@@ -237,7 +250,7 @@
             darkLabel66.Location = new Point(21, 114);
             darkLabel66.Margin = new Padding(4, 0, 4, 0);
             darkLabel66.Name = "darkLabel66";
-            darkLabel66.Size = new Size(178, 15);
+            darkLabel66.Size = new Size(177, 15);
             darkLabel66.TabIndex = 141;
             darkLabel66.Text = "Sniper Prone Distance Threshold";
             // 
@@ -246,13 +259,14 @@
             CanRecruitGuardsCB.AutoSize = true;
             CanRecruitGuardsCB.CheckAlign = ContentAlignment.MiddleRight;
             CanRecruitGuardsCB.ForeColor = SystemColors.Control;
-            CanRecruitGuardsCB.Location = new Point(347, 147);
+            CanRecruitGuardsCB.Location = new Point(348, 175);
             CanRecruitGuardsCB.Margin = new Padding(4, 3, 4, 3);
             CanRecruitGuardsCB.Name = "CanRecruitGuardsCB";
             CanRecruitGuardsCB.Size = new Size(127, 19);
             CanRecruitGuardsCB.TabIndex = 139;
             CanRecruitGuardsCB.Text = "Can Recruit Guards";
             CanRecruitGuardsCB.UseVisualStyleBackColor = true;
+            CanRecruitGuardsCB.CheckedChanged += CanRecruitGuardsCB_CheckedChanged;
             // 
             // DamageMultiplierNUD
             // 
@@ -267,6 +281,7 @@
             DamageMultiplierNUD.Size = new Size(124, 23);
             DamageMultiplierNUD.TabIndex = 137;
             DamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            DamageMultiplierNUD.ValueChanged += DamageMultiplierNUD_ValueChanged;
             // 
             // darkLabel9
             // 
@@ -292,6 +307,7 @@
             ThreatDistanceLimitNUD.Size = new Size(124, 23);
             ThreatDistanceLimitNUD.TabIndex = 135;
             ThreatDistanceLimitNUD.TextAlign = HorizontalAlignment.Center;
+            ThreatDistanceLimitNUD.ValueChanged += ThreatDistanceLimitNUD_ValueChanged;
             // 
             // darkLabel5
             // 
@@ -300,7 +316,7 @@
             darkLabel5.Location = new Point(20, 54);
             darkLabel5.Margin = new Padding(4, 0, 4, 0);
             darkLabel5.Name = "darkLabel5";
-            darkLabel5.Size = new Size(119, 15);
+            darkLabel5.Size = new Size(118, 15);
             darkLabel5.TabIndex = 136;
             darkLabel5.Text = "Threat Distance Limit";
             // 
@@ -320,26 +336,28 @@
             MannersCB.AutoSize = true;
             MannersCB.CheckAlign = ContentAlignment.MiddleRight;
             MannersCB.ForeColor = SystemColors.Control;
-            MannersCB.Location = new Point(103, 147);
+            MannersCB.Location = new Point(104, 175);
             MannersCB.Margin = new Padding(4, 3, 4, 3);
             MannersCB.Name = "MannersCB";
             MannersCB.Size = new Size(72, 19);
             MannersCB.TabIndex = 128;
             MannersCB.Text = "Manners";
             MannersCB.UseVisualStyleBackColor = true;
+            MannersCB.CheckedChanged += MannersCB_CheckedChanged;
             // 
             // VaultingCB
             // 
             VaultingCB.AutoSize = true;
             VaultingCB.CheckAlign = ContentAlignment.MiddleRight;
             VaultingCB.ForeColor = SystemColors.Control;
-            VaultingCB.Location = new Point(19, 147);
+            VaultingCB.Location = new Point(20, 175);
             VaultingCB.Margin = new Padding(4, 3, 4, 3);
             VaultingCB.Name = "VaultingCB";
             VaultingCB.Size = new Size(69, 19);
             VaultingCB.TabIndex = 120;
             VaultingCB.Text = "Vaulting";
             VaultingCB.UseVisualStyleBackColor = true;
+            VaultingCB.CheckedChanged += VaultingCB_CheckedChanged;
             // 
             // AccuracyMaxNUD
             // 
@@ -354,6 +372,7 @@
             AccuracyMaxNUD.Size = new Size(124, 23);
             AccuracyMaxNUD.TabIndex = 126;
             AccuracyMaxNUD.TextAlign = HorizontalAlignment.Center;
+            AccuracyMaxNUD.ValueChanged += AccuracyMaxNUD_ValueChanged;
             // 
             // AccuracyMinNUD
             // 
@@ -368,6 +387,7 @@
             AccuracyMinNUD.Size = new Size(124, 23);
             AccuracyMinNUD.TabIndex = 121;
             AccuracyMinNUD.TextAlign = HorizontalAlignment.Center;
+            AccuracyMinNUD.ValueChanged += AccuracyMinNUD_ValueChanged;
             // 
             // darkLabel2
             // 
@@ -376,7 +396,7 @@
             darkLabel2.Location = new Point(367, 24);
             darkLabel2.Margin = new Padding(4, 0, 4, 0);
             darkLabel2.Name = "darkLabel2";
-            darkLabel2.Size = new Size(81, 15);
+            darkLabel2.Size = new Size(82, 15);
             darkLabel2.TabIndex = 127;
             darkLabel2.Text = "Accuracy Max";
             // 
@@ -392,6 +412,7 @@
             FormationScaleNUD.Size = new Size(124, 23);
             FormationScaleNUD.TabIndex = 123;
             FormationScaleNUD.TextAlign = HorizontalAlignment.Center;
+            FormationScaleNUD.ValueChanged += FormationScaleNUD_ValueChanged;
             // 
             // darkLabel17
             // 
@@ -404,6 +425,30 @@
             darkLabel17.TabIndex = 124;
             darkLabel17.Text = "Formation Scale";
             // 
+            // MemeLevelNUD
+            // 
+            MemeLevelNUD.BackColor = Color.FromArgb(60, 63, 65);
+            MemeLevelNUD.ForeColor = SystemColors.Control;
+            MemeLevelNUD.Location = new Point(224, 141);
+            MemeLevelNUD.Margin = new Padding(4, 3, 4, 3);
+            MemeLevelNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            MemeLevelNUD.Name = "MemeLevelNUD";
+            MemeLevelNUD.Size = new Size(124, 23);
+            MemeLevelNUD.TabIndex = 206;
+            MemeLevelNUD.TextAlign = HorizontalAlignment.Center;
+            MemeLevelNUD.ValueChanged += MemeLevelNUD_ValueChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = Color.FromArgb(220, 220, 220);
+            label1.Location = new Point(24, 143);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(71, 15);
+            label1.TabIndex = 207;
+            label1.Text = "Meme Level";
+            // 
             // AISettingsConfigControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -412,7 +457,7 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "AISettingsConfigControl";
-            Size = new Size(755, 208);
+            Size = new Size(755, 235);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DamageReceivedMultiplierNUD).EndInit();
@@ -423,6 +468,7 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).EndInit();
             ResumeLayout(false);
         }
 
@@ -453,5 +499,7 @@
         private Label darkLabel2;
         private NumericUpDown FormationScaleNUD;
         private Label darkLabel17;
+        private NumericUpDown MemeLevelNUD;
+        private Label label1;
     }
 }

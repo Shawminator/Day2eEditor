@@ -216,7 +216,7 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.Container;
             }
         }
 
@@ -225,41 +225,34 @@ namespace EconomyPlugin
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            {
-                _data.Container = getContainerString((ContainerTypes)comboBox2.SelectedItem);
-                HasChanges();
-            }
+            _data.Container = getContainerString((ContainerTypes)comboBox2.SelectedItem);
+            HasChanges();
+            UpdateTreeNodeText();
         }
         private void numericUpDown8_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            {
-                _data.Usage = (int)numericUpDown8.Value;
-                HasChanges();
+            _data.Usage = (int)numericUpDown8.Value;
+            HasChanges();
 
-            }
         }
         private void numericUpDown32_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            {
-                _data.FallSpeed = numericUpDown32.Value;
-                HasChanges();
-            }
+            _data.FallSpeed = numericUpDown32.Value;
+            HasChanges();
         }
         private void numericUpDown9_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            {
-                _data.Weight = (decimal)numericUpDown9.Value;
-                HasChanges();
-            }
+            _data.Weight = (decimal)numericUpDown9.Value;
+            HasChanges();
         }
         private void numericUpDown10_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ItemCount = (int)numericUpDown10.Value;
-               HasChanges();
+            HasChanges();
         }
         private void numericUpDown11_ValueChanged(object sender, EventArgs e)
         {

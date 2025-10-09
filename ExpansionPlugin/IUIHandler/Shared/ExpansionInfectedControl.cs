@@ -1,5 +1,8 @@
 ﻿using Day2eEditor;
 using System.ComponentModel;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ExpansionPlugin
 {
@@ -64,7 +67,9 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            listBox1.DisplayMember = "DisplayName";
+            listBox1.ValueMember = "Value";
+            listBox1.DataSource = _data;
 
             _suppressEvents = false;
         }
@@ -94,7 +99,7 @@ namespace ExpansionPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
+                parent.isDirty = !_data.SequenceEqual(_originalData);
             }
         }
 
@@ -103,14 +108,19 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
+
         private BindingList<string> CloneData(BindingList<string> data)
         {
-            // TODO: Implement actual cloning logic
-            return new BindingList<string>
+            var clonedList = new BindingList<string>();
+
+            foreach (var item in data)
             {
-                // Copy properties here
-            };
+                clonedList.Add(item);
+            }
+
+            return clonedList;
         }
+
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -124,5 +134,52 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void ExpansionLootitemSetAllChanceButton_Click(object sender, EventArgs e)
+        {
+            List<string> removezombies = new List<string>();
+            foreach (var item in listBox1.SelectedItems)
+            {
+                removezombies.Add(item.ToString());
+
+            }
+            foreach (string s in removezombies)
+            {
+                _data.Remove(s);
+                
+            }
+            HasChanges();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            foreach (var item in listBox2.SelectedItems)
+            {
+                string zombie = item.ToString();
+                if (!_data.Contains(zombie))
+                {
+                    _data.Add(zombie);
+                }
+                else
+                {
+                    MessageBox.Show("Infected Type allready in the list.....");
+                }
+            }
+            HasChanges();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string zombie = textBox1.Text;
+            if (!_data.Contains(zombie))
+            {
+                _data.Add(zombie);
+                HasChanges();
+            }
+            else
+            {
+                MessageBox.Show("Infected Type allready in the list.....");
+            }
+        }
     }
 }
