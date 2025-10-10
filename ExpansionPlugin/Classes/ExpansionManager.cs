@@ -75,11 +75,11 @@ namespace ExpansionPlugin
             ExpansionAIConfig = new ExpansionAIConfig(_paths["AISettings"]);
             LoadConfigWithErrorReport("AISettings", ExpansionAIConfig);
 
-            ExpansionBookConfig = new ExpansionBookConfig(_paths["BookSettings"]);
-            LoadConfigWithErrorReport("BookSettings", ExpansionBookConfig);
-
             ExpansionBaseBuildingConfig = new ExpansionBaseBuildingConfig(_paths["BaseBuildingSettings"]);
             LoadConfigWithErrorReport("BaseBuildingSettings", ExpansionBaseBuildingConfig);
+
+            ExpansionBookConfig = new ExpansionBookConfig(_paths["BookSettings"]);
+            LoadConfigWithErrorReport("BookSettings", ExpansionBookConfig);
 
             Save();
         }

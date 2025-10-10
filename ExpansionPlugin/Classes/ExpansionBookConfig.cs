@@ -19,7 +19,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        const int CurrentVersion = 5;
+        public const int CurrentVersion = 5;
 
         public ExpansionBookConfig(string path)
         {
@@ -46,6 +46,18 @@ namespace ExpansionPlugin
                 },
                 configName: "ExpansionBook"
             );
+            var missingFields = Data.FixMissingOrInvalidFields();
+            if (missingFields.Any())
+            {
+                HasErrors = true;
+                Errors.AddRange(missingFields);
+                Console.WriteLine("Validation issues in " + FileName + ":");
+                foreach (var issue in missingFields)
+                {
+                    Console.WriteLine("- " + issue);
+                }
+                isDirty = true;
+            }
         }
         public IEnumerable<string> Save()
         {
@@ -76,8 +88,6 @@ namespace ExpansionPlugin
     }
     public class ExpansionBookSettings
     {
-        
-
         public int m_Version { get; set; }
         public int EnableStatusTab { get; set; }
         public int EnablePartyTab { get; set; }
@@ -562,6 +572,140 @@ namespace ExpansionPlugin
                 }
             };
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookSettings other)
+            {
+                return m_Version == other.m_Version &&
+                       EnableStatusTab == other.EnableStatusTab &&
+                       EnablePartyTab == other.EnablePartyTab &&
+                       EnableServerInfoTab == other.EnableServerInfoTab &&
+                       EnableServerRulesTab == other.EnableServerRulesTab &&
+                       EnableTerritoryTab == other.EnableTerritoryTab &&
+                       EnableBookMenu == other.EnableBookMenu &&
+                       CreateBookmarks == other.CreateBookmarks &&
+                       ShowHaBStats == other.ShowHaBStats &&
+                       ShowPlayerFaction == other.ShowPlayerFaction &&
+                       DisplayServerSettingsInServerInfoTab == other.DisplayServerSettingsInServerInfoTab &&
+                       EnableCraftingRecipesTab == other.EnableCraftingRecipesTab &&
+                       RuleCategories.SequenceEqual(other.RuleCategories) &&
+                       SettingCategories.SequenceEqual(other.SettingCategories) &&
+                       Links.SequenceEqual(other.Links) &&
+                       Descriptions.SequenceEqual(other.Descriptions) &&
+                       CraftingCategories.SequenceEqual(other.CraftingCategories);
+            }
+            return false;
+        }
+
+        public List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+            if (m_Version < ExpansionBookConfig.CurrentVersion)
+            {
+                fixes.Add($"Updated version from {m_Version} to {ExpansionBookConfig.CurrentVersion}");
+                m_Version = ExpansionBookConfig.CurrentVersion;
+            }
+            if (RuleCategories == null)
+            {
+                DefaultRules();
+                fixes.Add("Initialized and created default RuleCategories");
+            }
+
+            if (SettingCategories == null)
+            {
+                DefaultSettings();
+                fixes.Add("Initialized and created default SettingCategories");
+            }
+
+            if (Links == null)
+            {
+                DefaultLinks();
+                fixes.Add("Initialized and created default Links");
+            }
+
+            if (Descriptions == null)
+            {
+                DefaultDescriptions();
+                fixes.Add("Initialized and created default Descriptions");
+            }
+
+            if (CraftingCategories == null)
+            {
+                DefaultCraftingCategories();
+                fixes.Add("Initialized and created default CraftingCategories");
+            }
+
+            if (EnableStatusTab != 0 && EnableStatusTab != 1)
+            {
+                EnableStatusTab = 1;
+                fixes.Add("Corrected EnableStatusTab");
+            }
+
+            if (EnablePartyTab != 0 && EnablePartyTab != 1)
+            {
+                EnablePartyTab = 1;
+                fixes.Add("Corrected EnablePartyTab");
+            }
+
+            if (EnableServerInfoTab != 0 && EnableServerInfoTab != 1)
+            {
+                EnableServerInfoTab = 1;
+                fixes.Add("Corrected EnableServerInfoTab");
+            }
+
+            if (EnableServerRulesTab != 0 && EnableServerRulesTab != 1)
+            {
+                EnableServerRulesTab = 1;
+                fixes.Add("Corrected EnableServerRulesTab");
+            }
+
+            if (EnableTerritoryTab != 0 && EnableTerritoryTab != 1)
+            {
+                EnableTerritoryTab = 1;
+                fixes.Add("Corrected EnableTerritoryTab");
+            }
+
+            if (EnableBookMenu != 0 && EnableBookMenu != 1)
+            {
+                EnableBookMenu = 1;
+                fixes.Add("Corrected EnableBookMenu");
+            }
+
+            if (CreateBookmarks != 0 && CreateBookmarks != 1)
+            {
+                CreateBookmarks = 1;
+                fixes.Add("Corrected CreateBookmarks");
+            }
+
+            if (ShowHaBStats != 0 && ShowHaBStats != 1)
+            {
+                ShowHaBStats = 1;
+                fixes.Add("Corrected ShowHaBStats");
+            }
+
+            if (ShowPlayerFaction != 0 && ShowPlayerFaction != 1)
+            {
+                ShowPlayerFaction = 1;
+                fixes.Add("Corrected ShowPlayerFaction");
+            }
+
+            if (DisplayServerSettingsInServerInfoTab != 0 && DisplayServerSettingsInServerInfoTab != 1)
+            {
+                DisplayServerSettingsInServerInfoTab = 1;
+                fixes.Add("Corrected DisplayServerSettingsInServerInfoTab");
+            }
+
+            if (EnableCraftingRecipesTab != 0 && EnableCraftingRecipesTab != 1)
+            {
+                EnableCraftingRecipesTab = 1;
+                fixes.Add("Corrected EnableCraftingRecipesTab");
+            }
+
+            return fixes;
+        }
+
+
     }
     public class ExpansionBookRuleCategory
     {
@@ -584,6 +728,17 @@ namespace ExpansionPlugin
                 Rules[j].RuleParagraph = i.ToString() + "." + (j + 1).ToString();
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookRuleCategory other)
+            {
+                return CategoryName == other.CategoryName &&
+                       Rules.SequenceEqual(other.Rules);
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookRule
     {
@@ -599,6 +754,17 @@ namespace ExpansionPlugin
         {
             return RuleParagraph;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookRule other)
+            {
+                return RuleParagraph == other.RuleParagraph &&
+                       RuleText == other.RuleText;
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookSettingCategory
     {
@@ -614,12 +780,36 @@ namespace ExpansionPlugin
         {
             return CategoryName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookSettingCategory other)
+            {
+                return CategoryName == other.CategoryName &&
+                       Settings.SequenceEqual(other.Settings);
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookSetting
     {
         public string SettingTitle { get; set; }
         public string SettingText { get; set; }
         public string SettingValue { get; set; }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookSetting other)
+            {
+                return SettingTitle == other.SettingTitle &&
+                       SettingText == other.SettingText &&
+                       SettingValue == other.SettingValue;
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookLink
     {
@@ -632,6 +822,19 @@ namespace ExpansionPlugin
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookLink other)
+            {
+                return Name == other.Name &&
+                       URL == other.URL &&
+                       IconName == other.IconName &&
+                       IconColor == other.IconColor;
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookDescriptionCategory
     {
@@ -647,6 +850,17 @@ namespace ExpansionPlugin
         {
             return CategoryName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookDescriptionCategory other)
+            {
+                return CategoryName == other.CategoryName &&
+                       Descriptions.SequenceEqual(other.Descriptions);
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookDescription
     {
@@ -659,6 +873,17 @@ namespace ExpansionPlugin
         {
             return DTName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookDescription other)
+            {
+                return DescriptionText == other.DescriptionText &&
+                       DTName == other.DTName;
+            }
+            return false;
+        }
+
     }
     public class ExpansionBookCraftingCategory
     {
@@ -674,5 +899,16 @@ namespace ExpansionPlugin
         {
             return CategoryName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ExpansionBookCraftingCategory other)
+            {
+                return CategoryName == other.CategoryName &&
+                       Results.SequenceEqual(other.Results);
+            }
+            return false;
+        }
+
     }
 }

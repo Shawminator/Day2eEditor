@@ -77,23 +77,11 @@
             darkButton33 = new Button();
             darkButton34 = new Button();
             listBox18 = new ListBox();
-            groupBox31 = new GroupBox();
-            darkButton39 = new Button();
-            darkButton37 = new Button();
-            darkButton38 = new Button();
-            darkLabel88 = new Label();
-            darkButton35 = new Button();
-            darkButton36 = new Button();
-            listBox20 = new ListBox();
-            darkLabel87 = new Label();
-            textBox14 = new TextBox();
-            listBox19 = new ListBox();
             groupBox11.SuspendLayout();
             groupBox13.SuspendLayout();
             groupBox12.SuspendLayout();
             groupBox30.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LinkIconColour).BeginInit();
-            groupBox31.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox11
@@ -110,7 +98,7 @@
             groupBox11.Controls.Add(EnablePartyTabCB);
             groupBox11.Controls.Add(EnableStatusTabCB);
             groupBox11.ForeColor = SystemColors.Control;
-            groupBox11.Location = new Point(373, 173);
+            groupBox11.Location = new Point(13, 12);
             groupBox11.Margin = new Padding(4, 3, 4, 3);
             groupBox11.Name = "groupBox11";
             groupBox11.Padding = new Padding(4, 3, 4, 3);
@@ -275,7 +263,7 @@
             groupBox13.Controls.Add(textBox10);
             groupBox13.Controls.Add(listBox13);
             groupBox13.ForeColor = SystemColors.Control;
-            groupBox13.Location = new Point(373, 335);
+            groupBox13.Location = new Point(13, 174);
             groupBox13.Margin = new Padding(4, 3, 4, 3);
             groupBox13.Name = "groupBox13";
             groupBox13.Padding = new Padding(4, 3, 4, 3);
@@ -406,7 +394,7 @@
             groupBox12.Controls.Add(textBox5);
             groupBox12.Controls.Add(listBox10);
             groupBox12.ForeColor = SystemColors.Control;
-            groupBox12.Location = new Point(947, 173);
+            groupBox12.Location = new Point(587, 12);
             groupBox12.Margin = new Padding(4, 3, 4, 3);
             groupBox12.Name = "groupBox12";
             groupBox12.Padding = new Padding(4, 3, 4, 3);
@@ -557,7 +545,7 @@
             groupBox30.Controls.Add(darkButton34);
             groupBox30.Controls.Add(listBox18);
             groupBox30.ForeColor = SystemColors.Control;
-            groupBox30.Location = new Point(947, 495);
+            groupBox30.Location = new Point(587, 334);
             groupBox30.Margin = new Padding(4, 3, 4, 3);
             groupBox30.Name = "groupBox30";
             groupBox30.Padding = new Padding(4, 3, 4, 3);
@@ -684,141 +672,12 @@
             listBox18.Size = new Size(167, 180);
             listBox18.TabIndex = 0;
             // 
-            // groupBox31
-            // 
-            groupBox31.Controls.Add(darkButton39);
-            groupBox31.Controls.Add(darkButton37);
-            groupBox31.Controls.Add(darkButton38);
-            groupBox31.Controls.Add(darkLabel88);
-            groupBox31.Controls.Add(darkButton35);
-            groupBox31.Controls.Add(darkButton36);
-            groupBox31.Controls.Add(listBox20);
-            groupBox31.Controls.Add(darkLabel87);
-            groupBox31.Controls.Add(textBox14);
-            groupBox31.Controls.Add(listBox19);
-            groupBox31.ForeColor = SystemColors.Control;
-            groupBox31.Location = new Point(1521, 173);
-            groupBox31.Margin = new Padding(4, 3, 4, 3);
-            groupBox31.Name = "groupBox31";
-            groupBox31.Padding = new Padding(4, 3, 4, 3);
-            groupBox31.Size = new Size(266, 570);
-            groupBox31.TabIndex = 6;
-            groupBox31.TabStop = false;
-            groupBox31.Text = "Book Crafting Categories";
-            // 
-            // darkButton39
-            // 
-            darkButton39.FlatStyle = FlatStyle.Flat;
-            darkButton39.Location = new Point(182, 16);
-            darkButton39.Margin = new Padding(4, 3, 4, 3);
-            darkButton39.Name = "darkButton39";
-            darkButton39.Size = new Size(77, 27);
-            darkButton39.TabIndex = 1;
-            darkButton39.Text = "Sort";
-            // 
-            // darkButton37
-            // 
-            darkButton37.FlatStyle = FlatStyle.Flat;
-            darkButton37.Location = new Point(91, 268);
-            darkButton37.Margin = new Padding(4, 3, 4, 3);
-            darkButton37.Name = "darkButton37";
-            darkButton37.Size = new Size(84, 27);
-            darkButton37.TabIndex = 3;
-            darkButton37.Text = "Remove";
-            // 
-            // darkButton38
-            // 
-            darkButton38.FlatStyle = FlatStyle.Flat;
-            darkButton38.Location = new Point(7, 268);
-            darkButton38.Margin = new Padding(4, 3, 4, 3);
-            darkButton38.Name = "darkButton38";
-            darkButton38.Size = new Size(80, 27);
-            darkButton38.TabIndex = 2;
-            darkButton38.Text = "Add New";
-            // 
-            // darkLabel88
-            // 
-            darkLabel88.AutoSize = true;
-            darkLabel88.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel88.Location = new Point(7, 347);
-            darkLabel88.Margin = new Padding(4, 0, 4, 0);
-            darkLabel88.Name = "darkLabel88";
-            darkLabel88.Size = new Size(90, 15);
-            darkLabel88.TabIndex = 114;
-            darkLabel88.Text = "Category Name";
-            // 
-            // darkButton35
-            // 
-            darkButton35.FlatStyle = FlatStyle.Flat;
-            darkButton35.Location = new Point(175, 534);
-            darkButton35.Margin = new Padding(4, 3, 4, 3);
-            darkButton35.Name = "darkButton35";
-            darkButton35.Size = new Size(84, 27);
-            darkButton35.TabIndex = 7;
-            darkButton35.Text = "Remove";
-            // 
-            // darkButton36
-            // 
-            darkButton36.FlatStyle = FlatStyle.Flat;
-            darkButton36.Location = new Point(10, 534);
-            darkButton36.Margin = new Padding(4, 3, 4, 3);
-            darkButton36.Name = "darkButton36";
-            darkButton36.Size = new Size(80, 27);
-            darkButton36.TabIndex = 6;
-            darkButton36.Text = "Add New";
-            // 
-            // listBox20
-            // 
-            listBox20.BackColor = Color.FromArgb(60, 63, 65);
-            listBox20.DrawMode = DrawMode.OwnerDrawFixed;
-            listBox20.ForeColor = SystemColors.Control;
-            listBox20.FormattingEnabled = true;
-            listBox20.Location = new Point(7, 366);
-            listBox20.Margin = new Padding(4, 3, 4, 3);
-            listBox20.Name = "listBox20";
-            listBox20.Size = new Size(251, 148);
-            listBox20.TabIndex = 5;
-            // 
-            // darkLabel87
-            // 
-            darkLabel87.AutoSize = true;
-            darkLabel87.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel87.Location = new Point(4, 300);
-            darkLabel87.Margin = new Padding(4, 0, 4, 0);
-            darkLabel87.Name = "darkLabel87";
-            darkLabel87.Size = new Size(90, 15);
-            darkLabel87.TabIndex = 4;
-            darkLabel87.Text = "Category Name";
-            // 
-            // textBox14
-            // 
-            textBox14.BackColor = Color.FromArgb(60, 63, 65);
-            textBox14.ForeColor = SystemColors.Control;
-            textBox14.Location = new Point(7, 318);
-            textBox14.Margin = new Padding(4, 3, 4, 3);
-            textBox14.Name = "textBox14";
-            textBox14.Size = new Size(251, 23);
-            textBox14.TabIndex = 4;
-            // 
-            // listBox19
-            // 
-            listBox19.BackColor = Color.FromArgb(60, 63, 65);
-            listBox19.DrawMode = DrawMode.OwnerDrawFixed;
-            listBox19.ForeColor = SystemColors.Control;
-            listBox19.FormattingEnabled = true;
-            listBox19.Location = new Point(7, 16);
-            listBox19.Margin = new Padding(4, 3, 4, 3);
-            listBox19.Name = "listBox19";
-            listBox19.Size = new Size(167, 244);
-            listBox19.TabIndex = 0;
-            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(2091, 831);
-            Controls.Add(groupBox31);
             Controls.Add(groupBox30);
             Controls.Add(groupBox12);
             Controls.Add(groupBox13);
@@ -836,8 +695,6 @@
             groupBox30.ResumeLayout(false);
             groupBox30.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)LinkIconColour).EndInit();
-            groupBox31.ResumeLayout(false);
-            groupBox31.PerformLayout();
             ResumeLayout(false);
 
         }
@@ -891,16 +748,5 @@
         private System.Windows.Forms.Button darkButton33;
         private System.Windows.Forms.Button darkButton34;
         private System.Windows.Forms.ListBox listBox18;
-        private System.Windows.Forms.GroupBox groupBox31;
-        private System.Windows.Forms.Button darkButton39;
-        private System.Windows.Forms.Button darkButton37;
-        private System.Windows.Forms.Button darkButton38;
-        private System.Windows.Forms.Label darkLabel88;
-        private System.Windows.Forms.Button darkButton35;
-        private System.Windows.Forms.Button darkButton36;
-        private System.Windows.Forms.ListBox listBox20;
-        private System.Windows.Forms.Label darkLabel87;
-        private System.Windows.Forms.TextBox textBox14;
-        private System.Windows.Forms.ListBox listBox19;
     }
 }

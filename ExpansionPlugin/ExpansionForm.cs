@@ -88,7 +88,18 @@ namespace ExpansionPlugin
                 {
                     AILightEntries AILightEntries = node.Tag as AILightEntries;
                     ShowHandler(new AILightControl(), typeof(ExpansionAIConfig), AILightEntries, selected);
-                }
+                },
+                //Book 
+                [typeof(ExpansionBookCraftingCategory)] = (node, selected) =>
+                {
+                    ExpansionBookCraftingCategory ExpansionBookCraftingCategory = node.Tag as ExpansionBookCraftingCategory;
+                    ShowHandler(new ExpansionBookCraftingCategoryControl(), typeof(ExpansionBookConfig), ExpansionBookCraftingCategory, selected);
+                },
+                [typeof(ExpansionBookDescriptionCategory)] = (node, selected) =>
+                {
+                    ExpansionBookDescriptionCategory ExpansionBookDescriptionCategory = node.Tag as ExpansionBookDescriptionCategory;
+                    ShowHandler(new ExpansionBookDescriptionCategoryControl(), typeof(ExpansionBookConfig), ExpansionBookDescriptionCategory, selected);
+                },
             };
             // ----------------------
             // String handlers
@@ -634,15 +645,6 @@ namespace ExpansionPlugin
                 {
                     Tag = bdc
                 };
-                int i = 1;
-                foreach (ExpansionBookDescription db in bdc.Descriptions)
-                {
-                    bdcnodes.Nodes.Add(new TreeNode($"Description Text {i}")
-                    {
-                        Tag = bdc
-                    });
-                    i++;
-                }
                 dnodes.Nodes.Add(bdcnodes);
             }
             EconomyRootNode.Nodes.Add(dnodes);
