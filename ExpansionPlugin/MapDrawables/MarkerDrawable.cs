@@ -14,6 +14,7 @@ namespace ExpansionPlugin
         public float Radius { get; set; } = 5f;
 
         public bool Scaleradius { get; set; } = false;
+        public bool Shade { get; set; } = false;
 
         private readonly Size _mapSize;
 
@@ -64,6 +65,48 @@ namespace ExpansionPlugin
                     screenRadius * 2);
             }
 
+
+            // Diagonal shading lines clipped to circle
+            if (Shade)
+            {
+                using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+                {
+                    // Define the circular clipping region
+                    path.AddEllipse(
+                        screenX - screenRadius,
+                        screenY - screenRadius,
+                        screenRadius * 2,
+                        screenRadius * 2);
+
+                    // Save original clip
+                    var originalClip = g.Clip.Clone();
+
+                    // Apply circular clip
+                    g.SetClip(path);
+
+                    using (var pen = new Pen(Color.FromArgb(175, Color))) // semi-transparent
+                    {
+                        float spacing = 7.5f * zoom; // scale spacing with zoom
+                        float left = screenX - screenRadius;
+                        float top = screenY - screenRadius;
+                        float diameter = screenRadius * 2;
+
+                        for (float i = -diameter; i < diameter * 2; i += spacing)
+                        {
+                            PointF start = new PointF(left + i, top);
+                            PointF end = new PointF(left, top + i);
+                            g.DrawLine(pen, start, end);
+                        }
+                    }
+
+                    // Restore original clip
+                    g.SetClip(originalClip, System.Drawing.Drawing2D.CombineMode.Replace);
+                }
+            }
+
+
+
+
             // Inner dot
             //float dotRadius = 5f * 0.3f; // adjust as needed
             float dotRadius = 2f; // adjust as needed
@@ -75,6 +118,10 @@ namespace ExpansionPlugin
                     dotRadius * 2,
                     dotRadius * 2);
             }
+
+
+
+
         }
     }
 

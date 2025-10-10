@@ -32,6 +32,12 @@
     <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="IUIHandler\AI\AILightControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+
   <Target Name="copyToPluginsFolder" AfterTargets="Build">
     <MakeDir Directories="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Day2eEditor\bin\$(Configuration)\net9.0-windows7.0\Plugins" SkipUnchangedFiles="false" />

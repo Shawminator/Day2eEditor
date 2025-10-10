@@ -3,6 +3,8 @@ using EconomyPlugin;
 using System.ComponentModel;
 using System.Runtime;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace ExpansionPlugin
 {
@@ -68,6 +70,11 @@ namespace ExpansionPlugin
                         _mapControl.ClearDrawables(); ;
                         DrawbasebuildingNoBuildZones(node.FindParentOfType<ExpansionBaseBuildingConfig>());
                     };
+                    control.RadiusChanged += (updatedRadius) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbasebuildingNoBuildZones(node.FindParentOfType<ExpansionBaseBuildingConfig>());
+                    };
                     ShowHandler(control, typeof(ExpansionBaseBuildingConfig), node.Tag as ExpansionBuildNoBuildZone, selected);
                     SetupBaseBuildingNoBuildZone(ExpansionBuildNoBuildZone, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
@@ -76,6 +83,11 @@ namespace ExpansionPlugin
                 {
                     ExpansionAISettings ExpansionAISettings = node.Tag as ExpansionAISettings;
                     ShowHandler(new AISettingsConfigControl(), typeof(ExpansionAIConfig), ExpansionAISettings, selected);
+                },
+                [typeof(AILightEntries)] = (node, selected) =>
+                {
+                    AILightEntries AILightEntries = node.Tag as AILightEntries;
+                    ShowHandler(new AILightControl(), typeof(ExpansionAIConfig), AILightEntries, selected);
                 }
             };
             // ----------------------
@@ -130,10 +142,18 @@ namespace ExpansionPlugin
             // ----------------------
             _typeContextMenus = new Dictionary<Type, Action<TreeNode>>
             {
+                // Airdrops
                 [typeof(ExpansionLootContainer)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeAirdropContainerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //basebuilding 
+                [typeof(ExpansionBuildNoBuildZone)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveNoBuildZoneToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
             };
@@ -186,8 +206,61 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeAIPlayerFactionToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-
-
+                //BaseBuilding 
+                ["BaseBuildingDeployableOutsideATerritory"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewDeployableOutsideTerritoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingDeployableOutsideATerritoryItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeDeployableOutsideTerritoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingDeployableInsideAEnemyTerritory"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewDeployableInsideEnemyTerritoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingVirtualStorageExcludedContainers"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewVirtualStorageExcludedContainerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingVirtualStorageExcludedContainersItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeVirtualStorageExcludedContainerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingDeployableInsideAEnemyTerritoryItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeDeployableInsideEnemyTerritoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingNoBuldZones"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewNoBuildZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingNoBuldZoneItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addBuildZoneItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BaseBuildingNoBuldZoneItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeBuildZoneItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                } 
             };
         }
 
@@ -199,6 +272,61 @@ namespace ExpansionPlugin
                 return;
             }
             BuildTreeview();
+        }
+        private void ExpansionForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            AppServices.Unregister<ExpansionManager>();
+            _mapControl.ClearMap();
+        }
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            savefiles();
+        }
+        public void savefiles(bool updated = false)
+        {
+            var savedFiles = _expansionManager.Save();
+            if (_currentHandler != null)
+                _currentHandler.ApplyChanges();
+            Console.WriteLine("Saved files:");
+            foreach (var file in savedFiles)
+            {
+                Console.WriteLine(file);
+            }
+            if (savedFiles.Count() > 0)
+            {
+                ShowSavedFilesMessage(savedFiles);
+            }
+        }
+        private void ShowSavedFilesMessage(IEnumerable<string> files)
+        {
+            // Build a nice multiline string
+            var fileListText = string.Join(Environment.NewLine, files);
+
+            // Limit length so the box doesn't get too tall
+            if (files.Count() > 15)
+            {
+                fileListText = string.Join(Environment.NewLine, files.Take(15)) +
+                               Environment.NewLine + $"...and {files.Count() - 15} more";
+            }
+
+            MessageBox.Show(
+                $"The following files were saved successfully:\n\n{fileListText}",
+                "Save Complete",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+        }
+
+        private void ExpansionForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_expansionManager.needToSave())
+            {
+                DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    savefiles();
+                }
+            }
         }
         private bool InitializeMap()
         {
@@ -378,14 +506,12 @@ namespace ExpansionPlugin
             {
                 Tag = "LightingConfigMinNightVisibilityMeters"
             };
-            int count = 1;
             foreach (AILightEntries AILightEntries in ef.Data.AILightEntries)
             {
-                LightingConfigMinNightVisibilityMetersNodes.Nodes.Add(new TreeNode($"AILightEntries_{count}")
+                LightingConfigMinNightVisibilityMetersNodes.Nodes.Add(new TreeNode($"Lighting Config {AILightEntries.Key} : Visibility {AILightEntries.Value}")
                 {
-                    Tag = "AILightEntries"
+                    Tag = AILightEntries
                 });
-                count++;
             }
             AIRootNode.Nodes.Add(LightingConfigMinNightVisibilityMetersNodes);
             return AIRootNode;
@@ -439,9 +565,9 @@ namespace ExpansionPlugin
             {
                 Tag = "BaseBuildingCraftDismantle"
             });
-            TreeNode VirtualStorageExcludedContainersnodes = new TreeNode("Storage")
+            TreeNode VirtualStorageExcludedContainersnodes = new TreeNode("Virtual Storage Excluded Containers")
             {
-                Tag = "BaseBuildingStorage"
+                Tag = "BaseBuildingVirtualStorageExcludedContainers"
             };
             foreach (string s in ef.Data.VirtualStorageExcludedContainers)
             {
@@ -623,6 +749,9 @@ namespace ExpansionPlugin
 
             // Remove all event subscriptions to avoid duplicates
 
+            // Remove all event subscriptions to avoid duplicates
+            _mapControl.MapDoubleClicked -= MapControl_BuildZoneDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_BuildZoneSingleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -680,6 +809,7 @@ namespace ExpansionPlugin
             }
         }
 
+        #region mapstuff
         /// <summary>
         /// MapViewer Draw Mothods
         /// </summary>
@@ -697,8 +827,8 @@ namespace ExpansionPlugin
             SetupMap(() =>
             {
                 _selectedNoBuildZonePos = pos;
-                //_mapControl.MapDoubleClicked += MapControl_EventSpawnDoubleclicked;
-                //_mapControl.MapsingleClicked += MapControl_EventSpawnSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_BuildZoneDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_BuildZoneSingleclicked;
 
                 var ExpansionBaseBuildingConfig = node.Parent?.Parent?.Tag as ExpansionBaseBuildingConfig;
                 if (ExpansionBaseBuildingConfig != null)
@@ -714,8 +844,9 @@ namespace ExpansionPlugin
                 var marker = new MarkerDrawable(new PointF((float)pos.Center[0], (float)pos.Center[2]), _mapControl.MapSize)
                 {
                     Color = Color.Red,
-                    Radius = 8,
-                    Scaleradius = false
+                    Radius = pos.Radius,
+                    Scaleradius = true,
+                    Shade = true
                 };
                 if (_selectedNoBuildZonePos == pos)
                 {
@@ -725,67 +856,76 @@ namespace ExpansionPlugin
             }
         }
 
-        private void ExpansionForm_FormClosed(object sender, FormClosedEventArgs e)
+        //map click methods
+        private void MapControl_BuildZoneSingleclicked(object sender, MapClickEventArgs e)
         {
-            AppServices.Unregister<ExpansionManager>();
-            _mapControl.ClearMap();
-        }
-        private void SaveButton_Click(object sender, EventArgs e)
-        {
-            savefiles();
-        }
-        public void savefiles(bool updated = false)
-        {
-            var savedFiles = _expansionManager.Save();
-            if (_currentHandler != null)
-                _currentHandler.ApplyChanges();
-            Console.WriteLine("Saved files:");
-            foreach (var file in savedFiles)
-            {
-                Console.WriteLine(file);
-            }
-            if (savedFiles.Count() > 0)
-            {
-                ShowSavedFilesMessage(savedFiles);
-            }
-        }
-        private void ShowSavedFilesMessage(IEnumerable<string> files)
-        {
-            // Build a nice multiline string
-            var fileListText = string.Join(Environment.NewLine, files);
+            if (currentTreeNode?.Parent == null)
+                return;
 
-            // Limit length so the box doesn't get too tall
-            if (files.Count() > 15)
-            {
-                fileListText = string.Join(Environment.NewLine, files.Take(15)) +
-                               Environment.NewLine + $"...and {files.Count() - 15} more";
-            }
+            TreeNode parentNode = currentTreeNode.Parent;
 
-            MessageBox.Show(
-                $"The following files were saved successfully:\n\n{fileListText}",
-                "Save Complete",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
-        }
+            ExpansionBuildNoBuildZone closestPos = null;
+            double closestDistance = double.MaxValue;
 
-        private void ExpansionForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_expansionManager.needToSave())
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
             {
-                DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
+                if (child.Tag is ExpansionBuildNoBuildZone pos)
                 {
-                    savefiles();
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.Center[0], (float)pos.Center[2]));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
                 }
             }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
         }
+        private void MapControl_BuildZoneDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (_selectedNoBuildZonePos == null) return;
 
+            _selectedNoBuildZonePos.Center[0] = (float)e.MapCoordinates.X;
+            _selectedNoBuildZonePos.Center[2] = (float)e.MapCoordinates.Y;
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
 
+            _mapControl.ClearDrawables();
+
+            ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig = currentTreeNode.Parent.Parent.Tag as ExpansionBaseBuildingConfig;
+            ShowHandler<IUIHandler>(new ExpansionBuildNoBuildZoneControl(), typeof(ExpansionBaseBuildingConfig), _selectedNoBuildZonePos, new List<TreeNode>() { currentTreeNode });
+            DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig);
+
+        }
+        #endregion mapstuff
+
+        #region right click methods
         /// <summary>
         /// Treeview right click methods
         /// </summary>
-
         // Airdrops 
         private void addNewAirdropContainerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -835,7 +975,6 @@ namespace ExpansionPlugin
                 _expansionManager.ExpansionAIConfig.isDirty = true;
             }
         }
-
         private void addAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddItemfromString form = new AddItemfromString();
@@ -855,32 +994,197 @@ namespace ExpansionPlugin
                 _expansionManager.ExpansionAIConfig.isDirty = true;
             }
         }
-
         private void addAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            AddFromList newform = new AddFromList();
+            newform.List = File.ReadAllLines("Data/ExpansionFactions.txt").ToList();
+            DialogResult result = newform.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> returnlist = newform.GetSelected;
+                foreach (string faction in returnlist)
+                {
+                    if (!_expansionManager.ExpansionAIConfig.Data.PlayerFactions.Contains(faction))
+                    {
+                        _expansionManager.ExpansionAIConfig.Data.PlayerFactions.Add(faction);
+                        currentTreeNode.Nodes.Add(new TreeNode(faction)
+                        {
+                            Tag = "AISettingsPlayerFactionsString"
+                        });
+                        _expansionManager.ExpansionAIConfig.isDirty = true;
+                    }
+                }
+            }
         }
-
         private void removeAIAdminToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.Admins.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionAIConfig.isDirty = true;
         }
-
         private void removeAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.PreventClimb.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionAIConfig.isDirty = true;
         }
-
         private void removeAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.PlayerFactions.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionAIConfig.isDirty = true;
         }
+        //BaseBuilding Settings
+        private void addNewDeployableOutsideTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionBaseBuildingConfig.Data.DeployableOutsideATerritory.Contains(l))
+                    {
+                        _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableOutsideATerritory.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "BaseBuildingDeployableOutsideATerritoryItem"
+                        });
+                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                    }
+                }
+            }
+        }
+        private void removeDeployableOutsideTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableOutsideATerritory.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+        }
+        private void addNewDeployableInsideEnemyTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionBaseBuildingConfig.Data.DeployableInsideAEnemyTerritory.Contains(l))
+                    {
+                        _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableInsideAEnemyTerritory.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "BaseBuildingDeployableInsideAEnemyTerritoryItem"
+                        });
+                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                    }
+                }
+            }
+        }
+        private void removeDeployableInsideEnemyTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableInsideAEnemyTerritory.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+        }
+        private void addNewVirtualStorageExcludedContainerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionBaseBuildingConfig.Data.VirtualStorageExcludedContainers.Contains(l))
+                    {
+                        _expansionManager.ExpansionBaseBuildingConfig.Data.VirtualStorageExcludedContainers.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "BaseBuildingVirtualStorageExcludedContainersItem"
+                        });
+                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                    }
+                }
+            }
+        }
+        private void removeVirtualStorageExcludedContainerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBaseBuildingConfig.Data.VirtualStorageExcludedContainers.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+        }
+        private void addNewNoBuildZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int MapSize = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize;
+            ExpansionBuildNoBuildZone nbz = new ExpansionBuildNoBuildZone()
+            {
+                Name = "new No Build Zone",
+                CustomMessage = "",
+                Radius = 100,
+                Center = new float[] { MapSize / 2, 0, MapSize / 2 },
+                IsWhitelist = 0,
+                Items = new BindingList<string>()
+            };
+            _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Add(nbz);
+            TreeNode nbznode = new TreeNode(nbz.Name)
+            {
+                Tag = nbz
+            };
+            TreeNode nbzinodes = new TreeNode("Items")
+            {
+                Tag = "BaseBuildingNoBuldZoneItems"
+            };
+            foreach (string s in nbz.Items)
+            {
+                nbzinodes.Nodes.Add(new TreeNode($"Item: {s}")
+                {
+                    Tag = "BaseBuildingNoBuldZoneItem"
+                });
+            }
+            nbznode.Nodes.Add(nbzinodes);
+            currentTreeNode.Nodes.Add(nbznode);
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+        }
+        private void RemoveNoBuildZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Remove(currentTreeNode.Tag as ExpansionBuildNoBuildZone);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+        }
+        private void addBuildZoneItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                ExpansionBuildNoBuildZone currentbuildzone = currentTreeNode.Parent.Tag as ExpansionBuildNoBuildZone;
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!currentbuildzone.Items.Contains(l))
+                    {
+                        currentbuildzone.Items.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode($"Item: {l}")
+                        {
+                            Tag = "BaseBuildingNoBuldZoneItem"
+                        });
+                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                    }
+                }
+            }
+        }
+        private void removeBuildZoneItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBuildNoBuildZone currentbuildzone = currentTreeNode.Parent.Parent.Tag as ExpansionBuildNoBuildZone;
+            currentbuildzone.Items.Remove(currentTreeNode.Text.Substring(6));
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+        }
+
+        #endregion right click methods
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

@@ -16,6 +16,9 @@
     <Compile Update="Forms\AddEventFile.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\AddFromList.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\ValuesEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>

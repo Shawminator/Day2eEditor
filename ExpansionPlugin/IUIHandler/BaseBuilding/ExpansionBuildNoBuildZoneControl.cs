@@ -10,6 +10,7 @@ namespace ExpansionPlugin
     public partial class ExpansionBuildNoBuildZoneControl : UserControl, IUIHandler
     {
         public event Action<ExpansionBuildNoBuildZone> PositionChanged;
+        public event Action<ExpansionBuildNoBuildZone> RadiusChanged;
         private Type _parentType;
         private ExpansionBuildNoBuildZone _data;
         private ExpansionBuildNoBuildZone _originalData;
@@ -148,6 +149,7 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Radius = (float)numericUpDown13.Value;
             HasChanges();
+            RadiusChanged?.Invoke(_data);
         }
 
         private void checkBox6_CheckedChanged(object sender, EventArgs e)
