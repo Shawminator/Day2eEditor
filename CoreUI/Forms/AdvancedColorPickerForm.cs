@@ -17,6 +17,7 @@ namespace CoreUI.Forms
         private Color baseColor = Color.Red;
         private int alpha = 255;
         public string SelectedColorHex { get; private set; }
+        public Color SelectedColor { get; private set; }
 
         public AdvancedColorPickerForm(Color initialColor)
         {
@@ -60,9 +61,9 @@ namespace CoreUI.Forms
 
         private void UpdatePreview()
         {
-            Color finalColor = Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B);
-            panelPreview.BackColor = finalColor;
-            SelectedColorHex = $"0x{finalColor.ToArgb():X8}";
+            SelectedColor = Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B);
+            panelPreview.BackColor = SelectedColor;
+            SelectedColorHex = $"0x{SelectedColor.ToArgb():X8}";
             lblColorCode.Text = $"ARGB: {SelectedColorHex}";
             lblColorCodeints.Text = $"A:{alpha}, R:{baseColor.R}, G:{baseColor.G}, B:{baseColor.B}";
         }

@@ -76,16 +76,6 @@ namespace ExpansionPlugin
         {
             return isDirty;
         }
-        public bool checkver()
-        {
-            if (Data.m_Version != CurrentVersion)
-            {
-                Data.m_Version = CurrentVersion;
-                isDirty = true;
-                return true;
-            }
-            return false;
-        }
     }
     public enum ExpansionCodelockAttachMode
     {
@@ -305,8 +295,6 @@ namespace ExpansionPlugin
                    VirtualStorageExcludedContainers.SequenceEqual(other.VirtualStorageExcludedContainers) &&
                    Zones.SequenceEqual(other.Zones);
         }
-
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

@@ -95,11 +95,26 @@ namespace ExpansionPlugin
                     ExpansionBookCraftingCategory ExpansionBookCraftingCategory = node.Tag as ExpansionBookCraftingCategory;
                     ShowHandler(new ExpansionBookCraftingCategoryControl(), typeof(ExpansionBookConfig), ExpansionBookCraftingCategory, selected);
                 },
+                [typeof(ExpansionBookRuleCategory)] = (node, selected) =>
+                {
+                    ExpansionBookRuleCategory ExpansionBookRuleCategory = node.Tag as ExpansionBookRuleCategory;
+                    ShowHandler(new ExpansionBookRuleCategoryControl(), typeof(ExpansionBookConfig), ExpansionBookRuleCategory, selected);
+                },
+                [typeof(ExpansionBookRule)] = (node, selected) =>
+                {
+                    ExpansionBookRule ExpansionBookRule = node.Tag as ExpansionBookRule;
+                    ShowHandler(new ExpansionBookRuleControl(), typeof(ExpansionBookConfig), ExpansionBookRule, selected);
+                },
                 [typeof(ExpansionBookDescriptionCategory)] = (node, selected) =>
                 {
                     ExpansionBookDescriptionCategory ExpansionBookDescriptionCategory = node.Tag as ExpansionBookDescriptionCategory;
                     ShowHandler(new ExpansionBookDescriptionCategoryControl(), typeof(ExpansionBookConfig), ExpansionBookDescriptionCategory, selected);
                 },
+                [typeof(ExpansionBookLink)] = (node, selected) =>
+                {
+                    ExpansionBookLink ExpansionBookLink = node.Tag as ExpansionBookLink;
+                    ShowHandler(new BookLinksControl(), typeof(ExpansionBookConfig), ExpansionBookLink, selected);
+                }
             };
             // ----------------------
             // String handlers
@@ -138,14 +153,20 @@ namespace ExpansionPlugin
                     ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
                     ShowHandler<IUIHandler>(new BaseBuildingCraftDismantleControl(), typeof(ExpansionBaseBuildingConfig), cfg.Data, selected);
                 },
-                ["BaseBuildingStorage"] = (node, selected) =>
+                ["BaseBuildingVirtualStorageExcludedContainers"] = (node, selected) =>
                 {
                     ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
                     ShowHandler<IUIHandler>(new VirtualStorageExcludedContainersControl(), typeof(ExpansionBaseBuildingConfig), cfg.Data, selected);
-                }
+                },
+                //book  
+                ["BookGeneral"] = (node, selected) =>
+                {
+                    ExpansionBookConfig cfg = node.FindParentOfType<ExpansionBookConfig>();
+                    ShowHandler<IUIHandler>(new ExpansionBookGeneralControl(), typeof(ExpansionBookConfig), cfg.Data, selected);
+                },
+
             };
         }
-
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -167,6 +188,40 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(RemoveNoBuildZoneToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //book
+                [typeof(ExpansionBookDescriptionCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeDescriptionCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionBookRuleCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewRuleParagraphToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(removeRuleCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionBookRule)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeRuleParagrapghToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionBookLink)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeLinkToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionBookCraftingCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeCraftingCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
+
             };
             // ----------------------
             // String handlers
@@ -271,7 +326,32 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeBuildZoneItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-                } 
+                },
+                //Book
+                ["BookDescriptions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewDescriptionCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BookRulesCategories"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewRuleCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BookLinks"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewLinkToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BookCraftingCategories"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewCraftingCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
             };
         }
 
@@ -635,7 +715,7 @@ namespace ExpansionPlugin
             {
                 Tag = "BookGeneral"
             });
-            TreeNode dnodes = new TreeNode("descriptions")
+            TreeNode dnodes = new TreeNode("Descriptions")
             {
                 Tag = "BookDescriptions"
             };
@@ -1185,8 +1265,117 @@ namespace ExpansionPlugin
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
         }
-
+        //Book settings
+        private void addNewDescriptionCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookDescriptionCategory newdescrioptcat = new ExpansionBookDescriptionCategory()
+            {
+                CategoryName = "New Category",
+                Descriptions = new BindingList<ExpansionBookDescription>()
+            };
+            _expansionManager.ExpansionBookConfig.Data.Descriptions.Add(newdescrioptcat);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newdescrioptcat.CategoryName}")
+            {
+                Tag = newdescrioptcat
+            });
+        }
+        private void removeDescriptionCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBookConfig.Data.Descriptions.Remove(currentTreeNode.Tag as ExpansionBookDescriptionCategory);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewRuleCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookRuleCategory newExpansionBookRuleCategory = new ExpansionBookRuleCategory()
+            {
+                CategoryName = "New Rule",
+                Rules = new BindingList<ExpansionBookRule>()
+            };
+            _expansionManager.ExpansionBookConfig.Data.RuleCategories.Add(newExpansionBookRuleCategory);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newExpansionBookRuleCategory.CategoryName}")
+            {
+                Tag = newExpansionBookRuleCategory
+            });
+        }
+        private void removeRuleCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBookConfig.Data.RuleCategories.Remove(currentTreeNode.Tag as ExpansionBookRuleCategory);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewRuleParagraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookRuleCategory ExpansionBookRuleCategory = currentTreeNode.Tag as ExpansionBookRuleCategory;
+            ExpansionBookRule newExpansionBookRule = new ExpansionBookRule()
+            {
+                RuleParagraph = "new paragraph",
+                RuleText = "NewText"
+            };
+            ExpansionBookRuleCategory.Rules.Add(newExpansionBookRule);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(new TreeNode($"Rule Paragraph: {newExpansionBookRule.RuleParagraph}")
+            {
+                Tag = newExpansionBookRule
+            });
+        }
+        private void removeRuleParagrapghToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookRuleCategory ExpansionBookRuleCategory = currentTreeNode.Parent.Tag as ExpansionBookRuleCategory;
+            ExpansionBookRuleCategory.Rules.Remove(currentTreeNode.Tag as ExpansionBookRule);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewLinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookLink newExpansionBookLink = new ExpansionBookLink()
+            {
+                Name = "New link",
+                URL = "Some Url",
+                IconColor = -1,
+                IconName = "Homepage"
+            };
+            _expansionManager.ExpansionBookConfig.Data.Links.Add(newExpansionBookLink);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(new TreeNode($"Links: {newExpansionBookLink.Name}")
+            {
+                Tag = newExpansionBookLink
+            });
+        }
+        private void removeLinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBookConfig.Data.Links.Remove(currentTreeNode.Tag as ExpansionBookLink);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewCraftingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookCraftingCategory newExpansionBookCraftingCategory = new ExpansionBookCraftingCategory()
+            {
+                CategoryName = "New Crafting Category",
+                Results = new BindingList<string>()
+            };
+            _expansionManager.ExpansionBookConfig.Data.CraftingCategories.Add(newExpansionBookCraftingCategory);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Nodes.Add(new TreeNode($"Category: {newExpansionBookCraftingCategory.CategoryName}")
+            {
+                Tag = newExpansionBookCraftingCategory
+            });
+        }
+        private void removeCraftingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBookConfig.Data.CraftingCategories.Remove(currentTreeNode.Tag as ExpansionBookCraftingCategory);
+            _expansionManager.ExpansionBookConfig.isDirty = true;
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
         #endregion right click methods
+
+
+
+
+
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]
