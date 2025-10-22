@@ -41,8 +41,7 @@ namespace ExpansionPlugin
             _expansionManager = new ExpansionManager();
             _expansionManager.SetExpansionStuff();
             AppServices.Register(_expansionManager);
-            initializeShowControlHandlers();
-            InitializeContextMenuHandlers();
+            
         }
         private void initializeShowControlHandlers()
         {
@@ -362,6 +361,20 @@ namespace ExpansionPlugin
             {
                 return;
             }
+
+            if (_expansionManager.HasErrors)
+            {
+
+                BeginInvoke(new Action(() =>
+                {
+
+                    MessageBox.Show("Errors were detected.\nPlease check the console for further info\nIf all errors are corrected please reload Expansion Manager", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+                }));
+                return;
+            }
+            initializeShowControlHandlers();
+            InitializeContextMenuHandlers();
             BuildTreeview();
         }
         private void ExpansionForm_FormClosed(object sender, FormClosedEventArgs e)

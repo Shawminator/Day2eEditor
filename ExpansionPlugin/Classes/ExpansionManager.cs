@@ -22,10 +22,10 @@ namespace ExpansionPlugin
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig { get; set; }
         public ExpansionBookConfig ExpansionBookConfig { get; set; }
-        //public ExpansionChatSettings ChatSettings { get; set; }
-        //public ExpansionDamageSystemSettings DamageSystemSettings { get; set; }
-        //public ExpansionDebugSettings DebugSettings { get; set; }
-        //public ExpansionGarageSettings GarageSettings { get; set; }
+        public ExpansionChatConfig ExpansionChatConfig { get; set; }
+        public ExpansionCoreConfig ExpansionCoreConfig { get; set; }
+        public ExpansionDamageSystemConfig ExpansionDamageSystemConfig { get; set; }
+        public ExpansionGarageConfig ExpansionGarageConfig { get; set; }
         //public ExpansionGeneralSettings GeneralSettings { get; set; }
         //public ExpansionHardlineSettings HardLineSettings { get; set; }
         //public ExpansionHardlinePlayerDataList ExpansionHardlinePlayerDataList { get; set; }
@@ -59,7 +59,11 @@ namespace ExpansionPlugin
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
             _paths["AISettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AISettings.json");
             _paths["BookSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "BookSettings.json");
-            
+            _paths["ChatSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "ChatSettings.json");
+            _paths["CoreSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "CoreSettings.json");
+            _paths["DamageSystemSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "DamageSystemSettings.json");
+            _paths["GarageSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "GarageSettings.json");
+
             // missions files
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
 
@@ -80,6 +84,18 @@ namespace ExpansionPlugin
 
             ExpansionBookConfig = new ExpansionBookConfig(_paths["BookSettings"]);
             LoadConfigWithErrorReport("BookSettings", ExpansionBookConfig);
+
+            ExpansionChatConfig = new ExpansionChatConfig(_paths["ChatSettings"]);
+            LoadConfigWithErrorReport("ChatSettings", ExpansionChatConfig);
+
+            ExpansionCoreConfig = new ExpansionCoreConfig(_paths["CoreSettings"]);
+            LoadConfigWithErrorReport("CoreSettings", ExpansionCoreConfig);
+
+            ExpansionDamageSystemConfig = new ExpansionDamageSystemConfig(_paths["DamageSystemSettings"]);
+            LoadConfigWithErrorReport("DamageSystemSettings", ExpansionDamageSystemConfig);
+
+            ExpansionGarageConfig = new ExpansionGarageConfig(_paths["GarageSettings"]);
+            LoadConfigWithErrorReport("GarageSettings", ExpansionGarageConfig);
 
             Save();
         }
@@ -104,7 +120,12 @@ namespace ExpansionPlugin
                 ExpansionAirdropConfig,
                 ExpansionAIConfig,
                 ExpansionBookConfig,
-                ExpansionBaseBuildingConfig
+                ExpansionBaseBuildingConfig,
+                ExpansionChatConfig,
+                ExpansionCoreConfig,
+                ExpansionDamageSystemConfig,
+                ExpansionGarageConfig
+
             };
 
             var savedFiles = new List<string>();
@@ -127,7 +148,11 @@ namespace ExpansionPlugin
                 ExpansionAirdropConfig,
                 ExpansionAIConfig,
                 ExpansionBookConfig,
-                ExpansionBaseBuildingConfig
+                ExpansionBaseBuildingConfig,
+                ExpansionChatConfig,
+                ExpansionCoreConfig,
+                ExpansionDamageSystemConfig,
+                ExpansionGarageConfig
             };
             foreach (var obj in configs)
             {
