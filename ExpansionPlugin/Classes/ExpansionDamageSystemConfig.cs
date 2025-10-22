@@ -84,9 +84,6 @@ namespace ExpansionPlugin
         public BindingList<string> ExplosionTargets { get; set; }
         public Dictionary<string, string> ExplosiveProjectiles { get; set; }
 
-        [JsonIgnore]
-        public BindingList<ExplosiveProjectiles> explosinvesList;
-
         public ExpansionDamageSystemSettings()
         {
         }

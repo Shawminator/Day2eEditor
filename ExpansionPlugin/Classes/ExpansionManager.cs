@@ -26,10 +26,10 @@ namespace ExpansionPlugin
         public ExpansionCoreConfig ExpansionCoreConfig { get; set; }
         public ExpansionDamageSystemConfig ExpansionDamageSystemConfig { get; set; }
         public ExpansionGarageConfig ExpansionGarageConfig { get; set; }
-        //public ExpansionGeneralSettings GeneralSettings { get; set; }
+        public ExpansionGeneralConfig ExpansionGeneralConfig { get; set; }
         //public ExpansionHardlineSettings HardLineSettings { get; set; }
         //public ExpansionHardlinePlayerDataList ExpansionHardlinePlayerDataList { get; set; }
-        //public ExpansionLogSettings LogSettings { get; set; }
+        public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         //public ExpansionMapSettings MapSettings { get; set; }
         //public MarketSettings marketsettings { get; set; }
         //public ExpansionMissionSettings MissionSettings { get; set; }
@@ -63,6 +63,8 @@ namespace ExpansionPlugin
             _paths["CoreSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "CoreSettings.json");
             _paths["DamageSystemSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "DamageSystemSettings.json");
             _paths["GarageSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "GarageSettings.json");
+            _paths["GeneralSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "GeneralSettings.json");
+            _paths["LogsSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "LogsSettings.json");
 
             // missions files
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
@@ -97,6 +99,12 @@ namespace ExpansionPlugin
             ExpansionGarageConfig = new ExpansionGarageConfig(_paths["GarageSettings"]);
             LoadConfigWithErrorReport("GarageSettings", ExpansionGarageConfig);
 
+            ExpansionGeneralConfig = new ExpansionGeneralConfig(_paths["GeneralSettings"]);
+            LoadConfigWithErrorReport("GeneralSettings", ExpansionGeneralConfig);
+
+            ExpansionLogsConfig = new ExpansionLogsConfig(_paths["LogsSettings"]);
+            LoadConfigWithErrorReport("LogsSettings", ExpansionLogsConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -124,7 +132,9 @@ namespace ExpansionPlugin
                 ExpansionChatConfig,
                 ExpansionCoreConfig,
                 ExpansionDamageSystemConfig,
-                ExpansionGarageConfig
+                ExpansionGarageConfig,
+                ExpansionGeneralConfig,
+                ExpansionLogsConfig
 
             };
 
@@ -152,7 +162,9 @@ namespace ExpansionPlugin
                 ExpansionChatConfig,
                 ExpansionCoreConfig,
                 ExpansionDamageSystemConfig,
-                ExpansionGarageConfig
+                ExpansionGarageConfig,
+                ExpansionGeneralConfig,
+                ExpansionLogsConfig
             };
             foreach (var obj in configs)
             {
