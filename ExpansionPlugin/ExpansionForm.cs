@@ -1,6 +1,7 @@
 using Day2eEditor;
 using EconomyPlugin;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -50,6 +51,7 @@ namespace ExpansionPlugin
             // ----------------------
             _typeHandlers = new Dictionary<Type, Action<TreeNode, List<TreeNode>>>
             {
+                //Airdrops
                 [typeof(ExpansionAirdropSettings)] = (node, selected) =>
                 {
                     ExpansionAirdropSettings ExpansionAirdropSettings = node.Tag as ExpansionAirdropSettings;
@@ -60,6 +62,15 @@ namespace ExpansionPlugin
                     ExpansionLootContainer ExpansionLootContainer = node.Tag as ExpansionLootContainer;
                     ShowHandler(new ExpansionLootContainerControl(), typeof(ExpansionAirdropConfig), ExpansionLootContainer, selected);
                 },
+                //AI
+                [typeof(ExpansionAIRoamingLocation)] = (node, selected) =>
+                {
+                    ExpansionAIRoamingLocation ExpansionAIRoamingLocation = node.Tag as ExpansionAIRoamingLocation;
+                    ShowHandler(new AIRoamingLocationControl(), typeof(ExpansionAILocationConfig), ExpansionAIRoamingLocation, selected);
+                    SetupAILocationRoamingLocations(ExpansionAIRoamingLocation, node);
+                    _mapControl.EnsureVisible(new PointF((float)ExpansionAIRoamingLocation.Position[0], (float)ExpansionAIRoamingLocation.Position[2]));
+                },
+                //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
                 {
                     ExpansionBuildNoBuildZone ExpansionBuildNoBuildZone = node.Tag as ExpansionBuildNoBuildZone;
@@ -509,7 +520,21 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionChatConfig, CreateExpansionChatConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionCoreConfig, CreateExpansionCoreConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionDamageSystemConfig, CreateExpansionDamageSystemConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionGarageConfig, CreateExpansionGarageConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionGeneralConfig, CreateExpansionGeneralConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
 
+            TreeNode AIrootNode = new TreeNode("AI")
+            {
+                Tag = "AIrootNode"
+            };
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAILocationConfig, CreateExpansionAILocationConfigNodes);
+            rootNode.Nodes.Add(AIrootNode);
 
             rootNode.Nodes.Add(SettingsNode);
             ExpansionTV.Nodes.Add(rootNode);
@@ -620,6 +645,118 @@ namespace ExpansionPlugin
             AIRootNode.Nodes.Add(LightingConfigMinNightVisibilityMetersNodes);
             return AIRootNode;
         }
+        private TreeNode CreateExpansionAIPatrolConfigNodes(ExpansionAIPatrolConfig ef)
+        {
+            TreeNode AIPatrolRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            AIPatrolRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode AIAPatrolsNode = new TreeNode("Patrols")
+            {
+                Tag = "AIPatrols"
+            };
+            foreach(ExpansionAIPatrol pat in ef.Data.Patrols)
+            {
+                TreeNode PatrolRoot = new TreeNode(pat.Name)
+                {
+                    Tag = pat
+                };
+                CreatePatrolNodes(pat, PatrolRoot);
+                AIAPatrolsNode.Nodes.Add(PatrolRoot);
+            }
+            AIPatrolRootNode.Nodes.Add(AIAPatrolsNode);
+            TreeNode LoadBalancingNode = new TreeNode("Load Balancing")
+            {
+                Tag = "AILoadBlanacing"
+            };
+            foreach(Loadbalancingcategorie lbc in ef.Data._LoadBalancingCategories)
+            {
+                TreeNode LoadbalancingcategorieRoot = new TreeNode(lbc.name)
+                {
+                    Tag = lbc
+                };
+                int i = 0;
+                foreach(Loadbalancingcategories lbcat in lbc.Categorieslist)
+                {
+                    LoadbalancingcategorieRoot.Nodes.Add(new TreeNode($"Counts {i.ToString()}")
+                    {
+                        Tag = lbcat
+                    });
+                    i++;
+                }
+                LoadBalancingNode.Nodes.Add(LoadbalancingcategorieRoot);
+            }
+            AIPatrolRootNode.Nodes.Add(LoadBalancingNode);
+            return AIPatrolRootNode;
+        }
+        private void CreatePatrolNodes(ExpansionAIPatrol pat, TreeNode Root)
+        {
+            Root.Nodes.Add(new TreeNode("General")
+            {
+                Tag = pat
+            });
+            TreeNode WaypointsNode = new TreeNode("WayPoints")
+            {
+                Tag = "AIPatrolWayPoints"
+            };
+            foreach(Vec3 v3 in pat._waypoints)
+            {
+                WaypointsNode.Nodes.Add(new TreeNode (v3.GetString())
+                {
+                    Tag = v3
+                });
+            }
+            Root.Nodes.Add(WaypointsNode);
+        }
+        private TreeNode CreateExpansionAILocationConfigNodes(ExpansionAILocationConfig ef)
+        {
+            TreeNode AILocationlRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            TreeNode RoamingLocationsNodes = new TreeNode("RoamingLocations")
+            {
+                Tag = "RoamingLocations"
+            };
+            foreach(ExpansionAIRoamingLocation ExpansionAIRoamingLocation in ef.Data.RoamingLocations)
+            {
+                RoamingLocationsNodes.Nodes.Add(new TreeNode(ExpansionAIRoamingLocation.Name)
+                {
+                    Tag = ExpansionAIRoamingLocation
+                });
+            }
+            AILocationlRootNode.Nodes.Add(RoamingLocationsNodes);
+            TreeNode AExcludedRoamingBuildingsNode = new TreeNode("Excluded Roaming Buildings")
+            {
+                Tag = "ExcludedRoamingBuildings"
+            };
+            foreach (string s in ef.Data.ExcludedRoamingBuildings)
+            {
+                AExcludedRoamingBuildingsNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "ExcludedRoamingBuilding"
+                });
+            }
+            AILocationlRootNode.Nodes.Add(AExcludedRoamingBuildingsNode);
+            TreeNode NoGoAreasNode = new TreeNode("No Go Areas")
+            {
+                Tag = "NoGoAreas"
+            };
+            foreach (ExpansionAINoGoArea lbc in ef.Data.NoGoAreas)
+            {
+                NoGoAreasNode.Nodes.Add(new TreeNode($"{lbc.Name}")
+                {
+                    Tag = lbc
+                });
+            }
+            AILocationlRootNode.Nodes.Add(NoGoAreasNode);
+            return AILocationlRootNode;
+        }
+
         //Basebuilding
         private TreeNode CreateExpansionBaseBuildingConfigNodes(ExpansionBaseBuildingConfig ef)
         {
@@ -786,6 +923,193 @@ namespace ExpansionPlugin
             }
             EconomyRootNode.Nodes.Add(cnodes);
         }
+        //Chat
+        private TreeNode CreateExpansionChatConfigConfigNodes(ExpansionChatConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateChatNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateChatNodes(ExpansionChatConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Colours")
+            {
+                Tag = ef.Data.ChatColors
+            });
+        }
+        //Core
+        private TreeNode CreateExpansionCoreConfigConfigNodes(ExpansionCoreConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateCoreNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateCoreNodes(ExpansionCoreConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //DamageSystem
+        private TreeNode CreateExpansionDamageSystemConfigConfigNodes(ExpansionDamageSystemConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateDamageSystemNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateDamageSystemNodes(ExpansionDamageSystemConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode ExplosionTargetsNodes = new TreeNode("ExplosionTargets")
+            {
+                Tag = "ExplosionTargets"
+            };
+            foreach(string s in ef.Data.ExplosionTargets)
+            {
+                ExplosionTargetsNodes.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "ExplosivewTarget"
+                });
+            }
+            EconomyRootNode.Nodes.Add(ExplosionTargetsNodes);
+            TreeNode ExplosiveProjectilesNodes = new TreeNode("ExplosiveProjectiles")
+            {
+                Tag = "ExplosiveProjectiles"
+            };
+            foreach (ExplosiveProjectiles ep in ef.Data._ExplosiveProjectiles)
+            {
+                ExplosiveProjectilesNodes.Nodes.Add(new TreeNode($"{ep.explosion}:{ep.ammo}")
+                {
+                    Tag = "ExplosivewTarget"
+                });
+            }
+            EconomyRootNode.Nodes.Add(ExplosiveProjectilesNodes);
+        }
+        //Garage
+        private TreeNode CreateExpansionGarageConfigConfigNodes(ExpansionGarageConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateGarageNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateGarageNodes(ExpansionGarageConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode WhitelistNode = new TreeNode("EntityWhitelist")
+            {
+                Tag = "EntityWhitelist"
+            };
+            foreach(string s in ef.Data.EntityWhitelist)
+            {
+                WhitelistNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "EntityWhitelistItem"
+                });
+            }
+            EconomyRootNode.Nodes.Add(WhitelistNode);
+        }
+        //General
+        private TreeNode CreateExpansionGeneralConfigConfigNodes(ExpansionGeneralConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateGeneralNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateGeneralNodes(ExpansionGeneralConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = "GenralGernal"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Screen")
+            {
+                Tag = "GenralScreen"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Grave Cross")
+            {
+                Tag = "GenralGraveCross"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Lights")
+            {
+                Tag = "GenralLights"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("HUD")
+            {
+                Tag = "GenralHuds"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Mapping")
+            {
+                Tag = ef.Data.Mapping
+            });
+        }
+        //Hardline
+        private TreeNode CreateExpansionHardlineConfigNodes(ExpansionHardlineConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateHardlineNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateHardlineNodes(ExpansionHardlineConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Reputation")
+            {
+                Tag = "Reputation"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Requirements and Item Rarity")
+            {
+                Tag = "RequirementsandItemRarity"
+            });
+        }
+        //Logs
+        private TreeNode CreateExpansionLogsConfigConfigNodes(ExpansionLogsConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateLogsNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateLogsNodes(ExpansionLogsConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
 
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
@@ -847,6 +1171,7 @@ namespace ExpansionPlugin
             // Remove all event subscriptions to avoid duplicates
             _mapControl.MapDoubleClicked -= MapControl_BuildZoneDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_BuildZoneSingleclicked;
+            _mapControl.MapsingleClicked -= MapControl_AIRomaingLocationSingleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -909,6 +1234,8 @@ namespace ExpansionPlugin
         /// MapViewer Draw Mothods
         /// </summary>
         private ExpansionBuildNoBuildZone _selectedNoBuildZonePos;
+        private ExpansionAIRoamingLocation _selectedAIRoamingLocations;
+
         // Generic map reset + show
         private void SetupMap(Action config)
         {
@@ -930,6 +1257,18 @@ namespace ExpansionPlugin
                     DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig);
             });
         }
+        private void SetupAILocationRoamingLocations(ExpansionAIRoamingLocation pos, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedAIRoamingLocations = pos;
+                _mapControl.MapsingleClicked += MapControl_AIRomaingLocationSingleclicked;
+
+                var ExpansionAILocationConfig = node.Parent?.Parent?.Tag as ExpansionAILocationConfig;
+                if (ExpansionAILocationConfig != null)
+                    DrawbaseAIRoamingLocation(ExpansionAILocationConfig);
+            });
+        }
 
         //Draw Methods
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
@@ -944,6 +1283,24 @@ namespace ExpansionPlugin
                     Shade = true
                 };
                 if (_selectedNoBuildZonePos == pos)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
+            }
+        }
+        private void DrawbaseAIRoamingLocation(ExpansionAILocationConfig ExpansionAILocationConfig)
+        {
+            foreach (ExpansionAIRoamingLocation pos in ExpansionAILocationConfig.Data.RoamingLocations)
+            {
+                var marker = new MarkerDrawable(new PointF((float)pos.Position[0], (float)pos.Position[2]), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)pos.Radius,
+                    Scaleradius = true,
+                    Shade = true
+                };
+                if (_selectedAIRoamingLocations == pos)
                 {
                     marker.Color = Color.LimeGreen;
                 }
@@ -1014,6 +1371,54 @@ namespace ExpansionPlugin
             ShowHandler<IUIHandler>(new ExpansionBuildNoBuildZoneControl(), typeof(ExpansionBaseBuildingConfig), _selectedNoBuildZonePos, new List<TreeNode>() { currentTreeNode });
             DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig);
 
+        }
+        private void MapControl_AIRomaingLocationSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            ExpansionAIRoamingLocation closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is ExpansionAIRoamingLocation pos)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.Position[0], (float)pos.Position[2]));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
         }
         #endregion mapstuff
 

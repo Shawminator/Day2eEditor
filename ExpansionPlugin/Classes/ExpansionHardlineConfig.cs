@@ -63,6 +63,8 @@ namespace ExpansionPlugin
         {
             if (isDirty)
             {
+                convertliststoDict();
+                convertreplisttodict();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };

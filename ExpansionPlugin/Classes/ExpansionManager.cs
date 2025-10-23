@@ -20,6 +20,7 @@ namespace ExpansionPlugin
 
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
+        public ExpansionAILocationConfig ExpansionAILocationConfig { get; set; }
         public ExpansionAIPatrolConfig ExpansionAIPatrolConfig { get; set; }
         public ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig { get; set; }
         public ExpansionBookConfig ExpansionBookConfig { get; set; }
@@ -68,6 +69,7 @@ namespace ExpansionPlugin
             _paths["LogsSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "LogsSettings.json");
 
             // missions files
+            _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
             _paths["AIPatrolSettings"] = Path.Combine(basePath, "expansion", "settings", "AIPatrolSettings.json");
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
             _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
@@ -80,6 +82,9 @@ namespace ExpansionPlugin
 
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
+
+            ExpansionAILocationConfig = new ExpansionAILocationConfig(_paths["AILocationSettings"]);
+            LoadConfigWithErrorReport("AILocationSettings", ExpansionAILocationConfig);
 
             ExpansionAIConfig = new ExpansionAIConfig(_paths["AISettings"]);
             LoadConfigWithErrorReport("AISettings", ExpansionAIConfig);
@@ -135,6 +140,7 @@ namespace ExpansionPlugin
             var configs = new object[]
             {
                 ExpansionAirdropConfig,
+                ExpansionAILocationConfig,
                 ExpansionAIConfig,
                 ExpansionAIPatrolConfig,
                 ExpansionBookConfig,
@@ -167,6 +173,7 @@ namespace ExpansionPlugin
             var configs = new object[]
             {
                 ExpansionAirdropConfig,
+                ExpansionAILocationConfig,
                 ExpansionAIConfig,
                 ExpansionAIPatrolConfig,
                 ExpansionBookConfig,

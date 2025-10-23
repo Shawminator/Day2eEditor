@@ -58,6 +58,7 @@ namespace ExpansionPlugin
                 }
                 isDirty = true;
             }
+            GetExplosiveProjectilesList();
         }
         public IEnumerable<string> Save()
         {
@@ -75,6 +76,26 @@ namespace ExpansionPlugin
         {
             return isDirty;
         }
+        public void GetExplosiveProjectilesList()
+        {
+            Data._ExplosiveProjectiles = new BindingList<ExplosiveProjectiles>();
+            foreach (KeyValuePair<string,string> ep in Data.ExplosiveProjectiles)
+            {
+                Data._ExplosiveProjectiles.Add(new ExplosiveProjectiles()
+                {
+                    explosion = ep.Key,
+                    ammo = ep.Value,
+                });
+            }
+        }
+        public void SetExplosiveProjectilesDictionary()
+        {
+            Data.ExplosiveProjectiles = new Dictionary<string, string>();
+            foreach (ExplosiveProjectiles ep in Data._ExplosiveProjectiles)
+            {
+                Data.ExplosiveProjectiles.Add(ep.explosion, ep.ammo);
+            }
+        }
     }
     public class ExpansionDamageSystemSettings
     {
@@ -83,6 +104,9 @@ namespace ExpansionPlugin
         public int? CheckForBlockingObjects { get; set; }
         public BindingList<string> ExplosionTargets { get; set; }
         public Dictionary<string, string> ExplosiveProjectiles { get; set; }
+
+        [JsonIgnore]
+        public BindingList<ExplosiveProjectiles> _ExplosiveProjectiles { get; set; }
 
         public ExpansionDamageSystemSettings()
         {
@@ -122,8 +146,8 @@ namespace ExpansionPlugin
                    Enabled == other.Enabled &&
                    CheckForBlockingObjects == other.CheckForBlockingObjects &&
                    ExplosionTargets.SequenceEqual(other.ExplosionTargets ?? new BindingList<string>()) &&
-                   (ExplosiveProjectiles?.OrderBy(kvp => kvp.Key) ?? Enumerable.Empty<KeyValuePair<string, string>>())
-                       .SequenceEqual(other.ExplosiveProjectiles?.OrderBy(kvp => kvp.Key) ?? Enumerable.Empty<KeyValuePair<string, string>>());
+                   _ExplosiveProjectiles.SequenceEqual(other._ExplosiveProjectiles);
+                  
         }
 
 
@@ -173,6 +197,14 @@ namespace ExpansionPlugin
         public override string ToString()
         {
             return explosion;
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not ExplosiveProjectiles other)
+                return false;
+
+            return explosion == other.explosion &&
+                   ammo == other.ammo;
         }
     }
 }
