@@ -69,7 +69,6 @@ namespace Day2eEditor
         {
             return X.ToString() + "," + Y.ToString() + "," + Z.ToString();
         }
-
         public float[] getfloatarray()
         {
             return new float[] { X, Y, Z };
@@ -78,10 +77,15 @@ namespace Day2eEditor
         {
             return X.ToString("F6") + " " + Y.ToString("F6") + " " + Z.ToString("F6");
         }
-
         public decimal[] getDecimalArray()
         {
             return new decimal[] { (decimal)X, (decimal)Y, (decimal)Z };
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Vec3 other) return false;
+
+            return X == other.X && Y == other.Y && Z == other.Z;
         }
     }
 
@@ -182,5 +186,14 @@ namespace Day2eEditor
         {
             return Position.X + " " + Position.Y + " " + Position.Z + "|" + Rotation.X + " " + Rotation.Y + " " + Rotation.Z;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not Vec3PandR other) return false;
+
+            return rotspecified == other.rotspecified &&
+                   Equals(Position, other.Position) &&
+                   Equals(Rotation, other.Rotation);
+        }
+
     }
 }

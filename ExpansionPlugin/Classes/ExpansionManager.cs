@@ -20,6 +20,7 @@ namespace ExpansionPlugin
 
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
+        public ExpansionAIPatrolConfig ExpansionAIPatrolConfig { get; set; }
         public ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig { get; set; }
         public ExpansionBookConfig ExpansionBookConfig { get; set; }
         public ExpansionChatConfig ExpansionChatConfig { get; set; }
@@ -27,7 +28,7 @@ namespace ExpansionPlugin
         public ExpansionDamageSystemConfig ExpansionDamageSystemConfig { get; set; }
         public ExpansionGarageConfig ExpansionGarageConfig { get; set; }
         public ExpansionGeneralConfig ExpansionGeneralConfig { get; set; }
-        //public ExpansionHardlineSettings HardLineSettings { get; set; }
+        public ExpansionHardlineConfig ExpansionHardlineConfig { get; set; }
         //public ExpansionHardlinePlayerDataList ExpansionHardlinePlayerDataList { get; set; }
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         //public ExpansionMapSettings MapSettings { get; set; }
@@ -67,7 +68,9 @@ namespace ExpansionPlugin
             _paths["LogsSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "LogsSettings.json");
 
             // missions files
+            _paths["AIPatrolSettings"] = Path.Combine(basePath, "expansion", "settings", "AIPatrolSettings.json");
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
+            _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
 
             LoadFiles(basePath);
         }
@@ -80,6 +83,9 @@ namespace ExpansionPlugin
 
             ExpansionAIConfig = new ExpansionAIConfig(_paths["AISettings"]);
             LoadConfigWithErrorReport("AISettings", ExpansionAIConfig);
+
+            ExpansionAIPatrolConfig = new ExpansionAIPatrolConfig(_paths["AIPatrolSettings"]);
+            LoadConfigWithErrorReport("AIPatrolSettings", ExpansionAIPatrolConfig);
 
             ExpansionBaseBuildingConfig = new ExpansionBaseBuildingConfig(_paths["BaseBuildingSettings"]);
             LoadConfigWithErrorReport("BaseBuildingSettings", ExpansionBaseBuildingConfig);
@@ -101,6 +107,9 @@ namespace ExpansionPlugin
 
             ExpansionGeneralConfig = new ExpansionGeneralConfig(_paths["GeneralSettings"]);
             LoadConfigWithErrorReport("GeneralSettings", ExpansionGeneralConfig);
+
+            ExpansionHardlineConfig = new ExpansionHardlineConfig(_paths["HardlineSettings"]);
+            LoadConfigWithErrorReport("HardlineSettings", ExpansionHardlineConfig);
 
             ExpansionLogsConfig = new ExpansionLogsConfig(_paths["LogsSettings"]);
             LoadConfigWithErrorReport("LogsSettings", ExpansionLogsConfig);
@@ -127,6 +136,7 @@ namespace ExpansionPlugin
             {
                 ExpansionAirdropConfig,
                 ExpansionAIConfig,
+                ExpansionAIPatrolConfig,
                 ExpansionBookConfig,
                 ExpansionBaseBuildingConfig,
                 ExpansionChatConfig,
@@ -134,6 +144,7 @@ namespace ExpansionPlugin
                 ExpansionDamageSystemConfig,
                 ExpansionGarageConfig,
                 ExpansionGeneralConfig,
+                ExpansionHardlineConfig,
                 ExpansionLogsConfig
 
             };
@@ -157,6 +168,7 @@ namespace ExpansionPlugin
             {
                 ExpansionAirdropConfig,
                 ExpansionAIConfig,
+                ExpansionAIPatrolConfig,
                 ExpansionBookConfig,
                 ExpansionBaseBuildingConfig,
                 ExpansionChatConfig,
@@ -164,6 +176,7 @@ namespace ExpansionPlugin
                 ExpansionDamageSystemConfig,
                 ExpansionGarageConfig,
                 ExpansionGeneralConfig,
+                ExpansionHardlineConfig,
                 ExpansionLogsConfig
             };
             foreach (var obj in configs)
