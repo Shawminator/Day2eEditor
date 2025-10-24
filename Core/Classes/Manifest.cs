@@ -9,6 +9,8 @@ namespace Day2eEditor
     public class Manifest
     {
         public AppInfo MainApp { get; set; }
+        public CoreInfo Core { get; set; }
+        public CoreUIInfo CoreUI { get; set; }
         public List<PluginInfo> Plugins { get; set; }
         public List<MapAddonInfo> MapAddons { get; set; }
     }
@@ -20,6 +22,19 @@ namespace Day2eEditor
         public string Checksum { get; set; }      // e.g., "sha256-abcdef123456..."
     }
 
+    public class CoreInfo
+    {
+        public string Version { get; set; }       // e.g., "2.3.0"
+        public string Url { get; set; }           // Direct URL to MainApp.zip
+        public string Checksum { get; set; }      // e.g., "sha256-abcdef123456..."
+    }
+
+    public class CoreUIInfo
+    {
+        public string Version { get; set; }       // e.g., "2.3.0"
+        public string Url { get; set; }           // Direct URL to MainApp.zip
+        public string Checksum { get; set; }      // e.g., "sha256-abcdef123456..."
+    }
     public class PluginInfo
     {
         public string Name { get; set; }          // e.g., "MyPluginA"

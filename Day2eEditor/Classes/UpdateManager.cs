@@ -61,6 +61,11 @@ namespace Day2eEditor
             // Update the main app (ZIP)
             await CheckAndUpdateMainAppAsync(manifest.MainApp);
 
+            // Core DLLs first
+            await CheckAndUpdateCoreDllAsync("Core", manifest.Core.Url, manifest.Core.Version, manifest.Core.Checksum);
+            await CheckAndUpdateCoreDllAsync("CoreUI", manifest.CoreUI.Url, manifest.CoreUI.Version, manifest.CoreUI.Checksum);
+
+
             // Update plugins
             if (manifest.Plugins != null)
             {
@@ -78,12 +83,51 @@ namespace Day2eEditor
             Console.WriteLine("Update checks complete.");
         }
 
+        private async Task CheckAndUpdateCoreDllAsync(string name, string url, string version, string checksum)
+        {
+            string path = Path.Combine(_appDirectory, $"{name}.dll");
+            bool needsUpdate = true;
 
+            if (File.Exists(path))
+            {
+                var localVersion = AssemblyName.GetAssemblyName(path).Version;
+                var remoteVersion = Version.Parse(version);
+                if (localVersion >= remoteVersion)
+                {
+                    Console.WriteLine($"{name} is up-to-date (v{localVersion})");
+                    needsUpdate = false;
+                }
+                else
+                {
+                    Console.WriteLine($"{name} update available: v{localVersion} -> v{remoteVersion}");
+                }
+            }
+
+            if (needsUpdate)
+            {
+                Console.WriteLine($"Downloading {name}...");
+                byte[] data = await _http.GetByteArrayAsync(url);
+
+                if (!ChecksumUtils.VerifyChecksum(data, checksum))
+                    throw new InvalidOperationException($"Checksum verification failed for {name}");
+
+                // Write to temporary file first
+                string tmpPath = path + ".update";
+                await File.WriteAllBytesAsync(tmpPath, data);
+
+                // Mark original for replacement
+                if (File.Exists(path)) File.Move(path, path + ".delete", true);
+
+                File.Move(tmpPath, path);
+
+                Console.WriteLine($"{name} updated successfully.");
+            }
+        }
 
         private async Task CheckAndUpdateMainAppAsync(AppInfo mainApp)
         {
             // Dynamically create the zip file path based on the version
-            string appZipFileName = $"Day2eEditor_v{mainApp.Version}.zip";
+            string appZipFileName = $"Day2eEditor.zip";
             string appZipFilePath = Path.Combine(_tempDirectory, appZipFileName);
 
             bool needsUpdate = true;
