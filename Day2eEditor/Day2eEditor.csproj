@@ -88,23 +88,4 @@
   <ItemGroup>
     <Folder Include="Updater\" />
   </ItemGroup>
-
-  <Target Name="CopyPluginDlls" AfterTargets="Build">
-    <ItemGroup>
-      <!-- List your DLLs here -->
-      <PluginAssemblies Include="$(OutputPath)Core.dll" />
-      <PluginAssemblies Include="$(OutputPath)Core.pdb" />
-      <PluginAssemblies Include="$(OutputPath)CoreUI.dll" />
-      <PluginAssemblies Include="$(OutputPath)CoreUI.pdb" />
-    </ItemGroup>
-
-    <MakeDir Directories="$(OutputPath)Plugins" />
-
-    <Copy
-      SourceFiles="@(PluginAssemblies)"
-      DestinationFolder="$(OutputPath)Plugins"
-      SkipUnchangedFiles="true" />
-    <Delete Files="@(PluginAssemblies)" />
-  </Target>
-
 </Project>

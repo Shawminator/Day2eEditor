@@ -1,4 +1,7 @@
 
+using System.Reflection;
+using System.Runtime.Loader;
+
 namespace Day2eEditor
 {
     internal static class Program
@@ -11,7 +14,7 @@ namespace Day2eEditor
         {
             ApplicationConfiguration.Initialize();
 
-            //updatemanager
+            //Register updatemanager
             var updateManager = new UpdateManager();
             try
             {
@@ -19,14 +22,16 @@ namespace Day2eEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Update failed:\n{ex.Message}");
+                MessageBox.Show($"Update failed:\n{ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             AppServices.Register(updateManager);
+
+           
 
             // Register fileService
             AppServices.Register(new FileService());
 
-            //projectmanager
+            //Register projectmanager
             var projectManager = new ProjectManager("Projects");
             AppServices.Register(projectManager);
             projectManager.Load();
@@ -34,23 +39,25 @@ namespace Day2eEditor
             string activeProject = projectManager.CurrentProject == null
                 ? "Active Project : None Selected"
                 : $"Active Project : {projectManager.CurrentProject.ProjectName}";
+
             Console.WriteLine(activeProject);
-            var economymanager = new EconomyManager();
-            AppServices.Register(economymanager);
+
+            // EconomyManager
+            var economyManager = new EconomyManager();
+            AppServices.Register(economyManager);
             if (projectManager.CurrentProject != null)
             {
-                economymanager.SetProject(projectManager.CurrentProject);
-                if (economymanager.HasErrors)
+                economyManager.SetProject(projectManager.CurrentProject);
+                if (economyManager.HasErrors)
                 {
-                    var errorForm = new ErrorDialog("EconomyManager Errors", economymanager.Errors);
-                    errorForm.StartPosition = FormStartPosition.CenterScreen;
+                    var errorForm = new ErrorDialog("EconomyManager Errors", economyManager.Errors)
+                    {
+                        StartPosition = FormStartPosition.CenterScreen
+                    };
                     errorForm.ShowDialog();
-
-
                     Application.Exit(); // Cleanly close WinForms app
                     return;
                 }
-                
             }
 
             Application.Run(new Form1(activeProject));

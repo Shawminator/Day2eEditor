@@ -83,7 +83,7 @@ namespace Day2eEditor
         private async Task CheckAndUpdateMainAppAsync(AppInfo mainApp)
         {
             // Dynamically create the zip file path based on the version
-            string appZipFileName = $"Day2eEditor_v{mainApp.Version}.zip";  // Example naming convention
+            string appZipFileName = $"Day2eEditor_v{mainApp.Version}.zip";
             string appZipFilePath = Path.Combine(_tempDirectory, appZipFileName);
 
             bool needsUpdate = true;

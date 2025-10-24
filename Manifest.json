@@ -1,8 +1,18 @@
 {
   "mainApp": {
     "version": "0.0.2",
-    "url": "https://github.com/Shawminator/Day2eEditor/releases/download/v0.0.2/Day2eEditor_v0.0.2.zip",
-    "checksum": "sha256-35aad71122b5cd0f65ea90d693ef9a5828ed50d6b61de6368ae53586f37c1f19"
+    "url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/Day2eEditor.zip",
+    "checksum": "sha256-c8d369221a6a931c242ce57135ff6c91ce05f1ff7a4bbcf64f9997a6768459dd"
+  },
+  "Core": {
+    "Version": "0.0.2",
+    "Url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/Core.dll",
+    "Checksum": "sha256-de7b031a6efea66855994c3adf85c1639dd7ad380c2a9f8176b4454d6ad4b74a"
+  },
+  "CoreUI": {
+    "Version": "0.0.2",
+    "Url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/CoreUI.dll",
+    "Checksum": "sha256-b6b8f65120dbb11324a5d5a6b19aed0919d79e1cc5bdfa6a6cfac96f3f787b6b"
   },
   "plugins": [
     {
