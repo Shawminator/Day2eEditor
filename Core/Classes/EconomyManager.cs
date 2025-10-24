@@ -1,5 +1,6 @@
 ﻿using DayZeLib;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Day2eEditor
 {
@@ -25,9 +26,7 @@ namespace Day2eEditor
     public class EconomyManager
     {
         private readonly Dictionary<string, string> _paths = new();
-
         public string basePath { get; set; }
-
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
 
@@ -54,7 +53,7 @@ namespace Day2eEditor
         public mapgroupposConfig mapgroupposConfig { get; set; }
         public TerritoriesConfig territoriesConfig { get; set; }
         public mapgroupprotoConfig mapgroupprotoConfig { get; set; }
-
+        
         public EconomyManager() 
         {
         }

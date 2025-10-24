@@ -1,6 +1,8 @@
 using Day2eEditor;
 using EconomyPlugin;
+using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime;
 using System.Windows.Forms;
@@ -16,13 +18,13 @@ namespace ExpansionPlugin
         private IPluginForm _plugin;
         private TreeNode? currentTreeNode;
         private ExpansionManager _expansionManager { get; set; }
+        public MapData MapData { get; private set; }
 
-        #region Ditionarys
+        #region Dictionarys
         private Dictionary<Type, Action<TreeNode, List<TreeNode>>> _typeHandlers;
         private Dictionary<string, Action<TreeNode, List<TreeNode>>> _stringHandlers;
         private Dictionary<Type, Action<TreeNode>> _typeContextMenus;
         private Dictionary<string, Action<TreeNode>> _stringContextMenus;
-
         #endregion Dictionarys
 
         protected override CreateParams CreateParams
@@ -51,6 +53,18 @@ namespace ExpansionPlugin
             // ----------------------
             _typeHandlers = new Dictionary<Type, Action<TreeNode, List<TreeNode>>>
             {
+                //vec3
+                [typeof(Vec3)] = (node, selected) =>
+                {
+                    Vec3 v3 = node.Tag as Vec3;
+                    if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
+                    {
+                        
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Tag as ExpansionAIPatrol;
+                        SetupAIPatrols(ExpansionAIPatrol, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                },
                 //Airdrops
                 [typeof(ExpansionAirdropSettings)] = (node, selected) =>
                 {
@@ -387,6 +401,7 @@ namespace ExpansionPlugin
             initializeShowControlHandlers();
             InitializeContextMenuHandlers();
             BuildTreeview();
+            
         }
         private void ExpansionForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -455,6 +470,7 @@ namespace ExpansionPlugin
             }
             Image mapImage = Image.FromFile(imagePath);
             _mapControl.LoadMap(mapImage, AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
+            MapData = new MapData(Path.Combine(appDirectory, "MapAddons", AppServices.GetRequired<ProjectManager>().CurrentProject.MapPath+".xyz"), AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
             return true;
         }
         private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, string rootPath, TFile file, Func<TFile, TreeNode> createFileNode, bool expand = false)
@@ -1166,15 +1182,18 @@ namespace ExpansionPlugin
             _mapControl.Visible = false;
             _mapControl.ClearDrawables();
 
-            // Remove all event subscriptions to avoid duplicates
 
             // Remove all event subscriptions to avoid duplicates
-            _mapControl.MapDoubleClicked -= MapControl_BuildZoneDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_BuildZoneSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_BuildZoneDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_AIRomaingLocationSingleclicked;
+            _mapControl.MapsingleClicked -= MapControl_AIPatrolSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_AIPatrolDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
+            _selectedAIRoamingLocations = null;
+            _selectedAIPatrol = null;
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -1235,12 +1254,17 @@ namespace ExpansionPlugin
         /// </summary>
         private ExpansionBuildNoBuildZone _selectedNoBuildZonePos;
         private ExpansionAIRoamingLocation _selectedAIRoamingLocations;
+        private ExpansionAIPatrol _selectedAIPatrol;
 
         // Generic map reset + show
         private void SetupMap(Action config)
         {
             _mapControl.Visible = true;
-            _mapControl.ClearDrawables();
+            if (!_mapControl.HasInitialPainted)
+            {
+                _mapControl.Invalidate();
+                _mapControl.Update();
+            }
             config?.Invoke();
         }
         // Specific helpers for different map cases
@@ -1267,6 +1291,19 @@ namespace ExpansionPlugin
                 var ExpansionAILocationConfig = node.Parent?.Parent?.Tag as ExpansionAILocationConfig;
                 if (ExpansionAILocationConfig != null)
                     DrawbaseAIRoamingLocation(ExpansionAILocationConfig);
+            });
+        }
+        private void SetupAIPatrols(ExpansionAIPatrol patrol, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedAIPatrol = patrol;
+                _mapControl.MapDoubleClicked += MapControl_AIPatrolDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_AIPatrolSingleclicked;
+
+                var ExpansionAIPatrolConfig = node.Parent?.Parent?.Parent?.Parent?.Tag as ExpansionAIPatrolConfig;
+                if (ExpansionAIPatrolConfig != null)
+                    DrawbaseAIPatrols(ExpansionAIPatrolConfig);
             });
         }
 
@@ -1305,6 +1342,53 @@ namespace ExpansionPlugin
                     marker.Color = Color.LimeGreen;
                 }
                 _mapControl.RegisterDrawable(marker);
+            }
+        }
+        private void DrawbaseAIPatrols(ExpansionAIPatrolConfig ExpansionAIPatrolConfig)
+        {
+            foreach (ExpansionAIPatrol patrol in ExpansionAIPatrolConfig.Data.Patrols)
+            {
+                int c = 1;
+                foreach (Vec3 waypoints in patrol._waypoints)
+                {
+                    float centerX2 = 0;
+                    float centerY2 = 0;
+                    if (c < patrol._waypoints.Count)
+                    {
+                        centerX2 = patrol._waypoints[c].X;
+                        centerY2 = patrol._waypoints[c].Z;
+                    }
+                    else
+                    {
+                        centerX2 = patrol._waypoints[0].X;
+                        centerY2 = patrol._waypoints[0].Z;
+                    }
+
+                    var marker = new AIPatrolDrawable(new PointF(waypoints.X, waypoints.Z), new PointF(centerX2, centerY2), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        WriteString = true
+                    };
+                    if (_selectedAIPatrol == patrol)
+                    {
+                        marker.Color = Color.LimeGreen;
+                    }
+                    Vec3 v3 = currentTreeNode.Tag as Vec3;
+                    if(v3 == waypoints)
+                    {
+                        marker.Color = Color.Yellow;
+                    }
+                    if (c == 1)
+                    {
+                        marker.text = patrol.Name + "\n" + c.ToString();
+                    }
+                    else
+                    {
+                        marker.text = c.ToString();
+                    }
+                    c++;
+                    _mapControl.RegisterDrawable(marker);
+                }
             }
         }
 
@@ -1418,6 +1502,80 @@ namespace ExpansionPlugin
                 }
 
                 //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_AIPatrolSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent.Parent.Parent;
+
+            Vec3 closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                foreach (TreeNode child2 in child.Nodes[1].Nodes)
+                {
+                    if (child2.Tag is Vec3 pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    foreach (TreeNode child2 in child.Nodes[1].Nodes)
+                    {
+                        if (child2.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child2;
+                            break;
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_AIPatrolDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 v3)
+            {
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _expansionManager.ExpansionAIPatrolConfig.isDirty = true;
+
+                _mapControl.ClearDrawables();
+
+                ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+                ExpansionAIPatrolConfig.isDirty = true;
+                DrawbaseAIPatrols(ExpansionAIPatrolConfig);
+                currentTreeNode.Text = v3.GetString();
             }
         }
         #endregion mapstuff

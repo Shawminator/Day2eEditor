@@ -65,6 +65,8 @@ namespace ExpansionPlugin
         {
             if (isDirty)
             {
+                SetAIPatrolWaypoints();
+                SetLoadBalancingCategoriestoDictionary();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };

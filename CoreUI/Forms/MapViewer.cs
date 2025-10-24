@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Drawing2D;
+using System.Security.Policy;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
@@ -10,7 +11,7 @@ namespace Day2eEditor
         private DrawingManager _drawingManager = new DrawingManager();
         public event EventHandler<MapClickEventArgs> MapDoubleClicked;
         public event EventHandler<MapClickEventArgs> MapsingleClicked;
-
+        
         private Image _image;
         private float _zoom = 1.0f;
         private PointF _panOffset = new PointF(0, 0);
@@ -38,6 +39,7 @@ namespace Day2eEditor
                 Invalidate();
             }
         }
+        public bool HasInitialPainted = false;
 
         // Allows plugin to register drawables
         public void RegisterDrawable(IMapDrawable drawable)
@@ -199,6 +201,7 @@ namespace Day2eEditor
                 e.Graphics.FillRectangle(backBrush, textRect);
                 e.Graphics.DrawString(coordText, font, brush, new PointF(textX + padding, textY + padding / 2));
             }
+            HasInitialPainted = true;
         }
         protected override void OnMouseDown(MouseEventArgs e)
         {

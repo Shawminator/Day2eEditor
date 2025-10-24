@@ -2668,7 +2668,11 @@ namespace EconomyPlugin
         private void SetupMap(Action config)
         {
             _mapControl.Visible = true;
-            _mapControl.ClearDrawables();
+            if (!_mapControl.HasInitialPainted)
+            {
+                _mapControl.Invalidate();
+                _mapControl.Update();
+            }
             config?.Invoke();
         }
         // Specific helpers for different map cases

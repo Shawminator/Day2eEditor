@@ -11,10 +11,8 @@ namespace ExpansionPlugin
     public class ExpansionManager
     {
         private readonly Dictionary<string, string> _paths = new();
-
         public string basePath { get; set; }
         public string profilePath { get; set; }
-
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
 
@@ -134,7 +132,6 @@ namespace ExpansionPlugin
                 Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
             }
         }
-
         public IEnumerable<string> Save()
         {
             var configs = new object[]

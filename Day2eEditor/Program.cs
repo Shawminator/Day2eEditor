@@ -13,7 +13,6 @@ namespace Day2eEditor
 
             //updatemanager
             var updateManager = new UpdateManager();
-
             try
             {
                 Task.Run(() => updateManager.CheckAndUpdateAsync()).GetAwaiter().GetResult();

@@ -44,10 +44,10 @@ namespace EconomyPlugin
             _suppressEvents = true;
 
             NameTB.Text = _data.Name;
-            XNUD.Value = (decimal)_data._Position.X;
-            YNUD.Value = (decimal)_data._Position.Y;
-            ZNUD.Value = (decimal)_data._Position.Z;
-            RadiusNUD.Value = (decimal)_data.Radius;
+            XNUD.Text = _data._Position.X.ToString();
+            YNUD.Text = _data._Position.Y.ToString();
+            ZNUD.Text = _data._Position.Z.ToString();
+            RadiusNUD.Text = _data.Radius.ToString();
             TypeTB.Text = _data.Type;
             EnabledCB.Checked = _data.Enabled == 1 ? true : false;
 
