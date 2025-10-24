@@ -33,13 +33,37 @@ namespace Day2eEditor
         }
         private void CleanupMarkedPlugins()
         {
-            Console.WriteLine("Clean up:");    
+            Console.WriteLine("Clean up:");
             foreach (var file in Directory.GetFiles(_pluginsDirectory, "*.dll.delete"))
             {
                 try
                 {
                     File.Delete(file);
                     Console.WriteLine($"\t{Path.GetFileName(file)} Removed");
+                }
+                catch
+                {
+                    // Log or ignore
+                }
+            }
+            if (File.Exists("Core.dll.delete"))
+            {
+                try
+                {
+                    File.Delete("Core.dll.delete");
+                    Console.WriteLine($"\t{Path.GetFileName("Core.dll.delete")} Removed");
+                }
+                catch
+                {
+                   // Log or ignore
+                }
+            }
+            if (File.Exists("CoreUI.dll.delete"))
+            {
+                try
+                {
+                    File.Delete("CoreUI.dll.delete");
+                    Console.WriteLine($"\t{Path.GetFileName("CoreUI.dll.delete")} Removed");
                 }
                 catch
                 {
