@@ -86,8 +86,16 @@ namespace Day2eEditor
             await CheckAndUpdateMainAppAsync(manifest.MainApp);
 
             // Core DLLs first
-            await CheckAndUpdateCoreDllAsync("Core", manifest.Core.Url, manifest.Core.Version, manifest.Core.Checksum);
-            await CheckAndUpdateCoreDllAsync("CoreUI", manifest.CoreUI.Url, manifest.CoreUI.Version, manifest.CoreUI.Checksum);
+            bool coreUpdated = await CheckAndUpdateCoreDllAsync("Core", manifest.Core.Url, manifest.Core.Version, manifest.Core.Checksum);
+            bool coreUIUpdated = await CheckAndUpdateCoreDllAsync("CoreUI", manifest.CoreUI.Url, manifest.CoreUI.Version, manifest.CoreUI.Checksum);
+
+            // If either was updated, initiate restart
+            if (coreUpdated || coreUIUpdated)
+            {
+                Console.WriteLine("Core DLL(s) updated — restarting application to apply updates...");
+                InitiateShutdown(restartOnly: true); // your existing restart/launcher logic
+                return; // stop further execution until restart
+            }
 
 
             // Update plugins
@@ -107,14 +115,22 @@ namespace Day2eEditor
             Console.WriteLine("Update checks complete.");
         }
 
-        private async Task CheckAndUpdateCoreDllAsync(string name, string url, string version, string checksum)
+        private async Task<bool> CheckAndUpdateCoreDllAsync(
+             string name,
+             string dllUrl,
+             string version,
+             string dllChecksum,
+             string pdbUrl = null,
+             string pdbChecksum = null)
         {
-            string path = Path.Combine(_appDirectory, $"{name}.dll");
+            string dllPath = Path.Combine(_appDirectory, $"{name}.dll");
+            bool updated = false;
+
             bool needsUpdate = true;
 
-            if (File.Exists(path))
+            if (File.Exists(dllPath))
             {
-                var localVersion = AssemblyName.GetAssemblyName(path).Version;
+                var localVersion = AssemblyName.GetAssemblyName(dllPath).Version;
                 var remoteVersion = Version.Parse(version);
                 if (localVersion >= remoteVersion)
                 {
@@ -130,22 +146,24 @@ namespace Day2eEditor
             if (needsUpdate)
             {
                 Console.WriteLine($"Downloading {name}...");
-                byte[] data = await _http.GetByteArrayAsync(url);
+                byte[] data = await _http.GetByteArrayAsync(dllUrl);
 
-                if (!ChecksumUtils.VerifyChecksum(data, checksum))
+                if (!ChecksumUtils.VerifyChecksum(data, dllChecksum))
                     throw new InvalidOperationException($"Checksum verification failed for {name}");
 
-                // Write to temporary file first
-                string tmpPath = path + ".update";
-                await File.WriteAllBytesAsync(tmpPath, data);
+                // Write DLL to temporary file first
+                string tmpDll = dllPath + ".update";
+                await File.WriteAllBytesAsync(tmpDll, data);
 
-                // Mark original for replacement
-                if (File.Exists(path)) File.Move(path, path + ".delete", true);
+                // Stage for replacement
+                if (File.Exists(dllPath)) File.Move(dllPath, dllPath + ".delete", true);
+                File.Move(tmpDll, dllPath);
 
-                File.Move(tmpPath, path);
-
+                updated = true;
                 Console.WriteLine($"{name} updated successfully.");
             }
+
+            return updated;
         }
 
         private async Task CheckAndUpdateMainAppAsync(AppInfo mainApp)
@@ -189,10 +207,9 @@ namespace Day2eEditor
                 InitiateShutdown(appZipFilePath, mainApp);
             }
         }
-        private void InitiateShutdown(string zipFilePath, AppInfo mainApp)
+        private void InitiateShutdown(string zipFilePath = null, AppInfo mainApp = null, bool restartOnly = false)
         {
-            // Create a separate process to restart the application after the shutdown
-            string updaterPath = Path.Combine(_appDirectory, "Updater.exe");
+            string updaterPath = Path.Combine(_appDirectory,"Updater", "Updater.exe");
             int pid = Process.GetCurrentProcess().Id;
 
             if (!File.Exists(updaterPath))
@@ -201,13 +218,24 @@ namespace Day2eEditor
                 return;
             }
 
+            // Build arguments
+            string args;
+            if (restartOnly)
+            {
+                args = "--restart-only";
+            }
+            else
+            {
+                args = $"\"{zipFilePath}\" \"{pid}\"";
+            }
+
             var psi = new ProcessStartInfo
             {
                 FileName = updaterPath,
-                Arguments = $"\"{zipFilePath}\" \" {pid}",
+                Arguments = args,
                 WorkingDirectory = _appDirectory,
-                UseShellExecute = true, // better for launching external .exe files
-                CreateNoWindow = true
+                UseShellExecute = true,
+                CreateNoWindow = false
             };
 
             try
@@ -219,8 +247,8 @@ namespace Day2eEditor
                 Console.WriteLine("Failed to start Updater.exe: " + ex.Message);
             }
 
-            // Shutdown the current application
-            Environment.Exit(0);  // Close the current app to allow updates
+            // Close the main app so the updater can do its work or just restart
+            Environment.Exit(0);
         }
         public async Task CheckAndUpdatePluginAsync(PluginInfo plugin)
         {

@@ -5,16 +5,21 @@ class Updater
 {
     static async Task Main(string[] args)
     {
-        if (args.Length < 2)
+        if (args.Length == 0)
         {
-            Console.WriteLine("Usage: Updater <zipPath> <expectedChecksum> [mainAppPid]");
+            Console.WriteLine("Usage: Updater <zipPath> <expectedChecksum> [mainAppPid] [--restart-only]");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
             return;
         }
+
+        bool restartOnly = args.Contains("--restart-only");
 
         string zipPath = args[0];
         int? mainAppPid = args.Length >= 2 && int.TryParse(args[1], out var pid) ? pid : null;
 
-        string appDirectory = AppContext.BaseDirectory;
+        string baseDir = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        string appDirectory = Directory.GetParent(baseDir)?.FullName ?? baseDir;
 
         if (mainAppPid.HasValue)
         {
@@ -38,18 +43,33 @@ class Updater
             }
         }
 
-        // Extract
-        Console.WriteLine("Extracting update...");
-        using (FileStream fs = File.OpenRead(zipPath))
+        if (!restartOnly)
         {
-            using (ZipArchive zip = new ZipArchive(fs))
+            // Extract update
+            Console.WriteLine("Extracting update...");
+            using (FileStream fs = File.OpenRead(zipPath))
             {
-                ExtractToDirectory(zip, appDirectory, true);
+                using (ZipArchive zip = new ZipArchive(fs))
+                {
+                    ExtractToDirectory(zip, appDirectory, true);
+                }
             }
+            File.Delete(zipPath);
+            Console.WriteLine("Update applied.");
         }
-        File.Delete(zipPath);
-        Console.WriteLine("Update applied.");
+        else
+        {
+            Console.WriteLine("Restart-only mode, skipping extraction.");
+        }
 
+        // Restart main app
+        RestartMainApp(appDirectory);
+        //Console.WriteLine("Press any key to continue...");
+        //Console.ReadKey();
+    }
+
+    private static void RestartMainApp(string appDirectory)
+    {
         // Restart main app
         string mainAppExe = Path.Combine(appDirectory, "Day2eEditor.exe");
         if (File.Exists(mainAppExe))
@@ -63,9 +83,12 @@ class Updater
         }
         else
         {
-            Console.WriteLine("Day2eEditor.exe not found.");
+            Console.WriteLine($"{mainAppExe} not found.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
     }
+
     public static void ExtractToDirectory(ZipArchive archive, string destinationDirectoryName, bool overwrite)
     {
         if (!overwrite)
