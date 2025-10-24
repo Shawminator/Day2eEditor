@@ -5,12 +5,12 @@
     "checksum": "sha256-c8d369221a6a931c242ce57135ff6c91ce05f1ff7a4bbcf64f9997a6768459dd"
   },
   "Core": {
-    "Version": "0.0.3",
+    "Version": "0.0.2",
     "Url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/Core.dll",
     "Checksum": "sha256-f507948820bd68378db292c5d2012a39fe7165e8e019fbe4d9e02556290700e5"
   },
   "CoreUI": {
-    "Version": "0.0.3",
+    "Version": "0.0.2",
     "Url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/CoreUI.dll",
     "Checksum": "sha256-d5d7c802b81b85b72257c99ac17d2383e72a63ff30befbd905d2424f08258fd4"
   },
