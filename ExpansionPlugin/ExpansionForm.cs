@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime;
 using System.Windows.Forms;
+using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 
@@ -57,9 +58,16 @@ namespace ExpansionPlugin
                 [typeof(Vec3)] = (node, selected) =>
                 {
                     Vec3 v3 = node.Tag as Vec3;
+                    var control = new Vector3Control();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables();
+                        DrawbaseAIPatrols(node.Parent.Parent.Parent.Parent.Tag as ExpansionAIPatrolConfig);
+                    };
+                    ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
                     if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
                     {
-                        
+
                         ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Tag as ExpansionAIPatrol;
                         SetupAIPatrols(ExpansionAIPatrol, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
@@ -83,6 +91,16 @@ namespace ExpansionPlugin
                     ShowHandler(new AIRoamingLocationControl(), typeof(ExpansionAILocationConfig), ExpansionAIRoamingLocation, selected);
                     SetupAILocationRoamingLocations(ExpansionAIRoamingLocation, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionAIRoamingLocation.Position[0], (float)ExpansionAIRoamingLocation.Position[2]));
+                },
+                [typeof(ExpansionAIPatrolSettings)] = (node, selected) =>
+                {
+                    ExpansionAIPatrolSettings ExpansionAIPatrolSettings = node.Tag as ExpansionAIPatrolSettings;
+                    ShowHandler(new AIPAtrolGeneralControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrolSettings, selected);
+                },
+                [typeof(ExpansionAIPatrol)] = (node,selected) =>
+                {
+                    ExpansionAIPatrol ExpansionAIPatrol = node.Tag as ExpansionAIPatrol;
+                    ShowHandler(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
                 },
                 //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
@@ -548,6 +566,9 @@ namespace ExpansionPlugin
             {
                 Tag = "AIrootNode"
             };
+
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLoadoutConfig, CreateExpansionLoadoutConfigNodes);
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLootDropConfig, CrateLootDropConfigNodes);
             AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
             AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAILocationConfig, CreateExpansionAILocationConfigNodes);
             rootNode.Nodes.Add(AIrootNode);
@@ -601,6 +622,91 @@ namespace ExpansionPlugin
             EconomyRootNode.Nodes.Add(acnodes);
         }
         //AI
+        private TreeNode CreateExpansionLoadoutConfigNodes(ExpansionLoadoutConfig ef)
+        {
+            TreeNode AILoadoutConfigRootNode = new TreeNode("Loadouts")
+            {
+                Tag = ef
+            };
+            foreach(AILoadouts AILoadouts in ef.AllData)
+            {
+                AILoadoutConfigRootNode.Nodes.Add(SetupLoadoutTreeView(AILoadouts));
+            }
+
+            return AILoadoutConfigRootNode;
+        }
+        private TreeNode SetupLoadoutTreeView(AILoadouts load)
+        {
+            string display = !string.IsNullOrWhiteSpace(load.FileName) ? load.FileName : Path.GetFileNameWithoutExtension(load.FileName ?? string.Empty);
+            TreeNode root = new TreeNode(display) { Tag = load };
+
+            TreeNode invAttachments = new TreeNode("inventoryAttachments") { Tag = "InventoryAttachments" };
+            foreach (Inventoryattachment ia in load.InventoryAttachments ?? new BindingList<Inventoryattachment>())
+                invAttachments.Nodes.Add(BuildInventoryAttachmentNode(ia));
+            root.Nodes.Add(invAttachments);
+
+            TreeNode invCargo = new TreeNode("InventoryCargo") { Tag = "InventoryCargo" };
+            foreach (AILoadouts cargo in load.InventoryCargo ?? new BindingList<AILoadouts>())
+                invCargo.Nodes.Add(BuildAILoadoutsNode(cargo));
+            root.Nodes.Add(invCargo);
+
+            TreeNode sets = new TreeNode("Sets") { Tag = "Sets" };
+            foreach (AILoadouts set in load.Sets ?? new BindingList<AILoadouts>())
+                sets.Nodes.Add(BuildAILoadoutsNode(set));
+            root.Nodes.Add(sets);
+
+            return root;
+        }
+        private TreeNode BuildInventoryAttachmentNode(Inventoryattachment ia)
+        {
+            string slotname = string.IsNullOrWhiteSpace(ia.SlotName) ? "Default Slot" : ia.SlotName;
+            TreeNode tn = new TreeNode(slotname) { Tag = ia };
+            foreach (AILoadouts child in ia.Items ?? new BindingList<AILoadouts>())
+                tn.Nodes.Add(BuildAILoadoutsNode(child));
+            return tn;
+        }
+        private TreeNode BuildAILoadoutsNode(AILoadouts a)
+        {
+            string label = string.IsNullOrWhiteSpace(a.ClassName) ? "Set" : a.ClassName;
+            TreeNode tn = new TreeNode(label) { Tag = a };
+
+            foreach (Inventoryattachment ia in a.InventoryAttachments ?? new BindingList<Inventoryattachment>())
+                tn.Nodes.Add(BuildInventoryAttachmentNode(ia));
+
+            TreeNode cargoNode = BuildCargoNode(a.InventoryCargo);
+            if (cargoNode != null) tn.Nodes.Add(cargoNode);
+
+            foreach (AILoadouts set in a.Sets ?? new BindingList<AILoadouts>())
+                tn.Nodes.Add(BuildAILoadoutsNode(set));
+
+            return tn;
+        }
+        private TreeNode BuildCargoNode(BindingList<AILoadouts> cargoList)
+        {
+            if (cargoList == null || cargoList.Count == 0) return null;
+            TreeNode tn = new TreeNode("Cargo") { Tag = "Cargo" };
+            foreach (AILoadouts c in cargoList)
+                tn.Nodes.Add(BuildAILoadoutsNode(c));
+            return tn;
+        }
+        private TreeNode CrateLootDropConfigNodes(ExpansionLootDropConfig ef)
+        {
+            TreeNode AILootdropConfigRootNode = new TreeNode("LootDrops")
+            {
+                Tag = ef
+            };
+            foreach (AILootDrops AILootdrops in ef.AllData)
+            {
+                TreeNode fileNode = new TreeNode(AILootdrops.FileName) { Tag = AILootdrops };
+                foreach (AILoadouts entry in AILootdrops.LootdropList)
+                {
+                    fileNode.Nodes.Add(BuildAILoadoutsNode(entry));
+                }
+                AILootdropConfigRootNode.Nodes.Add(fileNode);
+            }
+
+            return AILootdropConfigRootNode;
+        }
         private TreeNode CreateExpansionAIConfigNodes(ExpansionAIConfig ef)
         {
             TreeNode AIRootNode = new TreeNode(ef.FileName)
@@ -679,7 +785,7 @@ namespace ExpansionPlugin
             {
                 TreeNode PatrolRoot = new TreeNode(pat.Name)
                 {
-                    Tag = pat
+                    Tag = "ExpamnsionAIPatrols"
                 };
                 CreatePatrolNodes(pat, PatrolRoot);
                 AIAPatrolsNode.Nodes.Add(PatrolRoot);
@@ -727,6 +833,18 @@ namespace ExpansionPlugin
                 });
             }
             Root.Nodes.Add(WaypointsNode);
+            TreeNode UnitsNode = new TreeNode("Units")
+            {
+                Tag = "AIPatrolUnits"
+            };
+            foreach (string s in pat.Units)
+            {
+                UnitsNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "AIPatrolsUnit"
+                });
+            }
+            Root.Nodes.Add(UnitsNode);
         }
         private TreeNode CreateExpansionAILocationConfigNodes(ExpansionAILocationConfig ef)
         {
@@ -1346,47 +1464,52 @@ namespace ExpansionPlugin
         }
         private void DrawbaseAIPatrols(ExpansionAIPatrolConfig ExpansionAIPatrolConfig)
         {
+            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
             foreach (ExpansionAIPatrol patrol in ExpansionAIPatrolConfig.Data.Patrols)
             {
-                int c = 1;
-                foreach (Vec3 waypoints in patrol._waypoints)
+                PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                if (!string.IsNullOrEmpty(patrol.Behaviour))
                 {
-                    float centerX2 = 0;
-                    float centerY2 = 0;
-                    if (c < patrol._waypoints.Count)
+                    Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
+                }
+
+                for (int i = 0; i < patrol._waypoints.Count; i++)
+                {
+                    Vec3 waypoints = patrol._waypoints[i];
+
+                    // Determine next waypoint index
+                    bool isLast = i == patrol._waypoints.Count - 1;
+                    Vec3 nextWaypoint;
+
+                    if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
                     {
-                        centerX2 = patrol._waypoints[c].X;
-                        centerY2 = patrol._waypoints[c].Z;
+                        // Don't connect last to first for ALTERNATE
+                        nextWaypoint = waypoints;
                     }
                     else
                     {
-                        centerX2 = patrol._waypoints[0].X;
-                        centerY2 = patrol._waypoints[0].Z;
+                        nextWaypoint = patrol._waypoints[(i + 1) % patrol._waypoints.Count];
                     }
 
-                    var marker = new AIPatrolDrawable(new PointF(waypoints.X, waypoints.Z), new PointF(centerX2, centerY2), _mapControl.MapSize)
+                    var marker = new AIPatrolDrawable(
+                        new PointF(waypoints.X, waypoints.Z),
+                        new PointF(nextWaypoint.X, nextWaypoint.Z),
+                        _mapControl.MapSize,
+                        behaviour)
                     {
                         Color = Color.Red,
                         WriteString = true
                     };
+
                     if (_selectedAIPatrol == patrol)
-                    {
                         marker.Color = Color.LimeGreen;
-                    }
+
                     Vec3 v3 = currentTreeNode.Tag as Vec3;
-                    if(v3 == waypoints)
-                    {
+                    if (v3 == waypoints)
                         marker.Color = Color.Yellow;
-                    }
-                    if (c == 1)
-                    {
-                        marker.text = patrol.Name + "\n" + c.ToString();
-                    }
-                    else
-                    {
-                        marker.text = c.ToString();
-                    }
-                    c++;
+
+                    marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
+
                     _mapControl.RegisterDrawable(marker);
                 }
             }
@@ -1574,6 +1697,7 @@ namespace ExpansionPlugin
 
                 ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
                 ExpansionAIPatrolConfig.isDirty = true;
+                ShowHandler(new Vector3Control(), typeof(ExpansionAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
                 DrawbaseAIPatrols(ExpansionAIPatrolConfig);
                 currentTreeNode.Text = v3.GetString();
             }

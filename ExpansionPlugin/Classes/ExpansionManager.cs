@@ -16,6 +16,8 @@ namespace ExpansionPlugin
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
 
+        public ExpansionLoadoutConfig ExpansionLoadoutConfig { get; set; }
+        public ExpansionLootDropConfig ExpansionLootDropConfig { get; set; }
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionAILocationConfig ExpansionAILocationConfig { get; set; }
@@ -56,6 +58,8 @@ namespace ExpansionPlugin
             profilePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName);
 
             //profile files
+            _paths["ExpansionLoadouts"] = Path.Combine(profilePath, "ExpansionMod", "Loadouts");
+            _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
             _paths["AISettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AISettings.json");
             _paths["BookSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "BookSettings.json");
@@ -77,6 +81,12 @@ namespace ExpansionPlugin
         private void LoadFiles(string basePath)
         {
             Console.WriteLine($"\n[Load Expansion] Loading all files associated with the Expansion Mod.");
+
+            ExpansionLoadoutConfig = new ExpansionLoadoutConfig(_paths["ExpansionLoadouts"]);
+            LoadConfigWithErrorReport("ExpansionLoadouts", ExpansionLoadoutConfig);
+
+            ExpansionLootDropConfig = new ExpansionLootDropConfig(_paths["ExpansionLootDrops"]);
+            LoadConfigWithErrorReport("ExpansionLootDrops", ExpansionLootDropConfig);
 
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
@@ -136,6 +146,8 @@ namespace ExpansionPlugin
         {
             var configs = new object[]
             {
+                ExpansionLoadoutConfig,
+                ExpansionLootDropConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -169,6 +181,8 @@ namespace ExpansionPlugin
             bool needtosave = false;
             var configs = new object[]
             {
+                ExpansionLoadoutConfig,
+                ExpansionLootDropConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
