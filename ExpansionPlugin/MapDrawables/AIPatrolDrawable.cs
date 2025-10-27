@@ -1,6 +1,7 @@
 ﻿using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
@@ -67,15 +68,7 @@ namespace ExpansionPlugin
                             : Radius;
 
 
-            using (var pen = new Pen(Color, 2))
-            {
-                g.DrawEllipse(pen, screenX - screenRadius, screenY - screenRadius, screenRadius * 2, screenRadius * 2);
-            }
-
-            using (var brush = new SolidBrush(Color))
-            {
-                g.FillEllipse(brush, screenX - 2f, screenY - 2f, 4f, 4f);
-            }
+            
 
             PointF center = new PointF(screenX, screenY);
             PointF center2 = new PointF(screenX2, screenY2);
@@ -146,7 +139,15 @@ namespace ExpansionPlugin
                     DrawArrow(g, center2, center, GetArrowPen());
                 }
             }
+            using (var pen = new Pen(Color, 2))
+            {
+                g.DrawEllipse(pen, screenX - screenRadius, screenY - screenRadius, screenRadius * 2, screenRadius * 2);
+            }
 
+            using (var brush = new SolidBrush(Color))
+            {
+                g.FillEllipse(brush, screenX - 2f, screenY - 2f, 4f, 4f);
+            }
             if (WriteString)
             {
                 Rectangle rect3 = new Rectangle((int)center.X - 2, (int)center.Y - 32, 200, 40);
@@ -166,6 +167,7 @@ namespace ExpansionPlugin
 
             if (length == 0) return;
 
+            // Normalize direction
             dx /= length;
             dy /= length;
 
@@ -173,13 +175,22 @@ namespace ExpansionPlugin
             float px = -dy;
             float py = dx;
 
-            PointF mid = new PointF(from.X + dx * length / 2f, from.Y + dy * length / 2f);
+            // Shift the arrow position (e.g., 40% of the way instead of 50%)
+            float arrowPosition = 0.4f; // 0 = start, 1 = end
+            float shift = arrowPosition * length;
 
-            PointF arrowPoint1 = new PointF(mid.X - arrowSize * dx + arrowSize * 0.5f * px, mid.Y - arrowSize * dy + arrowSize * 0.5f * py);
-            PointF arrowPoint2 = new PointF(mid.X - arrowSize * dx - arrowSize * 0.5f * px, mid.Y - arrowSize * dy - arrowSize * 0.5f * py);
+            // Compute the base point of the arrow (slightly toward 'from')
+            PointF basePoint = new PointF(from.X + dx * shift, from.Y + dy * shift);
 
-            g.DrawLine(pen, mid, arrowPoint1);
-            g.DrawLine(pen, mid, arrowPoint2);
+            // Compute arrowhead points
+            PointF arrowPoint1 = new PointF(basePoint.X - arrowSize * dx + arrowSize * 0.5f * px,
+                                            basePoint.Y - arrowSize * dy + arrowSize * 0.5f * py);
+            PointF arrowPoint2 = new PointF(basePoint.X - arrowSize * dx - arrowSize * 0.5f * px,
+                                            basePoint.Y - arrowSize * dy - arrowSize * 0.5f * py);
+
+            // Draw the arrowhead
+            g.DrawLine(pen, basePoint, arrowPoint1);
+            g.DrawLine(pen, basePoint, arrowPoint2);
         }
 
         private Pen GetArrowPen(bool dashed = false)

@@ -67,8 +67,7 @@ namespace ExpansionPlugin
                     ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
                     if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
                     {
-
-                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Tag as ExpansionAIPatrol;
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Nodes[0].Tag as ExpansionAIPatrol;
                         SetupAIPatrols(ExpansionAIPatrol, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
@@ -1496,7 +1495,7 @@ namespace ExpansionPlugin
                         new PointF(nextWaypoint.X, nextWaypoint.Z),
                         _mapControl.MapSize,
                         behaviour)
-                    {
+                        {
                         Color = Color.Red,
                         WriteString = true
                     };
