@@ -375,6 +375,7 @@
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(289, 132);
             listBox1.TabIndex = 197;
+            listBox1.DrawItem += listBox_DrawItem;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // ExpansionAILoadoutsControl

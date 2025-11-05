@@ -57,7 +57,24 @@ namespace ExpansionPlugin
 
             _suppressEvents = false;
         }
-
+        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            ListBox lb = sender as ListBox;
+            e.DrawBackground();
+            Brush myBrush = Brushes.Black;
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+            }
+            else
+            {
+                myBrush = Brushes.White;
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(60, 63, 65)), e.Bounds);
+            }
+            e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
+            e.DrawFocusRectangle();
+        }
         /// <summary>
         /// Applies changes to the data and updates the original snapshot
         /// </summary>
