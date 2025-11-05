@@ -501,6 +501,19 @@ namespace Day2eEditor
 
             return null;
         }
+        public static object FindLastParentOfType(this TreeNode node, Type type)
+        {
+            object lastMatch = null;
+            while (node != null)
+            {
+                if (node.Tag != null && type.IsInstanceOfType(node.Tag))
+                    lastMatch = node.Tag;
+
+                node = node.Parent;
+            }
+
+            return lastMatch;
+        }
         public static T FindChildOfType<T>(this TreeNode node) where T : class
         {
             if (node == null)
@@ -531,6 +544,19 @@ namespace Day2eEditor
 
             return null;
         }
-        
+        public static T FindLastParentOfType<T>(this TreeNode node) where T : class
+        {
+            T lastMatch = null;
+
+            while (node != null)
+            {
+                if (node.Tag is T match)
+                    lastMatch = match; // keep updating, don’t return yet
+
+                node = node.Parent;
+            }
+
+            return lastMatch;
+        }
     }
 }

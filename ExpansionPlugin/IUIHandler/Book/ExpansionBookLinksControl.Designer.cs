@@ -1,6 +1,6 @@
-﻿namespace EconomyPlugin
+﻿namespace ExpansionPlugin
 {
-    partial class BookLinksControl
+    partial class ExpansionBookLinksControl
     {
         /// <summary> 
         /// Required designer variable.

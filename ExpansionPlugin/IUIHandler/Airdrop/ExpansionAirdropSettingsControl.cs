@@ -1,7 +1,6 @@
 ﻿using Day2eEditor;
-using ExpansionPlugin;
 
-namespace EconomyPlugin
+namespace ExpansionPlugin
 {
     /// <summary>
     /// Template for a UI Control implementing IUIHandler

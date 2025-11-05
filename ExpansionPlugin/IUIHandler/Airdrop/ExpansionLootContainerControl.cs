@@ -1,8 +1,7 @@
 ﻿using Day2eEditor;
-using ExpansionPlugin;
 using System.ComponentModel;
 
-namespace EconomyPlugin
+namespace ExpansionPlugin
 {
     /// <summary>
     /// Template for a UI Control implementing IUIHandler

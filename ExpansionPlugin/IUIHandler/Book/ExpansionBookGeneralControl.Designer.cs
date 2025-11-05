@@ -1,4 +1,4 @@
-﻿namespace EconomyPlugin
+﻿namespace ExpansionPlugin
 {
     partial class ExpansionBookGeneralControl
     {

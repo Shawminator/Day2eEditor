@@ -1,19 +1,18 @@
 ﻿using CoreUI.Forms;
 using Day2eEditor;
-using ExpansionPlugin;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace EconomyPlugin
+namespace ExpansionPlugin
 {
     /// <summary>
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class BookLinksControl : UserControl, IUIHandler
+    public partial class ExpansionBookLinksControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private ExpansionBookLink _data;
@@ -21,7 +20,7 @@ namespace EconomyPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public BookLinksControl()
+        public ExpansionBookLinksControl()
         {
             InitializeComponent();
         }

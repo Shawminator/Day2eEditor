@@ -1,11 +1,10 @@
 ﻿using Day2eEditor;
-using ExpansionPlugin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace EconomyPlugin
+namespace ExpansionPlugin
 {
     /// <summary>
     /// Template for a UI Control implementing IUIHandler

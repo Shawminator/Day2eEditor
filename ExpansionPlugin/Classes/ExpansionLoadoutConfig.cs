@@ -88,6 +88,7 @@ namespace ExpansionPlugin
         public bool ToDelete { get; set; }
 
         public string ClassName { get; set; }
+        public string Include { get; set; }
         public decimal Chance { get; set; }
         public Quantity Quantity { get; set; }
         public BindingList<Health> Health { get; set; }
@@ -103,6 +104,7 @@ namespace ExpansionPlugin
         public AILoadouts()
         {
             ClassName = "";
+            Include = "";
             Chance = (decimal)1;
             Quantity = new Quantity();
             Health = new BindingList<Health>();
@@ -115,6 +117,7 @@ namespace ExpansionPlugin
         {
             name = name;
             ClassName = "";
+            Include = "";
             Chance = (decimal)1;
             Quantity = new Quantity();
             Health = new BindingList<Health>();
@@ -155,12 +158,35 @@ namespace ExpansionPlugin
 
             return ClassName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not AILoadouts other) return false;
+
+            return ClassName == other.ClassName &&
+                   Include == other.Include &&
+                   Chance == other.Chance &&
+                   Equals(Quantity, other.Quantity) &&
+                   Health.SequenceEqual(other.Health) &&
+                   InventoryAttachments.SequenceEqual(other.InventoryAttachments) &&
+                   InventoryCargo.SequenceEqual(other.InventoryCargo) &&
+                   ConstructionPartsBuilt.SequenceEqual(other.ConstructionPartsBuilt) &&
+                   Sets.SequenceEqual(other.Sets);
+        }
+
     }
 
     public class Quantity
     {
         public decimal Min { get; set; }
         public decimal Max { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Quantity other) return false;
+            return Min == other.Min && Max == other.Max;
+        }
+
     }
 
     public class Health
@@ -176,6 +202,12 @@ namespace ExpansionPlugin
             return Zone;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not Health other) return false;
+            return Min == other.Min && Max == other.Max && Zone == other.Zone;
+        }
+
     }
 
     public class Inventoryattachment
@@ -187,5 +219,13 @@ namespace ExpansionPlugin
         {
             return SlotName; ;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Inventoryattachment other) return false;
+            return SlotName == other.SlotName &&
+                   Items.SequenceEqual(other.Items);
+        }
+
     }
 }
