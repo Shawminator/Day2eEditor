@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -225,6 +226,31 @@ namespace ExpansionPlugin
             // ----------------------
             _typeContextMenus = new Dictionary<Type, Action<TreeNode>>
             {
+                // Loadouts
+                [typeof(Inventoryattachment)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveAttachemtItemToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(AILoadouts)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removItemToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(AddNewAttachmentItemToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(AddNewCargoItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                // LootDrop
+                [typeof(AILootDrops)] = noew =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 // Airdrops
                 [typeof(ExpansionLootContainer)] = node =>
                 {
@@ -279,6 +305,19 @@ namespace ExpansionPlugin
             // ----------------------
             _stringContextMenus = new Dictionary<string, Action<TreeNode>>
             {
+                // Loadouts
+                ["InventoryAttachments"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewAttachmentItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["InventoryCargo"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewCargoItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 // Airdrops
                 ["AirdropContainers"] = node =>
                 {
@@ -693,7 +732,7 @@ namespace ExpansionPlugin
         private TreeNode BuildCargoNode(BindingList<AILoadouts> cargoList)
         {
             if (cargoList == null || cargoList.Count == 0) return null;
-            TreeNode tn = new TreeNode("Cargo") { Tag = "Cargo" };
+            TreeNode tn = new TreeNode("InventoryCargo") { Tag = "InventoryCargo" };
             foreach (AILoadouts c in cargoList)
                 tn.Nodes.Add(BuildAILoadoutsNode(c));
             return tn;
@@ -1722,110 +1761,123 @@ namespace ExpansionPlugin
         /// Treeview right click methods
         /// </summary>
         //Loadouts
-        //private void AddNewAttachmentItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    Inventoryattachment newIA = new Inventoryattachment()
-        //    {
-        //        SlotName = "Back",
-        //        Items = new BindingList<AILoadouts>()
-        //    };
+        private void AddNewAttachmentItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Inventoryattachment newIA = new Inventoryattachment()
+            {
+                SlotName = "Back",
+                Items = new BindingList<AILoadouts>()
+            };
 
-        //    TreeNode newnode = new TreeNode(newIA.SlotName) { Tag = newIA };
+            TreeNode newnode = new TreeNode(newIA.SlotName) { Tag = newIA };
 
-        //    // If selected node is the "inventoryAttachments" category under a file
-        //    if (treeViewMS1.SelectedNode != null && treeViewMS1.SelectedNode.Tag is string tag && tag == TAG_INVENTORY_ATTACHMENTS && CurrentAILoadoutsFile != null)
-        //    {
-        //        CurrentAILoadoutsFile.InventoryAttachments.Add(newIA);
-        //        treeViewMS1.SelectedNode.Nodes.Add(newnode);
-        //        CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //    else if (CurrentAIloadouts != null)
-        //    {
-        //        CurrentAIloadouts.InventoryAttachments.Add(newIA);
-        //        treeViewMS1.SelectedNode?.Nodes.Add(newnode);
+            // If selected node is the "inventoryAttachments" category under a file
+            if (currentTreeNode != null && currentTreeNode.Tag is string tag && tag == "InventoryAttachments" && currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
+            {
+                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                AILoadouts.InventoryAttachments.Add(newIA);
+                currentTreeNode.Nodes.Add(newnode);
+                AILoadouts.isDirty = true;
+            }
+            else if ( currentTreeNode.FindParentOfType<AILoadouts>() != null)
+            {
+                AILoadouts AILoadouts = currentTreeNode.FindParentOfType<AILoadouts>();
+                AILoadouts.InventoryAttachments.Add(newIA);
+                currentTreeNode.Nodes.Add(newnode);
 
-        //        // If parent is inside a loot drops file, mark that file dirty
-        //        if (currentAILootDropsFile != null)
-        //            currentAILootDropsFile.isDirty = true;
-        //        else if (CurrentAILoadoutsFile != null)
-        //            CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //}
-        //private void RemoveAttachemtItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    if (CurrentInventoryattachment == null) return;
 
-        //    // If the inventory attachment belongs to an AILoadouts file
-        //    if (CurrentAILoadoutsFile != null)
-        //    {
-        //        CurrentAILoadoutsFile.InventoryAttachments.Remove(CurrentInventoryattachment);
-        //        if (treeViewMS1.SelectedNode != null)
-        //            treeViewMS1.SelectedNode.Remove();
-        //        CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //    else if (currentAILootDropsFile != null)
-        //    {
-        //        // If this inventory attachment is inside an AILoadouts that belongs to a loot drops file,
-        //        // find that specific AILoadouts parent and update it and the loot drops file's dirty flag.
-        //        TreeNode selected = treeViewMS1.SelectedNode;
-        //        TreeNode parent = selected?.Parent;
-        //        if (parent != null && parent.Tag is AILoadouts parentLoadout)
-        //        {
-        //            parentLoadout.InventoryAttachments.Remove(CurrentInventoryattachment);
-        //            selected.Remove();
-        //            currentAILootDropsFile.isDirty = true;
-        //        }
-        //    }
-        //}
-        //private void AddNewCargoItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    AILoadouts newItem = new AILoadouts()
-        //    {
-        //        ClassName = "New Item, Replace me.",
-        //        Chance = (decimal)1.0,
-        //        Quantity = new Quantity(),
-        //        Health = new BindingList<Health>(),
-        //        InventoryAttachments = new BindingList<Inventoryattachment>(),
-        //        InventoryCargo = new BindingList<AILoadouts>(),
-        //        ConstructionPartsBuilt = new BindingList<object>(),
-        //        Sets = new BindingList<AILoadouts>()
-        //    };
-        //    TreeNode newNode = new TreeNode(newItem.ClassName) { Tag = newItem };
+                // If parent is inside a loot drops file, mark that file dirty
+                if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
+                    currentTreeNode.FindParentOfType<AILootDrops>().isDirty = true;
+                else if (currentTreeNode.FindLastParentOfType<AILoadouts>() != null)
+                    currentTreeNode.FindLastParentOfType<AILoadouts>().isDirty = true;
+            }
+        }
 
-        //    TreeNode sel = treeViewMS1.SelectedNode;
-        //    if (sel == null) return;
+        private void RemoveAttachemtItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // If the inventory attachment belongs to an AILoadouts file
+            if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
+            {
+                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                AILoadouts.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
+                if (currentTreeNode != null)
+                    currentTreeNode.Remove();
+                AILoadouts.isDirty = true;
+            }
+            else if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
+            {
+                // If this inventory attachment is inside an AILoadouts that belongs to a loot drops file,
+                // find that specific AILoadouts parent and update it and the loot drops file's dirty flag.
+                TreeNode parent = currentTreeNode.Parent;
+                if (parent != null && parent.Tag is AILoadouts parentLoadout)
+                {
+                    parentLoadout.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
+                    currentTreeNode.FindParentOfType<AILootDrops>().isDirty = true;
+                    currentTreeNode.Remove();
+                }
+            }
+        }
 
-        //    // If user clicked on an InventoryCargo category node
-        //    if (sel.Tag is string tag && tag == TAG_INVENTORY_CARGO && CurrentAILoadoutsFile != null)
-        //    {
-        //        CurrentAILoadoutsFile.InventoryCargo.Add(newItem);
-        //        sel.Nodes.Add(newNode);
-        //        CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //    else if (sel.Tag is AILoadouts selectedAILoadouts)
-        //    {
-        //        // find/create Cargo child
-        //        TreeNode cargoNode = sel.Nodes.Cast<TreeNode>().FirstOrDefault(n => string.Equals(n.Tag as string, TAG_CARGO));
-        //        if (cargoNode == null)
-        //        {
-        //            cargoNode = new TreeNode("Cargo") { Tag = TAG_CARGO };
-        //            sel.Nodes.Add(cargoNode);
-        //        }
-        //        cargoNode.Nodes.Add(newNode);
-        //        selectedAILoadouts.InventoryCargo.Add(newItem);
+        private void AddNewCargoItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AILoadouts newItem = new AILoadouts()
+            {
+                ClassName = "New Item, Replace me.",
+                Chance = (decimal)1.0,
+                Quantity = new Quantity(),
+                Health = new BindingList<Health>(),
+                InventoryAttachments = new BindingList<Inventoryattachment>(),
+                InventoryCargo = new BindingList<AILoadouts>(),
+                ConstructionPartsBuilt = new BindingList<object>(),
+                Sets = new BindingList<AILoadouts>()
+            };
+            TreeNode newNode = new TreeNode(newItem.ClassName) { Tag = newItem };
 
-        //        // If this AILoadouts is inside a loot drops file, mark the loot drops file dirty
-        //        AILootDrops owningLootFile = sel.FindParentOfType<AILootDrops>();
-        //        if (owningLootFile != null)
-        //        {
-        //            owningLootFile.isDirty = true;
-        //        }
-        //        else if (CurrentAILoadoutsFile != null)
-        //        {
-        //            CurrentAILoadoutsFile.isDirty = true;
-        //        }
-        //    }
-        //}
+
+
+            if(currentTreeNode.Parent.Tag is AILoadouts AILoadouts)
+            {
+                AILoadouts.InventoryCargo.Add(newItem);
+                currentTreeNode.Nodes.Add(newNode);
+                AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>();
+                AILoadouts AILoadouts3 = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                if (owningLootFile != null)
+                {
+                    owningLootFile.isDirty = true;
+                }
+                else if (AILoadouts3 != null)
+                {
+                    AILoadouts3.isDirty = true;
+                }
+            }
+            else if (currentTreeNode.Tag is AILoadouts selectedAILoadouts)
+            {
+                // find/create Cargo child
+                TreeNode cargoNode = currentTreeNode.Nodes.Cast<TreeNode>().FirstOrDefault(n => string.Equals(n.Tag as string, "InventoryCargo"));
+                if (cargoNode == null)
+                {
+                    cargoNode = new TreeNode("InventoryCargo") { Tag = "InventoryCargo" };
+                    currentTreeNode.Nodes.Add(cargoNode);
+                }
+                cargoNode.Nodes.Add(newNode);
+                selectedAILoadouts.InventoryCargo.Add(newItem);
+
+                // If this AILoadouts is inside a loot drops file, mark the loot drops file dirty
+                AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>();
+                AILoadouts AILoadouts3 = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                if (owningLootFile != null)
+                {
+                    owningLootFile.isDirty = true;
+                }
+                else if (AILoadouts3 != null)
+                {
+                    AILoadouts3.isDirty = true;
+                }
+            }
+            ExpansionTV.SelectedNode = newNode;
+        }
+
         //private void RemoveCargoItemToolStripMenuItem_Click(object sender, EventArgs e)
         //{
         //    TreeNode sel = treeViewMS1.SelectedNode;
@@ -1845,6 +1897,7 @@ namespace ExpansionPlugin
         //            CurrentAILoadoutsFile.isDirty = true;
         //    }
         //}
+
         //private void AddNewSetItemToolStripMenuItem_Click(object sender, EventArgs e)
         //{
         //    AILoadouts newSet = new AILoadouts()
@@ -1874,6 +1927,7 @@ namespace ExpansionPlugin
         //        currentAILootDropsFile.isDirty = true;
         //    }
         //}
+
         //private void RemoveSetItemToolStripMenuItem_Click(object sender, EventArgs e)
         //{
         //    TreeNode sel = treeViewMS1.SelectedNode;
@@ -1904,140 +1958,128 @@ namespace ExpansionPlugin
         //        else if (CurrentAILoadoutsFile != null) CurrentAILoadoutsFile.isDirty = true;
         //    }
         //}
-        //private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    AILoadouts newItem = new AILoadouts()
-        //    {
-        //        ClassName = "New Item, Replace me.",
-        //        Chance = (decimal)1.0,
-        //        Quantity = new Quantity(),
-        //        Health = new BindingList<Health>(),
-        //        InventoryAttachments = new BindingList<Inventoryattachment>(),
-        //        InventoryCargo = new BindingList<AILoadouts>(),
-        //        ConstructionPartsBuilt = new BindingList<object>(),
-        //        Sets = new BindingList<AILoadouts>()
-        //    };
-        //    newItem.Health.Add(new Health() { Zone = "", Min = (decimal)0.7, Max = (decimal)1.0 });
 
-        //    TreeNode newNode = new TreeNode(newItem.ClassName) { Tag = newItem };
-        //    treeViewMS1.SelectedNode?.Nodes.Add(newNode);
+        private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AILoadouts newItem = new AILoadouts()
+            {
+                ClassName = "New Item, Replace me.",
+                Chance = (decimal)1.0,
+                Quantity = new Quantity(),
+                Health = new BindingList<Health>(),
+                InventoryAttachments = new BindingList<Inventoryattachment>(),
+                InventoryCargo = new BindingList<AILoadouts>(),
+                ConstructionPartsBuilt = new BindingList<object>(),
+                Sets = new BindingList<AILoadouts>()
+            };
+            newItem.Health.Add(new Health() { Zone = "", Min = (decimal)0.7, Max = (decimal)1.0 });
 
-        //    // If adding under AILootDrops file node
-        //    if (CurrentTreenode != null && CurrentTreenode.Tag is AILootDrops drops)
-        //    {
-        //        drops.LootdropList.Add(newItem);
-        //        drops.isDirty = true;
-        //    }
-        //    else if (CurrentAILoadoutsFile != null)
-        //    {
-        //        // If adding under a loadouts file
-        //        if (CurrentTreenode.Tag is Inventoryattachment Inventoryattachment)
-        //            Inventoryattachment.Items.Add(newItem);
-        //        CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //    else if (currentAILootDropsFile != null)
-        //    {
-        //        if (CurrentTreenode.Tag is Inventoryattachment Inventoryattachment)
-        //            Inventoryattachment.Items.Add(newItem);
+            TreeNode newNode = new TreeNode(newItem.ClassName) { Tag = newItem };
+            currentTreeNode.Nodes.Add(newNode);
 
-        //        currentAILootDropsFile.isDirty = true;
-        //    }
-        //}
-        //private void removeItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    TreeNode selected = treeViewMS1.SelectedNode;
-        //    if (selected == null || selected.Parent == null) return;
+            // If adding under AILootDrops file node
+            if (currentTreeNode != null && currentTreeNode.Tag is AILootDrops drops)
+            {
+                drops.LootdropList.Add(newItem);
+                drops.isDirty = true;
+            }
+            else if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
+            {
+                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                // If adding under a loadouts file
+                if (currentTreeNode.Tag is Inventoryattachment Inventoryattachment)
+                    Inventoryattachment.Items.Add(newItem);
+                AILoadouts.isDirty = true;
+            }
+            else if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
+            {
+                AILootDrops AILootDrops = currentTreeNode.FindLastParentOfType<AILootDrops>();
+                if (currentTreeNode.Tag is Inventoryattachment Inventoryattachment)
+                    Inventoryattachment.Items.Add(newItem);
 
-        //    TreeNode parent = selected.Parent;
+                AILootDrops.isDirty = true;
+            }
+        }
 
-        //    // --- 1) Inventoryattachment parent ---
-        //    if (parent.Tag is Inventoryattachment ia)
-        //    {
-        //        AILoadouts item = selected.Tag as AILoadouts;
-        //        AILootDrops owningLootFile = selected.FindParentOfType<AILootDrops>(); // capture before removal
+        private void removeItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode parent = currentTreeNode.Parent;
 
-        //        ia.Items.Remove(item);
-        //        selected.Remove();
+            // --- 1) Inventoryattachment parent ---
+            if (parent.Tag is Inventoryattachment ia)
+            {
+                AILoadouts item = currentTreeNode.Tag as AILoadouts;
+                AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
+                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ia.Items.Remove(item);
+                currentTreeNode.Remove();
 
-        //        if (owningLootFile != null)
-        //            owningLootFile.isDirty = true;
-        //        else if (CurrentAILoadoutsFile != null)
-        //            CurrentAILoadoutsFile.isDirty = true;
+                if (owningLootFile != null)
+                    owningLootFile.isDirty = true;
+                else if (AILoadouts != null)
+                    AILoadouts.isDirty = true;
 
-        //        return;
-        //    }
+                return;
+            }
 
-        //    // --- 2) AILootDrops file parent (top-level loadout under LootDrops file) ---
-        //    if (parent.Tag is AILootDrops parentLootFile)
-        //    {
-        //        AILoadouts toRemove = selected.Tag as AILoadouts;
-        //        if (toRemove != null)
-        //        {
-        //            parentLootFile.LootdropList.Remove(toRemove);
-        //            selected.Remove();
-        //            parentLootFile.isDirty = true;
-        //        }
-        //        return;
-        //    }
+            // --- 2) AILootDrops file parent (top-level loadout under LootDrops file) ---
+            if (parent.Tag is AILootDrops parentLootFile)
+            {
+                AILoadouts toRemove = currentTreeNode.Tag as AILoadouts;
+                if (toRemove != null)
+                {
+                    parentLootFile.LootdropList.Remove(toRemove);
+                    currentTreeNode.Remove();
+                    parentLootFile.isDirty = true;
+                }
+                return;
+            }
 
-        //    // --- 3) All other cases where selected.Tag is AILoadouts ---
-        //    if (selected.Tag is AILoadouts selectedLoadout)
-        //    {
-        //        AILootDrops owningLootFile = selected.FindParentOfType<AILootDrops>(); // capture before removal
+            // --- 3) All other cases where selected.Tag is AILoadouts ---
+            if (currentTreeNode.Tag is AILoadouts selectedLoadout)
+            {
+                AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
 
-        //        // (a) InventoryCargo category
-        //        if (string.Equals(parent.Text, "InventoryCargo", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
-        //            if (fileRoot != null)
-        //            {
-        //                fileRoot.InventoryCargo.Remove(selectedLoadout);
-        //                selected.Remove();
+                // (a) InventoryCargo category
+                if (string.Equals(parent.Text, "InventoryCargo", StringComparison.OrdinalIgnoreCase))
+                {
+                    AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
+                    if (fileRoot != null)
+                    {
+                        fileRoot.InventoryCargo.Remove(selectedLoadout);
+                        
+                        AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                        if (owningLootFile != null)
+                            owningLootFile.isDirty = true;
+                        else if (AILoadouts != null)
+                            AILoadouts.isDirty = true;
 
-        //                if (owningLootFile != null)
-        //                    owningLootFile.isDirty = true;
-        //                else if (CurrentAILoadoutsFile != null)
-        //                    CurrentAILoadoutsFile.isDirty = true;
-        //            }
-        //        }
-        //        // (b) Sets category
-        //        else if (string.Equals(parent.Text, "Sets", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
-        //            if (fileRoot != null)
-        //            {
-        //                fileRoot.Sets.Remove(selectedLoadout);
-        //                selected.Remove();
+                        currentTreeNode.Remove();
+                        if(fileRoot.InventoryCargo.Count == 0)
+                        {
 
-        //                if (owningLootFile != null)
-        //                    owningLootFile.isDirty = true;
-        //                else if (CurrentAILoadoutsFile != null)
-        //                    CurrentAILoadoutsFile.isDirty = true;
-        //            }
-        //        }
-        //        // (c) Cargo category (nested under another AILoadouts)
-        //        else if (string.Equals(parent.Text, "Cargo", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            AILoadouts parentLoadout = parent.Parent?.Tag as AILoadouts;
-        //            if (parentLoadout != null)
-        //            {
-        //                parentLoadout.InventoryCargo.Remove(selectedLoadout);
+                        }
+                    }
+                }
+                // (b) Sets category
+                else if (string.Equals(parent.Text, "Sets", StringComparison.OrdinalIgnoreCase))
+                {
+                    AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
+                    if (fileRoot != null)
+                    {
+                        fileRoot.Sets.Remove(selectedLoadout);
+                        
+                        AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                        if (owningLootFile != null)
+                            owningLootFile.isDirty = true;
+                        else if (AILoadouts != null)
+                            AILoadouts.isDirty = true;
 
-        //                // Remove tree node after all data updates
-        //                selected.Remove();
-
-        //                // If cargo is now empty, remove the "Cargo" container node
-        //                if (parentLoadout.InventoryCargo.Count == 0)
-        //                    parent.Remove();
-
-        //                if (owningLootFile != null)
-        //                    owningLootFile.isDirty = true;
-        //                else if (CurrentAILoadoutsFile != null)
-        //                    CurrentAILoadoutsFile.isDirty = true;
-        //            }
-        //        }
-        //    }
-        //}
+                        currentTreeNode.Remove();
+                    }
+                }
+            }
+        }
         // Airdrops 
         private void addNewAirdropContainerToolStripMenuItem_Click(object sender, EventArgs e)
         {
