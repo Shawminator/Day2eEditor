@@ -4,11 +4,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Runtime;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ExpansionPlugin
 {
@@ -44,8 +48,9 @@ namespace ExpansionPlugin
             _plugin = plugin;
             _expansionManager = new ExpansionManager();
             _expansionManager.SetExpansionStuff();
+            _expansionManager.SetExternalFiles();
             AppServices.Register(_expansionManager);
-            
+
         }
         private void initializeShowControlHandlers()
         {
@@ -106,11 +111,6 @@ namespace ExpansionPlugin
                 {
                     ExpansionAIPatrolSettings ExpansionAIPatrolSettings = node.Tag as ExpansionAIPatrolSettings;
                     ShowHandler(new AIPAtrolGeneralControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrolSettings, selected);
-                },
-                [typeof(ExpansionAIPatrol)] = (node,selected) =>
-                {
-                    ExpansionAIPatrol ExpansionAIPatrol = node.Tag as ExpansionAIPatrol;
-                    ShowHandler(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
                 },
                 //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
@@ -173,6 +173,12 @@ namespace ExpansionPlugin
             // ----------------------
             _stringHandlers = new Dictionary<string, Action<TreeNode, List<TreeNode>>>
             {
+                //AI
+                ["AIPatrolGeneral"] = (node, selected) =>
+                {
+                    ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
+                    ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
+                },
                 //Airdrops
                 ["AirdropContainersLoot"] = (node, selected) =>
                 {
@@ -226,6 +232,26 @@ namespace ExpansionPlugin
             // ----------------------
             _typeContextMenus = new Dictionary<Type, Action<TreeNode>>
             {
+                [typeof(Vec3)] = node =>
+                {
+                    Vec3 v3 = node.Tag as Vec3;
+                    if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeWaypointToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveWaypointUpToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(moveWaypointDownToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                },
+                //AI
+                [typeof(ExpansionAIPatrol)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removePatrolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 // Loadouts
                 [typeof(Inventoryattachment)] = node =>
                 {
@@ -238,17 +264,31 @@ namespace ExpansionPlugin
                 [typeof(AILoadouts)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
-                    ExpansionSettingsCM.Items.Add(removItemToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(RemoveItemToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(AddNewAttachmentItemToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(AddNewCargoItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionLoadoutConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewLoadoutFileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 // LootDrop
                 [typeof(AILootDrops)] = noew =>
                 {
                     ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveItemToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(addNewItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionLootDropConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewLootDropFileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 // Airdrops
@@ -318,6 +358,12 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(AddNewCargoItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                ["Sets"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewSetToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 // Airdrops
                 ["AirdropContainers"] = node =>
                 {
@@ -360,6 +406,33 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeAIPlayerFactionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AIPatrols"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewPatrolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AIPatrolWayPoints"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addWaypointToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(importWaypointsToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(exportWaypointsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AIPatrolUnits"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addUnitToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AIPatrolsUnit"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeUnitToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //BaseBuilding 
@@ -460,14 +533,14 @@ namespace ExpansionPlugin
                 {
 
                     MessageBox.Show("Errors were detected.\nPlease check the console for further info\nIf all errors are corrected please reload Expansion Manager", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
+                    Close();
                 }));
                 return;
             }
             initializeShowControlHandlers();
             InitializeContextMenuHandlers();
             BuildTreeview();
-            
+
         }
         private void ExpansionForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -536,7 +609,7 @@ namespace ExpansionPlugin
             }
             Image mapImage = Image.FromFile(imagePath);
             _mapControl.LoadMap(mapImage, AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
-            MapData = new MapData(Path.Combine(appDirectory, "MapAddons", AppServices.GetRequired<ProjectManager>().CurrentProject.MapPath+".xyz"), AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
+            MapData = new MapData(Path.Combine(appDirectory, "MapAddons", AppServices.GetRequired<ProjectManager>().CurrentProject.MapPath + ".xyz"), AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
             return true;
         }
         private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, string rootPath, TFile file, Func<TFile, TreeNode> createFileNode, bool expand = false)
@@ -676,7 +749,7 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            foreach(AILoadouts AILoadouts in ef.AllData)
+            foreach (AILoadouts AILoadouts in ef.AllData)
             {
                 AILoadoutConfigRootNode.Nodes.Add(SetupLoadoutTreeView(AILoadouts));
             }
@@ -829,11 +902,11 @@ namespace ExpansionPlugin
             {
                 Tag = "AIPatrols"
             };
-            foreach(ExpansionAIPatrol pat in ef.Data.Patrols)
+            foreach (ExpansionAIPatrol pat in ef.Data.Patrols)
             {
                 TreeNode PatrolRoot = new TreeNode(pat.Name)
                 {
-                    Tag = "ExpamnsionAIPatrols"
+                    Tag = pat
                 };
                 CreatePatrolNodes(pat, PatrolRoot);
                 AIAPatrolsNode.Nodes.Add(PatrolRoot);
@@ -843,14 +916,14 @@ namespace ExpansionPlugin
             {
                 Tag = "AILoadBlanacing"
             };
-            foreach(Loadbalancingcategorie lbc in ef.Data._LoadBalancingCategories)
+            foreach (Loadbalancingcategorie lbc in ef.Data._LoadBalancingCategories)
             {
                 TreeNode LoadbalancingcategorieRoot = new TreeNode(lbc.name)
                 {
                     Tag = lbc
                 };
                 int i = 0;
-                foreach(Loadbalancingcategories lbcat in lbc.Categorieslist)
+                foreach (Loadbalancingcategories lbcat in lbc.Categorieslist)
                 {
                     LoadbalancingcategorieRoot.Nodes.Add(new TreeNode($"Counts {i.ToString()}")
                     {
@@ -867,15 +940,15 @@ namespace ExpansionPlugin
         {
             Root.Nodes.Add(new TreeNode("General")
             {
-                Tag = pat
+                Tag = "AIPatrolGeneral"
             });
             TreeNode WaypointsNode = new TreeNode("WayPoints")
             {
                 Tag = "AIPatrolWayPoints"
             };
-            foreach(Vec3 v3 in pat._waypoints)
+            foreach (Vec3 v3 in pat._waypoints)
             {
-                WaypointsNode.Nodes.Add(new TreeNode (v3.GetString())
+                WaypointsNode.Nodes.Add(new TreeNode(v3.GetString())
                 {
                     Tag = v3
                 });
@@ -904,7 +977,7 @@ namespace ExpansionPlugin
             {
                 Tag = "RoamingLocations"
             };
-            foreach(ExpansionAIRoamingLocation ExpansionAIRoamingLocation in ef.Data.RoamingLocations)
+            foreach (ExpansionAIRoamingLocation ExpansionAIRoamingLocation in ef.Data.RoamingLocations)
             {
                 RoamingLocationsNodes.Nodes.Add(new TreeNode(ExpansionAIRoamingLocation.Name)
                 {
@@ -1163,7 +1236,7 @@ namespace ExpansionPlugin
             {
                 Tag = "ExplosionTargets"
             };
-            foreach(string s in ef.Data.ExplosionTargets)
+            foreach (string s in ef.Data.ExplosionTargets)
             {
                 ExplosionTargetsNodes.Nodes.Add(new TreeNode(s)
                 {
@@ -1204,7 +1277,7 @@ namespace ExpansionPlugin
             {
                 Tag = "EntityWhitelist"
             };
-            foreach(string s in ef.Data.EntityWhitelist)
+            foreach (string s in ef.Data.EntityWhitelist)
             {
                 WhitelistNode.Nodes.Add(new TreeNode(s)
                 {
@@ -1544,7 +1617,7 @@ namespace ExpansionPlugin
                         new PointF(nextWaypoint.X, nextWaypoint.Z),
                         _mapControl.MapSize,
                         behaviour)
-                        {
+                    {
                         Color = Color.Red,
                         WriteString = true
                     };
@@ -1779,7 +1852,7 @@ namespace ExpansionPlugin
                 currentTreeNode.Nodes.Add(newnode);
                 AILoadouts.isDirty = true;
             }
-            else if ( currentTreeNode.FindParentOfType<AILoadouts>() != null)
+            else if (currentTreeNode.FindParentOfType<AILoadouts>() != null)
             {
                 AILoadouts AILoadouts = currentTreeNode.FindParentOfType<AILoadouts>();
                 AILoadouts.InventoryAttachments.Add(newIA);
@@ -1793,7 +1866,6 @@ namespace ExpansionPlugin
                     currentTreeNode.FindLastParentOfType<AILoadouts>().isDirty = true;
             }
         }
-
         private void RemoveAttachemtItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // If the inventory attachment belongs to an AILoadouts file
@@ -1818,7 +1890,6 @@ namespace ExpansionPlugin
                 }
             }
         }
-
         private void AddNewCargoItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AILoadouts newItem = new AILoadouts()
@@ -1836,7 +1907,7 @@ namespace ExpansionPlugin
 
 
 
-            if(currentTreeNode.Parent.Tag is AILoadouts AILoadouts)
+            if (currentTreeNode.Parent.Tag is AILoadouts AILoadouts)
             {
                 AILoadouts.InventoryCargo.Add(newItem);
                 currentTreeNode.Nodes.Add(newNode);
@@ -1877,88 +1948,29 @@ namespace ExpansionPlugin
             }
             ExpansionTV.SelectedNode = newNode;
         }
-
-        //private void RemoveCargoItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    TreeNode sel = treeViewMS1.SelectedNode;
-        //    if (sel == null || sel.Parent == null) return;
-
-        //    // If the parent node's Tag is AILoadouts, we expect to clear its InventoryCargo
-        //    AILoadouts parentLoadout = sel.Parent.Tag as AILoadouts;
-        //    if (parentLoadout != null)
-        //    {
-        //        parentLoadout.InventoryCargo = new BindingList<AILoadouts>();
-        //        sel.Remove();
-        //        // mark correct file dirty
-        //        AILootDrops owningLootFile = sel.FindParentOfType<AILootDrops>();
-        //        if (owningLootFile != null)
-        //            owningLootFile.isDirty = true;
-        //        else if (CurrentAILoadoutsFile != null)
-        //            CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //}
-
-        //private void AddNewSetItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    AILoadouts newSet = new AILoadouts()
-        //    {
-        //        ClassName = "",
-        //        Chance = (decimal)1.0,
-        //        Quantity = new Quantity(),
-        //        Health = new BindingList<Health>(),
-        //        InventoryAttachments = new BindingList<Inventoryattachment>(),
-        //        InventoryCargo = new BindingList<AILoadouts>(),
-        //        ConstructionPartsBuilt = new BindingList<object>(),
-        //        Sets = new BindingList<AILoadouts>()
-        //    };
-
-        //    if (CurrentAILoadoutsFile != null)
-        //    {
-        //        CurrentAILoadoutsFile.Sets.Add(newSet);
-        //        TreeNode newNode = new TreeNode("Set") { Tag = newSet };
-        //        treeViewMS1.SelectedNode.Nodes.Add(newNode);
-        //        CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //    else if (currentAILootDropsFile != null && CurrentAIloadouts != null)
-        //    {
-        //        // If the selected node is a Sets container inside an AILoadouts that belongs to a loot drops file:
-        //        CurrentAIloadouts.Sets.Add(newSet);
-        //        treeViewMS1.SelectedNode?.Nodes.Add(new TreeNode("Set") { Tag = newSet });
-        //        currentAILootDropsFile.isDirty = true;
-        //    }
-        //}
-
-        //private void RemoveSetItemToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    TreeNode sel = treeViewMS1.SelectedNode;
-        //    if (sel == null || sel.Parent == null) return;
-
-        //    TreeNode parent = sel.Parent;
-        //    // If parent is the "Sets" container directly under a file root
-        //    if (parent.Tag is string tag && tag == TAG_SETS)
-        //    {
-        //        // parent.Parent is the AILoadouts it belongs to
-        //        AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
-        //        if (fileRoot != null)
-        //        {
-        //            fileRoot.Sets.Remove(sel.Tag as AILoadouts);
-        //            sel.Remove();
-        //            // mark owning file dirty (could be either loadouts file or loot drops file)
-        //            AILootDrops ld = parent.FindParentOfType<AILootDrops>();
-        //            if (ld != null) ld.isDirty = true;
-        //            else fileRoot.isDirty = true;
-        //        }
-        //    }
-        //    else if (parent.Tag is AILoadouts parentLoadout)
-        //    {
-        //        parentLoadout.Sets.Remove(sel.Tag as AILoadouts);
-        //        sel.Remove();
-        //        AILootDrops ld = sel.FindParentOfType<AILootDrops>();
-        //        if (ld != null) ld.isDirty = true;
-        //        else if (CurrentAILoadoutsFile != null) CurrentAILoadoutsFile.isDirty = true;
-        //    }
-        //}
-
+        private void AddNewSetItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AILoadouts newSet = new AILoadouts()
+            {
+                ClassName = "",
+                Chance = (decimal)1.0,
+                Quantity = new Quantity(),
+                Health = new BindingList<Health>(),
+                InventoryAttachments = new BindingList<Inventoryattachment>(),
+                InventoryCargo = new BindingList<AILoadouts>(),
+                ConstructionPartsBuilt = new BindingList<object>(),
+                Sets = new BindingList<AILoadouts>()
+            };
+            AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
+            AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+            if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
+            {
+                AILoadouts.Sets.Add(newSet);
+                TreeNode newNode = new TreeNode("New Set") { Tag = newSet };
+                currentTreeNode.Nodes.Add(newNode);
+                AILoadouts.isDirty = true;
+            }
+        }
         private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AILoadouts newItem = new AILoadouts()
@@ -2000,7 +2012,6 @@ namespace ExpansionPlugin
                 AILootDrops.isDirty = true;
             }
         }
-
         private void removeItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode parent = currentTreeNode.Parent;
@@ -2034,12 +2045,24 @@ namespace ExpansionPlugin
                 }
                 return;
             }
+            // --- 3) is Lootdrop file ---
+            if (currentTreeNode.Tag is AILootDrops AILootDrops)
+            {
+                if (MessageBox.Show("This Will Remove The All reference to this Lootdrop, Are you sure you want to do this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    // remove node from tree
+                    if (currentTreeNode != null && currentTreeNode.Parent != null)
+                        currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                    AILootDrops.isDirty = true;
+                    AILootDrops.ToDelete = true;
+                }
+            }
 
-            // --- 3) All other cases where selected.Tag is AILoadouts ---
+            // --- 4) All other cases where selected.Tag is AILoadouts ---
             if (currentTreeNode.Tag is AILoadouts selectedLoadout)
             {
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
-
+                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
                 // (a) InventoryCargo category
                 if (string.Equals(parent.Text, "InventoryCargo", StringComparison.OrdinalIgnoreCase))
                 {
@@ -2047,17 +2070,18 @@ namespace ExpansionPlugin
                     if (fileRoot != null)
                     {
                         fileRoot.InventoryCargo.Remove(selectedLoadout);
-                        
-                        AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+
+
                         if (owningLootFile != null)
                             owningLootFile.isDirty = true;
                         else if (AILoadouts != null)
                             AILoadouts.isDirty = true;
 
+                        TreeNode parentonventory = currentTreeNode.Parent;
                         currentTreeNode.Remove();
-                        if(fileRoot.InventoryCargo.Count == 0)
+                        if (fileRoot.InventoryCargo.Count == 0)
                         {
-
+                            parentonventory.Remove();
                         }
                     }
                 }
@@ -2068,8 +2092,7 @@ namespace ExpansionPlugin
                     if (fileRoot != null)
                     {
                         fileRoot.Sets.Remove(selectedLoadout);
-                        
-                        AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+
                         if (owningLootFile != null)
                             owningLootFile.isDirty = true;
                         else if (AILoadouts != null)
@@ -2077,6 +2100,121 @@ namespace ExpansionPlugin
 
                         currentTreeNode.Remove();
                     }
+                }
+                // (c) Removing Loadouts file
+                else if (parent.Tag is ExpansionLoadoutConfig ExpansionLoadoutConfig)
+                {
+                    if (MessageBox.Show("This Will Remove The All reference to this Loadout, Are you sure you want to do this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        // remove node from tree
+                        if (currentTreeNode != null && currentTreeNode.Parent != null)
+                            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+                        AILoadouts.isDirty = true;
+                        AILoadouts.ToDelete = true;
+                    }
+                }
+            }
+        }
+        private void addNewLoadoutFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Loadout File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Import to Expansion";
+            frm.HideCEStuff();
+            frm.moddir = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName, "ExpansionMod", "Loadouts");
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + ".json";
+                string newPath = Path.Combine(newmodPath, typesfile);
+                AILoadouts newAILoadouts = new AILoadouts()
+                {
+                    // default constructor already initializes lists
+                    ClassName = "",
+                    Chance = (decimal)1.0,
+                    Quantity = new Quantity(),
+                    isDirty = true
+                };
+                newAILoadouts.setpath(newPath);
+                newAILoadouts.isDirty = true;
+                bool added = _expansionManager.ExpansionLoadoutConfig.AddNewLoadoutFile(newAILoadouts);
+                if (added)
+                {
+                    TreeNode newNode = SetupLoadoutTreeView(newAILoadouts);
+                    string newNodeText = newNode.Text.ToLowerInvariant();
+
+                    int insertIndex = 0;
+                    foreach (TreeNode node in currentTreeNode.Nodes)
+                    {
+                        if (string.Compare(newNodeText, node.Text.ToLowerInvariant()) < 0)
+                        {
+                            break;
+                        }
+                        insertIndex++;
+                    }
+
+                    currentTreeNode.Nodes.Insert(insertIndex, newNode);
+                    ExpansionTV.SelectedNode = newNode;
+                    newNode.Expand();
+                }
+                else
+                {
+                    MessageBox.Show($"File with the same filename allready exist.\nYou chose... poorly.");
+                }
+            }
+        }
+        private void addNewLootDropFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Lootdrop File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Import to Expansion";
+            frm.HideCEStuff();
+            frm.moddir = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName, "ExpansionMod", "AI", "LootDrops");
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + ".json";
+                string newPath = Path.Combine(newmodPath, typesfile);
+                AILootDrops newAILootDrops = new AILootDrops()
+                {
+                    LootdropList = new BindingList<AILoadouts>(),
+                    isDirty = true
+                };
+                newAILootDrops.setpath(newPath);
+                newAILootDrops.isDirty = true;
+                bool added = _expansionManager.ExpansionLootDropConfig.AddNewLootDropFile(newAILootDrops);
+                if (added)
+                {
+                    TreeNode newNode = new TreeNode(newAILootDrops.FileName) { Tag = newAILootDrops };
+                    foreach (AILoadouts entry in newAILootDrops.LootdropList)
+                    {
+                        newNode.Nodes.Add(BuildAILoadoutsNode(entry));
+                    }
+                    string newNodeText = newNode.Text.ToLowerInvariant();
+
+                    int insertIndex = 0;
+                    foreach (TreeNode node in currentTreeNode.Nodes)
+                    {
+                        if (string.Compare(newNodeText, node.Text.ToLowerInvariant()) < 0)
+                        {
+                            break;
+                        }
+                        insertIndex++;
+                    }
+
+                    currentTreeNode.Nodes.Insert(insertIndex, newNode);
+                    ExpansionTV.SelectedNode = newNode;
+                    newNode.Expand();
+                }
+                else
+                {
+                    MessageBox.Show($"File with the same filename allready exist.\nYou chose... poorly.");
                 }
             }
         }
@@ -2187,6 +2325,266 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionAIConfig.Data.PlayerFactions.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionAIConfig.isDirty = true;
+        }
+        //AI Patrol Settings
+        private void addNewPatrolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrol newpatrol = new ExpansionAIPatrol()
+            {
+                Name = "NewPatrol",
+                Persist = 0,
+                Faction = "West",
+                Formation = "",
+                FormationScale = (decimal)-1.0,
+                FormationLooseness = (decimal)0.0,
+                Loadout = "",
+                Units = new BindingList<string>(),
+                NumberOfAI = -3,
+                Behaviour = "ALTERNATE",
+                LootingBehaviour = "DEFAULT",
+                Speed = "WALK",
+                UnderThreatSpeed = "SPRINT",
+                CanBeLooted = 1,
+                LootDropOnDeath = "",
+                UnlimitedReload = 1,
+                SniperProneDistanceThreshold = (decimal)0.0,
+                AccuracyMin = -1,
+                AccuracyMax = -1,
+                ThreatDistanceLimit = -1,
+                NoiseInvestigationDistanceLimit = -1,
+                DamageMultiplier = -1,
+                DamageReceivedMultiplier = -1,
+                CanBeTriggeredByAI = 0,
+                MinDistRadius = -1,
+                MaxDistRadius = -1,
+                DespawnRadius = -1,
+                MinSpreadRadius = 1,
+                MaxSpreadRadius = 100,
+                Chance = 1,
+                DespawnTime = -1,
+                RespawnTime = -2,
+                LoadBalancingCategory = "",
+                ObjectClassName = "",
+                WaypointInterpolation = "",
+                UseRandomWaypointAsStartPoint = 1,
+                Waypoints = new BindingList<float[]>(),
+                _waypoints = new BindingList<Vec3>()
+            };
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrolConfig.Data.Patrols.Add(newpatrol);
+            TreeNode PatrolRoot = new TreeNode(newpatrol.Name)
+            {
+                Tag = newpatrol
+            };
+            CreatePatrolNodes(newpatrol, PatrolRoot);
+            currentTreeNode.Nodes.Add(PatrolRoot);
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void removePatrolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrolConfig.Data.Patrols.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
+            currentTreeNode.Remove();
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void addWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            if (ExpansionAIPatrol._waypoints.Count == null)
+                ExpansionAIPatrol._waypoints = new BindingList<Vec3>();
+
+            Vec3 newvec3 = null;
+            if (ExpansionAIPatrol._waypoints.Count == 0)
+            {
+                newvec3 = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2);
+                if (MapData.FileExists)
+                {
+                    newvec3.Y = (MapData.gethieght(newvec3.X, newvec3.Z));
+                }
+            }
+            else
+            {
+                Vec3 vec3 = ExpansionAIPatrol._waypoints.Last();
+                newvec3 = new Vec3(vec3.X + 25, 0f, vec3.Z);
+                if (MapData.FileExists)
+                {
+                    newvec3.Y = (MapData.gethieght(newvec3.X, newvec3.Z));
+                }
+            }
+            TreeNode newvec3node = new TreeNode(newvec3.GetString())
+            {
+                Tag = newvec3
+            };
+            currentTreeNode.Nodes.Add(newvec3node);
+            ExpansionAIPatrol._waypoints.Add(newvec3);
+            ExpansionAIPatrolConfig.isDirty = true;
+            ExpansionTV.SelectedNode = newvec3node;
+        }
+        private void removeWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            ExpansionAIPatrol._waypoints.Remove(currentTreeNode.Tag as Vec3);
+            ExpansionAIPatrolConfig.isDirty = true;
+            currentTreeNode.Remove();
+
+        }
+        private void importWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Import AI Patrol";
+            openFileDialog.Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+                ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+                string filePath = openFileDialog.FileName;
+                DialogResult dialogResult = MessageBox.Show("Clear Exisitng Position?", "Clear position", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    ExpansionAIPatrol._waypoints.Clear();
+                    currentTreeNode.Nodes.Clear();
+                }
+                switch (openFileDialog.FilterIndex)
+                {
+                    case 1:
+                        string[] fileContent = File.ReadAllLines(filePath);
+                        for (int i = 0; i < fileContent.Length; i++)
+                        {
+                            if (fileContent[i] == "") continue;
+                            string[] linesplit = fileContent[i].Split('|');
+                            string[] XYZ = linesplit[1].Split(' ');
+                            ExpansionAIPatrol._waypoints.Add(new Vec3(XYZ));
+                        }
+                        break;
+                    case 2:
+                        ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
+                        foreach (SpawnObjects so in newobjectspawner.Objects)
+                        {
+                            ExpansionAIPatrol._waypoints.Add(new Vec3(so.pos));
+                        }
+                        break;
+                    case 3:
+                        DZE importfile = DZEHelpers.LoadFile(filePath);
+                        foreach (Editorobject eo in importfile.EditorObjects)
+                        {
+                            ExpansionAIPatrol._waypoints.Add(new Vec3(eo.Position));
+                        }
+                        break;
+                }
+                foreach (Vec3 v3 in ExpansionAIPatrol._waypoints)
+                {
+                    currentTreeNode.Nodes.Add(new TreeNode(v3.GetString())
+                    {
+                        Tag = v3
+                    });
+                }
+                ExpansionAIPatrolConfig.isDirty = true;
+            }
+        }
+        private void exportWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            SaveFileDialog save = new SaveFileDialog();
+            save.Title = "Export AI Patrol";
+            save.Filter = "Expansion Map |*.map|Object Spawner|*.json";
+            save.FileName = ExpansionAIPatrol.Name;
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                switch (save.FilterIndex)
+                {
+                    case 1:
+                        StringBuilder SB = new StringBuilder();
+                        foreach (Vec3 array in ExpansionAIPatrol._waypoints)
+                        {
+                            SB.AppendLine("eAI_SurvivorM_Lewis|" + array.GetString() + "|0.0 0.0 0.0");
+                        }
+                        File.WriteAllText(save.FileName, SB.ToString());
+                        break;
+                    case 2:
+                        ObjectSpawnerArr newobjectspawner = new ObjectSpawnerArr();
+                        newobjectspawner.Objects = new BindingList<SpawnObjects>();
+                        foreach (Vec3 array in ExpansionAIPatrol._waypoints)
+                        {
+                            SpawnObjects newobject = new SpawnObjects();
+                            newobject.name = "eAI_SurvivorM_Lewis";
+                            newobject.pos = array.getfloatarray();
+                            newobject.ypr = new float[] { 0, 0, 0 };
+                            newobject.scale = 1;
+                            newobject.enableCEPersistency = false;
+                            newobjectspawner.Objects.Add(newobject);
+                        }
+                        var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                        string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
+                        File.WriteAllText(save.FileName, jsonString);
+                        break;
+                }
+            }
+        }
+        private void moveWaypointUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index > 0)
+            {
+                siblings.RemoveAt(index);
+                ExpansionAIPatrol._waypoints.RemoveAt(index);
+                ExpansionAIPatrol._waypoints.Insert(index-1, waypoint);
+                siblings.Insert(index - 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void moveWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index < siblings.Count - 1)
+            {
+                siblings.RemoveAt(index);
+                ExpansionAIPatrol._waypoints.RemoveAt(index);
+                ExpansionAIPatrol._waypoints.Insert(index + 1, waypoint);
+                siblings.Insert(index + 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void addUnitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeUnitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            ExpansionAIPatrol.Units.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            ExpansionAIPatrolConfig.isDirty = true;
         }
         //BaseBuilding Settings
         private void addNewDeployableOutsideTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2444,11 +2842,6 @@ namespace ExpansionPlugin
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         #endregion right click methods
-
-
-
-
-
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

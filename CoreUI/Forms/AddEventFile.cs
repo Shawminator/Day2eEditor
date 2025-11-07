@@ -33,6 +33,11 @@ namespace Day2eEditor
         {
             set { button4.Visible = value; }
         }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string Button5text
+        {
+            set { button5.Text = value; }
+        }
         public AddEventFile()
         {
             InitializeComponent();
@@ -47,7 +52,12 @@ namespace Day2eEditor
             );
             this.Disposed += (s, e) => controller.Dispose();
         }
-
+        public void HideCEStuff()
+        {
+            label3.Visible = false;
+            textBox2.Visible = false;
+            SelectProjectFolderbutton.Visible = false;
+        }
         private void AddEventFile_Load(object sender, EventArgs e)
         {
             var economymanager = AppServices.GetRequired<EconomyManager>();

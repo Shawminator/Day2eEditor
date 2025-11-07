@@ -338,5 +338,61 @@ namespace Day2eEditor
                 }
             }
         }
+
+        public void SetExternalFiles()
+        {
+            checkVanillaSlotNames();
+        }
+        private void checkVanillaSlotNames()
+        {
+            string filePath = "Data\\VanillaSlotNames.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> fileSlotNames = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                fileSlotNames = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string slot in VanillaSlotNames)
+            {
+                if (!fileSlotNames.Contains(slot))
+                {
+                    fileSlotNames.Add(slot);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, fileSlotNames);
+            }
+
+        }
+        static List<string> VanillaSlotNames = new List<string>()
+        {
+            "Armband",
+            "Back",
+            "Body",
+            "Cargo",
+            "Eyewear",
+            "Feet",
+            "Gloves",
+            "Hands",
+            "Headgear",
+            "Hips",
+            "LeftHand",
+            "Legs",
+            "Mask",
+            "shoulderL",
+            "shoulderR",
+            "Vest",
+        };
     }
 }

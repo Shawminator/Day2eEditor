@@ -62,7 +62,7 @@
             groupBox1.Size = new Size(400, 146);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
-            groupBox1.Text = "No Build Zone";
+            groupBox1.Text = "Roaming Locations";
             // 
             // ZNUD
             // 

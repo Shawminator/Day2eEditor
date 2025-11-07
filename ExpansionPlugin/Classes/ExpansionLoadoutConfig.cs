@@ -73,6 +73,24 @@ namespace ExpansionPlugin
         {
             return false;
         }
+
+        internal bool AddNewLoadoutFile(AILoadouts newAILoadouts)
+        {
+            bool exists = AllData.Any(ld => ld.FileName.ToLower() == newAILoadouts.FileName.ToLower());
+
+            if (exists)
+                return false; // File with same name already exists
+
+            AllData.Add(newAILoadouts);
+            return true;
+
+        }
+
+        internal void RemoveFile(AILoadouts aILoadouts)
+        {
+            AllData.Remove(aILoadouts);
+
+        }
     }
     public class AILoadouts
     {

@@ -2,9 +2,14 @@
 using DayZeLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ExpansionPlugin
 {
@@ -206,5 +211,112 @@ namespace ExpansionPlugin
             }
             return needtosave;
         }
+
+        internal void SetExternalFiles()
+        {
+            checkExpansionSlotNames();
+            CheckExpansionFactions();
+        }
+
+        private void CheckExpansionFactions()
+        {
+            string filePath = "Data\\ExpansionFactions.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> fileExpansionFactions = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                fileExpansionFactions = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string slot in ExpansionFactions)
+            {
+                if (!fileExpansionFactions.Contains(slot))
+                {
+                    fileExpansionFactions.Add(slot);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, fileExpansionFactions);
+            }
+        }
+
+        private void checkExpansionSlotNames()
+        {
+            string filePath = "Data\\ExpansionSlotnames.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> fileSlotNames = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                fileSlotNames = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string slot in ExpansionSlotnames)
+            {
+                if (!fileSlotNames.Contains(slot))
+                {
+                    fileSlotNames.Add(slot);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, fileSlotNames);
+            }
+
+        }
+        static List<string> ExpansionFactions = new List<string>()
+        {
+            "Brawlers",
+            "Civilian",
+            "East",
+            "Guards",
+            "InvincibleGuards",
+            "InvincibleObservers",
+            "InvincibleYeetBrigade",
+            "Mercenaries",
+            "Observers",
+            "Passive",
+            "Raiders",
+            "RANDOM",
+            "Shamans",
+            "West",
+            "YeetBrigade"
+        };
+        static List<string> ExpansionSlotnames = new List<string>()
+        {
+            "Default Slot",
+            "Back",
+            "Body",
+            "Dogtag",
+            "Eyes",
+            "Feet",
+            "Gloves",
+            "Hands",
+            "Headgear",
+            "Hips",
+            "Legs",
+            "Mask",
+            "Melee",
+            "Shoulder",
+            "Vest"
+        };
     }
 }

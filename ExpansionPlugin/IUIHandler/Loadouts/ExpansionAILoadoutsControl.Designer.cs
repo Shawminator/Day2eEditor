@@ -115,6 +115,7 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(167, 23);
             textBox1.TabIndex = 180;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // darkButton11
             // 
@@ -126,6 +127,7 @@
             darkButton11.Size = new Size(23, 23);
             darkButton11.TabIndex = 179;
             darkButton11.Text = "+";
+            darkButton11.Click += darkButton11_Click;
             // 
             // darkLabel40
             // 

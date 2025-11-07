@@ -165,7 +165,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.ClassName;
             }
         }
 
@@ -253,6 +253,31 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             Currenthealth.Zone = textBox2.Text;
             HasChanges();
+        }
+
+        private void darkButton11_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes
+            {
+                UseOnlySingleItem = true
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    textBox1.Text = l; // keep original behaviour
+                }
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ClassName = textBox1.Text;
+            HasChanges();
+            UpdateTreeNodeText();
         }
     }
 }

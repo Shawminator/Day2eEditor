@@ -97,6 +97,7 @@
             darkLabel53 = new Label();
             StaticPatrolWaypointInterpolationCB = new ComboBox();
             StaticPatrolDespawnTimeNUD = new NumericUpDown();
+            StaticPatrolUseRandomWaypointAsStartPointCB = new CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolFormationScaleNUD).BeginInit();
             groupBox19.SuspendLayout();
@@ -185,6 +186,7 @@
             groupBox1.Controls.Add(darkLabel53);
             groupBox1.Controls.Add(StaticPatrolWaypointInterpolationCB);
             groupBox1.Controls.Add(StaticPatrolDespawnTimeNUD);
+            groupBox1.Controls.Add(StaticPatrolUseRandomWaypointAsStartPointCB);
             groupBox1.ForeColor = SystemColors.Control;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Margin = new Padding(4, 3, 4, 3);
@@ -205,6 +207,7 @@
             StaticPatrolLootDropOnDeathCB.Name = "StaticPatrolLootDropOnDeathCB";
             StaticPatrolLootDropOnDeathCB.Size = new Size(384, 23);
             StaticPatrolLootDropOnDeathCB.TabIndex = 373;
+            StaticPatrolLootDropOnDeathCB.SelectedIndexChanged += StaticPatrolLootDropOnDeathCB_SelectedIndexChanged;
             // 
             // darkLabel10
             // 
@@ -226,6 +229,7 @@
             textBox6.Name = "textBox6";
             textBox6.Size = new Size(382, 23);
             textBox6.TabIndex = 370;
+            textBox6.TextChanged += textBox6_TextChanged;
             // 
             // darkLabel204
             // 
@@ -249,6 +253,7 @@
             StaticPatrolLoadBalancingCategoryCB.Name = "StaticPatrolLoadBalancingCategoryCB";
             StaticPatrolLoadBalancingCategoryCB.Size = new Size(384, 23);
             StaticPatrolLoadBalancingCategoryCB.TabIndex = 369;
+            StaticPatrolLoadBalancingCategoryCB.SelectedIndexChanged += StaticPatrolLoadBalancingCategoryCB_SelectedIndexChanged;
             // 
             // darkLabel179
             // 
@@ -285,6 +290,7 @@
             StaticPatrolFormationScaleNUD.Size = new Size(122, 23);
             StaticPatrolFormationScaleNUD.TabIndex = 366;
             StaticPatrolFormationScaleNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolFormationScaleNUD.ValueChanged += StaticPatrolFormationScaleNUD_ValueChanged;
             // 
             // groupBox19
             // 
@@ -311,6 +317,8 @@
             StaticPatrolLootingBehaviousCLB.Name = "StaticPatrolLootingBehaviousCLB";
             StaticPatrolLootingBehaviousCLB.Size = new Size(245, 508);
             StaticPatrolLootingBehaviousCLB.TabIndex = 302;
+            StaticPatrolLootingBehaviousCLB.ItemCheck += StaticPatrolLootingBehaviousCLB_ItemCheck;
+            StaticPatrolLootingBehaviousCLB.SelectedIndexChanged += StaticPatrolLootingBehaviousCLB_SelectedIndexChanged;
             // 
             // StaticPatrolCanBeTriggeredByAICB
             // 
@@ -324,6 +332,7 @@
             StaticPatrolCanBeTriggeredByAICB.TabIndex = 364;
             StaticPatrolCanBeTriggeredByAICB.Text = "Can Be Triggered By AI";
             StaticPatrolCanBeTriggeredByAICB.UseVisualStyleBackColor = true;
+            StaticPatrolCanBeTriggeredByAICB.CheckedChanged += StaticPatrolCanBeTriggeredByAICB_CheckedChanged;
             // 
             // groupBox16
             // 
@@ -353,6 +362,7 @@
             StaticPatrolURVehiclesCB.TabIndex = 295;
             StaticPatrolURVehiclesCB.Text = "Vehicles";
             StaticPatrolURVehiclesCB.UseVisualStyleBackColor = true;
+            StaticPatrolURVehiclesCB.CheckedChanged += StaticPatrolURBitmaskCB_CheckedChanged;
             // 
             // StaticPatrolURPlayersCB
             // 
@@ -366,6 +376,7 @@
             StaticPatrolURPlayersCB.TabIndex = 294;
             StaticPatrolURPlayersCB.Text = "Players";
             StaticPatrolURPlayersCB.UseVisualStyleBackColor = true;
+            StaticPatrolURPlayersCB.CheckedChanged += StaticPatrolURBitmaskCB_CheckedChanged;
             // 
             // StaticPatrolURInfectedCB
             // 
@@ -379,6 +390,7 @@
             StaticPatrolURInfectedCB.TabIndex = 293;
             StaticPatrolURInfectedCB.Text = "Infected";
             StaticPatrolURInfectedCB.UseVisualStyleBackColor = true;
+            StaticPatrolURInfectedCB.CheckedChanged += StaticPatrolURBitmaskCB_CheckedChanged;
             // 
             // StaticPatrolURAnimalsCB
             // 
@@ -392,6 +404,7 @@
             StaticPatrolURAnimalsCB.TabIndex = 292;
             StaticPatrolURAnimalsCB.Text = "Animals";
             StaticPatrolURAnimalsCB.UseVisualStyleBackColor = true;
+            StaticPatrolURAnimalsCB.CheckedChanged += StaticPatrolURBitmaskCB_CheckedChanged;
             // 
             // StaticPatrolPersistCB
             // 
@@ -405,6 +418,7 @@
             StaticPatrolPersistCB.TabIndex = 362;
             StaticPatrolPersistCB.Text = "Persist";
             StaticPatrolPersistCB.UseVisualStyleBackColor = true;
+            StaticPatrolPersistCB.CheckedChanged += StaticPatrolPersistCB_CheckedChanged;
             // 
             // darkLabel77
             // 
@@ -430,6 +444,7 @@
             StaticPatrolNoiseInvestigationDistanceLimitNUD.Size = new Size(122, 23);
             StaticPatrolNoiseInvestigationDistanceLimitNUD.TabIndex = 358;
             StaticPatrolNoiseInvestigationDistanceLimitNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolNoiseInvestigationDistanceLimitNUD.ValueChanged += StaticPatrolNoiseInvestigationDistanceLimitNUD_ValueChanged;
             // 
             // darkLabel65
             // 
@@ -474,6 +489,7 @@
             StaticPatrolFactionCB.Name = "StaticPatrolFactionCB";
             StaticPatrolFactionCB.Size = new Size(382, 23);
             StaticPatrolFactionCB.TabIndex = 310;
+            StaticPatrolFactionCB.SelectedIndexChanged += StaticPatrolFactionCB_SelectedIndexChanged;
             // 
             // StaticPatrolDamageReceivedMultiplierNUD
             // 
@@ -488,6 +504,7 @@
             StaticPatrolDamageReceivedMultiplierNUD.Size = new Size(122, 23);
             StaticPatrolDamageReceivedMultiplierNUD.TabIndex = 356;
             StaticPatrolDamageReceivedMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolDamageReceivedMultiplierNUD.ValueChanged += StaticPatrolDamageReceivedMultiplierNUD_ValueChanged;
             // 
             // StaticPatrolLoadoutsCB
             // 
@@ -499,6 +516,7 @@
             StaticPatrolLoadoutsCB.Name = "StaticPatrolLoadoutsCB";
             StaticPatrolLoadoutsCB.Size = new Size(384, 23);
             StaticPatrolLoadoutsCB.TabIndex = 311;
+            StaticPatrolLoadoutsCB.SelectedIndexChanged += StaticPatrolLoadoutsCB_SelectedIndexChanged;
             // 
             // StaticPatrolSniperProneDistanceThresholdNUD
             // 
@@ -514,6 +532,7 @@
             StaticPatrolSniperProneDistanceThresholdNUD.Size = new Size(122, 23);
             StaticPatrolSniperProneDistanceThresholdNUD.TabIndex = 354;
             StaticPatrolSniperProneDistanceThresholdNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolSniperProneDistanceThresholdNUD.ValueChanged += StaticPatrolSniperProneDistanceThresholdNUD_ValueChanged;
             // 
             // darkLabel32
             // 
@@ -549,6 +568,7 @@
             StaticPatrolNumberOfAINUD.Size = new Size(122, 23);
             StaticPatrolNumberOfAINUD.TabIndex = 313;
             StaticPatrolNumberOfAINUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolNumberOfAINUD.ValueChanged += StaticPatrolNumberOfAINUD_ValueChanged;
             // 
             // StaticPatrolNameTB
             // 
@@ -559,6 +579,7 @@
             StaticPatrolNameTB.Name = "StaticPatrolNameTB";
             StaticPatrolNameTB.Size = new Size(382, 23);
             StaticPatrolNameTB.TabIndex = 352;
+            StaticPatrolNameTB.TextChanged += StaticPatrolNameTB_TextChanged;
             // 
             // darkLabel31
             // 
@@ -582,6 +603,7 @@
             StaticPatrolBehaviorCB.Name = "StaticPatrolBehaviorCB";
             StaticPatrolBehaviorCB.Size = new Size(384, 23);
             StaticPatrolBehaviorCB.TabIndex = 315;
+            StaticPatrolBehaviorCB.SelectedIndexChanged += StaticPatrolBehaviorCB_SelectedIndexChanged;
             // 
             // darkLabel64
             // 
@@ -618,6 +640,7 @@
             StaticPatrolFormationLoosenessNUD.Size = new Size(122, 23);
             StaticPatrolFormationLoosenessNUD.TabIndex = 350;
             StaticPatrolFormationLoosenessNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolFormationLoosenessNUD.ValueChanged += StaticPatrolFormationLoosenessNUD_ValueChanged;
             // 
             // StaticPatrolSpeedCB
             // 
@@ -630,6 +653,7 @@
             StaticPatrolSpeedCB.Name = "StaticPatrolSpeedCB";
             StaticPatrolSpeedCB.Size = new Size(384, 23);
             StaticPatrolSpeedCB.TabIndex = 317;
+            StaticPatrolSpeedCB.SelectedIndexChanged += StaticPatrolSpeedCB_SelectedIndexChanged;
             // 
             // darkLabel29
             // 
@@ -653,6 +677,7 @@
             StaticPatrolUnderThreatSpeedCB.Name = "StaticPatrolUnderThreatSpeedCB";
             StaticPatrolUnderThreatSpeedCB.Size = new Size(384, 23);
             StaticPatrolUnderThreatSpeedCB.TabIndex = 319;
+            StaticPatrolUnderThreatSpeedCB.SelectedIndexChanged += StaticPatrolUnderThreatSpeedCB_SelectedIndexChanged;
             // 
             // darkLabel28
             // 
@@ -677,6 +702,7 @@
             StaticPatrolCanBeLotedCB.TabIndex = 325;
             StaticPatrolCanBeLotedCB.Text = "Can Be Looted";
             StaticPatrolCanBeLotedCB.UseVisualStyleBackColor = true;
+            StaticPatrolCanBeLotedCB.CheckedChanged += StaticPatrolCanBeLotedCB_CheckedChanged;
             // 
             // darkLabel42
             // 
@@ -702,6 +728,7 @@
             StaticPatrolMinSpreadRadiusNUD.Size = new Size(122, 23);
             StaticPatrolMinSpreadRadiusNUD.TabIndex = 328;
             StaticPatrolMinSpreadRadiusNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolMinSpreadRadiusNUD.ValueChanged += StaticPatrolMinSpreadRadiusNUD_ValueChanged;
             // 
             // darkLabel13
             // 
@@ -727,6 +754,7 @@
             StaticPatrolRespawnTimeNUD.Size = new Size(122, 23);
             StaticPatrolRespawnTimeNUD.TabIndex = 330;
             StaticPatrolRespawnTimeNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolRespawnTimeNUD.ValueChanged += StaticPatrolRespawnTimeNUD_ValueChanged;
             // 
             // darkLabel6
             // 
@@ -752,6 +780,7 @@
             StaticPatrolMaxSpreadRadiusNUD.Size = new Size(122, 23);
             StaticPatrolMaxSpreadRadiusNUD.TabIndex = 332;
             StaticPatrolMaxSpreadRadiusNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolMaxSpreadRadiusNUD.ValueChanged += StaticPatrolMaxSpreadRadiusNUD_ValueChanged;
             // 
             // darkLabel26
             // 
@@ -777,6 +806,7 @@
             StaticPatrolDamageMultiplierNUD.Size = new Size(122, 23);
             StaticPatrolDamageMultiplierNUD.TabIndex = 348;
             StaticPatrolDamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolDamageMultiplierNUD.ValueChanged += StaticPatrolDamageMultiplierNUD_ValueChanged;
             // 
             // darkLabel8
             // 
@@ -802,6 +832,7 @@
             StaticPatrolMaxDistRadiusNUD.Size = new Size(122, 23);
             StaticPatrolMaxDistRadiusNUD.TabIndex = 323;
             StaticPatrolMaxDistRadiusNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolMaxDistRadiusNUD.ValueChanged += StaticPatrolMaxDistRadiusNUD_ValueChanged;
             // 
             // darkLabel54
             // 
@@ -827,6 +858,7 @@
             StaticPatrolDespawnRadiusNUD.Size = new Size(122, 23);
             StaticPatrolDespawnRadiusNUD.TabIndex = 334;
             StaticPatrolDespawnRadiusNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolDespawnRadiusNUD.ValueChanged += StaticPatrolDespawnRadiusNUD_ValueChanged;
             // 
             // darkLabel27
             // 
@@ -863,6 +895,7 @@
             StaticPatrolMinDistRadiusNUD.Size = new Size(122, 23);
             StaticPatrolMinDistRadiusNUD.TabIndex = 321;
             StaticPatrolMinDistRadiusNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolMinDistRadiusNUD.ValueChanged += StaticPatrolMinDistRadiusNUD_ValueChanged;
             // 
             // darkLabel12
             // 
@@ -889,6 +922,7 @@
             StaticPatrolAccuracyMaxNUD.Size = new Size(122, 23);
             StaticPatrolAccuracyMaxNUD.TabIndex = 344;
             StaticPatrolAccuracyMaxNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolAccuracyMaxNUD.ValueChanged += StaticPatrolAccuracyMaxNUD_ValueChanged;
             // 
             // StaticPatrolChanceCB
             // 
@@ -902,6 +936,7 @@
             StaticPatrolChanceCB.Size = new Size(122, 23);
             StaticPatrolChanceCB.TabIndex = 326;
             StaticPatrolChanceCB.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolChanceCB.ValueChanged += StaticPatrolChanceCB_ValueChanged;
             // 
             // StaticPatrolThreatDistanceLimitNUD
             // 
@@ -916,6 +951,7 @@
             StaticPatrolThreatDistanceLimitNUD.Size = new Size(122, 23);
             StaticPatrolThreatDistanceLimitNUD.TabIndex = 346;
             StaticPatrolThreatDistanceLimitNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolThreatDistanceLimitNUD.ValueChanged += StaticPatrolThreatDistanceLimitNUD_ValueChanged;
             // 
             // darkLabel39
             // 
@@ -953,6 +989,7 @@
             StaticPatrolAccuracyMinNUD.Size = new Size(122, 23);
             StaticPatrolAccuracyMinNUD.TabIndex = 342;
             StaticPatrolAccuracyMinNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolAccuracyMinNUD.ValueChanged += StaticPatrolAccuracyMinNUD_ValueChanged;
             // 
             // StaticPatrolFormationCB
             // 
@@ -965,6 +1002,7 @@
             StaticPatrolFormationCB.Name = "StaticPatrolFormationCB";
             StaticPatrolFormationCB.Size = new Size(382, 23);
             StaticPatrolFormationCB.TabIndex = 337;
+            StaticPatrolFormationCB.SelectedIndexChanged += StaticPatrolFormationCB_SelectedIndexChanged;
             // 
             // darkLabel55
             // 
@@ -1010,6 +1048,7 @@
             StaticPatrolWaypointInterpolationCB.Name = "StaticPatrolWaypointInterpolationCB";
             StaticPatrolWaypointInterpolationCB.Size = new Size(384, 23);
             StaticPatrolWaypointInterpolationCB.TabIndex = 339;
+            StaticPatrolWaypointInterpolationCB.SelectedIndexChanged += StaticPatrolWaypointInterpolationCB_SelectedIndexChanged;
             // 
             // StaticPatrolDespawnTimeNUD
             // 
@@ -1024,6 +1063,21 @@
             StaticPatrolDespawnTimeNUD.Size = new Size(122, 23);
             StaticPatrolDespawnTimeNUD.TabIndex = 340;
             StaticPatrolDespawnTimeNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolDespawnTimeNUD.ValueChanged += StaticPatrolDespawnTimeNUD_ValueChanged;
+            // 
+            // StaticPatrolUseRandomWaypointAsStartPointCB
+            // 
+            StaticPatrolUseRandomWaypointAsStartPointCB.AutoSize = true;
+            StaticPatrolUseRandomWaypointAsStartPointCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolUseRandomWaypointAsStartPointCB.ForeColor = SystemColors.Control;
+            StaticPatrolUseRandomWaypointAsStartPointCB.Location = new Point(285, 610);
+            StaticPatrolUseRandomWaypointAsStartPointCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolUseRandomWaypointAsStartPointCB.Name = "StaticPatrolUseRandomWaypointAsStartPointCB";
+            StaticPatrolUseRandomWaypointAsStartPointCB.Size = new Size(147, 34);
+            StaticPatrolUseRandomWaypointAsStartPointCB.TabIndex = 374;
+            StaticPatrolUseRandomWaypointAsStartPointCB.Text = "Use Random Waypoint\r\nAs Start Point";
+            StaticPatrolUseRandomWaypointAsStartPointCB.UseVisualStyleBackColor = true;
+            StaticPatrolUseRandomWaypointAsStartPointCB.CheckedChanged += StaticPatrolUseRandomWaypointAsStartPointCB_CheckedChanged;
             // 
             // AIPatrolControl
             // 
@@ -1131,5 +1185,6 @@
         private Label darkLabel53;
         private ComboBox StaticPatrolWaypointInterpolationCB;
         private NumericUpDown StaticPatrolDespawnTimeNUD;
+        private CheckBox StaticPatrolUseRandomWaypointAsStartPointCB;
     }
 }

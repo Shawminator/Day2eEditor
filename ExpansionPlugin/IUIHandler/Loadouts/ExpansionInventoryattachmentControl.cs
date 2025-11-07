@@ -40,7 +40,7 @@ namespace ExpansionPlugin
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
-
+            ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\VanillaSlotNames.txt").ToList();
             string slotname = string.IsNullOrWhiteSpace(_data.SlotName)
                     ? "Default Slot"
                     : _data.SlotName;

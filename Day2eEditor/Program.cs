@@ -44,6 +44,7 @@ namespace Day2eEditor
 
             // EconomyManager
             var economyManager = new EconomyManager();
+            economyManager.SetExternalFiles();
             AppServices.Register(economyManager);
             if (projectManager.CurrentProject != null)
             {

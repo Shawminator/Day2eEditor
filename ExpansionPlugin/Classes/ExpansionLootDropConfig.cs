@@ -79,6 +79,17 @@ namespace ExpansionPlugin
         {
             return false;
         }
+
+        internal bool AddNewLootDropFile(AILootDrops newAILootDrops)
+        {
+            bool exists = AllData.Any(ld => ld.FileName.ToLower() == newAILootDrops.FileName.ToLower());
+
+            if (exists)
+                return false; // File with same name already exists
+
+            AllData.Add(newAILootDrops);
+            return true;
+        }
     }
     public class AILootDrops
     {

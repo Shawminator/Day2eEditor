@@ -41,7 +41,7 @@ namespace EconomyPlugin
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
-            ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\SlotNames.txt").ToList();
+            ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\ExpansionSlotnames.txt").ToList();
             ItemAttachmentSlotNameCB.SelectedIndex = ItemAttachmentSlotNameCB.FindStringExact(_data.slotName);
 
             _suppressEvents = false;

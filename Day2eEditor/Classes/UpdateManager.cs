@@ -27,6 +27,7 @@ namespace Day2eEditor
             _appDirectory = appDirectory == string.Empty ? Directory.GetCurrentDirectory() : appDirectory; // Default to current directory
             Directory.CreateDirectory(_pluginsDirectory);
             Directory.CreateDirectory(mapAddonsDirectory);
+            Directory.CreateDirectory("Data");
             Directory.CreateDirectory(_tempDirectory); // Temporary directory for downloading
             _http = new HttpClient();
             CleanupMarkedPlugins();

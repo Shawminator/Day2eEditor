@@ -224,7 +224,6 @@ namespace ExpansionPlugin
             HasChanges();
 
         }
-
         private void LogAIHitByCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -237,7 +236,6 @@ namespace ExpansionPlugin
             _data.LogAIKilled = LogAIKilledCB.Checked == true ? 1 : 0;
             HasChanges();
         }
-
         private void EnableZombieVehicleAttackHandlerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -250,7 +248,5 @@ namespace ExpansionPlugin
             _data.EnableZombieVehicleAttackPhysics = EnableZombieVehicleAttackPhysicsCB.Checked == true ? 1 : 0;
             HasChanges();
         }
-
-
     }
 }
