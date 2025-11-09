@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            MemeLevelNUD = new NumericUpDown();
+            label1 = new Label();
             EnableZombieVehicleAttackHandlerCB = new CheckBox();
             EnableZombieVehicleAttackPhysicsCB = new CheckBox();
             LogAIHitByCB = new CheckBox();
@@ -53,9 +55,10 @@
             darkLabel2 = new Label();
             FormationScaleNUD = new NumericUpDown();
             darkLabel17 = new Label();
-            MemeLevelNUD = new NumericUpDown();
-            label1 = new Label();
+            MaxRecruitableAINUD = new NumericUpDown();
+            label2 = new Label();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DamageReceivedMultiplierNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)NoiseInvestigationDistanceLimitNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)SniperProneDistanceThresholdNUD).BeginInit();
@@ -64,11 +67,13 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MaxRecruitableAINUD).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(MaxRecruitableAINUD);
+            groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(MemeLevelNUD);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(EnableZombieVehicleAttackHandlerCB);
@@ -104,6 +109,30 @@
             groupBox1.TabIndex = 131;
             groupBox1.TabStop = false;
             groupBox1.Text = "AI Settings";
+            // 
+            // MemeLevelNUD
+            // 
+            MemeLevelNUD.BackColor = Color.FromArgb(60, 63, 65);
+            MemeLevelNUD.ForeColor = SystemColors.Control;
+            MemeLevelNUD.Location = new Point(224, 141);
+            MemeLevelNUD.Margin = new Padding(4, 3, 4, 3);
+            MemeLevelNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            MemeLevelNUD.Name = "MemeLevelNUD";
+            MemeLevelNUD.Size = new Size(124, 23);
+            MemeLevelNUD.TabIndex = 206;
+            MemeLevelNUD.TextAlign = HorizontalAlignment.Center;
+            MemeLevelNUD.ValueChanged += MemeLevelNUD_ValueChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = Color.FromArgb(220, 220, 220);
+            label1.Location = new Point(24, 143);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(71, 15);
+            label1.TabIndex = 207;
+            label1.Text = "Meme Level";
             // 
             // EnableZombieVehicleAttackHandlerCB
             // 
@@ -250,7 +279,7 @@
             darkLabel66.Location = new Point(21, 114);
             darkLabel66.Margin = new Padding(4, 0, 4, 0);
             darkLabel66.Name = "darkLabel66";
-            darkLabel66.Size = new Size(177, 15);
+            darkLabel66.Size = new Size(178, 15);
             darkLabel66.TabIndex = 141;
             darkLabel66.Text = "Sniper Prone Distance Threshold";
             // 
@@ -316,7 +345,7 @@
             darkLabel5.Location = new Point(20, 54);
             darkLabel5.Margin = new Padding(4, 0, 4, 0);
             darkLabel5.Name = "darkLabel5";
-            darkLabel5.Size = new Size(118, 15);
+            darkLabel5.Size = new Size(119, 15);
             darkLabel5.TabIndex = 136;
             darkLabel5.Text = "Threat Distance Limit";
             // 
@@ -396,7 +425,7 @@
             darkLabel2.Location = new Point(367, 24);
             darkLabel2.Margin = new Padding(4, 0, 4, 0);
             darkLabel2.Name = "darkLabel2";
-            darkLabel2.Size = new Size(82, 15);
+            darkLabel2.Size = new Size(81, 15);
             darkLabel2.TabIndex = 127;
             darkLabel2.Text = "Accuracy Max";
             // 
@@ -425,29 +454,30 @@
             darkLabel17.TabIndex = 124;
             darkLabel17.Text = "Formation Scale";
             // 
-            // MemeLevelNUD
+            // MaxRecruitableAINUD
             // 
-            MemeLevelNUD.BackColor = Color.FromArgb(60, 63, 65);
-            MemeLevelNUD.ForeColor = SystemColors.Control;
-            MemeLevelNUD.Location = new Point(224, 141);
-            MemeLevelNUD.Margin = new Padding(4, 3, 4, 3);
-            MemeLevelNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            MemeLevelNUD.Name = "MemeLevelNUD";
-            MemeLevelNUD.Size = new Size(124, 23);
-            MemeLevelNUD.TabIndex = 206;
-            MemeLevelNUD.TextAlign = HorizontalAlignment.Center;
-            MemeLevelNUD.ValueChanged += MemeLevelNUD_ValueChanged;
+            MaxRecruitableAINUD.BackColor = Color.FromArgb(60, 63, 65);
+            MaxRecruitableAINUD.DecimalPlaces = 2;
+            MaxRecruitableAINUD.ForeColor = SystemColors.Control;
+            MaxRecruitableAINUD.Location = new Point(567, 141);
+            MaxRecruitableAINUD.Margin = new Padding(4, 3, 4, 3);
+            MaxRecruitableAINUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            MaxRecruitableAINUD.Name = "MaxRecruitableAINUD";
+            MaxRecruitableAINUD.Size = new Size(124, 23);
+            MaxRecruitableAINUD.TabIndex = 208;
+            MaxRecruitableAINUD.TextAlign = HorizontalAlignment.Center;
+            MaxRecruitableAINUD.ValueChanged += MaxRecruitableAINUD_ValueChanged;
             // 
-            // label1
+            // label2
             // 
-            label1.AutoSize = true;
-            label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(24, 143);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(71, 15);
-            label1.TabIndex = 207;
-            label1.Text = "Meme Level";
+            label2.AutoSize = true;
+            label2.ForeColor = Color.FromArgb(220, 220, 220);
+            label2.Location = new Point(367, 143);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(105, 15);
+            label2.TabIndex = 209;
+            label2.Text = "Max Recruitable AI";
             // 
             // AISettingsConfigControl
             // 
@@ -460,6 +490,7 @@
             Size = new Size(755, 235);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)DamageReceivedMultiplierNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)NoiseInvestigationDistanceLimitNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)SniperProneDistanceThresholdNUD).EndInit();
@@ -468,7 +499,7 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MaxRecruitableAINUD).EndInit();
             ResumeLayout(false);
         }
 
@@ -501,5 +532,7 @@
         private Label darkLabel17;
         private NumericUpDown MemeLevelNUD;
         private Label label1;
+        private NumericUpDown MaxRecruitableAINUD;
+        private Label label2;
     }
 }

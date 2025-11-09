@@ -18,7 +18,7 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-        public const int CurrentVersion = 15;
+        public const int CurrentVersion = 16;
         public ExpansionAIConfig(string path)
         {
             _path = path;
@@ -118,6 +118,7 @@ namespace ExpansionPlugin
         public int? MemeLevel { get; set; }
         public int? CanRecruitFriendly { get; set; }
         public int? CanRecruitGuards { get; set; }
+        public int? MaxRecruitableAI { get; set; }
         public BindingList<string>? PreventClimb { get; set; }
         public decimal? FormationScale { get; set; } //added in version 13
         public BindingList<string>? PlayerFactions { get; set; }
@@ -159,6 +160,7 @@ namespace ExpansionPlugin
             MemeLevel = 1;
             CanRecruitFriendly = 1;
             CanRecruitGuards = 0;
+            MaxRecruitableAI = 1;
             PreventClimb = new BindingList<string>();
             FormationScale = (decimal)1.0;
             PlayerFactions = new BindingList<string>();
@@ -192,6 +194,7 @@ namespace ExpansionPlugin
                    MemeLevel == other.MemeLevel &&
                    CanRecruitFriendly == other.CanRecruitFriendly &&
                    CanRecruitGuards == other.CanRecruitGuards &&
+                   MaxRecruitableAI == other.MaxRecruitableAI &&
                    FormationScale == other.FormationScale &&
                    LogAIHitBy == other.LogAIHitBy &&
                    LogAIKilled == other.LogAIKilled &&
@@ -305,7 +308,13 @@ namespace ExpansionPlugin
                 CanRecruitGuards = 0;
                 fixes.Add("Corrected CanRecruitGuards");
             }
- 
+
+            if (MaxRecruitableAI == null)
+            {
+                MaxRecruitableAI = 1;
+                fixes.Add("Corrected MaxRecruitableAI");
+            }
+
             if (PreventClimb == null)
             {
                 PreventClimb = new BindingList<string>();

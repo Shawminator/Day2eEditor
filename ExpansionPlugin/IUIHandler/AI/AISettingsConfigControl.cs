@@ -50,6 +50,7 @@ namespace ExpansionPlugin
             MannersCB.Checked = _data.Manners == 1 ? true : false;
             CanRecruitGuardsCB.Checked = _data.CanRecruitGuards == 1 ? true : false;
             CanRecruitFriendlyCB.Checked = _data.CanRecruitFriendly == 1 ? true : false;
+            MaxRecruitableAINUD.Value = (decimal)_data.MaxRecruitableAI;
             LogAIHitByCB.Checked = _data.LogAIHitBy == 1 ? true : false;
             LogAIKilledCB.Checked = _data.LogAIKilled == 1 ? true : false;
 
@@ -246,6 +247,13 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.EnableZombieVehicleAttackPhysics = EnableZombieVehicleAttackPhysicsCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void MaxRecruitableAINUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MaxRecruitableAI = (int)MaxRecruitableAINUD.Value;
             HasChanges();
         }
     }
