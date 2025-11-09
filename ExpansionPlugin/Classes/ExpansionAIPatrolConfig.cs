@@ -20,7 +20,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        public const int CurrentVersion = 24;
+        public const int CurrentVersion = 27;
 
         public ExpansionAIPatrolConfig(string path)
         {

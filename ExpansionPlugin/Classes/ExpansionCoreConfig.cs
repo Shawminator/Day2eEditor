@@ -17,7 +17,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        public const int CurrentVersion = 4;
+        public const int CurrentVersion = 9;
 
         public ExpansionCoreConfig(string path)
         {
