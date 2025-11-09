@@ -434,6 +434,7 @@ namespace ExpansionPlugin
         public decimal? NoiseInvestigationDistanceLimit { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
+        public decimal? HeadshotResistance { get; set; }
         public int? CanBeTriggeredByAI { get; set; }
         public decimal? MinDistRadius { get; set; }
         public decimal? MaxDistRadius { get; set; }
@@ -451,43 +452,6 @@ namespace ExpansionPlugin
 
         public ExpansionAIPatrol()
         {
-            Name = "";
-            Persist = 0;
-            Faction = "";
-            Formation = "";
-            FormationScale = (decimal)-1.0;
-            FormationLooseness = (decimal)0.0;
-            Loadout = "";
-            Units = new BindingList<string>();
-            NumberOfAI = -3;
-            Behaviour = "";
-            LootingBehaviour = "DEFAULT";
-            Speed = "";
-            UnderThreatSpeed = "";
-            CanBeLooted = 1;
-            LootDropOnDeath = "";
-            UnlimitedReload = 0;
-            SniperProneDistanceThreshold = (decimal)0.0;
-            AccuracyMin = -1;
-            AccuracyMax = -1;
-            ThreatDistanceLimit = -1;
-            NoiseInvestigationDistanceLimit = -1;
-            DamageMultiplier = -1;
-            DamageReceivedMultiplier = (decimal)-1.0;
-            CanBeTriggeredByAI = 0;
-            MinDistRadius = -1;
-            MaxDistRadius = -1;
-            DespawnRadius = -1;
-            MinSpreadRadius = 1;
-            MaxSpreadRadius = 0;
-            Chance = 1;
-            DespawnTime = -1;
-            RespawnTime = -2;
-            LoadBalancingCategory = "";
-            ObjectClassName = "";
-            WaypointInterpolation = "";
-            UseRandomWaypointAsStartPoint = 1;
-            Waypoints = new BindingList<float[]>();
         }
         public ExpansionAIPatrol(int bod = 1, string spd = "JOG", string threatspd = "SPRINT", string beh = "ALTERNATE", string fac = "WEST", string loa = "HumanLoadout", bool canbelooted = true, bool unlimitedreload = false, decimal chance = (decimal)1.0, float mindistradius = -2, float maxdistradius = -2, decimal respawntime = -2, decimal wprnd = 0, List<float[]> way = null)
         {
@@ -514,6 +478,7 @@ namespace ExpansionPlugin
             NoiseInvestigationDistanceLimit = -1;
             DamageMultiplier = -1;
             DamageReceivedMultiplier = (decimal)-1.0;
+            HeadshotResistance = (decimal)0.0;
             CanBeTriggeredByAI = 0;
             MinDistRadius = -1;
             MaxDistRadius = -1;
@@ -562,6 +527,7 @@ namespace ExpansionPlugin
                    NoiseInvestigationDistanceLimit == other.NoiseInvestigationDistanceLimit &&
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
+                   HeadshotResistance == other.HeadshotResistance &&
                    CanBeTriggeredByAI == other.CanBeTriggeredByAI &&
                    MinDistRadius == other.MinDistRadius &&
                    MaxDistRadius == other.MaxDistRadius &&
@@ -603,6 +569,7 @@ namespace ExpansionPlugin
             if (NoiseInvestigationDistanceLimit == null) { NoiseInvestigationDistanceLimit = -1; fixes.Add("Set NoiseInvestigationDistanceLimit to -1"); }
             if (DamageMultiplier == null) { DamageMultiplier = -1; fixes.Add("Set DamageMultiplier to -1"); }
             if (DamageReceivedMultiplier == null) { DamageReceivedMultiplier = -1; fixes.Add("Set DamageReceivedMultiplier to -1"); }
+            if (HeadshotResistance == null) { HeadshotResistance = 0; fixes.Add("Set HeadshotResistance to 0"); }
             if (CanBeTriggeredByAI == null || (CanBeTriggeredByAI != 0 && CanBeTriggeredByAI != 1)) { CanBeTriggeredByAI = 0; fixes.Add("Corrected CanBeTriggeredByAI to 0"); }
             if (MinDistRadius == null) { MinDistRadius = -1; fixes.Add("Set MinDistRadius to -1"); }
             if (MaxDistRadius == null) { MaxDistRadius = -1; fixes.Add("Set MaxDistRadius to -1"); }

@@ -78,7 +78,7 @@ namespace ExpansionPlugin
     {
         public int m_Version { get; set; }
         public int? ServerUpdateRateLimit { get; set; }
-        public int? FixCELifetime { get; set; }
+        public int? ForceExactCEItemLifetime { get; set; }
         public int? EnableInventoryCargoTidy { get; set; }
 
         public ExpansionCoreSettings()
@@ -88,7 +88,7 @@ namespace ExpansionPlugin
         {
             m_Version = CurrentVersion;
             ServerUpdateRateLimit = 0;
-            FixCELifetime = 0;
+            ForceExactCEItemLifetime = 0;
             EnableInventoryCargoTidy = 0;
         }
         public override bool Equals(object obj)
@@ -98,7 +98,7 @@ namespace ExpansionPlugin
 
             return m_Version == other.m_Version &&
                    ServerUpdateRateLimit == other.ServerUpdateRateLimit &&
-                   FixCELifetime == other.FixCELifetime &&
+                   ForceExactCEItemLifetime == other.ForceExactCEItemLifetime &&
                    EnableInventoryCargoTidy == other.EnableInventoryCargoTidy;
         }
 
@@ -118,10 +118,10 @@ namespace ExpansionPlugin
                 fixes.Add("Corrected ServerUpdateRateLimit to 0");
             }
 
-            if (FixCELifetime == null || (FixCELifetime != 0 && FixCELifetime != 1))
+            if (ForceExactCEItemLifetime == null || (ForceExactCEItemLifetime != 0 && ForceExactCEItemLifetime != 1))
             {
-                FixCELifetime = 0;
-                fixes.Add("Corrected FixCELifetime to 0");
+                ForceExactCEItemLifetime = 0;
+                fixes.Add("Corrected ForceExactCEItemLifetime to 0");
             }
 
             if (EnableInventoryCargoTidy == null || (EnableInventoryCargoTidy != 0 && EnableInventoryCargoTidy != 1))

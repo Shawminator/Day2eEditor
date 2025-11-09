@@ -97,6 +97,7 @@ namespace ExpansionPlugin
             StaticPatrolCanBeTriggeredByAICB.Checked = _data.CanBeTriggeredByAI == 1 ? true : false;
             StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
             StaticPatrolFormationScaleNUD.Value = (decimal)_data.FormationScale;
+            StaticPatrolHeadshotResistanceNUD.Value = (decimal)_data.HeadshotResistance;
             int StaticPatrolUnlimitedReloadBitmask = (int)_data.UnlimitedReload;
             if (StaticPatrolUnlimitedReloadBitmask == 1)
                 StaticPatrolUnlimitedReloadBitmask = 30;
@@ -187,6 +188,7 @@ namespace ExpansionPlugin
                 NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
                 DamageMultiplier = data.DamageMultiplier,
                 DamageReceivedMultiplier = data.DamageReceivedMultiplier,
+                HeadshotResistance = data.HeadshotResistance,
                 CanBeTriggeredByAI = data.CanBeTriggeredByAI,
                 MinDistRadius = data.MinDistRadius,
                 MaxDistRadius = data.MaxDistRadius,
@@ -538,6 +540,13 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.UseRandomWaypointAsStartPoint = StaticPatrolUseRandomWaypointAsStartPointCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void StaticPatrolHeadshotResistanceNUD_Valuechanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.HeadshotResistance = StaticPatrolHeadshotResistanceNUD.Value;
             HasChanges();
         }
     }
