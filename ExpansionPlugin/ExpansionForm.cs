@@ -197,7 +197,13 @@ namespace ExpansionPlugin
                 {
                     ExpansionBookLink ExpansionBookLink = node.Tag as ExpansionBookLink;
                     ShowHandler(new ExpansionBookLinksControl(), typeof(ExpansionBookConfig), ExpansionBookLink, selected);
-                }
+                },
+                // Chat
+                [typeof(ExpansionChatSettings)] = (node,selected) =>
+                {
+                    ExpansionChatSettings ExpansionChatSettings = node.Tag as ExpansionChatSettings;
+                    ShowHandler(new ExpansionChatSettingsControl(), typeof(ExpansionChatConfig), ExpansionChatSettings, selected);
+                },
             };
             // ----------------------
             // String handlers
