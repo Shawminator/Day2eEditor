@@ -129,7 +129,7 @@ namespace Day2eEditor
         }
         private void LoadFiles()
         {
-            Console.WriteLine($"\n[Load Economy] Loading all base economy files associated with the current Project.");
+            Console.WriteLine($"\n[Economy Manager] Loading all base economy files associated with the current Project.");
 
             eonomyCoreConfig = new economyCoreConfig(_paths["cfgeconomycore"]);
             LoadConfigWithErrorReport("cfgeconomycore", eonomyCoreConfig);
@@ -338,10 +338,43 @@ namespace Day2eEditor
                 }
             }
         }
-
         public void SetExternalFiles()
         {
+            Console.WriteLine("[Economy Manager] Checking External Data Files");
             checkVanillaSlotNames();
+            checkVanillaCharacterClassnames();
+        }
+
+        private void checkVanillaCharacterClassnames()
+        {
+            string filePath = "Data\\VanillaCharacterClassnames.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> fileCharacterClassnames = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                fileCharacterClassnames = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string slot in VanillaCharacterClassnames)
+            {
+                if (!fileCharacterClassnames.Contains(slot))
+                {
+                    fileCharacterClassnames.Add(slot);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, fileCharacterClassnames);
+            }
         }
         private void checkVanillaSlotNames()
         {
@@ -394,5 +427,43 @@ namespace Day2eEditor
             "shoulderR",
             "Vest",
         };
+
+        static List<string> VanillaCharacterClassnames = new List<string>()
+        {
+            "SurvivorF_Baty",
+            "SurvivorF_Eva",
+            "SurvivorF_Frida",
+            "SurvivorF_Gabi",
+            "SurvivorF_Helga",
+            "SurvivorF_Irena",
+            "SurvivorF_Judy",
+            "SurvivorF_Keiko",
+            "SurvivorF_Linda",
+            "SurvivorF_Maria",
+            "SurvivorF_Naomi",
+            "SurvivorM_Denis",
+            "SurvivorM_Boris",
+            "SurvivorM_Cyril",
+            "SurvivorM_Elias",
+            "SurvivorM_Francis",
+            "SurvivorM_Guo",
+            "SurvivorM_Hassan",
+            "SurvivorM_Indar",
+            "SurvivorM_Jose",
+            "SurvivorM_Kaito",
+            "SurvivorM_Lewis",
+            "SurvivorM_Manua",
+            "SurvivorM_Mirek",
+            "SurvivorM_Niki",
+            "SurvivorM_Oliver",
+            "SurvivorM_Peter",
+            "SurvivorM_Quinn",
+            "SurvivorM_Rolf",
+            "SurvivorM_Seth",
+            "SurvivorM_Taiki"
+        };
+
+
+
     }
 }

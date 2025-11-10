@@ -1,0 +1,15 @@
+﻿Default Slot
+Back
+Body
+Dogtag
+Eyes
+Feet
+Gloves
+Hands
+Headgear
+Hips
+Legs
+Mask
+Melee
+Shoulder
+Vest

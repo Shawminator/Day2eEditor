@@ -47,8 +47,6 @@ namespace ExpansionPlugin
             var missingFields = Data.FixMissingOrInvalidFields();
             if (missingFields.Any())
             {
-                HasErrors = true;
-                Errors.AddRange(missingFields);
                 Console.WriteLine("Validation issues in " + FileName + ":");
                 foreach (var issue in missingFields)
                 {

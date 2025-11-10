@@ -22,7 +22,7 @@ namespace EconomyPlugin
         {
             InitializeComponent();
 
-            characterTypesCB.DataSource = File.ReadAllLines("Data\\CharacterClassnames.txt").ToList();
+            characterTypesCB.DataSource = File.ReadAllLines("Data\\VanillaCharacterClassnames.txt").ToList();
         }
 
         /// <summary>

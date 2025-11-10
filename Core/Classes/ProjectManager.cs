@@ -173,5 +173,83 @@ namespace Day2eEditor
             _store.Projects.RaiseListChangedEvents = true;
             _store.Projects.ResetBindings();
         }
+
+        public void SetExternalFiles()
+        {
+            Console.WriteLine("[Project Manager] Checking External Data Files");
+            checkMapSizes();
+        }
+        private void checkMapSizes()
+        {
+            string filePath = "Data\\MapSizes.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> fileMapSizes = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                fileMapSizes = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string slot in MapSizes)
+            {
+                if (!fileMapSizes.Contains(slot))
+                {
+                    fileMapSizes.Add(slot);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, fileMapSizes);
+            }
+        }
+        static List<string> MapSizes = new List<string>()
+        {
+            "chernarusplus:15360",
+            "chernarusplusgloom:15360",
+            "banov:15360",
+            "namalsk:12800",
+            "enoch:12800",
+            "enochgloom:12800",
+            "takistanplus:12800",
+            "esseker:12800",
+            "deerisle:16384",
+            "rostow:14336",
+            "iztek:8192",
+            "valning:10240",
+            "pripyat:20480",
+            "yiprit:20480",
+            "barrington:10240",
+            "vela:10240",
+            "chiemsee:10240",
+            "melkart:20480",
+            "thezone:20480",
+            "capare:20480",
+            "nhchernobyl:20480",
+            "NukeZZonE:15360",
+            "lux:15360",
+            "vis_island:20480",
+            "bearisland:10240",
+            "fogfall:20480",
+            "swansisland:2048",
+            "anastara:10240",
+            "alteria:8192",
+            "bitterroot:12288",
+            "sakhal:15360",
+            "arsteinen:15360",
+            "raman:32768",
+            "NorthTakistan:12288",
+            "GreenCounty:10240",
+            "hashima:5120",
+            "Deadfall:10240",
+            "pnw:10240"
+        };
     }
 }

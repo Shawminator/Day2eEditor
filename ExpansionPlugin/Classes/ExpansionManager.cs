@@ -85,7 +85,7 @@ namespace ExpansionPlugin
         }
         private void LoadFiles(string basePath)
         {
-            Console.WriteLine($"\n[Load Expansion] Loading all files associated with the Expansion Mod.");
+            Console.WriteLine($"\n[Expansion Manager] Loading all files associated with the Expansion Mod.");
 
             ExpansionLoadoutConfig = new ExpansionLoadoutConfig(_paths["ExpansionLoadouts"]);
             LoadConfigWithErrorReport("ExpansionLoadouts", ExpansionLoadoutConfig);

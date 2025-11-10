@@ -34,6 +34,7 @@ namespace Day2eEditor
             //Register projectmanager
             var projectManager = new ProjectManager("Projects");
             AppServices.Register(projectManager);
+            projectManager.SetExternalFiles();
             projectManager.Load();
 
             string activeProject = projectManager.CurrentProject == null
@@ -43,6 +44,7 @@ namespace Day2eEditor
             Console.WriteLine(activeProject);
 
             // EconomyManager
+            Console.WriteLine("[Load] Loading Economy Manager");
             var economyManager = new EconomyManager();
             economyManager.SetExternalFiles();
             AppServices.Register(economyManager);
