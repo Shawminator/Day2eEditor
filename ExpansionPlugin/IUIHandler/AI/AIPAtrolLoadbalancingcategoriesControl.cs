@@ -1,28 +1,26 @@
 ﻿using Day2eEditor;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace EconomyPlugin
+namespace ExpansionPlugin
 {
     /// <summary>
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class AttachmentslotitemsetControl : UserControl, IUIHandler
+    public partial class AIPAtrolLoadbalancingcategoriesControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private Attachmentslotitemset _data;
-        private Attachmentslotitemset _originalData;
+        private Loadbalancingcategories _data;
+        private Loadbalancingcategories _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public AttachmentslotitemsetControl()
+        public AIPAtrolLoadbalancingcategoriesControl()
         {
             InitializeComponent();
-            
         }
 
         /// <summary>
@@ -36,13 +34,15 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as Attachmentslotitemset ?? throw new InvalidCastException();
+            _data = data as Loadbalancingcategories ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
-            ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\VanillaSlotNames.txt").ToList();
-            ItemAttachmentSlotNameCB.SelectedIndex = ItemAttachmentSlotNameCB.FindStringExact(_data.slotName);
+
+            MinPlayersLBCNUD.Value = _data.MinPlayers;
+            MaxPlayersLBCNUD.Value = _data.MaxPlayers;
+            MaxPatrolsLBCNUD.Value = _data.MaxPatrols;
 
             _suppressEvents = false;
         }
@@ -81,13 +81,15 @@ namespace EconomyPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-        private Attachmentslotitemset CloneData(Attachmentslotitemset data)
+        private Loadbalancingcategories CloneData(Loadbalancingcategories data)
         {
-            return new Attachmentslotitemset
+            // TODO: Implement actual cloning logic
+            return new Loadbalancingcategories
             {
-                slotName = data.slotName
+                MinPlayers = data.MinPlayers,
+                MaxPlayers = data.MaxPlayers,
+                MaxPatrols = data.MaxPatrols,
             };
-
         }
 
         /// <summary>
@@ -97,30 +99,30 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = _data.slotName;
+                // TODO: Update _nodes.Last().Text based on _data
             }
         }
 
         #endregion
 
-        private void ItemAttachmentSlotNameCB_SelectedIndexChanged(object sender, EventArgs e)
+        private void MinPlayersLBCNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            var SpawnGearPresetFiles = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
-            if (_nodes.Last().Parent.Tag.ToString() == "SpawnGearAttachmentSlotItemSetsParent")
-            {
-                string Slotname = ItemAttachmentSlotNameCB.GetItemText(ItemAttachmentSlotNameCB.SelectedItem);
-                if (!SpawnGearPresetFiles.attachmentSlotItemSets.Any(x => x.slotName == Slotname))
-                {
-                    _data.slotName = Slotname;
-                    HasChanges();
-                    UpdateTreeNodeText();
-                }
-                else
-                {
-                    MessageBox.Show("Slot Name allready in Use.....");
-                }
-            }
+            _data.MinPlayers = (int)MinPlayersLBCNUD.Value;
+            HasChanges();
+        }
+        private void MaxPlayersLBCNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MaxPlayers = (int)MaxPlayersLBCNUD.Value;
+            HasChanges();
+        }
+
+        private void MaxPatrolsLBCNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MaxPatrols = (int)MaxPatrolsLBCNUD.Value;
+            HasChanges();
         }
     }
 }

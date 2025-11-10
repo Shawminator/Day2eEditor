@@ -20,6 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Classes\t4uf14p5.fd4~" />
     <None Remove="Expansion.png" />
   </ItemGroup>
 

@@ -112,6 +112,37 @@ namespace ExpansionPlugin
                     ExpansionAIPatrolSettings ExpansionAIPatrolSettings = node.Tag as ExpansionAIPatrolSettings;
                     ShowHandler(new AIPAtrolGeneralControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrolSettings, selected);
                 },
+                [typeof(Loadbalancingcategorie)] = (node, selected) =>
+                {
+                    Loadbalancingcategorie Loadbalancingcategorie = node.Tag as Loadbalancingcategorie;
+                    ShowHandler(new AIPatrolLoadbalancingcategorieControl(), typeof(ExpansionAIPatrolConfig), Loadbalancingcategorie, selected);
+                },
+                [typeof(Loadbalancingcategories)] = (node, selected) =>
+                {
+                    Loadbalancingcategories Loadbalancingcategories = node.Tag as Loadbalancingcategories;
+                    ShowHandler(new AIPAtrolLoadbalancingcategoriesControl(), typeof(ExpansionAIPatrolConfig), Loadbalancingcategories, selected);
+                },
+                [typeof(ExpansionAINoGoArea)] = (node, selected) =>
+                {
+                    ExpansionAINoGoArea ExpansionAINoGoArea = node.Tag as ExpansionAINoGoArea;
+                    var control = new ExpansionAINoGoAreaControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseAILocationNoGoAreas(node.FindParentOfType<ExpansionAILocationConfig>());
+                    };
+                    control.RadiusChanged += (updatedRadius) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseAILocationNoGoAreas(node.FindParentOfType<ExpansionAILocationConfig>());
+                    };
+
+
+
+                    ShowHandler(control, typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, selected);
+                    SetupAILocationNoGoAreas(ExpansionAINoGoArea, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z));
+                },
                 //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
                 {
@@ -127,7 +158,7 @@ namespace ExpansionPlugin
                         _mapControl.ClearDrawables(); ;
                         DrawbasebuildingNoBuildZones(node.FindParentOfType<ExpansionBaseBuildingConfig>());
                     };
-                    ShowHandler(control, typeof(ExpansionBaseBuildingConfig), node.Tag as ExpansionBuildNoBuildZone, selected);
+                    ShowHandler(control, typeof(ExpansionBaseBuildingConfig), ExpansionBuildNoBuildZone, selected);
                     SetupBaseBuildingNoBuildZone(ExpansionBuildNoBuildZone, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
                 },
@@ -274,6 +305,26 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewLoadoutFileToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(Loadbalancingcategorie)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewLoadBalancingCountsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(Loadbalancingcategories)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeCountsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionAINoGoArea)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAINoGoAreaToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 // LootDrop
@@ -433,6 +484,30 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeUnitToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AILoadBlanacing"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewLoadBalancingCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["NoGoAreas"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAiNoGoAreaToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ExcludedRoamingBuildings"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAIExcludedBuildingsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ExcludedRoamingBuilding"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAIExludedBuildingsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //BaseBuilding 
@@ -918,14 +993,14 @@ namespace ExpansionPlugin
             };
             foreach (Loadbalancingcategorie lbc in ef.Data._LoadBalancingCategories)
             {
-                TreeNode LoadbalancingcategorieRoot = new TreeNode(lbc.name)
+                TreeNode LoadbalancingcategorieRoot = new TreeNode($"Category Name : - {lbc.name}")
                 {
                     Tag = lbc
                 };
                 int i = 0;
                 foreach (Loadbalancingcategories lbcat in lbc.Categorieslist)
                 {
-                    LoadbalancingcategorieRoot.Nodes.Add(new TreeNode($"Counts {i.ToString()}")
+                    LoadbalancingcategorieRoot.Nodes.Add(new TreeNode($"Load Balancing : {i.ToString()}")
                     {
                         Tag = lbcat
                     });
@@ -1428,11 +1503,14 @@ namespace ExpansionPlugin
             _mapControl.MapsingleClicked -= MapControl_AIRomaingLocationSingleclicked;
             _mapControl.MapsingleClicked -= MapControl_AIPatrolSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_AIPatrolDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_AILocationNoGoAreasSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_AILocationNoGoAreasDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
             _selectedAIRoamingLocations = null;
             _selectedAIPatrol = null;
+            _selectedAINOGoArea = null;
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -1494,6 +1572,7 @@ namespace ExpansionPlugin
         private ExpansionBuildNoBuildZone _selectedNoBuildZonePos;
         private ExpansionAIRoamingLocation _selectedAIRoamingLocations;
         private ExpansionAIPatrol _selectedAIPatrol;
+        private ExpansionAINoGoArea _selectedAINOGoArea;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -1543,6 +1622,19 @@ namespace ExpansionPlugin
                 var ExpansionAIPatrolConfig = node.Parent?.Parent?.Parent?.Parent?.Tag as ExpansionAIPatrolConfig;
                 if (ExpansionAIPatrolConfig != null)
                     DrawbaseAIPatrols(ExpansionAIPatrolConfig);
+            });
+        }
+        private void SetupAILocationNoGoAreas(ExpansionAINoGoArea pos, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedAINOGoArea = pos;
+                _mapControl.MapsingleClicked += MapControl_AILocationNoGoAreasSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_AILocationNoGoAreasDoubleclicked;
+
+                var ExpansionAILocationConfig = node.Parent?.Parent?.Tag as ExpansionAILocationConfig;
+                if (ExpansionAILocationConfig != null)
+                    DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig);
             });
         }
 
@@ -1633,6 +1725,24 @@ namespace ExpansionPlugin
 
                     _mapControl.RegisterDrawable(marker);
                 }
+            }
+        }
+        private void DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig ExpansionAILocationConfig)
+        {
+            foreach (ExpansionAINoGoArea ExpansionAINoGoArea in ExpansionAILocationConfig.Data.NoGoAreas)
+            {
+                var marker = new MarkerDrawable(new PointF(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)ExpansionAINoGoArea.Radius,
+                    Scaleradius = true,
+                    Shade = true
+                };
+                if (_selectedAINOGoArea == ExpansionAINoGoArea)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
             }
         }
 
@@ -1816,8 +1926,6 @@ namespace ExpansionPlugin
                 {
                     v3.Y = (MapData.gethieght(v3.X, v3.Z));
                 }
-                _expansionManager.ExpansionAIPatrolConfig.isDirty = true;
-
                 _mapControl.ClearDrawables();
 
                 ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
@@ -1825,6 +1933,74 @@ namespace ExpansionPlugin
                 ShowHandler(new Vector3Control(), typeof(ExpansionAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
                 DrawbaseAIPatrols(ExpansionAIPatrolConfig);
                 currentTreeNode.Text = v3.GetString();
+            }
+        }
+        private void MapControl_AILocationNoGoAreasSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            ExpansionAINoGoArea closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is ExpansionAINoGoArea pos)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos._Position.X, pos._Position.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_AILocationNoGoAreasDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is ExpansionAINoGoArea ExpansionAINoGoArea)
+            {
+                ExpansionAINoGoArea._Position.X = (float)e.MapCoordinates.X;
+                ExpansionAINoGoArea._Position.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    ExpansionAINoGoArea._Position.Y = (MapData.gethieght(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z));
+                }
+                _expansionManager.ExpansionAILocationConfig.isDirty = true;
+
+                _mapControl.ClearDrawables();
+
+                ExpansionAILocationConfig ExpansionAILocationConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
+                ExpansionAILocationConfig.isDirty = true;
+                ShowHandler(new ExpansionAINoGoAreaControl(), typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, new List<TreeNode>() { currentTreeNode });
+                DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig);
             }
         }
         #endregion mapstuff
@@ -2542,7 +2718,7 @@ namespace ExpansionPlugin
             {
                 siblings.RemoveAt(index);
                 ExpansionAIPatrol._waypoints.RemoveAt(index);
-                ExpansionAIPatrol._waypoints.Insert(index-1, waypoint);
+                ExpansionAIPatrol._waypoints.Insert(index - 1, waypoint);
                 siblings.Insert(index - 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
@@ -2583,6 +2759,115 @@ namespace ExpansionPlugin
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
             ExpansionAIPatrol.Units.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void addNewLoadBalancingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            Loadbalancingcategorie newcat = new Loadbalancingcategorie()
+            {
+                name = "New Category - Change Me",
+                Categorieslist = new BindingList<Loadbalancingcategories>()
+            };
+            ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Add(newcat);
+            TreeNode newtreenode = new TreeNode($"Category Name : - {newcat.name}")
+            {
+                Tag = newcat
+            };
+            currentTreeNode.Nodes.Add(newtreenode);
+            ExpansionTV.SelectedNode = newtreenode;
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void removeCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            Loadbalancingcategorie Loadbalancingcategorie = currentTreeNode.Tag as Loadbalancingcategorie;
+            ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Remove(Loadbalancingcategorie);
+            currentTreeNode.Remove();
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void addNewLoadBalancingCountsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            Loadbalancingcategorie Loadbalancingcategorie = currentTreeNode.Tag as Loadbalancingcategorie;
+            Loadbalancingcategorie.Categorieslist.Add(new Loadbalancingcategories()
+            {
+                MinPlayers = 0,
+                MaxPlayers = 255,
+                MaxPatrols = -1
+            });
+            TreeNode Newtreenode = new TreeNode($"Load Balancing : {(Loadbalancingcategorie.Categorieslist.Count - 1).ToString()}")
+            {
+                Tag = Loadbalancingcategorie.Categorieslist.Last()
+            };
+            currentTreeNode.Nodes.Add(Newtreenode);
+            ExpansionTV.SelectedNode = Newtreenode;
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void removeCountsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (currentTreeNode.Parent.Tag as Loadbalancingcategorie).Categorieslist.Remove(currentTreeNode.Tag as Loadbalancingcategories);
+            currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>().isDirty = true;
+            currentTreeNode.Remove();
+        }
+        private void addAiNoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
+            ExpansionAINoGoArea newnogo = new ExpansionAINoGoArea()
+            {
+                Name = "New NoGO Area",
+                _Position = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2),
+                Radius = 300,
+                Height = MapData.gethieght(AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2) + 200
+            };
+            if (MapData.FileExists)
+            {
+                newnogo._Position.Y = (MapData.gethieght(newnogo._Position.X, newnogo._Position.Z));
+            }
+            ExpansionAIPatrolConfig.Data.NoGoAreas.Add(newnogo);
+            TreeNode newtreenode = new TreeNode($"{newnogo.Name}")
+            {
+                Tag = newnogo
+            };
+            currentTreeNode.Nodes.Add(newtreenode);
+            ExpansionTV.SelectedNode = newtreenode;
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void removeAINoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
+            ExpansionAIPatrolConfig.Data.NoGoAreas.Remove(currentTreeNode.Tag as ExpansionAINoGoArea);
+            currentTreeNode.Remove();
+            ExpansionAIPatrolConfig.isDirty = true;
+        }
+        private void addAIExcludedBuildingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Admin Steam ID";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!ExpansionAIPatrolConfig.Data.ExcludedRoamingBuildings.Contains(l))
+                    {
+                        ExpansionAIPatrolConfig.Data.ExcludedRoamingBuildings.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "ExcludedRoamingBuilding"
+                        });
+                    }
+                }
+                ExpansionAIPatrolConfig.isDirty = true;
+            }
+        }
+        private void removeAIExlusdedBuildingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
+            ExpansionAIPatrolConfig.Data.ExcludedRoamingBuildings.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
             ExpansionAIPatrolConfig.isDirty = true;
         }
@@ -2842,6 +3127,9 @@ namespace ExpansionPlugin
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         #endregion right click methods
+
+
+
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

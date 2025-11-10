@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace ExpansionPlugin
 {
@@ -12,15 +11,17 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class AIRoamingLocationControl : UserControl, IUIHandler
+    public partial class ExpansionAINoGoAreaControl : UserControl, IUIHandler
     {
+        public event Action<ExpansionAINoGoArea> PositionChanged;
+        public event Action<ExpansionAINoGoArea> RadiusChanged;
         private Type _parentType;
-        private ExpansionAIRoamingLocation _data;
-        private ExpansionAIRoamingLocation _originalData;
+        private ExpansionAINoGoArea _data;
+        private ExpansionAINoGoArea _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public AIRoamingLocationControl()
+        public ExpansionAINoGoAreaControl()
         {
             InitializeComponent();
         }
@@ -36,19 +37,18 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as ExpansionAIRoamingLocation ?? throw new InvalidCastException();
+            _data = data as ExpansionAINoGoArea ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
             NameTB.Text = _data.Name;
-            XNUD.Text = _data._Position.X.ToString();
-            YNUD.Text = _data._Position.Y.ToString();
-            ZNUD.Text = _data._Position.Z.ToString();
-            RadiusNUD.Text = _data.Radius.ToString();
-            TypeTB.Text = _data.Type;
-            EnabledCB.Checked = _data.Enabled == 1 ? true : false;
+            POSXNUD.Value = (decimal)_data._Position.X;
+            POSYNUD.Value = (decimal)_data._Position.Y;
+            POSZNUD.Value = (decimal)_data._Position.Z;
+            RadiusNUD.Value = (decimal)_data.Radius;
+            HieghtNUD.Value = (decimal)_data.Height;
 
             _suppressEvents = false;
         }
@@ -87,19 +87,17 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-
-        private ExpansionAIRoamingLocation CloneData(ExpansionAIRoamingLocation data)
+        private ExpansionAINoGoArea CloneData(ExpansionAINoGoArea data)
         {
-            return new ExpansionAIRoamingLocation
+            // TODO: Implement actual cloning logic
+            return new ExpansionAINoGoArea
             {
                 Name = data.Name,
+                _Position = data._Position != null ? new Vec3(data._Position.X, data._Position.Y, data._Position.Z) : null,
                 Radius = data.Radius,
-                Type = data.Type,
-                Enabled = data.Enabled,
-                _Position = data._Position != null ? new Vec3(data._Position.X, data._Position.Y, data._Position.Z) : null
+                Height = data.Height,
             };
         }
-
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -108,16 +106,50 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = $"{_data.Name}";
             }
         }
 
         #endregion
 
-        private void EnabledCB_CheckedChanged(object sender, EventArgs e)
+        private void NameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.Enabled = EnabledCB.Checked == true ? 1 : 0;
+            _data.Name = NameTB.Text;
+            UpdateTreeNodeText();
+            HasChanges();
+        }
+        private void POSXNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data._Position.X = (float)POSXNUD.Value;
+            HasChanges();
+            PositionChanged?.Invoke(_data);
+        }
+        private void POSYNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data._Position.Y = (float)POSYNUD.Value;
+            HasChanges();
+        }
+        private void POSZNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data._Position.Z = (float)POSZNUD.Value;
+            HasChanges();
+            PositionChanged?.Invoke(_data);
+        }
+        private void RadiusNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Radius= (float)RadiusNUD.Value;
+            HasChanges();
+            RadiusChanged?.Invoke(_data);
+        }
+        private void HieghtNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Height = (float)HieghtNUD.Value;
             HasChanges();
         }
     }

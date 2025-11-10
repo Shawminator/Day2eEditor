@@ -190,7 +190,7 @@ namespace ExpansionPlugin
                 return false;
 
             return Name == other.Name &&
-                   Position?.SequenceEqual(other.Position ?? Array.Empty<float>()) == true &&
+                   _Position.Equals(other._Position) &&
                    Radius == other.Radius &&
                    Type == other.Type &&
                    Enabled == other.Enabled;
@@ -211,17 +211,17 @@ namespace ExpansionPlugin
         {
             return Name;
         }
-
         public override bool Equals(object? obj)
         {
             if (obj is not ExpansionAINoGoArea other)
                 return false;
 
             return Name == other.Name &&
-                   Position?.SequenceEqual(other.Position ?? Array.Empty<float>()) == true &&
+                   _Position.Equals(other._Position) &&
                    Radius == other.Radius &&
                    Height == other.Height;
         }
+
 
     }
 }
