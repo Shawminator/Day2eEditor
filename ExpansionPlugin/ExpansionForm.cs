@@ -208,6 +208,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionChatColors ExpansionChatColors = node.Tag as ExpansionChatColors;
                     ShowHandler(new ExpansionChatColorsControl(), typeof(ExpansionChatConfig), ExpansionChatColors, selected);
+                },
+                //Core
+                [typeof(ExpansionCoreSettings)] = (node, selected) =>
+                {
+                    ExpansionCoreSettings ExpansionCoreSettings = node.Tag as ExpansionCoreSettings;
+                    ShowHandler(new ExpansionCoreControl(), typeof(ExpansionCoreConfig), ExpansionCoreSettings, selected);
                 }
             };
             // ----------------------
