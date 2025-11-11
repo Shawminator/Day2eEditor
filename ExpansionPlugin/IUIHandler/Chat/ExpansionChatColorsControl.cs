@@ -1,6 +1,8 @@
-﻿using Day2eEditor;
+﻿using CoreUI.Forms;
+using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -40,9 +42,30 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+
+            SetChatColor(_data.SystemChatColor, SystemChatColorPB);
+            SetChatColor(_data.AdminChatColor, AdminChatColorPB);
+            SetChatColor(_data.GlobalChatColor, GlobalChatColorPB);
+            SetChatColor(_data.DirectChatColor, DirectChatColorPB);
+            SetChatColor(_data.PartyChatColor, PartyChatColorPB);
+            SetChatColor(_data.TransportChatColor, TransportChatColorPB);
+            SetChatColor(_data.TransmitterChatColor, TransmitterChatColorPB);
+            SetChatColor(_data.StatusMessageColor, StatusMessageColorPB);
+            SetChatColor(_data.ActionMessageColor, ActionMessageColorPB);
+            SetChatColor(_data.FriendlyMessageColor, FriendlyMessageColorPB);
+            SetChatColor(_data.ImportantMessageColor, ImportantMessageColorPB);
+            SetChatColor(_data.DefaultMessageColor, DefaultMessageColorPB);
+
+
 
             _suppressEvents = false;
+        }
+
+        private void SetChatColor(string hexColor, PictureBox targetPB)
+        {
+            string formattedColor = "#" + hexColor.Substring(6) + hexColor.Remove(6, 2);
+            Color selectedColor = ColorTranslator.FromHtml(formattedColor);
+            targetPB.BackColor = selectedColor;
         }
 
         /// <summary>
@@ -100,5 +123,40 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void SystemChatColorPB_Click(object sender, EventArgs e)
+        {
+            if (sender is PictureBox pb)
+            {
+                HandleColorChange(pb);
+            }
+
+        }
+
+        private void HandleColorChange(PictureBox pb)
+        {
+            Color startColor = pb.BackColor;
+            using (AdvancedColorPickerForm picker = new AdvancedColorPickerForm(startColor))
+            {
+                picker.StartPosition = FormStartPosition.CenterParent;
+                if (picker.ShowDialog() == DialogResult.OK)
+                {
+                    string colorHex = picker.SelectedColorHex;
+                    Color selectedColor = ColorTranslator.FromHtml(colorHex);
+                    pb.BackColor = selectedColor;
+
+                    // Map PictureBox name to _data property dynamically
+                    string propertyName = pb.Name.Replace("PB", ""); // e.g., SystemChatColorPB → SystemChatColor
+                    var prop = typeof(ExpansionChatColors).GetProperty(propertyName);
+                    if (prop != null)
+                    {
+                        prop.SetValue(_data, colorHex.Substring(4, 6) + colorHex.Substring(2, 2));
+                    }
+
+                    HasChanges();
+                }
+            }
+        }
+
     }
 }

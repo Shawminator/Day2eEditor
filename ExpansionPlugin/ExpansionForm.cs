@@ -204,6 +204,11 @@ namespace ExpansionPlugin
                     ExpansionChatSettings ExpansionChatSettings = node.Tag as ExpansionChatSettings;
                     ShowHandler(new ExpansionChatSettingsControl(), typeof(ExpansionChatConfig), ExpansionChatSettings, selected);
                 },
+                [typeof(ExpansionChatColors)] = (node,selected) =>
+                {
+                    ExpansionChatColors ExpansionChatColors = node.Tag as ExpansionChatColors;
+                    ShowHandler(new ExpansionChatColorsControl(), typeof(ExpansionChatConfig), ExpansionChatColors, selected);
+                }
             };
             // ----------------------
             // String handlers

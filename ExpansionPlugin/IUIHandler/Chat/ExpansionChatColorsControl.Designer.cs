@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExpansionChatColorsControl));
             groupBox34 = new GroupBox();
             DefaultMessageColorPB = new PictureBox();
             darkLabel159 = new Label();
@@ -107,13 +106,13 @@
             // 
             // DefaultMessageColorPB
             // 
-            DefaultMessageColorPB.BackgroundImage = (Image)resources.GetObject("DefaultMessageColorPB.BackgroundImage");
             DefaultMessageColorPB.Location = new Point(157, 260);
             DefaultMessageColorPB.Margin = new Padding(4, 3, 4, 3);
             DefaultMessageColorPB.Name = "DefaultMessageColorPB";
             DefaultMessageColorPB.Size = new Size(141, 15);
             DefaultMessageColorPB.TabIndex = 142;
             DefaultMessageColorPB.TabStop = false;
+            DefaultMessageColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel159
             // 
@@ -128,13 +127,13 @@
             // 
             // ImportantMessageColorPB
             // 
-            ImportantMessageColorPB.BackgroundImage = (Image)resources.GetObject("ImportantMessageColorPB.BackgroundImage");
             ImportantMessageColorPB.Location = new Point(157, 238);
             ImportantMessageColorPB.Margin = new Padding(4, 3, 4, 3);
             ImportantMessageColorPB.Name = "ImportantMessageColorPB";
             ImportantMessageColorPB.Size = new Size(141, 15);
             ImportantMessageColorPB.TabIndex = 140;
             ImportantMessageColorPB.TabStop = false;
+            ImportantMessageColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel158
             // 
@@ -149,13 +148,13 @@
             // 
             // FriendlyMessageColorPB
             // 
-            FriendlyMessageColorPB.BackgroundImage = (Image)resources.GetObject("FriendlyMessageColorPB.BackgroundImage");
             FriendlyMessageColorPB.Location = new Point(157, 216);
             FriendlyMessageColorPB.Margin = new Padding(4, 3, 4, 3);
             FriendlyMessageColorPB.Name = "FriendlyMessageColorPB";
             FriendlyMessageColorPB.Size = new Size(141, 15);
             FriendlyMessageColorPB.TabIndex = 138;
             FriendlyMessageColorPB.TabStop = false;
+            FriendlyMessageColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel23
             // 
@@ -170,13 +169,13 @@
             // 
             // ActionMessageColorPB
             // 
-            ActionMessageColorPB.BackgroundImage = (Image)resources.GetObject("ActionMessageColorPB.BackgroundImage");
             ActionMessageColorPB.Location = new Point(157, 195);
             ActionMessageColorPB.Margin = new Padding(4, 3, 4, 3);
             ActionMessageColorPB.Name = "ActionMessageColorPB";
             ActionMessageColorPB.Size = new Size(141, 15);
             ActionMessageColorPB.TabIndex = 136;
             ActionMessageColorPB.TabStop = false;
+            ActionMessageColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel22
             // 
@@ -191,13 +190,13 @@
             // 
             // StatusMessageColorPB
             // 
-            StatusMessageColorPB.BackgroundImage = (Image)resources.GetObject("StatusMessageColorPB.BackgroundImage");
             StatusMessageColorPB.Location = new Point(157, 174);
             StatusMessageColorPB.Margin = new Padding(4, 3, 4, 3);
             StatusMessageColorPB.Name = "StatusMessageColorPB";
             StatusMessageColorPB.Size = new Size(141, 15);
             StatusMessageColorPB.TabIndex = 134;
             StatusMessageColorPB.TabStop = false;
+            StatusMessageColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel21
             // 
@@ -212,13 +211,13 @@
             // 
             // TransmitterChatColorPB
             // 
-            TransmitterChatColorPB.BackgroundImage = (Image)resources.GetObject("TransmitterChatColorPB.BackgroundImage");
             TransmitterChatColorPB.Location = new Point(157, 152);
             TransmitterChatColorPB.Margin = new Padding(4, 3, 4, 3);
             TransmitterChatColorPB.Name = "TransmitterChatColorPB";
             TransmitterChatColorPB.Size = new Size(141, 15);
             TransmitterChatColorPB.TabIndex = 132;
             TransmitterChatColorPB.TabStop = false;
+            TransmitterChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel98
             // 
@@ -233,13 +232,13 @@
             // 
             // PartyChatColorPB
             // 
-            PartyChatColorPB.BackgroundImage = (Image)resources.GetObject("PartyChatColorPB.BackgroundImage");
             PartyChatColorPB.Location = new Point(157, 132);
             PartyChatColorPB.Margin = new Padding(4, 3, 4, 3);
             PartyChatColorPB.Name = "PartyChatColorPB";
             PartyChatColorPB.Size = new Size(141, 15);
             PartyChatColorPB.TabIndex = 130;
             PartyChatColorPB.TabStop = false;
+            PartyChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel97
             // 
@@ -254,13 +253,13 @@
             // 
             // TransportChatColorPB
             // 
-            TransportChatColorPB.BackgroundImage = (Image)resources.GetObject("TransportChatColorPB.BackgroundImage");
             TransportChatColorPB.Location = new Point(157, 110);
             TransportChatColorPB.Margin = new Padding(4, 3, 4, 3);
             TransportChatColorPB.Name = "TransportChatColorPB";
             TransportChatColorPB.Size = new Size(141, 15);
             TransportChatColorPB.TabIndex = 128;
             TransportChatColorPB.TabStop = false;
+            TransportChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel96
             // 
@@ -275,13 +274,13 @@
             // 
             // DirectChatColorPB
             // 
-            DirectChatColorPB.BackgroundImage = (Image)resources.GetObject("DirectChatColorPB.BackgroundImage");
             DirectChatColorPB.Location = new Point(157, 88);
             DirectChatColorPB.Margin = new Padding(4, 3, 4, 3);
             DirectChatColorPB.Name = "DirectChatColorPB";
             DirectChatColorPB.Size = new Size(141, 15);
             DirectChatColorPB.TabIndex = 126;
             DirectChatColorPB.TabStop = false;
+            DirectChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel95
             // 
@@ -296,13 +295,13 @@
             // 
             // GlobalChatColorPB
             // 
-            GlobalChatColorPB.BackgroundImage = (Image)resources.GetObject("GlobalChatColorPB.BackgroundImage");
             GlobalChatColorPB.Location = new Point(157, 66);
             GlobalChatColorPB.Margin = new Padding(4, 3, 4, 3);
             GlobalChatColorPB.Name = "GlobalChatColorPB";
             GlobalChatColorPB.Size = new Size(141, 15);
             GlobalChatColorPB.TabIndex = 124;
             GlobalChatColorPB.TabStop = false;
+            GlobalChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // GlobalChatColorL
             // 
@@ -317,13 +316,13 @@
             // 
             // AdminChatColorPB
             // 
-            AdminChatColorPB.BackgroundImage = (Image)resources.GetObject("AdminChatColorPB.BackgroundImage");
             AdminChatColorPB.Location = new Point(157, 44);
             AdminChatColorPB.Margin = new Padding(4, 3, 4, 3);
             AdminChatColorPB.Name = "AdminChatColorPB";
             AdminChatColorPB.Size = new Size(141, 15);
             AdminChatColorPB.TabIndex = 122;
             AdminChatColorPB.TabStop = false;
+            AdminChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel93
             // 
@@ -338,13 +337,13 @@
             // 
             // SystemChatColorPB
             // 
-            SystemChatColorPB.BackgroundImage = (Image)resources.GetObject("SystemChatColorPB.BackgroundImage");
             SystemChatColorPB.Location = new Point(157, 22);
             SystemChatColorPB.Margin = new Padding(4, 3, 4, 3);
             SystemChatColorPB.Name = "SystemChatColorPB";
             SystemChatColorPB.Size = new Size(141, 15);
             SystemChatColorPB.TabIndex = 120;
             SystemChatColorPB.TabStop = false;
+            SystemChatColorPB.Click += SystemChatColorPB_Click;
             // 
             // darkLabel92
             // 
