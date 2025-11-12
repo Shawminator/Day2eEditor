@@ -34,45 +34,6 @@
             textBox18 = new TextBox();
             CheckForBlockingObjectsCB = new CheckBox();
             DSEnabledCB = new CheckBox();
-            groupBox76 = new GroupBox();
-            GarageParkingMeterEnableFlavorCB = new CheckBox();
-            AllowStoringDEVehiclesCB = new CheckBox();
-            GarageMaxRangeTier3NUD = new NumericUpDown();
-            darkLabel244 = new Label();
-            GarageMaxRangeTier2NUD = new NumericUpDown();
-            darkLabel243 = new Label();
-            GarageMaxRangeTier1NUD = new NumericUpDown();
-            darkLabel242 = new Label();
-            GarageMaxStorableTier3NUD = new NumericUpDown();
-            darkLabel241 = new Label();
-            GarageMaxStorableTier2NUD = new NumericUpDown();
-            darkLabel240 = new Label();
-            GarageMaxStorableTier1NUD = new NumericUpDown();
-            darkLabel239 = new Label();
-            GarageStaticStorePriceNUD = new NumericUpDown();
-            darkLabel238 = new Label();
-            GarageEnableMarketFeaturesCB = new CheckBox();
-            GarageGroupStoreModeCB = new ComboBox();
-            label18 = new Label();
-            GarageEnableGroupFeaturesCB = new CheckBox();
-            GarageNeedKeyToStoreCB = new CheckBox();
-            GarageUseVirtualStorageForCargoCB = new CheckBox();
-            GarageStorePricePercentNUD = new NumericUpDown();
-            darkLabel236 = new Label();
-            GarageMaxDistanceFromStoredPositionNUD = new NumericUpDown();
-            darkLabel234 = new Label();
-            GarageVehicleSearchRadiusNUD = new NumericUpDown();
-            darkLabel226 = new Label();
-            MaxStorableVehiclesNUD = new NumericUpDown();
-            darkLabel225 = new Label();
-            GarageCanStoreWithCargoCB = new CheckBox();
-            GarageRetrieveModeCB = new ComboBox();
-            label16 = new Label();
-            GarageStoreModeCB = new ComboBox();
-            label15 = new Label();
-            GarageModeCB = new ComboBox();
-            label14 = new Label();
-            GarageEnabledCB = new CheckBox();
             groupBox36 = new GroupBox();
             UseExpansionMainMenuIntroSceneCB = new CheckBox();
             UseExpansionMainMenuIconsCB = new CheckBox();
@@ -107,6 +68,7 @@
             StaminaBarColorLowPB = new PictureBox();
             darkLabel251 = new Label();
             StaminaBarColorHalfPB = new PictureBox();
+            darkLabel235 = new Label();
             darkLabel220 = new Label();
             ReputationHighColorPB = new PictureBox();
             TemperatureBurningColorPB = new PictureBox();
@@ -143,7 +105,6 @@
             darkLabel94 = new Label();
             BuildingInteriorsCB = new CheckBox();
             UseCustomMappingModuleCB = new CheckBox();
-            darkLabel235 = new Label();
             groupBox72 = new GroupBox();
             ItemRarityParentSearchCB = new CheckBox();
             DefaultItemRarityCB = new ComboBox();
@@ -211,18 +172,6 @@
             SafezoneCB = new CheckBox();
             VehicleCarKeyCB = new CheckBox();
             groupBox68.SuspendLayout();
-            groupBox76.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxRangeTier3NUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxRangeTier2NUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxRangeTier1NUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxStorableTier3NUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxStorableTier2NUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxStorableTier1NUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageStaticStorePriceNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageStorePricePercentNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxDistanceFromStoredPositionNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GarageVehicleSearchRadiusNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)MaxStorableVehiclesNUD).BeginInit();
             groupBox36.SuspendLayout();
             groupBox33.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GravecrossSpawnTimeDelayNUD).BeginInit();
@@ -265,7 +214,7 @@
             groupBox68.Controls.Add(CheckForBlockingObjectsCB);
             groupBox68.Controls.Add(DSEnabledCB);
             groupBox68.ForeColor = SystemColors.Control;
-            groupBox68.Location = new Point(14, 384);
+            groupBox68.Location = new Point(13, 16);
             groupBox68.Margin = new Padding(4, 3, 4, 3);
             groupBox68.Name = "groupBox68";
             groupBox68.Padding = new Padding(4, 3, 4, 3);
@@ -321,509 +270,6 @@
             DSEnabledCB.TextAlign = ContentAlignment.MiddleRight;
             DSEnabledCB.UseVisualStyleBackColor = true;
             // 
-            // groupBox76
-            // 
-            groupBox76.Controls.Add(GarageParkingMeterEnableFlavorCB);
-            groupBox76.Controls.Add(AllowStoringDEVehiclesCB);
-            groupBox76.Controls.Add(GarageMaxRangeTier3NUD);
-            groupBox76.Controls.Add(darkLabel244);
-            groupBox76.Controls.Add(GarageMaxRangeTier2NUD);
-            groupBox76.Controls.Add(darkLabel243);
-            groupBox76.Controls.Add(GarageMaxRangeTier1NUD);
-            groupBox76.Controls.Add(darkLabel242);
-            groupBox76.Controls.Add(GarageMaxStorableTier3NUD);
-            groupBox76.Controls.Add(darkLabel241);
-            groupBox76.Controls.Add(GarageMaxStorableTier2NUD);
-            groupBox76.Controls.Add(darkLabel240);
-            groupBox76.Controls.Add(GarageMaxStorableTier1NUD);
-            groupBox76.Controls.Add(darkLabel239);
-            groupBox76.Controls.Add(GarageStaticStorePriceNUD);
-            groupBox76.Controls.Add(darkLabel238);
-            groupBox76.Controls.Add(GarageEnableMarketFeaturesCB);
-            groupBox76.Controls.Add(GarageGroupStoreModeCB);
-            groupBox76.Controls.Add(label18);
-            groupBox76.Controls.Add(GarageEnableGroupFeaturesCB);
-            groupBox76.Controls.Add(GarageNeedKeyToStoreCB);
-            groupBox76.Controls.Add(GarageUseVirtualStorageForCargoCB);
-            groupBox76.Controls.Add(GarageStorePricePercentNUD);
-            groupBox76.Controls.Add(darkLabel236);
-            groupBox76.Controls.Add(GarageMaxDistanceFromStoredPositionNUD);
-            groupBox76.Controls.Add(darkLabel234);
-            groupBox76.Controls.Add(GarageVehicleSearchRadiusNUD);
-            groupBox76.Controls.Add(darkLabel226);
-            groupBox76.Controls.Add(MaxStorableVehiclesNUD);
-            groupBox76.Controls.Add(darkLabel225);
-            groupBox76.Controls.Add(GarageCanStoreWithCargoCB);
-            groupBox76.Controls.Add(GarageRetrieveModeCB);
-            groupBox76.Controls.Add(label16);
-            groupBox76.Controls.Add(GarageStoreModeCB);
-            groupBox76.Controls.Add(label15);
-            groupBox76.Controls.Add(GarageModeCB);
-            groupBox76.Controls.Add(label14);
-            groupBox76.Controls.Add(GarageEnabledCB);
-            groupBox76.ForeColor = SystemColors.Control;
-            groupBox76.Location = new Point(14, 518);
-            groupBox76.Margin = new Padding(4, 3, 4, 3);
-            groupBox76.Name = "groupBox76";
-            groupBox76.Padding = new Padding(4, 3, 4, 3);
-            groupBox76.Size = new Size(796, 388);
-            groupBox76.TabIndex = 11;
-            groupBox76.TabStop = false;
-            groupBox76.Text = "General Settings";
-            // 
-            // GarageParkingMeterEnableFlavorCB
-            // 
-            GarageParkingMeterEnableFlavorCB.AutoSize = true;
-            GarageParkingMeterEnableFlavorCB.Location = new Point(400, 355);
-            GarageParkingMeterEnableFlavorCB.Margin = new Padding(4, 3, 4, 3);
-            GarageParkingMeterEnableFlavorCB.Name = "GarageParkingMeterEnableFlavorCB";
-            GarageParkingMeterEnableFlavorCB.Size = new Size(173, 19);
-            GarageParkingMeterEnableFlavorCB.TabIndex = 25;
-            GarageParkingMeterEnableFlavorCB.Tag = "";
-            GarageParkingMeterEnableFlavorCB.Text = "Parking Meter Enable Flavor";
-            GarageParkingMeterEnableFlavorCB.UseVisualStyleBackColor = true;
-            // 
-            // AllowStoringDEVehiclesCB
-            // 
-            AllowStoringDEVehiclesCB.AutoSize = true;
-            AllowStoringDEVehiclesCB.Location = new Point(174, 22);
-            AllowStoringDEVehiclesCB.Margin = new Padding(4, 3, 4, 3);
-            AllowStoringDEVehiclesCB.Name = "AllowStoringDEVehiclesCB";
-            AllowStoringDEVehiclesCB.Size = new Size(159, 19);
-            AllowStoringDEVehiclesCB.TabIndex = 1;
-            AllowStoringDEVehiclesCB.Tag = "";
-            AllowStoringDEVehiclesCB.Text = "Allow Storing DE Vehicles";
-            AllowStoringDEVehiclesCB.UseVisualStyleBackColor = true;
-            // 
-            // GarageMaxRangeTier3NUD
-            // 
-            GarageMaxRangeTier3NUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxRangeTier3NUD.DecimalPlaces = 1;
-            GarageMaxRangeTier3NUD.ForeColor = SystemColors.Control;
-            GarageMaxRangeTier3NUD.Location = new Point(604, 324);
-            GarageMaxRangeTier3NUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxRangeTier3NUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxRangeTier3NUD.Name = "GarageMaxRangeTier3NUD";
-            GarageMaxRangeTier3NUD.Size = new Size(118, 23);
-            GarageMaxRangeTier3NUD.TabIndex = 24;
-            GarageMaxRangeTier3NUD.Tag = "Weight";
-            GarageMaxRangeTier3NUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel244
-            // 
-            darkLabel244.AutoSize = true;
-            darkLabel244.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel244.Location = new Point(397, 327);
-            darkLabel244.Margin = new Padding(4, 0, 4, 0);
-            darkLabel244.Name = "darkLabel244";
-            darkLabel244.Size = new Size(94, 15);
-            darkLabel244.TabIndex = 139;
-            darkLabel244.Tag = "";
-            darkLabel244.Text = "Max Range Tier3";
-            // 
-            // GarageMaxRangeTier2NUD
-            // 
-            GarageMaxRangeTier2NUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxRangeTier2NUD.DecimalPlaces = 1;
-            GarageMaxRangeTier2NUD.ForeColor = SystemColors.Control;
-            GarageMaxRangeTier2NUD.Location = new Point(604, 294);
-            GarageMaxRangeTier2NUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxRangeTier2NUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxRangeTier2NUD.Name = "GarageMaxRangeTier2NUD";
-            GarageMaxRangeTier2NUD.Size = new Size(118, 23);
-            GarageMaxRangeTier2NUD.TabIndex = 23;
-            GarageMaxRangeTier2NUD.Tag = "Weight";
-            GarageMaxRangeTier2NUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel243
-            // 
-            darkLabel243.AutoSize = true;
-            darkLabel243.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel243.Location = new Point(397, 297);
-            darkLabel243.Margin = new Padding(4, 0, 4, 0);
-            darkLabel243.Name = "darkLabel243";
-            darkLabel243.Size = new Size(94, 15);
-            darkLabel243.TabIndex = 137;
-            darkLabel243.Tag = "";
-            darkLabel243.Text = "Max Range Tier2";
-            // 
-            // GarageMaxRangeTier1NUD
-            // 
-            GarageMaxRangeTier1NUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxRangeTier1NUD.DecimalPlaces = 1;
-            GarageMaxRangeTier1NUD.ForeColor = SystemColors.Control;
-            GarageMaxRangeTier1NUD.Location = new Point(604, 264);
-            GarageMaxRangeTier1NUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxRangeTier1NUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxRangeTier1NUD.Name = "GarageMaxRangeTier1NUD";
-            GarageMaxRangeTier1NUD.Size = new Size(118, 23);
-            GarageMaxRangeTier1NUD.TabIndex = 22;
-            GarageMaxRangeTier1NUD.Tag = "Weight";
-            GarageMaxRangeTier1NUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel242
-            // 
-            darkLabel242.AutoSize = true;
-            darkLabel242.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel242.Location = new Point(397, 267);
-            darkLabel242.Margin = new Padding(4, 0, 4, 0);
-            darkLabel242.Name = "darkLabel242";
-            darkLabel242.Size = new Size(94, 15);
-            darkLabel242.TabIndex = 135;
-            darkLabel242.Tag = "";
-            darkLabel242.Text = "Max Range Tier1";
-            // 
-            // GarageMaxStorableTier3NUD
-            // 
-            GarageMaxStorableTier3NUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxStorableTier3NUD.ForeColor = SystemColors.Control;
-            GarageMaxStorableTier3NUD.Location = new Point(604, 234);
-            GarageMaxStorableTier3NUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxStorableTier3NUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxStorableTier3NUD.Name = "GarageMaxStorableTier3NUD";
-            GarageMaxStorableTier3NUD.Size = new Size(118, 23);
-            GarageMaxStorableTier3NUD.TabIndex = 21;
-            GarageMaxStorableTier3NUD.Tag = "Weight";
-            GarageMaxStorableTier3NUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel241
-            // 
-            darkLabel241.AutoSize = true;
-            darkLabel241.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel241.Location = new Point(397, 237);
-            darkLabel241.Margin = new Padding(4, 0, 4, 0);
-            darkLabel241.Name = "darkLabel241";
-            darkLabel241.Size = new Size(104, 15);
-            darkLabel241.TabIndex = 133;
-            darkLabel241.Tag = "";
-            darkLabel241.Text = "Max Storable Tier3";
-            // 
-            // GarageMaxStorableTier2NUD
-            // 
-            GarageMaxStorableTier2NUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxStorableTier2NUD.ForeColor = SystemColors.Control;
-            GarageMaxStorableTier2NUD.Location = new Point(604, 204);
-            GarageMaxStorableTier2NUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxStorableTier2NUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxStorableTier2NUD.Name = "GarageMaxStorableTier2NUD";
-            GarageMaxStorableTier2NUD.Size = new Size(118, 23);
-            GarageMaxStorableTier2NUD.TabIndex = 20;
-            GarageMaxStorableTier2NUD.Tag = "Weight";
-            GarageMaxStorableTier2NUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel240
-            // 
-            darkLabel240.AutoSize = true;
-            darkLabel240.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel240.Location = new Point(397, 207);
-            darkLabel240.Margin = new Padding(4, 0, 4, 0);
-            darkLabel240.Name = "darkLabel240";
-            darkLabel240.Size = new Size(104, 15);
-            darkLabel240.TabIndex = 131;
-            darkLabel240.Tag = "";
-            darkLabel240.Text = "Max Storable Tier2";
-            // 
-            // GarageMaxStorableTier1NUD
-            // 
-            GarageMaxStorableTier1NUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxStorableTier1NUD.ForeColor = SystemColors.Control;
-            GarageMaxStorableTier1NUD.Location = new Point(604, 174);
-            GarageMaxStorableTier1NUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxStorableTier1NUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxStorableTier1NUD.Name = "GarageMaxStorableTier1NUD";
-            GarageMaxStorableTier1NUD.Size = new Size(118, 23);
-            GarageMaxStorableTier1NUD.TabIndex = 19;
-            GarageMaxStorableTier1NUD.Tag = "Weight";
-            GarageMaxStorableTier1NUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel239
-            // 
-            darkLabel239.AutoSize = true;
-            darkLabel239.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel239.Location = new Point(397, 177);
-            darkLabel239.Margin = new Padding(4, 0, 4, 0);
-            darkLabel239.Name = "darkLabel239";
-            darkLabel239.Size = new Size(104, 15);
-            darkLabel239.TabIndex = 129;
-            darkLabel239.Tag = "";
-            darkLabel239.Text = "Max Storable Tier1";
-            // 
-            // GarageStaticStorePriceNUD
-            // 
-            GarageStaticStorePriceNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageStaticStorePriceNUD.ForeColor = SystemColors.Control;
-            GarageStaticStorePriceNUD.Location = new Point(604, 144);
-            GarageStaticStorePriceNUD.Margin = new Padding(4, 3, 4, 3);
-            GarageStaticStorePriceNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageStaticStorePriceNUD.Name = "GarageStaticStorePriceNUD";
-            GarageStaticStorePriceNUD.Size = new Size(118, 23);
-            GarageStaticStorePriceNUD.TabIndex = 18;
-            GarageStaticStorePriceNUD.Tag = "Weight";
-            GarageStaticStorePriceNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel238
-            // 
-            darkLabel238.AutoSize = true;
-            darkLabel238.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel238.Location = new Point(397, 147);
-            darkLabel238.Margin = new Padding(4, 0, 4, 0);
-            darkLabel238.Name = "darkLabel238";
-            darkLabel238.Size = new Size(95, 15);
-            darkLabel238.TabIndex = 127;
-            darkLabel238.Tag = "";
-            darkLabel238.Text = "Static Store Price";
-            // 
-            // GarageEnableMarketFeaturesCB
-            // 
-            GarageEnableMarketFeaturesCB.AutoSize = true;
-            GarageEnableMarketFeaturesCB.Location = new Point(400, 95);
-            GarageEnableMarketFeaturesCB.Margin = new Padding(4, 3, 4, 3);
-            GarageEnableMarketFeaturesCB.Name = "GarageEnableMarketFeaturesCB";
-            GarageEnableMarketFeaturesCB.Size = new Size(148, 19);
-            GarageEnableMarketFeaturesCB.TabIndex = 16;
-            GarageEnableMarketFeaturesCB.Tag = "";
-            GarageEnableMarketFeaturesCB.Text = "Enable Market Features";
-            GarageEnableMarketFeaturesCB.UseVisualStyleBackColor = true;
-            // 
-            // GarageGroupStoreModeCB
-            // 
-            GarageGroupStoreModeCB.FormattingEnabled = true;
-            GarageGroupStoreModeCB.Location = new Point(400, 63);
-            GarageGroupStoreModeCB.Margin = new Padding(4, 3, 4, 3);
-            GarageGroupStoreModeCB.Name = "GarageGroupStoreModeCB";
-            GarageGroupStoreModeCB.Size = new Size(321, 23);
-            GarageGroupStoreModeCB.TabIndex = 15;
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(397, 45);
-            label18.Margin = new Padding(4, 0, 4, 0);
-            label18.Name = "label18";
-            label18.Size = new Size(104, 15);
-            label18.TabIndex = 123;
-            label18.Text = "Group Store Mode";
-            // 
-            // GarageEnableGroupFeaturesCB
-            // 
-            GarageEnableGroupFeaturesCB.AutoSize = true;
-            GarageEnableGroupFeaturesCB.Location = new Point(400, 22);
-            GarageEnableGroupFeaturesCB.Margin = new Padding(4, 3, 4, 3);
-            GarageEnableGroupFeaturesCB.Name = "GarageEnableGroupFeaturesCB";
-            GarageEnableGroupFeaturesCB.Size = new Size(144, 19);
-            GarageEnableGroupFeaturesCB.TabIndex = 14;
-            GarageEnableGroupFeaturesCB.Tag = "";
-            GarageEnableGroupFeaturesCB.Text = "Enable Group Features";
-            GarageEnableGroupFeaturesCB.UseVisualStyleBackColor = true;
-            // 
-            // GarageNeedKeyToStoreCB
-            // 
-            GarageNeedKeyToStoreCB.AutoSize = true;
-            GarageNeedKeyToStoreCB.Location = new Point(24, 337);
-            GarageNeedKeyToStoreCB.Margin = new Padding(4, 3, 4, 3);
-            GarageNeedKeyToStoreCB.Name = "GarageNeedKeyToStoreCB";
-            GarageNeedKeyToStoreCB.Size = new Size(121, 19);
-            GarageNeedKeyToStoreCB.TabIndex = 10;
-            GarageNeedKeyToStoreCB.Tag = "";
-            GarageNeedKeyToStoreCB.Text = "Need Key To Store";
-            GarageNeedKeyToStoreCB.UseVisualStyleBackColor = true;
-            // 
-            // GarageUseVirtualStorageForCargoCB
-            // 
-            GarageUseVirtualStorageForCargoCB.AutoSize = true;
-            GarageUseVirtualStorageForCargoCB.Location = new Point(24, 310);
-            GarageUseVirtualStorageForCargoCB.Margin = new Padding(4, 3, 4, 3);
-            GarageUseVirtualStorageForCargoCB.Name = "GarageUseVirtualStorageForCargoCB";
-            GarageUseVirtualStorageForCargoCB.Size = new Size(180, 19);
-            GarageUseVirtualStorageForCargoCB.TabIndex = 9;
-            GarageUseVirtualStorageForCargoCB.Tag = "";
-            GarageUseVirtualStorageForCargoCB.Text = "Use Virtual Storage For Cargo";
-            GarageUseVirtualStorageForCargoCB.UseVisualStyleBackColor = true;
-            // 
-            // GarageStorePricePercentNUD
-            // 
-            GarageStorePricePercentNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageStorePricePercentNUD.DecimalPlaces = 1;
-            GarageStorePricePercentNUD.ForeColor = SystemColors.Control;
-            GarageStorePricePercentNUD.Location = new Point(604, 114);
-            GarageStorePricePercentNUD.Margin = new Padding(4, 3, 4, 3);
-            GarageStorePricePercentNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageStorePricePercentNUD.Name = "GarageStorePricePercentNUD";
-            GarageStorePricePercentNUD.Size = new Size(118, 23);
-            GarageStorePricePercentNUD.TabIndex = 17;
-            GarageStorePricePercentNUD.Tag = "Weight";
-            GarageStorePricePercentNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel236
-            // 
-            darkLabel236.AutoSize = true;
-            darkLabel236.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel236.Location = new Point(397, 117);
-            darkLabel236.Margin = new Padding(4, 0, 4, 0);
-            darkLabel236.Name = "darkLabel236";
-            darkLabel236.Size = new Size(106, 15);
-            darkLabel236.TabIndex = 115;
-            darkLabel236.Tag = "";
-            darkLabel236.Text = "Store Price Percent";
-            // 
-            // GarageMaxDistanceFromStoredPositionNUD
-            // 
-            GarageMaxDistanceFromStoredPositionNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageMaxDistanceFromStoredPositionNUD.DecimalPlaces = 1;
-            GarageMaxDistanceFromStoredPositionNUD.ForeColor = SystemColors.Control;
-            GarageMaxDistanceFromStoredPositionNUD.Location = new Point(229, 256);
-            GarageMaxDistanceFromStoredPositionNUD.Margin = new Padding(4, 3, 4, 3);
-            GarageMaxDistanceFromStoredPositionNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageMaxDistanceFromStoredPositionNUD.Name = "GarageMaxDistanceFromStoredPositionNUD";
-            GarageMaxDistanceFromStoredPositionNUD.Size = new Size(118, 23);
-            GarageMaxDistanceFromStoredPositionNUD.TabIndex = 7;
-            GarageMaxDistanceFromStoredPositionNUD.Tag = "Weight";
-            GarageMaxDistanceFromStoredPositionNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel234
-            // 
-            darkLabel234.AutoSize = true;
-            darkLabel234.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel234.Location = new Point(21, 258);
-            darkLabel234.Margin = new Padding(4, 0, 4, 0);
-            darkLabel234.Name = "darkLabel234";
-            darkLabel234.Size = new Size(192, 15);
-            darkLabel234.TabIndex = 113;
-            darkLabel234.Tag = "";
-            darkLabel234.Text = "Max Distance From Stored Position";
-            // 
-            // GarageVehicleSearchRadiusNUD
-            // 
-            GarageVehicleSearchRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GarageVehicleSearchRadiusNUD.DecimalPlaces = 1;
-            GarageVehicleSearchRadiusNUD.ForeColor = SystemColors.Control;
-            GarageVehicleSearchRadiusNUD.Location = new Point(229, 226);
-            GarageVehicleSearchRadiusNUD.Margin = new Padding(4, 3, 4, 3);
-            GarageVehicleSearchRadiusNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GarageVehicleSearchRadiusNUD.Name = "GarageVehicleSearchRadiusNUD";
-            GarageVehicleSearchRadiusNUD.Size = new Size(118, 23);
-            GarageVehicleSearchRadiusNUD.TabIndex = 6;
-            GarageVehicleSearchRadiusNUD.Tag = "Weight";
-            GarageVehicleSearchRadiusNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel226
-            // 
-            darkLabel226.AutoSize = true;
-            darkLabel226.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel226.Location = new Point(21, 228);
-            darkLabel226.Margin = new Padding(4, 0, 4, 0);
-            darkLabel226.Name = "darkLabel226";
-            darkLabel226.Size = new Size(120, 15);
-            darkLabel226.TabIndex = 111;
-            darkLabel226.Tag = "";
-            darkLabel226.Text = "Vehicle Search Radius";
-            // 
-            // MaxStorableVehiclesNUD
-            // 
-            MaxStorableVehiclesNUD.BackColor = Color.FromArgb(60, 63, 65);
-            MaxStorableVehiclesNUD.ForeColor = SystemColors.Control;
-            MaxStorableVehiclesNUD.Location = new Point(229, 196);
-            MaxStorableVehiclesNUD.Margin = new Padding(4, 3, 4, 3);
-            MaxStorableVehiclesNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            MaxStorableVehiclesNUD.Name = "MaxStorableVehiclesNUD";
-            MaxStorableVehiclesNUD.Size = new Size(118, 23);
-            MaxStorableVehiclesNUD.TabIndex = 5;
-            MaxStorableVehiclesNUD.Tag = "Weight";
-            MaxStorableVehiclesNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel225
-            // 
-            darkLabel225.AutoSize = true;
-            darkLabel225.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel225.Location = new Point(21, 198);
-            darkLabel225.Margin = new Padding(4, 0, 4, 0);
-            darkLabel225.Name = "darkLabel225";
-            darkLabel225.Size = new Size(118, 15);
-            darkLabel225.TabIndex = 109;
-            darkLabel225.Tag = "";
-            darkLabel225.Text = "MaxStorable Vehicles";
-            // 
-            // GarageCanStoreWithCargoCB
-            // 
-            GarageCanStoreWithCargoCB.AutoSize = true;
-            GarageCanStoreWithCargoCB.Location = new Point(24, 284);
-            GarageCanStoreWithCargoCB.Margin = new Padding(4, 3, 4, 3);
-            GarageCanStoreWithCargoCB.Name = "GarageCanStoreWithCargoCB";
-            GarageCanStoreWithCargoCB.Size = new Size(137, 19);
-            GarageCanStoreWithCargoCB.TabIndex = 8;
-            GarageCanStoreWithCargoCB.Tag = "";
-            GarageCanStoreWithCargoCB.Text = "CanStore With Cargo";
-            GarageCanStoreWithCargoCB.UseVisualStyleBackColor = true;
-            // 
-            // GarageRetrieveModeCB
-            // 
-            GarageRetrieveModeCB.FormattingEnabled = true;
-            GarageRetrieveModeCB.Location = new Point(24, 165);
-            GarageRetrieveModeCB.Margin = new Padding(4, 3, 4, 3);
-            GarageRetrieveModeCB.Name = "GarageRetrieveModeCB";
-            GarageRetrieveModeCB.Size = new Size(321, 23);
-            GarageRetrieveModeCB.TabIndex = 4;
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new Point(21, 147);
-            label16.Margin = new Padding(4, 0, 4, 0);
-            label16.Name = "label16";
-            label16.Size = new Size(123, 15);
-            label16.TabIndex = 21;
-            label16.Text = "Garage Retrieve Mode";
-            // 
-            // GarageStoreModeCB
-            // 
-            GarageStoreModeCB.FormattingEnabled = true;
-            GarageStoreModeCB.Location = new Point(24, 113);
-            GarageStoreModeCB.Margin = new Padding(4, 3, 4, 3);
-            GarageStoreModeCB.Name = "GarageStoreModeCB";
-            GarageStoreModeCB.Size = new Size(321, 23);
-            GarageStoreModeCB.TabIndex = 3;
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Location = new Point(21, 95);
-            label15.Margin = new Padding(4, 0, 4, 0);
-            label15.Name = "label15";
-            label15.Size = new Size(108, 15);
-            label15.TabIndex = 19;
-            label15.Text = "Garage Store Mode";
-            // 
-            // GarageModeCB
-            // 
-            GarageModeCB.FormattingEnabled = true;
-            GarageModeCB.Location = new Point(24, 63);
-            GarageModeCB.Margin = new Padding(4, 3, 4, 3);
-            GarageModeCB.Name = "GarageModeCB";
-            GarageModeCB.Size = new Size(321, 23);
-            GarageModeCB.TabIndex = 2;
-            // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.Location = new Point(21, 45);
-            label14.Margin = new Padding(4, 0, 4, 0);
-            label14.Name = "label14";
-            label14.Size = new Size(78, 15);
-            label14.TabIndex = 2;
-            label14.Text = "Garage Mode";
-            // 
-            // GarageEnabledCB
-            // 
-            GarageEnabledCB.AutoSize = true;
-            GarageEnabledCB.Location = new Point(24, 22);
-            GarageEnabledCB.Margin = new Padding(4, 3, 4, 3);
-            GarageEnabledCB.Name = "GarageEnabledCB";
-            GarageEnabledCB.Size = new Size(61, 19);
-            GarageEnabledCB.TabIndex = 0;
-            GarageEnabledCB.Tag = "";
-            GarageEnabledCB.Text = "Enable";
-            GarageEnabledCB.UseVisualStyleBackColor = true;
-            // 
             // groupBox36
             // 
             groupBox36.Controls.Add(UseExpansionMainMenuIntroSceneCB);
@@ -848,7 +294,7 @@
             UseExpansionMainMenuIntroSceneCB.Location = new Point(24, 128);
             UseExpansionMainMenuIntroSceneCB.Margin = new Padding(4, 3, 4, 3);
             UseExpansionMainMenuIntroSceneCB.Name = "UseExpansionMainMenuIntroSceneCB";
-            UseExpansionMainMenuIntroSceneCB.Size = new Size(228, 19);
+            UseExpansionMainMenuIntroSceneCB.Size = new Size(227, 19);
             UseExpansionMainMenuIntroSceneCB.TabIndex = 4;
             UseExpansionMainMenuIntroSceneCB.Text = "Use Expansion Main Menu Intro Scene";
             UseExpansionMainMenuIntroSceneCB.UseVisualStyleBackColor = true;
@@ -859,7 +305,7 @@
             UseExpansionMainMenuIconsCB.Location = new Point(24, 102);
             UseExpansionMainMenuIconsCB.Margin = new Padding(4, 3, 4, 3);
             UseExpansionMainMenuIconsCB.Name = "UseExpansionMainMenuIconsCB";
-            UseExpansionMainMenuIconsCB.Size = new Size(197, 19);
+            UseExpansionMainMenuIconsCB.Size = new Size(196, 19);
             UseExpansionMainMenuIconsCB.TabIndex = 3;
             UseExpansionMainMenuIconsCB.Text = "Use Expansion Main Menu Icons";
             UseExpansionMainMenuIconsCB.UseVisualStyleBackColor = true;
@@ -870,7 +316,7 @@
             UseExpansionMainMenuLogoCB.Location = new Point(24, 75);
             UseExpansionMainMenuLogoCB.Margin = new Padding(4, 3, 4, 3);
             UseExpansionMainMenuLogoCB.Name = "UseExpansionMainMenuLogoCB";
-            UseExpansionMainMenuLogoCB.Size = new Size(196, 19);
+            UseExpansionMainMenuLogoCB.Size = new Size(195, 19);
             UseExpansionMainMenuLogoCB.TabIndex = 2;
             UseExpansionMainMenuLogoCB.Text = "Use Expansion Main Menu Logo";
             UseExpansionMainMenuLogoCB.UseVisualStyleBackColor = true;
@@ -945,7 +391,7 @@
             darkLabel228.Location = new Point(15, 147);
             darkLabel228.Margin = new Padding(4, 0, 4, 0);
             darkLabel228.Name = "darkLabel228";
-            darkLabel228.Size = new Size(163, 15);
+            darkLabel228.Size = new Size(164, 15);
             darkLabel228.TabIndex = 5;
             darkLabel228.Text = "Gravecross Spawn Time Delay";
             // 
@@ -969,7 +415,7 @@
             darkLabel89.Location = new Point(15, 98);
             darkLabel89.Margin = new Padding(4, 0, 4, 0);
             darkLabel89.Name = "darkLabel89";
-            darkLabel89.Size = new Size(148, 15);
+            darkLabel89.Size = new Size(150, 15);
             darkLabel89.TabIndex = 3;
             darkLabel89.Text = "Gravecross Time Threshold";
             // 
@@ -1042,7 +488,7 @@
             DisableShootToUnlockCB.Location = new Point(24, 22);
             DisableShootToUnlockCB.Margin = new Padding(4, 3, 4, 3);
             DisableShootToUnlockCB.Name = "DisableShootToUnlockCB";
-            DisableShootToUnlockCB.Size = new Size(153, 19);
+            DisableShootToUnlockCB.Size = new Size(154, 19);
             DisableShootToUnlockCB.TabIndex = 0;
             DisableShootToUnlockCB.Text = "Disable Shoot To Unlock";
             DisableShootToUnlockCB.UseVisualStyleBackColor = true;
@@ -1184,6 +630,7 @@
             groupBox69.Controls.Add(StaminaBarColorLowPB);
             groupBox69.Controls.Add(darkLabel251);
             groupBox69.Controls.Add(StaminaBarColorHalfPB);
+            groupBox69.Controls.Add(darkLabel235);
             groupBox69.Controls.Add(darkLabel220);
             groupBox69.Controls.Add(ReputationHighColorPB);
             groupBox69.Controls.Add(TemperatureBurningColorPB);
@@ -1263,6 +710,18 @@
             StaminaBarColorHalfPB.TabIndex = 146;
             StaminaBarColorHalfPB.TabStop = false;
             // 
+            // darkLabel235
+            // 
+            darkLabel235.AutoSize = true;
+            darkLabel235.ForeColor = Color.FromArgb(220, 220, 220);
+            darkLabel235.Location = new Point(231, 13);
+            darkLabel235.Margin = new Padding(4, 0, 4, 0);
+            darkLabel235.Name = "darkLabel235";
+            darkLabel235.Size = new Size(34, 15);
+            darkLabel235.TabIndex = 19;
+            darkLabel235.Tag = "";
+            darkLabel235.Text = "Level";
+            // 
             // darkLabel220
             // 
             darkLabel220.AutoSize = true;
@@ -1301,7 +760,7 @@
             darkLabel193.Location = new Point(7, 135);
             darkLabel193.Margin = new Padding(4, 0, 4, 0);
             darkLabel193.Name = "darkLabel193";
-            darkLabel193.Size = new Size(150, 15);
+            darkLabel193.Size = new Size(151, 15);
             darkLabel193.TabIndex = 4;
             darkLabel193.Text = "Temperature Burning Color";
             // 
@@ -1480,7 +939,7 @@
             darkLabel189.Location = new Point(7, 223);
             darkLabel189.Margin = new Padding(4, 0, 4, 0);
             darkLabel189.Name = "darkLabel189";
-            darkLabel189.Size = new Size(152, 15);
+            darkLabel189.Size = new Size(153, 15);
             darkLabel189.TabIndex = 8;
             darkLabel189.Text = "Temperature Freezing Color";
             // 
@@ -1501,7 +960,7 @@
             darkLabel190.Location = new Point(7, 201);
             darkLabel190.Margin = new Padding(4, 0, 4, 0);
             darkLabel190.Name = "darkLabel190";
-            darkLabel190.Size = new Size(133, 15);
+            darkLabel190.Size = new Size(134, 15);
             darkLabel190.TabIndex = 7;
             darkLabel190.Text = "Temperature Cold Color";
             // 
@@ -1522,7 +981,7 @@
             darkLabel191.Location = new Point(7, 179);
             darkLabel191.Margin = new Padding(4, 0, 4, 0);
             darkLabel191.Name = "darkLabel191";
-            darkLabel191.Size = new Size(133, 15);
+            darkLabel191.Size = new Size(134, 15);
             darkLabel191.TabIndex = 6;
             darkLabel191.Text = "Temperature Ideal Color";
             // 
@@ -1543,7 +1002,7 @@
             darkLabel192.Location = new Point(7, 157);
             darkLabel192.Margin = new Padding(4, 0, 4, 0);
             darkLabel192.Name = "darkLabel192";
-            darkLabel192.Size = new Size(128, 15);
+            darkLabel192.Size = new Size(129, 15);
             darkLabel192.TabIndex = 5;
             darkLabel192.Text = "Temperature Hot Color";
             // 
@@ -1653,18 +1112,6 @@
             UseCustomMappingModuleCB.TabIndex = 1;
             UseCustomMappingModuleCB.Text = "Use Custom Mapping Module";
             UseCustomMappingModuleCB.UseVisualStyleBackColor = true;
-            // 
-            // darkLabel235
-            // 
-            darkLabel235.AutoSize = true;
-            darkLabel235.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel235.Location = new Point(940, 480);
-            darkLabel235.Margin = new Padding(4, 0, 4, 0);
-            darkLabel235.Name = "darkLabel235";
-            darkLabel235.Size = new Size(34, 15);
-            darkLabel235.TabIndex = 19;
-            darkLabel235.Tag = "";
-            darkLabel235.Text = "Level";
             // 
             // groupBox72
             // 
@@ -2067,7 +1514,7 @@
             darkLabel221.Location = new Point(14, 55);
             darkLabel221.Margin = new Padding(4, 0, 4, 0);
             darkLabel221.Name = "darkLabel221";
-            darkLabel221.Size = new Size(91, 15);
+            darkLabel221.Size = new Size(90, 15);
             darkLabel221.TabIndex = 2;
             darkLabel221.Tag = "";
             darkLabel221.Text = "Max Reputation";
@@ -2262,7 +1709,7 @@
             ExplosionDamageSystemCB.Location = new Point(8, 85);
             ExplosionDamageSystemCB.Margin = new Padding(4, 3, 4, 3);
             ExplosionDamageSystemCB.Name = "ExplosionDamageSystemCB";
-            ExplosionDamageSystemCB.Size = new Size(165, 19);
+            ExplosionDamageSystemCB.Size = new Size(164, 19);
             ExplosionDamageSystemCB.TabIndex = 9;
             ExplosionDamageSystemCB.Text = "Explosion Damage System";
             ExplosionDamageSystemCB.TextAlign = ContentAlignment.MiddleRight;
@@ -2297,7 +1744,7 @@
             VehicleTowingCB.Location = new Point(162, 246);
             VehicleTowingCB.Margin = new Padding(4, 3, 4, 3);
             VehicleTowingCB.Name = "VehicleTowingCB";
-            VehicleTowingCB.Size = new Size(104, 19);
+            VehicleTowingCB.Size = new Size(105, 19);
             VehicleTowingCB.TabIndex = 31;
             VehicleTowingCB.Text = "Vehicle Towing";
             VehicleTowingCB.TextAlign = ContentAlignment.MiddleRight;
@@ -2334,7 +1781,7 @@
             ATMCB.Location = new Point(91, 39);
             ATMCB.Margin = new Padding(4, 3, 4, 3);
             ATMCB.Name = "ATMCB";
-            ATMCB.Size = new Size(50, 19);
+            ATMCB.Size = new Size(51, 19);
             ATMCB.TabIndex = 4;
             ATMCB.Text = "ATM";
             ATMCB.TextAlign = ContentAlignment.MiddleRight;
@@ -2359,7 +1806,7 @@
             LogToADMCB.Location = new Point(83, 106);
             LogToADMCB.Margin = new Padding(4, 3, 4, 3);
             LogToADMCB.Name = "LogToADMCB";
-            LogToADMCB.Size = new Size(91, 19);
+            LogToADMCB.Size = new Size(92, 19);
             LogToADMCB.TabIndex = 13;
             LogToADMCB.Text = "Log To ADM";
             LogToADMCB.UseVisualStyleBackColor = true;
@@ -2396,7 +1843,7 @@
             LogToScriptsCB.Location = new Point(183, 106);
             LogToScriptsCB.Margin = new Padding(4, 3, 4, 3);
             LogToScriptsCB.Name = "LogToScriptsCB";
-            LogToScriptsCB.Size = new Size(99, 19);
+            LogToScriptsCB.Size = new Size(100, 19);
             LogToScriptsCB.TabIndex = 14;
             LogToScriptsCB.Text = "Log To Scripts";
             LogToScriptsCB.UseVisualStyleBackColor = true;
@@ -2408,7 +1855,7 @@
             AdminToolsCB.Location = new Point(8, 16);
             AdminToolsCB.Margin = new Padding(4, 3, 4, 3);
             AdminToolsCB.Name = "AdminToolsCB";
-            AdminToolsCB.Size = new Size(89, 19);
+            AdminToolsCB.Size = new Size(90, 19);
             AdminToolsCB.TabIndex = 0;
             AdminToolsCB.Text = "AdminTools";
             AdminToolsCB.TextAlign = ContentAlignment.MiddleRight;
@@ -2486,7 +1933,7 @@
             TerritoryCB.Location = new Point(225, 151);
             TerritoryCB.Margin = new Padding(4, 3, 4, 3);
             TerritoryCB.Name = "TerritoryCB";
-            TerritoryCB.Size = new Size(69, 19);
+            TerritoryCB.Size = new Size(70, 19);
             TerritoryCB.TabIndex = 21;
             TerritoryCB.Text = "Territory";
             TerritoryCB.TextAlign = ContentAlignment.MiddleRight;
@@ -2528,7 +1975,6 @@
             Controls.Add(groupBox75);
             Controls.Add(groupBox74);
             Controls.Add(groupBox72);
-            Controls.Add(darkLabel235);
             Controls.Add(groupBox77);
             Controls.Add(groupBox37);
             Controls.Add(groupBox69);
@@ -2536,7 +1982,6 @@
             Controls.Add(groupBox36);
             Controls.Add(groupBox33);
             Controls.Add(groupBox32);
-            Controls.Add(groupBox76);
             Controls.Add(groupBox68);
             ForeColor = SystemColors.Control;
             Margin = new Padding(4, 3, 4, 3);
@@ -2544,19 +1989,6 @@
             Text = "Form3";
             groupBox68.ResumeLayout(false);
             groupBox68.PerformLayout();
-            groupBox76.ResumeLayout(false);
-            groupBox76.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxRangeTier3NUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxRangeTier2NUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxRangeTier1NUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxStorableTier3NUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxStorableTier2NUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxStorableTier1NUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageStaticStorePriceNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageStorePricePercentNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageMaxDistanceFromStoredPositionNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GarageVehicleSearchRadiusNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)MaxStorableVehiclesNUD).EndInit();
             groupBox36.ResumeLayout(false);
             groupBox36.PerformLayout();
             groupBox33.ResumeLayout(false);
@@ -2602,7 +2034,6 @@
             groupBox8.ResumeLayout(false);
             groupBox8.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
 
         }
 
@@ -2612,45 +2043,6 @@
         private System.Windows.Forms.TextBox textBox18;
         private System.Windows.Forms.CheckBox CheckForBlockingObjectsCB;
         private System.Windows.Forms.CheckBox DSEnabledCB;
-        private System.Windows.Forms.GroupBox groupBox76;
-        private System.Windows.Forms.CheckBox GarageParkingMeterEnableFlavorCB;
-        private System.Windows.Forms.CheckBox AllowStoringDEVehiclesCB;
-        private System.Windows.Forms.NumericUpDown GarageMaxRangeTier3NUD;
-        private System.Windows.Forms.Label darkLabel244;
-        private System.Windows.Forms.NumericUpDown GarageMaxRangeTier2NUD;
-        private System.Windows.Forms.Label darkLabel243;
-        private System.Windows.Forms.NumericUpDown GarageMaxRangeTier1NUD;
-        private System.Windows.Forms.Label darkLabel242;
-        private System.Windows.Forms.NumericUpDown GarageMaxStorableTier3NUD;
-        private System.Windows.Forms.Label darkLabel241;
-        private System.Windows.Forms.NumericUpDown GarageMaxStorableTier2NUD;
-        private System.Windows.Forms.Label darkLabel240;
-        private System.Windows.Forms.NumericUpDown GarageMaxStorableTier1NUD;
-        private System.Windows.Forms.Label darkLabel239;
-        private System.Windows.Forms.NumericUpDown GarageStaticStorePriceNUD;
-        private System.Windows.Forms.Label darkLabel238;
-        private System.Windows.Forms.CheckBox GarageEnableMarketFeaturesCB;
-        private System.Windows.Forms.ComboBox GarageGroupStoreModeCB;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.CheckBox GarageEnableGroupFeaturesCB;
-        private System.Windows.Forms.CheckBox GarageNeedKeyToStoreCB;
-        private System.Windows.Forms.CheckBox GarageUseVirtualStorageForCargoCB;
-        private System.Windows.Forms.NumericUpDown GarageStorePricePercentNUD;
-        private System.Windows.Forms.Label darkLabel236;
-        private System.Windows.Forms.NumericUpDown GarageMaxDistanceFromStoredPositionNUD;
-        private System.Windows.Forms.Label darkLabel234;
-        private System.Windows.Forms.NumericUpDown GarageVehicleSearchRadiusNUD;
-        private System.Windows.Forms.Label darkLabel226;
-        private System.Windows.Forms.NumericUpDown MaxStorableVehiclesNUD;
-        private System.Windows.Forms.Label darkLabel225;
-        private System.Windows.Forms.CheckBox GarageCanStoreWithCargoCB;
-        private System.Windows.Forms.ComboBox GarageRetrieveModeCB;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.ComboBox GarageStoreModeCB;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.ComboBox GarageModeCB;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.CheckBox GarageEnabledCB;
         private System.Windows.Forms.GroupBox groupBox36;
         private System.Windows.Forms.CheckBox UseExpansionMainMenuIntroSceneCB;
         private System.Windows.Forms.CheckBox UseExpansionMainMenuIconsCB;

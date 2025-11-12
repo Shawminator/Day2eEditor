@@ -19,6 +19,8 @@ namespace Day2eEditor
         }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<string> addedtypes { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool stripWhitespace = false;
         public AddItemfromString()
         {
             InitializeComponent();
@@ -36,12 +38,30 @@ namespace Day2eEditor
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            addedtypes = richTextBox1.Lines.ToList();
+            //addedtypes = richTextBox1.Lines.ToList();
         }
 
         private void darkButton1_Click(object sender, EventArgs e)
         {
+            addedtypes = new List<string>();
+            foreach (string line in richTextBox1.Lines)
+            {
+                if (stripWhitespace)
+                {
+                    // Trim and remove all whitespace characters
+                    string cleanName = new string(line.Where(c => !char.IsWhiteSpace(c)).ToArray());
 
+                    // Skip if empty after cleaning
+                    if (string.IsNullOrEmpty(cleanName))
+                        continue;
+
+                    addedtypes.Add(cleanName);
+                }
+                else
+                {
+                    addedtypes.Add(line);
+                }
+            }
         }
     }
 }

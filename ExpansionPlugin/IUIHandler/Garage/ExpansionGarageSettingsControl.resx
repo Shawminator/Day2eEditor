@@ -117,43 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="SaveButton.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACYAAAAWCAIAAAAjJXlUAAAABGdBTUEAALGPC/xhBQAAABl0RVh0U29m
-        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAMmSURBVEhLvZXZTxNBHMf5k7yPKEcxGqMBKZeJL1aO
-        iIBCfJT4QuKDvkBbUrvlKkLBLiAVopJ4AS12253dst3u0e7aFtoKlB6oXIa2Y4rGBNcAjQ2Tz8Mv+WW+
-        n/wmmZkceOgrB0J4Pl92aOyvPHbyTOHFsmslNUXF1UXF1VeLqouL5Y31lQ311xvqr9fVVZaXX1HcLD1+
-        Mv/suTzpdin7KwsKS1GURVHWaGSMRqZ/gB019kA4CqEJwvGN+ODjx08Yx1Ol8mW+TH7mXK404S/2V5aW
-        3RkeZvv7iV9095DPDQiEKEyMQji2uvSstbUNWNt0unfd3VjBAaz7K0vktSjK/FHq++Z0WkTkOrw84nXr
-        KFzV0tI4/uKRRvMWRTm93p6bV7S39aDKgQGHwUAZDNTgoLOnx6ZSvVar36jVbzo6JrXaSY3m/a+u0ejS
-        6235smvSnMyUIyMcgky3t79UKtOoVBNq9evdvFIqx9vaTRrNB9OYWFX9UJqTibL0dl8fOTQ0Fg774zF/
-        LLqLaMQXXhZj0XRrJTJvMk309uIKxQNpTgZKeVmdFjGTpNXv5zkW8BzxB44jvJ+dG+uL6ZoFXi8rCpRO
-        N6W41SLNyUyJIGYAPrGsgwAWDJsigIUkZklilgAWhsHX1xYJwgLSNeFxz3V2TmdLaRVFhqZtW5thUaRo
-        2uZy2RmXnaZtDnLW5bK7aLsg0FlUWgCw+nwcy4KtzWWfl+ZYgmWBk8IYBud5cudgCa+XyaIyPeVCQBAF
-        iuMIQZgTPHNLiyKEW9GI3+NxiCIlCtT8gjubSoKwhsPzwQAfCrpDQXcgwEdWfKnk13hsIRDgQkF3MMAv
-        L/sFD6XTZUdpAeATw5AYNvUl5GEZHMdncPsMhn3E7TMAmAEw4/YZmgZu3pGdKbVaM0liyeT3xHY0mYgl
-        tmOJ7aiUZPKbKDizcEnKK+oRxEKSGITrMLWaSsZhKg5Tq/8AromCs7Nzuqrm/16fS5dvIIiZ56md//zH
-        nqS+hISuLnNF5V1pTgbKoydOF8jkCkVtU/P9e03Ne9DUfL+mtu7CxfIjx09JczJQZp3fykNePwE7LSEV
-        SsZKzAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <metadata name="ExpansionSettingsCM.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>38, 15</value>
-  </metadata>
-  <metadata name="LoadoutsCM.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>207, 15</value>
-  </metadata>
-  <metadata name="ExpansionAICM.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>329, 15</value>
-  </metadata>
-  <metadata name="ChatCM.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>466, 15</value>
-  </metadata>
-  <metadata name="GarageCM.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>564, 15</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>94</value>
-  </metadata>
 </root>

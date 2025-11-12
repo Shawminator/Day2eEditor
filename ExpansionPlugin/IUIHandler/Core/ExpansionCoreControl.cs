@@ -86,6 +86,7 @@ namespace ExpansionPlugin
             // TODO: Implement actual cloning logic
             return new ExpansionCoreSettings
             {
+                m_Version = data.m_Version,
                 ServerUpdateRateLimit = data.ServerUpdateRateLimit,
                 ForceExactCEItemLifetime = data.ForceExactCEItemLifetime,
                 EnableInventoryCargoTidy = data.EnableInventoryCargoTidy

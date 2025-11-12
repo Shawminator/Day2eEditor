@@ -87,6 +87,7 @@ namespace ExpansionPlugin
             // TODO: Implement actual cloning logic
             return new ExpansionChatSettings
             {
+                m_Version = data.m_Version,
                 EnableExpansionChat = data.EnableExpansionChat,
                 EnableGlobalChat = data.EnableGlobalChat,
                 EnablePartyChat = data.EnablePartyChat,

@@ -199,12 +199,12 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionBookLinksControl(), typeof(ExpansionBookConfig), ExpansionBookLink, selected);
                 },
                 // Chat
-                [typeof(ExpansionChatSettings)] = (node,selected) =>
+                [typeof(ExpansionChatSettings)] = (node, selected) =>
                 {
                     ExpansionChatSettings ExpansionChatSettings = node.Tag as ExpansionChatSettings;
                     ShowHandler(new ExpansionChatSettingsControl(), typeof(ExpansionChatConfig), ExpansionChatSettings, selected);
                 },
-                [typeof(ExpansionChatColors)] = (node,selected) =>
+                [typeof(ExpansionChatColors)] = (node, selected) =>
                 {
                     ExpansionChatColors ExpansionChatColors = node.Tag as ExpansionChatColors;
                     ShowHandler(new ExpansionChatColorsControl(), typeof(ExpansionChatConfig), ExpansionChatColors, selected);
@@ -214,6 +214,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionCoreSettings ExpansionCoreSettings = node.Tag as ExpansionCoreSettings;
                     ShowHandler(new ExpansionCoreControl(), typeof(ExpansionCoreConfig), ExpansionCoreSettings, selected);
+                },
+                //Garage
+                [typeof(ExpansionGarageSettings)] = (node, selected) =>
+                {
+                    ExpansionGarageSettings ExpansionGarageSettings = node.Tag as ExpansionGarageSettings;
+                    ShowHandler(new ExpansionGarageSettingsControl(), typeof(ExpansionGarageConfig), ExpansionGarageSettings, selected);
                 }
             };
             // ----------------------
@@ -269,9 +275,8 @@ namespace ExpansionPlugin
                 {
                     ExpansionBookConfig cfg = node.FindParentOfType<ExpansionBookConfig>();
                     ShowHandler<IUIHandler>(new ExpansionBookGeneralControl(), typeof(ExpansionBookConfig), cfg.Data, selected);
-                },
-
-            };
+                }
+             };
         }
         private void InitializeContextMenuHandlers()
         {
@@ -605,6 +610,32 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewCraftingCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //chat
+                ["BlacklistedWords"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewBlacklistedWordToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BlacklistedWord"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeBlacklistedWordToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Garage
+                ["EntityWhitelist"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewEntityWhitelistToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["EntityWhitelistItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeEntityWhitelistToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -1103,7 +1134,6 @@ namespace ExpansionPlugin
             AILocationlRootNode.Nodes.Add(NoGoAreasNode);
             return AILocationlRootNode;
         }
-
         //Basebuilding
         private TreeNode CreateExpansionBaseBuildingConfigNodes(ExpansionBaseBuildingConfig ef)
         {
@@ -1290,6 +1320,18 @@ namespace ExpansionPlugin
             {
                 Tag = ef.Data.ChatColors
             });
+            TreeNode Blacklistedwordsnode = new TreeNode("Blacklisted Words")
+            {
+                Tag = "BlacklistedWords"
+            };
+            foreach (string s in ef.Data.BlacklistedWords)
+            {
+                Blacklistedwordsnode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "BlacklistedWord"
+                });
+            }
+            EconomyRootNode.Nodes.Add(Blacklistedwordsnode);
         }
         //Core
         private TreeNode CreateExpansionCoreConfigConfigNodes(ExpansionCoreConfig ef)
@@ -2862,7 +2904,7 @@ namespace ExpansionPlugin
         {
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
             AddItemfromString form = new AddItemfromString();
-            form.TitleLable = "Add Admin Steam ID";
+            form.TitleLable = "Add Excluded Building";
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -3143,7 +3185,68 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionBookConfig.isDirty = true;
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
+        //Chat
+        private void addNewBlacklistedWordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Blacklisted words";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionChatConfig.Data.BlacklistedWords.Contains(l))
+                    {
+                        _expansionManager.ExpansionChatConfig.Data.BlacklistedWords.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "BlacklistedWord"
+                        });
+                    }
+                }
+                _expansionManager.ExpansionChatConfig.isDirty = true;
+            }
+        }
+        private void removeBlacklistedWordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionChatConfig.Data.BlacklistedWords.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionChatConfig.isDirty = true;
+        }
+        //Garage
+        private void addNewEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Entity Whitelist items";
+            form.stripWhitespace = true;
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionGarageConfig.Data.EntityWhitelist.Contains(l))
+                    {
+                        _expansionManager.ExpansionGarageConfig.Data.EntityWhitelist.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "EntityWhitelistItem"
+                        });
+                    }
+                }
+                _expansionManager.ExpansionGarageConfig.isDirty = true;
+            }
+        }
+        private void removeEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionGarageConfig.Data.EntityWhitelist.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionGarageConfig.isDirty = true;
+        }
         #endregion right click methods
+
+
 
 
 
