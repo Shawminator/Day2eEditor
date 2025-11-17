@@ -60,6 +60,11 @@ namespace ExpansionPlugin
                 {
                     LootDropOnDeathNameList.Add(Path.GetFileNameWithoutExtension(AILootDrops.FileName));
                 }
+                BindingList<string>  Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
+                Factions.Insert(0, "");
+                StaticPatrolFactionCB.DataSource = Factions;
+
+
                 StaticPatrolLoadoutsCB.DataSource = new BindingList<string>(LoadoutNameList);
                 StaticPatrolLootDropOnDeathCB.DataSource = new BindingList<string>(LootDropOnDeathNameList);
                 StaticPatrolLoadBalancingCategoryCB.DataSource = new BindingSource(parent.Data._LoadBalancingCategories, null);
