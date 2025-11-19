@@ -62,6 +62,7 @@ namespace ExpansionPlugin
         {
             if (isDirty)
             {
+                SetExplosiveProjectilesDictionary();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
@@ -143,7 +144,7 @@ namespace ExpansionPlugin
             return m_Version == other.m_Version &&
                    Enabled == other.Enabled &&
                    CheckForBlockingObjects == other.CheckForBlockingObjects &&
-                   ExplosionTargets.SequenceEqual(other.ExplosionTargets ?? new BindingList<string>()) &&
+                   ExplosionTargets.SequenceEqual(other.ExplosionTargets) &&
                    _ExplosiveProjectiles.SequenceEqual(other._ExplosiveProjectiles);
                   
         }

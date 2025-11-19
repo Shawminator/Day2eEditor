@@ -29,11 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
-            groupBox68 = new GroupBox();
-            textBox17 = new TextBox();
-            textBox18 = new TextBox();
-            CheckForBlockingObjectsCB = new CheckBox();
-            DSEnabledCB = new CheckBox();
             groupBox36 = new GroupBox();
             UseExpansionMainMenuIntroSceneCB = new CheckBox();
             UseExpansionMainMenuIconsCB = new CheckBox();
@@ -41,20 +36,6 @@
             UseNewsFeedInGameMenuCB = new CheckBox();
             UseDeathScreenCB = new CheckBox();
             UseDeathScreenStatisticsCB = new CheckBox();
-            groupBox33 = new GroupBox();
-            EnableAIGravecrossCB = new CheckBox();
-            darkLabel228 = new Label();
-            GravecrossSpawnTimeDelayNUD = new NumericUpDown();
-            darkLabel89 = new Label();
-            EnableGravecrossCB = new CheckBox();
-            GravecrossDeleteBodyCB = new CheckBox();
-            GravecrossTimeThresholdNUD = new NumericUpDown();
-            groupBox32 = new GroupBox();
-            EnableEarPlugsCB = new CheckBox();
-            DisableShootToUnlockCB = new CheckBox();
-            DisableMagicCrosshairCB = new CheckBox();
-            EnableAutoRunCB = new CheckBox();
-            EnableHUDNightvisionOverlayCB = new CheckBox();
             groupBox35 = new GroupBox();
             LampSelectionModeCB = new ComboBox();
             darkLabel301 = new Label();
@@ -96,9 +77,6 @@
             darkLabel191 = new Label();
             TemperatureHotColorPB = new PictureBox();
             darkLabel192 = new Label();
-            groupBox77 = new GroupBox();
-            darkLabel245 = new Label();
-            InGameMenuLogoPathTB = new TextBox();
             groupBox37 = new GroupBox();
             darkLabel233 = new Label();
             BuildingIvysComboBox = new ComboBox();
@@ -171,12 +149,7 @@
             TerritoryCB = new CheckBox();
             SafezoneCB = new CheckBox();
             VehicleCarKeyCB = new CheckBox();
-            groupBox68.SuspendLayout();
             groupBox36.SuspendLayout();
-            groupBox33.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)GravecrossSpawnTimeDelayNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GravecrossTimeThresholdNUD).BeginInit();
-            groupBox32.SuspendLayout();
             groupBox35.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown34).BeginInit();
             groupBox69.SuspendLayout();
@@ -195,7 +168,6 @@
             ((System.ComponentModel.ISupportInitialize)TemperatureColdColorPB).BeginInit();
             ((System.ComponentModel.ISupportInitialize)TemperatureIdealColorPB).BeginInit();
             ((System.ComponentModel.ISupportInitialize)TemperatureHotColorPB).BeginInit();
-            groupBox77.SuspendLayout();
             groupBox37.SuspendLayout();
             groupBox72.SuspendLayout();
             groupBox75.SuspendLayout();
@@ -207,69 +179,6 @@
             groupBox8.SuspendLayout();
             SuspendLayout();
             // 
-            // groupBox68
-            // 
-            groupBox68.Controls.Add(textBox17);
-            groupBox68.Controls.Add(textBox18);
-            groupBox68.Controls.Add(CheckForBlockingObjectsCB);
-            groupBox68.Controls.Add(DSEnabledCB);
-            groupBox68.ForeColor = SystemColors.Control;
-            groupBox68.Location = new Point(13, 16);
-            groupBox68.Margin = new Padding(4, 3, 4, 3);
-            groupBox68.Name = "groupBox68";
-            groupBox68.Padding = new Padding(4, 3, 4, 3);
-            groupBox68.Size = new Size(308, 127);
-            groupBox68.TabIndex = 10;
-            groupBox68.TabStop = false;
-            groupBox68.Text = "Damage System Settings";
-            groupBox68.Enter += groupBox68_Enter;
-            // 
-            // textBox17
-            // 
-            textBox17.BackColor = Color.FromArgb(60, 63, 65);
-            textBox17.ForeColor = SystemColors.Control;
-            textBox17.Location = new Point(19, 91);
-            textBox17.Margin = new Padding(4, 3, 4, 3);
-            textBox17.Name = "textBox17";
-            textBox17.Size = new Size(279, 23);
-            textBox17.TabIndex = 8;
-            // 
-            // textBox18
-            // 
-            textBox18.BackColor = Color.FromArgb(60, 63, 65);
-            textBox18.ForeColor = SystemColors.Control;
-            textBox18.Location = new Point(19, 61);
-            textBox18.Margin = new Padding(4, 3, 4, 3);
-            textBox18.Name = "textBox18";
-            textBox18.Size = new Size(279, 23);
-            textBox18.TabIndex = 7;
-            // 
-            // CheckForBlockingObjectsCB
-            // 
-            CheckForBlockingObjectsCB.AutoSize = true;
-            CheckForBlockingObjectsCB.ForeColor = SystemColors.Control;
-            CheckForBlockingObjectsCB.Location = new Point(114, 35);
-            CheckForBlockingObjectsCB.Margin = new Padding(4, 3, 4, 3);
-            CheckForBlockingObjectsCB.Name = "CheckForBlockingObjectsCB";
-            CheckForBlockingObjectsCB.Size = new Size(171, 19);
-            CheckForBlockingObjectsCB.TabIndex = 21;
-            CheckForBlockingObjectsCB.Text = "Check For Blocking Objects";
-            CheckForBlockingObjectsCB.TextAlign = ContentAlignment.MiddleRight;
-            CheckForBlockingObjectsCB.UseVisualStyleBackColor = true;
-            // 
-            // DSEnabledCB
-            // 
-            DSEnabledCB.AutoSize = true;
-            DSEnabledCB.ForeColor = SystemColors.Control;
-            DSEnabledCB.Location = new Point(24, 35);
-            DSEnabledCB.Margin = new Padding(4, 3, 4, 3);
-            DSEnabledCB.Name = "DSEnabledCB";
-            DSEnabledCB.Size = new Size(68, 19);
-            DSEnabledCB.TabIndex = 0;
-            DSEnabledCB.Text = "Enabled";
-            DSEnabledCB.TextAlign = ContentAlignment.MiddleRight;
-            DSEnabledCB.UseVisualStyleBackColor = true;
-            // 
             // groupBox36
             // 
             groupBox36.Controls.Add(UseExpansionMainMenuIntroSceneCB);
@@ -279,7 +188,7 @@
             groupBox36.Controls.Add(UseDeathScreenCB);
             groupBox36.Controls.Add(UseDeathScreenStatisticsCB);
             groupBox36.ForeColor = SystemColors.Control;
-            groupBox36.Location = new Point(536, 180);
+            groupBox36.Location = new Point(223, 9);
             groupBox36.Margin = new Padding(4, 3, 4, 3);
             groupBox36.Name = "groupBox36";
             groupBox36.Padding = new Padding(4, 3, 4, 3);
@@ -294,7 +203,7 @@
             UseExpansionMainMenuIntroSceneCB.Location = new Point(24, 128);
             UseExpansionMainMenuIntroSceneCB.Margin = new Padding(4, 3, 4, 3);
             UseExpansionMainMenuIntroSceneCB.Name = "UseExpansionMainMenuIntroSceneCB";
-            UseExpansionMainMenuIntroSceneCB.Size = new Size(227, 19);
+            UseExpansionMainMenuIntroSceneCB.Size = new Size(228, 19);
             UseExpansionMainMenuIntroSceneCB.TabIndex = 4;
             UseExpansionMainMenuIntroSceneCB.Text = "Use Expansion Main Menu Intro Scene";
             UseExpansionMainMenuIntroSceneCB.UseVisualStyleBackColor = true;
@@ -305,7 +214,7 @@
             UseExpansionMainMenuIconsCB.Location = new Point(24, 102);
             UseExpansionMainMenuIconsCB.Margin = new Padding(4, 3, 4, 3);
             UseExpansionMainMenuIconsCB.Name = "UseExpansionMainMenuIconsCB";
-            UseExpansionMainMenuIconsCB.Size = new Size(196, 19);
+            UseExpansionMainMenuIconsCB.Size = new Size(197, 19);
             UseExpansionMainMenuIconsCB.TabIndex = 3;
             UseExpansionMainMenuIconsCB.Text = "Use Expansion Main Menu Icons";
             UseExpansionMainMenuIconsCB.UseVisualStyleBackColor = true;
@@ -316,7 +225,7 @@
             UseExpansionMainMenuLogoCB.Location = new Point(24, 75);
             UseExpansionMainMenuLogoCB.Margin = new Padding(4, 3, 4, 3);
             UseExpansionMainMenuLogoCB.Name = "UseExpansionMainMenuLogoCB";
-            UseExpansionMainMenuLogoCB.Size = new Size(195, 19);
+            UseExpansionMainMenuLogoCB.Size = new Size(196, 19);
             UseExpansionMainMenuLogoCB.TabIndex = 2;
             UseExpansionMainMenuLogoCB.Text = "Use Expansion Main Menu Logo";
             UseExpansionMainMenuLogoCB.UseVisualStyleBackColor = true;
@@ -354,178 +263,6 @@
             UseDeathScreenStatisticsCB.Text = "Use Death Screen Statistics";
             UseDeathScreenStatisticsCB.UseVisualStyleBackColor = true;
             // 
-            // groupBox33
-            // 
-            groupBox33.Controls.Add(EnableAIGravecrossCB);
-            groupBox33.Controls.Add(darkLabel228);
-            groupBox33.Controls.Add(GravecrossSpawnTimeDelayNUD);
-            groupBox33.Controls.Add(darkLabel89);
-            groupBox33.Controls.Add(EnableGravecrossCB);
-            groupBox33.Controls.Add(GravecrossDeleteBodyCB);
-            groupBox33.Controls.Add(GravecrossTimeThresholdNUD);
-            groupBox33.ForeColor = SystemColors.Control;
-            groupBox33.Location = new Point(820, 15);
-            groupBox33.Margin = new Padding(4, 3, 4, 3);
-            groupBox33.Name = "groupBox33";
-            groupBox33.Padding = new Padding(4, 3, 4, 3);
-            groupBox33.Size = new Size(278, 202);
-            groupBox33.TabIndex = 14;
-            groupBox33.TabStop = false;
-            groupBox33.Text = "Grave Cross";
-            // 
-            // EnableAIGravecrossCB
-            // 
-            EnableAIGravecrossCB.AutoSize = true;
-            EnableAIGravecrossCB.Location = new Point(20, 48);
-            EnableAIGravecrossCB.Margin = new Padding(4, 3, 4, 3);
-            EnableAIGravecrossCB.Name = "EnableAIGravecrossCB";
-            EnableAIGravecrossCB.Size = new Size(135, 19);
-            EnableAIGravecrossCB.TabIndex = 1;
-            EnableAIGravecrossCB.Text = "Enable AI Gravecross";
-            EnableAIGravecrossCB.UseVisualStyleBackColor = true;
-            // 
-            // darkLabel228
-            // 
-            darkLabel228.AutoSize = true;
-            darkLabel228.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel228.Location = new Point(15, 147);
-            darkLabel228.Margin = new Padding(4, 0, 4, 0);
-            darkLabel228.Name = "darkLabel228";
-            darkLabel228.Size = new Size(164, 15);
-            darkLabel228.TabIndex = 5;
-            darkLabel228.Text = "Gravecross Spawn Time Delay";
-            // 
-            // GravecrossSpawnTimeDelayNUD
-            // 
-            GravecrossSpawnTimeDelayNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GravecrossSpawnTimeDelayNUD.DecimalPlaces = 1;
-            GravecrossSpawnTimeDelayNUD.ForeColor = SystemColors.Control;
-            GravecrossSpawnTimeDelayNUD.Location = new Point(19, 165);
-            GravecrossSpawnTimeDelayNUD.Margin = new Padding(4, 3, 4, 3);
-            GravecrossSpawnTimeDelayNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GravecrossSpawnTimeDelayNUD.Name = "GravecrossSpawnTimeDelayNUD";
-            GravecrossSpawnTimeDelayNUD.Size = new Size(130, 23);
-            GravecrossSpawnTimeDelayNUD.TabIndex = 6;
-            GravecrossSpawnTimeDelayNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel89
-            // 
-            darkLabel89.AutoSize = true;
-            darkLabel89.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel89.Location = new Point(15, 98);
-            darkLabel89.Margin = new Padding(4, 0, 4, 0);
-            darkLabel89.Name = "darkLabel89";
-            darkLabel89.Size = new Size(150, 15);
-            darkLabel89.TabIndex = 3;
-            darkLabel89.Text = "Gravecross Time Threshold";
-            // 
-            // EnableGravecrossCB
-            // 
-            EnableGravecrossCB.AutoSize = true;
-            EnableGravecrossCB.Location = new Point(20, 22);
-            EnableGravecrossCB.Margin = new Padding(4, 3, 4, 3);
-            EnableGravecrossCB.Name = "EnableGravecrossCB";
-            EnableGravecrossCB.Size = new Size(121, 19);
-            EnableGravecrossCB.TabIndex = 0;
-            EnableGravecrossCB.Text = "Enable Gravecross";
-            EnableGravecrossCB.UseVisualStyleBackColor = true;
-            // 
-            // GravecrossDeleteBodyCB
-            // 
-            GravecrossDeleteBodyCB.AutoSize = true;
-            GravecrossDeleteBodyCB.Location = new Point(19, 75);
-            GravecrossDeleteBodyCB.Margin = new Padding(4, 3, 4, 3);
-            GravecrossDeleteBodyCB.Name = "GravecrossDeleteBodyCB";
-            GravecrossDeleteBodyCB.Size = new Size(149, 19);
-            GravecrossDeleteBodyCB.TabIndex = 2;
-            GravecrossDeleteBodyCB.Text = "Gravecross Delete Body";
-            GravecrossDeleteBodyCB.UseVisualStyleBackColor = true;
-            // 
-            // GravecrossTimeThresholdNUD
-            // 
-            GravecrossTimeThresholdNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GravecrossTimeThresholdNUD.DecimalPlaces = 1;
-            GravecrossTimeThresholdNUD.ForeColor = SystemColors.Control;
-            GravecrossTimeThresholdNUD.Location = new Point(19, 117);
-            GravecrossTimeThresholdNUD.Margin = new Padding(4, 3, 4, 3);
-            GravecrossTimeThresholdNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GravecrossTimeThresholdNUD.Name = "GravecrossTimeThresholdNUD";
-            GravecrossTimeThresholdNUD.Size = new Size(130, 23);
-            GravecrossTimeThresholdNUD.TabIndex = 4;
-            GravecrossTimeThresholdNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // groupBox32
-            // 
-            groupBox32.Controls.Add(EnableEarPlugsCB);
-            groupBox32.Controls.Add(DisableShootToUnlockCB);
-            groupBox32.Controls.Add(DisableMagicCrosshairCB);
-            groupBox32.Controls.Add(EnableAutoRunCB);
-            groupBox32.Controls.Add(EnableHUDNightvisionOverlayCB);
-            groupBox32.ForeColor = SystemColors.Control;
-            groupBox32.Location = new Point(536, 14);
-            groupBox32.Margin = new Padding(4, 3, 4, 3);
-            groupBox32.Name = "groupBox32";
-            groupBox32.Padding = new Padding(4, 3, 4, 3);
-            groupBox32.Size = new Size(278, 159);
-            groupBox32.TabIndex = 12;
-            groupBox32.TabStop = false;
-            groupBox32.Text = "Settings";
-            // 
-            // EnableEarPlugsCB
-            // 
-            EnableEarPlugsCB.AutoSize = true;
-            EnableEarPlugsCB.Location = new Point(24, 108);
-            EnableEarPlugsCB.Margin = new Padding(4, 3, 4, 3);
-            EnableEarPlugsCB.Name = "EnableEarPlugsCB";
-            EnableEarPlugsCB.Size = new Size(112, 19);
-            EnableEarPlugsCB.TabIndex = 4;
-            EnableEarPlugsCB.Text = "Enable Ear Plugs";
-            EnableEarPlugsCB.UseVisualStyleBackColor = true;
-            // 
-            // DisableShootToUnlockCB
-            // 
-            DisableShootToUnlockCB.AutoSize = true;
-            DisableShootToUnlockCB.Location = new Point(24, 22);
-            DisableShootToUnlockCB.Margin = new Padding(4, 3, 4, 3);
-            DisableShootToUnlockCB.Name = "DisableShootToUnlockCB";
-            DisableShootToUnlockCB.Size = new Size(154, 19);
-            DisableShootToUnlockCB.TabIndex = 0;
-            DisableShootToUnlockCB.Text = "Disable Shoot To Unlock";
-            DisableShootToUnlockCB.UseVisualStyleBackColor = true;
-            // 
-            // DisableMagicCrosshairCB
-            // 
-            DisableMagicCrosshairCB.AutoSize = true;
-            DisableMagicCrosshairCB.Location = new Point(24, 63);
-            DisableMagicCrosshairCB.Margin = new Padding(4, 3, 4, 3);
-            DisableMagicCrosshairCB.Name = "DisableMagicCrosshairCB";
-            DisableMagicCrosshairCB.Size = new Size(152, 19);
-            DisableMagicCrosshairCB.TabIndex = 2;
-            DisableMagicCrosshairCB.Text = "Disable Magic Crosshair";
-            DisableMagicCrosshairCB.UseVisualStyleBackColor = true;
-            // 
-            // EnableAutoRunCB
-            // 
-            EnableAutoRunCB.AutoSize = true;
-            EnableAutoRunCB.Location = new Point(24, 87);
-            EnableAutoRunCB.Margin = new Padding(4, 3, 4, 3);
-            EnableAutoRunCB.Name = "EnableAutoRunCB";
-            EnableAutoRunCB.Size = new Size(114, 19);
-            EnableAutoRunCB.TabIndex = 3;
-            EnableAutoRunCB.Text = "Enable Auto Run";
-            EnableAutoRunCB.UseVisualStyleBackColor = true;
-            // 
-            // EnableHUDNightvisionOverlayCB
-            // 
-            EnableHUDNightvisionOverlayCB.AutoSize = true;
-            EnableHUDNightvisionOverlayCB.Location = new Point(24, 43);
-            EnableHUDNightvisionOverlayCB.Margin = new Padding(4, 3, 4, 3);
-            EnableHUDNightvisionOverlayCB.Name = "EnableHUDNightvisionOverlayCB";
-            EnableHUDNightvisionOverlayCB.Size = new Size(199, 19);
-            EnableHUDNightvisionOverlayCB.TabIndex = 1;
-            EnableHUDNightvisionOverlayCB.Text = "Enable HUD Night vision Overlay";
-            EnableHUDNightvisionOverlayCB.UseVisualStyleBackColor = true;
-            // 
             // groupBox35
             // 
             groupBox35.Controls.Add(LampSelectionModeCB);
@@ -536,7 +273,7 @@
             groupBox35.Controls.Add(EnableLighthousesCB);
             groupBox35.Controls.Add(EnableLampsComboBox);
             groupBox35.ForeColor = SystemColors.Control;
-            groupBox35.Location = new Point(820, 224);
+            groupBox35.Location = new Point(13, 9);
             groupBox35.Margin = new Padding(4, 3, 4, 3);
             groupBox35.Name = "groupBox35";
             groupBox35.Padding = new Padding(4, 3, 4, 3);
@@ -659,7 +396,7 @@
             groupBox69.Controls.Add(TemperatureHotColorPB);
             groupBox69.Controls.Add(darkLabel192);
             groupBox69.ForeColor = SystemColors.Control;
-            groupBox69.Location = new Point(817, 418);
+            groupBox69.Location = new Point(13, 200);
             groupBox69.Margin = new Padding(4, 3, 4, 3);
             groupBox69.Name = "groupBox69";
             groupBox69.Padding = new Padding(4, 3, 4, 3);
@@ -760,7 +497,7 @@
             darkLabel193.Location = new Point(7, 135);
             darkLabel193.Margin = new Padding(4, 0, 4, 0);
             darkLabel193.Name = "darkLabel193";
-            darkLabel193.Size = new Size(151, 15);
+            darkLabel193.Size = new Size(150, 15);
             darkLabel193.TabIndex = 4;
             darkLabel193.Text = "Temperature Burning Color";
             // 
@@ -939,7 +676,7 @@
             darkLabel189.Location = new Point(7, 223);
             darkLabel189.Margin = new Padding(4, 0, 4, 0);
             darkLabel189.Name = "darkLabel189";
-            darkLabel189.Size = new Size(153, 15);
+            darkLabel189.Size = new Size(152, 15);
             darkLabel189.TabIndex = 8;
             darkLabel189.Text = "Temperature Freezing Color";
             // 
@@ -960,7 +697,7 @@
             darkLabel190.Location = new Point(7, 201);
             darkLabel190.Margin = new Padding(4, 0, 4, 0);
             darkLabel190.Name = "darkLabel190";
-            darkLabel190.Size = new Size(134, 15);
+            darkLabel190.Size = new Size(133, 15);
             darkLabel190.TabIndex = 7;
             darkLabel190.Text = "Temperature Cold Color";
             // 
@@ -981,7 +718,7 @@
             darkLabel191.Location = new Point(7, 179);
             darkLabel191.Margin = new Padding(4, 0, 4, 0);
             darkLabel191.Name = "darkLabel191";
-            darkLabel191.Size = new Size(134, 15);
+            darkLabel191.Size = new Size(133, 15);
             darkLabel191.TabIndex = 6;
             darkLabel191.Text = "Temperature Ideal Color";
             // 
@@ -1002,44 +739,9 @@
             darkLabel192.Location = new Point(7, 157);
             darkLabel192.Margin = new Padding(4, 0, 4, 0);
             darkLabel192.Name = "darkLabel192";
-            darkLabel192.Size = new Size(129, 15);
+            darkLabel192.Size = new Size(128, 15);
             darkLabel192.TabIndex = 5;
             darkLabel192.Text = "Temperature Hot Color";
-            // 
-            // groupBox77
-            // 
-            groupBox77.Controls.Add(darkLabel245);
-            groupBox77.Controls.Add(InGameMenuLogoPathTB);
-            groupBox77.ForeColor = SystemColors.Control;
-            groupBox77.Location = new Point(1105, 16);
-            groupBox77.Margin = new Padding(4, 3, 4, 3);
-            groupBox77.Name = "groupBox77";
-            groupBox77.Padding = new Padding(4, 3, 4, 3);
-            groupBox77.Size = new Size(645, 67);
-            groupBox77.TabIndex = 17;
-            groupBox77.TabStop = false;
-            groupBox77.Text = "Logo Path";
-            // 
-            // darkLabel245
-            // 
-            darkLabel245.AutoSize = true;
-            darkLabel245.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel245.Location = new Point(15, 29);
-            darkLabel245.Margin = new Padding(4, 0, 4, 0);
-            darkLabel245.Name = "darkLabel245";
-            darkLabel245.Size = new Size(139, 15);
-            darkLabel245.TabIndex = 0;
-            darkLabel245.Text = "InGame Menu Logo Path";
-            // 
-            // InGameMenuLogoPathTB
-            // 
-            InGameMenuLogoPathTB.BackColor = Color.FromArgb(60, 63, 65);
-            InGameMenuLogoPathTB.ForeColor = SystemColors.Control;
-            InGameMenuLogoPathTB.Location = new Point(169, 25);
-            InGameMenuLogoPathTB.Margin = new Padding(4, 3, 4, 3);
-            InGameMenuLogoPathTB.Name = "InGameMenuLogoPathTB";
-            InGameMenuLogoPathTB.Size = new Size(464, 23);
-            InGameMenuLogoPathTB.TabIndex = 1;
             // 
             // groupBox37
             // 
@@ -1049,7 +751,7 @@
             groupBox37.Controls.Add(BuildingInteriorsCB);
             groupBox37.Controls.Add(UseCustomMappingModuleCB);
             groupBox37.ForeColor = SystemColors.Control;
-            groupBox37.Location = new Point(1105, 88);
+            groupBox37.Location = new Point(650, 289);
             groupBox37.Margin = new Padding(4, 3, 4, 3);
             groupBox37.Name = "groupBox37";
             groupBox37.Padding = new Padding(4, 3, 4, 3);
@@ -1127,7 +829,7 @@
             groupBox72.Controls.Add(UseReputationCB);
             groupBox72.Controls.Add(ShowHardlineHUDCB);
             groupBox72.ForeColor = SystemColors.Control;
-            groupBox72.Location = new Point(1156, 282);
+            groupBox72.Location = new Point(750, 466);
             groupBox72.Margin = new Padding(4, 3, 4, 3);
             groupBox72.Name = "groupBox72";
             groupBox72.Padding = new Padding(4, 3, 4, 3);
@@ -1268,7 +970,7 @@
             groupBox75.Controls.Add(ItemRequirementNUD);
             groupBox75.Controls.Add(darkLabel1);
             groupBox75.ForeColor = SystemColors.Control;
-            groupBox75.Location = new Point(1458, 365);
+            groupBox75.Location = new Point(1344, 330);
             groupBox75.Margin = new Padding(4, 3, 4, 3);
             groupBox75.Name = "groupBox75";
             groupBox75.Padding = new Padding(4, 3, 4, 3);
@@ -1390,7 +1092,7 @@
             groupBox74.Controls.Add(ReputationMaxReputationNUD);
             groupBox74.Controls.Add(darkLabel221);
             groupBox74.ForeColor = SystemColors.Control;
-            groupBox74.Location = new Point(1156, 553);
+            groupBox74.Location = new Point(1013, 111);
             groupBox74.Margin = new Padding(4, 3, 4, 3);
             groupBox74.Name = "groupBox74";
             groupBox74.Padding = new Padding(4, 3, 4, 3);
@@ -1514,7 +1216,7 @@
             darkLabel221.Location = new Point(14, 55);
             darkLabel221.Margin = new Padding(4, 0, 4, 0);
             darkLabel221.Name = "darkLabel221";
-            darkLabel221.Size = new Size(90, 15);
+            darkLabel221.Size = new Size(91, 15);
             darkLabel221.TabIndex = 2;
             darkLabel221.Tag = "";
             darkLabel221.Text = "Max Reputation";
@@ -1554,7 +1256,7 @@
             groupBox8.Controls.Add(SafezoneCB);
             groupBox8.Controls.Add(VehicleCarKeyCB);
             groupBox8.ForeColor = SystemColors.Control;
-            groupBox8.Location = new Point(1455, 84);
+            groupBox8.Location = new Point(1336, 18);
             groupBox8.Margin = new Padding(4, 3, 4, 3);
             groupBox8.Name = "groupBox8";
             groupBox8.Padding = new Padding(4, 3, 4, 3);
@@ -1709,7 +1411,7 @@
             ExplosionDamageSystemCB.Location = new Point(8, 85);
             ExplosionDamageSystemCB.Margin = new Padding(4, 3, 4, 3);
             ExplosionDamageSystemCB.Name = "ExplosionDamageSystemCB";
-            ExplosionDamageSystemCB.Size = new Size(164, 19);
+            ExplosionDamageSystemCB.Size = new Size(165, 19);
             ExplosionDamageSystemCB.TabIndex = 9;
             ExplosionDamageSystemCB.Text = "Explosion Damage System";
             ExplosionDamageSystemCB.TextAlign = ContentAlignment.MiddleRight;
@@ -1744,7 +1446,7 @@
             VehicleTowingCB.Location = new Point(162, 246);
             VehicleTowingCB.Margin = new Padding(4, 3, 4, 3);
             VehicleTowingCB.Name = "VehicleTowingCB";
-            VehicleTowingCB.Size = new Size(105, 19);
+            VehicleTowingCB.Size = new Size(104, 19);
             VehicleTowingCB.TabIndex = 31;
             VehicleTowingCB.Text = "Vehicle Towing";
             VehicleTowingCB.TextAlign = ContentAlignment.MiddleRight;
@@ -1781,7 +1483,7 @@
             ATMCB.Location = new Point(91, 39);
             ATMCB.Margin = new Padding(4, 3, 4, 3);
             ATMCB.Name = "ATMCB";
-            ATMCB.Size = new Size(51, 19);
+            ATMCB.Size = new Size(50, 19);
             ATMCB.TabIndex = 4;
             ATMCB.Text = "ATM";
             ATMCB.TextAlign = ContentAlignment.MiddleRight;
@@ -1806,7 +1508,7 @@
             LogToADMCB.Location = new Point(83, 106);
             LogToADMCB.Margin = new Padding(4, 3, 4, 3);
             LogToADMCB.Name = "LogToADMCB";
-            LogToADMCB.Size = new Size(92, 19);
+            LogToADMCB.Size = new Size(91, 19);
             LogToADMCB.TabIndex = 13;
             LogToADMCB.Text = "Log To ADM";
             LogToADMCB.UseVisualStyleBackColor = true;
@@ -1843,7 +1545,7 @@
             LogToScriptsCB.Location = new Point(183, 106);
             LogToScriptsCB.Margin = new Padding(4, 3, 4, 3);
             LogToScriptsCB.Name = "LogToScriptsCB";
-            LogToScriptsCB.Size = new Size(100, 19);
+            LogToScriptsCB.Size = new Size(99, 19);
             LogToScriptsCB.TabIndex = 14;
             LogToScriptsCB.Text = "Log To Scripts";
             LogToScriptsCB.UseVisualStyleBackColor = true;
@@ -1855,7 +1557,7 @@
             AdminToolsCB.Location = new Point(8, 16);
             AdminToolsCB.Margin = new Padding(4, 3, 4, 3);
             AdminToolsCB.Name = "AdminToolsCB";
-            AdminToolsCB.Size = new Size(90, 19);
+            AdminToolsCB.Size = new Size(89, 19);
             AdminToolsCB.TabIndex = 0;
             AdminToolsCB.Text = "AdminTools";
             AdminToolsCB.TextAlign = ContentAlignment.MiddleRight;
@@ -1933,7 +1635,7 @@
             TerritoryCB.Location = new Point(225, 151);
             TerritoryCB.Margin = new Padding(4, 3, 4, 3);
             TerritoryCB.Name = "TerritoryCB";
-            TerritoryCB.Size = new Size(70, 19);
+            TerritoryCB.Size = new Size(69, 19);
             TerritoryCB.TabIndex = 21;
             TerritoryCB.Text = "Territory";
             TerritoryCB.TextAlign = ContentAlignment.MiddleRight;
@@ -1975,28 +1677,16 @@
             Controls.Add(groupBox75);
             Controls.Add(groupBox74);
             Controls.Add(groupBox72);
-            Controls.Add(groupBox77);
             Controls.Add(groupBox37);
             Controls.Add(groupBox69);
             Controls.Add(groupBox35);
             Controls.Add(groupBox36);
-            Controls.Add(groupBox33);
-            Controls.Add(groupBox32);
-            Controls.Add(groupBox68);
             ForeColor = SystemColors.Control;
             Margin = new Padding(4, 3, 4, 3);
             Name = "Form3";
             Text = "Form3";
-            groupBox68.ResumeLayout(false);
-            groupBox68.PerformLayout();
             groupBox36.ResumeLayout(false);
             groupBox36.PerformLayout();
-            groupBox33.ResumeLayout(false);
-            groupBox33.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)GravecrossSpawnTimeDelayNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GravecrossTimeThresholdNUD).EndInit();
-            groupBox32.ResumeLayout(false);
-            groupBox32.PerformLayout();
             groupBox35.ResumeLayout(false);
             groupBox35.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown34).EndInit();
@@ -2017,8 +1707,6 @@
             ((System.ComponentModel.ISupportInitialize)TemperatureColdColorPB).EndInit();
             ((System.ComponentModel.ISupportInitialize)TemperatureIdealColorPB).EndInit();
             ((System.ComponentModel.ISupportInitialize)TemperatureHotColorPB).EndInit();
-            groupBox77.ResumeLayout(false);
-            groupBox77.PerformLayout();
             groupBox37.ResumeLayout(false);
             groupBox37.PerformLayout();
             groupBox72.ResumeLayout(false);
@@ -2038,11 +1726,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.GroupBox groupBox68;
-        private System.Windows.Forms.TextBox textBox17;
-        private System.Windows.Forms.TextBox textBox18;
-        private System.Windows.Forms.CheckBox CheckForBlockingObjectsCB;
-        private System.Windows.Forms.CheckBox DSEnabledCB;
         private System.Windows.Forms.GroupBox groupBox36;
         private System.Windows.Forms.CheckBox UseExpansionMainMenuIntroSceneCB;
         private System.Windows.Forms.CheckBox UseExpansionMainMenuIconsCB;
@@ -2050,20 +1733,6 @@
         private System.Windows.Forms.CheckBox UseNewsFeedInGameMenuCB;
         private System.Windows.Forms.CheckBox UseDeathScreenCB;
         private System.Windows.Forms.CheckBox UseDeathScreenStatisticsCB;
-        private System.Windows.Forms.GroupBox groupBox33;
-        private System.Windows.Forms.CheckBox EnableAIGravecrossCB;
-        private System.Windows.Forms.Label darkLabel228;
-        private System.Windows.Forms.NumericUpDown GravecrossSpawnTimeDelayNUD;
-        private System.Windows.Forms.Label darkLabel89;
-        private System.Windows.Forms.CheckBox EnableGravecrossCB;
-        private System.Windows.Forms.CheckBox GravecrossDeleteBodyCB;
-        private System.Windows.Forms.NumericUpDown GravecrossTimeThresholdNUD;
-        private System.Windows.Forms.GroupBox groupBox32;
-        private System.Windows.Forms.CheckBox EnableEarPlugsCB;
-        private System.Windows.Forms.CheckBox DisableShootToUnlockCB;
-        private System.Windows.Forms.CheckBox DisableMagicCrosshairCB;
-        private System.Windows.Forms.CheckBox EnableAutoRunCB;
-        private System.Windows.Forms.CheckBox EnableHUDNightvisionOverlayCB;
         private System.Windows.Forms.GroupBox groupBox35;
         private System.Windows.Forms.ComboBox LampSelectionModeCB;
         private System.Windows.Forms.Label darkLabel301;
@@ -2104,9 +1773,6 @@
         private System.Windows.Forms.Label darkLabel191;
         private System.Windows.Forms.PictureBox TemperatureHotColorPB;
         private System.Windows.Forms.Label darkLabel192;
-        private System.Windows.Forms.GroupBox groupBox77;
-        private System.Windows.Forms.Label darkLabel245;
-        private System.Windows.Forms.TextBox InGameMenuLogoPathTB;
         private System.Windows.Forms.GroupBox groupBox37;
         private System.Windows.Forms.Label darkLabel233;
         private System.Windows.Forms.ComboBox BuildingIvysComboBox;

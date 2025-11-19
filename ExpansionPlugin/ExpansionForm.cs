@@ -215,6 +215,17 @@ namespace ExpansionPlugin
                     ExpansionCoreSettings ExpansionCoreSettings = node.Tag as ExpansionCoreSettings;
                     ShowHandler(new ExpansionCoreControl(), typeof(ExpansionCoreConfig), ExpansionCoreSettings, selected);
                 },
+                //Damage
+                [typeof(ExpansionDamageSystemSettings)] = (node, selected) =>
+                {
+                    ExpansionDamageSystemSettings ExpansionDamageSystemSettings = node.Tag as ExpansionDamageSystemSettings;
+                    ShowHandler(new ExpansionDamageControl(), typeof(ExpansionDamageSystemConfig), ExpansionDamageSystemSettings, selected);
+                },
+                [typeof(ExplosiveProjectiles)] = (node, selected) =>
+                {
+                    ExplosiveProjectiles ExplosiveProjectiles = node.Tag as ExplosiveProjectiles;
+                    ShowHandler(new ExpansionDamageProjectilesControl(), typeof(ExpansionDamageSystemConfig), ExplosiveProjectiles, selected);
+                },
                 //Garage
                 [typeof(ExpansionGarageSettings)] = (node, selected) =>
                 {
@@ -275,8 +286,17 @@ namespace ExpansionPlugin
                 {
                     ExpansionBookConfig cfg = node.FindParentOfType<ExpansionBookConfig>();
                     ShowHandler<IUIHandler>(new ExpansionBookGeneralControl(), typeof(ExpansionBookConfig), cfg.Data, selected);
+                },
+                //General
+                ["GenralGernal"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionGeneralGeneralControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
+                },
+                ["GenralGraveCross"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionGeneralGraveCrossControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 }
-             };
+            };
         }
         private void InitializeContextMenuHandlers()
         {
@@ -410,8 +430,14 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeCraftingCategoryToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Damage
+                [typeof(ExplosiveProjectiles)] = NodeLabelEditEventArgs =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeExplosiveProjectileToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
-
             };
             // ----------------------
             // String handlers
@@ -623,6 +649,25 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeBlacklistedWordToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Damage
+                ["ExplosionTargets"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewExplosionTargetToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ExplosionTarget"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeExplosionTargetToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ExplosiveProjectiles"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewExplosiveProjectileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Garage
@@ -1374,7 +1419,7 @@ namespace ExpansionPlugin
             {
                 ExplosionTargetsNodes.Nodes.Add(new TreeNode(s)
                 {
-                    Tag = "ExplosivewTarget"
+                    Tag = "ExplosionTarget"
                 });
             }
             EconomyRootNode.Nodes.Add(ExplosionTargetsNodes);
@@ -1386,7 +1431,7 @@ namespace ExpansionPlugin
             {
                 ExplosiveProjectilesNodes.Nodes.Add(new TreeNode($"{ep.explosion}:{ep.ammo}")
                 {
-                    Tag = "ExplosivewTarget"
+                    Tag = ep
                 });
             }
             EconomyRootNode.Nodes.Add(ExplosiveProjectilesNodes);
@@ -3214,6 +3259,64 @@ namespace ExpansionPlugin
             currentTreeNode.Remove();
             _expansionManager.ExpansionChatConfig.isDirty = true;
         }
+        //Damage
+        private void addNewExplosionTargetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Explosion Targets";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionDamageSystemConfig.Data.ExplosionTargets.Contains(l))
+                    {
+                        _expansionManager.ExpansionDamageSystemConfig.Data.ExplosionTargets.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "ExplosionTarget"
+                        });
+                    }
+                }
+                _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+            }
+        }
+        private void removeExplosionTargetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionDamageSystemConfig.Data.ExplosionTargets.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+        }
+        private void addNewExplosiveProjectileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExplosiveProjectiles newEP = new ExplosiveProjectiles()
+            {
+                ammo = "New Ammo",
+                explosion = "New Explosion"
+            };
+            if(!_expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Any( x => x.explosion == newEP.explosion))
+            {
+                _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Add(newEP);
+                _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+                currentTreeNode.Nodes.Add(new TreeNode($"{newEP.explosion}:{newEP.ammo}")
+                {
+                    Tag = newEP
+                });
+            }
+            else
+            {
+                MessageBox.Show("There is already a enrty for that Explosive Type");
+            }
+           
+
+        }
+        private void removeExplosiveProjectileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Remove(currentTreeNode.Tag as ExplosiveProjectiles);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+        }
         //Garage
         private void addNewEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3245,6 +3348,7 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionGarageConfig.isDirty = true;
         }
         #endregion right click methods
+
 
 
 

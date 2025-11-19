@@ -37,6 +37,9 @@
     <Compile Update="IUIHandler\AI\AILightControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="IUIHandler\General\ExpansionGeneralGraveCrossControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="IUIHandler\Shared\Vector3Control.cs">
       <SubType>UserControl</SubType>
     </Compile>
