@@ -118,7 +118,7 @@
             groupBox72.Controls.Add(UseReputationCB);
             groupBox72.Controls.Add(ShowHardlineHUDCB);
             groupBox72.ForeColor = SystemColors.Control;
-            groupBox72.Location = new Point(16, 364);
+            groupBox72.Location = new Point(13, 13);
             groupBox72.Margin = new Padding(4, 3, 4, 3);
             groupBox72.Name = "groupBox72";
             groupBox72.Padding = new Padding(4, 3, 4, 3);
@@ -259,7 +259,7 @@
             groupBox75.Controls.Add(ItemRequirementNUD);
             groupBox75.Controls.Add(darkLabel1);
             groupBox75.ForeColor = SystemColors.Control;
-            groupBox75.Location = new Point(686, 13);
+            groupBox75.Location = new Point(672, 13);
             groupBox75.Margin = new Padding(4, 3, 4, 3);
             groupBox75.Name = "groupBox75";
             groupBox75.Padding = new Padding(4, 3, 4, 3);
@@ -381,7 +381,7 @@
             groupBox74.Controls.Add(ReputationMaxReputationNUD);
             groupBox74.Controls.Add(darkLabel221);
             groupBox74.ForeColor = SystemColors.Control;
-            groupBox74.Location = new Point(386, 13);
+            groupBox74.Location = new Point(13, 284);
             groupBox74.Margin = new Padding(4, 3, 4, 3);
             groupBox74.Name = "groupBox74";
             groupBox74.Padding = new Padding(4, 3, 4, 3);
@@ -545,7 +545,7 @@
             groupBox8.Controls.Add(SafezoneCB);
             groupBox8.Controls.Add(VehicleCarKeyCB);
             groupBox8.ForeColor = SystemColors.Control;
-            groupBox8.Location = new Point(327, 358);
+            groupBox8.Location = new Point(313, 13);
             groupBox8.Margin = new Padding(4, 3, 4, 3);
             groupBox8.Name = "groupBox8";
             groupBox8.Padding = new Padding(4, 3, 4, 3);
