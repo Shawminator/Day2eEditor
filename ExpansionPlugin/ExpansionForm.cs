@@ -231,6 +231,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionGarageSettings ExpansionGarageSettings = node.Tag as ExpansionGarageSettings;
                     ShowHandler(new ExpansionGarageSettingsControl(), typeof(ExpansionGarageConfig), ExpansionGarageSettings, selected);
+                },
+                //General
+                [typeof(ExpansionMapping)] = (node, selected) =>
+                {
+                    ExpansionMapping ExpansionMapping = node.Tag as ExpansionMapping;
+                    ShowHandler(new ExpansionGeneralMappingControl(), typeof(ExpansionGeneralConfig), ExpansionMapping, selected);
                 }
             };
             // ----------------------
@@ -292,9 +298,21 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralGeneralControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 },
+                ["GenralScreen"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionGeneralScreenControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
+                },
                 ["GenralGraveCross"] = (node,selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralGraveCrossControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
+                },
+                ["GenralLights"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionGeneralLightsControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
+                },
+                ["GenralHuds"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionGeneralHudColoursControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 }
             };
         }
@@ -1497,11 +1515,48 @@ namespace ExpansionPlugin
             {
                 Tag = "GenralHuds"
             });
-            EconomyRootNode.Nodes.Add(new TreeNode("Mapping")
+            TreeNode MappingNode = new TreeNode("Mapping")
             {
                 Tag = ef.Data.Mapping
-            });
+            };
+            CreateMappingNodes(ef.Data.Mapping, MappingNode);
+            EconomyRootNode.Nodes.Add(MappingNode);
         }
+
+        private static void CreateMappingNodes(ExpansionMapping mapping, TreeNode mappingNode)
+        {
+            if(mapping.UseCustomMappingModule == 1)
+            {
+                TreeNode Newcustomnode = new TreeNode("Custom Mappings")
+                {
+                    Tag = "CustomMappings"
+                };
+                foreach(string s in mapping.Mapping)
+                {
+                    Newcustomnode.Nodes.Add(new TreeNode(s)
+                    {
+                        Tag = "CustomMapping"
+                    });
+                }
+                mappingNode.Nodes.Add(Newcustomnode);
+            }
+            if(mapping.BuildingInteriors == 1)
+            {
+                TreeNode Newinteriornode = new TreeNode("Interiors")
+                {
+                    Tag = "Interiors"
+                };
+                foreach (string s in mapping.Interiors)
+                {
+                    Newinteriornode.Nodes.Add(new TreeNode(s)
+                    {
+                        Tag = "Interior"
+                    });
+                }
+                mappingNode.Nodes.Add(Newinteriornode);
+            }
+        }
+
         //Hardline
         private TreeNode CreateExpansionHardlineConfigNodes(ExpansionHardlineConfig ef)
         {

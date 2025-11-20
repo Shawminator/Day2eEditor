@@ -70,6 +70,7 @@
             EnableAIGravecrossCB.TabIndex = 1;
             EnableAIGravecrossCB.Text = "Enable AI Gravecross";
             EnableAIGravecrossCB.UseVisualStyleBackColor = true;
+            EnableAIGravecrossCB.CheckedChanged += EnableAIGravecrossCB_CheckedChanged;
             // 
             // darkLabel228
             // 
@@ -94,6 +95,7 @@
             GravecrossSpawnTimeDelayNUD.Size = new Size(130, 23);
             GravecrossSpawnTimeDelayNUD.TabIndex = 6;
             GravecrossSpawnTimeDelayNUD.TextAlign = HorizontalAlignment.Center;
+            GravecrossSpawnTimeDelayNUD.ValueChanged += GravecrossSpawnTimeDelayNUD_ValueChanged;
             // 
             // darkLabel89
             // 
@@ -116,6 +118,7 @@
             EnableGravecrossCB.TabIndex = 0;
             EnableGravecrossCB.Text = "Enable Gravecross";
             EnableGravecrossCB.UseVisualStyleBackColor = true;
+            EnableGravecrossCB.CheckedChanged += EnableGravecrossCB_CheckedChanged;
             // 
             // GravecrossDeleteBodyCB
             // 
@@ -127,6 +130,7 @@
             GravecrossDeleteBodyCB.TabIndex = 2;
             GravecrossDeleteBodyCB.Text = "Gravecross Delete Body";
             GravecrossDeleteBodyCB.UseVisualStyleBackColor = true;
+            GravecrossDeleteBodyCB.CheckedChanged += GravecrossDeleteBodyCB_CheckedChanged;
             // 
             // GravecrossTimeThresholdNUD
             // 
@@ -140,6 +144,7 @@
             GravecrossTimeThresholdNUD.Size = new Size(130, 23);
             GravecrossTimeThresholdNUD.TabIndex = 4;
             GravecrossTimeThresholdNUD.TextAlign = HorizontalAlignment.Center;
+            GravecrossTimeThresholdNUD.ValueChanged += GravecrossTimeThresholdNUD_ValueChanged;
             // 
             // ExpansionGeneralGraveCrossControl
             // 

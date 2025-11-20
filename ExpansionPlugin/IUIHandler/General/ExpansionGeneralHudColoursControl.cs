@@ -1,4 +1,5 @@
-﻿using Day2eEditor;
+﻿using CoreUI.Forms;
+using Day2eEditor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionGeneralGraveCrossControl : UserControl, IUIHandler
+    public partial class ExpansionGeneralHudColoursControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private ExpansionGeneralSettings _data;
@@ -19,7 +20,7 @@ namespace ExpansionPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionGeneralGraveCrossControl()
+        public ExpansionGeneralHudColoursControl()
         {
             InitializeComponent();
         }
@@ -41,15 +42,34 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            EnableGravecrossCB.Checked = _data.EnableGravecross == 1 ? true : false;
-            EnableAIGravecrossCB.Checked = _data.EnableAIGravecross == 1 ? true : false;
-            GravecrossDeleteBodyCB.Checked = _data.GravecrossDeleteBody == 1 ? true : false;
-            GravecrossTimeThresholdNUD.Value = (decimal)_data.GravecrossTimeThreshold;
-            GravecrossSpawnTimeDelayNUD.Value = (decimal)_data.GravecrossSpawnTimeDelay;
+            UseHUDColorsCB.Checked = _data.UseHUDColors == 1 ? true : false;
+
+            SetHudColor(_data.HUDColors.StaminaBarColor, StaminaBarColorPB);
+            SetHudColor(_data.HUDColors.StaminaBarColorHalf, StaminaBarColorHalfPB);
+            SetHudColor(_data.HUDColors.StaminaBarColorLow, StaminaBarColorLowPB);
+            SetHudColor(_data.HUDColors.NotifierDividerColor, NotifierDividerColorPB);
+            SetHudColor(_data.HUDColors.TemperatureBurningColor, TemperatureBurningColorPB);
+            SetHudColor(_data.HUDColors.TemperatureHotColor, TemperatureHotColorPB);
+            SetHudColor(_data.HUDColors.TemperatureIdealColor, TemperatureIdealColorPB);
+            SetHudColor(_data.HUDColors.TemperatureColdColor, TemperatureColdColorPB);
+            SetHudColor(_data.HUDColors.TemperatureFreezingColor, TemperatureFreezingColorPB);
+            SetHudColor(_data.HUDColors.NotifiersIdealColor, NotifiersIdealColorPB);
+            SetHudColor(_data.HUDColors.NotifiersHalfColor, NotifiersHalfColorPB);
+            SetHudColor(_data.HUDColors.NotifiersLowColor, NotifiersLowColorPB);
+            SetHudColor(_data.HUDColors.ReputationBaseColor, ReputationBaseColorPB);
+            SetHudColor(_data.HUDColors.ReputationMedColor, ReputationMedColorPB);
+            SetHudColor(_data.HUDColors.ReputationHighColor, ReputationHighColorPB);
+
+
 
             _suppressEvents = false;
         }
-
+        private void SetHudColor(string hexColor, PictureBox targetPB)
+        {
+            string formattedColor = "#" + hexColor.Substring(6) + hexColor.Remove(6, 2);
+            Color selectedColor = ColorTranslator.FromHtml(formattedColor);
+            targetPB.BackColor = selectedColor;
+        }
         /// <summary>
         /// Applies changes to the data and updates the original snapshot
         /// </summary>
@@ -84,7 +104,6 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-
         private ExpansionGeneralSettings CloneData(ExpansionGeneralSettings data)
         {
             if (data == null)
@@ -145,7 +164,6 @@ namespace ExpansionPlugin
             };
         }
 
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
@@ -159,39 +177,43 @@ namespace ExpansionPlugin
 
         #endregion
 
-        private void EnableGravecrossCB_CheckedChanged(object sender, EventArgs e)
+        private void UseHUDColorsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableGravecross = EnableGravecrossCB.Checked == true ? 1 : 0;
+            _data.UseHUDColors = UseHUDColorsCB.Checked == true ? 1 : 0;
             HasChanges();
         }
-
-        private void EnableAIGravecrossCB_CheckedChanged(object sender, EventArgs e)
+        private void HudColourPB_Click(object sender, EventArgs e)
         {
-            if (_suppressEvents) return;
-            _data.EnableAIGravecross = EnableAIGravecrossCB.Checked == true?1:0;
-            HasChanges();
+            if (sender is PictureBox pb)
+            {
+                HandleColorChange(pb);
+            }
+
         }
-
-        private void GravecrossDeleteBodyCB_CheckedChanged(object sender, EventArgs e)
+        private void HandleColorChange(PictureBox pb)
         {
-            if (_suppressEvents) return;
-            _data.GravecrossDeleteBody = GravecrossDeleteBodyCB.Checked == true ? 1:0;
-            HasChanges();
-        }
+            Color startColor = pb.BackColor;
+            using (AdvancedColorPickerForm picker = new AdvancedColorPickerForm(startColor))
+            {
+                picker.StartPosition = FormStartPosition.CenterParent;
+                if (picker.ShowDialog() == DialogResult.OK)
+                {
+                    string colorHex = picker.SelectedColorHex;
+                    Color selectedColor = ColorTranslator.FromHtml(colorHex);
+                    pb.BackColor = selectedColor;
 
-        private void GravecrossTimeThresholdNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.GravecrossTimeThreshold = GravecrossTimeThresholdNUD.Value;
-            HasChanges();
-        }
+                    // Map PictureBox name to _data property dynamically
+                    string propertyName = pb.Name.Replace("PB", ""); // e.g., SystemChatColorPB → SystemChatColor
+                    var prop = typeof(ExpansionHudIndicatorColors).GetProperty(propertyName);
+                    if (prop != null)
+                    {
+                        prop.SetValue(_data.HUDColors, colorHex.Substring(4, 6) + colorHex.Substring(2, 2));
+                    }
 
-        private void GravecrossSpawnTimeDelayNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.GravecrossSpawnTimeDelay = (decimal)GravecrossSpawnTimeDelayNUD.Value;
-            HasChanges();
+                    HasChanges();
+                }
+            }
         }
     }
 }

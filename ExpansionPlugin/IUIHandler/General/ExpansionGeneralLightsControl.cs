@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using ExpansionPlugin;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionGeneralGraveCrossControl : UserControl, IUIHandler
+    public partial class ExpansionGeneralLightsControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private ExpansionGeneralSettings _data;
@@ -19,7 +20,7 @@ namespace ExpansionPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionGeneralGraveCrossControl()
+        public ExpansionGeneralLightsControl()
         {
             InitializeComponent();
         }
@@ -41,13 +42,23 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            EnableGravecrossCB.Checked = _data.EnableGravecross == 1 ? true : false;
-            EnableAIGravecrossCB.Checked = _data.EnableAIGravecross == 1 ? true : false;
-            GravecrossDeleteBodyCB.Checked = _data.GravecrossDeleteBody == 1 ? true : false;
-            GravecrossTimeThresholdNUD.Value = (decimal)_data.GravecrossTimeThreshold;
-            GravecrossSpawnTimeDelayNUD.Value = (decimal)_data.GravecrossSpawnTimeDelay;
+            EnableLampsComboBox.DataSource = Enum.GetValues(typeof(LampModeEnum));
+            LampSelectionModeCB.DataSource = Enum.GetValues(typeof(ExpansionLampSelectionMode));
+
+            EnableLampsComboBox.SelectedItem = (LampModeEnum)_data.EnableLamps;
+            numericUpDown34.Value = (int)_data.LampAmount_OneInX;
+            EnableGeneratorsCB.Checked = _data.EnableGenerators == 1 ? true : false;
+            EnableLighthousesCB.Checked = _data.EnableLighthouses == 1 ? true : false;
+            LampSelectionModeCB.SelectedIndex = LampSelectionModeCB.FindStringExact(_data.LampSelectionMode);
 
             _suppressEvents = false;
+        }
+
+        private string GetEnumDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attr = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+            return attr?.Description ?? value.ToString();
         }
 
         /// <summary>
@@ -84,7 +95,6 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-
         private ExpansionGeneralSettings CloneData(ExpansionGeneralSettings data)
         {
             if (data == null)
@@ -145,7 +155,6 @@ namespace ExpansionPlugin
             };
         }
 
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
@@ -159,38 +168,39 @@ namespace ExpansionPlugin
 
         #endregion
 
-        private void EnableGravecrossCB_CheckedChanged(object sender, EventArgs e)
+
+
+        private void EnableLampsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableGravecross = EnableGravecrossCB.Checked == true ? 1 : 0;
+            _data.EnableLamps = (int)(LampModeEnum)EnableLampsComboBox.SelectedItem;
+            HasChanges();
+        }
+        private void EnableGeneratorsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EnableGenerators = EnableGeneratorsCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void EnableAIGravecrossCB_CheckedChanged(object sender, EventArgs e)
+        private void EnableLighthousesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableAIGravecross = EnableAIGravecrossCB.Checked == true?1:0;
+            _data.EnableLighthouses = EnableLighthousesCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void GravecrossDeleteBodyCB_CheckedChanged(object sender, EventArgs e)
+        private void numericUpDown34_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.GravecrossDeleteBody = GravecrossDeleteBodyCB.Checked == true ? 1:0;
+            _data.LampAmount_OneInX = (int)numericUpDown34.Value;
             HasChanges();
         }
 
-        private void GravecrossTimeThresholdNUD_ValueChanged(object sender, EventArgs e)
+        private void LampSelectionModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.GravecrossTimeThreshold = GravecrossTimeThresholdNUD.Value;
-            HasChanges();
-        }
-
-        private void GravecrossSpawnTimeDelayNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.GravecrossSpawnTimeDelay = (decimal)GravecrossSpawnTimeDelayNUD.Value;
+            _data.LampSelectionMode = LampSelectionModeCB.GetItemText(LampSelectionModeCB.SelectedIndex);
             HasChanges();
         }
     }

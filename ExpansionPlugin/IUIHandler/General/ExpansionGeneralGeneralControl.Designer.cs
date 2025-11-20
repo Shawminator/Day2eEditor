@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             groupBox32 = new GroupBox();
-            InGameMenuLogoPathTB = new TextBox();
-            darkLabel245 = new Label();
             EnableEarPlugsCB = new CheckBox();
             DisableShootToUnlockCB = new CheckBox();
             DisableMagicCrosshairCB = new CheckBox();
@@ -41,8 +39,6 @@
             // 
             // groupBox32
             // 
-            groupBox32.Controls.Add(InGameMenuLogoPathTB);
-            groupBox32.Controls.Add(darkLabel245);
             groupBox32.Controls.Add(EnableEarPlugsCB);
             groupBox32.Controls.Add(DisableShootToUnlockCB);
             groupBox32.Controls.Add(DisableMagicCrosshairCB);
@@ -53,31 +49,10 @@
             groupBox32.Margin = new Padding(4, 3, 4, 3);
             groupBox32.Name = "groupBox32";
             groupBox32.Padding = new Padding(4, 3, 4, 3);
-            groupBox32.Size = new Size(503, 202);
+            groupBox32.Size = new Size(256, 155);
             groupBox32.TabIndex = 13;
             groupBox32.TabStop = false;
             groupBox32.Text = "General";
-            // 
-            // InGameMenuLogoPathTB
-            // 
-            InGameMenuLogoPathTB.BackColor = Color.FromArgb(60, 63, 65);
-            InGameMenuLogoPathTB.ForeColor = SystemColors.Control;
-            InGameMenuLogoPathTB.Location = new Point(23, 162);
-            InGameMenuLogoPathTB.Margin = new Padding(4, 3, 4, 3);
-            InGameMenuLogoPathTB.Name = "InGameMenuLogoPathTB";
-            InGameMenuLogoPathTB.Size = new Size(464, 23);
-            InGameMenuLogoPathTB.TabIndex = 1;
-            // 
-            // darkLabel245
-            // 
-            darkLabel245.AutoSize = true;
-            darkLabel245.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel245.Location = new Point(23, 144);
-            darkLabel245.Margin = new Padding(4, 0, 4, 0);
-            darkLabel245.Name = "darkLabel245";
-            darkLabel245.Size = new Size(139, 15);
-            darkLabel245.TabIndex = 0;
-            darkLabel245.Text = "InGame Menu Logo Path";
             // 
             // EnableEarPlugsCB
             // 
@@ -89,6 +64,7 @@
             EnableEarPlugsCB.TabIndex = 4;
             EnableEarPlugsCB.Text = "Enable Ear Plugs";
             EnableEarPlugsCB.UseVisualStyleBackColor = true;
+            EnableEarPlugsCB.CheckedChanged += EnableEarPlugsCB_CheckedChanged;
             // 
             // DisableShootToUnlockCB
             // 
@@ -100,6 +76,7 @@
             DisableShootToUnlockCB.TabIndex = 0;
             DisableShootToUnlockCB.Text = "Disable Shoot To Unlock";
             DisableShootToUnlockCB.UseVisualStyleBackColor = true;
+            DisableShootToUnlockCB.CheckedChanged += DisableShootToUnlockCB_CheckedChanged;
             // 
             // DisableMagicCrosshairCB
             // 
@@ -111,6 +88,7 @@
             DisableMagicCrosshairCB.TabIndex = 2;
             DisableMagicCrosshairCB.Text = "Disable Magic Crosshair";
             DisableMagicCrosshairCB.UseVisualStyleBackColor = true;
+            DisableMagicCrosshairCB.CheckedChanged += DisableMagicCrosshairCB_CheckedChanged;
             // 
             // EnableAutoRunCB
             // 
@@ -122,6 +100,7 @@
             EnableAutoRunCB.TabIndex = 3;
             EnableAutoRunCB.Text = "Enable Auto Run";
             EnableAutoRunCB.UseVisualStyleBackColor = true;
+            EnableAutoRunCB.CheckedChanged += EnableAutoRunCB_CheckedChanged;
             // 
             // EnableHUDNightvisionOverlayCB
             // 
@@ -133,6 +112,7 @@
             EnableHUDNightvisionOverlayCB.TabIndex = 1;
             EnableHUDNightvisionOverlayCB.Text = "Enable HUD Night vision Overlay";
             EnableHUDNightvisionOverlayCB.UseVisualStyleBackColor = true;
+            EnableHUDNightvisionOverlayCB.CheckedChanged += EnableHUDNightvisionOverlayCB_CheckedChanged;
             // 
             // ExpansionGeneralGeneralControl
             // 
@@ -142,7 +122,7 @@
             Controls.Add(groupBox32);
             ForeColor = SystemColors.Control;
             Name = "ExpansionGeneralGeneralControl";
-            Size = new Size(503, 202);
+            Size = new Size(256, 155);
             groupBox32.ResumeLayout(false);
             groupBox32.PerformLayout();
             ResumeLayout(false);
@@ -151,8 +131,6 @@
         #endregion
 
         private GroupBox groupBox32;
-        private TextBox InGameMenuLogoPathTB;
-        private Label darkLabel245;
         private CheckBox EnableEarPlugsCB;
         private CheckBox DisableShootToUnlockCB;
         private CheckBox DisableMagicCrosshairCB;

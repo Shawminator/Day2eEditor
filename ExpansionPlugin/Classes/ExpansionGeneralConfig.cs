@@ -171,8 +171,8 @@ namespace ExpansionPlugin
                    UseHUDColors == other.UseHUDColors &&
                    EnableEarPlugs == other.EnableEarPlugs &&
                    InGameMenuLogoPath == other.InGameMenuLogoPath &&
-                   Equals(Mapping, other.Mapping) &&
-                   Equals(HUDColors, other.HUDColors);
+                   Mapping.Equals(other.Mapping) &&
+                   HUDColors.Equals(other.HUDColors);
         }
 
         public List<string> FixMissingOrInvalidFields()
@@ -483,8 +483,18 @@ namespace ExpansionPlugin
         [Description("No custom ivies will be added to the map")]
         Disabled = 0,
         [Description("Custom Ivies in specific locations will be added to the map")]
-        Specific_locations = 1,
+        Chernarus_Pre_defined_pos = 1,
         [Description("on all buildings on the map, not just predefined areas")]
         All_Buildings = 2,
     };
+    public enum ExpansionLampSelectionMode
+    {
+        
+        [Description("Uses optimized farthest point sampling to evenly spread out the lights. May generate the same light positions on each server start (not guaranteed).")]
+        FARTHEST,
+        [Description("Like FARTHEST, but with random distribution.")]
+        FARTHEST_RANDOM,
+        [Description("Completely random. May cause light overlap and thus flicker.")]
+        RANDOM
+    }
 }

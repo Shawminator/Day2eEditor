@@ -121,7 +121,7 @@ namespace ExpansionPlugin
                    EnablePartyChat == other.EnablePartyChat &&
                    EnableTransportChat == other.EnableTransportChat &&
                    EnableExpansionChat == other.EnableExpansionChat &&
-                   Equals(ChatColors, other.ChatColors) &&
+                   ChatColors.Equals(other.ChatColors) &&
                    BlacklistedWords.SequenceEqual(other.BlacklistedWords);
         }
         public List<string> FixMissingOrInvalidFields()

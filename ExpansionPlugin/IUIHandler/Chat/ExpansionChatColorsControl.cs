@@ -102,14 +102,29 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
+
         private ExpansionChatColors CloneData(ExpansionChatColors data)
         {
-            // TODO: Implement actual cloning logic
+            if (data == null)
+                return null;
+
             return new ExpansionChatColors
             {
-                // Copy properties here
+                SystemChatColor = data.SystemChatColor,
+                AdminChatColor = data.AdminChatColor,
+                GlobalChatColor = data.GlobalChatColor,
+                DirectChatColor = data.DirectChatColor,
+                TransportChatColor = data.TransportChatColor,
+                PartyChatColor = data.PartyChatColor,
+                TransmitterChatColor = data.TransmitterChatColor,
+                StatusMessageColor = data.StatusMessageColor,
+                ActionMessageColor = data.ActionMessageColor,
+                FriendlyMessageColor = data.FriendlyMessageColor,
+                ImportantMessageColor = data.ImportantMessageColor,
+                DefaultMessageColor = data.DefaultMessageColor
             };
         }
+
 
         /// <summary>
         /// Updates the TreeNode text based on current data

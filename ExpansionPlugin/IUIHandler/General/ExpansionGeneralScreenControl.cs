@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using ExpansionPlugin;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionGeneralGraveCrossControl : UserControl, IUIHandler
+    public partial class ExpansionGeneralScreenControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private ExpansionGeneralSettings _data;
@@ -19,7 +20,7 @@ namespace ExpansionPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionGeneralGraveCrossControl()
+        public ExpansionGeneralScreenControl()
         {
             InitializeComponent();
         }
@@ -41,11 +42,13 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            EnableGravecrossCB.Checked = _data.EnableGravecross == 1 ? true : false;
-            EnableAIGravecrossCB.Checked = _data.EnableAIGravecross == 1 ? true : false;
-            GravecrossDeleteBodyCB.Checked = _data.GravecrossDeleteBody == 1 ? true : false;
-            GravecrossTimeThresholdNUD.Value = (decimal)_data.GravecrossTimeThreshold;
-            GravecrossSpawnTimeDelayNUD.Value = (decimal)_data.GravecrossSpawnTimeDelay;
+            UseDeathScreenCB.Checked = _data.UseDeathScreen == 1 ? true : false;
+            UseDeathScreenStatisticsCB.Checked = _data.UseDeathScreenStatistics == 1 ? true : false;
+            UseExpansionMainMenuLogoCB.Checked = _data.UseExpansionMainMenuLogo == 1 ? true : false;
+            UseExpansionMainMenuIconsCB.Checked = _data.UseExpansionMainMenuIcons == 1 ? true : false;
+            UseExpansionMainMenuIntroSceneCB.Checked = _data.UseExpansionMainMenuIntroScene == 1 ? true : false;
+            UseNewsFeedInGameMenuCB.Checked = _data.UseNewsFeedInGameMenu == 1 ? true : false;
+            InGameMenuLogoPathTB.Text = _data.InGameMenuLogoPath;
 
             _suppressEvents = false;
         }
@@ -84,7 +87,6 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
-
         private ExpansionGeneralSettings CloneData(ExpansionGeneralSettings data)
         {
             if (data == null)
@@ -145,7 +147,6 @@ namespace ExpansionPlugin
             };
         }
 
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
@@ -159,38 +160,52 @@ namespace ExpansionPlugin
 
         #endregion
 
-        private void EnableGravecrossCB_CheckedChanged(object sender, EventArgs e)
+        private void UseDeathScreenCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableGravecross = EnableGravecrossCB.Checked == true ? 1 : 0;
+            _data.UseDeathScreen = UseDeathScreenCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void EnableAIGravecrossCB_CheckedChanged(object sender, EventArgs e)
+        private void UseDeathScreenStatisticsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableAIGravecross = EnableAIGravecrossCB.Checked == true?1:0;
+            _data.UseDeathScreenStatistics = UseDeathScreenStatisticsCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void GravecrossDeleteBodyCB_CheckedChanged(object sender, EventArgs e)
+        private void UseExpansionMainMenuLogoCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.GravecrossDeleteBody = GravecrossDeleteBodyCB.Checked == true ? 1:0;
+            _data.UseExpansionMainMenuLogo = UseExpansionMainMenuLogoCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void GravecrossTimeThresholdNUD_ValueChanged(object sender, EventArgs e)
+        private void UseExpansionMainMenuIconsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.GravecrossTimeThreshold = GravecrossTimeThresholdNUD.Value;
+            _data.UseExpansionMainMenuIcons = UseExpansionMainMenuIconsCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void GravecrossSpawnTimeDelayNUD_ValueChanged(object sender, EventArgs e)
+        private void UseExpansionMainMenuIntroSceneCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.GravecrossSpawnTimeDelay = (decimal)GravecrossSpawnTimeDelayNUD.Value;
+            _data.UseExpansionMainMenuIntroScene = UseExpansionMainMenuIntroSceneCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void UseNewsFeedInGameMenuCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.UseNewsFeedInGameMenu = UseNewsFeedInGameMenuCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void InGameMenuLogoPathTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.InGameMenuLogoPath = InGameMenuLogoPathTB.Text;
             HasChanges();
         }
     }
