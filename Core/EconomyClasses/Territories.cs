@@ -13,6 +13,8 @@ namespace Day2eEditor
 {
     public class TerritoriesConfig: IConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         public string _basepath { get; set; }
         public BindingList<territorytype> AllData { get; private set; }
         public bool HasErrors { get; private set; }

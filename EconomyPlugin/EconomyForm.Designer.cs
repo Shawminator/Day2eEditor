@@ -39,6 +39,10 @@ namespace EconomyPlugin
             editPropertyToolStripMenuItem = new ToolStripMenuItem();
             setToDefaultToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
+            button3 = new Button();
+            button2 = new Button();
+            txtSearch = new TextBox();
+            button1 = new Button();
             TerritorieszonesCB = new CheckBox();
             SaveButton = new Button();
             EventSpawnContextMenu = new ContextMenuStrip(components);
@@ -156,8 +160,10 @@ namespace EconomyPlugin
             // EconomyTV
             // 
             EconomyTV.BackColor = Color.FromArgb(60, 63, 65);
+            EconomyTV.CollapseSelectedNodeOnly = true;
             EconomyTV.Dock = DockStyle.Fill;
             EconomyTV.ForeColor = SystemColors.Control;
+            EconomyTV.HideSelection = false;
             EconomyTV.LineColor = Color.FromArgb(240, 240, 240);
             EconomyTV.Location = new Point(0, 0);
             EconomyTV.Name = "EconomyTV";
@@ -193,6 +199,10 @@ namespace EconomyPlugin
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(60, 63, 65);
+            panel1.Controls.Add(button3);
+            panel1.Controls.Add(button2);
+            panel1.Controls.Add(txtSearch);
+            panel1.Controls.Add(button1);
             panel1.Controls.Add(TerritorieszonesCB);
             panel1.Controls.Add(SaveButton);
             panel1.Dock = DockStyle.Top;
@@ -201,10 +211,52 @@ namespace EconomyPlugin
             panel1.Size = new Size(1170, 31);
             panel1.TabIndex = 4;
             // 
+            // button3
+            // 
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Location = new Point(331, 5);
+            button3.Name = "button3";
+            button3.Size = new Size(56, 23);
+            button3.TabIndex = 6;
+            button3.Text = "Next";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button2
+            // 
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(283, 5);
+            button2.Name = "button2";
+            button2.Size = new Size(42, 23);
+            button2.TabIndex = 5;
+            button2.Text = "Find";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // txtSearch
+            // 
+            txtSearch.BackColor = Color.FromArgb(60, 63, 65);
+            txtSearch.ForeColor = SystemColors.Control;
+            txtSearch.Location = new Point(104, 5);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(173, 23);
+            txtSearch.TabIndex = 4;
+            // 
+            // button1
+            // 
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(58, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(40, 25);
+            button1.TabIndex = 3;
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // TerritorieszonesCB
             // 
             TerritorieszonesCB.AutoSize = true;
-            TerritorieszonesCB.Location = new Point(402, 9);
+            TerritorieszonesCB.Location = new Point(397, 7);
             TerritorieszonesCB.Name = "TerritorieszonesCB";
             TerritorieszonesCB.Size = new Size(190, 19);
             TerritorieszonesCB.TabIndex = 2;
@@ -497,7 +549,7 @@ namespace EconomyPlugin
             SpawnGearPresetCM.Items.AddRange(new ToolStripItem[] { addNewSpawnGEarPresetFileToolStripMenuItem, addNewAttachmentSlotItemSetToolStripMenuItem, addNewDisctreetItemSetToolStripMenuItem, addNewComplexChildSetToolStripMenuItem, addNewDiscreetUnsortedItemSetToolStripMenuItem, SpawnGearremoveSelectedToolStripMenuItem2 });
             SpawnGearPresetCM.Name = "TypesCM";
             SpawnGearPresetCM.ShowImageMargin = false;
-            SpawnGearPresetCM.Size = new Size(241, 158);
+            SpawnGearPresetCM.Size = new Size(241, 136);
             // 
             // addNewSpawnGEarPresetFileToolStripMenuItem
             // 
@@ -859,5 +911,9 @@ namespace EconomyPlugin
         private ContextMenuStrip MapGroupPosCM;
         private ToolStripMenuItem removeSelectedPositionsToolStripMenuItem;
         private CheckBox TerritorieszonesCB;
+        private Button button1;
+        private Button button3;
+        private Button button2;
+        private TextBox txtSearch;
     }
 }

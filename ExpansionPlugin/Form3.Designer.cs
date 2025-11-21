@@ -28,18 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            groupBox72 = new GroupBox();
-            ItemRarityParentSearchCB = new CheckBox();
-            DefaultItemRarityCB = new ComboBox();
-            darkLabel230 = new Label();
-            UseItemRarityOnInventoryIconsCB = new CheckBox();
-            EnableFactionPersistenceCB = new CheckBox();
-            UseFactionReputationCB = new CheckBox();
-            UseItemRarityForMarketPurchaseNCB = new CheckBox();
-            UseItemRarityForMarketSellCB = new CheckBox();
-            EnableItemRarityCB = new CheckBox();
-            UseReputationCB = new CheckBox();
-            ShowHardlineHUDCB = new CheckBox();
             groupBox75 = new GroupBox();
             darkButton2 = new Button();
             darkButton72 = new Button();
@@ -50,17 +38,6 @@
             ItemRarityCB = new ComboBox();
             ItemRequirementNUD = new NumericUpDown();
             darkLabel1 = new Label();
-            groupBox74 = new GroupBox();
-            darkButton109 = new Button();
-            darkButton110 = new Button();
-            darkButton111 = new Button();
-            EntityReputationNUD = new NumericUpDown();
-            darkLabel229 = new Label();
-            EntityReputationLB = new ListBox();
-            ReputationLossOnDeathNUD = new NumericUpDown();
-            darkLabel227 = new Label();
-            ReputationMaxReputationNUD = new NumericUpDown();
-            darkLabel221 = new Label();
             groupBox8 = new GroupBox();
             QuestsCB = new CheckBox();
             VehicleCoverCB = new CheckBox();
@@ -94,158 +71,10 @@
             TerritoryCB = new CheckBox();
             SafezoneCB = new CheckBox();
             VehicleCarKeyCB = new CheckBox();
-            groupBox72.SuspendLayout();
             groupBox75.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ItemRequirementNUD).BeginInit();
-            groupBox74.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)EntityReputationNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ReputationLossOnDeathNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ReputationMaxReputationNUD).BeginInit();
             groupBox8.SuspendLayout();
             SuspendLayout();
-            // 
-            // groupBox72
-            // 
-            groupBox72.Controls.Add(ItemRarityParentSearchCB);
-            groupBox72.Controls.Add(DefaultItemRarityCB);
-            groupBox72.Controls.Add(darkLabel230);
-            groupBox72.Controls.Add(UseItemRarityOnInventoryIconsCB);
-            groupBox72.Controls.Add(EnableFactionPersistenceCB);
-            groupBox72.Controls.Add(UseFactionReputationCB);
-            groupBox72.Controls.Add(UseItemRarityForMarketPurchaseNCB);
-            groupBox72.Controls.Add(UseItemRarityForMarketSellCB);
-            groupBox72.Controls.Add(EnableItemRarityCB);
-            groupBox72.Controls.Add(UseReputationCB);
-            groupBox72.Controls.Add(ShowHardlineHUDCB);
-            groupBox72.ForeColor = SystemColors.Control;
-            groupBox72.Location = new Point(13, 13);
-            groupBox72.Margin = new Padding(4, 3, 4, 3);
-            groupBox72.Name = "groupBox72";
-            groupBox72.Padding = new Padding(4, 3, 4, 3);
-            groupBox72.Size = new Size(292, 264);
-            groupBox72.TabIndex = 20;
-            groupBox72.TabStop = false;
-            groupBox72.Text = "General";
-            // 
-            // ItemRarityParentSearchCB
-            // 
-            ItemRarityParentSearchCB.AutoSize = true;
-            ItemRarityParentSearchCB.Location = new Point(21, 238);
-            ItemRarityParentSearchCB.Margin = new Padding(4, 3, 4, 3);
-            ItemRarityParentSearchCB.Name = "ItemRarityParentSearchCB";
-            ItemRarityParentSearchCB.Size = new Size(158, 19);
-            ItemRarityParentSearchCB.TabIndex = 10;
-            ItemRarityParentSearchCB.Text = "Item Rarity Parent Search";
-            ItemRarityParentSearchCB.UseVisualStyleBackColor = true;
-            // 
-            // DefaultItemRarityCB
-            // 
-            DefaultItemRarityCB.FormattingEnabled = true;
-            DefaultItemRarityCB.Location = new Point(21, 207);
-            DefaultItemRarityCB.Margin = new Padding(4, 3, 4, 3);
-            DefaultItemRarityCB.Name = "DefaultItemRarityCB";
-            DefaultItemRarityCB.Size = new Size(221, 23);
-            DefaultItemRarityCB.TabIndex = 9;
-            // 
-            // darkLabel230
-            // 
-            darkLabel230.AutoSize = true;
-            darkLabel230.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel230.Location = new Point(16, 188);
-            darkLabel230.Margin = new Padding(4, 0, 4, 0);
-            darkLabel230.Name = "darkLabel230";
-            darkLabel230.Size = new Size(105, 15);
-            darkLabel230.TabIndex = 8;
-            darkLabel230.Tag = "";
-            darkLabel230.Text = "Default Item Rarity";
-            // 
-            // UseItemRarityOnInventoryIconsCB
-            // 
-            UseItemRarityOnInventoryIconsCB.AutoSize = true;
-            UseItemRarityOnInventoryIconsCB.Location = new Point(20, 82);
-            UseItemRarityOnInventoryIconsCB.Margin = new Padding(4, 3, 4, 3);
-            UseItemRarityOnInventoryIconsCB.Name = "UseItemRarityOnInventoryIconsCB";
-            UseItemRarityOnInventoryIconsCB.Size = new Size(208, 19);
-            UseItemRarityOnInventoryIconsCB.TabIndex = 3;
-            UseItemRarityOnInventoryIconsCB.Text = "Use Item Rarity On Inventory Icons";
-            UseItemRarityOnInventoryIconsCB.UseVisualStyleBackColor = true;
-            // 
-            // EnableFactionPersistenceCB
-            // 
-            EnableFactionPersistenceCB.AutoSize = true;
-            EnableFactionPersistenceCB.Location = new Point(20, 165);
-            EnableFactionPersistenceCB.Margin = new Padding(4, 3, 4, 3);
-            EnableFactionPersistenceCB.Name = "EnableFactionPersistenceCB";
-            EnableFactionPersistenceCB.Size = new Size(165, 19);
-            EnableFactionPersistenceCB.TabIndex = 7;
-            EnableFactionPersistenceCB.Text = "Enable Faction Persistence";
-            EnableFactionPersistenceCB.UseVisualStyleBackColor = true;
-            // 
-            // UseFactionReputationCB
-            // 
-            UseFactionReputationCB.AutoSize = true;
-            UseFactionReputationCB.Location = new Point(20, 144);
-            UseFactionReputationCB.Margin = new Padding(4, 3, 4, 3);
-            UseFactionReputationCB.Name = "UseFactionReputationCB";
-            UseFactionReputationCB.Size = new Size(148, 19);
-            UseFactionReputationCB.TabIndex = 6;
-            UseFactionReputationCB.Text = "Use Faction Reputation";
-            UseFactionReputationCB.UseVisualStyleBackColor = true;
-            // 
-            // UseItemRarityForMarketPurchaseNCB
-            // 
-            UseItemRarityForMarketPurchaseNCB.AutoSize = true;
-            UseItemRarityForMarketPurchaseNCB.Location = new Point(20, 103);
-            UseItemRarityForMarketPurchaseNCB.Margin = new Padding(4, 3, 4, 3);
-            UseItemRarityForMarketPurchaseNCB.Name = "UseItemRarityForMarketPurchaseNCB";
-            UseItemRarityForMarketPurchaseNCB.Size = new Size(216, 19);
-            UseItemRarityForMarketPurchaseNCB.TabIndex = 4;
-            UseItemRarityForMarketPurchaseNCB.Text = "Use Item Rarity For Market Purchase";
-            UseItemRarityForMarketPurchaseNCB.UseVisualStyleBackColor = true;
-            // 
-            // UseItemRarityForMarketSellCB
-            // 
-            UseItemRarityForMarketSellCB.AutoSize = true;
-            UseItemRarityForMarketSellCB.Location = new Point(20, 123);
-            UseItemRarityForMarketSellCB.Margin = new Padding(4, 3, 4, 3);
-            UseItemRarityForMarketSellCB.Name = "UseItemRarityForMarketSellCB";
-            UseItemRarityForMarketSellCB.Size = new Size(186, 19);
-            UseItemRarityForMarketSellCB.TabIndex = 5;
-            UseItemRarityForMarketSellCB.Text = "Use Item Rarity For Market Sell";
-            UseItemRarityForMarketSellCB.UseVisualStyleBackColor = true;
-            // 
-            // EnableItemRarityCB
-            // 
-            EnableItemRarityCB.AutoSize = true;
-            EnableItemRarityCB.Location = new Point(20, 63);
-            EnableItemRarityCB.Margin = new Padding(4, 3, 4, 3);
-            EnableItemRarityCB.Name = "EnableItemRarityCB";
-            EnableItemRarityCB.Size = new Size(121, 19);
-            EnableItemRarityCB.TabIndex = 2;
-            EnableItemRarityCB.Text = "Enable Item Rarity";
-            EnableItemRarityCB.UseVisualStyleBackColor = true;
-            // 
-            // UseReputationCB
-            // 
-            UseReputationCB.AutoSize = true;
-            UseReputationCB.Location = new Point(20, 22);
-            UseReputationCB.Margin = new Padding(4, 3, 4, 3);
-            UseReputationCB.Name = "UseReputationCB";
-            UseReputationCB.Size = new Size(106, 19);
-            UseReputationCB.TabIndex = 0;
-            UseReputationCB.Text = "Use Reputation";
-            UseReputationCB.UseVisualStyleBackColor = true;
-            // 
-            // ShowHardlineHUDCB
-            // 
-            ShowHardlineHUDCB.AutoSize = true;
-            ShowHardlineHUDCB.Location = new Point(20, 43);
-            ShowHardlineHUDCB.Margin = new Padding(4, 3, 4, 3);
-            ShowHardlineHUDCB.Name = "ShowHardlineHUDCB";
-            ShowHardlineHUDCB.Size = new Size(131, 19);
-            ShowHardlineHUDCB.TabIndex = 1;
-            ShowHardlineHUDCB.Text = "Show Hardline HUD";
-            ShowHardlineHUDCB.UseVisualStyleBackColor = true;
             // 
             // groupBox75
             // 
@@ -259,7 +88,7 @@
             groupBox75.Controls.Add(ItemRequirementNUD);
             groupBox75.Controls.Add(darkLabel1);
             groupBox75.ForeColor = SystemColors.Control;
-            groupBox75.Location = new Point(672, 13);
+            groupBox75.Location = new Point(838, 365);
             groupBox75.Margin = new Padding(4, 3, 4, 3);
             groupBox75.Name = "groupBox75";
             groupBox75.Padding = new Padding(4, 3, 4, 3);
@@ -368,148 +197,6 @@
             darkLabel1.Tag = "";
             darkLabel1.Text = "Level";
             // 
-            // groupBox74
-            // 
-            groupBox74.Controls.Add(darkButton109);
-            groupBox74.Controls.Add(darkButton110);
-            groupBox74.Controls.Add(darkButton111);
-            groupBox74.Controls.Add(EntityReputationNUD);
-            groupBox74.Controls.Add(darkLabel229);
-            groupBox74.Controls.Add(EntityReputationLB);
-            groupBox74.Controls.Add(ReputationLossOnDeathNUD);
-            groupBox74.Controls.Add(darkLabel227);
-            groupBox74.Controls.Add(ReputationMaxReputationNUD);
-            groupBox74.Controls.Add(darkLabel221);
-            groupBox74.ForeColor = SystemColors.Control;
-            groupBox74.Location = new Point(13, 284);
-            groupBox74.Margin = new Padding(4, 3, 4, 3);
-            groupBox74.Name = "groupBox74";
-            groupBox74.Padding = new Padding(4, 3, 4, 3);
-            groupBox74.Size = new Size(292, 344);
-            groupBox74.TabIndex = 21;
-            groupBox74.TabStop = false;
-            groupBox74.Text = "Reputation";
-            // 
-            // darkButton109
-            // 
-            darkButton109.FlatStyle = FlatStyle.Flat;
-            darkButton109.Location = new Point(94, 310);
-            darkButton109.Margin = new Padding(4, 3, 4, 3);
-            darkButton109.Name = "darkButton109";
-            darkButton109.Size = new Size(97, 27);
-            darkButton109.TabIndex = 8;
-            darkButton109.Text = "From String";
-            // 
-            // darkButton110
-            // 
-            darkButton110.FlatStyle = FlatStyle.Flat;
-            darkButton110.Location = new Point(198, 310);
-            darkButton110.Margin = new Padding(4, 3, 4, 3);
-            darkButton110.Name = "darkButton110";
-            darkButton110.Size = new Size(84, 27);
-            darkButton110.TabIndex = 9;
-            darkButton110.Text = "Remove";
-            // 
-            // darkButton111
-            // 
-            darkButton111.FlatStyle = FlatStyle.Flat;
-            darkButton111.Location = new Point(7, 310);
-            darkButton111.Margin = new Padding(4, 3, 4, 3);
-            darkButton111.Name = "darkButton111";
-            darkButton111.Size = new Size(80, 27);
-            darkButton111.TabIndex = 7;
-            darkButton111.Text = "Add New";
-            // 
-            // EntityReputationNUD
-            // 
-            EntityReputationNUD.BackColor = Color.FromArgb(60, 63, 65);
-            EntityReputationNUD.ForeColor = SystemColors.Control;
-            EntityReputationNUD.Location = new Point(166, 280);
-            EntityReputationNUD.Margin = new Padding(4, 3, 4, 3);
-            EntityReputationNUD.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            EntityReputationNUD.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
-            EntityReputationNUD.Name = "EntityReputationNUD";
-            EntityReputationNUD.Size = new Size(118, 23);
-            EntityReputationNUD.TabIndex = 6;
-            EntityReputationNUD.Tag = "Weight";
-            EntityReputationNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel229
-            // 
-            darkLabel229.AutoSize = true;
-            darkLabel229.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel229.Location = new Point(13, 283);
-            darkLabel229.Margin = new Padding(4, 0, 4, 0);
-            darkLabel229.Name = "darkLabel229";
-            darkLabel229.Size = new Size(98, 15);
-            darkLabel229.TabIndex = 5;
-            darkLabel229.Tag = "";
-            darkLabel229.Text = "Entity Reputation";
-            // 
-            // EntityReputationLB
-            // 
-            EntityReputationLB.BackColor = Color.FromArgb(60, 63, 65);
-            EntityReputationLB.DrawMode = DrawMode.OwnerDrawFixed;
-            EntityReputationLB.ForeColor = SystemColors.Control;
-            EntityReputationLB.FormattingEnabled = true;
-            EntityReputationLB.Location = new Point(8, 88);
-            EntityReputationLB.Margin = new Padding(4, 3, 4, 3);
-            EntityReputationLB.Name = "EntityReputationLB";
-            EntityReputationLB.Size = new Size(275, 180);
-            EntityReputationLB.TabIndex = 4;
-            // 
-            // ReputationLossOnDeathNUD
-            // 
-            ReputationLossOnDeathNUD.BackColor = Color.FromArgb(60, 63, 65);
-            ReputationLossOnDeathNUD.ForeColor = SystemColors.Control;
-            ReputationLossOnDeathNUD.Location = new Point(167, 23);
-            ReputationLossOnDeathNUD.Margin = new Padding(4, 3, 4, 3);
-            ReputationLossOnDeathNUD.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            ReputationLossOnDeathNUD.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
-            ReputationLossOnDeathNUD.Name = "ReputationLossOnDeathNUD";
-            ReputationLossOnDeathNUD.Size = new Size(118, 23);
-            ReputationLossOnDeathNUD.TabIndex = 1;
-            ReputationLossOnDeathNUD.Tag = "Weight";
-            ReputationLossOnDeathNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel227
-            // 
-            darkLabel227.AutoSize = true;
-            darkLabel227.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel227.Location = new Point(14, 25);
-            darkLabel227.Margin = new Padding(4, 0, 4, 0);
-            darkLabel227.Name = "darkLabel227";
-            darkLabel227.Size = new Size(144, 15);
-            darkLabel227.TabIndex = 0;
-            darkLabel227.Tag = "";
-            darkLabel227.Text = "Reputation Loss On Death";
-            // 
-            // ReputationMaxReputationNUD
-            // 
-            ReputationMaxReputationNUD.BackColor = Color.FromArgb(60, 63, 65);
-            ReputationMaxReputationNUD.ForeColor = SystemColors.Control;
-            ReputationMaxReputationNUD.Location = new Point(167, 53);
-            ReputationMaxReputationNUD.Margin = new Padding(4, 3, 4, 3);
-            ReputationMaxReputationNUD.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            ReputationMaxReputationNUD.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
-            ReputationMaxReputationNUD.Name = "ReputationMaxReputationNUD";
-            ReputationMaxReputationNUD.Size = new Size(118, 23);
-            ReputationMaxReputationNUD.TabIndex = 3;
-            ReputationMaxReputationNUD.Tag = "Weight";
-            ReputationMaxReputationNUD.TextAlign = HorizontalAlignment.Center;
-            // 
-            // darkLabel221
-            // 
-            darkLabel221.AutoSize = true;
-            darkLabel221.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel221.Location = new Point(14, 55);
-            darkLabel221.Margin = new Padding(4, 0, 4, 0);
-            darkLabel221.Name = "darkLabel221";
-            darkLabel221.Size = new Size(91, 15);
-            darkLabel221.TabIndex = 2;
-            darkLabel221.Tag = "";
-            darkLabel221.Text = "Max Reputation";
-            // 
             // groupBox8
             // 
             groupBox8.Controls.Add(QuestsCB);
@@ -545,7 +232,7 @@
             groupBox8.Controls.Add(SafezoneCB);
             groupBox8.Controls.Add(VehicleCarKeyCB);
             groupBox8.ForeColor = SystemColors.Control;
-            groupBox8.Location = new Point(313, 13);
+            groupBox8.Location = new Point(330, 30);
             groupBox8.Margin = new Padding(4, 3, 4, 3);
             groupBox8.Name = "groupBox8";
             groupBox8.Padding = new Padding(4, 3, 4, 3);
@@ -964,22 +651,13 @@
             ClientSize = new Size(1919, 975);
             Controls.Add(groupBox8);
             Controls.Add(groupBox75);
-            Controls.Add(groupBox74);
-            Controls.Add(groupBox72);
             ForeColor = SystemColors.Control;
             Margin = new Padding(4, 3, 4, 3);
             Name = "Form3";
             Text = "Form3";
-            groupBox72.ResumeLayout(false);
-            groupBox72.PerformLayout();
             groupBox75.ResumeLayout(false);
             groupBox75.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ItemRequirementNUD).EndInit();
-            groupBox74.ResumeLayout(false);
-            groupBox74.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)EntityReputationNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ReputationLossOnDeathNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ReputationMaxReputationNUD).EndInit();
             groupBox8.ResumeLayout(false);
             groupBox8.PerformLayout();
             ResumeLayout(false);
@@ -987,18 +665,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.GroupBox groupBox72;
-        private System.Windows.Forms.CheckBox ItemRarityParentSearchCB;
-        private System.Windows.Forms.ComboBox DefaultItemRarityCB;
-        private System.Windows.Forms.Label darkLabel230;
-        private System.Windows.Forms.CheckBox UseItemRarityOnInventoryIconsCB;
-        private System.Windows.Forms.CheckBox EnableFactionPersistenceCB;
-        private System.Windows.Forms.CheckBox UseFactionReputationCB;
-        private System.Windows.Forms.CheckBox UseItemRarityForMarketPurchaseNCB;
-        private System.Windows.Forms.CheckBox UseItemRarityForMarketSellCB;
-        private System.Windows.Forms.CheckBox EnableItemRarityCB;
-        private System.Windows.Forms.CheckBox UseReputationCB;
-        private System.Windows.Forms.CheckBox ShowHardlineHUDCB;
         private System.Windows.Forms.GroupBox groupBox75;
         private System.Windows.Forms.Button darkButton2;
         private System.Windows.Forms.Button darkButton72;
@@ -1009,17 +675,6 @@
         private System.Windows.Forms.ComboBox ItemRarityCB;
         private System.Windows.Forms.NumericUpDown ItemRequirementNUD;
         private System.Windows.Forms.Label darkLabel1;
-        private System.Windows.Forms.GroupBox groupBox74;
-        private System.Windows.Forms.Button darkButton109;
-        private System.Windows.Forms.Button darkButton110;
-        private System.Windows.Forms.Button darkButton111;
-        private System.Windows.Forms.NumericUpDown EntityReputationNUD;
-        private System.Windows.Forms.Label darkLabel229;
-        private System.Windows.Forms.ListBox EntityReputationLB;
-        private System.Windows.Forms.NumericUpDown ReputationLossOnDeathNUD;
-        private System.Windows.Forms.Label darkLabel227;
-        private System.Windows.Forms.NumericUpDown ReputationMaxReputationNUD;
-        private System.Windows.Forms.Label darkLabel221;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.CheckBox QuestsCB;
         private System.Windows.Forms.CheckBox VehicleCoverCB;

@@ -10,6 +10,8 @@ namespace Day2eEditor
 {
     public class cfgspawnabletypesConfig : IAdvancedConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         public string _basepath { get; set; }
         public List<cfgspawnabletypesFile> AllData { get; private set; } = new List<cfgspawnabletypesFile>();
         public bool HasErrors { get; private set; }

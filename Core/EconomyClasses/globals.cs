@@ -5,6 +5,8 @@ namespace Day2eEditor
 {
     public class globalsConfig : IAdvancedConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         public string _basepath { get; set; }
         public List<globalsFile> AllData { get; private set; } = new List<globalsFile>();
         public bool HasErrors { get; private set; }

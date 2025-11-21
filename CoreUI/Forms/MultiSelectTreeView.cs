@@ -10,7 +10,7 @@ namespace Day2eEditor
 {
     public class MultiSelectTreeView : TreeView
     {
-         [Category("Behavior")]
+        [Category("Behavior")]
         public event EventHandler<NodeRequestTextEventArgs> RequestDisplayText;
 
         [Category("Behavior")]
@@ -103,11 +103,129 @@ namespace Day2eEditor
             }
         }
 
-        // Token: 0x06000003 RID: 3 RVA: 0x00002072 File Offset: 0x00001072
+
+        private Button? _collapseBtn;
+        private ToolTip? _toolTip;
+        private bool _showCollapseButton = true;
+
+        [Category("Behavior")]
+        [Description("Shows a small Collapse button over the top-right of the TreeView.")]
+        [DefaultValue(true)]
+        public bool ShowCollapseButton
+        {
+            get => _showCollapseButton;
+            set
+            {
+                _showCollapseButton = value;
+                if (_collapseBtn != null)
+                    _collapseBtn.Visible = value && Visible;
+            }
+        }
+
+        [Category("Behavior")]
+        [Description("If true, collapses only the selected node’s subtree; otherwise collapses the entire tree.")]
+        [DefaultValue(false)]
+        public bool CollapseSelectedNodeOnly { get; set; } = true;
+
+
+
         public MultiSelectTreeView()
         {
             this.m_coll = new ArrayList();
+
+            HideSelection = false;
+
+
         }
+
+        protected override void OnLayout(LayoutEventArgs levent)
+        {
+            base.OnLayout(levent);
+            EnsureOverlayButton();
+            PositionOverlay();
+        }
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if (_collapseBtn != null)
+                _collapseBtn.Visible = _showCollapseButton && Visible;
+        }
+
+        private void EnsureOverlayButton()
+        {
+            if (_collapseBtn != null || Parent == null) return;
+
+            _collapseBtn = new Button
+            {
+                Size = new Size(15,15),
+                FlatStyle = FlatStyle.Flat,
+                TabStop = false,
+                Text = "▲", // Collapse glyph
+                Font = new Font("Segoe UI", 9f, FontStyle.Bold),
+                BackColor = Color.White,
+                ForeColor = Color.Black,
+                Visible = _showCollapseButton && Visible
+            };
+            _collapseBtn.FlatAppearance.BorderSize = 1;
+
+            _collapseBtn.Click += CollapseBtn_Click;
+
+            _toolTip = new ToolTip();
+            _toolTip.SetToolTip(_collapseBtn, "Collapse Selected Node");
+
+            Parent.Controls.Add(_collapseBtn); // safer than setting Parent property
+            _collapseBtn.BringToFront();
+        }
+
+        private void PositionOverlay()
+        {
+            if (_collapseBtn == null || Parent == null) return;
+
+            var treeScreen = PointToScreen(Point.Empty);
+            var parentScreen = Parent.PointToScreen(Point.Empty);
+
+            int offsetX = treeScreen.X - parentScreen.X;
+            int offsetY = treeScreen.Y - parentScreen.Y;
+
+            int x = offsetX + ClientSize.Width - _collapseBtn.Width - ScalePadding(4);
+            int y = offsetY + ScalePadding(4);
+
+            if (_collapseBtn.Location != new Point(x, y))
+                _collapseBtn.Location = new Point(x, y);
+        }
+
+        private int ScalePadding(int px) => (int)(px * (DeviceDpi / 96f));
+
+        private void CollapseBtn_Click(object? sender, EventArgs e)
+        {
+            BeginUpdate();
+            try
+            {
+                if (CollapseSelectedNodeOnly && SelectedNode is TreeNode selected)
+                {
+                    CollapseSubtree(selected);
+                }
+                else
+                {
+                    foreach (TreeNode root in Nodes)
+                        CollapseSubtree(root);
+                }
+            }
+            finally
+            {
+                EndUpdate();
+            }
+        }
+
+        private static void CollapseSubtree(TreeNode node)
+        {
+            foreach (TreeNode child in node.Nodes)
+                CollapseSubtree(child);
+            node.Collapse();
+        }
+
+
 
         // Token: 0x06000004 RID: 4 RVA: 0x0000208E File Offset: 0x0000108E
         protected override void OnPaint(PaintEventArgs pe)

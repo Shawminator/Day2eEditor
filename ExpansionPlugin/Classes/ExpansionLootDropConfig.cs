@@ -12,6 +12,8 @@ namespace ExpansionPlugin
 {
     public class ExpansionLootDropConfig : IConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         private readonly string _basepath;
         public List<AILootDrops> AllData { get; private set; } = new List<AILootDrops>();
         public bool HasErrors { get; private set; }

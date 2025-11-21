@@ -9,6 +9,8 @@ namespace Day2eEditor
 {
     public class cfgeventspawnsConfig : IConfigLoader
     {
+        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
+        public string FilePath => _path;
         private readonly string _path;
         public eventposdef Data { get; private set; }
         public bool HasErrors { get; private set; }

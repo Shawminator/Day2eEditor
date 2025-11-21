@@ -426,7 +426,6 @@ namespace ExpansionPlugin
         {
             GetType().GetProperty(v).SetValue(this, value, null);
         }
-
         public void DefaultEntityReputation()
         {
             EntityReputation = new Dictionary<string, int>();
@@ -1952,7 +1951,6 @@ namespace ExpansionPlugin
                    areListsEqual(IngredientItems, other.IngredientItems) &&
                    areListsEqual(entityreps, other.entityreps);
         }
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -2092,7 +2090,6 @@ namespace ExpansionPlugin
         {
             return Classname;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not EntityReputationlevels other)
@@ -2100,7 +2097,6 @@ namespace ExpansionPlugin
 
             return Classname == other.Classname && Level == other.Level;
         }
-
     }
     public enum ExpansionHardlineItemRarity
     {

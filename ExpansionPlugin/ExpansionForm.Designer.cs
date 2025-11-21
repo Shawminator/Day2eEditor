@@ -31,6 +31,7 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExpansionForm));
             panel1 = new Panel();
+            OpenFolderButton = new Button();
             SaveButton = new Button();
             splitContainer1 = new SplitContainer();
             ExpansionTV = new Day2eEditor.MultiSelectTreeView();
@@ -103,6 +104,9 @@
             removeExplosionTargetToolStripMenuItem = new ToolStripMenuItem();
             addNewExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
             removeExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
+            button3 = new Button();
+            button2 = new Button();
+            txtSearch = new TextBox();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -119,12 +123,29 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(60, 63, 65);
+            panel1.Controls.Add(button3);
+            panel1.Controls.Add(button2);
+            panel1.Controls.Add(txtSearch);
+            panel1.Controls.Add(OpenFolderButton);
             panel1.Controls.Add(SaveButton);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(1192, 31);
             panel1.TabIndex = 6;
+            // 
+            // OpenFolderButton
+            // 
+            OpenFolderButton.BackgroundImage = (Image)resources.GetObject("OpenFolderButton.BackgroundImage");
+            OpenFolderButton.BackgroundImageLayout = ImageLayout.Stretch;
+            OpenFolderButton.FlatStyle = FlatStyle.Flat;
+            OpenFolderButton.Location = new Point(58, 3);
+            OpenFolderButton.Name = "OpenFolderButton";
+            OpenFolderButton.Size = new Size(40, 25);
+            OpenFolderButton.TabIndex = 1;
+            OpenFolderButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            OpenFolderButton.UseVisualStyleBackColor = true;
+            OpenFolderButton.Click += OpenFolderButton_Click;
             // 
             // SaveButton
             // 
@@ -689,7 +710,7 @@
             DamageCM.Items.AddRange(new ToolStripItem[] { addNewExplosionTargetToolStripMenuItem, removeExplosionTargetToolStripMenuItem, addNewExplosiveProjectileToolStripMenuItem, removeExplosiveProjectileToolStripMenuItem });
             DamageCM.Name = "DamageCM";
             DamageCM.ShowImageMargin = false;
-            DamageCM.Size = new Size(203, 114);
+            DamageCM.Size = new Size(203, 92);
             // 
             // addNewExplosionTargetToolStripMenuItem
             // 
@@ -723,6 +744,37 @@
             removeExplosiveProjectileToolStripMenuItem.Text = "Remove Explosive Projectile";
             removeExplosiveProjectileToolStripMenuItem.Click += removeExplosiveProjectileToolStripMenuItem_Click;
             // 
+            // button3
+            // 
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Location = new Point(332, 4);
+            button3.Name = "button3";
+            button3.Size = new Size(56, 23);
+            button3.TabIndex = 9;
+            button3.Text = "Next";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button2
+            // 
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(284, 4);
+            button2.Name = "button2";
+            button2.Size = new Size(42, 23);
+            button2.TabIndex = 8;
+            button2.Text = "Find";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // txtSearch
+            // 
+            txtSearch.BackColor = Color.FromArgb(60, 63, 65);
+            txtSearch.ForeColor = SystemColors.Control;
+            txtSearch.Location = new Point(105, 4);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(173, 23);
+            txtSearch.TabIndex = 7;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -739,6 +791,7 @@
             FormClosed += ExpansionForm_FormClosed;
             Load += ExpansionForm_Load;
             panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
@@ -828,5 +881,9 @@
         private ToolStripMenuItem removeExplosionTargetToolStripMenuItem;
         private ToolStripMenuItem addNewExplosiveProjectileToolStripMenuItem;
         private ToolStripMenuItem removeExplosiveProjectileToolStripMenuItem;
+        private Button OpenFolderButton;
+        private Button button3;
+        private Button button2;
+        private TextBox txtSearch;
     }
 }

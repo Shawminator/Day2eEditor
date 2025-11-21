@@ -5,6 +5,8 @@ namespace Day2eEditor
 {
     public class eventsConfig : IAdvancedConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         public string _basepath { get; set; }
         public List<EventsFile> AllData { get; private set; } = new List<EventsFile>();
         public bool HasErrors { get; private set; }

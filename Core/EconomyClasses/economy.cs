@@ -4,6 +4,8 @@ namespace Day2eEditor
 {
     public class economyConfig : IAdvancedConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         public string _basepath { get; set; }
         public List<economyFile> AllData { get; private set; } = new List<economyFile>();
         public bool HasErrors { get; private set; }

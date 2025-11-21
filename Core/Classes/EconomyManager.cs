@@ -6,6 +6,9 @@ namespace Day2eEditor
 {
     public interface IConfigLoader
     {
+        public string FileName { get; }
+        public string FilePath { get; }
+
         bool HasErrors { get; }
         public List<string> Errors { get; }
 

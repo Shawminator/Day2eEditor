@@ -13,6 +13,8 @@ namespace ExpansionPlugin
 {
     public class ExpansionLoadoutConfig : IConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         private readonly string _basepath;
         public List<AILoadouts> AllData { get; private set; } = new List<AILoadouts>();
         public bool HasErrors { get; private set; }

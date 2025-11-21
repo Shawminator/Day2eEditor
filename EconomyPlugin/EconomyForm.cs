@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace EconomyPlugin
 {
@@ -327,7 +326,7 @@ namespace EconomyPlugin
                 [typeof(prototypeGroupContainer)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new prototypeGroupContainerControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroupContainer, selected)
 
-                   
+
 
             };
             // ----------------------
@@ -461,7 +460,7 @@ namespace EconomyPlugin
                     var cc = node.FindParentOfType<Complexchildrentype>();
                     ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), cc, selected);
                 },
-                ["INITC"] = (node, selected ) =>
+                ["INITC"] = (node, selected) =>
                 {
                     OpenWithExternalEditor frm = new OpenWithExternalEditor();
                     frm.StartPosition = FormStartPosition.CenterParent;
@@ -583,7 +582,7 @@ namespace EconomyPlugin
                 {
                     SpawnableTypesCM.Items.Clear();
                     SpawnableTypesCM.Items.Add(addNewSpawnableTypeToolStripMenuItem);
-                    if((node.Tag as cfgspawnabletypesFile).IsModded)
+                    if ((node.Tag as cfgspawnabletypesFile).IsModded)
                         SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
                     SpawnableTypesCM.Show(Cursor.Position);
                 },
@@ -2224,7 +2223,7 @@ namespace EconomyPlugin
                 {
                     Tag = prototypeGroup
                 };
-                foreach(prototypeGroupContainer container in prototypeGroup.container)
+                foreach (prototypeGroupContainer container in prototypeGroup.container)
                 {
                     TreeNode containernode = new TreeNode(container.ToString())
                     {
@@ -5525,6 +5524,80 @@ namespace EconomyPlugin
         {
             TerritorieszonesCB.Location = new Point(14 + EconomyTV.Width + 10, 9);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            IConfigLoader IConfigLoaderFile = currentTreeNode.FindParentOfType<IConfigLoader>();
+            if (IConfigLoaderFile != null)
+            {
+                string folderPath = IConfigLoaderFile.FilePath;
+                if (!Directory.Exists(folderPath))
+                    folderPath = Path.GetDirectoryName(folderPath);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = folderPath,
+                    UseShellExecute = true
+                });
+
+            }
+        }
+
+        #region search treeview
+        private List<TreeNode> _searchResults = new();
+        private int _currentIndex = -1;
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string searchText = txtSearch.Text.Trim();
+            if (string.IsNullOrEmpty(searchText)) return;
+
+            _searchResults.Clear();
+            _currentIndex = -1;
+
+            FindAllNodes(EconomyTV.Nodes, searchText);
+
+            if (_searchResults.Count > 0)
+            {
+                _currentIndex = 0;
+                SelectNode(_searchResults[_currentIndex]);
+            }
+            else
+            {
+                MessageBox.Show("No matches found.");
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (_searchResults.Count == 0) return;
+
+            _currentIndex++;
+            if (_currentIndex >= _searchResults.Count)
+            {
+                MessageBox.Show("No more matches.");
+                _currentIndex = _searchResults.Count - 1;
+                return;
+            }
+            EconomyTV.CollapseAll();
+            SelectNode(_searchResults[_currentIndex]);
+        }
+        private void FindAllNodes(TreeNodeCollection nodes, string searchText)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                    _searchResults.Add(node);
+
+                FindAllNodes(node.Nodes, searchText);
+            }
+        }
+
+        private void SelectNode(TreeNode node)
+        {
+            EconomyTV.SelectedNode = node;
+            node.EnsureVisible();
+        }
+        #endregion search treeview
+
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin", "EconomyPlugin.DayzEconomy.png")]

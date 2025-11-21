@@ -1,6 +1,7 @@
 using Day2eEditor;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime;
@@ -10,9 +11,6 @@ using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ExpansionPlugin
 {
@@ -237,7 +235,13 @@ namespace ExpansionPlugin
                 {
                     ExpansionMapping ExpansionMapping = node.Tag as ExpansionMapping;
                     ShowHandler(new ExpansionGeneralMappingControl(), typeof(ExpansionGeneralConfig), ExpansionMapping, selected);
-                }
+                },
+                //Hardline
+                [typeof(ExpansionHardlineSettings)] = (node,selected)=>
+                {
+                    ExpansionHardlineSettings ExpansionHardlineSettings = node.Tag as ExpansionHardlineSettings;
+                    ShowHandler(new ExpansionHardlineGneralControl(), typeof(ExpansionHardlineConfig), ExpansionHardlineSettings, selected);
+                },
             };
             // ----------------------
             // String handlers
@@ -294,26 +298,31 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionBookGeneralControl(), typeof(ExpansionBookConfig), cfg.Data, selected);
                 },
                 //General
-                ["GenralGernal"] = (node,selected) =>
+                ["GenralGernal"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralGeneralControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 },
-                ["GenralScreen"] = (node,selected) =>
+                ["GenralScreen"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralScreenControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 },
-                ["GenralGraveCross"] = (node,selected) =>
+                ["GenralGraveCross"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralGraveCrossControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 },
-                ["GenralLights"] = (node,selected) =>
+                ["GenralLights"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralLightsControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 },
-                ["GenralHuds"] = (node,selected) =>
+                ["GenralHuds"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionGeneralHudColoursControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
-                }
+                },
+                //Hardline
+                ["Reputation"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionHardlineReputationControl(), typeof(ExpansionHardlineConfig), _expansionManager.ExpansionHardlineConfig.Data, selected);
+                },
             };
         }
         private void InitializeContextMenuHandlers()
@@ -771,7 +780,22 @@ namespace ExpansionPlugin
                 MessageBoxIcon.Information
             );
         }
+        private void OpenFolderButton_Click(object sender, EventArgs e)
+        {
+            IConfigLoader IConfigLoaderFile = currentTreeNode.FindParentOfType<IConfigLoader>();
+            if (IConfigLoaderFile != null)
+            {
+                string folderPath = IConfigLoaderFile.FilePath;
+                if (!Directory.Exists(folderPath))
+                    folderPath = Path.GetDirectoryName(folderPath);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = folderPath,
+                    UseShellExecute = true
+                });
 
+            }
+        }
         private void ExpansionForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_expansionManager.needToSave())
@@ -1525,13 +1549,13 @@ namespace ExpansionPlugin
 
         private static void CreateMappingNodes(ExpansionMapping mapping, TreeNode mappingNode)
         {
-            if(mapping.UseCustomMappingModule == 1)
+            if (mapping.UseCustomMappingModule == 1)
             {
                 TreeNode Newcustomnode = new TreeNode("Custom Mappings")
                 {
                     Tag = "CustomMappings"
                 };
-                foreach(string s in mapping.Mapping)
+                foreach (string s in mapping.Mapping)
                 {
                     Newcustomnode.Nodes.Add(new TreeNode(s)
                     {
@@ -1540,7 +1564,7 @@ namespace ExpansionPlugin
                 }
                 mappingNode.Nodes.Add(Newcustomnode);
             }
-            if(mapping.BuildingInteriors == 1)
+            if (mapping.BuildingInteriors == 1)
             {
                 TreeNode Newinteriornode = new TreeNode("Interiors")
                 {
@@ -3350,7 +3374,7 @@ namespace ExpansionPlugin
                 ammo = "New Ammo",
                 explosion = "New Explosion"
             };
-            if(!_expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Any( x => x.explosion == newEP.explosion))
+            if (!_expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Any(x => x.explosion == newEP.explosion))
             {
                 _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Add(newEP);
                 _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
@@ -3363,7 +3387,7 @@ namespace ExpansionPlugin
             {
                 MessageBox.Show("There is already a enrty for that Explosive Type");
             }
-           
+
 
         }
         private void removeExplosiveProjectileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3404,11 +3428,60 @@ namespace ExpansionPlugin
         }
         #endregion right click methods
 
+        #region Search Treeview
+        private List<TreeNode> _searchResults = new();
+        private int _currentIndex = -1;
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string searchText = txtSearch.Text.Trim();
+            if (string.IsNullOrEmpty(searchText)) return;
 
+            _searchResults.Clear();
+            _currentIndex = -1;
 
+            FindAllNodes(ExpansionTV.Nodes, searchText);
 
+            if (_searchResults.Count > 0)
+            {
+                _currentIndex = 0;
+                SelectNode(_searchResults[_currentIndex]);
+            }
+            else
+            {
+                MessageBox.Show("No matches found.");
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (_searchResults.Count == 0) return;
 
+            
+            _currentIndex++;
+            if (_currentIndex >= _searchResults.Count)
+            {
+                MessageBox.Show("No more matches.");
+                _currentIndex = _searchResults.Count - 1;
+                return;
+            }
+            ExpansionTV.CollapseAll();
+            SelectNode(_searchResults[_currentIndex]);
+        }
+        private void FindAllNodes(TreeNodeCollection nodes, string searchText)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Text.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                    _searchResults.Add(node);
 
+                FindAllNodes(node.Nodes, searchText);
+            }
+        }
+        private void SelectNode(TreeNode node)
+        {
+            ExpansionTV.SelectedNode = node;
+            node.EnsureVisible();
+        }
+        #endregion search treeview
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

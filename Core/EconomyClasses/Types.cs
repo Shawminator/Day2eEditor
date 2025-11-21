@@ -7,6 +7,8 @@ namespace Day2eEditor
 {
     public class TypesConfig : IAdvancedConfigLoader
     {
+        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
+        public string FilePath => _basepath;
         public string _basepath { get; set; }
         public List<TypesFile> AllData { get; private set; } = new List<TypesFile>();
         public bool HasErrors { get; private set; }
