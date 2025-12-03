@@ -88,7 +88,7 @@
             groupBox75.Controls.Add(ItemRequirementNUD);
             groupBox75.Controls.Add(darkLabel1);
             groupBox75.ForeColor = SystemColors.Control;
-            groupBox75.Location = new Point(838, 365);
+            groupBox75.Location = new Point(13, 12);
             groupBox75.Margin = new Padding(4, 3, 4, 3);
             groupBox75.Name = "groupBox75";
             groupBox75.Padding = new Padding(4, 3, 4, 3);
@@ -99,10 +99,10 @@
             // 
             // darkButton2
             // 
+            darkButton2.FlatStyle = FlatStyle.Flat;
             darkButton2.Location = new Point(9, 582);
             darkButton2.Margin = new Padding(4, 3, 4, 3);
             darkButton2.Name = "darkButton2";
-            darkButton2.Padding = new Padding(6);
             darkButton2.Size = new Size(275, 27);
             darkButton2.TabIndex = 8;
             darkButton2.Text = "Assign All From CE Rarity";
@@ -184,6 +184,7 @@
             ItemRequirementNUD.TabIndex = 3;
             ItemRequirementNUD.Tag = "Weight";
             ItemRequirementNUD.TextAlign = HorizontalAlignment.Center;
+            ItemRequirementNUD.ValueChanged += ItemRequirementNUD_ValueChanged;
             // 
             // darkLabel1
             // 

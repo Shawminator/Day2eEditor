@@ -21,5 +21,10 @@ namespace DayZeEditor
         {
 
         }
+
+        private void ItemRequirementNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

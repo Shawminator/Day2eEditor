@@ -323,6 +323,10 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionHardlineReputationControl(), typeof(ExpansionHardlineConfig), _expansionManager.ExpansionHardlineConfig.Data, selected);
                 },
+                ["RequirementsandItemRarity"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionHardlineItemRarityControl(), typeof(ExpansionHardlineConfig), _expansionManager.ExpansionHardlineConfig.Data, selected);
+                },
             };
         }
         private void InitializeContextMenuHandlers()
@@ -3399,13 +3403,11 @@ namespace ExpansionPlugin
         //Garage
         private void addNewEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddItemfromString form = new AddItemfromString();
-            form.TitleLable = "Add Entity Whitelist items";
-            form.stripWhitespace = true;
+            AddItemfromTypes form = new AddItemfromTypes { };
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.OK)
             {
-                List<string> addedtypes = form.addedtypes.ToList();
+                List<string> addedtypes = form.AddedTypes.ToList();
                 foreach (string l in addedtypes)
                 {
                     if (!_expansionManager.ExpansionGarageConfig.Data.EntityWhitelist.Contains(l))
