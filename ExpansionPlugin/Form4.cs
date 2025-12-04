@@ -10,21 +10,11 @@ using System.Windows.Forms;
 
 namespace DayZeEditor
 {
-    public partial class Form3 : Form
+    public partial class Form4 : Form
     {
-        public Form3()
+        public Form4()
         {
             InitializeComponent();
-        }
-
-        private void groupBox68_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ItemRequirementNUD_ValueChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

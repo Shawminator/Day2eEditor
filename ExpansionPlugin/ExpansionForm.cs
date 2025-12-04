@@ -242,6 +242,32 @@ namespace ExpansionPlugin
                     ExpansionHardlineSettings ExpansionHardlineSettings = node.Tag as ExpansionHardlineSettings;
                     ShowHandler(new ExpansionHardlineGneralControl(), typeof(ExpansionHardlineConfig), ExpansionHardlineSettings, selected);
                 },
+                //Logs
+                [typeof(ExpansionLogsSettings)] = (node,selected) =>
+                {
+                    ExpansionLogsSettings ExpansionLogsSettings = node.Tag as ExpansionLogsSettings;
+                    ShowHandler(new ExpansionHardlineLogsControl(), typeof(ExpansionLogsConfig), ExpansionLogsSettings, selected);
+                },
+                //map
+               [typeof(ExpansionServerMarkerData)] = (node,selected) =>
+               {
+                   ExpansionServerMarkerData ExpansionServerMarkerData = node.Tag as ExpansionServerMarkerData;
+                   //var control = new ExpansionAINoGoAreaControl();
+                   //control.PositionChanged += (updatedPos) =>
+                   //{
+                   //    _mapControl.ClearDrawables(); ;
+                   //    DrawbaseAILocationNoGoAreas(node.FindParentOfType<ExpansionAILocationConfig>());
+                   //};
+                   //control.RadiusChanged += (updatedRadius) =>
+                   //{
+                   //    _mapControl.ClearDrawables(); ;
+                   //    DrawbaseAILocationNoGoAreas(node.FindParentOfType<ExpansionAILocationConfig>());
+                   //};
+                   //ShowHandler(control, typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, selected);
+
+                   SetupMapServerMarkers(ExpansionServerMarkerData, node);
+                   _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
+               },
             };
             // ----------------------
             // String handlers
@@ -326,6 +352,11 @@ namespace ExpansionPlugin
                 ["RequirementsandItemRarity"] = (node,selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionHardlineItemRarityControl(), typeof(ExpansionHardlineConfig), _expansionManager.ExpansionHardlineConfig.Data, selected);
+                },
+                //Map
+                ["MapSettings"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionMapMapControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
             };
         }
@@ -896,6 +927,7 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionGeneralConfig, CreateExpansionGeneralConfigConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMapConfig, CreateExpansionMapConfigNodes);
 
             TreeNode AIrootNode = new TreeNode("AI")
             {
@@ -1627,7 +1659,43 @@ namespace ExpansionPlugin
                 Tag = ef.Data
             });
         }
-
+        //Maps
+        private TreeNode CreateExpansionMapConfigNodes(ExpansionMapConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateMapNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateMapNodes(ExpansionMapConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("Map")
+            {
+                Tag = "MapSettings"
+            });
+            TreeNode ServerMarkerNode = new TreeNode("Server Markers")
+            {
+                Tag = "ServerMarkersSettings"
+            };
+            foreach(ExpansionServerMarkerData smd in ef.Data.ServerMarkers)
+            {
+                ServerMarkerNode.Nodes.Add(new TreeNode(smd.m_UID)
+                {
+                    Tag = smd
+                });
+            }
+            EconomyRootNode.Nodes.Add(ServerMarkerNode);
+            EconomyRootNode.Nodes.Add(new TreeNode("Personal Markers")
+            {
+                Tag = "PersonalMarkerSettings"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Compass")
+            {
+                Tag = "CompassSettings"
+            });
+        }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
         where THandler : IUIHandler
@@ -1692,12 +1760,15 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_AIPatrolDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_AILocationNoGoAreasSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_AILocationNoGoAreasDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_ServerMarkerDataSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_ServerMarkerDataDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
             _selectedAIRoamingLocations = null;
             _selectedAIPatrol = null;
             _selectedAINOGoArea = null;
+            _selectedServerMarkerData = null;
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -1760,6 +1831,7 @@ namespace ExpansionPlugin
         private ExpansionAIRoamingLocation _selectedAIRoamingLocations;
         private ExpansionAIPatrol _selectedAIPatrol;
         private ExpansionAINoGoArea _selectedAINOGoArea;
+        private ExpansionServerMarkerData _selectedServerMarkerData;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -1822,6 +1894,19 @@ namespace ExpansionPlugin
                 var ExpansionAILocationConfig = node.Parent?.Parent?.Tag as ExpansionAILocationConfig;
                 if (ExpansionAILocationConfig != null)
                     DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig);
+            });
+        }
+        private void SetupMapServerMarkers(ExpansionServerMarkerData smd, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedServerMarkerData = smd;
+                _mapControl.MapsingleClicked += MapControl_ServerMarkerDataSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ServerMarkerDataDoubleclicked;
+
+                var ExpansionMapConfig = node.Parent?.Parent?.Tag as ExpansionMapConfig;
+                if (ExpansionMapConfig != null)
+                    DrawbaseServerMarkerData(ExpansionMapConfig);
             });
         }
 
@@ -1931,6 +2016,10 @@ namespace ExpansionPlugin
                 }
                 _mapControl.RegisterDrawable(marker);
             }
+        }
+        private void DrawbaseServerMarkerData(ExpansionMapConfig expansionMapConfig)
+        {
+            
         }
 
         //map click methods
@@ -2171,6 +2260,74 @@ namespace ExpansionPlugin
             }
         }
         private void MapControl_AILocationNoGoAreasDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is ExpansionAINoGoArea ExpansionAINoGoArea)
+            {
+                ExpansionAINoGoArea._Position.X = (float)e.MapCoordinates.X;
+                ExpansionAINoGoArea._Position.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    ExpansionAINoGoArea._Position.Y = (MapData.gethieght(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z));
+                }
+                _expansionManager.ExpansionAILocationConfig.isDirty = true;
+
+                _mapControl.ClearDrawables();
+
+                ExpansionAILocationConfig ExpansionAILocationConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
+                ExpansionAILocationConfig.isDirty = true;
+                ShowHandler(new ExpansionAINoGoAreaControl(), typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, new List<TreeNode>() { currentTreeNode });
+                DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig);
+            }
+        }
+        private void MapControl_ServerMarkerDataSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent;
+
+            ExpansionAINoGoArea closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is ExpansionAINoGoArea pos)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos._Position.X, pos._Position.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_ServerMarkerDataDoubleclicked(object sender, MapClickEventArgs e)
         {
             if (currentTreeNode.Tag is ExpansionAINoGoArea ExpansionAINoGoArea)
             {

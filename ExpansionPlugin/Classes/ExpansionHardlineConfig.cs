@@ -78,7 +78,6 @@ namespace ExpansionPlugin
 
         public void ConvertDictionarytoLevels()
         {
-            // Initialize dictionary of lists for all rarities
             var rarityBuckets = Enum.GetValues(typeof(ExpansionHardlineItemRarity))
                 .Cast<ExpansionHardlineItemRarity>()
                 .ToDictionary(r => r, r => new List<string>());
@@ -86,13 +85,11 @@ namespace ExpansionPlugin
             if (Data.ItemRarity == null)
                 Data.ItemRarity = new Dictionary<string, int>();
 
-            // Fill buckets based on Data.ItemRarity
             foreach (var item in Data.ItemRarity)
             {
                 string useItem = item.Key.ToLower();
                 if (item.Key != useItem) isDirty = true;
 
-                // Convert int to enum safely
                 ExpansionHardlineItemRarity rarity = (ExpansionHardlineItemRarity)item.Value;
                 if (rarityBuckets.ContainsKey(rarity))
                 {
@@ -100,7 +97,6 @@ namespace ExpansionPlugin
                 }
             }
 
-            // Add NONE items (those not in Data.ItemRarity)
             foreach (TypesFile ft in AppServices.GetRequired<EconomyManager>().TypesConfig.AllData)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
@@ -113,13 +109,11 @@ namespace ExpansionPlugin
                 }
             }
 
-            // Sort and bind
             foreach (var rarity in rarityBuckets.Keys)
             {
                 rarityBuckets[rarity].Sort();
             }
 
-            // Assign to Data properties (assuming you have BindingList for each)
             Data.NoneItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.NONE]);
             Data.PoorItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Poor]);
             Data.CommonItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Common]);

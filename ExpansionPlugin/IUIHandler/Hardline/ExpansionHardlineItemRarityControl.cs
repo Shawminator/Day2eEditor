@@ -1,5 +1,6 @@
 ﻿using Day2eEditor;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -57,11 +58,12 @@ namespace ExpansionPlugin
             _data = data as ExpansionHardlineSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
-
+            ItemRarityCB.DataSource = Enum.GetValues(typeof(ExpansionHardlineItemRarity));
+            ItemRarityMoveToCB.DataSource = Enum.GetValues(typeof(ExpansionHardlineItemRarity));
             _suppressEvents = true;
 
-            ItemRarityCB.DataSource = Enum.GetValues(typeof(ExpansionHardlineItemRarity));
-            
+
+
             _suppressEvents = false;
         }
 
@@ -244,7 +246,7 @@ namespace ExpansionPlugin
                 return "Collectable";
             if (_data.IngredientItems.Contains(item))
                 return "Ingredient";
-            return "";
+            return "NOLIST";
 
         }
         public int? getRequirment(string type)
@@ -315,10 +317,13 @@ namespace ExpansionPlugin
                 foreach (string l in addedtypes)
                 {
                     string Typelist = GetListfromitem(l);
-                    getlist(Typelist).Remove(l);
-                    if (!getlist(Type).Contains(l))
+                    if (Typelist == "NOLIST")
                     {
                         getlist(Type).Add(l);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"{l} is allready in {Typelist}");
                     }
                 }
                 HasChanges();
@@ -327,10 +332,65 @@ namespace ExpansionPlugin
 
         private void darkButton70_Click(object sender, EventArgs e)
         {
-            string item = ItemRarityLB.GetItemText(ItemRarityLB.SelectedItem);
+            if (ItemRarityLB.SelectedItems.Count == 0)
+                return;
+
+            MoveSelected(ItemRarityLB, ItemRarityCB.GetItemText(ItemRarityCB.SelectedItem), "NONE");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (ItemRarityLB.SelectedItems.Count == 0)
+                return;
+
+            MoveSelected(ItemRarityLB, ItemRarityCB.GetItemText(ItemRarityCB.SelectedItem), ItemRarityMoveToCB.GetItemText(ItemRarityMoveToCB.SelectedItem));
+        }
+        private void MoveSelected(ListBox listBox, string fromType, string toType)
+        {
+            var src = getlist(fromType);
+            var dest = getlist(toType);
+
+            var selected = listBox.SelectedItems.Cast<string>().ToList();
+
+            foreach (var item in selected)
+            {
+                if (src.Remove(item) && !dest.Contains(item))
+                    dest.Add(item);
+            }
+
+            var sorted = dest.OrderBy(s => s, StringComparer.CurrentCultureIgnoreCase).ToList();
+
+            listBox.BeginUpdate();
+            try
+            {
+                dest.RaiseListChangedEvents = false;
+                try
+                {
+                    dest.Clear();
+                    foreach (var s in sorted)
+                        dest.Add(s);
+                }
+                finally
+                {
+                    dest.RaiseListChangedEvents = true;
+                    dest.ResetBindings(); // notify all bound controls
+                }
+            }
+            finally
+            {
+                listBox.EndUpdate();
+            }
+
+            HasChanges();
+            listBox.ClearSelected();
+
+        }
+
+        private void ItemRequirementNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
             string Type = ItemRarityCB.GetItemText(ItemRarityCB.SelectedItem);
-            getlist(Type).Remove(item);
-            getlist("NONE").Add(item);
+            SetRequirment(Type, (int)ItemRequirementNUD.Value);
             HasChanges();
         }
     }

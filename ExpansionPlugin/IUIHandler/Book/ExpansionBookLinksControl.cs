@@ -2,8 +2,11 @@
 using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 namespace ExpansionPlugin
@@ -39,15 +42,18 @@ namespace ExpansionPlugin
             _data = data as ExpansionBookLink ?? throw new InvalidCastException();
             _nodes = selectedNodes;
             _originalData = CloneData(_data); // Store original data for reset
+            
+            
 
             _suppressEvents = true;
-
+            BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
+            comboBox5.DataSource = Icons;
             textBox12.Text = _data.Name;
             textBox13.Text = _data.URL;
             comboBox5.SelectedIndex = comboBox5.FindStringExact(_data.IconName);
             Color selectedColor = Color.FromArgb(_data.IconColor);
             LinkIconColour.BackColor = selectedColor;
-
+            GetIcon();
             _suppressEvents = false;
         }
 
@@ -123,6 +129,7 @@ namespace ExpansionPlugin
                     Color color = picker.SelectedColor;
                     _data.IconColor = color.ToArgb();
                     LinkIconColour.BackColor = color;
+                    GetIcon();
                     HasChanges();
                 }
             }
@@ -146,7 +153,29 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.IconName = comboBox5.SelectedItem.ToString();
+            GetIcon();
             HasChanges();
+        }
+
+        private void GetIcon()
+        {
+            var resourceName = $"ExpansionPlugin.Icons.{_data.IconName}.png";
+            var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
+            if (stream != null)
+            {
+                Bitmap image = new Bitmap(Image.FromStream(stream));
+                Image image2 = ResourceHelper.MultiplyColorToBitmap(image, Color.FromArgb(_data.IconColor), 200, true);
+                Image image3 = resizeImage(image2, new Size(128,128));
+                pictureBox1.Image = image3;
+            }
+            else
+            {
+                pictureBox1.Image = null;
+            }
+        }
+        public static Image resizeImage(Image imgToResize, Size size)
+        {
+            return (Image)(new Bitmap(imgToResize, size));
         }
     }
 }

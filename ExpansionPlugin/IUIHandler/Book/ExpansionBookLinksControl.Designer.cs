@@ -37,12 +37,17 @@
             textBox13 = new TextBox();
             darkLabel83 = new Label();
             textBox12 = new TextBox();
+            label1 = new Label();
+            pictureBox1 = new PictureBox();
             groupBox30.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LinkIconColour).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // groupBox30
             // 
+            groupBox30.Controls.Add(pictureBox1);
+            groupBox30.Controls.Add(label1);
             groupBox30.Controls.Add(LinkIconColour);
             groupBox30.Controls.Add(comboBox5);
             groupBox30.Controls.Add(darkLabel86);
@@ -51,12 +56,13 @@
             groupBox30.Controls.Add(textBox13);
             groupBox30.Controls.Add(darkLabel83);
             groupBox30.Controls.Add(textBox12);
+            groupBox30.Dock = DockStyle.Fill;
             groupBox30.ForeColor = SystemColors.Control;
             groupBox30.Location = new Point(0, 0);
             groupBox30.Margin = new Padding(4, 3, 4, 3);
             groupBox30.Name = "groupBox30";
             groupBox30.Padding = new Padding(4, 3, 4, 3);
-            groupBox30.Size = new Size(567, 142);
+            groupBox30.Size = new Size(567, 297);
             groupBox30.TabIndex = 6;
             groupBox30.TabStop = false;
             groupBox30.Text = "Book Links";
@@ -76,7 +82,6 @@
             comboBox5.BackColor = Color.FromArgb(60, 63, 65);
             comboBox5.ForeColor = SystemColors.Control;
             comboBox5.FormattingEnabled = true;
-            comboBox5.Items.AddRange(new object[] { "Homepage", "Feedback", "Discord", "Patreon", "Steam", "Reddit", "GitHub", "YouTube", "Twitter" });
             comboBox5.Location = new Point(117, 82);
             comboBox5.Margin = new Padding(4, 3, 4, 3);
             comboBox5.Name = "comboBox5";
@@ -150,18 +155,38 @@
             textBox12.TabIndex = 3;
             textBox12.TextChanged += textBox12_TextChanged;
             // 
-            // BookLinksControl
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = Color.FromArgb(220, 220, 220);
+            label1.Location = new Point(18, 146);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(74, 15);
+            label1.TabIndex = 121;
+            label1.Text = "Icon Preview";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new Point(117, 146);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(128, 128);
+            pictureBox1.TabIndex = 122;
+            pictureBox1.TabStop = false;
+            // 
+            // ExpansionBookLinksControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             Controls.Add(groupBox30);
             ForeColor = SystemColors.Control;
-            Name = "BookLinksControl";
-            Size = new Size(567, 142);
+            Name = "ExpansionBookLinksControl";
+            Size = new Size(567, 297);
             groupBox30.ResumeLayout(false);
             groupBox30.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)LinkIconColour).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
@@ -176,5 +201,7 @@
         private Label darkLabel83;
         private TextBox textBox12;
         private PictureBox LinkIconColour;
+        private PictureBox pictureBox1;
+        private Label label1;
     }
 }

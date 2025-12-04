@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             groupBox75 = new GroupBox();
+            button1 = new Button();
+            ItemRarityMoveToCB = new ComboBox();
+            label1 = new Label();
             darkButton70 = new Button();
             darkButton71 = new Button();
             darkLabel237 = new Label();
@@ -42,6 +45,9 @@
             // 
             // groupBox75
             // 
+            groupBox75.Controls.Add(button1);
+            groupBox75.Controls.Add(ItemRarityMoveToCB);
+            groupBox75.Controls.Add(label1);
             groupBox75.Controls.Add(darkButton70);
             groupBox75.Controls.Add(darkButton71);
             groupBox75.Controls.Add(darkLabel237);
@@ -49,20 +55,57 @@
             groupBox75.Controls.Add(ItemRarityCB);
             groupBox75.Controls.Add(ItemRequirementNUD);
             groupBox75.Controls.Add(darkLabel1);
+            groupBox75.Dock = DockStyle.Fill;
             groupBox75.ForeColor = SystemColors.Control;
             groupBox75.Location = new Point(0, 0);
             groupBox75.Margin = new Padding(4, 3, 4, 3);
             groupBox75.Name = "groupBox75";
             groupBox75.Padding = new Padding(4, 3, 4, 3);
-            groupBox75.Size = new Size(296, 615);
+            groupBox75.Size = new Size(296, 605);
             groupBox75.TabIndex = 23;
             groupBox75.TabStop = false;
             groupBox75.Text = "Requirments and Items";
             // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(9, 563);
+            button1.Margin = new Padding(4, 3, 4, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(276, 27);
+            button1.TabIndex = 10;
+            button1.Text = "Move Selected";
+            button1.Click += button1_Click;
+            // 
+            // ItemRarityMoveToCB
+            // 
+            ItemRarityMoveToCB.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            ItemRarityMoveToCB.FormattingEnabled = true;
+            ItemRarityMoveToCB.Location = new Point(86, 534);
+            ItemRarityMoveToCB.Margin = new Padding(4, 3, 4, 3);
+            ItemRarityMoveToCB.Name = "ItemRarityMoveToCB";
+            ItemRarityMoveToCB.Size = new Size(199, 23);
+            ItemRarityMoveToCB.TabIndex = 9;
+            // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label1.AutoSize = true;
+            label1.ForeColor = Color.FromArgb(220, 220, 220);
+            label1.Location = new Point(20, 538);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(34, 15);
+            label1.TabIndex = 8;
+            label1.Tag = "";
+            label1.Text = "Level";
+            // 
             // darkButton70
             // 
+            darkButton70.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             darkButton70.FlatStyle = FlatStyle.Flat;
-            darkButton70.Location = new Point(147, 577);
+            darkButton70.Location = new Point(146, 501);
             darkButton70.Margin = new Padding(4, 3, 4, 3);
             darkButton70.Name = "darkButton70";
             darkButton70.Size = new Size(138, 27);
@@ -72,8 +115,9 @@
             // 
             // darkButton71
             // 
+            darkButton71.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             darkButton71.FlatStyle = FlatStyle.Flat;
-            darkButton71.Location = new Point(9, 577);
+            darkButton71.Location = new Point(8, 501);
             darkButton71.Margin = new Padding(4, 3, 4, 3);
             darkButton71.Name = "darkButton71";
             darkButton71.Size = new Size(130, 27);
@@ -96,6 +140,7 @@
             // 
             // ItemRarityLB
             // 
+            ItemRarityLB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             ItemRarityLB.BackColor = Color.FromArgb(60, 63, 65);
             ItemRarityLB.DrawMode = DrawMode.OwnerDrawFixed;
             ItemRarityLB.ForeColor = SystemColors.Control;
@@ -103,7 +148,8 @@
             ItemRarityLB.Location = new Point(9, 85);
             ItemRarityLB.Margin = new Padding(4, 3, 4, 3);
             ItemRarityLB.Name = "ItemRarityLB";
-            ItemRarityLB.Size = new Size(275, 484);
+            ItemRarityLB.SelectionMode = SelectionMode.MultiExtended;
+            ItemRarityLB.Size = new Size(275, 404);
             ItemRarityLB.TabIndex = 4;
             ItemRarityLB.DrawItem += listBox_DrawItem;
             // 
@@ -131,6 +177,7 @@
             ItemRequirementNUD.Tag = "Weight";
             ItemRequirementNUD.TextAlign = HorizontalAlignment.Center;
             ItemRequirementNUD.Visible = false;
+            ItemRequirementNUD.ValueChanged += ItemRequirementNUD_ValueChanged;
             // 
             // darkLabel1
             // 
@@ -152,7 +199,7 @@
             Controls.Add(groupBox75);
             ForeColor = SystemColors.Control;
             Name = "ExpansionHardlineItemRarityControl";
-            Size = new Size(296, 615);
+            Size = new Size(296, 605);
             groupBox75.ResumeLayout(false);
             groupBox75.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ItemRequirementNUD).EndInit();
@@ -162,12 +209,15 @@
         #endregion
 
         private GroupBox groupBox75;
-        private Button darkButton70;
-        private Button darkButton71;
         private Label darkLabel237;
         private ListBox ItemRarityLB;
         private ComboBox ItemRarityCB;
         private NumericUpDown ItemRequirementNUD;
         private Label darkLabel1;
+        private Button button1;
+        private ComboBox ItemRarityMoveToCB;
+        private Label label1;
+        private Button darkButton70;
+        private Button darkButton71;
     }
 }
