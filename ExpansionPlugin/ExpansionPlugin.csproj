@@ -22,10 +22,48 @@
   <ItemGroup>
     <None Remove="Classes\t4uf14p5.fd4~" />
     <None Remove="Expansion.png" />
+    <None Remove="Icons\Airdrop.png" />
+    <None Remove="Icons\Arrow.png" />
+    <None Remove="Icons\Bear.png" />
+    <None Remove="Icons\Boat.png" />
+    <None Remove="Icons\Car.png" />
+    <None Remove="Icons\Deliver.png" />
+    <None Remove="Icons\Exclamationmark.png" />
+    <None Remove="Icons\Fireplace.png" />
+    <None Remove="Icons\Fishing.png" />
+    <None Remove="Icons\Helicopter.png" />
+    <None Remove="Icons\Home.png" />
+    <None Remove="Icons\Human Skull.png" />
+    <None Remove="Icons\Mapmarker.png" />
+    <None Remove="Icons\Questionmark.png" />
+    <None Remove="Icons\Radiation.png" />
+    <None Remove="Icons\Skull 1.png" />
+    <None Remove="Icons\Skull 2.png" />
+    <None Remove="Icons\Skull.png" />
+    <None Remove="Icons\Trader.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Expansion.png" />
+    <EmbeddedResource Include="Icons\Airdrop.png" />
+    <EmbeddedResource Include="Icons\Arrow.png" />
+    <EmbeddedResource Include="Icons\Bear.png" />
+    <EmbeddedResource Include="Icons\Boat.png" />
+    <EmbeddedResource Include="Icons\Car.png" />
+    <EmbeddedResource Include="Icons\Deliver.png" />
+    <EmbeddedResource Include="Icons\Exclamationmark.png" />
+    <EmbeddedResource Include="Icons\Fireplace.png" />
+    <EmbeddedResource Include="Icons\Fishing.png" />
+    <EmbeddedResource Include="Icons\Helicopter.png" />
+    <EmbeddedResource Include="Icons\Home.png" />
+    <EmbeddedResource Include="Icons\Human Skull.png" />
+    <EmbeddedResource Include="Icons\Mapmarker.png" />
+    <EmbeddedResource Include="Icons\Questionmark.png" />
+    <EmbeddedResource Include="Icons\Radiation.png" />
+    <EmbeddedResource Include="Icons\Skull 1.png" />
+    <EmbeddedResource Include="Icons\Skull 2.png" />
+    <EmbeddedResource Include="Icons\Skull.png" />
+    <EmbeddedResource Include="Icons\Trader.png" />
   </ItemGroup>
 
   <ItemGroup>

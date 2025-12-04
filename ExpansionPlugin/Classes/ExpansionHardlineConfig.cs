@@ -75,95 +75,59 @@ namespace ExpansionPlugin
             return isDirty;
         }
         //Additional Functions
+
         public void ConvertDictionarytoLevels()
         {
-            List<string> InitialPoorItems = new List<string>();
-            List<string> InitialCommonItems = new List<string>();
-            List<string> InitialUncommonItems = new List<string>();
-            List<string> InitialRareItems = new List<string>();
-            List<string> InitialEpicItems = new List<string>();
-            List<string> InitialLegendaryItems = new List<string>();
-            List<string> InitialMythicItems = new List<string>();
-            List<string> InitialExoticItems = new List<string>();
-            List<string> InitialQuestItems = new List<string>();
-            List<string> InitialCollectableItems = new List<string>();
-            List<string> InitialIngredientItems = new List<string>();
+            var rarityBuckets = Enum.GetValues(typeof(ExpansionHardlineItemRarity))
+                .Cast<ExpansionHardlineItemRarity>()
+                .ToDictionary(r => r, r => new List<string>());
 
             if (Data.ItemRarity == null)
                 Data.ItemRarity = new Dictionary<string, int>();
 
-            foreach (KeyValuePair<string, int> item in Data.ItemRarity)
+            foreach (var item in Data.ItemRarity)
             {
-                string useitem = item.Key;
-                if (useitem != useitem.ToLower())
-                {
-                    useitem = useitem.ToLower();
-                    isDirty = true;
-                }
+                string useItem = item.Key.ToLower();
+                if (item.Key != useItem) isDirty = true;
 
-                switch (item.Value)
+                ExpansionHardlineItemRarity rarity = (ExpansionHardlineItemRarity)item.Value;
+                if (rarityBuckets.ContainsKey(rarity))
                 {
-                    case 1:
-                        InitialPoorItems.Add(useitem);
-                        break;
-                    case 2:
-                        InitialCommonItems.Add(useitem);
-                        break;
-                    case 3:
-                        InitialUncommonItems.Add(useitem);
-                        break;
-                    case 4:
-                        InitialRareItems.Add(useitem);
-                        break;
-                    case 5:
-                        InitialEpicItems.Add(useitem);
-                        break;
-                    case 6:
-                        InitialLegendaryItems.Add(useitem);
-                        break;
-                    case 7:
-                        InitialMythicItems.Add(useitem);
-                        break;
-                    case 8:
-                        InitialExoticItems.Add(useitem);
-                        break;
-                    case 9:
-                        InitialQuestItems.Add(useitem);
-                        break;
-                    case 10:
-                        InitialCollectableItems.Add(useitem);
-                        break;
-                    case 11:
-                        InitialIngredientItems.Add(useitem);
-                        break;
-
+                    rarityBuckets[rarity].Add(useItem);
                 }
             }
 
-            InitialPoorItems.Sort();
-            InitialCommonItems.Sort();
-            InitialUncommonItems.Sort();
-            InitialRareItems.Sort();
-            InitialEpicItems.Sort();
-            InitialLegendaryItems.Sort();
-            InitialMythicItems.Sort();
-            InitialExoticItems.Sort();
-            InitialQuestItems.Sort();
-            InitialCollectableItems.Sort();
-            InitialIngredientItems.Sort();
+            foreach (TypesFile ft in AppServices.GetRequired<EconomyManager>().TypesConfig.AllData)
+            {
+                foreach (TypeEntry type in ft.Data.TypeList)
+                {
+                    string itemName = type.Name.ToLower();
+                    if (!Data.ItemRarity.ContainsKey(itemName))
+                    {
+                        rarityBuckets[ExpansionHardlineItemRarity.NONE].Add(itemName);
+                    }
+                }
+            }
 
-            Data.PoorItems = new BindingList<string>(InitialPoorItems);
-            Data.CommonItems = new BindingList<string>(InitialCommonItems);
-            Data.UncommonItems = new BindingList<string>(InitialUncommonItems);
-            Data.RareItems = new BindingList<string>(InitialRareItems);
-            Data.EpicItems = new BindingList<string>(InitialEpicItems);
-            Data.LegendaryItems = new BindingList<string>(InitialLegendaryItems);
-            Data.MythicItems = new BindingList<string>(InitialMythicItems);
-            Data.ExoticItems = new BindingList<string>(InitialExoticItems);
-            Data.QuestItems = new BindingList<string>(InitialQuestItems);
-            Data.CollectableItems = new BindingList<string>(InitialCollectableItems);
-            Data.IngredientItems = new BindingList<string>(InitialIngredientItems);
+            foreach (var rarity in rarityBuckets.Keys)
+            {
+                rarityBuckets[rarity].Sort();
+            }
+
+            Data.NoneItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.NONE]);
+            Data.PoorItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Poor]);
+            Data.CommonItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Common]);
+            Data.UncommonItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Uncommon]);
+            Data.RareItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Rare]);
+            Data.EpicItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Epic]);
+            Data.LegendaryItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Legendary]);
+            Data.MythicItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Mythic]);
+            Data.ExoticItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Exotic]);
+            Data.QuestItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Quest]);
+            Data.CollectableItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Collectable]);
+            Data.IngredientItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Ingredient]);
         }
+
         public void convertliststoDict()
         {
             Data.ItemRarity = new Dictionary<string, int>();
@@ -232,115 +196,7 @@ namespace ExpansionPlugin
                 Data.EntityReputation.Add(item.Classname, item.Level);
             }
         }
-        public BindingList<string> getlist(string type)
-        {
-            switch (type)
-            {
-                case "Poor":
-                    return Data.PoorItems;
-                case "Common":
-                    return Data.CommonItems;
-                case "Uncommon":
-                    return Data.UncommonItems;
-                case "Rare":
-                    return Data.RareItems;
-                case "Epic":
-                    return Data.EpicItems;
-                case "Legendary":
-                    return Data.LegendaryItems;
-                case "Mythic":
-                    return Data.MythicItems;
-                case "Exotic":
-                    return Data.ExoticItems;
-                case "Quest":
-                    return Data.QuestItems;
-                case "Collectable":
-                    return Data.CollectableItems;
-                case "Ingredient":
-                    return Data.IngredientItems;
-            }
-            return new BindingList<string>();
-        }
-        public string GetListfromitem(string item)
-        {
-            if (Data.PoorItems.Contains(item))
-                return "Poor";
-            if (Data.CommonItems.Contains(item))
-                return "Common";
-            if (Data.UncommonItems.Contains(item))
-                return "Uncommon";
-            if (Data.RareItems.Contains(item))
-                return "Rare";
-            if (Data.EpicItems.Contains(item))
-                return "Epic";
-            if (Data.LegendaryItems.Contains(item))
-                return "Legendary";
-            if (Data.MythicItems.Contains(item))
-                return "Mythic";
-            if (Data.ExoticItems.Contains(item))
-                return "Exotic";
-            if (Data.QuestItems.Contains(item))
-                return "Quest";
-            if (Data.CollectableItems.Contains(item))
-                return "Collectable";
-            if (Data.IngredientItems.Contains(item))
-                return "Ingredient";
-            return "none";
 
-        }
-        public int? getRequirment(string type)
-        {
-            switch (type)
-            {
-                case "Poor":
-                    return Data.PoorItemRequirement;
-                case "Common":
-                    return Data.CommonItemRequirement;
-                case "Uncommon":
-                    return Data.UncommonItemRequirement;
-                case "Rare":
-                    return Data.RareItemRequirement;
-                case "Epic":
-                    return Data.EpicItemRequirement;
-                case "Legendary":
-                    return Data.LegendaryItemRequirement;
-                case "Mythic":
-                    return Data.MythicItemRequirement;
-                case "Exotic":
-                    return Data.ExoticItemRequirement;
-            }
-            return 0;
-        }
-        public void SetRequirment(string type, int value)
-        {
-            switch (type)
-            {
-                case "Poor":
-                    Data.PoorItemRequirement = value;
-                    break;
-                case "Common":
-                    Data.CommonItemRequirement = value;
-                    break;
-                case "Uncommon":
-                    Data.UncommonItemRequirement = value;
-                    break;
-                case "Rare":
-                    Data.RareItemRequirement = value;
-                    break;
-                case "Epic":
-                    Data.EpicItemRequirement = value;
-                    break;
-                case "Legendary":
-                    Data.LegendaryItemRequirement = value;
-                    break;
-                case "Mythic":
-                    Data.MythicItemRequirement = value;
-                    break;
-                case "Exotic":
-                    Data.ExoticItemRequirement = value;
-                    break;
-            }
-        }
     }
     public class ExpansionHardlineSettings
     {
@@ -368,6 +224,8 @@ namespace ExpansionPlugin
         public Dictionary<string, int> EntityReputation { get; set; }
         public Dictionary<string, int> ItemRarity { get; set; }
 
+        [JsonIgnore]
+        public BindingList<string> NoneItems { get; set; }
         [JsonIgnore]
         public BindingList<string> PoorItems { get; set; }
         [JsonIgnore]
@@ -2075,6 +1933,8 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+
+        
     }
     public class EntityReputationlevels
     {
