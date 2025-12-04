@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -357,6 +358,10 @@ namespace ExpansionPlugin
                 ["MapSettings"] = (node,selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapMapControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
+                },
+                ["PersonalMarkerSettings"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionMapPersonalMarkersControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
             };
         }
@@ -2017,11 +2022,34 @@ namespace ExpansionPlugin
                 _mapControl.RegisterDrawable(marker);
             }
         }
-        private void DrawbaseServerMarkerData(ExpansionMapConfig expansionMapConfig)
+        private void DrawbaseServerMarkerData(ExpansionMapConfig ExpansionMapConfig)
         {
-            
+            foreach (ExpansionServerMarkerData ExpansionServerMarkerData in ExpansionMapConfig.Data.ServerMarkers)
+            {
+                var marker = new MarkerIconDrawable(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]), _mapControl.MapSize)
+                {
+                    Image = GetIcon(ExpansionServerMarkerData)
+                };
+                _mapControl.RegisterDrawable(marker);
+            }
         }
-
+        private Image GetIcon(ExpansionServerMarkerData ExpansionServerMarkerData)
+        {
+            var resourceName = $"ExpansionPlugin.Icons.{ExpansionServerMarkerData.m_IconName}.png";
+            var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
+            if (stream != null)
+            {
+                Bitmap image = new Bitmap(Image.FromStream(stream));
+                Image image2 = ResourceHelper.MultiplyColorToBitmap(image, Color.FromArgb((int)ExpansionServerMarkerData.m_Color), 200, true);
+                Image image3 = resizeImage(image2, new Size(30, 30));
+               return image3;
+            }
+            return null;
+        }
+        public static Image resizeImage(Image imgToResize, Size size)
+        {
+            return (Image)(new Bitmap(imgToResize, size));
+        }
         //map click methods
         private void MapControl_BuildZoneSingleclicked(object sender, MapClickEventArgs e)
         {

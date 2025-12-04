@@ -29,12 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form4));
-            groupBox21 = new GroupBox();
-            NeedPenItemForCreateMarkerCB = new CheckBox();
-            CanCreateMarkerCB = new CheckBox();
-            ShowDistanceOnPersonalMarkersCB = new CheckBox();
-            CanCreate3DMarkerCB = new CheckBox();
-            NeedGPSItemForCreateMarkerCB = new CheckBox();
             groupBox20 = new GroupBox();
             EnableServerMarkersCB = new CheckBox();
             ShowDistanceOnServerMarkersCB = new CheckBox();
@@ -67,7 +61,6 @@
             numericUpDown24 = new NumericUpDown();
             numericUpDown25 = new NumericUpDown();
             numericUpDown26 = new NumericUpDown();
-            groupBox21.SuspendLayout();
             groupBox20.SuspendLayout();
             groupBox18.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
@@ -78,88 +71,6 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown25).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown26).BeginInit();
             SuspendLayout();
-            // 
-            // groupBox21
-            // 
-            groupBox21.Controls.Add(NeedPenItemForCreateMarkerCB);
-            groupBox21.Controls.Add(CanCreateMarkerCB);
-            groupBox21.Controls.Add(ShowDistanceOnPersonalMarkersCB);
-            groupBox21.Controls.Add(CanCreate3DMarkerCB);
-            groupBox21.Controls.Add(NeedGPSItemForCreateMarkerCB);
-            groupBox21.ForeColor = SystemColors.Control;
-            groupBox21.Location = new Point(13, 14);
-            groupBox21.Margin = new Padding(4, 3, 4, 3);
-            groupBox21.Name = "groupBox21";
-            groupBox21.Padding = new Padding(4, 3, 4, 3);
-            groupBox21.Size = new Size(260, 145);
-            groupBox21.TabIndex = 7;
-            groupBox21.TabStop = false;
-            groupBox21.Text = "Personal Markers";
-            // 
-            // NeedPenItemForCreateMarkerCB
-            // 
-            NeedPenItemForCreateMarkerCB.AutoSize = true;
-            NeedPenItemForCreateMarkerCB.ForeColor = SystemColors.Control;
-            NeedPenItemForCreateMarkerCB.Location = new Point(12, 67);
-            NeedPenItemForCreateMarkerCB.Margin = new Padding(4, 3, 4, 3);
-            NeedPenItemForCreateMarkerCB.Name = "NeedPenItemForCreateMarkerCB";
-            NeedPenItemForCreateMarkerCB.Size = new Size(201, 19);
-            NeedPenItemForCreateMarkerCB.TabIndex = 2;
-            NeedPenItemForCreateMarkerCB.Text = "Need Pen Item For Create Marker";
-            NeedPenItemForCreateMarkerCB.TextAlign = ContentAlignment.MiddleRight;
-            NeedPenItemForCreateMarkerCB.UseVisualStyleBackColor = true;
-            // 
-            // CanCreateMarkerCB
-            // 
-            CanCreateMarkerCB.AutoSize = true;
-            CanCreateMarkerCB.ForeColor = SystemColors.Control;
-            CanCreateMarkerCB.Location = new Point(12, 21);
-            CanCreateMarkerCB.Margin = new Padding(4, 3, 4, 3);
-            CanCreateMarkerCB.Name = "CanCreateMarkerCB";
-            CanCreateMarkerCB.Size = new Size(124, 19);
-            CanCreateMarkerCB.TabIndex = 0;
-            CanCreateMarkerCB.Text = "Can Create Marker";
-            CanCreateMarkerCB.TextAlign = ContentAlignment.MiddleRight;
-            CanCreateMarkerCB.UseVisualStyleBackColor = true;
-            // 
-            // ShowDistanceOnPersonalMarkersCB
-            // 
-            ShowDistanceOnPersonalMarkersCB.AutoSize = true;
-            ShowDistanceOnPersonalMarkersCB.ForeColor = SystemColors.Control;
-            ShowDistanceOnPersonalMarkersCB.Location = new Point(12, 114);
-            ShowDistanceOnPersonalMarkersCB.Margin = new Padding(4, 3, 4, 3);
-            ShowDistanceOnPersonalMarkersCB.Name = "ShowDistanceOnPersonalMarkersCB";
-            ShowDistanceOnPersonalMarkersCB.Size = new Size(215, 19);
-            ShowDistanceOnPersonalMarkersCB.TabIndex = 4;
-            ShowDistanceOnPersonalMarkersCB.Text = "Show Distance On Personal Markers";
-            ShowDistanceOnPersonalMarkersCB.TextAlign = ContentAlignment.MiddleRight;
-            ShowDistanceOnPersonalMarkersCB.UseVisualStyleBackColor = true;
-            // 
-            // CanCreate3DMarkerCB
-            // 
-            CanCreate3DMarkerCB.AutoSize = true;
-            CanCreate3DMarkerCB.ForeColor = SystemColors.Control;
-            CanCreate3DMarkerCB.Location = new Point(12, 44);
-            CanCreate3DMarkerCB.Margin = new Padding(4, 3, 4, 3);
-            CanCreate3DMarkerCB.Name = "CanCreate3DMarkerCB";
-            CanCreate3DMarkerCB.Size = new Size(141, 19);
-            CanCreate3DMarkerCB.TabIndex = 1;
-            CanCreate3DMarkerCB.Text = "Can Create 3D Marker";
-            CanCreate3DMarkerCB.TextAlign = ContentAlignment.MiddleCenter;
-            CanCreate3DMarkerCB.UseVisualStyleBackColor = true;
-            // 
-            // NeedGPSItemForCreateMarkerCB
-            // 
-            NeedGPSItemForCreateMarkerCB.AutoSize = true;
-            NeedGPSItemForCreateMarkerCB.ForeColor = SystemColors.Control;
-            NeedGPSItemForCreateMarkerCB.Location = new Point(12, 91);
-            NeedGPSItemForCreateMarkerCB.Margin = new Padding(4, 3, 4, 3);
-            NeedGPSItemForCreateMarkerCB.Name = "NeedGPSItemForCreateMarkerCB";
-            NeedGPSItemForCreateMarkerCB.Size = new Size(202, 19);
-            NeedGPSItemForCreateMarkerCB.TabIndex = 3;
-            NeedGPSItemForCreateMarkerCB.Text = "Need GPS Item For Create Marker";
-            NeedGPSItemForCreateMarkerCB.TextAlign = ContentAlignment.MiddleRight;
-            NeedGPSItemForCreateMarkerCB.UseVisualStyleBackColor = true;
             // 
             // groupBox20
             // 
@@ -573,7 +484,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1195, 770);
-            Controls.Add(groupBox21);
             Controls.Add(groupBox20);
             Controls.Add(groupBox18);
             Controls.Add(groupBox17);
@@ -581,8 +491,6 @@
             Margin = new Padding(4, 3, 4, 3);
             Name = "Form4";
             Text = "Form4";
-            groupBox21.ResumeLayout(false);
-            groupBox21.PerformLayout();
             groupBox20.ResumeLayout(false);
             groupBox20.PerformLayout();
             groupBox18.ResumeLayout(false);
@@ -600,13 +508,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox groupBox21;
-        private System.Windows.Forms.CheckBox NeedPenItemForCreateMarkerCB;
-        private System.Windows.Forms.CheckBox CanCreateMarkerCB;
-        private System.Windows.Forms.CheckBox ShowDistanceOnPersonalMarkersCB;
-        private System.Windows.Forms.CheckBox CanCreate3DMarkerCB;
-        private System.Windows.Forms.CheckBox NeedGPSItemForCreateMarkerCB;
         private System.Windows.Forms.GroupBox groupBox20;
         private System.Windows.Forms.CheckBox EnableServerMarkersCB;
         private System.Windows.Forms.CheckBox ShowDistanceOnServerMarkersCB;

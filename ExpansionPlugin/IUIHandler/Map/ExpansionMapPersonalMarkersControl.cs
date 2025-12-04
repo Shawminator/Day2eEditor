@@ -11,7 +11,7 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionMapMapControl : UserControl, IUIHandler
+    public partial class ExpansionMapPersonalMarkersControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private ExpansionMapSettings _data;
@@ -19,7 +19,7 @@ namespace ExpansionPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionMapMapControl()
+        public ExpansionMapPersonalMarkersControl()
         {
             InitializeComponent();
         }
@@ -41,16 +41,11 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            EnableMapCB.Checked = _data.EnableMap == 1 ? true : false;
-            UseMapOnMapItemCB.Checked = _data.UseMapOnMapItem == 1 ? true : false;
-            ShowPlayerPositionCB.SelectedIndex = (int)_data.ShowPlayerPosition;
-            ShowMapStatsCB.Checked = _data.ShowMapStats == 1 ? true : false;
-            CanOpenMapWithKeyBindingCB.Checked = _data.CanOpenMapWithKeyBinding == 1 ? true : false;
-            EnableHUDGPSCB.Checked = _data.EnableHUDGPS == 1 ? true : false;
-            NeedGPSItemForKeyBindingCB.Checked = _data.NeedGPSItemForKeyBinding == 1 ? true : false;
-            NeedMapItemForKeyBindingCB.Checked = _data.NeedMapItemForKeyBinding == 1 ? true : false;
-            CreateDeathMarkerCB.Checked = _data.CreateDeathMarker == 1 ? true : false;
-            PlayerLocationNotifierCB.Checked = _data.PlayerLocationNotifier == 1 ? true : false;
+            NeedPenItemForCreateMarkerCB.Checked = _data.NeedPenItemForCreateMarker == 1 ? true : false;
+            NeedGPSItemForCreateMarkerCB.Checked = _data.NeedGPSItemForCreateMarker == 1 ? true : false;
+            CanCreateMarkerCB.Checked = _data.CanCreateMarker == 1 ? true : false;
+            CanCreate3DMarkerCB.Checked = _data.CanCreate3DMarker == 1 ? true : false;
+            ShowDistanceOnPersonalMarkersCB.Checked = _data.ShowDistanceOnPersonalMarkers == 1 ? true : false;
 
             _suppressEvents = false;
         }
@@ -89,6 +84,7 @@ namespace ExpansionPlugin
         /// <summary>
         /// Clones the data for reset purposes
         /// </summary>
+
         private ExpansionMapSettings CloneData(ExpansionMapSettings data)
         {
             if (data == null)
@@ -155,6 +151,7 @@ namespace ExpansionPlugin
             };
         }
 
+
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
@@ -168,73 +165,38 @@ namespace ExpansionPlugin
 
         #endregion
 
-        private void EnableMapCB_CheckedChanged(object sender, EventArgs e)
+        private void CanCreateMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableMap = EnableMapCB.Checked == true ? 1 : 0;
+            _data.CanCreateMarker = CanCreateMarkerCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void EnableHUDGPSCB_CheckedChanged(object sender, EventArgs e)
+        private void NeedGPSItemForCreateMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.EnableHUDGPS = EnableHUDGPSCB.Checked == true ? 1 : 0;
+            _data.NeedGPSItemForCreateMarker = NeedGPSItemForCreateMarkerCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void ShowPlayerPositionCB_SelectedIndexChanged(object sender, EventArgs e)
+        private void CanCreate3DMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.ShowPlayerPosition = ShowPlayerPositionCB.SelectedIndex;
+            _data.CanCreate3DMarker = CanCreate3DMarkerCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void UseMapOnMapItemCB_CheckedChanged(object sender, EventArgs e)
+        private void ShowDistanceOnPersonalMarkersCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.UseMapOnMapItem = UseMapOnMapItemCB.Checked == true ? 1 : 0;
+            _data.ShowDistanceOnPersonalMarkers = ShowDistanceOnPersonalMarkersCB.Checked == true ? 1 : 0;
             HasChanges();
         }
 
-        private void CanOpenMapWithKeyBindingCB_CheckedChanged(object sender, EventArgs e)
+        private void NeedPenItemForCreateMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.CanOpenMapWithKeyBinding = CanOpenMapWithKeyBindingCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-
-        private void NeedMapItemForKeyBindingCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.NeedMapItemForKeyBinding = NeedMapItemForKeyBindingCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-
-        private void NeedGPSItemForKeyBindingCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.NeedGPSItemForKeyBinding = NeedGPSItemForKeyBindingCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-
-        private void CreateDeathMarkerCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.CreateDeathMarker = CreateDeathMarkerCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-
-        private void ShowMapStatsCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.ShowMapStats = ShowMapStatsCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-
-        private void PlayerLocationNotifierCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.PlayerLocationNotifier = PlayerLocationNotifierCB.Checked == true ? 1 : 0;
+            _data.NeedPenItemForCreateMarker = NeedPenItemForCreateMarkerCB.Checked == true ? 1 : 0;
             HasChanges();
         }
     }

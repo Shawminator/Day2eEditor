@@ -40,28 +40,21 @@
             EnableItemRarityCB = new CheckBox();
             UseReputationCB = new CheckBox();
             ShowHardlineHUDCB = new CheckBox();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             groupBox72.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox72
             // 
-            groupBox72.Controls.Add(ItemRarityParentSearchCB);
-            groupBox72.Controls.Add(DefaultItemRarityCB);
-            groupBox72.Controls.Add(darkLabel230);
-            groupBox72.Controls.Add(UseItemRarityOnInventoryIconsCB);
-            groupBox72.Controls.Add(EnableFactionPersistenceCB);
-            groupBox72.Controls.Add(UseFactionReputationCB);
-            groupBox72.Controls.Add(UseItemRarityForMarketPurchaseNCB);
-            groupBox72.Controls.Add(UseItemRarityForMarketSellCB);
-            groupBox72.Controls.Add(EnableItemRarityCB);
-            groupBox72.Controls.Add(UseReputationCB);
-            groupBox72.Controls.Add(ShowHardlineHUDCB);
+            groupBox72.Controls.Add(flowLayoutPanel1);
+            groupBox72.Dock = DockStyle.Fill;
             groupBox72.ForeColor = SystemColors.Control;
             groupBox72.Location = new Point(0, 0);
             groupBox72.Margin = new Padding(4, 3, 4, 3);
             groupBox72.Name = "groupBox72";
             groupBox72.Padding = new Padding(4, 3, 4, 3);
-            groupBox72.Size = new Size(292, 305);
+            groupBox72.Size = new Size(266, 297);
             groupBox72.TabIndex = 21;
             groupBox72.TabStop = false;
             groupBox72.Text = "General";
@@ -69,7 +62,7 @@
             // ItemRarityParentSearchCB
             // 
             ItemRarityParentSearchCB.AutoSize = true;
-            ItemRarityParentSearchCB.Location = new Point(23, 268);
+            ItemRarityParentSearchCB.Location = new Point(4, 203);
             ItemRarityParentSearchCB.Margin = new Padding(4, 3, 4, 3);
             ItemRarityParentSearchCB.Name = "ItemRarityParentSearchCB";
             ItemRarityParentSearchCB.Size = new Size(158, 19);
@@ -81,7 +74,7 @@
             // DefaultItemRarityCB
             // 
             DefaultItemRarityCB.FormattingEnabled = true;
-            DefaultItemRarityCB.Location = new Point(22, 239);
+            DefaultItemRarityCB.Location = new Point(4, 243);
             DefaultItemRarityCB.Margin = new Padding(4, 3, 4, 3);
             DefaultItemRarityCB.Name = "DefaultItemRarityCB";
             DefaultItemRarityCB.Size = new Size(239, 23);
@@ -92,7 +85,7 @@
             // 
             darkLabel230.AutoSize = true;
             darkLabel230.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel230.Location = new Point(23, 220);
+            darkLabel230.Location = new Point(4, 225);
             darkLabel230.Margin = new Padding(4, 0, 4, 0);
             darkLabel230.Name = "darkLabel230";
             darkLabel230.Size = new Size(105, 15);
@@ -103,7 +96,7 @@
             // UseItemRarityOnInventoryIconsCB
             // 
             UseItemRarityOnInventoryIconsCB.AutoSize = true;
-            UseItemRarityOnInventoryIconsCB.Location = new Point(23, 98);
+            UseItemRarityOnInventoryIconsCB.Location = new Point(4, 178);
             UseItemRarityOnInventoryIconsCB.Margin = new Padding(4, 3, 4, 3);
             UseItemRarityOnInventoryIconsCB.Name = "UseItemRarityOnInventoryIconsCB";
             UseItemRarityOnInventoryIconsCB.Size = new Size(208, 19);
@@ -115,7 +108,7 @@
             // EnableFactionPersistenceCB
             // 
             EnableFactionPersistenceCB.AutoSize = true;
-            EnableFactionPersistenceCB.Location = new Point(23, 198);
+            EnableFactionPersistenceCB.Location = new Point(4, 153);
             EnableFactionPersistenceCB.Margin = new Padding(4, 3, 4, 3);
             EnableFactionPersistenceCB.Name = "EnableFactionPersistenceCB";
             EnableFactionPersistenceCB.Size = new Size(165, 19);
@@ -127,7 +120,7 @@
             // UseFactionReputationCB
             // 
             UseFactionReputationCB.AutoSize = true;
-            UseFactionReputationCB.Location = new Point(23, 173);
+            UseFactionReputationCB.Location = new Point(4, 128);
             UseFactionReputationCB.Margin = new Padding(4, 3, 4, 3);
             UseFactionReputationCB.Name = "UseFactionReputationCB";
             UseFactionReputationCB.Size = new Size(148, 19);
@@ -139,7 +132,7 @@
             // UseItemRarityForMarketPurchaseNCB
             // 
             UseItemRarityForMarketPurchaseNCB.AutoSize = true;
-            UseItemRarityForMarketPurchaseNCB.Location = new Point(23, 123);
+            UseItemRarityForMarketPurchaseNCB.Location = new Point(4, 103);
             UseItemRarityForMarketPurchaseNCB.Margin = new Padding(4, 3, 4, 3);
             UseItemRarityForMarketPurchaseNCB.Name = "UseItemRarityForMarketPurchaseNCB";
             UseItemRarityForMarketPurchaseNCB.Size = new Size(216, 19);
@@ -151,7 +144,7 @@
             // UseItemRarityForMarketSellCB
             // 
             UseItemRarityForMarketSellCB.AutoSize = true;
-            UseItemRarityForMarketSellCB.Location = new Point(23, 148);
+            UseItemRarityForMarketSellCB.Location = new Point(4, 78);
             UseItemRarityForMarketSellCB.Margin = new Padding(4, 3, 4, 3);
             UseItemRarityForMarketSellCB.Name = "UseItemRarityForMarketSellCB";
             UseItemRarityForMarketSellCB.Size = new Size(186, 19);
@@ -163,7 +156,7 @@
             // EnableItemRarityCB
             // 
             EnableItemRarityCB.AutoSize = true;
-            EnableItemRarityCB.Location = new Point(23, 73);
+            EnableItemRarityCB.Location = new Point(4, 53);
             EnableItemRarityCB.Margin = new Padding(4, 3, 4, 3);
             EnableItemRarityCB.Name = "EnableItemRarityCB";
             EnableItemRarityCB.Size = new Size(121, 19);
@@ -175,7 +168,7 @@
             // UseReputationCB
             // 
             UseReputationCB.AutoSize = true;
-            UseReputationCB.Location = new Point(23, 48);
+            UseReputationCB.Location = new Point(4, 28);
             UseReputationCB.Margin = new Padding(4, 3, 4, 3);
             UseReputationCB.Name = "UseReputationCB";
             UseReputationCB.Size = new Size(106, 19);
@@ -187,7 +180,7 @@
             // ShowHardlineHUDCB
             // 
             ShowHardlineHUDCB.AutoSize = true;
-            ShowHardlineHUDCB.Location = new Point(23, 23);
+            ShowHardlineHUDCB.Location = new Point(4, 3);
             ShowHardlineHUDCB.Margin = new Padding(4, 3, 4, 3);
             ShowHardlineHUDCB.Name = "ShowHardlineHUDCB";
             ShowHardlineHUDCB.Size = new Size(131, 19);
@@ -195,6 +188,26 @@
             ShowHardlineHUDCB.Text = "Show Hardline HUD";
             ShowHardlineHUDCB.UseVisualStyleBackColor = true;
             ShowHardlineHUDCB.CheckedChanged += ShowHardlineHUDCB_CheckedChanged;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Controls.Add(ShowHardlineHUDCB);
+            flowLayoutPanel1.Controls.Add(UseReputationCB);
+            flowLayoutPanel1.Controls.Add(EnableItemRarityCB);
+            flowLayoutPanel1.Controls.Add(UseItemRarityForMarketSellCB);
+            flowLayoutPanel1.Controls.Add(UseItemRarityForMarketPurchaseNCB);
+            flowLayoutPanel1.Controls.Add(UseFactionReputationCB);
+            flowLayoutPanel1.Controls.Add(EnableFactionPersistenceCB);
+            flowLayoutPanel1.Controls.Add(UseItemRarityOnInventoryIconsCB);
+            flowLayoutPanel1.Controls.Add(ItemRarityParentSearchCB);
+            flowLayoutPanel1.Controls.Add(darkLabel230);
+            flowLayoutPanel1.Controls.Add(DefaultItemRarityCB);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanel1.Location = new Point(4, 19);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(258, 275);
+            flowLayoutPanel1.TabIndex = 11;
             // 
             // ExpansionHardlineGneralControl
             // 
@@ -204,9 +217,10 @@
             Controls.Add(groupBox72);
             ForeColor = SystemColors.Control;
             Name = "ExpansionHardlineGneralControl";
-            Size = new Size(292, 305);
+            Size = new Size(266, 297);
             groupBox72.ResumeLayout(false);
-            groupBox72.PerformLayout();
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -224,5 +238,6 @@
         private CheckBox EnableItemRarityCB;
         private CheckBox UseReputationCB;
         private CheckBox ShowHardlineHUDCB;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }
