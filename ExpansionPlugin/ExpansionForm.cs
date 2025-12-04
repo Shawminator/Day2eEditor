@@ -2935,7 +2935,66 @@ namespace ExpansionPlugin
         }
         private void addUnitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            List<string> classNames = new List<string>
+            {
+                "eAI_SurvivorM_Mirek",
+                "eAI_SurvivorM_Denis",
+                "eAI_SurvivorM_Boris",
+                "eAI_SurvivorM_Cyril",
+                "eAI_SurvivorM_Elias",
+                "eAI_SurvivorM_Francis",
+                "eAI_SurvivorM_Guo",
+                "eAI_SurvivorM_Hassan",
+                "eAI_SurvivorM_Indar",
+                "eAI_SurvivorM_Jose",
+                "eAI_SurvivorM_Kaito",
+                "eAI_SurvivorM_Lewis",
+                "eAI_SurvivorM_Manua",
+                "eAI_SurvivorM_Niki",
+                "eAI_SurvivorM_Oliver",
+                "eAI_SurvivorM_Peter",
+                "eAI_SurvivorM_Quinn",
+                "eAI_SurvivorM_Rolf",
+                "eAI_SurvivorM_Seth",
+                "eAI_SurvivorM_Taiki",
+                "eAI_SurvivorF_Linda",
+                "eAI_SurvivorF_Maria",
+                "eAI_SurvivorF_Frida",
+                "eAI_SurvivorF_Gabi",
+                "eAI_SurvivorF_Helga",
+                "eAI_SurvivorF_Irena",
+                "eAI_SurvivorF_Judy",
+                "eAI_SurvivorF_Keiko",
+                "eAI_SurvivorF_Eva",
+                "eAI_SurvivorF_Naomi",
+                "eAI_SurvivorF_Baty"
+            };
 
+
+
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            AddFromList form = new AddFromList();
+            form.TitleLable = "Add AI Unit, Delete accordingly";
+            form.List = classNames;
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.GetSelected;
+                foreach (string l in addedtypes)
+                {
+                    if (!ExpansionAIPatrol.Units.Contains(l))
+                    {
+                        ExpansionAIPatrol.Units.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "AIPatrolsUnit"
+                        });
+                    }
+                }
+                ExpansionAIPatrolConfig.isDirty = true;
+                currentTreeNode.Expand();
+            }
         }
         private void removeUnitToolStripMenuItem_Click(object sender, EventArgs e)
         {
