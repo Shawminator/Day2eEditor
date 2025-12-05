@@ -11,8 +11,6 @@ using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
