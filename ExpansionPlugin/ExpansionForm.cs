@@ -501,12 +501,19 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Damage
-                [typeof(ExplosiveProjectiles)] = NodeLabelEditEventArgs =>
+                [typeof(ExplosiveProjectiles)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeExplosiveProjectileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-                }
+                },
+                //Map
+                [typeof(ExpansionServerMarkerData)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeServerMarkerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
             // ----------------------
             // String handlers
@@ -751,7 +758,14 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeEntityWhitelistToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-                }
+                },
+                //Map
+                ["ServerMarkersSettings"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewServerMarkerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
         }
 
