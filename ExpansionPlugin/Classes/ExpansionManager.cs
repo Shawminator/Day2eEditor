@@ -543,7 +543,6 @@ namespace ExpansionPlugin
             "Battery Empty",
             "Clock Blank",
             "Expansion",
-            "Expansion B",
             "Expansion B/W"
         };
 

@@ -159,7 +159,8 @@ namespace ExpansionPlugin
 
         private void GetIcon()
         {
-            var resourceName = $"ExpansionPlugin.Icons.{_data.IconName}.png";
+            string iconname = _data.IconName.Replace("/","");
+            var resourceName = $"ExpansionPlugin.Icons.{iconname}.png";
             var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
             if (stream != null)
             {

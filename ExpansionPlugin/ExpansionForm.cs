@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
@@ -253,18 +254,13 @@ namespace ExpansionPlugin
                [typeof(ExpansionServerMarkerData)] = (node,selected) =>
                {
                    ExpansionServerMarkerData ExpansionServerMarkerData = node.Tag as ExpansionServerMarkerData;
-                   //var control = new ExpansionAINoGoAreaControl();
-                   //control.PositionChanged += (updatedPos) =>
-                   //{
-                   //    _mapControl.ClearDrawables(); ;
-                   //    DrawbaseAILocationNoGoAreas(node.FindParentOfType<ExpansionAILocationConfig>());
-                   //};
-                   //control.RadiusChanged += (updatedRadius) =>
-                   //{
-                   //    _mapControl.ClearDrawables(); ;
-                   //    DrawbaseAILocationNoGoAreas(node.FindParentOfType<ExpansionAILocationConfig>());
-                   //};
-                   //ShowHandler(control, typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, selected);
+                   var control = new ExpansionMapServerMarkerInfoControl();
+                   control.MarkerChanged += (updatedMarker) =>
+                   {
+                       _mapControl.ClearDrawables(); ;
+                       DrawbaseServerMarkerData(node.FindParentOfType<ExpansionMapConfig>());
+                   };
+                   ShowHandler(control, typeof(ExpansionMapConfig), ExpansionServerMarkerData, selected);
 
                    SetupMapServerMarkers(ExpansionServerMarkerData, node);
                    _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
@@ -362,6 +358,14 @@ namespace ExpansionPlugin
                 ["PersonalMarkerSettings"] = (node,selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapPersonalMarkersControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
+                },
+                ["CompassSettings"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionMapCompassControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
+                },
+                ["ServerMarkersSettings"] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionMapServerMarkerControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
             };
         }
@@ -2030,18 +2034,22 @@ namespace ExpansionPlugin
                 {
                     Image = GetIcon(ExpansionServerMarkerData)
                 };
+                if (_selectedServerMarkerData == ExpansionServerMarkerData)
+                {
+                    marker.IsSelected = true;
+                }
                 _mapControl.RegisterDrawable(marker);
             }
         }
         private Image GetIcon(ExpansionServerMarkerData ExpansionServerMarkerData)
         {
-            var resourceName = $"ExpansionPlugin.Icons.{ExpansionServerMarkerData.m_IconName}.png";
+            var resourceName = $"ExpansionPlugin.Icons.{ExpansionServerMarkerData.m_IconName}.png".Replace("/", "");
             var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
             if (stream != null)
             {
                 Bitmap image = new Bitmap(Image.FromStream(stream));
                 Image image2 = ResourceHelper.MultiplyColorToBitmap(image, Color.FromArgb((int)ExpansionServerMarkerData.m_Color), 200, true);
-                Image image3 = resizeImage(image2, new Size(30, 30));
+                Image image3 = resizeImage(image2, new Size(35, 35));
                return image3;
             }
             return null;
@@ -2314,7 +2322,7 @@ namespace ExpansionPlugin
 
             TreeNode parentNode = currentTreeNode.Parent;
 
-            ExpansionAINoGoArea closestPos = null;
+            ExpansionServerMarkerData closestPos = null;
             double closestDistance = double.MaxValue;
 
             PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
@@ -2322,10 +2330,10 @@ namespace ExpansionPlugin
             // Loop through all child nodes of the parent
             foreach (TreeNode child in parentNode.Nodes)
             {
-                if (child.Tag is ExpansionAINoGoArea pos)
+                if (child.Tag is ExpansionServerMarkerData pos)
                 {
                     // Node position in screen space
-                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos._Position.X, pos._Position.Z));
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos.m_Position[0], pos.m_Position[2]));
 
                     double dx = clickScreen.X - posScreen.X;
                     double dy = clickScreen.Y - posScreen.Y;
@@ -2340,7 +2348,7 @@ namespace ExpansionPlugin
             }
 
             // Optional: choose only if within some "click radius"
-            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            if (closestPos != null && closestDistance <= 30) // 10 units tolerance
             {
                 // Select that tree node in the TreeView
                 foreach (TreeNode child in parentNode.Nodes)
@@ -2357,22 +2365,22 @@ namespace ExpansionPlugin
         }
         private void MapControl_ServerMarkerDataDoubleclicked(object sender, MapClickEventArgs e)
         {
-            if (currentTreeNode.Tag is ExpansionAINoGoArea ExpansionAINoGoArea)
+            if (currentTreeNode.Tag is ExpansionServerMarkerData ExpansionServerMarkerData)
             {
-                ExpansionAINoGoArea._Position.X = (float)e.MapCoordinates.X;
-                ExpansionAINoGoArea._Position.Z = (float)e.MapCoordinates.Y;
+                ExpansionServerMarkerData.m_Position[0] = (float)e.MapCoordinates.X;
+                ExpansionServerMarkerData.m_Position[2] = (float)e.MapCoordinates.Y;
                 if (MapData.FileExists)
                 {
-                    ExpansionAINoGoArea._Position.Y = (MapData.gethieght(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z));
+                    ExpansionServerMarkerData.m_Position[1] = (MapData.gethieght(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
                 }
-                _expansionManager.ExpansionAILocationConfig.isDirty = true;
+                _expansionManager.ExpansionMapConfig.isDirty = true;
 
                 _mapControl.ClearDrawables();
 
-                ExpansionAILocationConfig ExpansionAILocationConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
-                ExpansionAILocationConfig.isDirty = true;
-                ShowHandler(new ExpansionAINoGoAreaControl(), typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, new List<TreeNode>() { currentTreeNode });
-                DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig);
+                ExpansionMapConfig ExpansionMapConfig = currentTreeNode.FindParentOfType<ExpansionMapConfig>();
+                ExpansionMapConfig.isDirty = true;
+                ShowHandler(new ExpansionMapServerMarkerInfoControl(), typeof(ExpansionMapConfig), ExpansionServerMarkerData, new List<TreeNode>() { currentTreeNode });
+                DrawbaseServerMarkerData(ExpansionMapConfig);
             }
         }
         #endregion mapstuff
