@@ -31,6 +31,9 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExpansionForm));
             panel1 = new Panel();
+            button3 = new Button();
+            button2 = new Button();
+            txtSearch = new TextBox();
             OpenFolderButton = new Button();
             SaveButton = new Button();
             splitContainer1 = new SplitContainer();
@@ -104,9 +107,8 @@
             removeExplosionTargetToolStripMenuItem = new ToolStripMenuItem();
             addNewExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
             removeExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
-            button3 = new Button();
-            button2 = new Button();
-            txtSearch = new TextBox();
+            addNewServerMarkerToolStripMenuItem = new ToolStripMenuItem();
+            removeServerMarkerToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -133,6 +135,37 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1192, 31);
             panel1.TabIndex = 6;
+            // 
+            // button3
+            // 
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Location = new Point(332, 4);
+            button3.Name = "button3";
+            button3.Size = new Size(56, 23);
+            button3.TabIndex = 9;
+            button3.Text = "Next";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button2
+            // 
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(284, 4);
+            button2.Name = "button2";
+            button2.Size = new Size(42, 23);
+            button2.TabIndex = 8;
+            button2.Text = "Find";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // txtSearch
+            // 
+            txtSearch.BackColor = Color.FromArgb(60, 63, 65);
+            txtSearch.ForeColor = SystemColors.Control;
+            txtSearch.Location = new Point(105, 4);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(173, 23);
+            txtSearch.TabIndex = 7;
             // 
             // OpenFolderButton
             // 
@@ -181,8 +214,10 @@
             // ExpansionTV
             // 
             ExpansionTV.BackColor = Color.FromArgb(60, 63, 65);
+            ExpansionTV.CollapseSelectedNodeOnly = true;
             ExpansionTV.Dock = DockStyle.Fill;
             ExpansionTV.ForeColor = SystemColors.Control;
+            ExpansionTV.HideSelection = false;
             ExpansionTV.LineColor = Color.FromArgb(240, 240, 240);
             ExpansionTV.Location = new Point(0, 0);
             ExpansionTV.Name = "ExpansionTV";
@@ -683,10 +718,10 @@
             // GarageCM
             // 
             GarageCM.BackColor = Color.FromArgb(60, 63, 65);
-            GarageCM.Items.AddRange(new ToolStripItem[] { addNewEntityWhitelistToolStripMenuItem, removeEntityWhitelistToolStripMenuItem });
+            GarageCM.Items.AddRange(new ToolStripItem[] { addNewEntityWhitelistToolStripMenuItem, removeEntityWhitelistToolStripMenuItem, addNewServerMarkerToolStripMenuItem, removeServerMarkerToolStripMenuItem });
             GarageCM.Name = "GarageCM";
             GarageCM.ShowImageMargin = false;
-            GarageCM.Size = new Size(181, 48);
+            GarageCM.Size = new Size(181, 114);
             // 
             // addNewEntityWhitelistToolStripMenuItem
             // 
@@ -744,36 +779,21 @@
             removeExplosiveProjectileToolStripMenuItem.Text = "Remove Explosive Projectile";
             removeExplosiveProjectileToolStripMenuItem.Click += removeExplosiveProjectileToolStripMenuItem_Click;
             // 
-            // button3
+            // addNewServerMarkerToolStripMenuItem
             // 
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(332, 4);
-            button3.Name = "button3";
-            button3.Size = new Size(56, 23);
-            button3.TabIndex = 9;
-            button3.Text = "Next";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            addNewServerMarkerToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewServerMarkerToolStripMenuItem.Name = "addNewServerMarkerToolStripMenuItem";
+            addNewServerMarkerToolStripMenuItem.Size = new Size(180, 22);
+            addNewServerMarkerToolStripMenuItem.Text = "Add New Server Marker";
+            addNewServerMarkerToolStripMenuItem.Click += addNewServerMarkerToolStripMenuItem_Click;
             // 
-            // button2
+            // removeServerMarkerToolStripMenuItem
             // 
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(284, 4);
-            button2.Name = "button2";
-            button2.Size = new Size(42, 23);
-            button2.TabIndex = 8;
-            button2.Text = "Find";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
-            // 
-            // txtSearch
-            // 
-            txtSearch.BackColor = Color.FromArgb(60, 63, 65);
-            txtSearch.ForeColor = SystemColors.Control;
-            txtSearch.Location = new Point(105, 4);
-            txtSearch.Name = "txtSearch";
-            txtSearch.Size = new Size(173, 23);
-            txtSearch.TabIndex = 7;
+            removeServerMarkerToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeServerMarkerToolStripMenuItem.Name = "removeServerMarkerToolStripMenuItem";
+            removeServerMarkerToolStripMenuItem.Size = new Size(180, 22);
+            removeServerMarkerToolStripMenuItem.Text = "Remove Server Marker";
+            removeServerMarkerToolStripMenuItem.Click += removeServerMarkerToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -885,5 +905,7 @@
         private Button button3;
         private Button button2;
         private TextBox txtSearch;
+        private ToolStripMenuItem addNewServerMarkerToolStripMenuItem;
+        private ToolStripMenuItem removeServerMarkerToolStripMenuItem;
     }
 }

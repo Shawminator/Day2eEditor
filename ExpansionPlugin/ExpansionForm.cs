@@ -237,32 +237,32 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionGeneralMappingControl(), typeof(ExpansionGeneralConfig), ExpansionMapping, selected);
                 },
                 //Hardline
-                [typeof(ExpansionHardlineSettings)] = (node,selected)=>
+                [typeof(ExpansionHardlineSettings)] = (node, selected) =>
                 {
                     ExpansionHardlineSettings ExpansionHardlineSettings = node.Tag as ExpansionHardlineSettings;
                     ShowHandler(new ExpansionHardlineGneralControl(), typeof(ExpansionHardlineConfig), ExpansionHardlineSettings, selected);
                 },
                 //Logs
-                [typeof(ExpansionLogsSettings)] = (node,selected) =>
+                [typeof(ExpansionLogsSettings)] = (node, selected) =>
                 {
                     ExpansionLogsSettings ExpansionLogsSettings = node.Tag as ExpansionLogsSettings;
                     ShowHandler(new ExpansionHardlineLogsControl(), typeof(ExpansionLogsConfig), ExpansionLogsSettings, selected);
                 },
                 //map
-               [typeof(ExpansionServerMarkerData)] = (node,selected) =>
-               {
-                   ExpansionServerMarkerData ExpansionServerMarkerData = node.Tag as ExpansionServerMarkerData;
-                   var control = new ExpansionMapServerMarkerInfoControl();
-                   control.MarkerChanged += (updatedMarker) =>
-                   {
-                       _mapControl.ClearDrawables(); ;
-                       DrawbaseServerMarkerData(node.FindParentOfType<ExpansionMapConfig>());
-                   };
-                   ShowHandler(control, typeof(ExpansionMapConfig), ExpansionServerMarkerData, selected);
+                [typeof(ExpansionServerMarkerData)] = (node, selected) =>
+                {
+                    ExpansionServerMarkerData ExpansionServerMarkerData = node.Tag as ExpansionServerMarkerData;
+                    var control = new ExpansionMapServerMarkerInfoControl();
+                    control.MarkerChanged += (updatedMarker) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseServerMarkerData(node.FindParentOfType<ExpansionMapConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionMapConfig), ExpansionServerMarkerData, selected);
 
-                   SetupMapServerMarkers(ExpansionServerMarkerData, node);
-                   _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
-               },
+                    SetupMapServerMarkers(ExpansionServerMarkerData, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
+                },
             };
             // ----------------------
             // String handlers
@@ -340,24 +340,24 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionGeneralHudColoursControl(), typeof(ExpansionGeneralConfig), _expansionManager.ExpansionGeneralConfig.Data, selected);
                 },
                 //Hardline
-                ["Reputation"] = (node,selected) =>
+                ["Reputation"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionHardlineReputationControl(), typeof(ExpansionHardlineConfig), _expansionManager.ExpansionHardlineConfig.Data, selected);
                 },
-                ["RequirementsandItemRarity"] = (node,selected) =>
+                ["RequirementsandItemRarity"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionHardlineItemRarityControl(), typeof(ExpansionHardlineConfig), _expansionManager.ExpansionHardlineConfig.Data, selected);
                 },
                 //Map
-                ["MapSettings"] = (node,selected) =>
+                ["MapSettings"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapMapControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
-                ["PersonalMarkerSettings"] = (node,selected) =>
+                ["PersonalMarkerSettings"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapPersonalMarkersControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
-                ["CompassSettings"] = (node,selected) =>
+                ["CompassSettings"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapCompassControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
@@ -1686,7 +1686,7 @@ namespace ExpansionPlugin
             {
                 Tag = "ServerMarkersSettings"
             };
-            foreach(ExpansionServerMarkerData smd in ef.Data.ServerMarkers)
+            foreach (ExpansionServerMarkerData smd in ef.Data.ServerMarkers)
             {
                 ServerMarkerNode.Nodes.Add(new TreeNode(smd.m_UID)
                 {
@@ -2048,7 +2048,7 @@ namespace ExpansionPlugin
                 Bitmap image = new Bitmap(Image.FromStream(stream));
                 Image image2 = ResourceHelper.MultiplyColorToBitmap(image, Color.FromArgb((int)ExpansionServerMarkerData.m_Color), 200, true);
                 Image image3 = resizeImage(image2, new Size(35, 35));
-               return image3;
+                return image3;
             }
             return null;
         }
@@ -3678,6 +3678,42 @@ namespace ExpansionPlugin
             currentTreeNode.Remove();
             _expansionManager.ExpansionGarageConfig.isDirty = true;
         }
+        //Map
+        private void addNewServerMarkerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionServerMarkerData newSM = new ExpansionServerMarkerData()
+            {
+                m_UID = "ServerMarker_New_Marker",
+                m_Visibility = 6,
+                m_Is3D = 1,
+                m_Text = "New Server Marker",
+                m_IconName = "Trader",
+                m_Color = -13710223,
+                m_Position = new float[]
+                    {
+                        pos,
+                        0,
+                        pos
+                    }
+            };
+            if (MapData.FileExists)
+            {
+                newSM.m_Position[1] = (MapData.gethieght(pos, pos));
+            }
+            _expansionManager.ExpansionMapConfig.Data.ServerMarkers.Add(newSM);
+            currentTreeNode.Nodes.Add(new TreeNode(newSM.m_UID)
+            {
+                Tag = newSM
+            });
+            _expansionManager.ExpansionMapConfig.isDirty = true;
+        }
+        private void removeServerMarkerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionMapConfig.Data.ServerMarkers.Remove(currentTreeNode.Tag as ExpansionServerMarkerData);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            _expansionManager.ExpansionMapConfig.isDirty = true;
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -3707,7 +3743,7 @@ namespace ExpansionPlugin
         {
             if (_searchResults.Count == 0) return;
 
-            
+
             _currentIndex++;
             if (_currentIndex >= _searchResults.Count)
             {
@@ -3734,6 +3770,8 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
+
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]
