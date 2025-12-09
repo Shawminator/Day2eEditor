@@ -38,7 +38,7 @@ namespace ExpansionPlugin
         public ExpansionHardlineConfig ExpansionHardlineConfig { get; set; }
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         public ExpansionMapConfig ExpansionMapConfig { get; set; }
-        //public MarketSettings marketsettings { get; set; }
+        public ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig { get; set; }
         //public ExpansionMissionSettings MissionSettings { get; set; }
         //public ExpansionMonitoringSettings MonitoringSettings { get; set; }
         //public ExpansionNameTagsSettings NameTagSettings { get; set; }
@@ -81,6 +81,7 @@ namespace ExpansionPlugin
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
             _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
             _paths["MapSettings"] = Path.Combine(basePath, "expansion", "settings", "MapSettings.json");
+            _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
 
             LoadFiles(basePath);
         }
@@ -136,6 +137,9 @@ namespace ExpansionPlugin
             ExpansionMapConfig = new ExpansionMapConfig(_paths["MapSettings"]);
             LoadConfigWithErrorReport("MapSettings", ExpansionMapConfig);
 
+            ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
+            LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -170,7 +174,8 @@ namespace ExpansionPlugin
                 ExpansionGeneralConfig,
                 ExpansionHardlineConfig,
                 ExpansionLogsConfig,
-                ExpansionMapConfig
+                ExpansionMapConfig,
+                ExpansionMarketSettingsConfig
 
             };
 
@@ -206,7 +211,8 @@ namespace ExpansionPlugin
                 ExpansionGeneralConfig,
                 ExpansionHardlineConfig,
                 ExpansionLogsConfig,
-                ExpansionMapConfig
+                ExpansionMapConfig,
+                ExpansionMarketSettingsConfig
             };
             foreach (var obj in configs)
             {

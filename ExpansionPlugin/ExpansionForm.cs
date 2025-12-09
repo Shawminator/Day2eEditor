@@ -949,6 +949,7 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMapConfig, CreateExpansionMapConfigNodes);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
 
             TreeNode AIrootNode = new TreeNode("AI")
             {
@@ -1716,6 +1717,119 @@ namespace ExpansionPlugin
             {
                 Tag = "CompassSettings"
             });
+        }
+        //Market
+        private TreeNode CreateExpansionMarketSettingsConfig(ExpansionMarketSettingsConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateMarketSettingsNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateMarketSettingsNodes(ExpansionMarketSettingsConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Market Menu Colors")
+            {
+                Tag = ef.Data.MarketMenuColors
+            });
+            TreeNode LargeVehiclenodes = new TreeNode("Large Vehicle")
+            {
+                Tag = "LargeVehicles"
+            };
+            foreach (string position in ef.Data.LargeVehicles)
+            {
+                LargeVehiclenodes.Nodes.Add(new TreeNode(position)
+                {
+                    Tag = "LargeVehicle"
+                });
+            }
+            EconomyRootNode.Nodes.Add(LargeVehiclenodes);
+            TreeNode Currenciesnodes = new TreeNode("Currencies")
+            {
+                Tag = "Currencies"
+            };
+            foreach (string position in ef.Data.Currencies)
+            {
+                Currenciesnodes.Nodes.Add(new TreeNode(position)
+                {
+                    Tag = "Currency"
+                });
+            }
+            EconomyRootNode.Nodes.Add(Currenciesnodes);
+            TreeNode VehicleKeysnodes = new TreeNode("Vehicle Keys")
+            {
+                Tag = "VehicleKeys"
+            };
+            foreach (string position in ef.Data.VehicleKeys)
+            {
+                VehicleKeysnodes.Nodes.Add(new TreeNode(position)
+                {
+                    Tag = "VehicleKey"
+                });
+            }
+            EconomyRootNode.Nodes.Add(VehicleKeysnodes);
+            TreeNode spawnpointnodes = new TreeNode("Vehicle Market Spawn Positions")
+            {
+                Tag = "VehicleMarketSpawnPositions"
+            };
+            TreeNode Landspawnpointnodes = new TreeNode("Land Spawn Positions")
+            {
+                Tag = "LandSpawnPositions"
+            };
+            foreach(ExpansionMarketSpawnPosition position in ef.Data.LandSpawnPositions)
+            {
+                Landspawnpointnodes.Nodes.Add(new TreeNode(position.ToString())
+                {
+                    Tag = position
+                });
+            }
+            spawnpointnodes.Nodes.Add(Landspawnpointnodes);
+
+            TreeNode Airspawnpointnodes = new TreeNode("Air Spawn Positions")
+            {
+                Tag = "AirSpawnPositions"
+            };
+            foreach (ExpansionMarketSpawnPosition position in ef.Data.AirSpawnPositions)
+            {
+                Airspawnpointnodes.Nodes.Add(new TreeNode(position.ToString())
+                {
+                    Tag = position
+                });
+            }
+            spawnpointnodes.Nodes.Add(Airspawnpointnodes);
+
+            TreeNode Waterspawnpointnodes = new TreeNode("Water Spawn Positions")
+            {
+                Tag = "WatertSpawnPositions"
+            };
+            foreach (ExpansionMarketSpawnPosition position in ef.Data.WaterSpawnPositions)
+            {
+                Waterspawnpointnodes.Nodes.Add(new TreeNode(position.ToString())
+                {
+                    Tag = position
+                });
+            }
+            spawnpointnodes.Nodes.Add(Waterspawnpointnodes);
+
+            TreeNode Trainspawnpointnodes = new TreeNode("Train Spawn Positions")
+            {
+                Tag = "TrainSpawnPositions"
+            };
+            foreach (ExpansionMarketSpawnPosition position in ef.Data.TrainSpawnPositions)
+            {
+                Trainspawnpointnodes.Nodes.Add(new TreeNode(position.ToString())
+                {
+                    Tag = position
+                });
+            }
+            spawnpointnodes.Nodes.Add(Trainspawnpointnodes);
+            EconomyRootNode.Nodes.Add(spawnpointnodes);
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
