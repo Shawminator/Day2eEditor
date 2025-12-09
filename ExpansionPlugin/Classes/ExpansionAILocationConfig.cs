@@ -114,22 +114,33 @@ namespace ExpansionPlugin
             DefaultExcludedRoamingBuildings();
             NoGoAreas = new BindingList<ExpansionAINoGoArea>();
         }
-        public void DefaultExcludedRoamingBuildings()
+        public List<string> DefaultExcludedRoamingBuildings()
         {
-            ExcludedRoamingBuildings = new BindingList<string>()
+            List<string> result = new List<string>();
+            List<string> defaults = new List<string>()
             {
-                "Land_CementWorks_Hall2_Grey",
-                "Land_Factory_Small",
-                "Land_House_1W09",
-                "Land_House_2W03",
-                "Land_HouseBlock_1F4",
-                "Land_Boathouse",
-                "Land_Mine_Building",
-                "Land_Shed_W2",
-                "Land_Tenement_Big",
-                "Land_Misc_Toilet_Mobile",
-                "Land_Ship_Medium2"
+                "Land_Boat_",  //! Sakhal, pathfinding won't find a path off the boat
+			    "Land_CementWorks_Hall2_Grey",  //! Unsuitable path endpoint
+			    "Land_Factory_Small",  //! Unsuitable path endpoint
+			    "Land_House_1W09",  //! Path endpoint between opened door and wall leading to AI running in circles trying to reach point
+			    "Land_House_2W03",  //! Unsuitable path endpoint
+			    "Land_HouseBlock_1F4",  //! Path endpoint behind unopenable lattice door
+			    "Land_Boathouse",  //! When AI falls into water it will likely get stuck under pier due to path always leading under it
+			    "Land_Mine_Building",  //! Stairs
+			    "Land_Shed_W2",  //! Pathfinding tends to find a way in, but not out.
+			    "Land_Tenement_Big",  //! AI can get stuck on upper floors when climbing the broken stairs
+			    "Land_Misc_Toilet_Mobile",  //! Too many door interactions
+			    "Land_Ship_Medium2"  //! AI can get stuck
             };
+            foreach(string value in defaults)
+            {
+                if(!ExcludedRoamingBuildings.Contains(value))
+                {
+                    ExcludedRoamingBuildings.Add(value);
+                    result.Add(value);
+                }
+            }
+            return result;
         }
         public override bool Equals(object? obj)
         {
@@ -157,10 +168,20 @@ namespace ExpansionPlugin
             }
             if(ExcludedRoamingBuildings == null)
             {
-                DefaultExcludedRoamingBuildings();
-                fixes.Add("Initilised Defualt ExcludedRoamingBuildings");
+                ExcludedRoamingBuildings = new BindingList<string>();
+                fixes.Add("Initilised ExcludedRoamingBuildings");
             }
-            if(NoGoAreas == null)
+            var result = DefaultExcludedRoamingBuildings();
+            if (result.Count() > 0)
+            {
+                string message = "Updated ExcludedRoamingBuildings";
+                foreach (string r in result)
+                {
+                    message += $"\n{r} Added to List";
+                }
+                fixes.Add(message);
+            }
+            if (NoGoAreas == null)
             {
                 NoGoAreas = new BindingList<ExpansionAINoGoArea>();
                 fixes.Add("Initilised RoamingLocations");

@@ -21,6 +21,7 @@ namespace ExpansionPlugin
         }
         public void Draw(Graphics g, RectangleF drawBounds, float zoom, PointF panOffset)
         {
+            
             // Convert map → screen
             float normalizedX = MapPosition.X / _mapSize.Width;
             float normalizedY = 1f - (MapPosition.Y / _mapSize.Height);
@@ -40,18 +41,19 @@ namespace ExpansionPlugin
                 finalH
             );
 
+            if (Image != null)
+            {
+                // High-quality scaling
+                var prevInterp = g.InterpolationMode;
+                var prevPixelOffset = g.PixelOffsetMode;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
-            // High-quality scaling
-            var prevInterp = g.InterpolationMode;
-            var prevPixelOffset = g.PixelOffsetMode;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                g.DrawImage(Image, destRect);
 
-            g.DrawImage(Image, destRect);
-
-            g.InterpolationMode = prevInterp;
-            g.PixelOffsetMode = prevPixelOffset;
-
+                g.InterpolationMode = prevInterp;
+                g.PixelOffsetMode = prevPixelOffset;
+            }
             if (IsSelected)
             {
 

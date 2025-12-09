@@ -18,7 +18,7 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-        public const int CurrentVersion = 16;
+        public const int CurrentVersion = 18;
         public ExpansionAIConfig(string path)
         {
             _path = path;
@@ -112,6 +112,8 @@ namespace ExpansionPlugin
 
         public int? Vaulting { get; set; }
         public decimal? SniperProneDistanceThreshold { get; set; }
+        public decimal? AggressionTimeout { get; set; }
+        public decimal? GuardAggressionTimeout { get; set; }
         public int? Manners { get; set; }
         public int? MemeLevel { get; set; }
         public int? CanRecruitFriendly { get; set; }
@@ -124,7 +126,8 @@ namespace ExpansionPlugin
         public int? LogAIKilled { get; set; }
         public int? EnableZombieVehicleAttackHandler { get; set; }
         public int? EnableZombieVehicleAttackPhysics { get; set; }
-
+        public int? OverrideClientWeaponFiring { get; set; }
+        public int? RecreateWeaponNetworkRepresentation { get; set; }
         public Dictionary<int, decimal>? LightingConfigMinNightVisibilityMeters { get; set; }
 
         [JsonIgnore]
@@ -154,6 +157,8 @@ namespace ExpansionPlugin
             Admins = new BindingList<string>();
             Vaulting = 1;
             SniperProneDistanceThreshold = (decimal)0.0;
+            AggressionTimeout = (decimal)120.0;
+            GuardAggressionTimeout = (decimal)150.0;
             Manners = 0;
             MemeLevel = 1;
             CanRecruitFriendly = 1;
@@ -166,6 +171,8 @@ namespace ExpansionPlugin
             LogAIKilled = 1;
             EnableZombieVehicleAttackHandler = 0;
             EnableZombieVehicleAttackPhysics = 0;
+            OverrideClientWeaponFiring = 1;
+            RecreateWeaponNetworkRepresentation = 1;
             LightingConfigMinNightVisibilityMeters = new Dictionary<int, decimal>
             {
                 {0, 100.0m },
@@ -188,6 +195,8 @@ namespace ExpansionPlugin
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
                    Vaulting == other.Vaulting &&
                    SniperProneDistanceThreshold == other.SniperProneDistanceThreshold &&
+                   AggressionTimeout == other.AggressionTimeout &&
+                   GuardAggressionTimeout == other.GuardAggressionTimeout &&
                    Manners == other.Manners &&
                    MemeLevel == other.MemeLevel &&
                    CanRecruitFriendly == other.CanRecruitFriendly &&
@@ -283,6 +292,18 @@ namespace ExpansionPlugin
                 fixes.Add("Set default SniperProneDistanceThreshold");
             }
 
+            if(AggressionTimeout == null)
+            {
+                AggressionTimeout = (decimal)120.0;
+                fixes.Add("Set default AggressionTimeout");
+            }
+
+            if (GuardAggressionTimeout == null)
+            {
+                GuardAggressionTimeout = (decimal)150.0;
+                fixes.Add("Set default GuardAggressionTimeout");
+            }
+
             if (Manners != 0 && Manners != 1)
             {
                 Manners = 0;
@@ -353,6 +374,18 @@ namespace ExpansionPlugin
             {
                 EnableZombieVehicleAttackPhysics = 0;
                 fixes.Add("Corrected EnableZombieVehicleAttackPhysics");
+            }
+
+            if (OverrideClientWeaponFiring != 0 && OverrideClientWeaponFiring != 1)
+            {
+                OverrideClientWeaponFiring = 1;
+                fixes.Add("Corrected OverrideClientWeaponFiring");
+            }
+
+            if (RecreateWeaponNetworkRepresentation != 0 && RecreateWeaponNetworkRepresentation != 1)
+            {
+                RecreateWeaponNetworkRepresentation = 1;
+                fixes.Add("Corrected RecreateWeaponNetworkRepresentation");
             }
 
             if (LightingConfigMinNightVisibilityMeters == null)

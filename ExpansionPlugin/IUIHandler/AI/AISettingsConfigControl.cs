@@ -45,6 +45,8 @@ namespace ExpansionPlugin
             FormationScaleNUD.Value = (decimal)_data.FormationScale;
             SniperProneDistanceThresholdNUD.Value = (decimal)_data.SniperProneDistanceThreshold;
             DamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
+            AggressionTimeoutNUD.Value = (decimal)_data.AggressionTimeout;
+            GuardAggressionTimeoutNUD.Value = (decimal)_data.GuardAggressionTimeout;
             MemeLevelNUD.Value = (int)_data.MemeLevel;
             VaultingCB.Checked = _data.Vaulting == 1 ? true : false;
             MannersCB.Checked = _data.Manners == 1 ? true : false;
@@ -56,6 +58,9 @@ namespace ExpansionPlugin
 
             EnableZombieVehicleAttackHandlerCB.Checked = _data.EnableZombieVehicleAttackHandler == 1 ? true : false;
             EnableZombieVehicleAttackPhysicsCB.Checked = _data.EnableZombieVehicleAttackPhysics == 1 ? true : false;
+
+            OverrideClientWeaponFiringCB.Checked = _data.OverrideClientWeaponFiring == 1 ? true : false;
+            RecreateWeaponNetworkRepresentationCB.Checked = _data.RecreateWeaponNetworkRepresentation == 1 ? true : false;
 
             _suppressEvents = false;
         }
@@ -200,6 +205,18 @@ namespace ExpansionPlugin
             _data.MemeLevel = (int)MemeLevelNUD.Value;
             HasChanges();
         }
+        private void AggressionTimeoutNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AggressionTimeout = AggressionTimeoutNUD.Value;
+            HasChanges();
+        }
+        private void GuardAggressionTimeoutNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.GuardAggressionTimeout = GuardAggressionTimeoutNUD.Value;
+            HasChanges();
+        }
         private void VaultingCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -254,6 +271,18 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.MaxRecruitableAI = (int)MaxRecruitableAINUD.Value;
+            HasChanges();
+        }
+        private void OverrideClientWeaponFiringCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.OverrideClientWeaponFiring = OverrideClientWeaponFiringCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void RecreateWeaponNetworkRepresentationCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.RecreateWeaponNetworkRepresentation = RecreateWeaponNetworkRepresentationCB.Checked == true ? 1 : 0;
             HasChanges();
         }
     }
