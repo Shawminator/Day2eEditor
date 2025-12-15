@@ -799,6 +799,12 @@ namespace EconomyPlugin
                     SpawnGearPresetCM.Items.Add(addNewDiscreetUnsortedItemSetToolStripMenuItem);
                     SpawnGearPresetCM.Show(Cursor.Position);
                 },
+                ["SpawnGear Presets Files"] = node =>
+                {
+                    SpawnGearPresetCM.Items.Clear();
+                    SpawnGearPresetCM.Items.Add(addNewSpawnGEarPresetFileToolStripMenuItem);
+                    SpawnGearPresetCM.Show(Cursor.Position);
+                },
                 ["PRABoxes"] = node =>
                 {
                     PlayerRestrictedAreaCM.Items.Clear();
@@ -5074,7 +5080,7 @@ namespace EconomyPlugin
             if (currentTreeNode.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
             {
                 _economyManager.CFGGameplayConfig.RemoveSpawnGearPreset(SpawnGearPresetFiles);
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
                 SpawnGearPresetFiles.isDirty = true;
                 SpawnGearPresetFiles.ToDelete = true;
             }
