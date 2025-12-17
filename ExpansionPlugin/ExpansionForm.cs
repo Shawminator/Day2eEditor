@@ -263,6 +263,17 @@ namespace ExpansionPlugin
                     SetupMapServerMarkers(ExpansionServerMarkerData, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
                 },
+                //Market
+                [typeof(MarketSettings)] = (node,selected) =>
+                {
+                    MarketSettings MarketSettings = node.Tag as MarketSettings;
+                    ShowHandler(new ExpansionMarketSettingsGeneralControl(), typeof(ExpansionMarketSettingsConfig), MarketSettings, selected);
+                },
+                [typeof(MarketMenuColours)] = (node,selected) =>
+                {
+                    ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig = node.Parent.Tag as ExpansionMarketSettingsConfig;
+                    ShowHandler(new ExpansionMarketSettingsHUDControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSettingsConfig.Data, selected);
+                },
             };
             // ----------------------
             // String handlers

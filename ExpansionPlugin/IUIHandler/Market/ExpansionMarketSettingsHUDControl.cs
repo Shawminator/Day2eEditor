@@ -1,8 +1,11 @@
-﻿using Day2eEditor;
+﻿using CoreUI.Forms;
+using Day2eEditor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace ExpansionPlugin
@@ -11,7 +14,7 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionMarketSettingsGeneralControl : UserControl, IUIHandler
+    public partial class ExpansionMarketSettingsHUDControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private MarketSettings _data;
@@ -19,7 +22,7 @@ namespace ExpansionPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionMarketSettingsGeneralControl()
+        public ExpansionMarketSettingsHUDControl()
         {
             InitializeComponent();
         }
@@ -41,27 +44,39 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            MarketSytemeEnabedcheckBox.Checked = _data.MarketSystemEnabled == 1 ? true : false;
-            ATMSytemeEnabledcheckBox.Checked = _data.ATMSystemEnabled == 1 ? true : false;
-            MaxdepositUpDown.Value = (int)_data.MaxDepositMoney;
-            DefaultDepositUpDown.Value = (int)_data.DefaultDepositMoney;
-            ATMPlayerTransferEnabledcheckbox.Checked = _data.ATMPlayerTransferEnabled == 1 ? true : false;
-            ATMPartyLockerEnabledCheckBox.Checked = _data.ATMPartyLockerEnabled == 1 ? true : false;
-            MaxPartyDepositMoneyUpDown.Value = (int)_data.MaxPartyDepositMoney;
-            SellPricePercentNUD.Value = (int)_data.SellPricePercent;
-            UseWholeMapForATMPlayerListCheckBox.Checked = _data.UseWholeMapForATMPlayerList == 1 ? true : false;
-            NetworkBatchSizeNUD.Value = (int)_data.NetworkBatchSize;
-            MaxVehicleDistanceToTraderNUD.Value = (decimal)_data.MaxVehicleDistanceToTrader;
-            MaxLargeVehicleDistanceToTraderNUD.Value = (decimal)_data.MaxLargeVehicleDistanceToTrader;
-            MaxSZVehicleParkingTimeNUD.Value = (decimal)_data.MaxSZVehicleParkingTime;
-            SZVehicleParkingTicketFineNUD.Value = (int)_data.SZVehicleParkingTicketFine;
-            SZVehicleParkingFineUseKeyCB.Checked = _data.SZVehicleParkingFineUseKey == 1 ? true : false;
-            DisallowUnpersistedCB.Checked = _data.DisallowUnpersisted == 1 ? true : false;
-            DisableClientSellTransactionDetailsCB.Checked = _data.DisableClientSellTransactionDetails == 1 ? true : false;
+            CurrencyIconTB.Text = _data.CurrencyIcon;
 
+            var colours = _data.MarketMenuColors; // Assuming this exists in MarketSettings
+            foreach (PropertyInfo property in colours.GetType().GetProperties())
+            {
+                // Get the hex color string from the property
+                var hex = property.GetValue(colours) as string;
+                if (string.IsNullOrWhiteSpace(hex))
+                    continue;
+
+                // Find the PictureBox by naming convention: "<PropertyName>Colour"
+                var pb = this.Controls.Find(property.Name + "Colour", true)
+                                      .OfType<PictureBox>()
+                                      .FirstOrDefault();
+
+                if (pb != null)
+                {
+                    SetChatColor(hex, pb);
+                }
+                else
+                {
+                    // Optional: log/diagnose missing PictureBox
+                    MessageBox.Show($"PictureBox '{property.Name}Colour' not found.");
+                }
+            }
             _suppressEvents = false;
         }
-
+        private void SetChatColor(string hexColor, PictureBox targetPB)
+        {
+            string formattedColor = "#" + hexColor.Substring(6) + hexColor.Remove(6, 2);
+            Color selectedColor = ColorTranslator.FromHtml(formattedColor);
+            targetPB.BackColor = selectedColor;
+        }
         /// <summary>
         /// Applies changes to the data and updates the original snapshot
         /// </summary>
@@ -233,107 +248,39 @@ namespace ExpansionPlugin
 
         #endregion
 
-        private void MarketSytemeEnabedcheckBox_CheckedChanged(object sender, EventArgs e)
+        private void CurrencyIconTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.MarketSystemEnabled = MarketSytemeEnabedcheckBox.Checked == true ? 1 : 0;
+            _data.CurrencyIcon = CurrencyIconTB.Text;
             HasChanges();
         }
-        private void ATMSytemeEnabledcheckBox_CheckedChanged(object sender, EventArgs e)
+        private void HUDColour_Click(object sender, EventArgs e)
         {
-            if (_suppressEvents) return;
-            _data.ATMSystemEnabled = ATMSytemeEnabledcheckBox.Checked == true ? 1 : 0;
-            HasChanges();
+            if (sender is PictureBox pb)
+            {
+                HandleColorChange(pb);
+            }
         }
-        private void MaxdepositUpDown_ValueChanged(object sender, EventArgs e)
+        private void HandleColorChange(PictureBox pb)
         {
-            if (_suppressEvents) return;
-            _data.MaxDepositMoney = (int)MaxdepositUpDown.Value;
-            HasChanges();
-        }
-        private void DefaultDepositUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DefaultDepositMoney = (int)DefaultDepositUpDown.Value;
-            HasChanges();
-        }
-        private void ATMPlayerTransferEnabledcheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.ATMPlayerTransferEnabled = ATMPlayerTransferEnabledcheckbox.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void ATMPartyLockerEnabledCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.ATMPartyLockerEnabled = ATMPartyLockerEnabledCheckBox.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void MaxPartyDepositMoneyUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.MaxPartyDepositMoney = (int)MaxPartyDepositMoneyUpDown.Value;
-            HasChanges();
-        }
-        private void UseWholeMapForATMPlayerListCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.UseWholeMapForATMPlayerList = UseWholeMapForATMPlayerListCheckBox.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void SellPricePercentNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.SellPricePercent = SellPricePercentNUD.Value;
-            HasChanges();
-        }
-        private void NetworkBatchSizeNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.NetworkBatchSize = (int)NetworkBatchSizeNUD.Value;
-            HasChanges();
-        }
-        private void MaxVehicleDistanceToTraderNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.MaxVehicleDistanceToTrader = (int)MaxVehicleDistanceToTraderNUD.Value;
-            HasChanges();
-        }
-        private void MaxLargeVehicleDistanceToTraderNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.MaxLargeVehicleDistanceToTrader = (int)MaxVehicleDistanceToTraderNUD.Value;
-            HasChanges();
-        }
-        private void MaxSZVehicleParkingTimeNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.MaxSZVehicleParkingTime = (int)MaxSZVehicleParkingTimeNUD.Value;
-            HasChanges();
-        }
-        private void SZVehicleParkingTicketFineNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.SZVehicleParkingTicketFine = (int)SZVehicleParkingTicketFineNUD.Value;
-            HasChanges();
-        }
-        private void SZVehicleParkingFineUseKeyCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.SZVehicleParkingFineUseKey = SZVehicleParkingFineUseKeyCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void DisallowUnpersistedCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DisallowUnpersisted = DisallowUnpersistedCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void DisableClientSellTransactionDetailsCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DisableClientSellTransactionDetails = DisableClientSellTransactionDetailsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            Color startColor = pb.BackColor;
+            using (AdvancedColorPickerForm picker = new AdvancedColorPickerForm(startColor))
+            {
+                picker.StartPosition = FormStartPosition.CenterParent;
+                if (picker.ShowDialog() == DialogResult.OK)
+                {
+                    string colorHex = picker.SelectedColorHex;
+                    Color selectedColor = ColorTranslator.FromHtml(colorHex);
+                    pb.BackColor = selectedColor;
+                    string propertyName = pb.Name.Replace("Colour", "");
+                    var prop = typeof(MarketMenuColours).GetProperty(propertyName);
+                    if (prop != null)
+                    {
+                        prop.SetValue(_data.MarketMenuColors, colorHex.Substring(4, 6) + colorHex.Substring(2, 2));
+                    }
+                    HasChanges();
+                }
+            }
         }
     }
 }

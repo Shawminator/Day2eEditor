@@ -1,13 +1,13 @@
-﻿namespace DayZeEditor
+﻿namespace ExpansionPlugin
 {
-    partial class Form4
+    partial class ExpansionMarketSettingsHUDControl
     {
-        /// <summary>
+        /// <summary> 
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -20,37 +20,21 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Component Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form4));
-            groupBox17 = new GroupBox();
-            listBox17 = new ListBox();
-            darkButton31 = new Button();
-            darkButton30 = new Button();
-            groupBox15 = new GroupBox();
-            darkButton44 = new Button();
-            darkButton43 = new Button();
-            listBox20 = new ListBox();
-            groupBox10 = new GroupBox();
-            darkButton17 = new Button();
-            listBox12 = new ListBox();
-            groupBox13 = new GroupBox();
-            darkButton50 = new Button();
-            darkButton36 = new Button();
-            listBox19 = new ListBox();
             groupBox2 = new GroupBox();
+            darkLabel84 = new Label();
+            CurrencyIconTB = new TextBox();
             ColorRequirementsNotMetColour = new PictureBox();
             darkLabel92 = new Label();
             ColorPlayerStockColour = new PictureBox();
             darkLabel93 = new Label();
-            darkLabel84 = new Label();
-            CurrencyIconTB = new TextBox();
             ColorItemInfoTitleColour = new PictureBox();
             darkLabel64 = new Label();
             ColorCurrencyDenominationTextColour = new PictureBox();
@@ -123,10 +107,6 @@
             darkLabel18 = new Label();
             BaseColorVignetteColour = new PictureBox();
             darkLabel17 = new Label();
-            groupBox17.SuspendLayout();
-            groupBox15.SuspendLayout();
-            groupBox10.SuspendLayout();
-            groupBox13.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ColorRequirementsNotMetColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorPlayerStockColour).BeginInit();
@@ -168,202 +148,14 @@
             ((System.ComponentModel.ISupportInitialize)BaseColorVignetteColour).BeginInit();
             SuspendLayout();
             // 
-            // groupBox17
-            // 
-            groupBox17.Controls.Add(listBox17);
-            groupBox17.Controls.Add(darkButton31);
-            groupBox17.Controls.Add(darkButton30);
-            groupBox17.ForeColor = SystemColors.Control;
-            groupBox17.Location = new Point(299, 14);
-            groupBox17.Margin = new Padding(4, 3, 4, 3);
-            groupBox17.Name = "groupBox17";
-            groupBox17.Padding = new Padding(4, 3, 4, 3);
-            groupBox17.Size = new Size(343, 192);
-            groupBox17.TabIndex = 7;
-            groupBox17.TabStop = false;
-            groupBox17.Text = "Large Vehicles";
-            // 
-            // listBox17
-            // 
-            listBox17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listBox17.BackColor = Color.FromArgb(60, 63, 65);
-            listBox17.DrawMode = DrawMode.OwnerDrawFixed;
-            listBox17.ForeColor = SystemColors.Control;
-            listBox17.FormattingEnabled = true;
-            listBox17.Location = new Point(8, 18);
-            listBox17.Margin = new Padding(4, 3, 4, 3);
-            listBox17.Name = "listBox17";
-            listBox17.Size = new Size(326, 116);
-            listBox17.TabIndex = 0;
-            // 
-            // darkButton31
-            // 
-            darkButton31.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton31.FlatStyle = FlatStyle.Flat;
-            darkButton31.Location = new Point(8, 155);
-            darkButton31.Margin = new Padding(4, 3, 4, 3);
-            darkButton31.Name = "darkButton31";
-            darkButton31.Size = new Size(119, 27);
-            darkButton31.TabIndex = 1;
-            darkButton31.Text = "Add New";
-            // 
-            // darkButton30
-            // 
-            darkButton30.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton30.FlatStyle = FlatStyle.Flat;
-            darkButton30.Location = new Point(197, 155);
-            darkButton30.Margin = new Padding(4, 3, 4, 3);
-            darkButton30.Name = "darkButton30";
-            darkButton30.Size = new Size(139, 27);
-            darkButton30.TabIndex = 2;
-            darkButton30.Text = "Remove";
-            // 
-            // groupBox15
-            // 
-            groupBox15.Controls.Add(darkButton44);
-            groupBox15.Controls.Add(darkButton43);
-            groupBox15.Controls.Add(listBox20);
-            groupBox15.ForeColor = SystemColors.Control;
-            groupBox15.Location = new Point(299, 212);
-            groupBox15.Margin = new Padding(4, 3, 4, 3);
-            groupBox15.Name = "groupBox15";
-            groupBox15.Padding = new Padding(4, 3, 4, 3);
-            groupBox15.Size = new Size(343, 173);
-            groupBox15.TabIndex = 8;
-            groupBox15.TabStop = false;
-            groupBox15.Text = "Vehicle Keys:-";
-            // 
-            // darkButton44
-            // 
-            darkButton44.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton44.FlatStyle = FlatStyle.Flat;
-            darkButton44.Location = new Point(8, 138);
-            darkButton44.Margin = new Padding(4, 3, 4, 3);
-            darkButton44.Name = "darkButton44";
-            darkButton44.Size = new Size(119, 27);
-            darkButton44.TabIndex = 1;
-            darkButton44.Text = "Add From Types";
-            // 
-            // darkButton43
-            // 
-            darkButton43.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton43.FlatStyle = FlatStyle.Flat;
-            darkButton43.Location = new Point(197, 138);
-            darkButton43.Margin = new Padding(4, 3, 4, 3);
-            darkButton43.Name = "darkButton43";
-            darkButton43.Size = new Size(138, 27);
-            darkButton43.TabIndex = 2;
-            darkButton43.Text = "Removed Selected";
-            // 
-            // listBox20
-            // 
-            listBox20.BackColor = Color.FromArgb(60, 63, 65);
-            listBox20.DrawMode = DrawMode.OwnerDrawFixed;
-            listBox20.ForeColor = SystemColors.Control;
-            listBox20.FormattingEnabled = true;
-            listBox20.Location = new Point(8, 22);
-            listBox20.Margin = new Padding(4, 3, 4, 3);
-            listBox20.Name = "listBox20";
-            listBox20.Size = new Size(327, 100);
-            listBox20.TabIndex = 0;
-            // 
-            // groupBox10
-            // 
-            groupBox10.Controls.Add(darkButton17);
-            groupBox10.Controls.Add(listBox12);
-            groupBox10.ForeColor = SystemColors.Control;
-            groupBox10.Location = new Point(9, 631);
-            groupBox10.Margin = new Padding(4, 3, 4, 3);
-            groupBox10.Name = "groupBox10";
-            groupBox10.Padding = new Padding(4, 3, 4, 3);
-            groupBox10.Size = new Size(343, 173);
-            groupBox10.TabIndex = 9;
-            groupBox10.TabStop = false;
-            groupBox10.Text = "ATM Currencies:-";
-            // 
-            // darkButton17
-            // 
-            darkButton17.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton17.FlatStyle = FlatStyle.Flat;
-            darkButton17.Location = new Point(8, 138);
-            darkButton17.Margin = new Padding(4, 3, 4, 3);
-            darkButton17.Name = "darkButton17";
-            darkButton17.Size = new Size(327, 27);
-            darkButton17.TabIndex = 1;
-            darkButton17.Text = "Removed Selected";
-            // 
-            // listBox12
-            // 
-            listBox12.BackColor = Color.FromArgb(60, 63, 65);
-            listBox12.DrawMode = DrawMode.OwnerDrawFixed;
-            listBox12.ForeColor = SystemColors.Control;
-            listBox12.FormattingEnabled = true;
-            listBox12.Location = new Point(8, 22);
-            listBox12.Margin = new Padding(4, 3, 4, 3);
-            listBox12.Name = "listBox12";
-            listBox12.Size = new Size(327, 100);
-            listBox12.TabIndex = 0;
-            // 
-            // groupBox13
-            // 
-            groupBox13.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            groupBox13.Controls.Add(darkButton50);
-            groupBox13.Controls.Add(darkButton36);
-            groupBox13.Controls.Add(listBox19);
-            groupBox13.ForeColor = SystemColors.ControlLightLight;
-            groupBox13.Location = new Point(359, 546);
-            groupBox13.Margin = new Padding(4, 3, 4, 3);
-            groupBox13.Name = "groupBox13";
-            groupBox13.Padding = new Padding(4, 3, 4, 3);
-            groupBox13.Size = new Size(343, 258);
-            groupBox13.TabIndex = 10;
-            groupBox13.TabStop = false;
-            groupBox13.Text = "Add Currency from Exchange";
-            // 
-            // darkButton50
-            // 
-            darkButton50.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton50.FlatStyle = FlatStyle.Flat;
-            darkButton50.Location = new Point(173, 226);
-            darkButton50.Margin = new Padding(4, 3, 4, 3);
-            darkButton50.Name = "darkButton50";
-            darkButton50.Size = new Size(163, 27);
-            darkButton50.TabIndex = 2;
-            darkButton50.Text = "Re check for exchange";
-            // 
-            // darkButton36
-            // 
-            darkButton36.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            darkButton36.FlatStyle = FlatStyle.Flat;
-            darkButton36.Location = new Point(7, 226);
-            darkButton36.Margin = new Padding(4, 3, 4, 3);
-            darkButton36.Name = "darkButton36";
-            darkButton36.Size = new Size(163, 27);
-            darkButton36.TabIndex = 1;
-            darkButton36.Text = "Add Selected";
-            // 
-            // listBox19
-            // 
-            listBox19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listBox19.BackColor = Color.FromArgb(60, 63, 65);
-            listBox19.DrawMode = DrawMode.OwnerDrawFixed;
-            listBox19.ForeColor = SystemColors.Control;
-            listBox19.FormattingEnabled = true;
-            listBox19.Location = new Point(8, 30);
-            listBox19.Margin = new Padding(4, 3, 4, 3);
-            listBox19.Name = "listBox19";
-            listBox19.SelectionMode = SelectionMode.MultiExtended;
-            listBox19.Size = new Size(327, 180);
-            listBox19.TabIndex = 0;
-            // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(darkLabel84);
+            groupBox2.Controls.Add(CurrencyIconTB);
             groupBox2.Controls.Add(ColorRequirementsNotMetColour);
             groupBox2.Controls.Add(darkLabel92);
             groupBox2.Controls.Add(ColorPlayerStockColour);
             groupBox2.Controls.Add(darkLabel93);
-            groupBox2.Controls.Add(darkLabel84);
-            groupBox2.Controls.Add(CurrencyIconTB);
             groupBox2.Controls.Add(ColorItemInfoTitleColour);
             groupBox2.Controls.Add(darkLabel64);
             groupBox2.Controls.Add(ColorCurrencyDenominationTextColour);
@@ -437,30 +229,52 @@
             groupBox2.Controls.Add(BaseColorVignetteColour);
             groupBox2.Controls.Add(darkLabel17);
             groupBox2.ForeColor = SystemColors.Control;
-            groupBox2.Location = new Point(649, 14);
+            groupBox2.Location = new Point(0, 0);
             groupBox2.Margin = new Padding(4, 3, 4, 3);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(4, 3, 4, 3);
-            groupBox2.Size = new Size(762, 483);
-            groupBox2.TabIndex = 11;
+            groupBox2.Size = new Size(738, 483);
+            groupBox2.TabIndex = 12;
             groupBox2.TabStop = false;
             groupBox2.Text = "Market Menu Colours";
             // 
+            // darkLabel84
+            // 
+            darkLabel84.AutoSize = true;
+            darkLabel84.ForeColor = Color.FromArgb(220, 220, 220);
+            darkLabel84.Location = new Point(24, 453);
+            darkLabel84.Margin = new Padding(4, 0, 4, 0);
+            darkLabel84.Name = "darkLabel84";
+            darkLabel84.Size = new Size(81, 15);
+            darkLabel84.TabIndex = 107;
+            darkLabel84.Text = "Currency Icon";
+            // 
+            // CurrencyIconTB
+            // 
+            CurrencyIconTB.BackColor = Color.FromArgb(60, 63, 65);
+            CurrencyIconTB.ForeColor = SystemColors.Control;
+            CurrencyIconTB.Location = new Point(123, 450);
+            CurrencyIconTB.Margin = new Padding(4, 3, 4, 3);
+            CurrencyIconTB.Name = "CurrencyIconTB";
+            CurrencyIconTB.Size = new Size(591, 23);
+            CurrencyIconTB.TabIndex = 106;
+            CurrencyIconTB.TextChanged += CurrencyIconTB_TextChanged;
+            // 
             // ColorRequirementsNotMetColour
             // 
-            ColorRequirementsNotMetColour.BackgroundImage = (Image)resources.GetObject("ColorRequirementsNotMetColour.BackgroundImage");
             ColorRequirementsNotMetColour.Location = new Point(597, 428);
             ColorRequirementsNotMetColour.Margin = new Padding(4, 3, 4, 3);
             ColorRequirementsNotMetColour.Name = "ColorRequirementsNotMetColour";
             ColorRequirementsNotMetColour.Size = new Size(117, 15);
             ColorRequirementsNotMetColour.TabIndex = 105;
             ColorRequirementsNotMetColour.TabStop = false;
+            ColorRequirementsNotMetColour.Click += HUDColour_Click;
             // 
             // darkLabel92
             // 
             darkLabel92.AutoSize = true;
             darkLabel92.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel92.Location = new Point(385, 428);
+            darkLabel92.Location = new Point(386, 428);
             darkLabel92.Margin = new Padding(4, 0, 4, 0);
             darkLabel92.Name = "darkLabel92";
             darkLabel92.Size = new Size(150, 15);
@@ -469,61 +283,40 @@
             // 
             // ColorPlayerStockColour
             // 
-            ColorPlayerStockColour.BackgroundImage = (Image)resources.GetObject("ColorPlayerStockColour.BackgroundImage");
             ColorPlayerStockColour.Location = new Point(597, 406);
             ColorPlayerStockColour.Margin = new Padding(4, 3, 4, 3);
             ColorPlayerStockColour.Name = "ColorPlayerStockColour";
             ColorPlayerStockColour.Size = new Size(117, 15);
             ColorPlayerStockColour.TabIndex = 103;
             ColorPlayerStockColour.TabStop = false;
+            ColorPlayerStockColour.Click += HUDColour_Click;
             // 
             // darkLabel93
             // 
             darkLabel93.AutoSize = true;
             darkLabel93.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel93.Location = new Point(385, 406);
+            darkLabel93.Location = new Point(386, 406);
             darkLabel93.Margin = new Padding(4, 0, 4, 0);
             darkLabel93.Name = "darkLabel93";
             darkLabel93.Size = new Size(97, 15);
             darkLabel93.TabIndex = 102;
             darkLabel93.Text = "ColorPlayerStock";
             // 
-            // darkLabel84
-            // 
-            darkLabel84.AutoSize = true;
-            darkLabel84.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel84.Location = new Point(22, 453);
-            darkLabel84.Margin = new Padding(4, 0, 4, 0);
-            darkLabel84.Name = "darkLabel84";
-            darkLabel84.Size = new Size(81, 15);
-            darkLabel84.TabIndex = 101;
-            darkLabel84.Text = "Currency Icon";
-            // 
-            // CurrencyIconTB
-            // 
-            CurrencyIconTB.BackColor = Color.FromArgb(60, 63, 65);
-            CurrencyIconTB.ForeColor = SystemColors.Control;
-            CurrencyIconTB.Location = new Point(122, 450);
-            CurrencyIconTB.Margin = new Padding(4, 3, 4, 3);
-            CurrencyIconTB.Name = "CurrencyIconTB";
-            CurrencyIconTB.Size = new Size(591, 23);
-            CurrencyIconTB.TabIndex = 100;
-            // 
             // ColorItemInfoTitleColour
             // 
-            ColorItemInfoTitleColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoTitleColour.BackgroundImage");
             ColorItemInfoTitleColour.Location = new Point(597, 187);
             ColorItemInfoTitleColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoTitleColour.Name = "ColorItemInfoTitleColour";
             ColorItemInfoTitleColour.Size = new Size(117, 15);
             ColorItemInfoTitleColour.TabIndex = 79;
             ColorItemInfoTitleColour.TabStop = false;
+            ColorItemInfoTitleColour.Click += HUDColour_Click;
             // 
             // darkLabel64
             // 
             darkLabel64.AutoSize = true;
             darkLabel64.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel64.Location = new Point(385, 187);
+            darkLabel64.Location = new Point(386, 187);
             darkLabel64.Margin = new Padding(4, 0, 4, 0);
             darkLabel64.Name = "darkLabel64";
             darkLabel64.Size = new Size(103, 15);
@@ -532,19 +325,19 @@
             // 
             // ColorCurrencyDenominationTextColour
             // 
-            ColorCurrencyDenominationTextColour.BackgroundImage = (Image)resources.GetObject("ColorCurrencyDenominationTextColour.BackgroundImage");
             ColorCurrencyDenominationTextColour.Location = new Point(597, 121);
             ColorCurrencyDenominationTextColour.Margin = new Padding(4, 3, 4, 3);
             ColorCurrencyDenominationTextColour.Name = "ColorCurrencyDenominationTextColour";
             ColorCurrencyDenominationTextColour.Size = new Size(117, 15);
             ColorCurrencyDenominationTextColour.TabIndex = 77;
             ColorCurrencyDenominationTextColour.TabStop = false;
+            ColorCurrencyDenominationTextColour.Click += HUDColour_Click;
             // 
             // darkLabel63
             // 
             darkLabel63.AutoSize = true;
             darkLabel63.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel63.Location = new Point(385, 121);
+            darkLabel63.Location = new Point(386, 121);
             darkLabel63.Margin = new Padding(4, 0, 4, 0);
             darkLabel63.Name = "darkLabel63";
             darkLabel63.Size = new Size(181, 15);
@@ -553,19 +346,19 @@
             // 
             // ColorIncreaseQuantityIconColour
             // 
-            ColorIncreaseQuantityIconColour.BackgroundImage = (Image)resources.GetObject("ColorIncreaseQuantityIconColour.BackgroundImage");
             ColorIncreaseQuantityIconColour.Location = new Point(236, 297);
             ColorIncreaseQuantityIconColour.Margin = new Padding(4, 3, 4, 3);
             ColorIncreaseQuantityIconColour.Name = "ColorIncreaseQuantityIconColour";
             ColorIncreaseQuantityIconColour.Size = new Size(117, 15);
             ColorIncreaseQuantityIconColour.TabIndex = 75;
             ColorIncreaseQuantityIconColour.TabStop = false;
+            ColorIncreaseQuantityIconColour.Click += HUDColour_Click;
             // 
             // darkLabel62
             // 
             darkLabel62.AutoSize = true;
             darkLabel62.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel62.Location = new Point(23, 297);
+            darkLabel62.Location = new Point(24, 297);
             darkLabel62.Margin = new Padding(4, 0, 4, 0);
             darkLabel62.Name = "darkLabel62";
             darkLabel62.Size = new Size(148, 15);
@@ -576,7 +369,7 @@
             // 
             darkLabel61.AutoSize = true;
             darkLabel61.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel61.Location = new Point(23, 231);
+            darkLabel61.Location = new Point(24, 231);
             darkLabel61.Margin = new Padding(4, 0, 4, 0);
             darkLabel61.Name = "darkLabel61";
             darkLabel61.Size = new Size(152, 15);
@@ -585,29 +378,29 @@
             // 
             // ColorDecreaseQuantityIconColour
             // 
-            ColorDecreaseQuantityIconColour.BackgroundImage = (Image)resources.GetObject("ColorDecreaseQuantityIconColour.BackgroundImage");
             ColorDecreaseQuantityIconColour.Location = new Point(236, 231);
             ColorDecreaseQuantityIconColour.Margin = new Padding(4, 3, 4, 3);
             ColorDecreaseQuantityIconColour.Name = "ColorDecreaseQuantityIconColour";
             ColorDecreaseQuantityIconColour.Size = new Size(117, 15);
             ColorDecreaseQuantityIconColour.TabIndex = 72;
             ColorDecreaseQuantityIconColour.TabStop = false;
+            ColorDecreaseQuantityIconColour.Click += HUDColour_Click;
             // 
             // BaseColorCheckboxesColour
             // 
-            BaseColorCheckboxesColour.BackgroundImage = (Image)resources.GetObject("BaseColorCheckboxesColour.BackgroundImage");
             BaseColorCheckboxesColour.Location = new Point(234, 121);
             BaseColorCheckboxesColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorCheckboxesColour.Name = "BaseColorCheckboxesColour";
             BaseColorCheckboxesColour.Size = new Size(117, 15);
             BaseColorCheckboxesColour.TabIndex = 71;
             BaseColorCheckboxesColour.TabStop = false;
+            BaseColorCheckboxesColour.Click += HUDColour_Click;
             // 
             // darkLabel60
             // 
             darkLabel60.AutoSize = true;
             darkLabel60.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel60.Location = new Point(22, 121);
+            darkLabel60.Location = new Point(23, 121);
             darkLabel60.Margin = new Padding(4, 0, 4, 0);
             darkLabel60.Name = "darkLabel60";
             darkLabel60.Size = new Size(124, 15);
@@ -616,19 +409,19 @@
             // 
             // ColorCategoryBackgroundColour
             // 
-            ColorCategoryBackgroundColour.BackgroundImage = (Image)resources.GetObject("ColorCategoryBackgroundColour.BackgroundImage");
             ColorCategoryBackgroundColour.Location = new Point(597, 384);
             ColorCategoryBackgroundColour.Margin = new Padding(4, 3, 4, 3);
             ColorCategoryBackgroundColour.Name = "ColorCategoryBackgroundColour";
             ColorCategoryBackgroundColour.Size = new Size(117, 15);
             ColorCategoryBackgroundColour.TabIndex = 69;
             ColorCategoryBackgroundColour.TabStop = false;
+            ColorCategoryBackgroundColour.Click += HUDColour_Click;
             // 
             // darkLabel47
             // 
             darkLabel47.AutoSize = true;
             darkLabel47.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel47.Location = new Point(385, 384);
+            darkLabel47.Location = new Point(386, 384);
             darkLabel47.Margin = new Padding(4, 0, 4, 0);
             darkLabel47.Name = "darkLabel47";
             darkLabel47.Size = new Size(148, 15);
@@ -637,19 +430,19 @@
             // 
             // ColorCategoryCornersColour
             // 
-            ColorCategoryCornersColour.BackgroundImage = (Image)resources.GetObject("ColorCategoryCornersColour.BackgroundImage");
             ColorCategoryCornersColour.Location = new Point(597, 362);
             ColorCategoryCornersColour.Margin = new Padding(4, 3, 4, 3);
             ColorCategoryCornersColour.Name = "ColorCategoryCornersColour";
             ColorCategoryCornersColour.Size = new Size(117, 15);
             ColorCategoryCornersColour.TabIndex = 67;
             ColorCategoryCornersColour.TabStop = false;
+            ColorCategoryCornersColour.Click += HUDColour_Click;
             // 
             // darkLabel46
             // 
             darkLabel46.AutoSize = true;
             darkLabel46.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel46.Location = new Point(385, 362);
+            darkLabel46.Location = new Point(386, 362);
             darkLabel46.Margin = new Padding(4, 0, 4, 0);
             darkLabel46.Name = "darkLabel46";
             darkLabel46.Size = new Size(125, 15);
@@ -658,19 +451,19 @@
             // 
             // ColorToggleCategoriesTextColour
             // 
-            ColorToggleCategoriesTextColour.BackgroundImage = (Image)resources.GetObject("ColorToggleCategoriesTextColour.BackgroundImage");
             ColorToggleCategoriesTextColour.Location = new Point(597, 340);
             ColorToggleCategoriesTextColour.Margin = new Padding(4, 3, 4, 3);
             ColorToggleCategoriesTextColour.Name = "ColorToggleCategoriesTextColour";
             ColorToggleCategoriesTextColour.Size = new Size(117, 15);
             ColorToggleCategoriesTextColour.TabIndex = 65;
             ColorToggleCategoriesTextColour.TabStop = false;
+            ColorToggleCategoriesTextColour.Click += HUDColour_Click;
             // 
             // darkLabel31
             // 
             darkLabel31.AutoSize = true;
             darkLabel31.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel31.Location = new Point(385, 340);
+            darkLabel31.Location = new Point(386, 340);
             darkLabel31.Margin = new Padding(4, 0, 4, 0);
             darkLabel31.Name = "darkLabel31";
             darkLabel31.Size = new Size(148, 15);
@@ -679,19 +472,19 @@
             // 
             // ColorItemInfoAttachmentsColour
             // 
-            ColorItemInfoAttachmentsColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoAttachmentsColour.BackgroundImage");
             ColorItemInfoAttachmentsColour.Location = new Point(597, 318);
             ColorItemInfoAttachmentsColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoAttachmentsColour.Name = "ColorItemInfoAttachmentsColour";
             ColorItemInfoAttachmentsColour.Size = new Size(117, 15);
             ColorItemInfoAttachmentsColour.TabIndex = 63;
             ColorItemInfoAttachmentsColour.TabStop = false;
+            ColorItemInfoAttachmentsColour.Click += HUDColour_Click;
             // 
             // darkLabel32
             // 
             darkLabel32.AutoSize = true;
             darkLabel32.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel32.Location = new Point(384, 318);
+            darkLabel32.Location = new Point(385, 318);
             darkLabel32.Margin = new Padding(4, 0, 4, 0);
             darkLabel32.Name = "darkLabel32";
             darkLabel32.Size = new Size(149, 15);
@@ -700,19 +493,19 @@
             // 
             // ColorItemInfoIsEquipedColour
             // 
-            ColorItemInfoIsEquipedColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoIsEquipedColour.BackgroundImage");
             ColorItemInfoIsEquipedColour.Location = new Point(597, 297);
             ColorItemInfoIsEquipedColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoIsEquipedColour.Name = "ColorItemInfoIsEquipedColour";
             ColorItemInfoIsEquipedColour.Size = new Size(117, 15);
             ColorItemInfoIsEquipedColour.TabIndex = 61;
             ColorItemInfoIsEquipedColour.TabStop = false;
+            ColorItemInfoIsEquipedColour.Click += HUDColour_Click;
             // 
             // darkLabel33
             // 
             darkLabel33.AutoSize = true;
             darkLabel33.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel33.Location = new Point(384, 297);
+            darkLabel33.Location = new Point(385, 297);
             darkLabel33.Margin = new Padding(4, 0, 4, 0);
             darkLabel33.Name = "darkLabel33";
             darkLabel33.Size = new Size(132, 15);
@@ -721,19 +514,19 @@
             // 
             // ColorItemInfoIsAttachmentColour
             // 
-            ColorItemInfoIsAttachmentColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoIsAttachmentColour.BackgroundImage");
             ColorItemInfoIsAttachmentColour.Location = new Point(597, 275);
             ColorItemInfoIsAttachmentColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoIsAttachmentColour.Name = "ColorItemInfoIsAttachmentColour";
             ColorItemInfoIsAttachmentColour.Size = new Size(117, 15);
             ColorItemInfoIsAttachmentColour.TabIndex = 59;
             ColorItemInfoIsAttachmentColour.TabStop = false;
+            ColorItemInfoIsAttachmentColour.Click += HUDColour_Click;
             // 
             // darkLabel34
             // 
             darkLabel34.AutoSize = true;
             darkLabel34.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel34.Location = new Point(384, 275);
+            darkLabel34.Location = new Point(385, 275);
             darkLabel34.Margin = new Padding(4, 0, 4, 0);
             darkLabel34.Name = "darkLabel34";
             darkLabel34.Size = new Size(152, 15);
@@ -742,79 +535,79 @@
             // 
             // ColorItemInfoHasBulletsColour
             // 
-            ColorItemInfoHasBulletsColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoHasBulletsColour.BackgroundImage");
             ColorItemInfoHasBulletsColour.Location = new Point(597, 253);
             ColorItemInfoHasBulletsColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoHasBulletsColour.Name = "ColorItemInfoHasBulletsColour";
             ColorItemInfoHasBulletsColour.Size = new Size(117, 15);
             ColorItemInfoHasBulletsColour.TabIndex = 57;
             ColorItemInfoHasBulletsColour.TabStop = false;
+            ColorItemInfoHasBulletsColour.Click += HUDColour_Click;
             // 
             // ColorItemInfoHasAttachmentsColour
             // 
-            ColorItemInfoHasAttachmentsColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoHasAttachmentsColour.BackgroundImage");
             ColorItemInfoHasAttachmentsColour.Location = new Point(597, 231);
             ColorItemInfoHasAttachmentsColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoHasAttachmentsColour.Name = "ColorItemInfoHasAttachmentsColour";
             ColorItemInfoHasAttachmentsColour.Size = new Size(117, 15);
             ColorItemInfoHasAttachmentsColour.TabIndex = 56;
             ColorItemInfoHasAttachmentsColour.TabStop = false;
+            ColorItemInfoHasAttachmentsColour.Click += HUDColour_Click;
             // 
             // ColorItemInfoHasContainerItemsColour
             // 
-            ColorItemInfoHasContainerItemsColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoHasContainerItemsColour.BackgroundImage");
             ColorItemInfoHasContainerItemsColour.Location = new Point(597, 209);
             ColorItemInfoHasContainerItemsColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoHasContainerItemsColour.Name = "ColorItemInfoHasContainerItemsColour";
             ColorItemInfoHasContainerItemsColour.Size = new Size(117, 15);
             ColorItemInfoHasContainerItemsColour.TabIndex = 55;
             ColorItemInfoHasContainerItemsColour.TabStop = false;
+            ColorItemInfoHasContainerItemsColour.Click += HUDColour_Click;
             // 
             // ColorItemInfoIconColour
             // 
-            ColorItemInfoIconColour.BackgroundImage = (Image)resources.GetObject("ColorItemInfoIconColour.BackgroundImage");
             ColorItemInfoIconColour.Location = new Point(597, 165);
             ColorItemInfoIconColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemInfoIconColour.Name = "ColorItemInfoIconColour";
             ColorItemInfoIconColour.Size = new Size(117, 15);
             ColorItemInfoIconColour.TabIndex = 54;
             ColorItemInfoIconColour.TabStop = false;
+            ColorItemInfoIconColour.Click += HUDColour_Click;
             // 
             // ColorItemButtonColour
             // 
-            ColorItemButtonColour.BackgroundImage = (Image)resources.GetObject("ColorItemButtonColour.BackgroundImage");
             ColorItemButtonColour.Location = new Point(597, 143);
             ColorItemButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorItemButtonColour.Name = "ColorItemButtonColour";
             ColorItemButtonColour.Size = new Size(117, 15);
             ColorItemButtonColour.TabIndex = 53;
             ColorItemButtonColour.TabStop = false;
+            ColorItemButtonColour.Click += HUDColour_Click;
             // 
             // ColorCategoryCollapseIconColour
             // 
-            ColorCategoryCollapseIconColour.BackgroundImage = (Image)resources.GetObject("ColorCategoryCollapseIconColour.BackgroundImage");
             ColorCategoryCollapseIconColour.Location = new Point(597, 99);
             ColorCategoryCollapseIconColour.Margin = new Padding(4, 3, 4, 3);
             ColorCategoryCollapseIconColour.Name = "ColorCategoryCollapseIconColour";
             ColorCategoryCollapseIconColour.Size = new Size(117, 15);
             ColorCategoryCollapseIconColour.TabIndex = 52;
             ColorCategoryCollapseIconColour.TabStop = false;
+            ColorCategoryCollapseIconColour.Click += HUDColour_Click;
             // 
             // ColorCategoryButtonColour
             // 
-            ColorCategoryButtonColour.BackgroundImage = (Image)resources.GetObject("ColorCategoryButtonColour.BackgroundImage");
             ColorCategoryButtonColour.Location = new Point(597, 77);
             ColorCategoryButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorCategoryButtonColour.Name = "ColorCategoryButtonColour";
             ColorCategoryButtonColour.Size = new Size(117, 15);
             ColorCategoryButtonColour.TabIndex = 51;
             ColorCategoryButtonColour.TabStop = false;
+            ColorCategoryButtonColour.Click += HUDColour_Click;
             // 
             // darkLabel35
             // 
             darkLabel35.AutoSize = true;
             darkLabel35.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel35.Location = new Point(384, 253);
+            darkLabel35.Location = new Point(385, 253);
             darkLabel35.Margin = new Padding(4, 0, 4, 0);
             darkLabel35.Name = "darkLabel35";
             darkLabel35.Size = new Size(136, 15);
@@ -825,7 +618,7 @@
             // 
             darkLabel36.AutoSize = true;
             darkLabel36.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel36.Location = new Point(384, 231);
+            darkLabel36.Location = new Point(385, 231);
             darkLabel36.Margin = new Padding(4, 0, 4, 0);
             darkLabel36.Name = "darkLabel36";
             darkLabel36.Size = new Size(169, 15);
@@ -836,7 +629,7 @@
             // 
             darkLabel37.AutoSize = true;
             darkLabel37.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel37.Location = new Point(384, 209);
+            darkLabel37.Location = new Point(385, 209);
             darkLabel37.Margin = new Padding(4, 0, 4, 0);
             darkLabel37.Name = "darkLabel37";
             darkLabel37.Size = new Size(182, 15);
@@ -847,7 +640,7 @@
             // 
             darkLabel38.AutoSize = true;
             darkLabel38.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel38.Location = new Point(384, 165);
+            darkLabel38.Location = new Point(385, 165);
             darkLabel38.Margin = new Padding(4, 0, 4, 0);
             darkLabel38.Name = "darkLabel38";
             darkLabel38.Size = new Size(104, 15);
@@ -858,7 +651,7 @@
             // 
             darkLabel39.AutoSize = true;
             darkLabel39.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel39.Location = new Point(384, 143);
+            darkLabel39.Location = new Point(385, 143);
             darkLabel39.Margin = new Padding(4, 0, 4, 0);
             darkLabel39.Name = "darkLabel39";
             darkLabel39.Size = new Size(96, 15);
@@ -869,7 +662,7 @@
             // 
             darkLabel40.AutoSize = true;
             darkLabel40.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel40.Location = new Point(384, 99);
+            darkLabel40.Location = new Point(385, 99);
             darkLabel40.Margin = new Padding(4, 0, 4, 0);
             darkLabel40.Name = "darkLabel40";
             darkLabel40.Size = new Size(152, 15);
@@ -880,7 +673,7 @@
             // 
             darkLabel41.AutoSize = true;
             darkLabel41.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel41.Location = new Point(384, 77);
+            darkLabel41.Location = new Point(385, 77);
             darkLabel41.Margin = new Padding(4, 0, 4, 0);
             darkLabel41.Name = "darkLabel41";
             darkLabel41.Size = new Size(120, 15);
@@ -889,19 +682,19 @@
             // 
             // ColorSearchFilterButtonColour
             // 
-            ColorSearchFilterButtonColour.BackgroundImage = (Image)resources.GetObject("ColorSearchFilterButtonColour.BackgroundImage");
             ColorSearchFilterButtonColour.Location = new Point(597, 55);
             ColorSearchFilterButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorSearchFilterButtonColour.Name = "ColorSearchFilterButtonColour";
             ColorSearchFilterButtonColour.Size = new Size(117, 15);
             ColorSearchFilterButtonColour.TabIndex = 43;
             ColorSearchFilterButtonColour.TabStop = false;
+            ColorSearchFilterButtonColour.Click += HUDColour_Click;
             // 
             // darkLabel42
             // 
             darkLabel42.AutoSize = true;
             darkLabel42.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel42.Location = new Point(384, 55);
+            darkLabel42.Location = new Point(385, 55);
             darkLabel42.Margin = new Padding(4, 0, 4, 0);
             darkLabel42.Name = "darkLabel42";
             darkLabel42.Size = new Size(133, 15);
@@ -910,19 +703,19 @@
             // 
             // ColorFilterOptionsIconColour
             // 
-            ColorFilterOptionsIconColour.BackgroundImage = (Image)resources.GetObject("ColorFilterOptionsIconColour.BackgroundImage");
             ColorFilterOptionsIconColour.Location = new Point(597, 33);
             ColorFilterOptionsIconColour.Margin = new Padding(4, 3, 4, 3);
             ColorFilterOptionsIconColour.Name = "ColorFilterOptionsIconColour";
             ColorFilterOptionsIconColour.Size = new Size(117, 15);
             ColorFilterOptionsIconColour.TabIndex = 41;
             ColorFilterOptionsIconColour.TabStop = false;
+            ColorFilterOptionsIconColour.Click += HUDColour_Click;
             // 
             // darkLabel43
             // 
             darkLabel43.AutoSize = true;
             darkLabel43.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel43.Location = new Point(384, 33);
+            darkLabel43.Location = new Point(385, 33);
             darkLabel43.Margin = new Padding(4, 0, 4, 0);
             darkLabel43.Name = "darkLabel43";
             darkLabel43.Size = new Size(127, 15);
@@ -931,19 +724,19 @@
             // 
             // ColorFilterOptionsButtonColour
             // 
-            ColorFilterOptionsButtonColour.BackgroundImage = (Image)resources.GetObject("ColorFilterOptionsButtonColour.BackgroundImage");
-            ColorFilterOptionsButtonColour.Location = new Point(234, 428);
+            ColorFilterOptionsButtonColour.Location = new Point(236, 428);
             ColorFilterOptionsButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorFilterOptionsButtonColour.Name = "ColorFilterOptionsButtonColour";
             ColorFilterOptionsButtonColour.Size = new Size(117, 15);
             ColorFilterOptionsButtonColour.TabIndex = 39;
             ColorFilterOptionsButtonColour.TabStop = false;
+            ColorFilterOptionsButtonColour.Click += HUDColour_Click;
             // 
             // darkLabel44
             // 
             darkLabel44.AutoSize = true;
             darkLabel44.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel44.Location = new Point(21, 428);
+            darkLabel44.Location = new Point(22, 428);
             darkLabel44.Margin = new Padding(4, 0, 4, 0);
             darkLabel44.Name = "darkLabel44";
             darkLabel44.Size = new Size(140, 15);
@@ -952,19 +745,19 @@
             // 
             // ColorMarketIconColour
             // 
-            ColorMarketIconColour.BackgroundImage = (Image)resources.GetObject("ColorMarketIconColour.BackgroundImage");
             ColorMarketIconColour.Location = new Point(236, 406);
             ColorMarketIconColour.Margin = new Padding(4, 3, 4, 3);
             ColorMarketIconColour.Name = "ColorMarketIconColour";
             ColorMarketIconColour.Size = new Size(117, 15);
             ColorMarketIconColour.TabIndex = 37;
             ColorMarketIconColour.TabStop = false;
+            ColorMarketIconColour.Click += HUDColour_Click;
             // 
             // darkLabel45
             // 
             darkLabel45.AutoSize = true;
             darkLabel45.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel45.Location = new Point(22, 406);
+            darkLabel45.Location = new Point(23, 406);
             darkLabel45.Margin = new Padding(4, 0, 4, 0);
             darkLabel45.Name = "darkLabel45";
             darkLabel45.Size = new Size(96, 15);
@@ -973,19 +766,19 @@
             // 
             // ColorBuyButtonColour
             // 
-            ColorBuyButtonColour.BackgroundImage = (Image)resources.GetObject("ColorBuyButtonColour.BackgroundImage");
             ColorBuyButtonColour.Location = new Point(236, 384);
             ColorBuyButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorBuyButtonColour.Name = "ColorBuyButtonColour";
             ColorBuyButtonColour.Size = new Size(117, 15);
             ColorBuyButtonColour.TabIndex = 35;
             ColorBuyButtonColour.TabStop = false;
+            ColorBuyButtonColour.Click += HUDColour_Click;
             // 
             // ColorBuyButtonlabel
             // 
             ColorBuyButtonlabel.AutoSize = true;
             ColorBuyButtonlabel.ForeColor = Color.FromArgb(220, 220, 220);
-            ColorBuyButtonlabel.Location = new Point(22, 384);
+            ColorBuyButtonlabel.Location = new Point(23, 384);
             ColorBuyButtonlabel.Margin = new Padding(4, 0, 4, 0);
             ColorBuyButtonlabel.Name = "ColorBuyButtonlabel";
             ColorBuyButtonlabel.Size = new Size(92, 15);
@@ -994,19 +787,19 @@
             // 
             // ColorBuyPanelColour
             // 
-            ColorBuyPanelColour.BackgroundImage = (Image)resources.GetObject("ColorBuyPanelColour.BackgroundImage");
             ColorBuyPanelColour.Location = new Point(236, 362);
             ColorBuyPanelColour.Margin = new Padding(4, 3, 4, 3);
             ColorBuyPanelColour.Name = "ColorBuyPanelColour";
             ColorBuyPanelColour.Size = new Size(117, 15);
             ColorBuyPanelColour.TabIndex = 33;
             ColorBuyPanelColour.TabStop = false;
+            ColorBuyPanelColour.Click += HUDColour_Click;
             // 
             // darkLabel30
             // 
             darkLabel30.AutoSize = true;
             darkLabel30.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel30.Location = new Point(22, 362);
+            darkLabel30.Location = new Point(23, 362);
             darkLabel30.Margin = new Padding(4, 0, 4, 0);
             darkLabel30.Name = "darkLabel30";
             darkLabel30.Size = new Size(85, 15);
@@ -1015,19 +808,19 @@
             // 
             // ColorSellButtonColour
             // 
-            ColorSellButtonColour.BackgroundImage = (Image)resources.GetObject("ColorSellButtonColour.BackgroundImage");
             ColorSellButtonColour.Location = new Point(236, 340);
             ColorSellButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorSellButtonColour.Name = "ColorSellButtonColour";
             ColorSellButtonColour.Size = new Size(117, 15);
             ColorSellButtonColour.TabIndex = 31;
             ColorSellButtonColour.TabStop = false;
+            ColorSellButtonColour.Click += HUDColour_Click;
             // 
             // darkLabel29
             // 
             darkLabel29.AutoSize = true;
             darkLabel29.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel29.Location = new Point(22, 340);
+            darkLabel29.Location = new Point(23, 340);
             darkLabel29.Margin = new Padding(4, 0, 4, 0);
             darkLabel29.Name = "darkLabel29";
             darkLabel29.Size = new Size(90, 15);
@@ -1036,19 +829,19 @@
             // 
             // ColorSellPanelColour
             // 
-            ColorSellPanelColour.BackgroundImage = (Image)resources.GetObject("ColorSellPanelColour.BackgroundImage");
             ColorSellPanelColour.Location = new Point(236, 318);
             ColorSellPanelColour.Margin = new Padding(4, 3, 4, 3);
             ColorSellPanelColour.Name = "ColorSellPanelColour";
             ColorSellPanelColour.Size = new Size(117, 15);
             ColorSellPanelColour.TabIndex = 29;
             ColorSellPanelColour.TabStop = false;
+            ColorSellPanelColour.Click += HUDColour_Click;
             // 
             // darkLabel28
             // 
             darkLabel28.AutoSize = true;
             darkLabel28.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel28.Location = new Point(22, 318);
+            darkLabel28.Location = new Point(23, 318);
             darkLabel28.Margin = new Padding(4, 0, 4, 0);
             darkLabel28.Name = "darkLabel28";
             darkLabel28.Size = new Size(83, 15);
@@ -1057,69 +850,69 @@
             // 
             // ColorIncreaseQuantityButtonColour
             // 
-            ColorIncreaseQuantityButtonColour.BackgroundImage = (Image)resources.GetObject("ColorIncreaseQuantityButtonColour.BackgroundImage");
             ColorIncreaseQuantityButtonColour.Location = new Point(236, 275);
             ColorIncreaseQuantityButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorIncreaseQuantityButtonColour.Name = "ColorIncreaseQuantityButtonColour";
             ColorIncreaseQuantityButtonColour.Size = new Size(117, 15);
             ColorIncreaseQuantityButtonColour.TabIndex = 27;
             ColorIncreaseQuantityButtonColour.TabStop = false;
+            ColorIncreaseQuantityButtonColour.Click += HUDColour_Click;
             // 
             // ColorSetQuantityButtonColour
             // 
-            ColorSetQuantityButtonColour.BackgroundImage = (Image)resources.GetObject("ColorSetQuantityButtonColour.BackgroundImage");
             ColorSetQuantityButtonColour.Location = new Point(236, 253);
             ColorSetQuantityButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorSetQuantityButtonColour.Name = "ColorSetQuantityButtonColour";
             ColorSetQuantityButtonColour.Size = new Size(117, 15);
             ColorSetQuantityButtonColour.TabIndex = 26;
             ColorSetQuantityButtonColour.TabStop = false;
+            ColorSetQuantityButtonColour.Click += HUDColour_Click;
             // 
             // ColorDecreaseQuantityButtonColour
             // 
-            ColorDecreaseQuantityButtonColour.BackgroundImage = (Image)resources.GetObject("ColorDecreaseQuantityButtonColour.BackgroundImage");
             ColorDecreaseQuantityButtonColour.Location = new Point(236, 209);
             ColorDecreaseQuantityButtonColour.Margin = new Padding(4, 3, 4, 3);
             ColorDecreaseQuantityButtonColour.Name = "ColorDecreaseQuantityButtonColour";
             ColorDecreaseQuantityButtonColour.Size = new Size(117, 15);
             ColorDecreaseQuantityButtonColour.TabIndex = 25;
             ColorDecreaseQuantityButtonColour.TabStop = false;
+            ColorDecreaseQuantityButtonColour.Click += HUDColour_Click;
             // 
             // BaseColorTooltipsBackgroundColour
             // 
-            BaseColorTooltipsBackgroundColour.BackgroundImage = (Image)resources.GetObject("BaseColorTooltipsBackgroundColour.BackgroundImage");
             BaseColorTooltipsBackgroundColour.Location = new Point(236, 187);
             BaseColorTooltipsBackgroundColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorTooltipsBackgroundColour.Name = "BaseColorTooltipsBackgroundColour";
             BaseColorTooltipsBackgroundColour.Size = new Size(117, 15);
             BaseColorTooltipsBackgroundColour.TabIndex = 24;
             BaseColorTooltipsBackgroundColour.TabStop = false;
+            BaseColorTooltipsBackgroundColour.Click += HUDColour_Click;
             // 
             // BaseColorTooltipsHeadersColour
             // 
-            BaseColorTooltipsHeadersColour.BackgroundImage = (Image)resources.GetObject("BaseColorTooltipsHeadersColour.BackgroundImage");
             BaseColorTooltipsHeadersColour.Location = new Point(236, 165);
             BaseColorTooltipsHeadersColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorTooltipsHeadersColour.Name = "BaseColorTooltipsHeadersColour";
             BaseColorTooltipsHeadersColour.Size = new Size(117, 15);
             BaseColorTooltipsHeadersColour.TabIndex = 23;
             BaseColorTooltipsHeadersColour.TabStop = false;
+            BaseColorTooltipsHeadersColour.Click += HUDColour_Click;
             // 
             // BaseColorInfoSectionBackgroundColour
             // 
-            BaseColorInfoSectionBackgroundColour.BackgroundImage = (Image)resources.GetObject("BaseColorInfoSectionBackgroundColour.BackgroundImage");
             BaseColorInfoSectionBackgroundColour.Location = new Point(234, 143);
             BaseColorInfoSectionBackgroundColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorInfoSectionBackgroundColour.Name = "BaseColorInfoSectionBackgroundColour";
             BaseColorInfoSectionBackgroundColour.Size = new Size(117, 15);
             BaseColorInfoSectionBackgroundColour.TabIndex = 21;
             BaseColorInfoSectionBackgroundColour.TabStop = false;
+            BaseColorInfoSectionBackgroundColour.Click += HUDColour_Click;
             // 
             // darkLabel27
             // 
             darkLabel27.AutoSize = true;
             darkLabel27.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel27.Location = new Point(22, 275);
+            darkLabel27.Location = new Point(23, 275);
             darkLabel27.Margin = new Padding(4, 0, 4, 0);
             darkLabel27.Name = "darkLabel27";
             darkLabel27.Size = new Size(161, 15);
@@ -1130,7 +923,7 @@
             // 
             darkLabel26.AutoSize = true;
             darkLabel26.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel26.Location = new Point(22, 253);
+            darkLabel26.Location = new Point(23, 253);
             darkLabel26.Margin = new Padding(4, 0, 4, 0);
             darkLabel26.Name = "darkLabel26";
             darkLabel26.Size = new Size(134, 15);
@@ -1141,7 +934,7 @@
             // 
             darkLabel25.AutoSize = true;
             darkLabel25.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel25.Location = new Point(22, 209);
+            darkLabel25.Location = new Point(23, 209);
             darkLabel25.Margin = new Padding(4, 0, 4, 0);
             darkLabel25.Name = "darkLabel25";
             darkLabel25.Size = new Size(165, 15);
@@ -1152,7 +945,7 @@
             // 
             darkLabel24.AutoSize = true;
             darkLabel24.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel24.Location = new Point(22, 187);
+            darkLabel24.Location = new Point(23, 187);
             darkLabel24.Margin = new Padding(4, 0, 4, 0);
             darkLabel24.Name = "darkLabel24";
             darkLabel24.Size = new Size(165, 15);
@@ -1163,7 +956,7 @@
             // 
             darkLabel23.AutoSize = true;
             darkLabel23.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel23.Location = new Point(22, 165);
+            darkLabel23.Location = new Point(23, 165);
             darkLabel23.Margin = new Padding(4, 0, 4, 0);
             darkLabel23.Name = "darkLabel23";
             darkLabel23.Size = new Size(144, 15);
@@ -1174,7 +967,7 @@
             // 
             darkLabel21.AutoSize = true;
             darkLabel21.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel21.Location = new Point(21, 143);
+            darkLabel21.Location = new Point(22, 143);
             darkLabel21.Margin = new Padding(4, 0, 4, 0);
             darkLabel21.Name = "darkLabel21";
             darkLabel21.Size = new Size(184, 15);
@@ -1183,19 +976,19 @@
             // 
             // BaseColorTextColour
             // 
-            BaseColorTextColour.BackgroundImage = (Image)resources.GetObject("BaseColorTextColour.BackgroundImage");
             BaseColorTextColour.Location = new Point(234, 99);
             BaseColorTextColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorTextColour.Name = "BaseColorTextColour";
             BaseColorTextColour.Size = new Size(117, 15);
             BaseColorTextColour.TabIndex = 7;
             BaseColorTextColour.TabStop = false;
+            BaseColorTextColour.Click += HUDColour_Click;
             // 
             // darkLabel20
             // 
             darkLabel20.AutoSize = true;
             darkLabel20.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel20.Location = new Point(21, 99);
+            darkLabel20.Location = new Point(22, 99);
             darkLabel20.Margin = new Padding(4, 0, 4, 0);
             darkLabel20.Name = "darkLabel20";
             darkLabel20.Size = new Size(81, 15);
@@ -1204,19 +997,19 @@
             // 
             // BaseColorLabelsColour
             // 
-            BaseColorLabelsColour.BackgroundImage = (Image)resources.GetObject("BaseColorLabelsColour.BackgroundImage");
             BaseColorLabelsColour.Location = new Point(234, 77);
             BaseColorLabelsColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorLabelsColour.Name = "BaseColorLabelsColour";
             BaseColorLabelsColour.Size = new Size(117, 15);
             BaseColorLabelsColour.TabIndex = 5;
             BaseColorLabelsColour.TabStop = false;
+            BaseColorLabelsColour.Click += HUDColour_Click;
             // 
             // darkLabel19
             // 
             darkLabel19.AutoSize = true;
             darkLabel19.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel19.Location = new Point(21, 77);
+            darkLabel19.Location = new Point(22, 77);
             darkLabel19.Margin = new Padding(4, 0, 4, 0);
             darkLabel19.Name = "darkLabel19";
             darkLabel19.Size = new Size(93, 15);
@@ -1225,19 +1018,19 @@
             // 
             // BaseColorHeadersColour
             // 
-            BaseColorHeadersColour.BackgroundImage = (Image)resources.GetObject("BaseColorHeadersColour.BackgroundImage");
             BaseColorHeadersColour.Location = new Point(234, 55);
             BaseColorHeadersColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorHeadersColour.Name = "BaseColorHeadersColour";
             BaseColorHeadersColour.Size = new Size(117, 15);
             BaseColorHeadersColour.TabIndex = 3;
             BaseColorHeadersColour.TabStop = false;
+            BaseColorHeadersColour.Click += HUDColour_Click;
             // 
             // darkLabel18
             // 
             darkLabel18.AutoSize = true;
             darkLabel18.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel18.Location = new Point(21, 55);
+            darkLabel18.Location = new Point(22, 55);
             darkLabel18.Margin = new Padding(4, 0, 4, 0);
             darkLabel18.Name = "darkLabel18";
             darkLabel18.Size = new Size(103, 15);
@@ -1246,44 +1039,34 @@
             // 
             // BaseColorVignetteColour
             // 
-            BaseColorVignetteColour.BackgroundImage = (Image)resources.GetObject("BaseColorVignetteColour.BackgroundImage");
             BaseColorVignetteColour.Location = new Point(234, 33);
             BaseColorVignetteColour.Margin = new Padding(4, 3, 4, 3);
             BaseColorVignetteColour.Name = "BaseColorVignetteColour";
             BaseColorVignetteColour.Size = new Size(117, 15);
             BaseColorVignetteColour.TabIndex = 1;
             BaseColorVignetteColour.TabStop = false;
+            BaseColorVignetteColour.Click += HUDColour_Click;
             // 
             // darkLabel17
             // 
             darkLabel17.AutoSize = true;
             darkLabel17.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel17.Location = new Point(22, 33);
+            darkLabel17.Location = new Point(23, 33);
             darkLabel17.Margin = new Padding(4, 0, 4, 0);
             darkLabel17.Name = "darkLabel17";
             darkLabel17.Size = new Size(104, 15);
             darkLabel17.TabIndex = 0;
             darkLabel17.Text = "BaseColorVignette";
             // 
-            // Form4
+            // ExpansionMarketSettingsHUDControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            ClientSize = new Size(1382, 810);
-            Controls.Add(groupBox17);
-            Controls.Add(groupBox15);
-            Controls.Add(groupBox10);
-            Controls.Add(groupBox13);
             Controls.Add(groupBox2);
             ForeColor = SystemColors.Control;
-            Margin = new Padding(4, 3, 4, 3);
-            Name = "Form4";
-            Text = "Form4";
-            groupBox17.ResumeLayout(false);
-            groupBox15.ResumeLayout(false);
-            groupBox10.ResumeLayout(false);
-            groupBox13.ResumeLayout(false);
+            Name = "ExpansionMarketSettingsHUDControl";
+            Size = new Size(738, 483);
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ColorRequirementsNotMetColour).EndInit();
@@ -1325,103 +1108,88 @@
             ((System.ComponentModel.ISupportInitialize)BaseColorHeadersColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)BaseColorVignetteColour).EndInit();
             ResumeLayout(false);
-
         }
 
         #endregion
-        private System.Windows.Forms.GroupBox groupBox17;
-        private System.Windows.Forms.ListBox listBox17;
-        private System.Windows.Forms.Button darkButton31;
-        private System.Windows.Forms.Button darkButton30;
-        private System.Windows.Forms.GroupBox groupBox15;
-        private System.Windows.Forms.Button darkButton44;
-        private System.Windows.Forms.Button darkButton43;
-        private System.Windows.Forms.ListBox listBox20;
-        private System.Windows.Forms.GroupBox groupBox10;
-        private System.Windows.Forms.Button darkButton17;
-        private System.Windows.Forms.ListBox listBox12;
-        private System.Windows.Forms.GroupBox groupBox13;
-        private System.Windows.Forms.Button darkButton50;
-        private System.Windows.Forms.Button darkButton36;
-        private System.Windows.Forms.ListBox listBox19;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.PictureBox ColorRequirementsNotMetColour;
-        private System.Windows.Forms.Label darkLabel92;
-        private System.Windows.Forms.PictureBox ColorPlayerStockColour;
-        private System.Windows.Forms.Label darkLabel93;
-        private System.Windows.Forms.Label darkLabel84;
-        private System.Windows.Forms.TextBox CurrencyIconTB;
-        private System.Windows.Forms.PictureBox ColorItemInfoTitleColour;
-        private System.Windows.Forms.Label darkLabel64;
-        private System.Windows.Forms.PictureBox ColorCurrencyDenominationTextColour;
-        private System.Windows.Forms.Label darkLabel63;
-        private System.Windows.Forms.PictureBox ColorIncreaseQuantityIconColour;
-        private System.Windows.Forms.Label darkLabel62;
-        private System.Windows.Forms.Label darkLabel61;
-        private System.Windows.Forms.PictureBox ColorDecreaseQuantityIconColour;
-        private System.Windows.Forms.PictureBox BaseColorCheckboxesColour;
-        private System.Windows.Forms.Label darkLabel60;
-        private System.Windows.Forms.PictureBox ColorCategoryBackgroundColour;
-        private System.Windows.Forms.Label darkLabel47;
-        private System.Windows.Forms.PictureBox ColorCategoryCornersColour;
-        private System.Windows.Forms.Label darkLabel46;
-        private System.Windows.Forms.PictureBox ColorToggleCategoriesTextColour;
-        private System.Windows.Forms.Label darkLabel31;
-        private System.Windows.Forms.PictureBox ColorItemInfoAttachmentsColour;
-        private System.Windows.Forms.Label darkLabel32;
-        private System.Windows.Forms.PictureBox ColorItemInfoIsEquipedColour;
-        private System.Windows.Forms.Label darkLabel33;
-        private System.Windows.Forms.PictureBox ColorItemInfoIsAttachmentColour;
-        private System.Windows.Forms.Label darkLabel34;
-        private System.Windows.Forms.PictureBox ColorItemInfoHasBulletsColour;
-        private System.Windows.Forms.PictureBox ColorItemInfoHasAttachmentsColour;
-        private System.Windows.Forms.PictureBox ColorItemInfoHasContainerItemsColour;
-        private System.Windows.Forms.PictureBox ColorItemInfoIconColour;
-        private System.Windows.Forms.PictureBox ColorItemButtonColour;
-        private System.Windows.Forms.PictureBox ColorCategoryCollapseIconColour;
-        private System.Windows.Forms.PictureBox ColorCategoryButtonColour;
-        private System.Windows.Forms.Label darkLabel35;
-        private System.Windows.Forms.Label darkLabel36;
-        private System.Windows.Forms.Label darkLabel37;
-        private System.Windows.Forms.Label darkLabel38;
-        private System.Windows.Forms.Label darkLabel39;
-        private System.Windows.Forms.Label darkLabel40;
-        private System.Windows.Forms.Label darkLabel41;
-        private System.Windows.Forms.PictureBox ColorSearchFilterButtonColour;
-        private System.Windows.Forms.Label darkLabel42;
-        private System.Windows.Forms.PictureBox ColorFilterOptionsIconColour;
-        private System.Windows.Forms.Label darkLabel43;
-        private System.Windows.Forms.PictureBox ColorFilterOptionsButtonColour;
-        private System.Windows.Forms.Label darkLabel44;
-        private System.Windows.Forms.PictureBox ColorMarketIconColour;
-        private System.Windows.Forms.Label darkLabel45;
-        private System.Windows.Forms.PictureBox ColorBuyButtonColour;
-        private System.Windows.Forms.Label ColorBuyButtonlabel;
-        private System.Windows.Forms.PictureBox ColorBuyPanelColour;
-        private System.Windows.Forms.Label darkLabel30;
-        private System.Windows.Forms.PictureBox ColorSellButtonColour;
-        private System.Windows.Forms.Label darkLabel29;
-        private System.Windows.Forms.PictureBox ColorSellPanelColour;
-        private System.Windows.Forms.Label darkLabel28;
-        private System.Windows.Forms.PictureBox ColorIncreaseQuantityButtonColour;
-        private System.Windows.Forms.PictureBox ColorSetQuantityButtonColour;
-        private System.Windows.Forms.PictureBox ColorDecreaseQuantityButtonColour;
-        private System.Windows.Forms.PictureBox BaseColorTooltipsBackgroundColour;
-        private System.Windows.Forms.PictureBox BaseColorTooltipsHeadersColour;
-        private System.Windows.Forms.PictureBox BaseColorInfoSectionBackgroundColour;
-        private System.Windows.Forms.Label darkLabel27;
-        private System.Windows.Forms.Label darkLabel26;
-        private System.Windows.Forms.Label darkLabel25;
-        private System.Windows.Forms.Label darkLabel24;
-        private System.Windows.Forms.Label darkLabel23;
-        private System.Windows.Forms.Label darkLabel21;
-        private System.Windows.Forms.PictureBox BaseColorTextColour;
-        private System.Windows.Forms.Label darkLabel20;
-        private System.Windows.Forms.PictureBox BaseColorLabelsColour;
-        private System.Windows.Forms.Label darkLabel19;
-        private System.Windows.Forms.PictureBox BaseColorHeadersColour;
-        private System.Windows.Forms.Label darkLabel18;
-        private System.Windows.Forms.PictureBox BaseColorVignetteColour;
-        private System.Windows.Forms.Label darkLabel17;
+
+        private GroupBox groupBox2;
+        private PictureBox ColorRequirementsNotMetColour;
+        private Label darkLabel92;
+        private PictureBox ColorPlayerStockColour;
+        private Label darkLabel93;
+        private PictureBox ColorItemInfoTitleColour;
+        private Label darkLabel64;
+        private PictureBox ColorCurrencyDenominationTextColour;
+        private Label darkLabel63;
+        private PictureBox ColorIncreaseQuantityIconColour;
+        private Label darkLabel62;
+        private Label darkLabel61;
+        private PictureBox ColorDecreaseQuantityIconColour;
+        private PictureBox BaseColorCheckboxesColour;
+        private Label darkLabel60;
+        private PictureBox ColorCategoryBackgroundColour;
+        private Label darkLabel47;
+        private PictureBox ColorCategoryCornersColour;
+        private Label darkLabel46;
+        private PictureBox ColorToggleCategoriesTextColour;
+        private Label darkLabel31;
+        private PictureBox ColorItemInfoAttachmentsColour;
+        private Label darkLabel32;
+        private PictureBox ColorItemInfoIsEquipedColour;
+        private Label darkLabel33;
+        private PictureBox ColorItemInfoIsAttachmentColour;
+        private Label darkLabel34;
+        private PictureBox ColorItemInfoHasBulletsColour;
+        private PictureBox ColorItemInfoHasAttachmentsColour;
+        private PictureBox ColorItemInfoHasContainerItemsColour;
+        private PictureBox ColorItemInfoIconColour;
+        private PictureBox ColorItemButtonColour;
+        private PictureBox ColorCategoryCollapseIconColour;
+        private PictureBox ColorCategoryButtonColour;
+        private Label darkLabel35;
+        private Label darkLabel36;
+        private Label darkLabel37;
+        private Label darkLabel38;
+        private Label darkLabel39;
+        private Label darkLabel40;
+        private Label darkLabel41;
+        private PictureBox ColorSearchFilterButtonColour;
+        private Label darkLabel42;
+        private PictureBox ColorFilterOptionsIconColour;
+        private Label darkLabel43;
+        private PictureBox ColorFilterOptionsButtonColour;
+        private Label darkLabel44;
+        private PictureBox ColorMarketIconColour;
+        private Label darkLabel45;
+        private PictureBox ColorBuyButtonColour;
+        private Label ColorBuyButtonlabel;
+        private PictureBox ColorBuyPanelColour;
+        private Label darkLabel30;
+        private PictureBox ColorSellButtonColour;
+        private Label darkLabel29;
+        private PictureBox ColorSellPanelColour;
+        private Label darkLabel28;
+        private PictureBox ColorIncreaseQuantityButtonColour;
+        private PictureBox ColorSetQuantityButtonColour;
+        private PictureBox ColorDecreaseQuantityButtonColour;
+        private PictureBox BaseColorTooltipsBackgroundColour;
+        private PictureBox BaseColorTooltipsHeadersColour;
+        private PictureBox BaseColorInfoSectionBackgroundColour;
+        private Label darkLabel27;
+        private Label darkLabel26;
+        private Label darkLabel25;
+        private Label darkLabel24;
+        private Label darkLabel23;
+        private Label darkLabel21;
+        private PictureBox BaseColorTextColour;
+        private Label darkLabel20;
+        private PictureBox BaseColorLabelsColour;
+        private Label darkLabel19;
+        private PictureBox BaseColorHeadersColour;
+        private Label darkLabel18;
+        private PictureBox BaseColorVignetteColour;
+        private Label darkLabel17;
+        private Label darkLabel84;
+        private TextBox CurrencyIconTB;
     }
 }
