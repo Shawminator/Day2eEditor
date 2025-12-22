@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             groupBox30 = new GroupBox();
+            pictureBox1 = new PictureBox();
+            label1 = new Label();
             LinkIconColour = new PictureBox();
             comboBox5 = new ComboBox();
             darkLabel86 = new Label();
@@ -37,11 +39,9 @@
             textBox13 = new TextBox();
             darkLabel83 = new Label();
             textBox12 = new TextBox();
-            label1 = new Label();
-            pictureBox1 = new PictureBox();
             groupBox30.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)LinkIconColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)LinkIconColour).BeginInit();
             SuspendLayout();
             // 
             // groupBox30
@@ -66,6 +66,26 @@
             groupBox30.TabIndex = 6;
             groupBox30.TabStop = false;
             groupBox30.Text = "Book Links";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackColor = Color.FromArgb(60, 63, 65);
+            pictureBox1.Location = new Point(117, 146);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(128, 128);
+            pictureBox1.TabIndex = 122;
+            pictureBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = Color.FromArgb(220, 220, 220);
+            label1.Location = new Point(18, 146);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(74, 15);
+            label1.TabIndex = 121;
+            label1.Text = "Icon Preview";
             // 
             // LinkIconColour
             // 
@@ -155,25 +175,6 @@
             textBox12.TabIndex = 3;
             textBox12.TextChanged += textBox12_TextChanged;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(18, 146);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(74, 15);
-            label1.TabIndex = 121;
-            label1.Text = "Icon Preview";
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Location = new Point(117, 146);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(128, 128);
-            pictureBox1.TabIndex = 122;
-            pictureBox1.TabStop = false;
-            // 
             // ExpansionBookLinksControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -185,8 +186,8 @@
             Size = new Size(567, 297);
             groupBox30.ResumeLayout(false);
             groupBox30.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)LinkIconColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)LinkIconColour).EndInit();
             ResumeLayout(false);
         }
 
