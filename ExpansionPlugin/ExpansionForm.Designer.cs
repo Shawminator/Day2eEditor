@@ -102,13 +102,25 @@
             GarageCM = new ContextMenuStrip(components);
             addNewEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
             removeEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
+            addNewServerMarkerToolStripMenuItem = new ToolStripMenuItem();
+            removeServerMarkerToolStripMenuItem = new ToolStripMenuItem();
             DamageCM = new ContextMenuStrip(components);
             addNewExplosionTargetToolStripMenuItem = new ToolStripMenuItem();
             removeExplosionTargetToolStripMenuItem = new ToolStripMenuItem();
             addNewExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
             removeExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
-            addNewServerMarkerToolStripMenuItem = new ToolStripMenuItem();
-            removeServerMarkerToolStripMenuItem = new ToolStripMenuItem();
+            MarketSettingsCM = new ContextMenuStrip(components);
+            addNewLargeVehicleToolStripMenuItem = new ToolStripMenuItem();
+            removeLargeVehicleToolStripMenuItem = new ToolStripMenuItem();
+            addNewCurrencyToolStripMenuItem = new ToolStripMenuItem();
+            removeCurrencyToolStripMenuItem = new ToolStripMenuItem();
+            addNewVehicleKeyToolStripMenuItem = new ToolStripMenuItem();
+            removeVehicleKeyToolStripMenuItem = new ToolStripMenuItem();
+            addNewLandSpawnToolStripMenuItem = new ToolStripMenuItem();
+            addNewAirSpawnToolStripMenuItem = new ToolStripMenuItem();
+            addNewWaterSpawnToolStripMenuItem = new ToolStripMenuItem();
+            addNewTrainSpawnToolStripMenuItem = new ToolStripMenuItem();
+            removeVehicleSpawnToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -120,6 +132,7 @@
             ChatCM.SuspendLayout();
             GarageCM.SuspendLayout();
             DamageCM.SuspendLayout();
+            MarketSettingsCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -721,7 +734,7 @@
             GarageCM.Items.AddRange(new ToolStripItem[] { addNewEntityWhitelistToolStripMenuItem, removeEntityWhitelistToolStripMenuItem, addNewServerMarkerToolStripMenuItem, removeServerMarkerToolStripMenuItem });
             GarageCM.Name = "GarageCM";
             GarageCM.ShowImageMargin = false;
-            GarageCM.Size = new Size(181, 114);
+            GarageCM.Size = new Size(181, 92);
             // 
             // addNewEntityWhitelistToolStripMenuItem
             // 
@@ -738,6 +751,22 @@
             removeEntityWhitelistToolStripMenuItem.Size = new Size(180, 22);
             removeEntityWhitelistToolStripMenuItem.Text = "Remove Entity Whitelist";
             removeEntityWhitelistToolStripMenuItem.Click += removeEntityWhitelistToolStripMenuItem_Click;
+            // 
+            // addNewServerMarkerToolStripMenuItem
+            // 
+            addNewServerMarkerToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewServerMarkerToolStripMenuItem.Name = "addNewServerMarkerToolStripMenuItem";
+            addNewServerMarkerToolStripMenuItem.Size = new Size(180, 22);
+            addNewServerMarkerToolStripMenuItem.Text = "Add New Server Marker";
+            addNewServerMarkerToolStripMenuItem.Click += addNewServerMarkerToolStripMenuItem_Click;
+            // 
+            // removeServerMarkerToolStripMenuItem
+            // 
+            removeServerMarkerToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeServerMarkerToolStripMenuItem.Name = "removeServerMarkerToolStripMenuItem";
+            removeServerMarkerToolStripMenuItem.Size = new Size(180, 22);
+            removeServerMarkerToolStripMenuItem.Text = "Remove Server Marker";
+            removeServerMarkerToolStripMenuItem.Click += removeServerMarkerToolStripMenuItem_Click;
             // 
             // DamageCM
             // 
@@ -779,21 +808,101 @@
             removeExplosiveProjectileToolStripMenuItem.Text = "Remove Explosive Projectile";
             removeExplosiveProjectileToolStripMenuItem.Click += removeExplosiveProjectileToolStripMenuItem_Click;
             // 
-            // addNewServerMarkerToolStripMenuItem
+            // MarketSettingsCM
             // 
-            addNewServerMarkerToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewServerMarkerToolStripMenuItem.Name = "addNewServerMarkerToolStripMenuItem";
-            addNewServerMarkerToolStripMenuItem.Size = new Size(180, 22);
-            addNewServerMarkerToolStripMenuItem.Text = "Add New Server Marker";
-            addNewServerMarkerToolStripMenuItem.Click += addNewServerMarkerToolStripMenuItem_Click;
+            MarketSettingsCM.BackColor = Color.FromArgb(60, 63, 65);
+            MarketSettingsCM.Items.AddRange(new ToolStripItem[] { addNewLargeVehicleToolStripMenuItem, removeLargeVehicleToolStripMenuItem, addNewCurrencyToolStripMenuItem, removeCurrencyToolStripMenuItem, addNewVehicleKeyToolStripMenuItem, removeVehicleKeyToolStripMenuItem, addNewLandSpawnToolStripMenuItem, addNewAirSpawnToolStripMenuItem, addNewWaterSpawnToolStripMenuItem, addNewTrainSpawnToolStripMenuItem, removeVehicleSpawnToolStripMenuItem });
+            MarketSettingsCM.Name = "ChatCM";
+            MarketSettingsCM.ShowImageMargin = false;
+            MarketSettingsCM.Size = new Size(171, 268);
             // 
-            // removeServerMarkerToolStripMenuItem
+            // addNewLargeVehicleToolStripMenuItem
             // 
-            removeServerMarkerToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeServerMarkerToolStripMenuItem.Name = "removeServerMarkerToolStripMenuItem";
-            removeServerMarkerToolStripMenuItem.Size = new Size(180, 22);
-            removeServerMarkerToolStripMenuItem.Text = "Remove Server Marker";
-            removeServerMarkerToolStripMenuItem.Click += removeServerMarkerToolStripMenuItem_Click;
+            addNewLargeVehicleToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewLargeVehicleToolStripMenuItem.Name = "addNewLargeVehicleToolStripMenuItem";
+            addNewLargeVehicleToolStripMenuItem.Size = new Size(170, 22);
+            addNewLargeVehicleToolStripMenuItem.Text = "Add New Large Vehicle";
+            addNewLargeVehicleToolStripMenuItem.Click += addNewLargeVehicleToolStripMenuItem_Click;
+            // 
+            // removeLargeVehicleToolStripMenuItem
+            // 
+            removeLargeVehicleToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeLargeVehicleToolStripMenuItem.Name = "removeLargeVehicleToolStripMenuItem";
+            removeLargeVehicleToolStripMenuItem.Size = new Size(170, 22);
+            removeLargeVehicleToolStripMenuItem.Text = "Remove Large Vehicle";
+            removeLargeVehicleToolStripMenuItem.Click += removeLargeVehicleToolStripMenuItem_Click;
+            // 
+            // addNewCurrencyToolStripMenuItem
+            // 
+            addNewCurrencyToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewCurrencyToolStripMenuItem.Name = "addNewCurrencyToolStripMenuItem";
+            addNewCurrencyToolStripMenuItem.Size = new Size(170, 22);
+            addNewCurrencyToolStripMenuItem.Text = "Add New Currency";
+            addNewCurrencyToolStripMenuItem.Click += addNewCurrencyToolStripMenuItem_Click;
+            // 
+            // removeCurrencyToolStripMenuItem
+            // 
+            removeCurrencyToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeCurrencyToolStripMenuItem.Name = "removeCurrencyToolStripMenuItem";
+            removeCurrencyToolStripMenuItem.Size = new Size(170, 22);
+            removeCurrencyToolStripMenuItem.Text = "Remove Currency";
+            removeCurrencyToolStripMenuItem.Click += removeCurrencyToolStripMenuItem_Click;
+            // 
+            // addNewVehicleKeyToolStripMenuItem
+            // 
+            addNewVehicleKeyToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewVehicleKeyToolStripMenuItem.Name = "addNewVehicleKeyToolStripMenuItem";
+            addNewVehicleKeyToolStripMenuItem.Size = new Size(170, 22);
+            addNewVehicleKeyToolStripMenuItem.Text = "Add New Vehicle Key";
+            addNewVehicleKeyToolStripMenuItem.Click += addNewVehicleKeyToolStripMenuItem_Click;
+            // 
+            // removeVehicleKeyToolStripMenuItem
+            // 
+            removeVehicleKeyToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeVehicleKeyToolStripMenuItem.Name = "removeVehicleKeyToolStripMenuItem";
+            removeVehicleKeyToolStripMenuItem.Size = new Size(170, 22);
+            removeVehicleKeyToolStripMenuItem.Text = "Remove Vehicle Key";
+            removeVehicleKeyToolStripMenuItem.Click += removeVehicleKeyToolStripMenuItem_Click;
+            // 
+            // addNewLandSpawnToolStripMenuItem
+            // 
+            addNewLandSpawnToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewLandSpawnToolStripMenuItem.Name = "addNewLandSpawnToolStripMenuItem";
+            addNewLandSpawnToolStripMenuItem.Size = new Size(170, 22);
+            addNewLandSpawnToolStripMenuItem.Text = "Add New Land Spawn";
+            addNewLandSpawnToolStripMenuItem.Click += addNewLandSpawnToolStripMenuItem_Click;
+            // 
+            // addNewAirSpawnToolStripMenuItem
+            // 
+            addNewAirSpawnToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewAirSpawnToolStripMenuItem.Name = "addNewAirSpawnToolStripMenuItem";
+            addNewAirSpawnToolStripMenuItem.Size = new Size(170, 22);
+            addNewAirSpawnToolStripMenuItem.Text = "Add New Air Spawn";
+            addNewAirSpawnToolStripMenuItem.Click += addNewAirSpawnToolStripMenuItem_Click;
+            // 
+            // addNewWaterSpawnToolStripMenuItem
+            // 
+            addNewWaterSpawnToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewWaterSpawnToolStripMenuItem.Name = "addNewWaterSpawnToolStripMenuItem";
+            addNewWaterSpawnToolStripMenuItem.Size = new Size(170, 22);
+            addNewWaterSpawnToolStripMenuItem.Text = "Add New Water Spawn";
+            addNewWaterSpawnToolStripMenuItem.Click += addNewWaterSpawnToolStripMenuItem_Click;
+            // 
+            // addNewTrainSpawnToolStripMenuItem
+            // 
+            addNewTrainSpawnToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTrainSpawnToolStripMenuItem.Name = "addNewTrainSpawnToolStripMenuItem";
+            addNewTrainSpawnToolStripMenuItem.Size = new Size(170, 22);
+            addNewTrainSpawnToolStripMenuItem.Text = "Add New Train Spawn";
+            addNewTrainSpawnToolStripMenuItem.Click += addNewTrainSpawnToolStripMenuItem_Click;
+            // 
+            // removeVehicleSpawnToolStripMenuItem
+            // 
+            removeVehicleSpawnToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeVehicleSpawnToolStripMenuItem.Name = "removeVehicleSpawnToolStripMenuItem";
+            removeVehicleSpawnToolStripMenuItem.Size = new Size(170, 22);
+            removeVehicleSpawnToolStripMenuItem.Text = "Remove Vehicle Spawn";
+            removeVehicleSpawnToolStripMenuItem.Click += removeVehicleSpawnToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -822,6 +931,7 @@
             ChatCM.ResumeLayout(false);
             GarageCM.ResumeLayout(false);
             DamageCM.ResumeLayout(false);
+            MarketSettingsCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -907,5 +1017,17 @@
         private TextBox txtSearch;
         private ToolStripMenuItem addNewServerMarkerToolStripMenuItem;
         private ToolStripMenuItem removeServerMarkerToolStripMenuItem;
+        private ContextMenuStrip MarketSettingsCM;
+        private ToolStripMenuItem addNewLargeVehicleToolStripMenuItem;
+        private ToolStripMenuItem removeLargeVehicleToolStripMenuItem;
+        private ToolStripMenuItem addNewCurrencyToolStripMenuItem;
+        private ToolStripMenuItem removeCurrencyToolStripMenuItem;
+        private ToolStripMenuItem addNewVehicleKeyToolStripMenuItem;
+        private ToolStripMenuItem removeVehicleKeyToolStripMenuItem;
+        private ToolStripMenuItem addNewLandSpawnToolStripMenuItem;
+        private ToolStripMenuItem addNewAirSpawnToolStripMenuItem;
+        private ToolStripMenuItem addNewWaterSpawnToolStripMenuItem;
+        private ToolStripMenuItem addNewTrainSpawnToolStripMenuItem;
+        private ToolStripMenuItem removeVehicleSpawnToolStripMenuItem;
     }
 }

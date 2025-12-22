@@ -264,15 +264,33 @@ namespace ExpansionPlugin
                     _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
                 },
                 //Market
-                [typeof(MarketSettings)] = (node,selected) =>
+                [typeof(MarketSettings)] = (node, selected) =>
                 {
                     MarketSettings MarketSettings = node.Tag as MarketSettings;
                     ShowHandler(new ExpansionMarketSettingsGeneralControl(), typeof(ExpansionMarketSettingsConfig), MarketSettings, selected);
                 },
-                [typeof(MarketMenuColours)] = (node,selected) =>
+                [typeof(MarketMenuColours)] = (node, selected) =>
                 {
                     ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig = node.Parent.Tag as ExpansionMarketSettingsConfig;
                     ShowHandler(new ExpansionMarketSettingsHUDControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSettingsConfig.Data, selected);
+                },
+                [typeof(ExpansionMarketSpawnPosition)] = (node, selected) =>
+                {
+                    ExpansionMarketSpawnPosition ExpansionMarketSpawnPosition = node.Tag as ExpansionMarketSpawnPosition;
+                    var control = new ExpasnionMarksetSettingsVehicleSpawnInfoControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseVehicleSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
+                    };
+                    control.OrientationChanged += (updatedOrientation) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseVehicleSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, selected);
+                    SetupVehicleSpawnLocation(ExpansionMarketSpawnPosition, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
                 },
             };
             // ----------------------
@@ -525,6 +543,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeServerMarkerToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //MarketSettings
+                [typeof(ExpansionMarketSpawnPosition)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeVehicleSpawnToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
             // ----------------------
             // String handlers
@@ -775,6 +800,67 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewServerMarkerToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Market Settings
+                ["LargeVehicles"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewLargeVehicleToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["LargeVehicle"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeLargeVehicleToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Currencies"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewCurrencyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Currency"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeCurrencyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["VehicleKeys"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewVehicleKeyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["VehicleKey"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeVehicleKeyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["LandSpawnPositions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewLandSpawnToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AirSpawnPositions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewAirSpawnToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["WatertSpawnPositions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewWaterSpawnToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["TrainSpawnPositions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewTrainSpawnToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
             };
@@ -1793,7 +1879,7 @@ namespace ExpansionPlugin
             {
                 Tag = "LandSpawnPositions"
             };
-            foreach(ExpansionMarketSpawnPosition position in ef.Data.LandSpawnPositions)
+            foreach (ExpansionMarketSpawnPosition position in ef.Data.LandSpawnPositions)
             {
                 Landspawnpointnodes.Nodes.Add(new TreeNode(position.ToString())
                 {
@@ -1908,6 +1994,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_AILocationNoGoAreasDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_ServerMarkerDataSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_ServerMarkerDataDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_VehicleSpawnPositionSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_VehicleSpawnPositionDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -1915,6 +2003,7 @@ namespace ExpansionPlugin
             _selectedAIPatrol = null;
             _selectedAINOGoArea = null;
             _selectedServerMarkerData = null;
+            _selectedVehicleSpanPosition = null;
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -1978,6 +2067,7 @@ namespace ExpansionPlugin
         private ExpansionAIPatrol _selectedAIPatrol;
         private ExpansionAINoGoArea _selectedAINOGoArea;
         private ExpansionServerMarkerData _selectedServerMarkerData;
+        private ExpansionMarketSpawnPosition _selectedVehicleSpanPosition;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -2053,6 +2143,19 @@ namespace ExpansionPlugin
                 var ExpansionMapConfig = node.Parent?.Parent?.Tag as ExpansionMapConfig;
                 if (ExpansionMapConfig != null)
                     DrawbaseServerMarkerData(ExpansionMapConfig);
+            });
+        }
+        private void SetupVehicleSpawnLocation(ExpansionMarketSpawnPosition expansionMarketSpawnPosition, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedVehicleSpanPosition = expansionMarketSpawnPosition;
+                _mapControl.MapsingleClicked += MapControl_VehicleSpawnPositionSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_VehicleSpawnPositionDoubleclicked;
+
+                var ExpansionMarketSettingsConfig = node.Parent?.Parent?.Parent?.Tag as ExpansionMarketSettingsConfig;
+                if (ExpansionMarketSettingsConfig != null)
+                    DrawbaseVehicleSpawnPositions(ExpansionMarketSettingsConfig);
             });
         }
 
@@ -2194,6 +2297,41 @@ namespace ExpansionPlugin
         public static Image resizeImage(Image imgToResize, Size size)
         {
             return (Image)(new Bitmap(imgToResize, size));
+        }
+        private void DrawbaseVehicleSpawnPositions(ExpansionMarketSettingsConfig expansionMarketSettingsConfig)
+        {
+            VehicleSpawnDrawable? selectedMarker = null;
+            void AddPositions(IEnumerable<ExpansionMarketSpawnPosition> positions)
+            {
+                foreach (var pos in positions)
+                {
+                    var marker = new VehicleSpawnDrawable(
+                        new PointF((float)pos.Position[0], (float)pos.Position[2]),
+                        _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Orientation = pos.Orientation
+                    };
+                    if (_selectedVehicleSpanPosition == pos)
+                    {
+                        marker.Color = Color.LimeGreen;
+                        // Defer registering; draw this one last
+                        selectedMarker = marker;
+                    }
+                    else
+                    {
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+            }
+            AddPositions(expansionMarketSettingsConfig.Data.LandSpawnPositions);
+            AddPositions(expansionMarketSettingsConfig.Data.AirSpawnPositions);
+            AddPositions(expansionMarketSettingsConfig.Data.WaterSpawnPositions);
+            AddPositions(expansionMarketSettingsConfig.Data.TrainSpawnPositions);
+            if (selectedMarker != null)
+            {
+                _mapControl.RegisterDrawable(selectedMarker);
+            }
         }
         //map click methods
         private void MapControl_BuildZoneSingleclicked(object sender, MapClickEventArgs e)
@@ -2518,6 +2656,81 @@ namespace ExpansionPlugin
                 ExpansionMapConfig.isDirty = true;
                 ShowHandler(new ExpansionMapServerMarkerInfoControl(), typeof(ExpansionMapConfig), ExpansionServerMarkerData, new List<TreeNode>() { currentTreeNode });
                 DrawbaseServerMarkerData(ExpansionMapConfig);
+            }
+        }
+        private void MapControl_VehicleSpawnPositionSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+
+            ExpansionMarketSpawnPosition closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child2 in parentNode.Nodes)
+            {
+                foreach (TreeNode child in child2.Nodes)
+                {
+                    if (child.Tag is ExpansionMarketSpawnPosition pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.Position[0], pos.Position[2]));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 30) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child2 in parentNode.Nodes)
+                {
+                    foreach (TreeNode child in child2.Nodes)
+                    {
+                        if (child.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child;
+                            break;
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_VehicleSpawnPositionDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is ExpansionMarketSpawnPosition ExpansionMarketSpawnPosition)
+            {
+                ExpansionMarketSpawnPosition.Position[0] = (float)e.MapCoordinates.X;
+                ExpansionMarketSpawnPosition.Position[2] = (float)e.MapCoordinates.Y;
+                if (currentTreeNode.Parent.Tag.ToString() == "LandSpawnPositions" ||
+                    currentTreeNode.Parent.Tag.ToString() == "AirSpawnPositions" ||
+                    currentTreeNode.Parent.Tag.ToString() == "TrainSpawnPositions")
+                {
+                    if (MapData.FileExists)
+                    {
+                        ExpansionMarketSpawnPosition.Position[1] = (MapData.gethieght(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
+                    }
+                }
+                _mapControl.ClearDrawables(); 
+                _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+                ShowHandler(new ExpasnionMarksetSettingsVehicleSpawnInfoControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, new List<TreeNode>() { currentTreeNode });
+                DrawbaseVehicleSpawnPositions(_expansionManager.ExpansionMarketSettingsConfig);
             }
         }
         #endregion mapstuff
@@ -3810,6 +4023,7 @@ namespace ExpansionPlugin
                 }
                 _expansionManager.ExpansionGarageConfig.isDirty = true;
             }
+
         }
         private void removeEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3852,6 +4066,212 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionMapConfig.Data.ServerMarkers.Remove(currentTreeNode.Tag as ExpansionServerMarkerData);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             _expansionManager.ExpansionMapConfig.isDirty = true;
+        }
+        //Market Settings
+
+        private void addNewLargeVehicleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionMarketSettingsConfig.Data.LargeVehicles.Contains(l))
+                    {
+                        _expansionManager.ExpansionMarketSettingsConfig.Data.LargeVehicles.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "LargeVehicle"
+                        });
+                    }
+                }
+                _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+            }
+        }
+        private void removeLargeVehicleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionMarketSettingsConfig.Data.LargeVehicles.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+        }
+        private void addNewCurrencyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //to do once i add in the market categories with exchange flag
+        }
+        private void removeCurrencyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionMarketSettingsConfig.Data.Currencies.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+        }
+        private void addNewVehicleKeyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionMarketSettingsConfig.Data.VehicleKeys.Contains(l))
+                    {
+                        _expansionManager.ExpansionMarketSettingsConfig.Data.VehicleKeys.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "VehicleKey"
+                        });
+                    }
+                }
+                _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+            }
+        }
+        private void removeVehicleKeyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionMarketSettingsConfig.Data.VehicleKeys.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+        }
+        private void addNewLandSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionMarketSpawnPosition newspawn = new ExpansionMarketSpawnPosition()
+            {
+                Position = new float[]
+                {
+                    pos,
+                    0,
+                    pos
+                },
+                Orientation = new float[]
+                {
+                    0,
+                    0,
+                    0
+                }
+            };
+            if (MapData.FileExists)
+            {
+                newspawn.Position[1] = (MapData.gethieght(pos, pos));
+            }
+            _expansionManager.ExpansionMarketSettingsConfig.Data.LandSpawnPositions.Add(newspawn);
+            currentTreeNode.Nodes.Add(new TreeNode(newspawn.ToString())
+            {
+                Tag = newspawn
+            });
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void addNewAirSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionMarketSpawnPosition newspawn = new ExpansionMarketSpawnPosition()
+            {
+                Position = new float[]
+                {
+                    pos,
+                    0,
+                    pos
+                },
+                Orientation = new float[]
+                {
+                    0,
+                    0,
+                    0
+                }
+            };
+            if (MapData.FileExists)
+            {
+                newspawn.Position[1] = (MapData.gethieght(pos, pos));
+            }
+            _expansionManager.ExpansionMarketSettingsConfig.Data.AirSpawnPositions.Add(newspawn);
+            currentTreeNode.Nodes.Add(new TreeNode(newspawn.ToString())
+            {
+                Tag = newspawn
+            });
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void addNewWaterSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionMarketSpawnPosition newspawn = new ExpansionMarketSpawnPosition()
+            {
+                Position = new float[]
+                {
+                    pos,
+                    0,
+                    pos
+                },
+                Orientation = new float[]
+                {
+                    0,
+                    0,
+                    0
+                }
+            };
+            _expansionManager.ExpansionMarketSettingsConfig.Data.WaterSpawnPositions.Add(newspawn);
+            currentTreeNode.Nodes.Add(new TreeNode(newspawn.ToString())
+            {
+                Tag = newspawn
+            });
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void addNewTrainSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionMarketSpawnPosition newspawn = new ExpansionMarketSpawnPosition()
+            {
+                Position = new float[]
+                {
+                    pos,
+                    0,
+                    pos
+                },
+                Orientation = new float[]
+                {
+                    0,
+                    0,
+                    0
+                }
+            };
+            if (MapData.FileExists)
+            {
+                newspawn.Position[1] = (MapData.gethieght(pos, pos));
+            }
+            _expansionManager.ExpansionMarketSettingsConfig.Data.TrainSpawnPositions.Add(newspawn);
+            currentTreeNode.Nodes.Add(new TreeNode(newspawn.ToString())
+            {
+                Tag = newspawn
+            });
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void removeVehicleSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string spawntype = currentTreeNode.Parent.Tag.ToString();
+            switch(spawntype)
+            {
+                case "LandSpawnPositions":
+                    _expansionManager.ExpansionMarketSettingsConfig.Data.LandSpawnPositions.Remove(currentTreeNode.Tag as ExpansionMarketSpawnPosition);
+                    break;
+                case "AirSpawnPositions":
+                    _expansionManager.ExpansionMarketSettingsConfig.Data.AirSpawnPositions.Remove(currentTreeNode.Tag as ExpansionMarketSpawnPosition);
+                    break;
+                case "WatertSpawnPositions":
+                    _expansionManager.ExpansionMarketSettingsConfig.Data.WaterSpawnPositions.Remove(currentTreeNode.Tag as ExpansionMarketSpawnPosition);
+                    break;
+                case "TrainSpawnPositions":
+                    _expansionManager.ExpansionMarketSettingsConfig.Data.TrainSpawnPositions.Remove(currentTreeNode.Tag as ExpansionMarketSpawnPosition);
+                    break;
+            }
+            currentTreeNode.Remove();
+            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
         }
         #endregion right click methods
 
@@ -3909,6 +4329,7 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
 
 
     }

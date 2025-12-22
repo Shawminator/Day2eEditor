@@ -478,7 +478,50 @@ namespace ExpansionPlugin
             position.Orientation = new float[] { 0.0f, 0.0f, 0.0f };
             WaterSpawnPositions.Add(position);
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is not MarketSettings other)
+                return false;
 
+
+            return m_Version == other.m_Version &&
+                MarketSystemEnabled == other.MarketSystemEnabled &&
+                CurrencyIcon == other.CurrencyIcon &&
+                ATMSystemEnabled == other.ATMSystemEnabled &&
+                MaxDepositMoney == other.MaxDepositMoney &&
+                DefaultDepositMoney == other.DefaultDepositMoney &&
+                ATMPlayerTransferEnabled == other.ATMPlayerTransferEnabled &&
+                ATMPartyLockerEnabled == other.ATMPartyLockerEnabled &&
+                MaxPartyDepositMoney == other.MaxPartyDepositMoney &&
+                UseWholeMapForATMPlayerList == other.UseWholeMapForATMPlayerList &&
+                SellPricePercent == other.SellPricePercent &&
+                NetworkBatchSize == other.NetworkBatchSize &&
+                MaxVehicleDistanceToTrader == other.MaxVehicleDistanceToTrader &&
+                MaxLargeVehicleDistanceToTrader == other.MaxLargeVehicleDistanceToTrader &&
+                MaxSZVehicleParkingTime == other.MaxSZVehicleParkingTime &&
+                SZVehicleParkingTicketFine == other.SZVehicleParkingTicketFine &&
+                SZVehicleParkingFineUseKey == other.SZVehicleParkingFineUseKey &&
+                DisallowUnpersisted == other.DisallowUnpersisted &&
+                DisableClientSellTransactionDetails == other.DisableClientSellTransactionDetails &&
+                MarketMenuColors.Equals(other.MarketMenuColors) &&
+                SequenceEqual(NetworkCategories, other.NetworkCategories) &&
+                SequenceEqual(LargeVehicles, other.LargeVehicles) &&
+                SequenceEqual(Currencies, other.Currencies) &&
+                SequenceEqual(VehicleKeys, other.VehicleKeys) &&
+                SequenceEqual(LandSpawnPositions, other.LandSpawnPositions) &&
+                SequenceEqual(AirSpawnPositions, other.AirSpawnPositions) &&
+                SequenceEqual(WaterSpawnPositions, other.WaterSpawnPositions) &&
+                SequenceEqual(TrainSpawnPositions, other.TrainSpawnPositions);
+
+        }
+        private bool SequenceEqual(BindingList<string> a, BindingList<string> b)
+        {
+            return a != null && b != null && a.SequenceEqual(b);
+        }
+        private bool SequenceEqual(BindingList<ExpansionMarketSpawnPosition> a, BindingList<ExpansionMarketSpawnPosition> b)
+        {
+            return a != null && b != null && a.SequenceEqual(b);
+        }
     }
     public class MarketMenuColours
     {
@@ -617,6 +660,16 @@ namespace ExpansionPlugin
         public override string ToString()
         {
             return Position[0].ToString("F6") + " " + Position[1].ToString("F6") + " " + Position[2].ToString("F6");
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is not ExpansionMarketSpawnPosition other)
+                return false;
+
+
+            return Position.SequenceEqual(other.Position) &&
+               Orientation.SequenceEqual(other.Orientation);
+
         }
     }
 }

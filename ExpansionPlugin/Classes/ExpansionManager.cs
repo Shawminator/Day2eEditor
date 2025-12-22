@@ -1,16 +1,6 @@
 ﻿using Day2eEditor;
-using DayZeLib;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+
 
 namespace ExpansionPlugin
 {
@@ -360,7 +350,6 @@ namespace ExpansionPlugin
             "Shoulder",
             "Vest"
         };
-
         public static List<string> ExpansionIcons = new List<string>()
         {
             "Ambush",
