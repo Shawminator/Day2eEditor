@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            GuardAggressionTimeoutNUD = new NumericUpDown();
+            label4 = new Label();
+            AggressionTimeoutNUD = new NumericUpDown();
+            label3 = new Label();
+            RecreateWeaponNetworkRepresentationCB = new CheckBox();
+            OverrideClientWeaponFiringCB = new CheckBox();
             MaxRecruitableAINUD = new NumericUpDown();
             label2 = new Label();
             MemeLevelNUD = new NumericUpDown();
@@ -57,13 +63,12 @@
             darkLabel2 = new Label();
             FormationScaleNUD = new NumericUpDown();
             darkLabel17 = new Label();
-            OverrideClientWeaponFiringCB = new CheckBox();
-            RecreateWeaponNetworkRepresentationCB = new CheckBox();
-            AggressionTimeoutNUD = new NumericUpDown();
-            label3 = new Label();
-            GuardAggressionTimeoutNUD = new NumericUpDown();
-            label4 = new Label();
+            MaxFlankingDistanceNUD = new NumericUpDown();
+            label5 = new Label();
+            EnableFlankingOutsideCombatCB = new CheckBox();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)GuardAggressionTimeoutNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)AggressionTimeoutNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRecruitableAINUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DamageReceivedMultiplierNUD).BeginInit();
@@ -74,12 +79,14 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)AggressionTimeoutNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)GuardAggressionTimeoutNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MaxFlankingDistanceNUD).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(EnableFlankingOutsideCombatCB);
+            groupBox1.Controls.Add(MaxFlankingDistanceNUD);
+            groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(GuardAggressionTimeoutNUD);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(AggressionTimeoutNUD);
@@ -120,10 +127,88 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(755, 289);
+            groupBox1.Size = new Size(755, 334);
             groupBox1.TabIndex = 131;
             groupBox1.TabStop = false;
             groupBox1.Text = "AI Settings";
+            // 
+            // GuardAggressionTimeoutNUD
+            // 
+            GuardAggressionTimeoutNUD.BackColor = Color.FromArgb(60, 63, 65);
+            GuardAggressionTimeoutNUD.DecimalPlaces = 2;
+            GuardAggressionTimeoutNUD.ForeColor = SystemColors.Control;
+            GuardAggressionTimeoutNUD.Location = new Point(567, 172);
+            GuardAggressionTimeoutNUD.Margin = new Padding(4, 3, 4, 3);
+            GuardAggressionTimeoutNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            GuardAggressionTimeoutNUD.Name = "GuardAggressionTimeoutNUD";
+            GuardAggressionTimeoutNUD.Size = new Size(124, 23);
+            GuardAggressionTimeoutNUD.TabIndex = 214;
+            GuardAggressionTimeoutNUD.TextAlign = HorizontalAlignment.Center;
+            GuardAggressionTimeoutNUD.ValueChanged += GuardAggressionTimeoutNUD_ValueChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.ForeColor = Color.FromArgb(220, 220, 220);
+            label4.Location = new Point(367, 174);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(149, 15);
+            label4.TabIndex = 215;
+            label4.Text = "Guard Aggression Timeout";
+            // 
+            // AggressionTimeoutNUD
+            // 
+            AggressionTimeoutNUD.BackColor = Color.FromArgb(60, 63, 65);
+            AggressionTimeoutNUD.DecimalPlaces = 2;
+            AggressionTimeoutNUD.ForeColor = SystemColors.Control;
+            AggressionTimeoutNUD.Location = new Point(224, 170);
+            AggressionTimeoutNUD.Margin = new Padding(4, 3, 4, 3);
+            AggressionTimeoutNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            AggressionTimeoutNUD.Name = "AggressionTimeoutNUD";
+            AggressionTimeoutNUD.Size = new Size(124, 23);
+            AggressionTimeoutNUD.TabIndex = 212;
+            AggressionTimeoutNUD.TextAlign = HorizontalAlignment.Center;
+            AggressionTimeoutNUD.ValueChanged += AggressionTimeoutNUD_ValueChanged;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.ForeColor = Color.FromArgb(220, 220, 220);
+            label3.Location = new Point(21, 174);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(114, 15);
+            label3.TabIndex = 213;
+            label3.Text = "Aggression Timeout";
+            // 
+            // RecreateWeaponNetworkRepresentationCB
+            // 
+            RecreateWeaponNetworkRepresentationCB.AutoSize = true;
+            RecreateWeaponNetworkRepresentationCB.CheckAlign = ContentAlignment.MiddleRight;
+            RecreateWeaponNetworkRepresentationCB.ForeColor = SystemColors.Control;
+            RecreateWeaponNetworkRepresentationCB.Location = new Point(17, 285);
+            RecreateWeaponNetworkRepresentationCB.Margin = new Padding(4, 3, 4, 3);
+            RecreateWeaponNetworkRepresentationCB.Name = "RecreateWeaponNetworkRepresentationCB";
+            RecreateWeaponNetworkRepresentationCB.Size = new Size(248, 19);
+            RecreateWeaponNetworkRepresentationCB.TabIndex = 211;
+            RecreateWeaponNetworkRepresentationCB.Text = "Recreate Weapon Network Representation";
+            RecreateWeaponNetworkRepresentationCB.UseVisualStyleBackColor = true;
+            RecreateWeaponNetworkRepresentationCB.CheckedChanged += RecreateWeaponNetworkRepresentationCB_CheckedChanged;
+            // 
+            // OverrideClientWeaponFiringCB
+            // 
+            OverrideClientWeaponFiringCB.AutoSize = true;
+            OverrideClientWeaponFiringCB.CheckAlign = ContentAlignment.MiddleRight;
+            OverrideClientWeaponFiringCB.ForeColor = SystemColors.Control;
+            OverrideClientWeaponFiringCB.Location = new Point(524, 259);
+            OverrideClientWeaponFiringCB.Margin = new Padding(4, 3, 4, 3);
+            OverrideClientWeaponFiringCB.Name = "OverrideClientWeaponFiringCB";
+            OverrideClientWeaponFiringCB.Size = new Size(185, 19);
+            OverrideClientWeaponFiringCB.TabIndex = 210;
+            OverrideClientWeaponFiringCB.Text = "Override Client Weapon Firing";
+            OverrideClientWeaponFiringCB.UseVisualStyleBackColor = true;
+            OverrideClientWeaponFiringCB.CheckedChanged += OverrideClientWeaponFiringCB_CheckedChanged;
             // 
             // MaxRecruitableAINUD
             // 
@@ -146,7 +231,7 @@
             label2.Location = new Point(367, 143);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(106, 15);
+            label2.Size = new Size(105, 15);
             label2.TabIndex = 209;
             label2.Text = "Max Recruitable AI";
             // 
@@ -179,7 +264,7 @@
             EnableZombieVehicleAttackHandlerCB.AutoSize = true;
             EnableZombieVehicleAttackHandlerCB.CheckAlign = ContentAlignment.MiddleRight;
             EnableZombieVehicleAttackHandlerCB.ForeColor = SystemColors.Control;
-            EnableZombieVehicleAttackHandlerCB.Location = new Point(18, 232);
+            EnableZombieVehicleAttackHandlerCB.Location = new Point(17, 260);
             EnableZombieVehicleAttackHandlerCB.Margin = new Padding(4, 3, 4, 3);
             EnableZombieVehicleAttackHandlerCB.Name = "EnableZombieVehicleAttackHandlerCB";
             EnableZombieVehicleAttackHandlerCB.Size = new Size(227, 19);
@@ -193,7 +278,7 @@
             EnableZombieVehicleAttackPhysicsCB.AutoSize = true;
             EnableZombieVehicleAttackPhysicsCB.CheckAlign = ContentAlignment.MiddleRight;
             EnableZombieVehicleAttackPhysicsCB.ForeColor = SystemColors.Control;
-            EnableZombieVehicleAttackPhysicsCB.Location = new Point(287, 232);
+            EnableZombieVehicleAttackPhysicsCB.Location = new Point(286, 260);
             EnableZombieVehicleAttackPhysicsCB.Margin = new Padding(4, 3, 4, 3);
             EnableZombieVehicleAttackPhysicsCB.Name = "EnableZombieVehicleAttackPhysicsCB";
             EnableZombieVehicleAttackPhysicsCB.Size = new Size(186, 19);
@@ -207,7 +292,7 @@
             LogAIHitByCB.AutoSize = true;
             LogAIHitByCB.CheckAlign = ContentAlignment.MiddleRight;
             LogAIHitByCB.ForeColor = SystemColors.Control;
-            LogAIHitByCB.Location = new Point(502, 206);
+            LogAIHitByCB.Location = new Point(501, 234);
             LogAIHitByCB.Margin = new Padding(4, 3, 4, 3);
             LogAIHitByCB.Name = "LogAIHitByCB";
             LogAIHitByCB.Size = new Size(95, 19);
@@ -221,7 +306,7 @@
             LogAIKilledCB.AutoSize = true;
             LogAIKilledCB.CheckAlign = ContentAlignment.MiddleRight;
             LogAIKilledCB.ForeColor = SystemColors.Control;
-            LogAIKilledCB.Location = new Point(619, 206);
+            LogAIKilledCB.Location = new Point(618, 234);
             LogAIKilledCB.Margin = new Padding(4, 3, 4, 3);
             LogAIKilledCB.Name = "LogAIKilledCB";
             LogAIKilledCB.Size = new Size(92, 19);
@@ -288,7 +373,7 @@
             CanRecruitFriendlyCB.AutoSize = true;
             CanRecruitFriendlyCB.CheckAlign = ContentAlignment.MiddleRight;
             CanRecruitFriendlyCB.ForeColor = SystemColors.Control;
-            CanRecruitFriendlyCB.Location = new Point(194, 206);
+            CanRecruitFriendlyCB.Location = new Point(193, 234);
             CanRecruitFriendlyCB.Margin = new Padding(4, 3, 4, 3);
             CanRecruitFriendlyCB.Name = "CanRecruitFriendlyCB";
             CanRecruitFriendlyCB.Size = new Size(132, 19);
@@ -319,7 +404,7 @@
             darkLabel66.Location = new Point(21, 114);
             darkLabel66.Margin = new Padding(4, 0, 4, 0);
             darkLabel66.Name = "darkLabel66";
-            darkLabel66.Size = new Size(177, 15);
+            darkLabel66.Size = new Size(178, 15);
             darkLabel66.TabIndex = 141;
             darkLabel66.Text = "Sniper Prone Distance Threshold";
             // 
@@ -328,7 +413,7 @@
             CanRecruitGuardsCB.AutoSize = true;
             CanRecruitGuardsCB.CheckAlign = ContentAlignment.MiddleRight;
             CanRecruitGuardsCB.ForeColor = SystemColors.Control;
-            CanRecruitGuardsCB.Location = new Point(349, 206);
+            CanRecruitGuardsCB.Location = new Point(348, 234);
             CanRecruitGuardsCB.Margin = new Padding(4, 3, 4, 3);
             CanRecruitGuardsCB.Name = "CanRecruitGuardsCB";
             CanRecruitGuardsCB.Size = new Size(127, 19);
@@ -385,7 +470,7 @@
             darkLabel5.Location = new Point(20, 54);
             darkLabel5.Margin = new Padding(4, 0, 4, 0);
             darkLabel5.Name = "darkLabel5";
-            darkLabel5.Size = new Size(118, 15);
+            darkLabel5.Size = new Size(119, 15);
             darkLabel5.TabIndex = 136;
             darkLabel5.Text = "Threat Distance Limit";
             // 
@@ -405,7 +490,7 @@
             MannersCB.AutoSize = true;
             MannersCB.CheckAlign = ContentAlignment.MiddleRight;
             MannersCB.ForeColor = SystemColors.Control;
-            MannersCB.Location = new Point(105, 206);
+            MannersCB.Location = new Point(104, 234);
             MannersCB.Margin = new Padding(4, 3, 4, 3);
             MannersCB.Name = "MannersCB";
             MannersCB.Size = new Size(72, 19);
@@ -419,7 +504,7 @@
             VaultingCB.AutoSize = true;
             VaultingCB.CheckAlign = ContentAlignment.MiddleRight;
             VaultingCB.ForeColor = SystemColors.Control;
-            VaultingCB.Location = new Point(21, 206);
+            VaultingCB.Location = new Point(20, 234);
             VaultingCB.Margin = new Padding(4, 3, 4, 3);
             VaultingCB.Name = "VaultingCB";
             VaultingCB.Size = new Size(69, 19);
@@ -465,7 +550,7 @@
             darkLabel2.Location = new Point(367, 24);
             darkLabel2.Margin = new Padding(4, 0, 4, 0);
             darkLabel2.Name = "darkLabel2";
-            darkLabel2.Size = new Size(82, 15);
+            darkLabel2.Size = new Size(81, 15);
             darkLabel2.TabIndex = 127;
             darkLabel2.Text = "Accuracy Max";
             // 
@@ -494,83 +579,44 @@
             darkLabel17.TabIndex = 124;
             darkLabel17.Text = "Formation Scale";
             // 
-            // OverrideClientWeaponFiringCB
+            // MaxFlankingDistanceNUD
             // 
-            OverrideClientWeaponFiringCB.AutoSize = true;
-            OverrideClientWeaponFiringCB.CheckAlign = ContentAlignment.MiddleRight;
-            OverrideClientWeaponFiringCB.ForeColor = SystemColors.Control;
-            OverrideClientWeaponFiringCB.Location = new Point(525, 231);
-            OverrideClientWeaponFiringCB.Margin = new Padding(4, 3, 4, 3);
-            OverrideClientWeaponFiringCB.Name = "OverrideClientWeaponFiringCB";
-            OverrideClientWeaponFiringCB.Size = new Size(185, 19);
-            OverrideClientWeaponFiringCB.TabIndex = 210;
-            OverrideClientWeaponFiringCB.Text = "Override Client Weapon Firing";
-            OverrideClientWeaponFiringCB.UseVisualStyleBackColor = true;
-            OverrideClientWeaponFiringCB.CheckedChanged += OverrideClientWeaponFiringCB_CheckedChanged;
+            MaxFlankingDistanceNUD.BackColor = Color.FromArgb(60, 63, 65);
+            MaxFlankingDistanceNUD.DecimalPlaces = 2;
+            MaxFlankingDistanceNUD.ForeColor = SystemColors.Control;
+            MaxFlankingDistanceNUD.Location = new Point(224, 199);
+            MaxFlankingDistanceNUD.Margin = new Padding(4, 3, 4, 3);
+            MaxFlankingDistanceNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            MaxFlankingDistanceNUD.Name = "MaxFlankingDistanceNUD";
+            MaxFlankingDistanceNUD.Size = new Size(124, 23);
+            MaxFlankingDistanceNUD.TabIndex = 216;
+            MaxFlankingDistanceNUD.TextAlign = HorizontalAlignment.Center;
+            MaxFlankingDistanceNUD.ValueChanged += MaxFlankingDistanceNUD_ValueChanged;
             // 
-            // RecreateWeaponNetworkRepresentationCB
+            // label5
             // 
-            RecreateWeaponNetworkRepresentationCB.AutoSize = true;
-            RecreateWeaponNetworkRepresentationCB.CheckAlign = ContentAlignment.MiddleRight;
-            RecreateWeaponNetworkRepresentationCB.ForeColor = SystemColors.Control;
-            RecreateWeaponNetworkRepresentationCB.Location = new Point(18, 257);
-            RecreateWeaponNetworkRepresentationCB.Margin = new Padding(4, 3, 4, 3);
-            RecreateWeaponNetworkRepresentationCB.Name = "RecreateWeaponNetworkRepresentationCB";
-            RecreateWeaponNetworkRepresentationCB.Size = new Size(248, 19);
-            RecreateWeaponNetworkRepresentationCB.TabIndex = 211;
-            RecreateWeaponNetworkRepresentationCB.Text = "Recreate Weapon Network Representation";
-            RecreateWeaponNetworkRepresentationCB.UseVisualStyleBackColor = true;
-            RecreateWeaponNetworkRepresentationCB.CheckedChanged += RecreateWeaponNetworkRepresentationCB_CheckedChanged;
+            label5.AutoSize = true;
+            label5.ForeColor = Color.FromArgb(220, 220, 220);
+            label5.Location = new Point(21, 203);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(125, 15);
+            label5.TabIndex = 217;
+            label5.Text = "Max Flanking Distance";
             // 
-            // AggressionTimeoutNUD
+            // EnableFlankingOutsideCombatCB
             // 
-            AggressionTimeoutNUD.BackColor = Color.FromArgb(60, 63, 65);
-            AggressionTimeoutNUD.DecimalPlaces = 2;
-            AggressionTimeoutNUD.ForeColor = SystemColors.Control;
-            AggressionTimeoutNUD.Location = new Point(224, 170);
-            AggressionTimeoutNUD.Margin = new Padding(4, 3, 4, 3);
-            AggressionTimeoutNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            AggressionTimeoutNUD.Name = "AggressionTimeoutNUD";
-            AggressionTimeoutNUD.Size = new Size(124, 23);
-            AggressionTimeoutNUD.TabIndex = 212;
-            AggressionTimeoutNUD.TextAlign = HorizontalAlignment.Center;
-            AggressionTimeoutNUD.ValueChanged += AggressionTimeoutNUD_ValueChanged;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.ForeColor = Color.FromArgb(220, 220, 220);
-            label3.Location = new Point(21, 174);
-            label3.Margin = new Padding(4, 0, 4, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(113, 15);
-            label3.TabIndex = 213;
-            label3.Text = "Aggression Timeout";
-            // 
-            // GuardAggressionTimeoutNUD
-            // 
-            GuardAggressionTimeoutNUD.BackColor = Color.FromArgb(60, 63, 65);
-            GuardAggressionTimeoutNUD.DecimalPlaces = 2;
-            GuardAggressionTimeoutNUD.ForeColor = SystemColors.Control;
-            GuardAggressionTimeoutNUD.Location = new Point(567, 172);
-            GuardAggressionTimeoutNUD.Margin = new Padding(4, 3, 4, 3);
-            GuardAggressionTimeoutNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            GuardAggressionTimeoutNUD.Name = "GuardAggressionTimeoutNUD";
-            GuardAggressionTimeoutNUD.Size = new Size(124, 23);
-            GuardAggressionTimeoutNUD.TabIndex = 214;
-            GuardAggressionTimeoutNUD.TextAlign = HorizontalAlignment.Center;
-            GuardAggressionTimeoutNUD.ValueChanged += GuardAggressionTimeoutNUD_ValueChanged;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.ForeColor = Color.FromArgb(220, 220, 220);
-            label4.Location = new Point(367, 174);
-            label4.Margin = new Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(148, 15);
-            label4.TabIndex = 215;
-            label4.Text = "Guard Aggression Timeout";
+            EnableFlankingOutsideCombatCB.AutoSize = true;
+            EnableFlankingOutsideCombatCB.CheckAlign = ContentAlignment.MiddleRight;
+            EnableFlankingOutsideCombatCB.ForeColor = SystemColors.Control;
+            EnableFlankingOutsideCombatCB.Location = new Point(286, 285);
+            EnableFlankingOutsideCombatCB.Margin = new Padding(4, 3, 4, 3);
+            EnableFlankingOutsideCombatCB.Name = "EnableFlankingOutsideCombatCB";
+            EnableFlankingOutsideCombatCB.Size = new Size(199, 19);
+            EnableFlankingOutsideCombatCB.TabIndex = 218;
+            EnableFlankingOutsideCombatCB.Text = "Enable Flanking Outside Combat";
+            EnableFlankingOutsideCombatCB.UseVisualStyleBackColor = true;
+            EnableFlankingOutsideCombatCB.CheckedChanged += EnableFlankingOutsideCombatCB_CheckedChanged;
             // 
             // AISettingsConfigControl
             // 
@@ -580,9 +626,11 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "AISettingsConfigControl";
-            Size = new Size(755, 289);
+            Size = new Size(755, 334);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)GuardAggressionTimeoutNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)AggressionTimeoutNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MaxRecruitableAINUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MemeLevelNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)DamageReceivedMultiplierNUD).EndInit();
@@ -593,8 +641,7 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)AggressionTimeoutNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)GuardAggressionTimeoutNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MaxFlankingDistanceNUD).EndInit();
             ResumeLayout(false);
         }
 
@@ -635,5 +682,8 @@
         private Label label3;
         private CheckBox RecreateWeaponNetworkRepresentationCB;
         private CheckBox OverrideClientWeaponFiringCB;
+        private CheckBox EnableFlankingOutsideCombatCB;
+        private NumericUpDown MaxFlankingDistanceNUD;
+        private Label label5;
     }
 }

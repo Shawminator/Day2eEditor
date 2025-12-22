@@ -41,6 +41,8 @@ namespace ExpansionPlugin
             AccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
             ThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
             NoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
+            MaxFlankingDistanceNUD.Value = (decimal)_data.MaxFlankingDistance;
+            EnableFlankingOutsideCombatCB.Checked = _data.EnableFlankingOutsideCombat == 1 ? true : false;
             DamageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
             FormationScaleNUD.Value = (decimal)_data.FormationScale;
             SniperProneDistanceThresholdNUD.Value = (decimal)_data.SniperProneDistanceThreshold;
@@ -283,6 +285,20 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.RecreateWeaponNetworkRepresentation = RecreateWeaponNetworkRepresentationCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+
+        private void MaxFlankingDistanceNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MaxFlankingDistance = MaxFlankingDistanceNUD.Value;
+            HasChanges();
+        }
+
+        private void EnableFlankingOutsideCombatCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EnableFlankingOutsideCombat = EnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             HasChanges();
         }
     }

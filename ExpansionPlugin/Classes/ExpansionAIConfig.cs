@@ -18,7 +18,7 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-        public const int CurrentVersion = 18;
+        public const int CurrentVersion = 19;
         public ExpansionAIConfig(string path)
         {
             _path = path;
@@ -105,6 +105,8 @@ namespace ExpansionPlugin
 
         public decimal? ThreatDistanceLimit { get; set; }
         public decimal? NoiseInvestigationDistanceLimit { get; set; }
+        public decimal? MaxFlankingDistance { get; set; }
+        public int? EnableFlankingOutsideCombat { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
 
@@ -153,6 +155,8 @@ namespace ExpansionPlugin
             AccuracyMax = (decimal)0.95;
             ThreatDistanceLimit = (decimal)1000.0;
             NoiseInvestigationDistanceLimit = (decimal)500.0;
+            MaxFlankingDistance = (decimal)200.0;
+            EnableFlankingOutsideCombat = 0;
             DamageMultiplier = (decimal)1.0;
             Admins = new BindingList<string>();
             Vaulting = 1;
@@ -255,11 +259,20 @@ namespace ExpansionPlugin
                 ThreatDistanceLimit = 1000.0m;
                 fixes.Add("Set default ThreatDistanceLimit");
             }
-
             if (NoiseInvestigationDistanceLimit == null)
             {
                 NoiseInvestigationDistanceLimit = 500.0m;
                 fixes.Add("Set default NoiseInvestigationDistanceLimit");
+            }
+            if (MaxFlankingDistance == null)
+            {
+                MaxFlankingDistance = 200.0m;
+                fixes.Add("Set default MaxFlankingDistance");
+            }
+            if (EnableFlankingOutsideCombat != 0 && EnableFlankingOutsideCombat != 1)
+            {
+                EnableFlankingOutsideCombat = 0;
+                fixes.Add("Corrected EnableFlankingOutsideCombat");
             }
 
             if (DamageMultiplier == null)
