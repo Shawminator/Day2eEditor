@@ -2731,6 +2731,7 @@ namespace ExpansionPlugin
                 _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
                 ShowHandler(new ExpasnionMarksetSettingsVehicleSpawnInfoControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, new List<TreeNode>() { currentTreeNode });
                 DrawbaseVehicleSpawnPositions(_expansionManager.ExpansionMarketSettingsConfig);
+                currentTreeNode.Text = ExpansionMarketSpawnPosition.ToString();
             }
         }
         #endregion mapstuff

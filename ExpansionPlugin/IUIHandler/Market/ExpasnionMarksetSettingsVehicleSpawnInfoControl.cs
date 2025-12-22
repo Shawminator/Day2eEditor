@@ -102,7 +102,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.ToString();
             }
         }
 
@@ -114,12 +114,14 @@ namespace ExpansionPlugin
             _data.Position[0] = (float)POSXNUD.Value;
             HasChanges();
             PositionChanged?.Invoke(_data);
+            UpdateTreeNodeText();
         }
         private void POSYNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Position[1] = (float)POSYNUD.Value;
             HasChanges();
+            UpdateTreeNodeText();
         }
         private void POSZNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -127,6 +129,7 @@ namespace ExpansionPlugin
             _data.Position[2] = (float)POSZNUD.Value;
             HasChanges();
             PositionChanged?.Invoke(_data);
+            UpdateTreeNodeText();
         }
         private void ORIXNUD_ValueChanged(object sender, EventArgs e)
         {
