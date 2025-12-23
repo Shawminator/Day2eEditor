@@ -60,7 +60,7 @@ namespace ExpansionPlugin
                 {
                     LootDropOnDeathNameList.Add(Path.GetFileNameWithoutExtension(AILootDrops.FileName));
                 }
-                BindingList<string>  Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
+                BindingList<string> Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
                 Factions.Insert(0, "");
                 StaticPatrolFactionCB.DataSource = Factions;
 
@@ -70,39 +70,178 @@ namespace ExpansionPlugin
                 StaticPatrolLoadBalancingCategoryCB.DataSource = new BindingSource(parent.Data._LoadBalancingCategories, null);
             }
             StaticPatrolNameTB.Text = _data.Name;
-            textBox6.Text = _data.ObjectClassName;
             StaticPatrolPersistCB.Checked = _data.Persist == 1 ? true : false;
             StaticPatrolFactionCB.SelectedIndex = StaticPatrolFactionCB.FindStringExact(_data.Faction);
+            StaticPatrolFormationCB.SelectedIndex = StaticPatrolFormationCB.FindStringExact(_data.Formation);
+            StaticPatrolFormationLoosenessNUD.Value = (decimal)_data.FormationLooseness;
+            StaticPatrolLoadoutsCB.SelectedIndex = StaticPatrolLoadoutsCB.FindStringExact(_data.Loadout);
             StaticPatrolNumberOfAINUD.Value = (decimal)_data.NumberOfAI;
             StaticPatrolBehaviorCB.SelectedIndex = StaticPatrolBehaviorCB.FindStringExact(_data.Behaviour);
             StaticPatrolSpeedCB.SelectedIndex = StaticPatrolSpeedCB.FindStringExact(_data.Speed);
             StaticPatrolUnderThreatSpeedCB.SelectedIndex = StaticPatrolUnderThreatSpeedCB.FindStringExact(_data.UnderThreatSpeed);
-            StaticPatrolRespawnTimeNUD.Value = (decimal)_data.RespawnTime;
-            StaticPatrolDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
-            StaticPatrolMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
-            StaticPatrolMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
-            StaticPatrolDespawnRadiusNUD.Value = (decimal)_data.DespawnRadius;
-            StaticPatrolAccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
-            StaticPatrolAccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
-            StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
-            StaticPatrolThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
-            StaticPatrolSniperProneDistanceThresholdNUD.Value = (decimal)_data.SniperProneDistanceThreshold;
-            StaticPatrolDamageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
-            StaticPatrolChanceCB.Value = (decimal)_data.Chance;
+            StaticPatrolDefaultStanceCB.SelectedIndex = StaticPatrolDefaultStanceCB.FindStringExact(_data.DefaultStance);
+            StaticPatrolDefaultLookAngleNUD.Value = (decimal)_data.DefaultLookAngle;
             StaticPatrolCanBeLotedCB.Checked = _data.CanBeLooted == 1 ? true : false;
-            StaticPatrolLoadoutsCB.SelectedIndex = StaticPatrolLoadoutsCB.FindStringExact(_data.Loadout);
+            StaticPatrolLootDropOnDeathCB.SelectedIndex = StaticPatrolLootDropOnDeathCB.FindStringExact(_data.LootDropOnDeath);
+            StaticPatrolSniperProneDistanceThresholdNUD.Value = (decimal)_data.SniperProneDistanceThreshold;
+            StaticPatrolHeadshotResistanceNUD.Value = (decimal)_data.HeadshotResistance;
+            StaticPatrolCanBeTriggeredByAICB.Checked = _data.CanBeTriggeredByAI == 1 ? true : false;
             StaticPatrolMinSpreadRadiusNUD.Value = (decimal)_data.MinSpreadRadius;
             StaticPatrolMaxSpreadRadiusNUD.Value = (decimal)_data.MaxSpreadRadius;
-            StaticPatrolFormationCB.SelectedIndex = StaticPatrolFormationCB.FindStringExact(_data.Formation);
-            StaticPatrolFormationLoosenessNUD.Value = (decimal)_data.FormationLooseness;
+            StaticPatrolChanceCB.Value = (decimal)_data.Chance;
             StaticPatrolLoadBalancingCategoryCB.SelectedIndex = StaticPatrolLoadBalancingCategoryCB.FindStringExact(_data.LoadBalancingCategory);
+            textBox6.Text = _data.ObjectClassName;
             StaticPatrolWaypointInterpolationCB.SelectedIndex = StaticPatrolWaypointInterpolationCB.FindStringExact(_data.WaypointInterpolation);
-            StaticPatrolLootDropOnDeathCB.SelectedIndex = StaticPatrolLootDropOnDeathCB.FindStringExact(_data.LootDropOnDeath);
             StaticPatrolUseRandomWaypointAsStartPointCB.Checked = _data.UseRandomWaypointAsStartPoint == 1 ? true : false;
-            StaticPatrolCanBeTriggeredByAICB.Checked = _data.CanBeTriggeredByAI == 1 ? true : false;
-            StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
-            StaticPatrolFormationScaleNUD.Value = (decimal)_data.FormationScale;
-            StaticPatrolHeadshotResistanceNUD.Value = (decimal)_data.HeadshotResistance;
+
+            if (_data.AccuracyMin == -1)
+            {
+                StaticPatrolAccuracyMinNUD.Visible = false;
+                StaticPatrolAccuracyMinGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolAccuracyMinNUD.Visible = true;
+                StaticPatrolAccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
+            }
+            if (_data.AccuracyMax == -1)
+            {
+                StaticPatrolAccuracyMaxNUD.Visible = false;
+                StaticPatrolAccuracyMaxGenerralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolAccuracyMaxNUD.Visible = true;
+                StaticPatrolAccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
+            }
+            if (_data.ThreatDistanceLimit == -1)
+            {
+                StaticPatrolThreatDistanceLimitNUD.Visible = false;
+                StaticPatrolThreatDistanceLimitGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolThreatDistanceLimitNUD.Visible = true;
+                StaticPatrolThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
+            }
+            if (_data.NoiseInvestigationDistanceLimit == -1)
+            {
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = false;
+                StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = true;
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
+            }
+            if (_data.MaxFlankingDistance == -1)
+            {
+                StsticPatrolMaxFlankingDistanceNUD.Visible = false;
+                StsticPatrolMaxFlankingDistanceGeneralCB.Checked = true;
+            }
+            else
+            {
+                StsticPatrolMaxFlankingDistanceNUD.Visible = true;
+                StsticPatrolMaxFlankingDistanceNUD.Value = (decimal)_data.MaxFlankingDistance;
+            }
+            if (_data.EnableFlankingOutsideCombat == -1)
+            {
+                StaticPatrolEnableFlankingOutsideCombatCB.Visible = false;
+                StaticPatrolEnableFlankingOutsideCombatGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolEnableFlankingOutsideCombatCB.Visible = true;
+                StaticPatrolEnableFlankingOutsideCombatCB.Checked = _data.EnableFlankingOutsideCombat == 1 ? true : false;
+            }
+            if (_data.DamageMultiplier == -1)
+            {
+                StaticPatrolDamageMultiplierNUD.Visible = false;
+                StaticPatrolDamageMultiplierGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolDamageMultiplierNUD.Visible = true;
+                StaticPatrolDamageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
+            }
+            if (_data.DamageReceivedMultiplier == -1)
+            {
+                StaticPatrolDamageReceivedMultiplierNUD.Visible = false;
+                StaticPatrolDamageReceivedMultiplierGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolDamageReceivedMultiplierNUD.Visible = true;
+                StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
+            }
+            if (_data.MinDistRadius == -1)
+            {
+                StaticPatrolMinDistRadiusNUD.Visible = false;
+                StaticPatrolMinDistRadiusGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolMinDistRadiusNUD.Visible = true;
+                StaticPatrolMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
+            }
+            if (_data.MaxDistRadius == -1)
+            {
+                StaticPatrolMaxDistRadiusNUD.Visible = false;
+                StaticPatrolMaxDistRadiusGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolMaxDistRadiusNUD.Visible = true;
+                StaticPatrolMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
+            }
+            if (_data.DespawnTime == -1)
+            {
+                StaticPatrolDespawnTimeNUD.Visible = false;
+                StaticPatrolDespawnTimeGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolDespawnTimeNUD.Visible = true;
+                StaticPatrolDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
+            }
+            if (_data.DespawnRadius == -1)
+            {
+                StaticPatrolDespawnRadiusNUD.Visible = false;
+                StaticPatrolDespawnRadiusGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolDespawnRadiusNUD.Visible = true;
+                StaticPatrolDespawnRadiusNUD.Value = (decimal)_data.DespawnRadius;
+            }
+            if (_data.RespawnTime == -1)
+            {
+                StaticPatrolRespawnTimeNUD.Visible = false;
+                StaticPatrolDespawnRadiusGeneralCB.Checked = true;
+            }
+            else if (_data.RespawnTime == -2)
+            {
+                StaticPatrolRespawnTimeNWonttRespawnCB.Checked = true;
+                StaticPatrolRespawnTimeGeneralCB.Visible = false;
+                StaticPatrolRespawnTimeNUD.Visible = false;
+            }
+            else
+            {
+                StaticPatrolRespawnTimeNUD.Visible = true;
+                StaticPatrolRespawnTimeNUD.Value = (decimal)_data.RespawnTime;
+            }
+            if (_data.FormationScale == -1)
+            {
+                StaticPatrolFormationScaleNUD.Visible = false;
+                StaticPatrolFormationScaleGeneralCB.Checked = true;
+            }
+            else
+            {
+                StaticPatrolFormationScaleNUD.Visible = true;
+                StaticPatrolFormationScaleNUD.Value = (decimal)_data.FormationScale;
+            }
+
+
             int StaticPatrolUnlimitedReloadBitmask = (int)_data.UnlimitedReload;
             if (StaticPatrolUnlimitedReloadBitmask == 1)
                 StaticPatrolUnlimitedReloadBitmask = 30;
@@ -183,6 +322,8 @@ namespace ExpansionPlugin
                 LootingBehaviour = data.LootingBehaviour,
                 Speed = data.Speed,
                 UnderThreatSpeed = data.UnderThreatSpeed,
+                DefaultStance = data.DefaultStance,
+                DefaultLookAngle = data.DefaultLookAngle,
                 CanBeLooted = data.CanBeLooted,
                 LootDropOnDeath = data.LootDropOnDeath,
                 UnlimitedReload = data.UnlimitedReload,
@@ -191,6 +332,8 @@ namespace ExpansionPlugin
                 AccuracyMax = data.AccuracyMax,
                 ThreatDistanceLimit = data.ThreatDistanceLimit,
                 NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
+                MaxFlankingDistance = data.MaxFlankingDistance,
+                EnableFlankingOutsideCombat = data.EnableFlankingOutsideCombat,
                 DamageMultiplier = data.DamageMultiplier,
                 DamageReceivedMultiplier = data.DamageReceivedMultiplier,
                 HeadshotResistance = data.HeadshotResistance,
@@ -552,6 +695,259 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.HeadshotResistance = StaticPatrolHeadshotResistanceNUD.Value;
+            HasChanges();
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void StaticPatrolAccuracyMinGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolAccuracyMinGeneralCB.Checked)
+            {
+                StaticPatrolAccuracyMinNUD.Visible = false;
+                _data.AccuracyMin = -1;
+            }
+            else
+            {
+                StaticPatrolAccuracyMinNUD.Visible = true;
+                _data.AccuracyMin = StaticPatrolAccuracyMinNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolAccuracyMaxGenerralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolAccuracyMaxGenerralCB.Checked)
+            {
+                StaticPatrolAccuracyMaxNUD.Visible = false;
+                _data.AccuracyMax = -1;
+            }
+            else
+            {
+                StaticPatrolAccuracyMaxNUD.Visible = true;
+                _data.AccuracyMax = StaticPatrolAccuracyMaxNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolThreatDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolThreatDistanceLimitGeneralCB.Checked)
+            {
+                StaticPatrolThreatDistanceLimitNUD.Visible = false;
+                _data.ThreatDistanceLimit = -1;
+            }
+            else
+            {
+                StaticPatrolThreatDistanceLimitNUD.Visible = true;
+                _data.ThreatDistanceLimit = StaticPatrolThreatDistanceLimitNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolNoiseInvestigationDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Checked)
+            {
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = false;
+                _data.NoiseInvestigationDistanceLimit = -1;
+            }
+            else
+            {
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = true;
+                _data.NoiseInvestigationDistanceLimit = StaticPatrolNoiseInvestigationDistanceLimitNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StsticPatrolMaxFlankingDistanceGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StsticPatrolMaxFlankingDistanceGeneralCB.Checked)
+            {
+                StsticPatrolMaxFlankingDistanceNUD.Visible = false;
+                _data.MaxFlankingDistance = -1;
+            }
+            else
+            {
+                StsticPatrolMaxFlankingDistanceNUD.Visible = true;
+                _data.MaxFlankingDistance = StsticPatrolMaxFlankingDistanceNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolEnableFlankingOutsideCombatGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolEnableFlankingOutsideCombatGeneralCB.Checked)
+            {
+                StaticPatrolEnableFlankingOutsideCombatCB.Visible = false;
+                _data.EnableFlankingOutsideCombat = -1;
+            }
+            else
+            {
+                StaticPatrolEnableFlankingOutsideCombatCB.Visible = true;
+                _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1: 0;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolDamageMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolDamageMultiplierGeneralCB.Checked)
+            {
+                StaticPatrolDamageMultiplierNUD.Visible = false;
+                _data.DamageMultiplier = -1;
+            }
+            else
+            {
+                StaticPatrolDamageMultiplierNUD.Visible = true;
+                _data.DamageMultiplier = StaticPatrolDamageMultiplierNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolDamageReceivedMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolDamageReceivedMultiplierGeneralCB.Checked)
+            {
+                StaticPatrolDamageReceivedMultiplierNUD.Visible = false;
+                _data.DamageReceivedMultiplier = -1;
+            }
+            else
+            {
+                StaticPatrolDamageReceivedMultiplierNUD.Visible = true;
+                _data.DamageReceivedMultiplier = StaticPatrolDamageReceivedMultiplierNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolMinDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolMinDistRadiusGeneralCB.Checked)
+            {
+                StaticPatrolMinDistRadiusNUD.Visible = false;
+                _data.MinDistRadius = -1;
+            }
+            else
+            {
+                StaticPatrolMinDistRadiusNUD.Visible = true;
+                _data.MinDistRadius = StaticPatrolMinDistRadiusNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolMaxDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolMaxDistRadiusGeneralCB.Checked)
+            {
+                StaticPatrolMaxDistRadiusNUD.Visible = false;
+                _data.MaxDistRadius = -1;
+            }
+            else
+            {
+                StaticPatrolMaxDistRadiusNUD.Visible = true;
+                _data.MaxDistRadius = StaticPatrolMaxDistRadiusNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolDespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolDespawnTimeGeneralCB.Checked)
+            {
+                StaticPatrolDespawnTimeNUD.Visible = false;
+                _data.DespawnTime = -1;
+            }
+            else
+            {
+                StaticPatrolDespawnTimeNUD.Visible = true;
+                _data.DespawnTime = StaticPatrolDespawnTimeNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolDespawnRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolDespawnRadiusGeneralCB.Checked)
+            {
+                StaticPatrolDespawnRadiusNUD.Visible = false;
+                _data.DespawnRadius = -1;
+            }
+            else
+            {
+                StaticPatrolDespawnRadiusNUD.Visible = true;
+                _data.DespawnRadius = StaticPatrolDespawnRadiusNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolRespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolRespawnTimeGeneralCB.Checked)
+            {
+                StaticPatrolRespawnTimeNUD.Visible = false;
+                _data.RespawnTime = -1;
+            }
+            else
+            {
+                StaticPatrolRespawnTimeNUD.Visible = true;
+                _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolRespawnTimeNWonttRespawnCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolRespawnTimeNWonttRespawnCB.Checked)
+            {
+                StaticPatrolRespawnTimeGeneralCB.Visible = false;
+                StaticPatrolRespawnTimeNUD.Visible = false;
+                _data.RespawnTime = -2;
+            }
+            else
+            {
+                StaticPatrolRespawnTimeGeneralCB.Visible = true;
+                if(StaticPatrolRespawnTimeGeneralCB.Checked)
+                {
+                    _suppressEvents = true;
+                    StaticPatrolRespawnTimeGeneralCB.Checked = false;
+                    _suppressEvents = false;
+                }
+                StaticPatrolRespawnTimeNUD.Visible = true;
+                _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
+            }
+            HasChanges();
+        }
+
+        private void StaticPatrolFormationScaleGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolFormationScaleGeneralCB.Checked)
+            {
+                StaticPatrolFormationScaleNUD.Visible = false;
+                _data.FormationScale = -1;
+            }
+            else
+            {
+                StaticPatrolFormationScaleNUD.Visible = true;
+                _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
+            }
             HasChanges();
         }
     }

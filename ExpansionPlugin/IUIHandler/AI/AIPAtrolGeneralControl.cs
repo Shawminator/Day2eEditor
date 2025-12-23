@@ -42,19 +42,137 @@ namespace ExpansionPlugin
             _suppressEvents = true;
 
             AIGeneralEnabledCB.Checked = _data.Enabled == 1 ? true : false;
-            AIGeneralDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
-            AIGeneralRespawnTimeNUD.Value = (decimal)_data.RespawnTime;
-            AIGeneralMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
-            AIGeneralMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
+            if (_data.FormationScale == -1)
+            {
+                AIGeneralFormationScaleNUD.Visible = false;
+                AIGeneralFormationScaleDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralFormationScaleNUD.Visible = true;
+                AIGeneralFormationScaleNUD.Value = (decimal)_data.FormationScale;
+            }
+            if (_data.DespawnTime == -1)
+            {
+                AIGeneralDespawnTimeNUD.Visible = false;
+                AIGeneralDespawnTimeDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralDespawnTimeNUD.Visible = true;
+                AIGeneralDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
+            }
+            if (_data.RespawnTime == -1)
+            {
+                AIGeneralRespawnTimeNUD.Visible = false;
+                AIGeneralRespawnTimeDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralRespawnTimeNUD.Visible = true;
+                AIGeneralRespawnTimeNUD.Value = (decimal)_data.RespawnTime;
+            }
+            if (_data.MinDistRadius == -1)
+            {
+                AIGeneralMinDistRadiusNUD.Visible = false;
+                AIGeneralMinDistRadiusDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralMinDistRadiusNUD.Visible = true;
+                AIGeneralMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
+            }
+            if (_data.MaxDistRadius == -1)
+            {
+                AIGeneralMaxDistRadiusNUD.Visible = false;
+                AIGeneralMaxDistRadiusDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralMaxDistRadiusNUD.Visible = true;
+                AIGeneralMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
+            }
             AIGeneralDespawnRadiusNUD.Value = (decimal)_data.DespawnRadius;
-            AIGeneralAccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
-            AIGeneralAccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
-            AIGeneralThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
-            AIGeneralNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
-            AIGeneralDanageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
-            AIGeneralDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
-            AIGeneralFormationScaleNUD.Value = (decimal)_data.FormationScale;
-
+            if (_data.AccuracyMin == -1)
+            {
+                AIGeneralAccuracyMinNUD.Visible = false;
+                AIGeneralAccuracyMinDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralAccuracyMinNUD.Visible = true;
+                AIGeneralAccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
+            }
+            if (_data.AccuracyMax == -1)
+            {
+                AIGeneralAccuracyMaxNUD.Visible = false;
+                AIGeneralAccuracyMaxDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralAccuracyMaxNUD.Visible = true;
+                AIGeneralAccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
+            }
+            if (_data.ThreatDistanceLimit == -1)
+            {
+                AIGeneralThreatDistanceLimitNUD.Visible = false;
+                AIGeneralThreatDistanceLimitDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralThreatDistanceLimitNUD.Visible = true;
+                AIGeneralThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
+            }
+            if (_data.NoiseInvestigationDistanceLimit == -1)
+            {
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = false;
+                AIGeneralNoiseInvestigationDistanceLimitDewfaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = true;
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
+            }
+            if (_data.MaxFlankingDistance == -1)
+            {
+                AIGeneralMaxFlankingDistanceNUD.Visible = false;
+                AIGeneralMaxFlankingDistanceDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralMaxFlankingDistanceNUD.Visible = true;
+                AIGeneralMaxFlankingDistanceNUD.Value = (decimal)_data.MaxFlankingDistance;
+            }
+            if (_data.EnableFlankingOutsideCombat == -1)
+            {
+                AIGeneralEnableFlankingOutsideCombatCB.Visible = false;
+                AIGeneralEnableFlankingOutsideCombatDefailtCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralEnableFlankingOutsideCombatCB.Visible = true;
+                AIGeneralEnableFlankingOutsideCombatCB.Checked = _data.EnableFlankingOutsideCombat == 1 ? true : false;
+            }
+            if (_data.DamageMultiplier == -1)
+            {
+                AIGeneralDanageMultiplierNUD.Visible = false;
+                AIGeneralDanageMultiplierDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralDanageMultiplierNUD.Visible = true;
+                AIGeneralDanageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
+            }
+            if (_data.DamageReceivedMultiplier == -1)
+            {
+                AIGeneralDamageReceivedMultiplierNUD.Visible = false;
+                AIGeneralDamageReceivedMultiplierDefaultCB.Checked = true;
+            }
+            else
+            {
+                AIGeneralDamageReceivedMultiplierNUD.Visible = true;
+                AIGeneralDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
+            }
             _suppressEvents = false;
         }
 
@@ -109,6 +227,8 @@ namespace ExpansionPlugin
                 AccuracyMax = data.AccuracyMax,
                 ThreatDistanceLimit = data.ThreatDistanceLimit,
                 NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
+                MaxFlankingDistance = data.MaxFlankingDistance,
+                EnableFlankingOutsideCombat = data.EnableFlankingOutsideCombat,
                 DamageMultiplier = data.DamageMultiplier,
                 DamageReceivedMultiplier = data.DamageReceivedMultiplier,
 
@@ -158,6 +278,8 @@ namespace ExpansionPlugin
                             LootingBehaviour = p.LootingBehaviour,
                             Speed = p.Speed,
                             UnderThreatSpeed = p.UnderThreatSpeed,
+                            DefaultStance = p.DefaultStance,
+                            DefaultLookAngle = p.DefaultLookAngle,
                             CanBeLooted = p.CanBeLooted,
                             LootDropOnDeath = p.LootDropOnDeath,
                             UnlimitedReload = p.UnlimitedReload,
@@ -166,6 +288,8 @@ namespace ExpansionPlugin
                             AccuracyMax = p.AccuracyMax,
                             ThreatDistanceLimit = p.ThreatDistanceLimit,
                             NoiseInvestigationDistanceLimit = p.NoiseInvestigationDistanceLimit,
+                            MaxFlankingDistance = p.MaxFlankingDistance,
+                            EnableFlankingOutsideCombat = p.EnableFlankingOutsideCombat,
                             DamageMultiplier = p.DamageMultiplier,
                             DamageReceivedMultiplier = p.DamageReceivedMultiplier,
                             CanBeTriggeredByAI = p.CanBeTriggeredByAI,
@@ -203,70 +327,10 @@ namespace ExpansionPlugin
 
         #endregion
 
-        private void AIGeneralDamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
-            HasChanges();
-        }
         private void AIGeneralEnabledCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Enabled = AIGeneralEnabledCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void AIGeneralRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralMinDistRadiusNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralDespawnTimeNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralAccuracyMinNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
-            HasChanges();
-        }
-        private void AIGenralAccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DespawnRadius = AIGeneralDespawnRadiusNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralDanageMultiplierNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
             HasChanges();
         }
         private void AIGeneralFormationScaleNUD_ValueChanged(object sender, EventArgs e)
@@ -275,10 +339,277 @@ namespace ExpansionPlugin
             _data.FormationScale = AIGeneralFormationScaleNUD.Value;
             HasChanges();
         }
+        private void AIGeneralFormationScaleDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralFormationScaleDefaultCB.Checked)
+            {
+                AIGeneralFormationScaleNUD.Visible = false;
+                _data.FormationScale = -1;
+            }
+            else
+            {
+                AIGeneralFormationScaleNUD.Visible = true;
+                _data.FormationScale = AIGeneralFormationScaleNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralDespawnTimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralDespawnTimeDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralDespawnTimeDefaultCB.Checked)
+            {
+                AIGeneralDespawnTimeNUD.Visible = false;
+                _data.DespawnTime = -1;
+            }
+            else
+            {
+                AIGeneralDespawnTimeNUD.Visible = true;
+                _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralRespawnTimeDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralRespawnTimeDefaultCB.Checked)
+            {
+                AIGeneralRespawnTimeNUD.Visible = false;
+                _data.RespawnTime = -1;
+            }
+            else
+            {
+                AIGeneralRespawnTimeNUD.Visible = true;
+                _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralMinDistRadiusNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralMinDistRadiusDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralMinDistRadiusDefaultCB.Checked)
+            {
+                AIGeneralMinDistRadiusNUD.Visible = false;
+                _data.MinDistRadius = -1;
+            }
+            else
+            {
+                AIGeneralMinDistRadiusNUD.Visible = true;
+                _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralMaxDistRadiusDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralMaxDistRadiusDefaultCB.Checked)
+            {
+                AIGeneralMaxDistRadiusNUD.Visible = false;
+                _data.MaxDistRadius = -1;
+            }
+            else
+            {
+                AIGeneralMaxDistRadiusNUD.Visible = true;
+                _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DespawnRadius = AIGeneralDespawnRadiusNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralAccuracyMinNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralAccuracyMinDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralAccuracyMinDefaultCB.Checked)
+            {
+                AIGeneralAccuracyMinNUD.Visible = false;
+                _data.AccuracyMin = -1;
+            }
+            else
+            {
+                AIGeneralAccuracyMinNUD.Visible = true;
+                _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGenralAccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralAccuracyMaxDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralAccuracyMaxDefaultCB.Checked)
+            {
+                AIGeneralAccuracyMaxNUD.Visible = false;
+                _data.AccuracyMax = -1;
+            }
+            else
+            {
+                AIGeneralAccuracyMaxNUD.Visible = true;
+                _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralThreatDistanceLimitDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralThreatDistanceLimitDefaultCB.Checked)
+            {
+                AIGeneralThreatDistanceLimitNUD.Visible = false;
+                _data.ThreatDistanceLimit = -1;
+            }
+            else
+            {
+                AIGeneralThreatDistanceLimitNUD.Visible = true;
+                _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
+            }
+            HasChanges();
+        }
         private void NoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralNoiseInvestigationDistanceLimitDewfaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralNoiseInvestigationDistanceLimitDewfaultCB.Checked)
+            {
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = false;
+                _data.NoiseInvestigationDistanceLimit = -1;
+            }
+            else
+            {
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = true;
+                _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralMaxFlankingDistanceNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralMaxFlankingDistanceDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralMaxFlankingDistanceDefaultCB.Checked)
+            {
+                AIGeneralMaxFlankingDistanceNUD.Visible = false;
+                _data.MaxFlankingDistance = -1;
+            }
+            else
+            {
+                AIGeneralMaxFlankingDistanceNUD.Visible = true;
+                _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralEnableFlankingOutsideCombatCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
+        private void AIGeneralEnableFlankingOutsideCombatDefailtCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralEnableFlankingOutsideCombatDefailtCB.Checked)
+            {
+                AIGeneralEnableFlankingOutsideCombatCB.Visible = false;
+                _data.EnableFlankingOutsideCombat = -1;
+            }
+            else
+            {
+                AIGeneralEnableFlankingOutsideCombatCB.Visible = true;
+                _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
+            }
+            HasChanges();
+        }
+        private void AIGeneralDanageMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralDanageMultiplierDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralDanageMultiplierDefaultCB.Checked)
+            {
+                AIGeneralDanageMultiplierNUD.Visible = false;
+                _data.DamageMultiplier = -1;
+            }
+            else
+            {
+                AIGeneralDanageMultiplierNUD.Visible = true;
+                _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
+            }
+            HasChanges();
+        }
+        private void AIGeneralDamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
+            HasChanges();
+        }
+        private void AIGeneralDamageReceivedMultiplierDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralDamageReceivedMultiplierDefaultCB.Checked)
+            {
+                AIGeneralDamageReceivedMultiplierNUD.Visible = false;
+                _data.DamageReceivedMultiplier = -1;
+            }
+            else
+            {
+                AIGeneralDamageReceivedMultiplierNUD.Visible = true;
+                _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
+            }
             HasChanges();
         }
     }

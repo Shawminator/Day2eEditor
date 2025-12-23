@@ -111,6 +111,8 @@ namespace ExpansionPlugin
                 AccuracyMax = data.AccuracyMax,
                 ThreatDistanceLimit = data.ThreatDistanceLimit,
                 NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
+                MaxFlankingDistance = data.MaxFlankingDistance,
+                EnableFlankingOutsideCombat = data.EnableFlankingOutsideCombat,
                 DamageMultiplier = data.DamageMultiplier,
                 DamageReceivedMultiplier = data.DamageReceivedMultiplier,
                 Vaulting = data.Vaulting,

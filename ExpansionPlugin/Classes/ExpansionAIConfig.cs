@@ -102,16 +102,13 @@ namespace ExpansionPlugin
 
         public decimal? AccuracyMin { get; set; }
         public decimal? AccuracyMax { get; set; }
-
         public decimal? ThreatDistanceLimit { get; set; }
         public decimal? NoiseInvestigationDistanceLimit { get; set; }
         public decimal? MaxFlankingDistance { get; set; }
         public int? EnableFlankingOutsideCombat { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
-
         public BindingList<string> Admins { get; set; }
-
         public int? Vaulting { get; set; }
         public decimal? SniperProneDistanceThreshold { get; set; }
         public decimal? AggressionTimeout { get; set; }
@@ -195,6 +192,8 @@ namespace ExpansionPlugin
                    AccuracyMax == other.AccuracyMax &&
                    ThreatDistanceLimit == other.ThreatDistanceLimit &&
                    NoiseInvestigationDistanceLimit == other.NoiseInvestigationDistanceLimit &&
+                   MaxFlankingDistance == other.MaxFlankingDistance &&
+                   EnableFlankingOutsideCombat == other.EnableFlankingOutsideCombat &&
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
                    Vaulting == other.Vaulting &&

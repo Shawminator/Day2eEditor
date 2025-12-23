@@ -136,6 +136,8 @@ namespace ExpansionPlugin
         public decimal? AccuracyMax { get; set; }
         public decimal? ThreatDistanceLimit { get; set; }
         public decimal? NoiseInvestigationDistanceLimit { get; set; }
+        public decimal? MaxFlankingDistance { get; set; }
+        public int? EnableFlankingOutsideCombat { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
 
@@ -163,6 +165,8 @@ namespace ExpansionPlugin
             ThreatDistanceLimit = (decimal)-1.0;
             DamageMultiplier = (decimal)-1.0;
             NoiseInvestigationDistanceLimit = (decimal)-1.0;
+            MaxFlankingDistance = (decimal)-1;
+            EnableFlankingOutsideCombat = -1;
             DamageReceivedMultiplier = (decimal)-1.0;
             DefaultLoadBalancing();
             DefaultPatrols();
@@ -255,6 +259,8 @@ namespace ExpansionPlugin
                    AccuracyMax == other.AccuracyMax &&
                    ThreatDistanceLimit == other.ThreatDistanceLimit &&
                    NoiseInvestigationDistanceLimit == other.NoiseInvestigationDistanceLimit &&
+                   MaxFlankingDistance == other.MaxFlankingDistance &&
+                   EnableFlankingOutsideCombat == other.EnableFlankingOutsideCombat &&
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
                    Patrols.SequenceEqual(other.Patrols) &&
@@ -321,7 +327,17 @@ namespace ExpansionPlugin
             if (NoiseInvestigationDistanceLimit == null)
             {
                 NoiseInvestigationDistanceLimit = -1;
+                fixes.Add("Corrected MaxFlankingDistance to -1");
+            }
+            if (MaxFlankingDistance == null)
+            {
+                MaxFlankingDistance = -1;
                 fixes.Add("Corrected NoiseInvestigationDistanceLimit to -1");
+            }
+            if (EnableFlankingOutsideCombat == null || (EnableFlankingOutsideCombat != -1 && EnableFlankingOutsideCombat != 0 && EnableFlankingOutsideCombat != 1))
+            {
+                EnableFlankingOutsideCombat = -1;
+                fixes.Add("Corrected EnableFlankingOutsideCombat to -1");
             }
             if (DamageMultiplier == null)
             {
@@ -422,6 +438,8 @@ namespace ExpansionPlugin
         public string? LootingBehaviour { get; set; }
         public string? Speed { get; set; }
         public string? UnderThreatSpeed { get; set; }
+        public string? DefaultStance { get; set; }
+        public decimal? DefaultLookAngle { get; set; }
         public int? CanBeLooted { get; set; }
         public string? LootDropOnDeath { get; set; }
         public int? UnlimitedReload { get; set; }
@@ -430,6 +448,8 @@ namespace ExpansionPlugin
         public decimal? AccuracyMax { get; set; }
         public decimal? ThreatDistanceLimit { get; set; }
         public decimal? NoiseInvestigationDistanceLimit { get; set; }
+        public decimal? MaxFlankingDistance { get; set; }
+        public int? EnableFlankingOutsideCombat { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
         public decimal? HeadshotResistance { get; set; }
@@ -466,6 +486,8 @@ namespace ExpansionPlugin
             LootingBehaviour = "DEFAULT";
             Speed = spd;
             UnderThreatSpeed = threatspd;
+            DefaultStance = "STANDING";
+            DefaultLookAngle = (decimal)0.0;
             CanBeLooted = canbelooted == true ? 1 : 0;
             LootDropOnDeath = "";
             UnlimitedReload = unlimitedreload == true ? 1 : 0; ;
@@ -474,6 +496,8 @@ namespace ExpansionPlugin
             AccuracyMax = -1;
             ThreatDistanceLimit = -1;
             NoiseInvestigationDistanceLimit = -1;
+            MaxFlankingDistance = -1;
+            EnableFlankingOutsideCombat = -1;
             DamageMultiplier = -1;
             DamageReceivedMultiplier = (decimal)-1.0;
             HeadshotResistance = (decimal)0.0;
@@ -515,6 +539,8 @@ namespace ExpansionPlugin
                    LootingBehaviour == other.LootingBehaviour &&
                    Speed == other.Speed &&
                    UnderThreatSpeed == other.UnderThreatSpeed &&
+                   DefaultStance == other.DefaultStance &&
+                   DefaultLookAngle == other.DefaultLookAngle &&
                    CanBeLooted == other.CanBeLooted &&
                    LootDropOnDeath == other.LootDropOnDeath &&
                    UnlimitedReload == other.UnlimitedReload &&
@@ -523,6 +549,8 @@ namespace ExpansionPlugin
                    AccuracyMax == other.AccuracyMax &&
                    ThreatDistanceLimit == other.ThreatDistanceLimit &&
                    NoiseInvestigationDistanceLimit == other.NoiseInvestigationDistanceLimit &&
+                   MaxFlankingDistance == other.MaxFlankingDistance &&
+                   EnableFlankingOutsideCombat == other.EnableFlankingOutsideCombat &&
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
                    HeadshotResistance == other.HeadshotResistance &&
@@ -555,6 +583,8 @@ namespace ExpansionPlugin
             if (NumberOfAI == null) { NumberOfAI = 3; fixes.Add("Set NumberOfAI to 3"); }
             if (Behaviour == null || string.IsNullOrWhiteSpace(Behaviour)) { Behaviour = "ALTERNATE"; fixes.Add($"Set Behaviour to ALTERNATE"); }
             if (LootingBehaviour == null || string.IsNullOrWhiteSpace(LootingBehaviour)) { LootingBehaviour = "DEFAULT"; fixes.Add($"Set LootingBehaviour to DEFAULT"); }
+            if (DefaultStance == null || string.IsNullOrWhiteSpace(DefaultStance) || (DefaultStance != "STANDING" && DefaultStance != "CROUCHED" && DefaultStance != "PRONE")) { DefaultStance = "STANDING"; fixes.Add($"Set DefaultStance to STANDING"); }
+            if (DefaultLookAngle == null) { DefaultLookAngle = 0; fixes.Add("Set DefaultLookAngle to 0"); }
             if (Speed == null || string.IsNullOrWhiteSpace(Speed)) { Speed = "JOG"; fixes.Add($"Set Speed to JOG"); }
             if (UnderThreatSpeed == null || string.IsNullOrWhiteSpace(UnderThreatSpeed)) { UnderThreatSpeed = "SPRINT"; fixes.Add($"Set UnderThreatSpeed to SPRINT"); }
             if (CanBeLooted == null || (CanBeLooted != 0 && CanBeLooted != 1)) { CanBeLooted = 1; fixes.Add("Corrected CanBeLooted to 1"); }
@@ -565,13 +595,15 @@ namespace ExpansionPlugin
             if (AccuracyMax == null) { AccuracyMax = -1; fixes.Add("Set AccuracyMax to -1"); }
             if (ThreatDistanceLimit == null) { ThreatDistanceLimit = -1; fixes.Add("Set ThreatDistanceLimit to -1"); }
             if (NoiseInvestigationDistanceLimit == null) { NoiseInvestigationDistanceLimit = -1; fixes.Add("Set NoiseInvestigationDistanceLimit to -1"); }
+            if (MaxFlankingDistance == null) { MaxFlankingDistance = -1; fixes.Add("Set MaxFlankingDistance to -1"); }
+            if (EnableFlankingOutsideCombat == null || (EnableFlankingOutsideCombat != -1 && EnableFlankingOutsideCombat != 0 && EnableFlankingOutsideCombat != 1)) { EnableFlankingOutsideCombat = -1; fixes.Add("Set EnableFlankingOutsideCombat to -1"); }
             if (DamageMultiplier == null) { DamageMultiplier = -1; fixes.Add("Set DamageMultiplier to -1"); }
             if (DamageReceivedMultiplier == null) { DamageReceivedMultiplier = -1; fixes.Add("Set DamageReceivedMultiplier to -1"); }
             if (HeadshotResistance == null) { HeadshotResistance = 0; fixes.Add("Set HeadshotResistance to 0"); }
             if (CanBeTriggeredByAI == null || (CanBeTriggeredByAI != 0 && CanBeTriggeredByAI != 1)) { CanBeTriggeredByAI = 0; fixes.Add("Corrected CanBeTriggeredByAI to 0"); }
             if (MinDistRadius == null) { MinDistRadius = -1; fixes.Add("Set MinDistRadius to -1"); }
             if (MaxDistRadius == null) { MaxDistRadius = -1; fixes.Add("Set MaxDistRadius to -1"); }
-            if (DespawnRadius == null) { DespawnRadius = -1; fixes.Add("Set DespawnRadius to -1"); }
+            if (DespawnRadius == null || DespawnRadius < -1) { DespawnRadius = -1; fixes.Add("Set DespawnRadius to -1"); }
             if (MinSpreadRadius == null) { MinSpreadRadius = -1; fixes.Add("Set MinSpreadRadius to -1"); }
             if (MaxSpreadRadius == null) { MaxSpreadRadius = -1; fixes.Add("Set MaxSpreadRadius to -1"); }
             if (Chance == null) { Chance = 1; fixes.Add("Set Chance to 1"); }
