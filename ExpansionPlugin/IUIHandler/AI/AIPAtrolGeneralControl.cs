@@ -44,133 +44,105 @@ namespace ExpansionPlugin
             AIGeneralEnabledCB.Checked = _data.Enabled == 1 ? true : false;
             if (_data.FormationScale == -1)
             {
-                AIGeneralFormationScaleNUD.Visible = false;
                 AIGeneralFormationScaleDefaultCB.Checked = true;
+                AIGeneralFormationScaleNUD.Enabled = false;
+                AIGeneralFormationScaleNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.FormationScale;
             }
             else
             {
-                AIGeneralFormationScaleNUD.Visible = true;
                 AIGeneralFormationScaleNUD.Value = (decimal)_data.FormationScale;
             }
-            if (_data.DespawnTime == -1)
-            {
-                AIGeneralDespawnTimeNUD.Visible = false;
-                AIGeneralDespawnTimeDefaultCB.Checked = true;
-            }
-            else
-            {
-                AIGeneralDespawnTimeNUD.Visible = true;
-                AIGeneralDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
-            }
+            AIGeneralDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
             if (_data.RespawnTime == -1)
             {
                 AIGeneralRespawnTimeNUD.Visible = false;
-                AIGeneralRespawnTimeDefaultCB.Checked = true;
+                AIGeneralRespawnTimeNWonttRespawnCB.Checked = true;
             }
             else
             {
-                AIGeneralRespawnTimeNUD.Visible = true;
                 AIGeneralRespawnTimeNUD.Value = (decimal)_data.RespawnTime;
             }
-            if (_data.MinDistRadius == -1)
-            {
-                AIGeneralMinDistRadiusNUD.Visible = false;
-                AIGeneralMinDistRadiusDefaultCB.Checked = true;
-            }
-            else
-            {
-                AIGeneralMinDistRadiusNUD.Visible = true;
-                AIGeneralMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
-            }
-            if (_data.MaxDistRadius == -1)
-            {
-                AIGeneralMaxDistRadiusNUD.Visible = false;
-                AIGeneralMaxDistRadiusDefaultCB.Checked = true;
-            }
-            else
-            {
-                AIGeneralMaxDistRadiusNUD.Visible = true;
-                AIGeneralMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
-            }
+            AIGeneralMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
+            AIGeneralMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
             AIGeneralDespawnRadiusNUD.Value = (decimal)_data.DespawnRadius;
             if (_data.AccuracyMin == -1)
             {
-                AIGeneralAccuracyMinNUD.Visible = false;
+                AIGeneralAccuracyMinNUD.Enabled = false;
                 AIGeneralAccuracyMinDefaultCB.Checked = true;
+                AIGeneralAccuracyMinNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMin;
             }
             else
             {
-                AIGeneralAccuracyMinNUD.Visible = true;
                 AIGeneralAccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
             }
             if (_data.AccuracyMax == -1)
             {
-                AIGeneralAccuracyMaxNUD.Visible = false;
+                AIGeneralAccuracyMaxNUD.Enabled = false;
                 AIGeneralAccuracyMaxDefaultCB.Checked = true;
+                AIGeneralAccuracyMaxNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMax;
             }
             else
             {
-                AIGeneralAccuracyMaxNUD.Visible = true;
                 AIGeneralAccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
             }
             if (_data.ThreatDistanceLimit == -1)
             {
-                AIGeneralThreatDistanceLimitNUD.Visible = false;
+                AIGeneralThreatDistanceLimitNUD.Enabled = false;
                 AIGeneralThreatDistanceLimitDefaultCB.Checked = true;
+                AIGeneralThreatDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ThreatDistanceLimit;
             }
             else
             {
-                AIGeneralThreatDistanceLimitNUD.Visible = true;
                 AIGeneralThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
             }
             if (_data.NoiseInvestigationDistanceLimit == -1)
             {
-                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = false;
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Enabled = false;
                 AIGeneralNoiseInvestigationDistanceLimitDewfaultCB.Checked = true;
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.NoiseInvestigationDistanceLimit;
             }
             else
             {
-                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = true;
                 AIGeneralNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
             }
             if (_data.MaxFlankingDistance == -1)
             {
-                AIGeneralMaxFlankingDistanceNUD.Visible = false;
+                AIGeneralMaxFlankingDistanceNUD.Enabled = false;
                 AIGeneralMaxFlankingDistanceDefaultCB.Checked = true;
+                AIGeneralMaxFlankingDistanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.MaxFlankingDistance;
             }
             else
             {
-                AIGeneralMaxFlankingDistanceNUD.Visible = true;
                 AIGeneralMaxFlankingDistanceNUD.Value = (decimal)_data.MaxFlankingDistance;
             }
             if (_data.EnableFlankingOutsideCombat == -1)
             {
-                AIGeneralEnableFlankingOutsideCombatCB.Visible = false;
+                AIGeneralEnableFlankingOutsideCombatCB.Enabled = false;
                 AIGeneralEnableFlankingOutsideCombatDefailtCB.Checked = true;
+                AIGeneralEnableFlankingOutsideCombatCB.Checked = AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.EnableFlankingOutsideCombat == 1 ? true : false;
             }
             else
             {
-                AIGeneralEnableFlankingOutsideCombatCB.Visible = true;
                 AIGeneralEnableFlankingOutsideCombatCB.Checked = _data.EnableFlankingOutsideCombat == 1 ? true : false;
             }
             if (_data.DamageMultiplier == -1)
             {
-                AIGeneralDanageMultiplierNUD.Visible = false;
+                AIGeneralDanageMultiplierNUD.Enabled = false;
                 AIGeneralDanageMultiplierDefaultCB.Checked = true;
+                AIGeneralDanageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageMultiplier;
             }
             else
             {
-                AIGeneralDanageMultiplierNUD.Visible = true;
                 AIGeneralDanageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
             }
             if (_data.DamageReceivedMultiplier == -1)
             {
-                AIGeneralDamageReceivedMultiplierNUD.Visible = false;
+                AIGeneralDamageReceivedMultiplierNUD.Enabled = false;
                 AIGeneralDamageReceivedMultiplierDefaultCB.Checked = true;
+                AIGeneralDamageReceivedMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageReceivedMultiplier;
             }
             else
             {
-                AIGeneralDamageReceivedMultiplierNUD.Visible = true;
                 AIGeneralDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
             }
             _suppressEvents = false;
@@ -344,12 +316,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralFormationScaleDefaultCB.Checked)
             {
-                AIGeneralFormationScaleNUD.Visible = false;
+                AIGeneralFormationScaleNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralFormationScaleNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.FormationScale;
+                _suppressEvents = false;
                 _data.FormationScale = -1;
             }
             else
             {
-                AIGeneralFormationScaleNUD.Visible = true;
+                AIGeneralFormationScaleNUD.Enabled = true;
                 _data.FormationScale = AIGeneralFormationScaleNUD.Value;
             }
             HasChanges();
@@ -360,31 +335,16 @@ namespace ExpansionPlugin
             _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
             HasChanges();
         }
-        private void AIGeneralDespawnTimeDefaultCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            if (AIGeneralDespawnTimeDefaultCB.Checked)
-            {
-                AIGeneralDespawnTimeNUD.Visible = false;
-                _data.DespawnTime = -1;
-            }
-            else
-            {
-                AIGeneralDespawnTimeNUD.Visible = true;
-                _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
-            }
-            HasChanges();
-        }
         private void AIGeneralRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
             HasChanges();
         }
-        private void AIGeneralRespawnTimeDefaultCB_CheckedChanged(object sender, EventArgs e)
+        private void AIGeneralRespawnTimeNWonttRespawnCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            if (AIGeneralRespawnTimeDefaultCB.Checked)
+            if (AIGeneralRespawnTimeNWonttRespawnCB.Checked)
             {
                 AIGeneralRespawnTimeNUD.Visible = false;
                 _data.RespawnTime = -1;
@@ -402,40 +362,10 @@ namespace ExpansionPlugin
             _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
             HasChanges();
         }
-        private void AIGeneralMinDistRadiusDefaultCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            if (AIGeneralMinDistRadiusDefaultCB.Checked)
-            {
-                AIGeneralMinDistRadiusNUD.Visible = false;
-                _data.MinDistRadius = -1;
-            }
-            else
-            {
-                AIGeneralMinDistRadiusNUD.Visible = true;
-                _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
-            }
-            HasChanges();
-        }
         private void AIGeneralMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
-            HasChanges();
-        }
-        private void AIGeneralMaxDistRadiusDefaultCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            if (AIGeneralMaxDistRadiusDefaultCB.Checked)
-            {
-                AIGeneralMaxDistRadiusNUD.Visible = false;
-                _data.MaxDistRadius = -1;
-            }
-            else
-            {
-                AIGeneralMaxDistRadiusNUD.Visible = true;
-                _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
-            }
             HasChanges();
         }
         private void AIGeneralDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
@@ -455,12 +385,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralAccuracyMinDefaultCB.Checked)
             {
-                AIGeneralAccuracyMinNUD.Visible = false;
+                AIGeneralAccuracyMinNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralAccuracyMinNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMin;
+                _suppressEvents = false;
                 _data.AccuracyMin = -1;
             }
             else
             {
-                AIGeneralAccuracyMinNUD.Visible = true;
+                AIGeneralAccuracyMinNUD.Enabled = true;
                 _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
             }
             HasChanges();
@@ -476,12 +409,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralAccuracyMaxDefaultCB.Checked)
             {
-                AIGeneralAccuracyMaxNUD.Visible = false;
+                AIGeneralAccuracyMaxNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralAccuracyMaxNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMax;
+                _suppressEvents = false;
                 _data.AccuracyMax = -1;
             }
             else
             {
-                AIGeneralAccuracyMaxNUD.Visible = true;
+                AIGeneralAccuracyMaxNUD.Enabled = true;
                 _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
             }
             HasChanges();
@@ -497,12 +433,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralThreatDistanceLimitDefaultCB.Checked)
             {
-                AIGeneralThreatDistanceLimitNUD.Visible = false;
+                AIGeneralThreatDistanceLimitNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralThreatDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ThreatDistanceLimit;
+                _suppressEvents = false;
                 _data.ThreatDistanceLimit = -1;
             }
             else
             {
-                AIGeneralThreatDistanceLimitNUD.Visible = true;
+                AIGeneralThreatDistanceLimitNUD.Enabled = true;
                 _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
             }
             HasChanges();
@@ -518,12 +457,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralNoiseInvestigationDistanceLimitDewfaultCB.Checked)
             {
-                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = false;
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.NoiseInvestigationDistanceLimit;
+                _suppressEvents = false;
                 _data.NoiseInvestigationDistanceLimit = -1;
             }
             else
             {
-                AIGeneralNoiseInvestigationDistanceLimitNUD.Visible = true;
+                AIGeneralNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
             }
             HasChanges();
@@ -539,12 +481,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralMaxFlankingDistanceDefaultCB.Checked)
             {
-                AIGeneralMaxFlankingDistanceNUD.Visible = false;
+                AIGeneralMaxFlankingDistanceNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralMaxFlankingDistanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.MaxFlankingDistance;
+                _suppressEvents = false;
                 _data.MaxFlankingDistance = -1;
             }
             else
             {
-                AIGeneralMaxFlankingDistanceNUD.Visible = true;
+                AIGeneralMaxFlankingDistanceNUD.Enabled = true;
                 _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
             }
             HasChanges();
@@ -560,12 +505,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralEnableFlankingOutsideCombatDefailtCB.Checked)
             {
-                AIGeneralEnableFlankingOutsideCombatCB.Visible = false;
+                AIGeneralEnableFlankingOutsideCombatCB.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralEnableFlankingOutsideCombatCB.Checked = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.EnableFlankingOutsideCombat == 1 ? true : false;
+                _suppressEvents = false;
                 _data.EnableFlankingOutsideCombat = -1;
             }
             else
             {
-                AIGeneralEnableFlankingOutsideCombatCB.Visible = true;
+                AIGeneralEnableFlankingOutsideCombatCB.Enabled = true;
                 _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             }
             HasChanges();
@@ -581,12 +529,15 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralDanageMultiplierDefaultCB.Checked)
             {
-                AIGeneralDanageMultiplierNUD.Visible = false;
+                AIGeneralDanageMultiplierNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralDanageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageMultiplier;
+                _suppressEvents = false;
                 _data.DamageMultiplier = -1;
             }
             else
             {
-                AIGeneralDanageMultiplierNUD.Visible = true;
+                AIGeneralDanageMultiplierNUD.Enabled = true;
                 _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
             }
             HasChanges();
@@ -602,15 +553,20 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (AIGeneralDamageReceivedMultiplierDefaultCB.Checked)
             {
-                AIGeneralDamageReceivedMultiplierNUD.Visible = false;
+                AIGeneralDamageReceivedMultiplierNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralDamageReceivedMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageReceivedMultiplier;
+                _suppressEvents = false;
                 _data.DamageReceivedMultiplier = -1;
             }
             else
             {
-                AIGeneralDamageReceivedMultiplierNUD.Visible = true;
+                AIGeneralDamageReceivedMultiplierNUD.Enabled = true;
                 _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
             }
             HasChanges();
         }
+
+
     }
 }

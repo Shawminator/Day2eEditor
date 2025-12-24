@@ -29,10 +29,10 @@ namespace ExpansionPlugin
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         public ExpansionMapConfig ExpansionMapConfig { get; set; }
         public ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig { get; set; }
-        //public ExpansionMissionSettings MissionSettings { get; set; }
-        //public ExpansionMonitoringSettings MonitoringSettings { get; set; }
-        //public ExpansionNameTagsSettings NameTagSettings { get; set; }
-        //public ExpansionNotificationSchedulerSettings NotificationSchedulerSettings { get; set; }
+        public ExpansionMissionConfig ExpansionMissionConfig { get; set; }
+        public ExpansionMonitoringConfig ExpansionMonitoringConfig { get; set; }
+        public ExpansionNameTagsConfig ExpansionNameTagsConfig { get; set; }
+        public ExpansionNotificationSchedulerConfig ExpansionNotificationSchedulerConfig { get; set; }
         //public ExpansionNotificationSettings NotificationSettings { get; set; }
         //public ExpansionPartySettings PartySettings { get; set; }
         //public ExpansionPersonalStorageList PersonalStorageList { get; set; }
@@ -52,9 +52,11 @@ namespace ExpansionPlugin
             basePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, "mpmissions", AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath);
             profilePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName);
 
-            //profile files
+            //Multiple files. not settings files,
             _paths["ExpansionLoadouts"] = Path.Combine(profilePath, "ExpansionMod", "Loadouts");
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
+
+            //Settings files in profiles
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
             _paths["AISettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AISettings.json");
             _paths["BookSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "BookSettings.json");
@@ -64,8 +66,12 @@ namespace ExpansionPlugin
             _paths["GarageSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "GarageSettings.json");
             _paths["GeneralSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "GeneralSettings.json");
             _paths["LogsSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "LogsSettings.json");
+            _paths["MissionSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "MissionSettings.json");
+            _paths["MonitoringSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "MonitoringSettings.json");
+            _paths["NameTagsSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NameTagsSettings.json");
+            _paths["NotificationSchedulerSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NotificationSchedulerSettings.json");
 
-            // missions files
+            // settings files in missions files
             _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
             _paths["AIPatrolSettings"] = Path.Combine(basePath, "expansion", "settings", "AIPatrolSettings.json");
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
@@ -130,6 +136,18 @@ namespace ExpansionPlugin
             ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
             LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
 
+            ExpansionMissionConfig = new ExpansionMissionConfig(_paths["MissionSettings"]);
+            LoadConfigWithErrorReport("MissionSettings", ExpansionMissionConfig);
+
+            ExpansionMonitoringConfig = new ExpansionMonitoringConfig(_paths["MonitoringSettings"]);
+            LoadConfigWithErrorReport("MonitoringSettings", ExpansionMonitoringConfig);
+
+            ExpansionNameTagsConfig = new ExpansionNameTagsConfig(_paths["NameTagsSettings"]);
+            LoadConfigWithErrorReport("NameTagsSettings", ExpansionNameTagsConfig);
+
+            ExpansionNotificationSchedulerConfig = new ExpansionNotificationSchedulerConfig(_paths["NotificationSchedulerSettings"]);
+            LoadConfigWithErrorReport("NotificationSchedulerSettings", ExpansionNotificationSchedulerConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -165,7 +183,11 @@ namespace ExpansionPlugin
                 ExpansionHardlineConfig,
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
-                ExpansionMarketSettingsConfig
+                ExpansionMarketSettingsConfig,
+                ExpansionMissionConfig,
+                ExpansionMonitoringConfig,
+                ExpansionNameTagsConfig,
+                ExpansionNotificationSchedulerConfig
 
             };
 
@@ -202,7 +224,11 @@ namespace ExpansionPlugin
                 ExpansionHardlineConfig,
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
-                ExpansionMarketSettingsConfig
+                ExpansionMarketSettingsConfig,
+                ExpansionMissionConfig,
+                ExpansionMonitoringConfig,
+                ExpansionNameTagsConfig,
+                ExpansionNotificationSchedulerConfig
             };
             foreach (var obj in configs)
             {

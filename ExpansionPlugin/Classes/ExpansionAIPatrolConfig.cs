@@ -20,7 +20,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        public const int CurrentVersion = 27;
+        public const int CurrentVersion = 28;
 
         public ExpansionAIPatrolConfig(string path)
         {
@@ -284,7 +284,7 @@ namespace ExpansionPlugin
                 FormationScale = -1;
                 fixes.Add("Corrected FormationScale to -1");
             }
-            if (DespawnTime == null)
+            if (DespawnTime == null || DespawnTime < 0)
             {
                 DespawnTime = 600;
                 fixes.Add("Corrected DespawnTime to 600");
@@ -294,17 +294,17 @@ namespace ExpansionPlugin
                 RespawnTime = -1;
                 fixes.Add("Corrected RespawnTime to -1");
             }
-            if (MinDistRadius == null)
+            if (MinDistRadius == null || MinDistRadius < 0)
             {
                 MinDistRadius = 400;
                 fixes.Add("Corrected MinDistRadius to 400");
             }
-            if (MaxDistRadius == null)
+            if (MaxDistRadius == null || MaxDistRadius < 0)
             {
                 MaxDistRadius = 1000;
                 fixes.Add("Corrected MaxDistRadius to 1000");
             }
-            if (DespawnRadius == null)
+            if (DespawnRadius == null || DespawnRadius < 0)
             {
                 DespawnRadius = 1100;
                 fixes.Add("Corrected DespawnRadius to 1100");
@@ -576,8 +576,8 @@ namespace ExpansionPlugin
             if (Persist == null || (Persist != 0 && Persist != 1)) { Persist = 0; fixes.Add("Corrected Persist to 0");}
             if (Faction == null ) { Faction = "West"; fixes.Add($"Set Faction to West"); }
             if (Formation == null || string.IsNullOrWhiteSpace(Formation)) { Formation = "RANDOM"; fixes.Add($"Set Formation to RANDOM"); }
-            if (FormationScale == null) { FormationScale = -1; fixes.Add("Set FormationScale to -1"); }
-            if (FormationLooseness == null) { FormationLooseness = -1; fixes.Add("Set FormationLooseness to -1"); }
+            if (FormationScale == null || FormationScale < -1) { FormationScale = -1; fixes.Add("Set FormationScale to -1"); }
+            if (FormationLooseness == null || FormationLooseness < -1) { FormationLooseness = -1; fixes.Add("Set FormationLooseness to -1"); }
             if (Loadout == null) { Loadout = ""; fixes.Add($"Loadout initialised"); }
             if (Units == null) { Units = new BindingList<string>(); fixes.Add("Initialized empty Units list"); }
             if (NumberOfAI == null) { NumberOfAI = 3; fixes.Add("Set NumberOfAI to 3"); }
@@ -591,24 +591,24 @@ namespace ExpansionPlugin
             if (LootDropOnDeath == null) { LootDropOnDeath = ""; fixes.Add($"initilised LootDropOnDeath"); }
             if (UnlimitedReload == null) { UnlimitedReload = 0; fixes.Add($"Set UnlimitedReload to 0"); }
             if (SniperProneDistanceThreshold == null) { SniperProneDistanceThreshold = 500; fixes.Add($"Set SniperProneDistanceThreshold to 500"); }
-            if (AccuracyMin == null) { AccuracyMin = -1; fixes.Add("Set AccuracyMin to -1"); }
-            if (AccuracyMax == null) { AccuracyMax = -1; fixes.Add("Set AccuracyMax to -1"); }
-            if (ThreatDistanceLimit == null) { ThreatDistanceLimit = -1; fixes.Add("Set ThreatDistanceLimit to -1"); }
+            if (AccuracyMin == null || AccuracyMin < -1) { AccuracyMin = -1; fixes.Add("Set AccuracyMin to -1"); }
+            if (AccuracyMax == null || AccuracyMax < -1) { AccuracyMax = -1; fixes.Add("Set AccuracyMax to -1"); }
+            if (ThreatDistanceLimit == null || ThreatDistanceLimit < -1) { ThreatDistanceLimit = -1; fixes.Add("Set ThreatDistanceLimit to -1"); }
             if (NoiseInvestigationDistanceLimit == null) { NoiseInvestigationDistanceLimit = -1; fixes.Add("Set NoiseInvestigationDistanceLimit to -1"); }
-            if (MaxFlankingDistance == null) { MaxFlankingDistance = -1; fixes.Add("Set MaxFlankingDistance to -1"); }
+            if (MaxFlankingDistance == null || MaxFlankingDistance < -1) { MaxFlankingDistance = -1; fixes.Add("Set MaxFlankingDistance to -1"); }
             if (EnableFlankingOutsideCombat == null || (EnableFlankingOutsideCombat != -1 && EnableFlankingOutsideCombat != 0 && EnableFlankingOutsideCombat != 1)) { EnableFlankingOutsideCombat = -1; fixes.Add("Set EnableFlankingOutsideCombat to -1"); }
-            if (DamageMultiplier == null) { DamageMultiplier = -1; fixes.Add("Set DamageMultiplier to -1"); }
-            if (DamageReceivedMultiplier == null) { DamageReceivedMultiplier = -1; fixes.Add("Set DamageReceivedMultiplier to -1"); }
+            if (DamageMultiplier == null || DamageMultiplier < -1) { DamageMultiplier = -1; fixes.Add("Set DamageMultiplier to -1"); }
+            if (DamageReceivedMultiplier == null || DamageReceivedMultiplier < -1) { DamageReceivedMultiplier = -1; fixes.Add("Set DamageReceivedMultiplier to -1"); }
             if (HeadshotResistance == null) { HeadshotResistance = 0; fixes.Add("Set HeadshotResistance to 0"); }
             if (CanBeTriggeredByAI == null || (CanBeTriggeredByAI != 0 && CanBeTriggeredByAI != 1)) { CanBeTriggeredByAI = 0; fixes.Add("Corrected CanBeTriggeredByAI to 0"); }
-            if (MinDistRadius == null) { MinDistRadius = -1; fixes.Add("Set MinDistRadius to -1"); }
-            if (MaxDistRadius == null) { MaxDistRadius = -1; fixes.Add("Set MaxDistRadius to -1"); }
+            if (MinDistRadius == null || MinDistRadius < -1) { MinDistRadius = -1; fixes.Add("Set MinDistRadius to -1"); }
+            if (MaxDistRadius == null || MaxDistRadius < -1) { MaxDistRadius = -1; fixes.Add("Set MaxDistRadius to -1"); }
             if (DespawnRadius == null || DespawnRadius < -1) { DespawnRadius = -1; fixes.Add("Set DespawnRadius to -1"); }
-            if (MinSpreadRadius == null) { MinSpreadRadius = -1; fixes.Add("Set MinSpreadRadius to -1"); }
-            if (MaxSpreadRadius == null) { MaxSpreadRadius = -1; fixes.Add("Set MaxSpreadRadius to -1"); }
+            if (MinSpreadRadius == null || MinSpreadRadius < -1) { MinSpreadRadius = -1; fixes.Add("Set MinSpreadRadius to -1"); }
+            if (MaxSpreadRadius == null || MaxSpreadRadius < -1) { MaxSpreadRadius = -1; fixes.Add("Set MaxSpreadRadius to -1"); }
             if (Chance == null) { Chance = 1; fixes.Add("Set Chance to 1"); }
-            if (DespawnTime == null) { DespawnTime = -1; fixes.Add("Set DespawnTime to -1"); }
-            if (RespawnTime == null) { RespawnTime = -2; fixes.Add("Set RespawnTime to -2"); }
+            if (DespawnTime == null || DespawnTime < -1) { DespawnTime = -1; fixes.Add("Set DespawnTime to -1"); }
+            if (RespawnTime == null || RespawnTime < -2) { RespawnTime = -2; fixes.Add("Set RespawnTime to -2"); }
             if (LoadBalancingCategory == null) { LoadBalancingCategory = ""; fixes.Add($"initilised LoadBalancingCategory"); }
             if (ObjectClassName == null) { ObjectClassName = ""; fixes.Add($"initilised ObjectClassName"); }
             if (WaypointInterpolation == null) { WaypointInterpolation = ""; fixes.Add($"initilised WaypointInterpolation"); }

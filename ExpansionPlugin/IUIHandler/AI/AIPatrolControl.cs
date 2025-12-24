@@ -96,130 +96,211 @@ namespace ExpansionPlugin
 
             if (_data.AccuracyMin == -1)
             {
-                StaticPatrolAccuracyMinNUD.Visible = false;
+                StaticPatrolAccuracyMinNUD.Enabled = false;
                 StaticPatrolAccuracyMinGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMin == -1)
+                {
+                    StaticPatrolAccuracyMinNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMin;
+                }
+                else
+                {
+                    StaticPatrolAccuracyMinNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMin;
+                }
             }
             else
             {
-                StaticPatrolAccuracyMinNUD.Visible = true;
+                StaticPatrolAccuracyMinNUD.Enabled = true;
                 StaticPatrolAccuracyMinNUD.Value = (decimal)_data.AccuracyMin;
+
             }
             if (_data.AccuracyMax == -1)
             {
-                StaticPatrolAccuracyMaxNUD.Visible = false;
+                StaticPatrolAccuracyMaxNUD.Enabled = false;
                 StaticPatrolAccuracyMaxGenerralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMax == -1)
+                {
+                    StaticPatrolAccuracyMaxNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMax;
+                }
+                else
+                {
+                    StaticPatrolAccuracyMaxNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMax;
+                }
             }
             else
             {
-                StaticPatrolAccuracyMaxNUD.Visible = true;
+                StaticPatrolAccuracyMaxNUD.Enabled = true;
                 StaticPatrolAccuracyMaxNUD.Value = (decimal)_data.AccuracyMax;
             }
             if (_data.ThreatDistanceLimit == -1)
             {
-                StaticPatrolThreatDistanceLimitNUD.Visible = false;
+                StaticPatrolThreatDistanceLimitNUD.Enabled = false;
                 StaticPatrolThreatDistanceLimitGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ThreatDistanceLimit == -1)
+                {
+                    StaticPatrolThreatDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ThreatDistanceLimit;
+                }
+                else
+                {
+                    StaticPatrolThreatDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ThreatDistanceLimit;
+                }
             }
             else
             {
-                StaticPatrolThreatDistanceLimitNUD.Visible = true;
+                StaticPatrolThreatDistanceLimitNUD.Enabled = true;
                 StaticPatrolThreatDistanceLimitNUD.Value = (decimal)_data.ThreatDistanceLimit;
             }
             if (_data.NoiseInvestigationDistanceLimit == -1)
             {
-                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = false;
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Enabled = false;
                 StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.NoiseInvestigationDistanceLimit == -1)
+                {
+                    StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.NoiseInvestigationDistanceLimit;
+                }
+                else
+                {
+                    StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.NoiseInvestigationDistanceLimit;
+                }
             }
             else
             {
-                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = true;
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)_data.NoiseInvestigationDistanceLimit;
             }
             if (_data.MaxFlankingDistance == -1)
             {
-                StsticPatrolMaxFlankingDistanceNUD.Visible = false;
+                StsticPatrolMaxFlankingDistanceNUD.Enabled = false;
                 StsticPatrolMaxFlankingDistanceGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MaxFlankingDistance == -1)
+                {
+                    StsticPatrolMaxFlankingDistanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.MaxFlankingDistance;
+                }
+                else
+                {
+                    StsticPatrolMaxFlankingDistanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MaxFlankingDistance;
+                }
             }
             else
             {
-                StsticPatrolMaxFlankingDistanceNUD.Visible = true;
+                StsticPatrolMaxFlankingDistanceNUD.Enabled = true;
                 StsticPatrolMaxFlankingDistanceNUD.Value = (decimal)_data.MaxFlankingDistance;
             }
             if (_data.EnableFlankingOutsideCombat == -1)
             {
-                StaticPatrolEnableFlankingOutsideCombatCB.Visible = false;
+                StaticPatrolEnableFlankingOutsideCombatCB.Enabled = false;
                 StaticPatrolEnableFlankingOutsideCombatGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.EnableFlankingOutsideCombat == -1)
+                {
+                    StaticPatrolEnableFlankingOutsideCombatCB.Checked = AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.EnableFlankingOutsideCombat == 1 ? true : false;
+                }
+                else
+                {
+                    StaticPatrolEnableFlankingOutsideCombatCB.Checked = AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.EnableFlankingOutsideCombat == 1 ? true : false;
+                }
             }
             else
             {
-                StaticPatrolEnableFlankingOutsideCombatCB.Visible = true;
+                StaticPatrolEnableFlankingOutsideCombatCB.Enabled = true;
                 StaticPatrolEnableFlankingOutsideCombatCB.Checked = _data.EnableFlankingOutsideCombat == 1 ? true : false;
             }
             if (_data.DamageMultiplier == -1)
             {
-                StaticPatrolDamageMultiplierNUD.Visible = false;
+                StaticPatrolDamageMultiplierNUD.Enabled = false;
                 StaticPatrolDamageMultiplierGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageMultiplier == -1)
+                {
+                    StaticPatrolDamageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageMultiplier;
+                }
+                else
+                {
+                    StaticPatrolDamageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageMultiplier;
+                }
             }
             else
             {
-                StaticPatrolDamageMultiplierNUD.Visible = true;
+                StaticPatrolDamageMultiplierNUD.Enabled = true;
                 StaticPatrolDamageMultiplierNUD.Value = (decimal)_data.DamageMultiplier;
             }
             if (_data.DamageReceivedMultiplier == -1)
             {
-                StaticPatrolDamageReceivedMultiplierNUD.Visible = false;
+                StaticPatrolDamageReceivedMultiplierNUD.Enabled = false;
                 StaticPatrolDamageReceivedMultiplierGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageReceivedMultiplier == -1)
+                {
+                    StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageReceivedMultiplier;
+                }
+                else
+                {
+                    StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageReceivedMultiplier;
+                }
             }
             else
             {
-                StaticPatrolDamageReceivedMultiplierNUD.Visible = true;
+                StaticPatrolDamageReceivedMultiplierNUD.Enabled = true;
                 StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
             }
             if (_data.MinDistRadius == -1)
             {
-                StaticPatrolMinDistRadiusNUD.Visible = false;
+                StaticPatrolMinDistRadiusNUD.Enabled = false;
                 StaticPatrolMinDistRadiusGeneralCB.Checked = true;
+                StaticPatrolMinDistRadiusNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MinDistRadius;
             }
             else
             {
-                StaticPatrolMinDistRadiusNUD.Visible = true;
+                StaticPatrolMinDistRadiusNUD.Enabled = true;
                 StaticPatrolMinDistRadiusNUD.Value = (decimal)_data.MinDistRadius;
             }
             if (_data.MaxDistRadius == -1)
             {
-                StaticPatrolMaxDistRadiusNUD.Visible = false;
+                StaticPatrolMaxDistRadiusNUD.Enabled = false;
                 StaticPatrolMaxDistRadiusGeneralCB.Checked = true;
+                StaticPatrolMaxDistRadiusNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MaxDistRadius;
             }
             else
             {
-                StaticPatrolMaxDistRadiusNUD.Visible = true;
+                StaticPatrolMaxDistRadiusNUD.Enabled = true;
                 StaticPatrolMaxDistRadiusNUD.Value = (decimal)_data.MaxDistRadius;
             }
             if (_data.DespawnTime == -1)
             {
-                StaticPatrolDespawnTimeNUD.Visible = false;
+                StaticPatrolDespawnTimeNUD.Enabled = false;
                 StaticPatrolDespawnTimeGeneralCB.Checked = true;
+                 StaticPatrolDespawnTimeNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DespawnTime;
             }
             else
             {
-                StaticPatrolDespawnTimeNUD.Visible = true;
+                StaticPatrolDespawnTimeNUD.Enabled = true;
                 StaticPatrolDespawnTimeNUD.Value = (decimal)_data.DespawnTime;
             }
             if (_data.DespawnRadius == -1)
             {
-                StaticPatrolDespawnRadiusNUD.Visible = false;
+                StaticPatrolDespawnRadiusNUD.Enabled = false;
                 StaticPatrolDespawnRadiusGeneralCB.Checked = true;
+                StaticPatrolDespawnRadiusNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DespawnRadius;
             }
             else
             {
-                StaticPatrolDespawnRadiusNUD.Visible = true;
+                StaticPatrolDespawnRadiusNUD.Enabled = true;
                 StaticPatrolDespawnRadiusNUD.Value = (decimal)_data.DespawnRadius;
             }
-            if (_data.RespawnTime == -1)
+            if (_data.RespawnTime == -2)
             {
-                StaticPatrolRespawnTimeNUD.Visible = false;
-                StaticPatrolDespawnRadiusGeneralCB.Checked = true;
+                if (AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.RespawnTime == -1)
+                {
+                    StaticPatrolRespawnTimeNWonttRespawnCB.Checked = true;
+                    StaticPatrolRespawnTimeNWonttRespawnCB.Enabled = false;
+                    StaticPatrolRespawnTimeNUD.Visible = false;
+                    StaticPatrolRespawnTimeGeneralCB.Checked = true;
+                }
+                else
+                {
+                    StaticPatrolRespawnTimeNWonttRespawnCB.Visible = false;
+                    StaticPatrolRespawnTimeNUD.Visible = true;
+                    StaticPatrolRespawnTimeNUD.Enabled = false;
+                    StaticPatrolRespawnTimeNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.RespawnTime;
+                }
             }
-            else if (_data.RespawnTime == -2)
+            else if (_data.RespawnTime == -1)
             {
                 StaticPatrolRespawnTimeNWonttRespawnCB.Checked = true;
                 StaticPatrolRespawnTimeGeneralCB.Visible = false;
@@ -232,12 +313,20 @@ namespace ExpansionPlugin
             }
             if (_data.FormationScale == -1)
             {
-                StaticPatrolFormationScaleNUD.Visible = false;
+                StaticPatrolFormationScaleNUD.Enabled = false;
                 StaticPatrolFormationScaleGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.FormationScale == -1)
+                {
+                    StaticPatrolFormationScaleNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.FormationScale;
+                }
+                else
+                {
+                    StaticPatrolFormationScaleNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.FormationScale;
+                }
             }
             else
             {
-                StaticPatrolFormationScaleNUD.Visible = true;
+                StaticPatrolFormationScaleNUD.Enabled = true;
                 StaticPatrolFormationScaleNUD.Value = (decimal)_data.FormationScale;
             }
 
@@ -702,18 +791,52 @@ namespace ExpansionPlugin
         {
 
         }
-
+        private void StaticPatrolFormationScaleGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolFormationScaleGeneralCB.Checked)
+            {
+                StaticPatrolFormationScaleNUD.Enabled = false;
+                _data.FormationScale = -1;
+                _suppressEvents = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.FormationScale == -1)
+                {
+                    StaticPatrolFormationScaleNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.FormationScale;
+                }
+                else
+                {
+                    StaticPatrolFormationScaleNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.FormationScale;
+                }
+                _suppressEvents = false;
+            }
+            else
+            {
+                StaticPatrolFormationScaleNUD.Enabled = true;
+                _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
+            }
+            HasChanges();
+        }
         private void StaticPatrolAccuracyMinGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             if (StaticPatrolAccuracyMinGeneralCB.Checked)
             {
-                StaticPatrolAccuracyMinNUD.Visible = false;
+                StaticPatrolAccuracyMinNUD.Enabled = false;
                 _data.AccuracyMin = -1;
+                _suppressEvents = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMin == -1)
+                {
+                    StaticPatrolAccuracyMinNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMin;
+                }
+                else
+                {
+                    StaticPatrolAccuracyMinNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMin;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolAccuracyMinNUD.Visible = true;
+                StaticPatrolAccuracyMinNUD.Enabled = true;
                 _data.AccuracyMin = StaticPatrolAccuracyMinNUD.Value;
             }
             HasChanges();
@@ -724,12 +847,22 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolAccuracyMaxGenerralCB.Checked)
             {
-                StaticPatrolAccuracyMaxNUD.Visible = false;
+                StaticPatrolAccuracyMaxNUD.Enabled = false;
                 _data.AccuracyMax = -1;
+                _suppressEvents = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMax == -1)
+                {
+                    StaticPatrolAccuracyMaxNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.AccuracyMax;
+                }
+                else
+                {
+                    StaticPatrolAccuracyMaxNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.AccuracyMax;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolAccuracyMaxNUD.Visible = true;
+                StaticPatrolAccuracyMaxNUD.Enabled = true;
                 _data.AccuracyMax = StaticPatrolAccuracyMaxNUD.Value;
             }
             HasChanges();
@@ -740,12 +873,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolThreatDistanceLimitGeneralCB.Checked)
             {
-                StaticPatrolThreatDistanceLimitNUD.Visible = false;
+                StaticPatrolThreatDistanceLimitNUD.Enabled = false;
                 _data.ThreatDistanceLimit = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ThreatDistanceLimit == -1)
+                {
+                    StaticPatrolThreatDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ThreatDistanceLimit;
+                }
+                else
+                {
+                    StaticPatrolThreatDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ThreatDistanceLimit;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolThreatDistanceLimitNUD.Visible = true;
+                StaticPatrolThreatDistanceLimitNUD.Enabled = true;
                 _data.ThreatDistanceLimit = StaticPatrolThreatDistanceLimitNUD.Value;
             }
             HasChanges();
@@ -756,12 +898,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Checked)
             {
-                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = false;
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Enabled = false;
                 _data.NoiseInvestigationDistanceLimit = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.NoiseInvestigationDistanceLimit == -1)
+                {
+                    StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.NoiseInvestigationDistanceLimit;
+                }
+                else
+                {
+                    StaticPatrolNoiseInvestigationDistanceLimitNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.NoiseInvestigationDistanceLimit;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolNoiseInvestigationDistanceLimitNUD.Visible = true;
+                StaticPatrolNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 _data.NoiseInvestigationDistanceLimit = StaticPatrolNoiseInvestigationDistanceLimitNUD.Value;
             }
             HasChanges();
@@ -772,12 +923,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StsticPatrolMaxFlankingDistanceGeneralCB.Checked)
             {
-                StsticPatrolMaxFlankingDistanceNUD.Visible = false;
+                StsticPatrolMaxFlankingDistanceNUD.Enabled = false;
                 _data.MaxFlankingDistance = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MaxFlankingDistance == -1)
+                {
+                    StsticPatrolMaxFlankingDistanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.MaxFlankingDistance;
+                }
+                else
+                {
+                    StsticPatrolMaxFlankingDistanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MaxFlankingDistance;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StsticPatrolMaxFlankingDistanceNUD.Visible = true;
+                StsticPatrolMaxFlankingDistanceNUD.Enabled = true;
                 _data.MaxFlankingDistance = StsticPatrolMaxFlankingDistanceNUD.Value;
             }
             HasChanges();
@@ -788,12 +948,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolEnableFlankingOutsideCombatGeneralCB.Checked)
             {
-                StaticPatrolEnableFlankingOutsideCombatCB.Visible = false;
+                StaticPatrolEnableFlankingOutsideCombatCB.Enabled = false;
                 _data.EnableFlankingOutsideCombat = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.EnableFlankingOutsideCombat == -1)
+                {
+                    StaticPatrolEnableFlankingOutsideCombatCB.Checked = AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.EnableFlankingOutsideCombat == 1 ? true : false;
+                }
+                else
+                {
+                    StaticPatrolEnableFlankingOutsideCombatCB.Checked = AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.EnableFlankingOutsideCombat == 1 ? true : false;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolEnableFlankingOutsideCombatCB.Visible = true;
+                StaticPatrolEnableFlankingOutsideCombatCB.Enabled = true;
                 _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1: 0;
             }
             HasChanges();
@@ -804,12 +973,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolDamageMultiplierGeneralCB.Checked)
             {
-                StaticPatrolDamageMultiplierNUD.Visible = false;
+                StaticPatrolDamageMultiplierNUD.Enabled = false;
                 _data.DamageMultiplier = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageMultiplier == -1)
+                {
+                    StaticPatrolDamageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageMultiplier;
+                }
+                else
+                {
+                    StaticPatrolDamageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageMultiplier;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolDamageMultiplierNUD.Visible = true;
+                StaticPatrolDamageMultiplierNUD.Enabled = true;
                 _data.DamageMultiplier = StaticPatrolDamageMultiplierNUD.Value;
             }
             HasChanges();
@@ -820,12 +998,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolDamageReceivedMultiplierGeneralCB.Checked)
             {
-                StaticPatrolDamageReceivedMultiplierNUD.Visible = false;
+                StaticPatrolDamageReceivedMultiplierNUD.Enabled = false;
                 _data.DamageReceivedMultiplier = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageReceivedMultiplier == -1)
+                {
+                    StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.DamageReceivedMultiplier;
+                }
+                else
+                {
+                    StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DamageReceivedMultiplier;
+                }
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolDamageReceivedMultiplierNUD.Visible = true;
+                StaticPatrolDamageReceivedMultiplierNUD.Enabled = true;
                 _data.DamageReceivedMultiplier = StaticPatrolDamageReceivedMultiplierNUD.Value;
             }
             HasChanges();
@@ -836,12 +1023,14 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolMinDistRadiusGeneralCB.Checked)
             {
-                StaticPatrolMinDistRadiusNUD.Visible = false;
+                StaticPatrolMinDistRadiusNUD.Enabled = false;
                 _data.MinDistRadius = -1;
+                StaticPatrolMinDistRadiusNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MinDistRadius;
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolMinDistRadiusNUD.Visible = true;
+                StaticPatrolMinDistRadiusNUD.Enabled = true;
                 _data.MinDistRadius = StaticPatrolMinDistRadiusNUD.Value;
             }
             HasChanges();
@@ -852,12 +1041,14 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolMaxDistRadiusGeneralCB.Checked)
             {
-                StaticPatrolMaxDistRadiusNUD.Visible = false;
+                StaticPatrolMaxDistRadiusNUD.Enabled = false;
                 _data.MaxDistRadius = -1;
+                StaticPatrolMaxDistRadiusNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.MaxDistRadius;
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolMaxDistRadiusNUD.Visible = true;
+                StaticPatrolMaxDistRadiusNUD.Enabled = true;
                 _data.MaxDistRadius = StaticPatrolMaxDistRadiusNUD.Value;
             }
             HasChanges();
@@ -868,12 +1059,14 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolDespawnTimeGeneralCB.Checked)
             {
-                StaticPatrolDespawnTimeNUD.Visible = false;
+                StaticPatrolDespawnTimeNUD.Enabled = false;
                 _data.DespawnTime = -1;
+                StaticPatrolDespawnTimeNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DespawnTime;
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolDespawnTimeNUD.Visible = true;
+                StaticPatrolDespawnTimeNUD.Enabled = true;
                 _data.DespawnTime = StaticPatrolDespawnTimeNUD.Value;
             }
             HasChanges();
@@ -884,12 +1077,14 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolDespawnRadiusGeneralCB.Checked)
             {
-                StaticPatrolDespawnRadiusNUD.Visible = false;
+                StaticPatrolDespawnRadiusNUD.Enabled = false;
                 _data.DespawnRadius = -1;
+                StaticPatrolDespawnRadiusNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DespawnRadius;
+                _suppressEvents = false;
             }
             else
             {
-                StaticPatrolDespawnRadiusNUD.Visible = true;
+                StaticPatrolDespawnRadiusNUD.Enabled = true;
                 _data.DespawnRadius = StaticPatrolDespawnRadiusNUD.Value;
             }
             HasChanges();
@@ -900,12 +1095,30 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (StaticPatrolRespawnTimeGeneralCB.Checked)
             {
-                StaticPatrolRespawnTimeNUD.Visible = false;
-                _data.RespawnTime = -1;
+                StaticPatrolRespawnTimeNUD.Enabled = false;
+                _data.RespawnTime = -2;
+                _suppressEvents = true;
+                if (AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.RespawnTime == -1)
+                {
+                    StaticPatrolRespawnTimeNWonttRespawnCB.Checked = true;
+                    StaticPatrolRespawnTimeNWonttRespawnCB.Enabled = false;
+                    StaticPatrolRespawnTimeNUD.Visible = false;
+                }
+                else
+                {
+                    StaticPatrolRespawnTimeNWonttRespawnCB.Visible = false;
+                    StaticPatrolRespawnTimeNUD.Visible = true;
+                    StaticPatrolRespawnTimeNUD.Enabled = false;
+                    StaticPatrolRespawnTimeNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.RespawnTime;
+                }
+                _suppressEvents = false;
             }
             else
             {
                 StaticPatrolRespawnTimeNUD.Visible = true;
+                StaticPatrolRespawnTimeNUD.Enabled = true;
+                StaticPatrolRespawnTimeNWonttRespawnCB.Checked = false;
+                StaticPatrolRespawnTimeNWonttRespawnCB.Enabled = true;
                 _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
             }
             HasChanges();
@@ -918,7 +1131,7 @@ namespace ExpansionPlugin
             {
                 StaticPatrolRespawnTimeGeneralCB.Visible = false;
                 StaticPatrolRespawnTimeNUD.Visible = false;
-                _data.RespawnTime = -2;
+                _data.RespawnTime = -1;
             }
             else
             {
@@ -935,20 +1148,6 @@ namespace ExpansionPlugin
             HasChanges();
         }
 
-        private void StaticPatrolFormationScaleGeneralCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            if (StaticPatrolFormationScaleGeneralCB.Checked)
-            {
-                StaticPatrolFormationScaleNUD.Visible = false;
-                _data.FormationScale = -1;
-            }
-            else
-            {
-                StaticPatrolFormationScaleNUD.Visible = true;
-                _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
-            }
-            HasChanges();
-        }
+
     }
 }

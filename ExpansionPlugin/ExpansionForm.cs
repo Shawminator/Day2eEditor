@@ -1030,6 +1030,44 @@ namespace ExpansionPlugin
             {
                 Tag = "RootNode",
             };
+
+
+            TreeNode AIrootNode = new TreeNode("AI")
+            {
+                Tag = "AIrootNode"
+            };
+
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLoadoutConfig, CreateExpansionLoadoutConfigNodes);
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLootDropConfig, CrateLootDropConfigNodes);
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAILocationConfig, CreateExpansionAILocationConfigNodes);
+            rootNode.Nodes.Add(AIrootNode);
+
+            TreeNode MarketrootNode = new TreeNode("Market")
+            {
+                Tag = "MarketrootNode"
+            };
+            rootNode.Nodes.Add(MarketrootNode);
+
+            TreeNode MissionrootNode = new TreeNode("Missions")
+            {
+                Tag = "MissionsrootNode"
+            };
+            rootNode.Nodes.Add(MissionrootNode);
+
+            TreeNode p2pmarketrootNode = new TreeNode("P2P Market")
+            {
+                Tag = "p2pmarketNode"
+            };
+            rootNode.Nodes.Add(p2pmarketrootNode);
+
+            TreeNode personalstoragerootNode = new TreeNode("Personal Storage")
+            {
+                Tag = "personalstoragerootNode"
+            };
+            rootNode.Nodes.Add(personalstoragerootNode);
+
+
             TreeNode SettingsNode = new TreeNode("Settings")
             {
                 Tag = "SettingsNode",
@@ -1047,66 +1085,21 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMapConfig, CreateExpansionMapConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
-
-            TreeNode AIrootNode = new TreeNode("AI")
-            {
-                Tag = "AIrootNode"
-            };
-
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLoadoutConfig, CreateExpansionLoadoutConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLootDropConfig, CrateLootDropConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAILocationConfig, CreateExpansionAILocationConfigNodes);
-            rootNode.Nodes.Add(AIrootNode);
-
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMonitoringConfig, CreateExpansionMonitoringConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNameTagsConfig, CreateExpansionNameTagsConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
             rootNode.Nodes.Add(SettingsNode);
+
+            TreeNode QuestsrootNode = new TreeNode("Quests")
+            {
+                Tag = "QuestsrootNode"
+            };
+            rootNode.Nodes.Add(QuestsrootNode);
+
             ExpansionTV.Nodes.Add(rootNode);
         }
-
-
-        //airdrop
-        private TreeNode CreateExpansionAirdropConfigNodes(ExpansionAirdropConfig ef)
-        {
-            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
-            {
-                Tag = ef
-            };
-            CreateairdropNodes(ef, EconomyRootNode);
-            return EconomyRootNode;
-        }
-        private void CreateairdropNodes(ExpansionAirdropConfig ef, TreeNode EconomyRootNode)
-        {
-            EconomyRootNode.Nodes.Add(new TreeNode("General")
-            {
-                Tag = ef.Data
-            });
-            TreeNode acnodes = new TreeNode("Containers")
-            {
-                Tag = "AirdropContainers"
-            };
-            foreach (ExpansionLootContainer alc in ef.Data.Containers)
-            {
-                TreeNode alcnodes = new TreeNode(alc.Container)
-                {
-                    Tag = alc
-                };
-                TreeNode alcinodes = new TreeNode("Infected")
-                {
-                    Tag = "AirdropContainersInfected"
-                };
-                alcnodes.Nodes.Add(alcinodes);
-
-                TreeNode alclnodes = new TreeNode("Loot")
-                {
-                    Tag = "AirdropContainersLoot"
-                };
-                alcnodes.Nodes.Add(alclnodes);
-
-                acnodes.Nodes.Add(alcnodes);
-
-            }
-            EconomyRootNode.Nodes.Add(acnodes);
-        }
+        
         //AI
         private TreeNode CreateExpansionLoadoutConfigNodes(ExpansionLoadoutConfig ef)
         {
@@ -1192,66 +1185,6 @@ namespace ExpansionPlugin
             }
 
             return AILootdropConfigRootNode;
-        }
-        private TreeNode CreateExpansionAIConfigNodes(ExpansionAIConfig ef)
-        {
-            TreeNode AIRootNode = new TreeNode(ef.FileName)
-            {
-                Tag = ef
-            };
-            AIRootNode.Nodes.Add(new TreeNode("General")
-            {
-                Tag = ef.Data
-            });
-            TreeNode AISettingsAdminsNodes = new TreeNode("Admins")
-            {
-                Tag = "AISettingsAdmins"
-            };
-            foreach (string s in ef.Data.Admins)
-            {
-                AISettingsAdminsNodes.Nodes.Add(new TreeNode(s)
-                {
-                    Tag = "AISettingsAdminString"
-                });
-            }
-            AIRootNode.Nodes.Add(AISettingsAdminsNodes);
-            TreeNode AISettingsPreventClimbNodes = new TreeNode("PreventClimb")
-            {
-                Tag = "AISettingsPreventClimb"
-            };
-            foreach (string s in ef.Data.PreventClimb)
-            {
-                AISettingsPreventClimbNodes.Nodes.Add(new TreeNode(s)
-                {
-                    Tag = "AISettingsPreventClimbString"
-                });
-            }
-            AIRootNode.Nodes.Add(AISettingsPreventClimbNodes);
-            TreeNode AISettingsPlayerFactionsNodes = new TreeNode("Player Factions")
-            {
-                Tag = "AISettingsPlayerFactions"
-            };
-            foreach (string s in ef.Data.PlayerFactions)
-            {
-                AISettingsPlayerFactionsNodes.Nodes.Add(new TreeNode(s)
-                {
-                    Tag = "AISettingsPlayerFactionsString"
-                });
-            }
-            AIRootNode.Nodes.Add(AISettingsPlayerFactionsNodes);
-            TreeNode LightingConfigMinNightVisibilityMetersNodes = new TreeNode("Lighting Config Min Night Visibility Meters")
-            {
-                Tag = "LightingConfigMinNightVisibilityMeters"
-            };
-            foreach (AILightEntries AILightEntries in ef.Data.AILightEntries)
-            {
-                LightingConfigMinNightVisibilityMetersNodes.Nodes.Add(new TreeNode($"Lighting Config {AILightEntries.Key} : Visibility {AILightEntries.Value}")
-                {
-                    Tag = AILightEntries
-                });
-            }
-            AIRootNode.Nodes.Add(LightingConfigMinNightVisibilityMetersNodes);
-            return AIRootNode;
         }
         private TreeNode CreateExpansionAIPatrolConfigNodes(ExpansionAIPatrolConfig ef)
         {
@@ -1375,6 +1308,112 @@ namespace ExpansionPlugin
             }
             AILocationlRootNode.Nodes.Add(NoGoAreasNode);
             return AILocationlRootNode;
+        }
+
+        //Settings files
+        //airdrop
+        private TreeNode CreateExpansionAirdropConfigNodes(ExpansionAirdropConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateairdropNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateairdropNodes(ExpansionAirdropConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode acnodes = new TreeNode("Containers")
+            {
+                Tag = "AirdropContainers"
+            };
+            foreach (ExpansionLootContainer alc in ef.Data.Containers)
+            {
+                TreeNode alcnodes = new TreeNode(alc.Container)
+                {
+                    Tag = alc
+                };
+                TreeNode alcinodes = new TreeNode("Infected")
+                {
+                    Tag = "AirdropContainersInfected"
+                };
+                alcnodes.Nodes.Add(alcinodes);
+
+                TreeNode alclnodes = new TreeNode("Loot")
+                {
+                    Tag = "AirdropContainersLoot"
+                };
+                alcnodes.Nodes.Add(alclnodes);
+
+                acnodes.Nodes.Add(alcnodes);
+
+            }
+            EconomyRootNode.Nodes.Add(acnodes);
+        }
+        //AI
+        private TreeNode CreateExpansionAIConfigNodes(ExpansionAIConfig ef)
+        {
+            TreeNode AIRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            AIRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode AISettingsAdminsNodes = new TreeNode("Admins")
+            {
+                Tag = "AISettingsAdmins"
+            };
+            foreach (string s in ef.Data.Admins)
+            {
+                AISettingsAdminsNodes.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "AISettingsAdminString"
+                });
+            }
+            AIRootNode.Nodes.Add(AISettingsAdminsNodes);
+            TreeNode AISettingsPreventClimbNodes = new TreeNode("PreventClimb")
+            {
+                Tag = "AISettingsPreventClimb"
+            };
+            foreach (string s in ef.Data.PreventClimb)
+            {
+                AISettingsPreventClimbNodes.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "AISettingsPreventClimbString"
+                });
+            }
+            AIRootNode.Nodes.Add(AISettingsPreventClimbNodes);
+            TreeNode AISettingsPlayerFactionsNodes = new TreeNode("Player Factions")
+            {
+                Tag = "AISettingsPlayerFactions"
+            };
+            foreach (string s in ef.Data.PlayerFactions)
+            {
+                AISettingsPlayerFactionsNodes.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "AISettingsPlayerFactionsString"
+                });
+            }
+            AIRootNode.Nodes.Add(AISettingsPlayerFactionsNodes);
+            TreeNode LightingConfigMinNightVisibilityMetersNodes = new TreeNode("Lighting Config Min Night Visibility Meters")
+            {
+                Tag = "LightingConfigMinNightVisibilityMeters"
+            };
+            foreach (AILightEntries AILightEntries in ef.Data.AILightEntries)
+            {
+                LightingConfigMinNightVisibilityMetersNodes.Nodes.Add(new TreeNode($"Lighting Config {AILightEntries.Key} : Visibility {AILightEntries.Value}")
+                {
+                    Tag = AILightEntries
+                });
+            }
+            AIRootNode.Nodes.Add(LightingConfigMinNightVisibilityMetersNodes);
+            return AIRootNode;
         }
         //Basebuilding
         private TreeNode CreateExpansionBaseBuildingConfigNodes(ExpansionBaseBuildingConfig ef)
@@ -1701,7 +1740,6 @@ namespace ExpansionPlugin
             CreateMappingNodes(ef.Data.Mapping, MappingNode);
             EconomyRootNode.Nodes.Add(MappingNode);
         }
-
         private static void CreateMappingNodes(ExpansionMapping mapping, TreeNode mappingNode)
         {
             if (mapping.UseCustomMappingModule == 1)
@@ -1735,7 +1773,6 @@ namespace ExpansionPlugin
                 mappingNode.Nodes.Add(Newinteriornode);
             }
         }
-
         //Hardline
         private TreeNode CreateExpansionHardlineConfigNodes(ExpansionHardlineConfig ef)
         {
@@ -1927,6 +1964,87 @@ namespace ExpansionPlugin
             }
             spawnpointnodes.Nodes.Add(Trainspawnpointnodes);
             EconomyRootNode.Nodes.Add(spawnpointnodes);
+        }
+        //Mission
+        private TreeNode CreateExpansionMissionConfig(ExpansionMissionConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionMissionConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMissionConfigNodes(ExpansionMissionConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //Monitoring
+        private TreeNode CreateExpansionMonitoringConfig(ExpansionMonitoringConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionMonitoringConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMonitoringConfigNodes(ExpansionMonitoringConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //NameTags
+        private TreeNode CreateExpansionNameTagsConfig(ExpansionNameTagsConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionNameTagsConfiggNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionNameTagsConfiggNodes(ExpansionNameTagsConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //NotificationScheduler
+        private TreeNode CreateExpansionNotificationSchedulerConfigConfig(ExpansionNotificationSchedulerConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionNotificationSchedulerConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionNotificationSchedulerConfigNodes(ExpansionNotificationSchedulerConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode Notificationsnodes = new TreeNode("Notifications")
+            {
+                Tag = "Notifications"
+            };
+            foreach(ExpansionNotificationSchedule ns in ef.Data.Notifications)
+            {
+                Notificationsnodes.Nodes.Add(new TreeNode(ns.Title)
+                {
+                    Tag = ns
+                });
+                
+            }
+            EconomyRootNode.Nodes.Add(Notificationsnodes);
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)

@@ -29,12 +29,9 @@
         private void InitializeComponent()
         {
             AIGeneralPatrolGB = new GroupBox();
+            AIGeneralRespawnTimeNWonttRespawnCB = new CheckBox();
             label4 = new Label();
             AIGeneralFormationScaleDefaultCB = new CheckBox();
-            AIGeneralDespawnTimeDefaultCB = new CheckBox();
-            AIGeneralRespawnTimeDefaultCB = new CheckBox();
-            AIGeneralMinDistRadiusDefaultCB = new CheckBox();
-            AIGeneralMaxDistRadiusDefaultCB = new CheckBox();
             AIGeneralAccuracyMinDefaultCB = new CheckBox();
             AIGeneralAccuracyMaxDefaultCB = new CheckBox();
             AIGeneralThreatDistanceLimitDefaultCB = new CheckBox();
@@ -91,12 +88,9 @@
             // 
             // AIGeneralPatrolGB
             // 
+            AIGeneralPatrolGB.Controls.Add(AIGeneralRespawnTimeNWonttRespawnCB);
             AIGeneralPatrolGB.Controls.Add(label4);
             AIGeneralPatrolGB.Controls.Add(AIGeneralFormationScaleDefaultCB);
-            AIGeneralPatrolGB.Controls.Add(AIGeneralDespawnTimeDefaultCB);
-            AIGeneralPatrolGB.Controls.Add(AIGeneralRespawnTimeDefaultCB);
-            AIGeneralPatrolGB.Controls.Add(AIGeneralMinDistRadiusDefaultCB);
-            AIGeneralPatrolGB.Controls.Add(AIGeneralMaxDistRadiusDefaultCB);
             AIGeneralPatrolGB.Controls.Add(AIGeneralAccuracyMinDefaultCB);
             AIGeneralPatrolGB.Controls.Add(AIGeneralAccuracyMaxDefaultCB);
             AIGeneralPatrolGB.Controls.Add(AIGeneralThreatDistanceLimitDefaultCB);
@@ -146,6 +140,21 @@
             AIGeneralPatrolGB.TabStop = false;
             AIGeneralPatrolGB.Text = "AI Patrol General Settings";
             // 
+            // AIGeneralRespawnTimeNWonttRespawnCB
+            // 
+            AIGeneralRespawnTimeNWonttRespawnCB.AutoSize = true;
+            AIGeneralRespawnTimeNWonttRespawnCB.CheckAlign = ContentAlignment.MiddleRight;
+            AIGeneralRespawnTimeNWonttRespawnCB.ForeColor = SystemColors.Control;
+            AIGeneralRespawnTimeNWonttRespawnCB.Location = new Point(154, 141);
+            AIGeneralRespawnTimeNWonttRespawnCB.Margin = new Padding(4, 3, 4, 3);
+            AIGeneralRespawnTimeNWonttRespawnCB.Name = "AIGeneralRespawnTimeNWonttRespawnCB";
+            AIGeneralRespawnTimeNWonttRespawnCB.Size = new Size(113, 19);
+            AIGeneralRespawnTimeNWonttRespawnCB.TabIndex = 404;
+            AIGeneralRespawnTimeNWonttRespawnCB.Text = "(Wont Respawn)";
+            AIGeneralRespawnTimeNWonttRespawnCB.TextAlign = ContentAlignment.TopCenter;
+            AIGeneralRespawnTimeNWonttRespawnCB.UseVisualStyleBackColor = true;
+            AIGeneralRespawnTimeNWonttRespawnCB.CheckedChanged += AIGeneralRespawnTimeNWonttRespawnCB_CheckedChanged;
+            // 
             // label4
             // 
             label4.AutoSize = true;
@@ -171,66 +180,6 @@
             AIGeneralFormationScaleDefaultCB.TextAlign = ContentAlignment.TopCenter;
             AIGeneralFormationScaleDefaultCB.UseVisualStyleBackColor = true;
             AIGeneralFormationScaleDefaultCB.CheckedChanged += AIGeneralFormationScaleDefaultCB_CheckedChanged;
-            // 
-            // AIGeneralDespawnTimeDefaultCB
-            // 
-            AIGeneralDespawnTimeDefaultCB.AutoSize = true;
-            AIGeneralDespawnTimeDefaultCB.CheckAlign = ContentAlignment.MiddleRight;
-            AIGeneralDespawnTimeDefaultCB.ForeColor = SystemColors.Control;
-            AIGeneralDespawnTimeDefaultCB.Location = new Point(252, 109);
-            AIGeneralDespawnTimeDefaultCB.Margin = new Padding(4, 3, 4, 3);
-            AIGeneralDespawnTimeDefaultCB.Name = "AIGeneralDespawnTimeDefaultCB";
-            AIGeneralDespawnTimeDefaultCB.RightToLeft = RightToLeft.Yes;
-            AIGeneralDespawnTimeDefaultCB.Size = new Size(15, 14);
-            AIGeneralDespawnTimeDefaultCB.TabIndex = 223;
-            AIGeneralDespawnTimeDefaultCB.TextAlign = ContentAlignment.TopCenter;
-            AIGeneralDespawnTimeDefaultCB.UseVisualStyleBackColor = true;
-            AIGeneralDespawnTimeDefaultCB.CheckedChanged += AIGeneralDespawnTimeDefaultCB_CheckedChanged;
-            // 
-            // AIGeneralRespawnTimeDefaultCB
-            // 
-            AIGeneralRespawnTimeDefaultCB.AutoSize = true;
-            AIGeneralRespawnTimeDefaultCB.CheckAlign = ContentAlignment.MiddleRight;
-            AIGeneralRespawnTimeDefaultCB.ForeColor = SystemColors.Control;
-            AIGeneralRespawnTimeDefaultCB.Location = new Point(252, 138);
-            AIGeneralRespawnTimeDefaultCB.Margin = new Padding(4, 3, 4, 3);
-            AIGeneralRespawnTimeDefaultCB.Name = "AIGeneralRespawnTimeDefaultCB";
-            AIGeneralRespawnTimeDefaultCB.RightToLeft = RightToLeft.Yes;
-            AIGeneralRespawnTimeDefaultCB.Size = new Size(15, 14);
-            AIGeneralRespawnTimeDefaultCB.TabIndex = 221;
-            AIGeneralRespawnTimeDefaultCB.TextAlign = ContentAlignment.TopCenter;
-            AIGeneralRespawnTimeDefaultCB.UseVisualStyleBackColor = true;
-            AIGeneralRespawnTimeDefaultCB.CheckedChanged += AIGeneralRespawnTimeDefaultCB_CheckedChanged;
-            // 
-            // AIGeneralMinDistRadiusDefaultCB
-            // 
-            AIGeneralMinDistRadiusDefaultCB.AutoSize = true;
-            AIGeneralMinDistRadiusDefaultCB.CheckAlign = ContentAlignment.MiddleRight;
-            AIGeneralMinDistRadiusDefaultCB.ForeColor = SystemColors.Control;
-            AIGeneralMinDistRadiusDefaultCB.Location = new Point(252, 167);
-            AIGeneralMinDistRadiusDefaultCB.Margin = new Padding(4, 3, 4, 3);
-            AIGeneralMinDistRadiusDefaultCB.Name = "AIGeneralMinDistRadiusDefaultCB";
-            AIGeneralMinDistRadiusDefaultCB.RightToLeft = RightToLeft.Yes;
-            AIGeneralMinDistRadiusDefaultCB.Size = new Size(15, 14);
-            AIGeneralMinDistRadiusDefaultCB.TabIndex = 220;
-            AIGeneralMinDistRadiusDefaultCB.TextAlign = ContentAlignment.TopCenter;
-            AIGeneralMinDistRadiusDefaultCB.UseVisualStyleBackColor = true;
-            AIGeneralMinDistRadiusDefaultCB.CheckedChanged += AIGeneralMinDistRadiusDefaultCB_CheckedChanged;
-            // 
-            // AIGeneralMaxDistRadiusDefaultCB
-            // 
-            AIGeneralMaxDistRadiusDefaultCB.AutoSize = true;
-            AIGeneralMaxDistRadiusDefaultCB.CheckAlign = ContentAlignment.MiddleRight;
-            AIGeneralMaxDistRadiusDefaultCB.ForeColor = SystemColors.Control;
-            AIGeneralMaxDistRadiusDefaultCB.Location = new Point(252, 197);
-            AIGeneralMaxDistRadiusDefaultCB.Margin = new Padding(4, 3, 4, 3);
-            AIGeneralMaxDistRadiusDefaultCB.Name = "AIGeneralMaxDistRadiusDefaultCB";
-            AIGeneralMaxDistRadiusDefaultCB.RightToLeft = RightToLeft.Yes;
-            AIGeneralMaxDistRadiusDefaultCB.Size = new Size(15, 14);
-            AIGeneralMaxDistRadiusDefaultCB.TabIndex = 219;
-            AIGeneralMaxDistRadiusDefaultCB.TextAlign = ContentAlignment.TopCenter;
-            AIGeneralMaxDistRadiusDefaultCB.UseVisualStyleBackColor = true;
-            AIGeneralMaxDistRadiusDefaultCB.CheckedChanged += AIGeneralMaxDistRadiusDefaultCB_CheckedChanged;
             // 
             // AIGeneralAccuracyMinDefaultCB
             // 
@@ -312,7 +261,7 @@
             AIGeneralEnableFlankingOutsideCombatDefailtCB.AutoSize = true;
             AIGeneralEnableFlankingOutsideCombatDefailtCB.CheckAlign = ContentAlignment.MiddleRight;
             AIGeneralEnableFlankingOutsideCombatDefailtCB.ForeColor = SystemColors.Control;
-            AIGeneralEnableFlankingOutsideCombatDefailtCB.Location = new Point(252, 408);
+            AIGeneralEnableFlankingOutsideCombatDefailtCB.Location = new Point(252, 411);
             AIGeneralEnableFlankingOutsideCombatDefailtCB.Margin = new Padding(4, 3, 4, 3);
             AIGeneralEnableFlankingOutsideCombatDefailtCB.Name = "AIGeneralEnableFlankingOutsideCombatDefailtCB";
             AIGeneralEnableFlankingOutsideCombatDefailtCB.RightToLeft = RightToLeft.Yes;
@@ -411,7 +360,7 @@
             label1.Location = new Point(29, 384);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(126, 15);
+            label1.Size = new Size(125, 15);
             label1.TabIndex = 207;
             label1.Text = "Max Flanking Distance";
             // 
@@ -528,7 +477,7 @@
             darkLabel61.Location = new Point(29, 322);
             darkLabel61.Margin = new Padding(4, 0, 4, 0);
             darkLabel61.Name = "darkLabel61";
-            darkLabel61.Size = new Size(118, 15);
+            darkLabel61.Size = new Size(119, 15);
             darkLabel61.TabIndex = 142;
             darkLabel61.Text = "Threat Distance Limit";
             // 
@@ -624,7 +573,7 @@
             darkLabel52.Location = new Point(29, 292);
             darkLabel52.Margin = new Padding(4, 0, 4, 0);
             darkLabel52.Name = "darkLabel52";
-            darkLabel52.Size = new Size(82, 15);
+            darkLabel52.Size = new Size(81, 15);
             darkLabel52.TabIndex = 138;
             darkLabel52.Text = "Accuracy Max";
             // 
@@ -635,7 +584,7 @@
             darkLabel37.Location = new Point(29, 112);
             darkLabel37.Margin = new Padding(4, 0, 4, 0);
             darkLabel37.Name = "darkLabel37";
-            darkLabel37.Size = new Size(84, 15);
+            darkLabel37.Size = new Size(85, 15);
             darkLabel37.TabIndex = 134;
             darkLabel37.Text = "Despawn Time";
             // 
@@ -660,7 +609,7 @@
             darkLabel15.Location = new Point(31, 200);
             darkLabel15.Margin = new Padding(4, 0, 4, 0);
             darkLabel15.Name = "darkLabel15";
-            darkLabel15.Size = new Size(91, 15);
+            darkLabel15.Size = new Size(90, 15);
             darkLabel15.TabIndex = 132;
             darkLabel15.Text = "Max Dist Radius";
             // 
@@ -712,7 +661,7 @@
             darkLabel3.Location = new Point(29, 141);
             darkLabel3.Margin = new Padding(4, 0, 4, 0);
             darkLabel3.Name = "darkLabel3";
-            darkLabel3.Size = new Size(83, 15);
+            darkLabel3.Size = new Size(84, 15);
             darkLabel3.TabIndex = 122;
             darkLabel3.Text = "Respawn Time";
             // 
@@ -803,9 +752,6 @@
         private NumericUpDown AIGeneralRespawnTimeNUD;
         private NumericUpDown AIGeneralMaxFlankingDistanceNUD;
         private Label label1;
-        private CheckBox AIGeneralRespawnTimeDefaultCB;
-        private CheckBox AIGeneralMinDistRadiusDefaultCB;
-        private CheckBox AIGeneralMaxDistRadiusDefaultCB;
         private CheckBox AIGeneralAccuracyMinDefaultCB;
         private CheckBox AIGeneralAccuracyMaxDefaultCB;
         private CheckBox AIGeneralThreatDistanceLimitDefaultCB;
@@ -818,7 +764,7 @@
         private CheckBox AIGeneralEnableFlankingOutsideCombatCB;
         private Label label2;
         private CheckBox AIGeneralFormationScaleDefaultCB;
-        private CheckBox AIGeneralDespawnTimeDefaultCB;
         private Label label4;
+        private CheckBox AIGeneralRespawnTimeNWonttRespawnCB;
     }
 }

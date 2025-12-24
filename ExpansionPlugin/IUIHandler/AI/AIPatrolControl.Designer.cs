@@ -30,31 +30,31 @@
         {
             groupBox1 = new GroupBox();
             label10 = new Label();
+            StaticPatrolFormationScaleGeneralCB = new CheckBox();
+            StaticPatrolEnableFlankingOutsideCombatGeneralCB = new CheckBox();
+            StaticPatrolDamageMultiplierGeneralCB = new CheckBox();
             StaticPatrolRespawnTimeNWonttRespawnCB = new CheckBox();
             StsticPatrolMaxFlankingDistanceGeneralCB = new CheckBox();
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB = new CheckBox();
-            StaticPatrolThreatDistanceLimitGeneralCB = new CheckBox();
-            StaticPatrolAccuracyMaxGenerralCB = new CheckBox();
-            StaticPatrolAccuracyMinGeneralCB = new CheckBox();
-            StaticPatrolFormationScaleGeneralCB = new CheckBox();
-            StaticPatrolRespawnTimeGeneralCB = new CheckBox();
-            StaticPatrolDespawnRadiusGeneralCB = new CheckBox();
-            StaticPatrolDespawnTimeGeneralCB = new CheckBox();
-            StaticPatrolMaxDistRadiusGeneralCB = new CheckBox();
-            StaticPatrolMinDistRadiusGeneralCB = new CheckBox();
-            StaticPatrolDamageReceivedMultiplierGeneralCB = new CheckBox();
-            StaticPatrolDamageMultiplierGeneralCB = new CheckBox();
-            StaticPatrolEnableFlankingOutsideCombatGeneralCB = new CheckBox();
             label9 = new Label();
+            StaticPatrolDamageReceivedMultiplierGeneralCB = new CheckBox();
             label8 = new Label();
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB = new CheckBox();
             label7 = new Label();
+            StaticPatrolMinDistRadiusGeneralCB = new CheckBox();
             label6 = new Label();
+            StaticPatrolThreatDistanceLimitGeneralCB = new CheckBox();
             StaticPatrolEnableFlankingOutsideCombatCB = new CheckBox();
+            StaticPatrolMaxDistRadiusGeneralCB = new CheckBox();
             StsticPatrolMaxFlankingDistanceNUD = new NumericUpDown();
+            StaticPatrolAccuracyMaxGenerralCB = new CheckBox();
             label5 = new Label();
+            StaticPatrolDespawnTimeGeneralCB = new CheckBox();
             label4 = new Label();
+            StaticPatrolAccuracyMinGeneralCB = new CheckBox();
             label3 = new Label();
+            StaticPatrolDespawnRadiusGeneralCB = new CheckBox();
             StaticPatrolDefaultLookAngleNUD = new NumericUpDown();
+            StaticPatrolRespawnTimeGeneralCB = new CheckBox();
             StaticPatrolDefaultStanceCB = new ComboBox();
             label2 = new Label();
             label1 = new Label();
@@ -157,31 +157,31 @@
             // groupBox1
             // 
             groupBox1.Controls.Add(label10);
+            groupBox1.Controls.Add(StaticPatrolFormationScaleGeneralCB);
+            groupBox1.Controls.Add(StaticPatrolEnableFlankingOutsideCombatGeneralCB);
+            groupBox1.Controls.Add(StaticPatrolDamageMultiplierGeneralCB);
             groupBox1.Controls.Add(StaticPatrolRespawnTimeNWonttRespawnCB);
             groupBox1.Controls.Add(StsticPatrolMaxFlankingDistanceGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolNoiseInvestigationDistanceLimitGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolThreatDistanceLimitGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolAccuracyMaxGenerralCB);
-            groupBox1.Controls.Add(StaticPatrolAccuracyMinGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolFormationScaleGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolRespawnTimeGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolDespawnRadiusGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolDespawnTimeGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolMaxDistRadiusGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolMinDistRadiusGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolDamageReceivedMultiplierGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolDamageMultiplierGeneralCB);
-            groupBox1.Controls.Add(StaticPatrolEnableFlankingOutsideCombatGeneralCB);
             groupBox1.Controls.Add(label9);
+            groupBox1.Controls.Add(StaticPatrolDamageReceivedMultiplierGeneralCB);
             groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(StaticPatrolNoiseInvestigationDistanceLimitGeneralCB);
             groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(StaticPatrolMinDistRadiusGeneralCB);
             groupBox1.Controls.Add(label6);
+            groupBox1.Controls.Add(StaticPatrolThreatDistanceLimitGeneralCB);
             groupBox1.Controls.Add(StaticPatrolEnableFlankingOutsideCombatCB);
+            groupBox1.Controls.Add(StaticPatrolMaxDistRadiusGeneralCB);
             groupBox1.Controls.Add(StsticPatrolMaxFlankingDistanceNUD);
+            groupBox1.Controls.Add(StaticPatrolAccuracyMaxGenerralCB);
             groupBox1.Controls.Add(label5);
+            groupBox1.Controls.Add(StaticPatrolDespawnTimeGeneralCB);
             groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(StaticPatrolAccuracyMinGeneralCB);
             groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(StaticPatrolDespawnRadiusGeneralCB);
             groupBox1.Controls.Add(StaticPatrolDefaultLookAngleNUD);
+            groupBox1.Controls.Add(StaticPatrolRespawnTimeGeneralCB);
             groupBox1.Controls.Add(StaticPatrolDefaultStanceCB);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
@@ -266,109 +266,19 @@
             // 
             label10.AutoSize = true;
             label10.ForeColor = Color.FromArgb(220, 220, 220);
-            label10.Location = new Point(742, 24);
+            label10.Location = new Point(889, 25);
             label10.Margin = new Padding(4, 0, 4, 0);
             label10.Name = "label10";
-            label10.Size = new Size(108, 15);
+            label10.Size = new Size(69, 30);
             label10.TabIndex = 404;
-            label10.Text = "Use Genral Settings";
-            // 
-            // StaticPatrolRespawnTimeNWonttRespawnCB
-            // 
-            StaticPatrolRespawnTimeNWonttRespawnCB.AutoSize = true;
-            StaticPatrolRespawnTimeNWonttRespawnCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolRespawnTimeNWonttRespawnCB.ForeColor = SystemColors.Control;
-            StaticPatrolRespawnTimeNWonttRespawnCB.Location = new Point(752, 419);
-            StaticPatrolRespawnTimeNWonttRespawnCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolRespawnTimeNWonttRespawnCB.Name = "StaticPatrolRespawnTimeNWonttRespawnCB";
-            StaticPatrolRespawnTimeNWonttRespawnCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolRespawnTimeNWonttRespawnCB.Size = new Size(15, 14);
-            StaticPatrolRespawnTimeNWonttRespawnCB.TabIndex = 403;
-            StaticPatrolRespawnTimeNWonttRespawnCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolRespawnTimeNWonttRespawnCB.UseVisualStyleBackColor = true;
-            StaticPatrolRespawnTimeNWonttRespawnCB.CheckedChanged += StaticPatrolRespawnTimeNWonttRespawnCB_CheckedChanged;
-            // 
-            // StsticPatrolMaxFlankingDistanceGeneralCB
-            // 
-            StsticPatrolMaxFlankingDistanceGeneralCB.AutoSize = true;
-            StsticPatrolMaxFlankingDistanceGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StsticPatrolMaxFlankingDistanceGeneralCB.ForeColor = SystemColors.Control;
-            StsticPatrolMaxFlankingDistanceGeneralCB.Location = new Point(791, 178);
-            StsticPatrolMaxFlankingDistanceGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StsticPatrolMaxFlankingDistanceGeneralCB.Name = "StsticPatrolMaxFlankingDistanceGeneralCB";
-            StsticPatrolMaxFlankingDistanceGeneralCB.RightToLeft = RightToLeft.Yes;
-            StsticPatrolMaxFlankingDistanceGeneralCB.Size = new Size(15, 14);
-            StsticPatrolMaxFlankingDistanceGeneralCB.TabIndex = 402;
-            StsticPatrolMaxFlankingDistanceGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StsticPatrolMaxFlankingDistanceGeneralCB.UseVisualStyleBackColor = true;
-            StsticPatrolMaxFlankingDistanceGeneralCB.CheckedChanged += StsticPatrolMaxFlankingDistanceGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolNoiseInvestigationDistanceLimitGeneralCB
-            // 
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.AutoSize = true;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Location = new Point(791, 151);
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Name = "StaticPatrolNoiseInvestigationDistanceLimitGeneralCB";
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Size = new Size(15, 14);
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.TabIndex = 401;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.CheckedChanged += StaticPatrolNoiseInvestigationDistanceLimitGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolThreatDistanceLimitGeneralCB
-            // 
-            StaticPatrolThreatDistanceLimitGeneralCB.AutoSize = true;
-            StaticPatrolThreatDistanceLimitGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolThreatDistanceLimitGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolThreatDistanceLimitGeneralCB.Location = new Point(791, 118);
-            StaticPatrolThreatDistanceLimitGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolThreatDistanceLimitGeneralCB.Name = "StaticPatrolThreatDistanceLimitGeneralCB";
-            StaticPatrolThreatDistanceLimitGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolThreatDistanceLimitGeneralCB.Size = new Size(15, 14);
-            StaticPatrolThreatDistanceLimitGeneralCB.TabIndex = 400;
-            StaticPatrolThreatDistanceLimitGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolThreatDistanceLimitGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolThreatDistanceLimitGeneralCB.CheckedChanged += StaticPatrolThreatDistanceLimitGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolAccuracyMaxGenerralCB
-            // 
-            StaticPatrolAccuracyMaxGenerralCB.AutoSize = true;
-            StaticPatrolAccuracyMaxGenerralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolAccuracyMaxGenerralCB.ForeColor = SystemColors.Control;
-            StaticPatrolAccuracyMaxGenerralCB.Location = new Point(791, 89);
-            StaticPatrolAccuracyMaxGenerralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolAccuracyMaxGenerralCB.Name = "StaticPatrolAccuracyMaxGenerralCB";
-            StaticPatrolAccuracyMaxGenerralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolAccuracyMaxGenerralCB.Size = new Size(15, 14);
-            StaticPatrolAccuracyMaxGenerralCB.TabIndex = 399;
-            StaticPatrolAccuracyMaxGenerralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolAccuracyMaxGenerralCB.UseVisualStyleBackColor = true;
-            StaticPatrolAccuracyMaxGenerralCB.CheckedChanged += StaticPatrolAccuracyMaxGenerralCB_CheckedChanged;
-            // 
-            // StaticPatrolAccuracyMinGeneralCB
-            // 
-            StaticPatrolAccuracyMinGeneralCB.AutoSize = true;
-            StaticPatrolAccuracyMinGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolAccuracyMinGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolAccuracyMinGeneralCB.Location = new Point(791, 58);
-            StaticPatrolAccuracyMinGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolAccuracyMinGeneralCB.Name = "StaticPatrolAccuracyMinGeneralCB";
-            StaticPatrolAccuracyMinGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolAccuracyMinGeneralCB.Size = new Size(15, 14);
-            StaticPatrolAccuracyMinGeneralCB.TabIndex = 398;
-            StaticPatrolAccuracyMinGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolAccuracyMinGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolAccuracyMinGeneralCB.CheckedChanged += StaticPatrolAccuracyMinGeneralCB_CheckedChanged;
+            label10.Text = "Use General\r\n   Settings";
             // 
             // StaticPatrolFormationScaleGeneralCB
             // 
             StaticPatrolFormationScaleGeneralCB.AutoSize = true;
             StaticPatrolFormationScaleGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolFormationScaleGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolFormationScaleGeneralCB.Location = new Point(791, 445);
+            StaticPatrolFormationScaleGeneralCB.Location = new Point(915, 68);
             StaticPatrolFormationScaleGeneralCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolFormationScaleGeneralCB.Name = "StaticPatrolFormationScaleGeneralCB";
             StaticPatrolFormationScaleGeneralCB.RightToLeft = RightToLeft.Yes;
@@ -378,117 +288,12 @@
             StaticPatrolFormationScaleGeneralCB.UseVisualStyleBackColor = true;
             StaticPatrolFormationScaleGeneralCB.CheckedChanged += StaticPatrolFormationScaleGeneralCB_CheckedChanged;
             // 
-            // StaticPatrolRespawnTimeGeneralCB
-            // 
-            StaticPatrolRespawnTimeGeneralCB.AutoSize = true;
-            StaticPatrolRespawnTimeGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolRespawnTimeGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolRespawnTimeGeneralCB.Location = new Point(791, 418);
-            StaticPatrolRespawnTimeGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolRespawnTimeGeneralCB.Name = "StaticPatrolRespawnTimeGeneralCB";
-            StaticPatrolRespawnTimeGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolRespawnTimeGeneralCB.Size = new Size(15, 14);
-            StaticPatrolRespawnTimeGeneralCB.TabIndex = 396;
-            StaticPatrolRespawnTimeGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolRespawnTimeGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolRespawnTimeGeneralCB.CheckedChanged += StaticPatrolRespawnTimeGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolDespawnRadiusGeneralCB
-            // 
-            StaticPatrolDespawnRadiusGeneralCB.AutoSize = true;
-            StaticPatrolDespawnRadiusGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolDespawnRadiusGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolDespawnRadiusGeneralCB.Location = new Point(791, 385);
-            StaticPatrolDespawnRadiusGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolDespawnRadiusGeneralCB.Name = "StaticPatrolDespawnRadiusGeneralCB";
-            StaticPatrolDespawnRadiusGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolDespawnRadiusGeneralCB.Size = new Size(15, 14);
-            StaticPatrolDespawnRadiusGeneralCB.TabIndex = 395;
-            StaticPatrolDespawnRadiusGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolDespawnRadiusGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolDespawnRadiusGeneralCB.CheckedChanged += StaticPatrolDespawnRadiusGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolDespawnTimeGeneralCB
-            // 
-            StaticPatrolDespawnTimeGeneralCB.AutoSize = true;
-            StaticPatrolDespawnTimeGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolDespawnTimeGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolDespawnTimeGeneralCB.Location = new Point(791, 356);
-            StaticPatrolDespawnTimeGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolDespawnTimeGeneralCB.Name = "StaticPatrolDespawnTimeGeneralCB";
-            StaticPatrolDespawnTimeGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolDespawnTimeGeneralCB.Size = new Size(15, 14);
-            StaticPatrolDespawnTimeGeneralCB.TabIndex = 394;
-            StaticPatrolDespawnTimeGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolDespawnTimeGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolDespawnTimeGeneralCB.CheckedChanged += StaticPatrolDespawnTimeGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolMaxDistRadiusGeneralCB
-            // 
-            StaticPatrolMaxDistRadiusGeneralCB.AutoSize = true;
-            StaticPatrolMaxDistRadiusGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolMaxDistRadiusGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolMaxDistRadiusGeneralCB.Location = new Point(791, 325);
-            StaticPatrolMaxDistRadiusGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolMaxDistRadiusGeneralCB.Name = "StaticPatrolMaxDistRadiusGeneralCB";
-            StaticPatrolMaxDistRadiusGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolMaxDistRadiusGeneralCB.Size = new Size(15, 14);
-            StaticPatrolMaxDistRadiusGeneralCB.TabIndex = 393;
-            StaticPatrolMaxDistRadiusGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolMaxDistRadiusGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolMaxDistRadiusGeneralCB.CheckedChanged += StaticPatrolMaxDistRadiusGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolMinDistRadiusGeneralCB
-            // 
-            StaticPatrolMinDistRadiusGeneralCB.AutoSize = true;
-            StaticPatrolMinDistRadiusGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolMinDistRadiusGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolMinDistRadiusGeneralCB.Location = new Point(791, 296);
-            StaticPatrolMinDistRadiusGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolMinDistRadiusGeneralCB.Name = "StaticPatrolMinDistRadiusGeneralCB";
-            StaticPatrolMinDistRadiusGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolMinDistRadiusGeneralCB.Size = new Size(15, 14);
-            StaticPatrolMinDistRadiusGeneralCB.TabIndex = 392;
-            StaticPatrolMinDistRadiusGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolMinDistRadiusGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolMinDistRadiusGeneralCB.CheckedChanged += StaticPatrolMinDistRadiusGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolDamageReceivedMultiplierGeneralCB
-            // 
-            StaticPatrolDamageReceivedMultiplierGeneralCB.AutoSize = true;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.Location = new Point(791, 263);
-            StaticPatrolDamageReceivedMultiplierGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolDamageReceivedMultiplierGeneralCB.Name = "StaticPatrolDamageReceivedMultiplierGeneralCB";
-            StaticPatrolDamageReceivedMultiplierGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.Size = new Size(15, 14);
-            StaticPatrolDamageReceivedMultiplierGeneralCB.TabIndex = 391;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolDamageReceivedMultiplierGeneralCB.CheckedChanged += StaticPatrolDamageReceivedMultiplierGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolDamageMultiplierGeneralCB
-            // 
-            StaticPatrolDamageMultiplierGeneralCB.AutoSize = true;
-            StaticPatrolDamageMultiplierGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolDamageMultiplierGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolDamageMultiplierGeneralCB.Location = new Point(791, 233);
-            StaticPatrolDamageMultiplierGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolDamageMultiplierGeneralCB.Name = "StaticPatrolDamageMultiplierGeneralCB";
-            StaticPatrolDamageMultiplierGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolDamageMultiplierGeneralCB.Size = new Size(15, 14);
-            StaticPatrolDamageMultiplierGeneralCB.TabIndex = 390;
-            StaticPatrolDamageMultiplierGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolDamageMultiplierGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolDamageMultiplierGeneralCB.CheckedChanged += StaticPatrolDamageMultiplierGeneralCB_CheckedChanged;
-            // 
             // StaticPatrolEnableFlankingOutsideCombatGeneralCB
             // 
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.AutoSize = true;
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolEnableFlankingOutsideCombatGeneralCB.Location = new Point(791, 205);
+            StaticPatrolEnableFlankingOutsideCombatGeneralCB.Location = new Point(915, 453);
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.Name = "StaticPatrolEnableFlankingOutsideCombatGeneralCB";
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.RightToLeft = RightToLeft.Yes;
@@ -498,27 +303,102 @@
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.UseVisualStyleBackColor = true;
             StaticPatrolEnableFlankingOutsideCombatGeneralCB.CheckedChanged += StaticPatrolEnableFlankingOutsideCombatGeneralCB_CheckedChanged;
             // 
+            // StaticPatrolDamageMultiplierGeneralCB
+            // 
+            StaticPatrolDamageMultiplierGeneralCB.AutoSize = true;
+            StaticPatrolDamageMultiplierGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolDamageMultiplierGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolDamageMultiplierGeneralCB.Location = new Point(915, 362);
+            StaticPatrolDamageMultiplierGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolDamageMultiplierGeneralCB.Name = "StaticPatrolDamageMultiplierGeneralCB";
+            StaticPatrolDamageMultiplierGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolDamageMultiplierGeneralCB.Size = new Size(15, 14);
+            StaticPatrolDamageMultiplierGeneralCB.TabIndex = 390;
+            StaticPatrolDamageMultiplierGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolDamageMultiplierGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolDamageMultiplierGeneralCB.CheckedChanged += StaticPatrolDamageMultiplierGeneralCB_CheckedChanged;
+            // 
+            // StaticPatrolRespawnTimeNWonttRespawnCB
+            // 
+            StaticPatrolRespawnTimeNWonttRespawnCB.AutoSize = true;
+            StaticPatrolRespawnTimeNWonttRespawnCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolRespawnTimeNWonttRespawnCB.ForeColor = SystemColors.Control;
+            StaticPatrolRespawnTimeNWonttRespawnCB.Location = new Point(636, 96);
+            StaticPatrolRespawnTimeNWonttRespawnCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolRespawnTimeNWonttRespawnCB.Name = "StaticPatrolRespawnTimeNWonttRespawnCB";
+            StaticPatrolRespawnTimeNWonttRespawnCB.Size = new Size(113, 19);
+            StaticPatrolRespawnTimeNWonttRespawnCB.TabIndex = 403;
+            StaticPatrolRespawnTimeNWonttRespawnCB.Text = "(Wont Respawn)";
+            StaticPatrolRespawnTimeNWonttRespawnCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolRespawnTimeNWonttRespawnCB.UseVisualStyleBackColor = true;
+            StaticPatrolRespawnTimeNWonttRespawnCB.CheckedChanged += StaticPatrolRespawnTimeNWonttRespawnCB_CheckedChanged;
+            // 
+            // StsticPatrolMaxFlankingDistanceGeneralCB
+            // 
+            StsticPatrolMaxFlankingDistanceGeneralCB.AutoSize = true;
+            StsticPatrolMaxFlankingDistanceGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StsticPatrolMaxFlankingDistanceGeneralCB.ForeColor = SystemColors.Control;
+            StsticPatrolMaxFlankingDistanceGeneralCB.Location = new Point(915, 427);
+            StsticPatrolMaxFlankingDistanceGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StsticPatrolMaxFlankingDistanceGeneralCB.Name = "StsticPatrolMaxFlankingDistanceGeneralCB";
+            StsticPatrolMaxFlankingDistanceGeneralCB.RightToLeft = RightToLeft.Yes;
+            StsticPatrolMaxFlankingDistanceGeneralCB.Size = new Size(15, 14);
+            StsticPatrolMaxFlankingDistanceGeneralCB.TabIndex = 402;
+            StsticPatrolMaxFlankingDistanceGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StsticPatrolMaxFlankingDistanceGeneralCB.UseVisualStyleBackColor = true;
+            StsticPatrolMaxFlankingDistanceGeneralCB.CheckedChanged += StsticPatrolMaxFlankingDistanceGeneralCB_CheckedChanged;
+            // 
             // label9
             // 
             label9.AutoSize = true;
             label9.ForeColor = Color.FromArgb(220, 220, 220);
-            label9.Location = new Point(563, 204);
+            label9.Location = new Point(553, 454);
             label9.Margin = new Padding(4, 0, 4, 0);
             label9.Name = "label9";
             label9.Size = new Size(180, 15);
             label9.TabIndex = 388;
             label9.Text = "Enable Flanking Outside Combat";
             // 
+            // StaticPatrolDamageReceivedMultiplierGeneralCB
+            // 
+            StaticPatrolDamageReceivedMultiplierGeneralCB.AutoSize = true;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.Location = new Point(915, 396);
+            StaticPatrolDamageReceivedMultiplierGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolDamageReceivedMultiplierGeneralCB.Name = "StaticPatrolDamageReceivedMultiplierGeneralCB";
+            StaticPatrolDamageReceivedMultiplierGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.Size = new Size(15, 14);
+            StaticPatrolDamageReceivedMultiplierGeneralCB.TabIndex = 391;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolDamageReceivedMultiplierGeneralCB.CheckedChanged += StaticPatrolDamageReceivedMultiplierGeneralCB_CheckedChanged;
+            // 
             // label8
             // 
             label8.AutoSize = true;
             label8.ForeColor = Color.FromArgb(220, 220, 220);
-            label8.Location = new Point(561, 176);
+            label8.Location = new Point(551, 426);
             label8.Margin = new Padding(4, 0, 4, 0);
             label8.Name = "label8";
-            label8.Size = new Size(126, 15);
+            label8.Size = new Size(125, 15);
             label8.TabIndex = 387;
             label8.Text = "Max Flanking Distance";
+            // 
+            // StaticPatrolNoiseInvestigationDistanceLimitGeneralCB
+            // 
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.AutoSize = true;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Location = new Point(915, 332);
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Name = "StaticPatrolNoiseInvestigationDistanceLimitGeneralCB";
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.Size = new Size(15, 14);
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.TabIndex = 401;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolNoiseInvestigationDistanceLimitGeneralCB.CheckedChanged += StaticPatrolNoiseInvestigationDistanceLimitGeneralCB_CheckedChanged;
             // 
             // label7
             // 
@@ -531,6 +411,21 @@
             label7.TabIndex = 386;
             label7.Text = "Use Random Waypoint As Start Point";
             // 
+            // StaticPatrolMinDistRadiusGeneralCB
+            // 
+            StaticPatrolMinDistRadiusGeneralCB.AutoSize = true;
+            StaticPatrolMinDistRadiusGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolMinDistRadiusGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolMinDistRadiusGeneralCB.Location = new Point(915, 156);
+            StaticPatrolMinDistRadiusGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolMinDistRadiusGeneralCB.Name = "StaticPatrolMinDistRadiusGeneralCB";
+            StaticPatrolMinDistRadiusGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolMinDistRadiusGeneralCB.Size = new Size(15, 14);
+            StaticPatrolMinDistRadiusGeneralCB.TabIndex = 392;
+            StaticPatrolMinDistRadiusGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolMinDistRadiusGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolMinDistRadiusGeneralCB.CheckedChanged += StaticPatrolMinDistRadiusGeneralCB_CheckedChanged;
+            // 
             // label6
             // 
             label6.AutoSize = true;
@@ -538,16 +433,31 @@
             label6.Location = new Point(25, 486);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new Size(126, 15);
+            label6.Size = new Size(127, 15);
             label6.TabIndex = 385;
             label6.Text = "Can Be Triggered By AI";
+            // 
+            // StaticPatrolThreatDistanceLimitGeneralCB
+            // 
+            StaticPatrolThreatDistanceLimitGeneralCB.AutoSize = true;
+            StaticPatrolThreatDistanceLimitGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolThreatDistanceLimitGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolThreatDistanceLimitGeneralCB.Location = new Point(915, 305);
+            StaticPatrolThreatDistanceLimitGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolThreatDistanceLimitGeneralCB.Name = "StaticPatrolThreatDistanceLimitGeneralCB";
+            StaticPatrolThreatDistanceLimitGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolThreatDistanceLimitGeneralCB.Size = new Size(15, 14);
+            StaticPatrolThreatDistanceLimitGeneralCB.TabIndex = 400;
+            StaticPatrolThreatDistanceLimitGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolThreatDistanceLimitGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolThreatDistanceLimitGeneralCB.CheckedChanged += StaticPatrolThreatDistanceLimitGeneralCB_CheckedChanged;
             // 
             // StaticPatrolEnableFlankingOutsideCombatCB
             // 
             StaticPatrolEnableFlankingOutsideCombatCB.AutoSize = true;
             StaticPatrolEnableFlankingOutsideCombatCB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolEnableFlankingOutsideCombatCB.ForeColor = SystemColors.Control;
-            StaticPatrolEnableFlankingOutsideCombatCB.Location = new Point(835, 205);
+            StaticPatrolEnableFlankingOutsideCombatCB.Location = new Point(759, 454);
             StaticPatrolEnableFlankingOutsideCombatCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolEnableFlankingOutsideCombatCB.Name = "StaticPatrolEnableFlankingOutsideCombatCB";
             StaticPatrolEnableFlankingOutsideCombatCB.RightToLeft = RightToLeft.Yes;
@@ -556,19 +466,49 @@
             StaticPatrolEnableFlankingOutsideCombatCB.TextAlign = ContentAlignment.TopCenter;
             StaticPatrolEnableFlankingOutsideCombatCB.UseVisualStyleBackColor = true;
             // 
+            // StaticPatrolMaxDistRadiusGeneralCB
+            // 
+            StaticPatrolMaxDistRadiusGeneralCB.AutoSize = true;
+            StaticPatrolMaxDistRadiusGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolMaxDistRadiusGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolMaxDistRadiusGeneralCB.Location = new Point(915, 185);
+            StaticPatrolMaxDistRadiusGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolMaxDistRadiusGeneralCB.Name = "StaticPatrolMaxDistRadiusGeneralCB";
+            StaticPatrolMaxDistRadiusGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolMaxDistRadiusGeneralCB.Size = new Size(15, 14);
+            StaticPatrolMaxDistRadiusGeneralCB.TabIndex = 393;
+            StaticPatrolMaxDistRadiusGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolMaxDistRadiusGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolMaxDistRadiusGeneralCB.CheckedChanged += StaticPatrolMaxDistRadiusGeneralCB_CheckedChanged;
+            // 
             // StsticPatrolMaxFlankingDistanceNUD
             // 
             StsticPatrolMaxFlankingDistanceNUD.BackColor = Color.FromArgb(60, 63, 65);
             StsticPatrolMaxFlankingDistanceNUD.DecimalPlaces = 2;
             StsticPatrolMaxFlankingDistanceNUD.ForeColor = SystemColors.Control;
             StsticPatrolMaxFlankingDistanceNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
-            StsticPatrolMaxFlankingDistanceNUD.Location = new Point(835, 174);
+            StsticPatrolMaxFlankingDistanceNUD.Location = new Point(759, 424);
             StsticPatrolMaxFlankingDistanceNUD.Margin = new Padding(4, 3, 4, 3);
             StsticPatrolMaxFlankingDistanceNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             StsticPatrolMaxFlankingDistanceNUD.Name = "StsticPatrolMaxFlankingDistanceNUD";
-            StsticPatrolMaxFlankingDistanceNUD.Size = new Size(122, 23);
+            StsticPatrolMaxFlankingDistanceNUD.Size = new Size(139, 23);
             StsticPatrolMaxFlankingDistanceNUD.TabIndex = 383;
             StsticPatrolMaxFlankingDistanceNUD.TextAlign = HorizontalAlignment.Center;
+            // 
+            // StaticPatrolAccuracyMaxGenerralCB
+            // 
+            StaticPatrolAccuracyMaxGenerralCB.AutoSize = true;
+            StaticPatrolAccuracyMaxGenerralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolAccuracyMaxGenerralCB.ForeColor = SystemColors.Control;
+            StaticPatrolAccuracyMaxGenerralCB.Location = new Point(915, 272);
+            StaticPatrolAccuracyMaxGenerralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolAccuracyMaxGenerralCB.Name = "StaticPatrolAccuracyMaxGenerralCB";
+            StaticPatrolAccuracyMaxGenerralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolAccuracyMaxGenerralCB.Size = new Size(15, 14);
+            StaticPatrolAccuracyMaxGenerralCB.TabIndex = 399;
+            StaticPatrolAccuracyMaxGenerralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolAccuracyMaxGenerralCB.UseVisualStyleBackColor = true;
+            StaticPatrolAccuracyMaxGenerralCB.CheckedChanged += StaticPatrolAccuracyMaxGenerralCB_CheckedChanged;
             // 
             // label5
             // 
@@ -581,6 +521,21 @@
             label5.TabIndex = 382;
             label5.Text = "Can Be Looted";
             // 
+            // StaticPatrolDespawnTimeGeneralCB
+            // 
+            StaticPatrolDespawnTimeGeneralCB.AutoSize = true;
+            StaticPatrolDespawnTimeGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolDespawnTimeGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolDespawnTimeGeneralCB.Location = new Point(915, 129);
+            StaticPatrolDespawnTimeGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolDespawnTimeGeneralCB.Name = "StaticPatrolDespawnTimeGeneralCB";
+            StaticPatrolDespawnTimeGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolDespawnTimeGeneralCB.Size = new Size(15, 14);
+            StaticPatrolDespawnTimeGeneralCB.TabIndex = 394;
+            StaticPatrolDespawnTimeGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolDespawnTimeGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolDespawnTimeGeneralCB.CheckedChanged += StaticPatrolDespawnTimeGeneralCB_CheckedChanged;
+            // 
             // label4
             // 
             label4.AutoSize = true;
@@ -592,6 +547,21 @@
             label4.TabIndex = 381;
             label4.Text = "Object Patrol Name";
             // 
+            // StaticPatrolAccuracyMinGeneralCB
+            // 
+            StaticPatrolAccuracyMinGeneralCB.AutoSize = true;
+            StaticPatrolAccuracyMinGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolAccuracyMinGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolAccuracyMinGeneralCB.Location = new Point(915, 245);
+            StaticPatrolAccuracyMinGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolAccuracyMinGeneralCB.Name = "StaticPatrolAccuracyMinGeneralCB";
+            StaticPatrolAccuracyMinGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolAccuracyMinGeneralCB.Size = new Size(15, 14);
+            StaticPatrolAccuracyMinGeneralCB.TabIndex = 398;
+            StaticPatrolAccuracyMinGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolAccuracyMinGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolAccuracyMinGeneralCB.CheckedChanged += StaticPatrolAccuracyMinGeneralCB_CheckedChanged;
+            // 
             // label3
             // 
             label3.AutoSize = true;
@@ -602,6 +572,21 @@
             label3.Size = new Size(108, 15);
             label3.TabIndex = 380;
             label3.Text = "Default Look Angle";
+            // 
+            // StaticPatrolDespawnRadiusGeneralCB
+            // 
+            StaticPatrolDespawnRadiusGeneralCB.AutoSize = true;
+            StaticPatrolDespawnRadiusGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolDespawnRadiusGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolDespawnRadiusGeneralCB.Location = new Point(915, 216);
+            StaticPatrolDespawnRadiusGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolDespawnRadiusGeneralCB.Name = "StaticPatrolDespawnRadiusGeneralCB";
+            StaticPatrolDespawnRadiusGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolDespawnRadiusGeneralCB.Size = new Size(15, 14);
+            StaticPatrolDespawnRadiusGeneralCB.TabIndex = 395;
+            StaticPatrolDespawnRadiusGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolDespawnRadiusGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolDespawnRadiusGeneralCB.CheckedChanged += StaticPatrolDespawnRadiusGeneralCB_CheckedChanged;
             // 
             // StaticPatrolDefaultLookAngleNUD
             // 
@@ -617,6 +602,21 @@
             StaticPatrolDefaultLookAngleNUD.Size = new Size(122, 23);
             StaticPatrolDefaultLookAngleNUD.TabIndex = 379;
             StaticPatrolDefaultLookAngleNUD.TextAlign = HorizontalAlignment.Center;
+            // 
+            // StaticPatrolRespawnTimeGeneralCB
+            // 
+            StaticPatrolRespawnTimeGeneralCB.AutoSize = true;
+            StaticPatrolRespawnTimeGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolRespawnTimeGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolRespawnTimeGeneralCB.Location = new Point(915, 97);
+            StaticPatrolRespawnTimeGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolRespawnTimeGeneralCB.Name = "StaticPatrolRespawnTimeGeneralCB";
+            StaticPatrolRespawnTimeGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolRespawnTimeGeneralCB.Size = new Size(15, 14);
+            StaticPatrolRespawnTimeGeneralCB.TabIndex = 396;
+            StaticPatrolRespawnTimeGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolRespawnTimeGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolRespawnTimeGeneralCB.CheckedChanged += StaticPatrolRespawnTimeGeneralCB_CheckedChanged;
             // 
             // StaticPatrolDefaultStanceCB
             // 
@@ -740,7 +740,7 @@
             // 
             darkLabel178.AutoSize = true;
             darkLabel178.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel178.Location = new Point(561, 444);
+            darkLabel178.Location = new Point(551, 67);
             darkLabel178.Margin = new Padding(4, 0, 4, 0);
             darkLabel178.Name = "darkLabel178";
             darkLabel178.Size = new Size(92, 15);
@@ -752,11 +752,11 @@
             StaticPatrolFormationScaleNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolFormationScaleNUD.DecimalPlaces = 1;
             StaticPatrolFormationScaleNUD.ForeColor = SystemColors.Control;
-            StaticPatrolFormationScaleNUD.Location = new Point(835, 444);
+            StaticPatrolFormationScaleNUD.Location = new Point(759, 66);
             StaticPatrolFormationScaleNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolFormationScaleNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             StaticPatrolFormationScaleNUD.Name = "StaticPatrolFormationScaleNUD";
-            StaticPatrolFormationScaleNUD.Size = new Size(122, 23);
+            StaticPatrolFormationScaleNUD.Size = new Size(139, 23);
             StaticPatrolFormationScaleNUD.TabIndex = 366;
             StaticPatrolFormationScaleNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolFormationScaleNUD.ValueChanged += StaticPatrolFormationScaleNUD_ValueChanged;
@@ -891,7 +891,7 @@
             // 
             darkLabel77.AutoSize = true;
             darkLabel77.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel77.Location = new Point(561, 144);
+            darkLabel77.Location = new Point(551, 333);
             darkLabel77.Margin = new Padding(4, 0, 4, 0);
             darkLabel77.Name = "darkLabel77";
             darkLabel77.Size = new Size(186, 15);
@@ -903,11 +903,11 @@
             StaticPatrolNoiseInvestigationDistanceLimitNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolNoiseInvestigationDistanceLimitNUD.DecimalPlaces = 2;
             StaticPatrolNoiseInvestigationDistanceLimitNUD.ForeColor = SystemColors.Control;
-            StaticPatrolNoiseInvestigationDistanceLimitNUD.Location = new Point(835, 144);
+            StaticPatrolNoiseInvestigationDistanceLimitNUD.Location = new Point(759, 332);
             StaticPatrolNoiseInvestigationDistanceLimitNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolNoiseInvestigationDistanceLimitNUD.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             StaticPatrolNoiseInvestigationDistanceLimitNUD.Name = "StaticPatrolNoiseInvestigationDistanceLimitNUD";
-            StaticPatrolNoiseInvestigationDistanceLimitNUD.Size = new Size(122, 23);
+            StaticPatrolNoiseInvestigationDistanceLimitNUD.Size = new Size(139, 23);
             StaticPatrolNoiseInvestigationDistanceLimitNUD.TabIndex = 358;
             StaticPatrolNoiseInvestigationDistanceLimitNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolNoiseInvestigationDistanceLimitNUD.ValueChanged += StaticPatrolNoiseInvestigationDistanceLimitNUD_ValueChanged;
@@ -927,7 +927,7 @@
             // 
             darkLabel76.AutoSize = true;
             darkLabel76.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel76.Location = new Point(563, 262);
+            darkLabel76.Location = new Point(553, 395);
             darkLabel76.Margin = new Padding(4, 0, 4, 0);
             darkLabel76.Name = "darkLabel76";
             darkLabel76.Size = new Size(155, 15);
@@ -962,11 +962,11 @@
             StaticPatrolDamageReceivedMultiplierNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolDamageReceivedMultiplierNUD.DecimalPlaces = 2;
             StaticPatrolDamageReceivedMultiplierNUD.ForeColor = SystemColors.Control;
-            StaticPatrolDamageReceivedMultiplierNUD.Location = new Point(835, 262);
+            StaticPatrolDamageReceivedMultiplierNUD.Location = new Point(759, 394);
             StaticPatrolDamageReceivedMultiplierNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolDamageReceivedMultiplierNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             StaticPatrolDamageReceivedMultiplierNUD.Name = "StaticPatrolDamageReceivedMultiplierNUD";
-            StaticPatrolDamageReceivedMultiplierNUD.Size = new Size(122, 23);
+            StaticPatrolDamageReceivedMultiplierNUD.Size = new Size(139, 23);
             StaticPatrolDamageReceivedMultiplierNUD.TabIndex = 356;
             StaticPatrolDamageReceivedMultiplierNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolDamageReceivedMultiplierNUD.ValueChanged += StaticPatrolDamageReceivedMultiplierNUD_ValueChanged;
@@ -1017,7 +1017,7 @@
             darkLabel68.Location = new Point(25, 430);
             darkLabel68.Margin = new Padding(4, 0, 4, 0);
             darkLabel68.Name = "darkLabel68";
-            darkLabel68.Size = new Size(177, 15);
+            darkLabel68.Size = new Size(178, 15);
             darkLabel68.TabIndex = 355;
             darkLabel68.Text = "Sniper Prone Distance Threshold";
             // 
@@ -1151,7 +1151,7 @@
             darkLabel28.Location = new Point(25, 289);
             darkLabel28.Margin = new Padding(4, 0, 4, 0);
             darkLabel28.Name = "darkLabel28";
-            darkLabel28.Size = new Size(110, 15);
+            darkLabel28.Size = new Size(111, 15);
             darkLabel28.TabIndex = 320;
             darkLabel28.Text = "Under Threat Speed";
             // 
@@ -1172,7 +1172,7 @@
             // 
             darkLabel42.AutoSize = true;
             darkLabel42.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel42.Location = new Point(563, 234);
+            darkLabel42.Location = new Point(553, 367);
             darkLabel42.Margin = new Padding(4, 0, 4, 0);
             darkLabel42.Name = "darkLabel42";
             darkLabel42.Size = new Size(105, 15);
@@ -1210,11 +1210,11 @@
             StaticPatrolRespawnTimeNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolRespawnTimeNUD.DecimalPlaces = 2;
             StaticPatrolRespawnTimeNUD.ForeColor = SystemColors.Control;
-            StaticPatrolRespawnTimeNUD.Location = new Point(835, 415);
+            StaticPatrolRespawnTimeNUD.Location = new Point(759, 95);
             StaticPatrolRespawnTimeNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolRespawnTimeNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             StaticPatrolRespawnTimeNUD.Name = "StaticPatrolRespawnTimeNUD";
-            StaticPatrolRespawnTimeNUD.Size = new Size(122, 23);
+            StaticPatrolRespawnTimeNUD.Size = new Size(139, 23);
             StaticPatrolRespawnTimeNUD.TabIndex = 330;
             StaticPatrolRespawnTimeNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolRespawnTimeNUD.ValueChanged += StaticPatrolRespawnTimeNUD_ValueChanged;
@@ -1223,10 +1223,10 @@
             // 
             darkLabel6.AutoSize = true;
             darkLabel6.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel6.Location = new Point(563, 415);
+            darkLabel6.Location = new Point(553, 96);
             darkLabel6.Margin = new Padding(4, 0, 4, 0);
             darkLabel6.Name = "darkLabel6";
-            darkLabel6.Size = new Size(83, 15);
+            darkLabel6.Size = new Size(84, 15);
             darkLabel6.TabIndex = 331;
             darkLabel6.Text = "Respawn Time";
             // 
@@ -1249,10 +1249,10 @@
             // 
             darkLabel26.AutoSize = true;
             darkLabel26.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel26.Location = new Point(563, 324);
+            darkLabel26.Location = new Point(553, 186);
             darkLabel26.Margin = new Padding(4, 0, 4, 0);
             darkLabel26.Name = "darkLabel26";
-            darkLabel26.Size = new Size(91, 15);
+            darkLabel26.Size = new Size(90, 15);
             darkLabel26.TabIndex = 324;
             darkLabel26.Text = "Max Dist Radius";
             // 
@@ -1261,11 +1261,11 @@
             StaticPatrolDamageMultiplierNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolDamageMultiplierNUD.DecimalPlaces = 2;
             StaticPatrolDamageMultiplierNUD.ForeColor = SystemColors.Control;
-            StaticPatrolDamageMultiplierNUD.Location = new Point(835, 229);
+            StaticPatrolDamageMultiplierNUD.Location = new Point(759, 361);
             StaticPatrolDamageMultiplierNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolDamageMultiplierNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             StaticPatrolDamageMultiplierNUD.Name = "StaticPatrolDamageMultiplierNUD";
-            StaticPatrolDamageMultiplierNUD.Size = new Size(122, 23);
+            StaticPatrolDamageMultiplierNUD.Size = new Size(139, 23);
             StaticPatrolDamageMultiplierNUD.TabIndex = 348;
             StaticPatrolDamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolDamageMultiplierNUD.ValueChanged += StaticPatrolDamageMultiplierNUD_ValueChanged;
@@ -1277,7 +1277,7 @@
             darkLabel8.Location = new Point(25, 540);
             darkLabel8.Margin = new Padding(4, 0, 4, 0);
             darkLabel8.Name = "darkLabel8";
-            darkLabel8.Size = new Size(104, 15);
+            darkLabel8.Size = new Size(103, 15);
             darkLabel8.TabIndex = 333;
             darkLabel8.Text = "Max Spread radius";
             // 
@@ -1286,11 +1286,11 @@
             StaticPatrolMaxDistRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolMaxDistRadiusNUD.DecimalPlaces = 2;
             StaticPatrolMaxDistRadiusNUD.ForeColor = SystemColors.Control;
-            StaticPatrolMaxDistRadiusNUD.Location = new Point(835, 324);
+            StaticPatrolMaxDistRadiusNUD.Location = new Point(759, 185);
             StaticPatrolMaxDistRadiusNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolMaxDistRadiusNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             StaticPatrolMaxDistRadiusNUD.Name = "StaticPatrolMaxDistRadiusNUD";
-            StaticPatrolMaxDistRadiusNUD.Size = new Size(122, 23);
+            StaticPatrolMaxDistRadiusNUD.Size = new Size(139, 23);
             StaticPatrolMaxDistRadiusNUD.TabIndex = 323;
             StaticPatrolMaxDistRadiusNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolMaxDistRadiusNUD.ValueChanged += StaticPatrolMaxDistRadiusNUD_ValueChanged;
@@ -1299,7 +1299,7 @@
             // 
             darkLabel54.AutoSize = true;
             darkLabel54.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel54.Location = new Point(561, 57);
+            darkLabel54.Location = new Point(551, 244);
             darkLabel54.Margin = new Padding(4, 0, 4, 0);
             darkLabel54.Name = "darkLabel54";
             darkLabel54.Size = new Size(80, 15);
@@ -1311,11 +1311,11 @@
             StaticPatrolDespawnRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolDespawnRadiusNUD.DecimalPlaces = 2;
             StaticPatrolDespawnRadiusNUD.ForeColor = SystemColors.Control;
-            StaticPatrolDespawnRadiusNUD.Location = new Point(835, 384);
+            StaticPatrolDespawnRadiusNUD.Location = new Point(759, 214);
             StaticPatrolDespawnRadiusNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolDespawnRadiusNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             StaticPatrolDespawnRadiusNUD.Name = "StaticPatrolDespawnRadiusNUD";
-            StaticPatrolDespawnRadiusNUD.Size = new Size(122, 23);
+            StaticPatrolDespawnRadiusNUD.Size = new Size(139, 23);
             StaticPatrolDespawnRadiusNUD.TabIndex = 334;
             StaticPatrolDespawnRadiusNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolDespawnRadiusNUD.ValueChanged += StaticPatrolDespawnRadiusNUD_ValueChanged;
@@ -1324,7 +1324,7 @@
             // 
             darkLabel27.AutoSize = true;
             darkLabel27.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel27.Location = new Point(563, 295);
+            darkLabel27.Location = new Point(553, 157);
             darkLabel27.Margin = new Padding(4, 0, 4, 0);
             darkLabel27.Name = "darkLabel27";
             darkLabel27.Size = new Size(89, 15);
@@ -1335,10 +1335,10 @@
             // 
             darkLabel43.AutoSize = true;
             darkLabel43.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel43.Location = new Point(563, 115);
+            darkLabel43.Location = new Point(553, 304);
             darkLabel43.Margin = new Padding(4, 0, 4, 0);
             darkLabel43.Name = "darkLabel43";
-            darkLabel43.Size = new Size(118, 15);
+            darkLabel43.Size = new Size(119, 15);
             darkLabel43.TabIndex = 347;
             darkLabel43.Text = "Threat Distance Limit";
             // 
@@ -1347,11 +1347,11 @@
             StaticPatrolMinDistRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolMinDistRadiusNUD.DecimalPlaces = 2;
             StaticPatrolMinDistRadiusNUD.ForeColor = SystemColors.Control;
-            StaticPatrolMinDistRadiusNUD.Location = new Point(835, 295);
+            StaticPatrolMinDistRadiusNUD.Location = new Point(759, 156);
             StaticPatrolMinDistRadiusNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolMinDistRadiusNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             StaticPatrolMinDistRadiusNUD.Name = "StaticPatrolMinDistRadiusNUD";
-            StaticPatrolMinDistRadiusNUD.Size = new Size(122, 23);
+            StaticPatrolMinDistRadiusNUD.Size = new Size(139, 23);
             StaticPatrolMinDistRadiusNUD.TabIndex = 321;
             StaticPatrolMinDistRadiusNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolMinDistRadiusNUD.ValueChanged += StaticPatrolMinDistRadiusNUD_ValueChanged;
@@ -1373,11 +1373,11 @@
             StaticPatrolAccuracyMaxNUD.DecimalPlaces = 2;
             StaticPatrolAccuracyMaxNUD.ForeColor = SystemColors.Control;
             StaticPatrolAccuracyMaxNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
-            StaticPatrolAccuracyMaxNUD.Location = new Point(835, 86);
+            StaticPatrolAccuracyMaxNUD.Location = new Point(759, 272);
             StaticPatrolAccuracyMaxNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolAccuracyMaxNUD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             StaticPatrolAccuracyMaxNUD.Name = "StaticPatrolAccuracyMaxNUD";
-            StaticPatrolAccuracyMaxNUD.Size = new Size(122, 23);
+            StaticPatrolAccuracyMaxNUD.Size = new Size(139, 23);
             StaticPatrolAccuracyMaxNUD.TabIndex = 344;
             StaticPatrolAccuracyMaxNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolAccuracyMaxNUD.ValueChanged += StaticPatrolAccuracyMaxNUD_ValueChanged;
@@ -1401,11 +1401,11 @@
             StaticPatrolThreatDistanceLimitNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolThreatDistanceLimitNUD.DecimalPlaces = 2;
             StaticPatrolThreatDistanceLimitNUD.ForeColor = SystemColors.Control;
-            StaticPatrolThreatDistanceLimitNUD.Location = new Point(835, 115);
+            StaticPatrolThreatDistanceLimitNUD.Location = new Point(759, 303);
             StaticPatrolThreatDistanceLimitNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolThreatDistanceLimitNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             StaticPatrolThreatDistanceLimitNUD.Name = "StaticPatrolThreatDistanceLimitNUD";
-            StaticPatrolThreatDistanceLimitNUD.Size = new Size(122, 23);
+            StaticPatrolThreatDistanceLimitNUD.Size = new Size(139, 23);
             StaticPatrolThreatDistanceLimitNUD.TabIndex = 346;
             StaticPatrolThreatDistanceLimitNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolThreatDistanceLimitNUD.ValueChanged += StaticPatrolThreatDistanceLimitNUD_ValueChanged;
@@ -1414,7 +1414,7 @@
             // 
             darkLabel39.AutoSize = true;
             darkLabel39.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel39.Location = new Point(563, 384);
+            darkLabel39.Location = new Point(553, 215);
             darkLabel39.Margin = new Padding(4, 0, 4, 0);
             darkLabel39.Name = "darkLabel39";
             darkLabel39.Size = new Size(93, 15);
@@ -1438,11 +1438,11 @@
             StaticPatrolAccuracyMinNUD.DecimalPlaces = 2;
             StaticPatrolAccuracyMinNUD.ForeColor = SystemColors.Control;
             StaticPatrolAccuracyMinNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
-            StaticPatrolAccuracyMinNUD.Location = new Point(835, 57);
+            StaticPatrolAccuracyMinNUD.Location = new Point(759, 243);
             StaticPatrolAccuracyMinNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolAccuracyMinNUD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             StaticPatrolAccuracyMinNUD.Name = "StaticPatrolAccuracyMinNUD";
-            StaticPatrolAccuracyMinNUD.Size = new Size(122, 23);
+            StaticPatrolAccuracyMinNUD.Size = new Size(139, 23);
             StaticPatrolAccuracyMinNUD.TabIndex = 342;
             StaticPatrolAccuracyMinNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolAccuracyMinNUD.ValueChanged += StaticPatrolAccuracyMinNUD_ValueChanged;
@@ -1464,10 +1464,10 @@
             // 
             darkLabel55.AutoSize = true;
             darkLabel55.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel55.Location = new Point(563, 86);
+            darkLabel55.Location = new Point(553, 273);
             darkLabel55.Margin = new Padding(4, 0, 4, 0);
             darkLabel55.Name = "darkLabel55";
-            darkLabel55.Size = new Size(82, 15);
+            darkLabel55.Size = new Size(81, 15);
             darkLabel55.TabIndex = 345;
             darkLabel55.Text = "Accuracy Max";
             // 
@@ -1486,10 +1486,10 @@
             // 
             darkLabel53.AutoSize = true;
             darkLabel53.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel53.Location = new Point(563, 355);
+            darkLabel53.Location = new Point(553, 128);
             darkLabel53.Margin = new Padding(4, 0, 4, 0);
             darkLabel53.Name = "darkLabel53";
-            darkLabel53.Size = new Size(84, 15);
+            darkLabel53.Size = new Size(85, 15);
             darkLabel53.TabIndex = 341;
             darkLabel53.Text = "Despawn Time";
             // 
@@ -1511,11 +1511,11 @@
             StaticPatrolDespawnTimeNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolDespawnTimeNUD.DecimalPlaces = 2;
             StaticPatrolDespawnTimeNUD.ForeColor = SystemColors.Control;
-            StaticPatrolDespawnTimeNUD.Location = new Point(835, 355);
+            StaticPatrolDespawnTimeNUD.Location = new Point(759, 127);
             StaticPatrolDespawnTimeNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolDespawnTimeNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             StaticPatrolDespawnTimeNUD.Name = "StaticPatrolDespawnTimeNUD";
-            StaticPatrolDespawnTimeNUD.Size = new Size(122, 23);
+            StaticPatrolDespawnTimeNUD.Size = new Size(139, 23);
             StaticPatrolDespawnTimeNUD.TabIndex = 340;
             StaticPatrolDespawnTimeNUD.TextAlign = HorizontalAlignment.Center;
             StaticPatrolDespawnTimeNUD.ValueChanged += StaticPatrolDespawnTimeNUD_ValueChanged;
