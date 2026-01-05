@@ -13,7 +13,7 @@ namespace Day2eEditor
         private readonly string _mapAddonsDirectory;
         private readonly string _downloadDirectory;
         private readonly string _tempDirectory;
-        private readonly string _appDirectory;  // This is the application directory
+        private readonly string _appDirectory;
         private readonly HttpClient _http;
         public string manifestUrl = "https://raw.githubusercontent.com/Shawminator/Day2eEditor/refs/heads/master/Manifest.json";
         private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin", "EconomyPlugin"};
@@ -24,11 +24,11 @@ namespace Day2eEditor
             _mapAddonsDirectory = mapAddonsDirectory;
             _mapAddonsManifestPath = Path.Combine(_mapAddonsDirectory, "mapaddons.json");
             _tempDirectory = tempDirectory;
-            _appDirectory = appDirectory == string.Empty ? Directory.GetCurrentDirectory() : appDirectory; // Default to current directory
+            _appDirectory = appDirectory == string.Empty ? Directory.GetCurrentDirectory() : appDirectory;
             Directory.CreateDirectory(_pluginsDirectory);
             Directory.CreateDirectory(mapAddonsDirectory);
             Directory.CreateDirectory("Data");
-            Directory.CreateDirectory(_tempDirectory); // Temporary directory for downloading
+            Directory.CreateDirectory(_tempDirectory);
             _http = new HttpClient();
             CleanupMarkedPlugins();
         }
@@ -44,7 +44,7 @@ namespace Day2eEditor
                 }
                 catch
                 {
-                    // Log or ignore
+                    
                 }
             }
             if (File.Exists("Core.dll.delete"))
@@ -56,7 +56,7 @@ namespace Day2eEditor
                 }
                 catch
                 {
-                   // Log or ignore
+                   
                 }
             }
             if (File.Exists("CoreUI.dll.delete"))
@@ -68,7 +68,7 @@ namespace Day2eEditor
                 }
                 catch
                 {
-                    // Log or ignore
+                    
                 }
             }
         }
@@ -90,12 +90,12 @@ namespace Day2eEditor
             bool coreUpdated = await CheckAndUpdateCoreDllAsync("Core", manifest.Core.Url, manifest.Core.Version, manifest.Core.Checksum);
             bool coreUIUpdated = await CheckAndUpdateCoreDllAsync("CoreUI", manifest.CoreUI.Url, manifest.CoreUI.Version, manifest.CoreUI.Checksum);
 
-            // If either was updated, initiate restart
+            // If either was updated, restart
             if (coreUpdated || coreUIUpdated)
             {
                 Console.WriteLine("Core DLL(s) updated — restarting application to apply updates...");
-                InitiateShutdown(restartOnly: true); // your existing restart/launcher logic
-                return; // stop further execution until restart
+                InitiateShutdown(restartOnly: true);
+                return;
             }
 
 
@@ -152,11 +152,11 @@ namespace Day2eEditor
                 if (!ChecksumUtils.VerifyChecksum(data, dllChecksum))
                     throw new InvalidOperationException($"Checksum verification failed for {name}");
 
-                // Write DLL to temporary file first
+                // Write DLL to temporary file
                 string tmpDll = dllPath + ".update";
                 await File.WriteAllBytesAsync(tmpDll, data);
 
-                // Stage for replacement
+                // Rename so when next restart the editor know to delete.
                 if (File.Exists(dllPath)) File.Move(dllPath, dllPath + ".delete", true);
                 File.Move(tmpDll, dllPath);
 
@@ -169,7 +169,7 @@ namespace Day2eEditor
 
         private async Task CheckAndUpdateMainAppAsync(AppInfo mainApp)
         {
-            // Dynamically create the zip file path based on the version
+            // create the zip file path based on the version
             string appZipFileName = $"Day2eEditor.zip";
             string appZipFilePath = Path.Combine(_tempDirectory, appZipFileName);
 
@@ -203,7 +203,7 @@ namespace Day2eEditor
                 await File.WriteAllBytesAsync(appZipFilePath, data);
                 Console.WriteLine($"Main app ZIP downloaded and verified.");
 
-                // Initiate shutdown to replace application files
+                // shutdown to replace application files
                 Console.WriteLine("Application will now shutdown to apply updates...");
                 InitiateShutdown(appZipFilePath, mainApp);
             }
@@ -219,7 +219,6 @@ namespace Day2eEditor
                 return;
             }
 
-            // Build arguments
             string args;
             if (restartOnly)
             {
@@ -247,8 +246,6 @@ namespace Day2eEditor
             {
                 Console.WriteLine("Failed to start Updater.exe: " + ex.Message);
             }
-
-            // Close the main app so the updater can do its work or just restart
             Environment.Exit(0);
         }
         public async Task CheckAndUpdatePluginAsync(PluginInfo plugin)
@@ -385,7 +382,6 @@ namespace Day2eEditor
                 }
             }
 
-            // Save latest manifest data locally (after checks)
             string updatedJson = JsonSerializer.Serialize(remoteAddons, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(_mapAddonsManifestPath, updatedJson);
         }
@@ -411,7 +407,7 @@ namespace Day2eEditor
                 }
 
                 if (file.Name == "")
-                {// Assuming Empty for Directory
+                {
                     Directory.CreateDirectory(Path.GetDirectoryName(completeFileName));
                     continue;
                 }

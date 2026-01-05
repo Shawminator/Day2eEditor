@@ -31,12 +31,11 @@ class Updater
             }
             catch (ArgumentException)
             {
-                // Process already exited
+                
             }
         }
         else
         {
-            // Fallback: wait for process name
             while (Process.GetProcessesByName("Day2eEditor").Any())
             {
                 await Task.Delay(500);
@@ -45,7 +44,6 @@ class Updater
 
         if (!restartOnly)
         {
-            // Extract update
             Console.WriteLine("Extracting update...");
             using (FileStream fs = File.OpenRead(zipPath))
             {
@@ -62,15 +60,11 @@ class Updater
             Console.WriteLine("Restart-only mode, skipping extraction.");
         }
 
-        // Restart main app
         RestartMainApp(appDirectory);
-        //Console.WriteLine("Press any key to continue...");
-        //Console.ReadKey();
     }
 
     private static void RestartMainApp(string appDirectory)
     {
-        // Restart main app
         string mainAppExe = Path.Combine(appDirectory, "Day2eEditor.exe");
         if (File.Exists(mainAppExe))
         {
@@ -111,7 +105,7 @@ class Updater
             }
 
             if (file.Name == "")
-            {// Assuming Empty for Directory
+            {
                 Directory.CreateDirectory(Path.GetDirectoryName(completeFileName));
                 continue;
             }
