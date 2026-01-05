@@ -173,7 +173,7 @@ namespace ExpansionPlugin
                    EnableServerMarkers == other.EnableServerMarkers &&
                    ShowNameOnServerMarkers == other.ShowNameOnServerMarkers &&
                    ShowDistanceOnServerMarkers == other.ShowDistanceOnServerMarkers &&
-                   ServerMarkers.Equals(other.ServerMarkers) &&
+                   ServerMarkers.SequenceEqual(other.ServerMarkers) &&
                    EnableHUDCompass == other.EnableHUDCompass &&
                    NeedCompassItemForHUDCompass == other.NeedCompassItemForHUDCompass &&
                    NeedGPSItemForHUDCompass == other.NeedGPSItemForHUDCompass &&

@@ -110,10 +110,10 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated version from {m_Version} to {ExpansionNameTagsConfig.CurrentVersion}");
                 m_Version = ExpansionNameTagsConfig.CurrentVersion;
             }
-            if (EnablePlayerTags is null or < 0 or > 0)
+            if (EnablePlayerTags is null or < 0 or > 1)
             {
                 EnablePlayerTags = 1;
-                fixes.Add("Corrected Enabled");
+                fixes.Add("Corrected EnablePlayerTags");
             }
             if (PlayerTagViewRange is null or < 0)
             {
@@ -210,7 +210,7 @@ namespace ExpansionPlugin
                ShowPlayerItemInHands = this.ShowPlayerItemInHands,
                ShowNPCTags = this.ShowNPCTags,
                ShowPlayerFaction = this.ShowPlayerFaction,
-               UseRarityColorForItemInHands = this.UseRarityColorForItemInHands;
+               UseRarityColorForItemInHands = this.UseRarityColorForItemInHands
             };
         }
     }
