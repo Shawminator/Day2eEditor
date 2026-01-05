@@ -36,7 +36,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionLogsSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -83,7 +83,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -108,53 +108,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionLogsSettings CloneData(ExpansionLogsSettings data)
-        {
-            if (data == null) return null;
-
-            return new ExpansionLogsSettings
-            {
-                m_Version = data.m_Version,
-                Safezone = data.Safezone,
-                AdminTools = data.AdminTools,
-                ExplosionDamageSystem = data.ExplosionDamageSystem,
-                VehicleCarKey = data.VehicleCarKey,
-                VehicleTowing = data.VehicleTowing,
-                VehicleLockPicking = data.VehicleLockPicking,
-                VehicleDestroyed = data.VehicleDestroyed,
-                VehicleAttachments = data.VehicleAttachments,
-                VehicleEnter = data.VehicleEnter,
-                VehicleLeave = data.VehicleLeave,
-                VehicleDeleted = data.VehicleDeleted,
-                VehicleEngine = data.VehicleEngine,
-                BaseBuildingRaiding = data.BaseBuildingRaiding,
-                CodeLockRaiding = data.CodeLockRaiding,
-                Territory = data.Territory,
-                Killfeed = data.Killfeed,
-                SpawnSelection = data.SpawnSelection,
-                Party = data.Party,
-                MissionAirdrop = data.MissionAirdrop,
-                Chat = data.Chat,
-                Market = data.Market,
-                ATM = data.ATM,
-                AIGeneral = data.AIGeneral,
-                AIPatrol = data.AIPatrol,
-                AIObjectPatrol = data.AIObjectPatrol,
-                LogToScripts = data.LogToScripts,
-                LogToADM = data.LogToADM,
-                Hardline = data.Hardline,
-                Garage = data.Garage,
-                VehicleCover = data.VehicleCover,
-                EntityStorage = data.EntityStorage,
-                Quests = data.Quests
-            };
-        }
-
 
         /// <summary>
         /// Updates the TreeNode text based on current data

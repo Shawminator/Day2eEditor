@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionHardlineSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -60,7 +60,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -85,60 +85,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionHardlineSettings CloneData(ExpansionHardlineSettings data)
-        {
-            if (data == null)
-                return null;
-
-            var clone = new ExpansionHardlineSettings
-            {
-                m_Version = data.m_Version,
-                PoorItemRequirement = data.PoorItemRequirement,
-                CommonItemRequirement = data.CommonItemRequirement,
-                UncommonItemRequirement = data.UncommonItemRequirement,
-                RareItemRequirement = data.RareItemRequirement,
-                EpicItemRequirement = data.EpicItemRequirement,
-                LegendaryItemRequirement = data.LegendaryItemRequirement,
-                MythicItemRequirement = data.MythicItemRequirement,
-                ExoticItemRequirement = data.ExoticItemRequirement,
-                ShowHardlineHUD = data.ShowHardlineHUD,
-                UseReputation = data.UseReputation,
-                UseFactionReputation = data.UseFactionReputation,
-                EnableFactionPersistence = data.EnableFactionPersistence,
-                EnableItemRarity = data.EnableItemRarity,
-                UseItemRarityOnInventoryIcons = data.UseItemRarityOnInventoryIcons,
-                UseItemRarityForMarketPurchase = data.UseItemRarityForMarketPurchase,
-                UseItemRarityForMarketSell = data.UseItemRarityForMarketSell,
-                MaxReputation = data.MaxReputation,
-                ReputationLossOnDeath = data.ReputationLossOnDeath,
-                DefaultItemRarity = data.DefaultItemRarity,
-                ItemRarityParentSearch = data.ItemRarityParentSearch,
-
-                // Deep copy lists
-                PoorItems = data.PoorItems != null ? new BindingList<string>(data.PoorItems.ToList()) : null,
-                CommonItems = data.CommonItems != null ? new BindingList<string>(data.CommonItems.ToList()) : null,
-                UncommonItems = data.UncommonItems != null ? new BindingList<string>(data.UncommonItems.ToList()) : null,
-                RareItems = data.RareItems != null ? new BindingList<string>(data.RareItems.ToList()) : null,
-                EpicItems = data.EpicItems != null ? new BindingList<string>(data.EpicItems.ToList()) : null,
-                LegendaryItems = data.LegendaryItems != null ? new BindingList<string>(data.LegendaryItems.ToList()) : null,
-                MythicItems = data.MythicItems != null ? new BindingList<string>(data.MythicItems.ToList()) : null,
-                ExoticItems = data.ExoticItems != null ? new BindingList<string>(data.ExoticItems.ToList()) : null,
-                QuestItems = data.QuestItems != null ? new BindingList<string>(data.QuestItems.ToList()) : null,
-                CollectableItems = data.CollectableItems != null ? new BindingList<string>(data.CollectableItems.ToList()) : null,
-                IngredientItems = data.IngredientItems != null ? new BindingList<string>(data.IngredientItems.ToList()) : null,
-                entityreps = data.entityreps != null
-                    ? new BindingList<EntityReputationlevels>(data.entityreps.Select(e => new EntityReputationlevels(e.Classname, e.Level)).ToList())
-                    : null
-            };
-
-            return clone;
-        }
-
 
         /// <summary>
         /// Updates the TreeNode text based on current data

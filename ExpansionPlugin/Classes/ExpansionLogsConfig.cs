@@ -24,7 +24,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionLogsSettings>(
@@ -67,7 +66,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -147,7 +145,6 @@ namespace ExpansionPlugin
             EntityStorage = 1;
             Quests = 1;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionLogsSettings other)
@@ -187,7 +184,6 @@ namespace ExpansionPlugin
                    EntityStorage == other.EntityStorage &&
                    Quests == other.Quests;
         }
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -392,11 +388,49 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-
         public void SetIntValue(string mytype, int myvalue)
         {
             GetType().GetProperty(mytype).SetValue(this, myvalue, null);
 
+        }
+        public ExpansionLogsSettings Clone()
+        {
+            return new ExpansionLogsSettings()
+            {
+                m_Version = this.m_Version,
+                   Safezone = this.Safezone,
+                   AdminTools = this.AdminTools,
+                   ExplosionDamageSystem = this.ExplosionDamageSystem,
+                   VehicleCarKey = this.VehicleCarKey,
+                   VehicleTowing = this.VehicleTowing,
+                   VehicleLockPicking = this.VehicleLockPicking,
+                   VehicleDestroyed = this.VehicleDestroyed,
+                   VehicleAttachments = this.VehicleAttachments,
+                   VehicleEnter = this.VehicleEnter,
+                   VehicleLeave = this.VehicleLeave,
+                   VehicleDeleted = this.VehicleDeleted,
+                   VehicleEngine = this.VehicleEngine,
+                   BaseBuildingRaiding = this.BaseBuildingRaiding,
+                   CodeLockRaiding = this.CodeLockRaiding,
+                   Territory = this.Territory,
+                   Killfeed = this.Killfeed,
+                   SpawnSelection = this.SpawnSelection,
+                   Party = this.Party,
+                   MissionAirdrop = this.MissionAirdrop,
+                   Chat = this.Chat,
+                   Market = this.Market,
+                   ATM = this.ATM,
+                   AIGeneral = this.AIGeneral,
+                   AIPatrol = this.AIPatrol,
+                   AIObjectPatrol = this.AIObjectPatrol,
+                   LogToScripts = this.LogToScripts,
+                   LogToADM = this.LogToADM,
+                   Hardline = this.Hardline,
+                   Garage = this.Garage,
+                   VehicleCover = this.VehicleCover,
+                   EntityStorage = this.EntityStorage,
+                   Quests = this.Quests
+            };
         }
     }
 }

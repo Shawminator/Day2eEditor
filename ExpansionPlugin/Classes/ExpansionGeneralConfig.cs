@@ -174,7 +174,6 @@ namespace ExpansionPlugin
                    Mapping.Equals(other.Mapping) &&
                    HUDColors.Equals(other.HUDColors);
         }
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -400,7 +399,38 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-
+        public ExpansionGeneralSettings Clone()
+        {
+            return new ExpansionGeneralSettings()
+            {
+                m_Version = this.m_Version,
+                DisableShootToUnlock = this.DisableShootToUnlock,
+                EnableGravecross = this.EnableGravecross,
+                EnableAIGravecross = this.EnableAIGravecross,
+                GravecrossDeleteBody = this.GravecrossDeleteBody,
+                GravecrossTimeThreshold = this.GravecrossTimeThreshold,
+                GravecrossSpawnTimeDelay = this.GravecrossSpawnTimeDelay,
+                EnableLamps = this.EnableLamps,
+                LampAmount_OneInX = this.LampAmount_OneInX,
+                LampSelectionMode = this.LampSelectionMode,
+                EnableGenerators = this.EnableGenerators,
+                EnableLighthouses = this.EnableLighthouses,
+                EnableHUDNightvisionOverlay = this.EnableHUDNightvisionOverlay,
+                DisableMagicCrosshair = this.DisableMagicCrosshair,
+                EnableAutoRun = this.EnableAutoRun,
+                UseDeathScreen = this.UseDeathScreen,
+                UseDeathScreenStatistics = this.UseDeathScreenStatistics,
+                UseExpansionMainMenuLogo = this.UseExpansionMainMenuLogo,
+                UseExpansionMainMenuIcons = this.UseExpansionMainMenuIcons,
+                UseExpansionMainMenuIntroScene = this.UseExpansionMainMenuIntroScene,
+                UseNewsFeedInGameMenu = this.UseNewsFeedInGameMenu,
+                UseHUDColors = this.UseHUDColors,
+                EnableEarPlugs = this.EnableEarPlugs,
+                InGameMenuLogoPath = this.InGameMenuLogoPath,
+                Mapping = this.Mapping.Clone(),
+                HUDColors = this.HUDColors.Clone()
+            };
+        }
 
 
     }
@@ -424,7 +454,27 @@ namespace ExpansionPlugin
                    Mapping.SequenceEqual(other.Mapping ?? new BindingList<string>()) &&
                    Interiors.SequenceEqual(other.Interiors ?? new BindingList<string>());
         }
-
+        public ExpansionMapping Clone()
+        {
+            return new ExpansionMapping()
+            {
+                UseCustomMappingModule = this.UseCustomMappingModule,
+                BuildingInteriors = this.BuildingInteriors,
+                BuildingIvys = this.BuildingIvys,
+                Mapping = CloneBindingList(this.Mapping, s => s),
+                Interiors = CloneBindingList(this.Interiors, s => s)
+            };
+        }
+        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
+        {
+            if (source == null) return null;
+            var result = new BindingList<T>();
+            foreach (var item in source)
+            {
+                result.Add(item == null ? default : cloner(item));
+            }
+            return result;
+        }
     }
     public class ExpansionHudIndicatorColors
     {
@@ -465,7 +515,27 @@ namespace ExpansionPlugin
                    ReputationMedColor == other.ReputationMedColor &&
                    ReputationHighColor == other.ReputationHighColor;
         }
-
+        public ExpansionHudIndicatorColors Clone()
+        {
+            return new ExpansionHudIndicatorColors()
+            {
+                StaminaBarColor = this.StaminaBarColor,
+                StaminaBarColorHalf = this.StaminaBarColorHalf,
+                StaminaBarColorLow = this.StaminaBarColorLow,
+                NotifierDividerColor = this.NotifierDividerColor,
+                TemperatureBurningColor = this.TemperatureBurningColor,
+                TemperatureHotColor = this.TemperatureHotColor,
+                TemperatureIdealColor = this.TemperatureIdealColor,
+                TemperatureColdColor = this.TemperatureColdColor,
+                TemperatureFreezingColor = this.TemperatureFreezingColor,
+                NotifiersIdealColor = this.NotifiersIdealColor,
+                NotifiersHalfColor = this.NotifiersHalfColor,
+                NotifiersLowColor = this.NotifiersLowColor,
+                ReputationBaseColor = this.ReputationBaseColor,
+                ReputationMedColor = this.ReputationMedColor,
+                ReputationHighColor = this.ReputationHighColor
+            };
+        }
     }
     public enum LampModeEnum
     {

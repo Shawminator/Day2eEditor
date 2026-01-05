@@ -75,7 +75,6 @@ namespace ExpansionPlugin
             return isDirty;
         }
         //Additional Functions
-
         public void ConvertDictionarytoLevels()
         {
             var rarityBuckets = Enum.GetValues(typeof(ExpansionHardlineItemRarity))
@@ -127,7 +126,6 @@ namespace ExpansionPlugin
             Data.CollectableItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Collectable]);
             Data.IngredientItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Ingredient]);
         }
-
         public void convertliststoDict()
         {
             Data.ItemRarity = new Dictionary<string, int>();
@@ -1933,14 +1931,68 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+        public ExpansionHardlineSettings Clone()
+        {
+            return new ExpansionHardlineSettings()
+            {
+                m_Version = this.m_Version,
+                PoorItemRequirement = this.PoorItemRequirement,
+                CommonItemRequirement = this.CommonItemRequirement,
+                UncommonItemRequirement = this.UncommonItemRequirement,
+                RareItemRequirement = this.RareItemRequirement,
+                EpicItemRequirement = this.EpicItemRequirement,
+                LegendaryItemRequirement = this.LegendaryItemRequirement,
+                MythicItemRequirement = this.MythicItemRequirement,
+                ExoticItemRequirement = this.ExoticItemRequirement,
+                ShowHardlineHUD = this.ShowHardlineHUD,
+                UseReputation = this.UseReputation,
+                UseFactionReputation = this.UseFactionReputation,
+                EnableFactionPersistence = this.EnableFactionPersistence,
+                EnableItemRarity = this.EnableItemRarity,
+                UseItemRarityOnInventoryIcons = this.UseItemRarityOnInventoryIcons,
+                UseItemRarityForMarketPurchase = this.UseItemRarityForMarketPurchase,
+                UseItemRarityForMarketSell = this.UseItemRarityForMarketSell,
+                MaxReputation = this.MaxReputation,
+                ReputationLossOnDeath = this.ReputationLossOnDeath,
+                DefaultItemRarity = this.DefaultItemRarity,
+                ItemRarityParentSearch = this.ItemRarityParentSearch,
+                PoorItems = CloneBindingList(this.PoorItems, s => s),
+                CommonItems = CloneBindingList(this.CommonItems, s => s),
+                UncommonItems = CloneBindingList(this.UncommonItems, s => s),
+                RareItems = CloneBindingList(this.RareItems, s => s),
+                EpicItems = CloneBindingList(this.EpicItems, s => s),
+                LegendaryItems = CloneBindingList(this.LegendaryItems, s => s),
+                MythicItems = CloneBindingList(this.MythicItems, s => s),
+                ExoticItems = CloneBindingList(this.ExoticItems, s => s),
+                QuestItems = CloneBindingList(this.QuestItems, s => s),
+                CollectableItems = CloneBindingList(this.CollectableItems, s => s),
+                IngredientItems = CloneBindingList(this.IngredientItems, s => s),
+                entityreps = CloneBindingList(this.entityreps, CloneEntityReputationlevels)
+            };
+        }
+        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
+        {
+            if (source == null) return null;
+            var result = new BindingList<T>();
+            foreach (var item in source)
+            {
+                result.Add(item == null ? default : cloner(item));
+            }
+            return result;
+        }
+        private static EntityReputationlevels CloneEntityReputationlevels(EntityReputationlevels src)
+        {
+            if (src == null) return null;
 
-        
+            return src.Clone();
+        }
     }
     public class EntityReputationlevels
     {
         public string Classname { get; set; }
         public int Level { get; set; }
 
+        public EntityReputationlevels() { } 
         public EntityReputationlevels(string _classname, int _level)
         {
             Classname = _classname;
@@ -1956,6 +2008,14 @@ namespace ExpansionPlugin
                 return false;
 
             return Classname == other.Classname && Level == other.Level;
+        }
+        public EntityReputationlevels Clone()
+        {
+            return new EntityReputationlevels()
+            {
+                Classname = this.Classname,
+                Level = this.Level
+            };
         }
     }
     public enum ExpansionHardlineItemRarity
