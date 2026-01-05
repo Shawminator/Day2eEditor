@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -19,11 +20,11 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
         public const int CurrentVersion = 17;
+  
         public ExpansionMarketSettingsConfig(string path)
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = null;
@@ -69,7 +70,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -107,7 +107,6 @@ namespace ExpansionPlugin
         public int? SZVehicleParkingFineUseKey { get; set; }
         public int? DisallowUnpersisted { get; set; }
         public int? DisableClientSellTransactionDetails { get; set; }
-
 
         public MarketSettings() { }
         public MarketSettings(int CurrentVersion)
@@ -162,13 +161,13 @@ namespace ExpansionPlugin
                 m_Version = ExpansionMarketSettingsConfig.CurrentVersion;
             }
 
-            if(MarketSystemEnabled == null ||(MarketSystemEnabled != 0 && MarketSystemEnabled != 1))
+            if (MarketSystemEnabled == null || (MarketSystemEnabled != 0 && MarketSystemEnabled != 1))
             {
                 MarketSystemEnabled = 1;
                 fixes.Add("Corrected MarketSystemEnabled");
             }
 
-            if(CurrencyIcon == null)
+            if (CurrencyIcon == null)
             {
                 CurrencyIcon = "DayZExpansion/Core/GUI/icons/misc/coinstack2_64x64.edds";
                 fixes.Add("Set default CurrencyIcon");
@@ -286,7 +285,7 @@ namespace ExpansionPlugin
                 DisableClientSellTransactionDetails = 0;
                 fixes.Add("Corrected DisableClientSellTransactionDetails");
             }
-            if(NetworkCategories == null)
+            if (NetworkCategories == null)
             {
                 NetworkCategories = new BindingList<string>();
                 fixes.Add("Initilised NetworkCategories");
@@ -296,12 +295,12 @@ namespace ExpansionPlugin
                 LargeVehicles = new BindingList<string>();
                 fixes.Add("Initilised LargeVehicles");
             }
-            if(Currencies == null)
+            if (Currencies == null)
             {
                 Currencies = new BindingList<string>();
                 fixes.Add("Initilised Currencies");
             }
-            if(VehicleKeys == null)
+            if (VehicleKeys == null)
             {
                 VehicleKeys = new BindingList<string>();
                 fixes.Add("Initilised VehicleKeys");
@@ -326,7 +325,7 @@ namespace ExpansionPlugin
                 TrainSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>();
                 fixes.Add("Initilised TrainSpawnPositions");
             }
-            if(MarketMenuColors == null)
+            if (MarketMenuColors == null)
             {
                 MarketMenuColors = new MarketMenuColours();
             }
@@ -522,6 +521,61 @@ namespace ExpansionPlugin
         {
             return a != null && b != null && a.SequenceEqual(b);
         }
+        public MarketSettings Clone()
+        {
+            return new MarketSettings()
+            {
+                m_Version = this.m_Version,
+                MarketSystemEnabled = this.MarketSystemEnabled,
+                NetworkCategories = CloneBindingList(this.NetworkCategories, s => s),
+                CurrencyIcon = this.CurrencyIcon,
+                ATMSystemEnabled = this.ATMSystemEnabled,
+                MaxDepositMoney = this.MaxDepositMoney,
+                DefaultDepositMoney = this.DefaultDepositMoney,
+                ATMPlayerTransferEnabled = this.ATMPlayerTransferEnabled,
+                ATMPartyLockerEnabled = this.ATMPartyLockerEnabled,
+                MaxPartyDepositMoney = this.MaxPartyDepositMoney,
+                UseWholeMapForATMPlayerList = this.UseWholeMapForATMPlayerList,
+                SellPricePercent = this.SellPricePercent,
+                NetworkBatchSize = this.NetworkBatchSize,
+                MaxVehicleDistanceToTrader = this.MaxVehicleDistanceToTrader,
+                MaxLargeVehicleDistanceToTrader = this.MaxLargeVehicleDistanceToTrader,
+
+                LargeVehicles = CloneBindingList(this.LargeVehicles, s => s),
+
+                LandSpawnPositions = CloneBindingList(this.LandSpawnPositions, CloneSpawnPosition),
+                AirSpawnPositions = CloneBindingList(this.AirSpawnPositions, CloneSpawnPosition),
+                WaterSpawnPositions = CloneBindingList(this.WaterSpawnPositions, CloneSpawnPosition),
+                TrainSpawnPositions = CloneBindingList(this.TrainSpawnPositions, CloneSpawnPosition),
+
+                MarketMenuColors = this.MarketMenuColors.Clone(),
+
+                Currencies = CloneBindingList(this.Currencies, s => s),
+                VehicleKeys = CloneBindingList(this.VehicleKeys, s => s),
+                MaxSZVehicleParkingTime = this.MaxSZVehicleParkingTime,
+                SZVehicleParkingTicketFine = this.SZVehicleParkingTicketFine,
+                SZVehicleParkingFineUseKey = this.SZVehicleParkingFineUseKey,
+                DisallowUnpersisted = this.DisallowUnpersisted,
+                DisableClientSellTransactionDetails = this.DisableClientSellTransactionDetails
+
+            };
+        }
+        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
+        {
+            if (source == null) return null;
+            var result = new BindingList<T>();
+            foreach (var item in source)
+            {
+                result.Add(item == null ? default : cloner(item));
+            }
+            return result;
+        }
+        private static ExpansionMarketSpawnPosition CloneSpawnPosition(ExpansionMarketSpawnPosition src)
+        {
+            if (src == null) return null;
+
+            return src.Clone();
+        }
     }
     public class MarketMenuColours
     {
@@ -650,7 +704,50 @@ namespace ExpansionPlugin
                        ColorPlayerStock == other.ColorPlayerStock &&
                        ColorRequirementsNotMet == other.ColorRequirementsNotMet;
         }
-        
+        public MarketMenuColours Clone()
+        {
+            return new MarketMenuColours()
+            {
+                BaseColorVignette = this.BaseColorVignette,
+                       BaseColorHeaders = this.BaseColorHeaders,
+                       BaseColorLabels = this.BaseColorLabels,
+                       BaseColorText = this.BaseColorText,
+                       BaseColorCheckboxes = this.BaseColorCheckboxes,
+                       BaseColorInfoSectionBackground = this.BaseColorInfoSectionBackground,
+                       BaseColorTooltipsHeaders = this.BaseColorTooltipsHeaders,
+                       BaseColorTooltipsBackground = this.BaseColorTooltipsBackground,
+                       ColorDecreaseQuantityButton = this.ColorDecreaseQuantityButton,
+                       ColorDecreaseQuantityIcon = this.ColorDecreaseQuantityIcon,
+                       ColorSetQuantityButton = this.ColorSetQuantityButton,
+                       ColorIncreaseQuantityButton = this.ColorIncreaseQuantityButton,
+                       ColorIncreaseQuantityIcon = this.ColorIncreaseQuantityIcon,
+                       ColorSellPanel = this.ColorSellPanel,
+                       ColorSellButton = this.ColorSellButton,
+                       ColorBuyPanel = this.ColorBuyPanel,
+                       ColorBuyButton = this.ColorBuyButton,
+                       ColorMarketIcon = this.ColorMarketIcon,
+                       ColorFilterOptionsButton = this.ColorFilterOptionsButton,
+                       ColorFilterOptionsIcon = this.ColorFilterOptionsIcon,
+                       ColorSearchFilterButton = this.ColorSearchFilterButton,
+                       ColorCategoryButton = this.ColorCategoryButton,
+                       ColorCategoryCollapseIcon = this.ColorCategoryCollapseIcon,
+                       ColorCurrencyDenominationText = this.ColorCurrencyDenominationText,
+                       ColorItemButton = this.ColorItemButton,
+                       ColorItemInfoIcon = this.ColorItemInfoIcon,
+                       ColorItemInfoTitle = this.ColorItemInfoTitle,
+                       ColorItemInfoHasContainerItems = this.ColorItemInfoHasContainerItems,
+                       ColorItemInfoHasAttachments = this.ColorItemInfoHasAttachments,
+                       ColorItemInfoHasBullets = this.ColorItemInfoHasBullets,
+                       ColorItemInfoIsAttachment = this.ColorItemInfoIsAttachment,
+                       ColorItemInfoIsEquiped = this.ColorItemInfoIsEquiped,
+                       ColorItemInfoAttachments = this.ColorItemInfoAttachments,
+                       ColorToggleCategoriesText = this.ColorToggleCategoriesText,
+                       ColorCategoryCorners = this.ColorCategoryCorners,
+                       ColorCategoryBackground = this.ColorCategoryBackground,
+                       ColorPlayerStock = this.ColorPlayerStock,
+                       ColorRequirementsNotMet = this.ColorRequirementsNotMet
+            };
+        }
     }
     public class ExpansionMarketSpawnPosition
     {
@@ -670,6 +767,14 @@ namespace ExpansionPlugin
             return Position.SequenceEqual(other.Position) &&
                Orientation.SequenceEqual(other.Orientation);
 
+        }
+        public ExpansionMarketSpawnPosition Clone()
+        {
+            return new ExpansionMarketSpawnPosition()
+            {
+                Position = this.Position != null ? (float[])this.Position.Clone() : null,
+                Orientation = this.Orientation != null ? (float[])this.Orientation.Clone() : null
+            };
         }
     }
 }

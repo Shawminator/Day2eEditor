@@ -16,14 +16,12 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-
         public const int CurrentVersion = 9;
-
+ 
         public ExpansionCoreConfig(string path)
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionCoreSettings>(
@@ -66,7 +64,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -99,7 +96,6 @@ namespace ExpansionPlugin
                    ForceExactCEItemLifetime == other.ForceExactCEItemLifetime &&
                    EnableInventoryCargoTidy == other.EnableInventoryCargoTidy;
         }
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -130,6 +126,15 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-
+        public ExpansionCoreSettings Clone()
+        {
+            return new ExpansionCoreSettings
+            {
+                m_Version = this.m_Version,
+                ServerUpdateRateLimit = this.ServerUpdateRateLimit,
+                ForceExactCEItemLifetime = this.ForceExactCEItemLifetime,
+                EnableInventoryCargoTidy = this.EnableInventoryCargoTidy
+            };
+        }
     }
 }

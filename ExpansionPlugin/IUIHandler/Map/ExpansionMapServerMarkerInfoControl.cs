@@ -40,7 +40,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionServerMarkerData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
             BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
@@ -78,7 +78,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -103,26 +103,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionServerMarkerData CloneData(ExpansionServerMarkerData m)
-        {
-            // TODO: Implement actual cloning logic
-            return new ExpansionServerMarkerData
-            {
-                m_UID = m.m_UID,
-                m_Visibility = m.m_Visibility,
-                m_Is3D = m.m_Is3D,
-                m_Text = m.m_Text,
-                m_IconName = m.m_IconName,
-                m_Color = m.m_Color,
-                m_Position = m.m_Position != null ? (float[])m.m_Position.Clone() : null, // deep clone array
-                m_Locked = m.m_Locked,
-                m_Persist = m.m_Persist
-            };
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data

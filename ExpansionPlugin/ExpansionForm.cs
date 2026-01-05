@@ -292,6 +292,12 @@ namespace ExpansionPlugin
                     SetupVehicleSpawnLocation(ExpansionMarketSpawnPosition, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
                 },
+                //Notification
+                [typeof(ExpansionNotificationSettings)] = (node, selected) =>
+                {
+                    ExpansionNotificationConfig ExpansionNotificationConfig = node.Parent.Tag as ExpansionNotificationConfig;
+                    ShowHandler(new ExpansionNotificationSettingsControl(), typeof(ExpansionNotificationConfig), ExpansionNotificationConfig.Data, selected);
+                },
             };
             // ----------------------
             // String handlers
@@ -1089,6 +1095,8 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMonitoringConfig, CreateExpansionMonitoringConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNameTagsConfig, CreateExpansionNameTagsConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig);
+            
             rootNode.Nodes.Add(SettingsNode);
 
             TreeNode QuestsrootNode = new TreeNode("Quests")
@@ -2045,6 +2053,23 @@ namespace ExpansionPlugin
                 
             }
             EconomyRootNode.Nodes.Add(Notificationsnodes);
+        }
+        //Notification
+        private TreeNode CreateExpansionNotificationConfigConfig(ExpansionNotificationConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionNotificationConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionNotificationConfigNodes(ExpansionNotificationConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)

@@ -21,7 +21,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = null;
@@ -67,7 +66,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -107,10 +105,10 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version != ExpansionMonitoringConfig.CurrentVersion)
+            if (m_Version != ExpansionNameTagsConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionMonitoringConfig.CurrentVersion}");
-                m_Version = ExpansionMonitoringConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionNameTagsConfig.CurrentVersion}");
+                m_Version = ExpansionNameTagsConfig.CurrentVersion;
             }
             if (EnablePlayerTags is null or < 0 or > 0)
             {
@@ -196,6 +194,24 @@ namespace ExpansionPlugin
                ShowNPCTags == other.ShowNPCTags &&
                ShowPlayerFaction == other.ShowPlayerFaction &&
                UseRarityColorForItemInHands == other.UseRarityColorForItemInHands;
+        }
+        public NameTagsSettings Clone()
+        {
+            return new NameTagsSettings
+            {
+                m_Version = this.m_Version,
+                EnablePlayerTags = this.EnablePlayerTags,
+               PlayerTagViewRange = this.PlayerTagViewRange,
+               PlayerTagsIcon = this.PlayerTagsIcon,
+               PlayerTagsColor = this.PlayerTagsColor,
+               PlayerNameColor = this.PlayerNameColor,
+               OnlyInSafeZones = this.OnlyInSafeZones,
+               OnlyInTerritories = this.OnlyInTerritories,
+               ShowPlayerItemInHands = this.ShowPlayerItemInHands,
+               ShowNPCTags = this.ShowNPCTags,
+               ShowPlayerFaction = this.ShowPlayerFaction,
+               UseRarityColorForItemInHands = this.UseRarityColorForItemInHands;
+            };
         }
     }
 }

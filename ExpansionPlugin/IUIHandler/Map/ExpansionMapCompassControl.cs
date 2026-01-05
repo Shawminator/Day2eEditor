@@ -39,7 +39,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionMapSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -60,7 +60,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -85,76 +85,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionMapSettings CloneData(ExpansionMapSettings data)
-        {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
-
-            return new ExpansionMapSettings
-            {
-                m_Version = data.m_Version,
-                EnableMap = data.EnableMap,
-                UseMapOnMapItem = data.UseMapOnMapItem,
-                ShowPlayerPosition = data.ShowPlayerPosition,
-                ShowMapStats = data.ShowMapStats,
-                NeedPenItemForCreateMarker = data.NeedPenItemForCreateMarker,
-                NeedGPSItemForCreateMarker = data.NeedGPSItemForCreateMarker,
-                CanCreateMarker = data.CanCreateMarker,
-                CanCreate3DMarker = data.CanCreate3DMarker,
-                CanOpenMapWithKeyBinding = data.CanOpenMapWithKeyBinding,
-                ShowDistanceOnPersonalMarkers = data.ShowDistanceOnPersonalMarkers,
-                EnableHUDGPS = data.EnableHUDGPS,
-                NeedGPSItemForKeyBinding = data.NeedGPSItemForKeyBinding,
-                NeedMapItemForKeyBinding = data.NeedMapItemForKeyBinding,
-                EnableServerMarkers = data.EnableServerMarkers,
-                ShowNameOnServerMarkers = data.ShowNameOnServerMarkers,
-                ShowDistanceOnServerMarkers = data.ShowDistanceOnServerMarkers,
-                ServerMarkers = CloneServerMarkers(data.ServerMarkers),
-                EnableHUDCompass = data.EnableHUDCompass,
-                NeedCompassItemForHUDCompass = data.NeedCompassItemForHUDCompass,
-                NeedGPSItemForHUDCompass = data.NeedGPSItemForHUDCompass,
-                CompassColor = data.CompassColor,
-                CreateDeathMarker = data.CreateDeathMarker,
-                PlayerLocationNotifier = data.PlayerLocationNotifier,
-                CompassBadgesColor = data.CompassBadgesColor
-            };
-        }
-
-        private static BindingList<ExpansionServerMarkerData>? CloneServerMarkers(
-            BindingList<ExpansionServerMarkerData>? source)
-        {
-            if (source == null) return null;
-
-            var list = new BindingList<ExpansionServerMarkerData>();
-            foreach (var marker in source)
-            {
-                list.Add(CloneMarker(marker));
-            }
-            return list;
-        }
-
-        private static ExpansionServerMarkerData CloneMarker(ExpansionServerMarkerData? m)
-        {
-            if (m == null) return new ExpansionServerMarkerData();
-
-            return new ExpansionServerMarkerData
-            {
-                m_UID = m.m_UID,
-                m_Visibility = m.m_Visibility,
-                m_Is3D = m.m_Is3D,
-                m_Text = m.m_Text,
-                m_IconName = m.m_IconName,
-                m_Color = m.m_Color,
-                m_Position = m.m_Position != null ? (float[])m.m_Position.Clone() : null, // deep clone array
-                m_Locked = m.m_Locked,
-                m_Persist = m.m_Persist
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

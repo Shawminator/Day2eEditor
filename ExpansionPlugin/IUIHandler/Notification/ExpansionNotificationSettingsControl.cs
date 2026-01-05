@@ -10,15 +10,15 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionCoreControl : UserControl, IUIHandler
+    public partial class ExpansionNotificationSettingsControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private ExpansionCoreSettings _data;
-        private ExpansionCoreSettings _originalData;
+        private ExpansionNotificationSettings _data;
+        private ExpansionNotificationSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionCoreControl()
+        public ExpansionNotificationSettingsControl()
         {
             InitializeComponent();
         }
@@ -34,15 +34,13 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as ExpansionCoreSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionNotificationSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
+            _originalData = _data.Clone();  // Store original data for reset
 
             _suppressEvents = true;
 
-            ServerUpdateRateLimitNUD.Value = (int)_data.ServerUpdateRateLimit;
-            ForceExactCEItemLifetimeCB.Checked = _data.ForceExactCEItemLifetime == 1 ? true : false;
-            EnableInventoryCargoTidyCB.Checked = _data.EnableInventoryCargoTidy == 1 ? true : false;
+            // TODO: Populate control with data fields here
 
             _suppressEvents = false;
         }
@@ -78,7 +76,6 @@ namespace ExpansionPlugin
 
         #region Helper Methods
 
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
@@ -91,24 +88,5 @@ namespace ExpansionPlugin
         }
 
         #endregion
-
-        private void ServerUpdateRateLimitNUD_ValueChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.ServerUpdateRateLimit = (int)ServerUpdateRateLimitNUD.Value;
-            HasChanges();
-        }
-        private void ForceExactCEItemLifetimeCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.ForceExactCEItemLifetime = ForceExactCEItemLifetimeCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
-        private void EnableInventoryCargoTidyCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.EnableInventoryCargoTidy = EnableInventoryCargoTidyCB.Checked == true ? 1 : 0;
-            HasChanges();
-        }
     }
 }

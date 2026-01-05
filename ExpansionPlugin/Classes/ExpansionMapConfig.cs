@@ -30,11 +30,11 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
         public const int CurrentVersion = 5;
+ 
         public ExpansionMapConfig(string path)
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = null;
@@ -80,7 +80,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -113,7 +112,6 @@ namespace ExpansionPlugin
         public int? CreateDeathMarker { get; set; }
         public int? PlayerLocationNotifier { get; set; }
         public int? CompassBadgesColor { get; set; }
-
 
         public ExpansionMapSettings() { }
         public ExpansionMapSettings(int CurrentVersion)
@@ -153,7 +151,6 @@ namespace ExpansionPlugin
 
             ServerMarkers = new BindingList<ExpansionServerMarkerData>();
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionMapSettings other)
@@ -185,7 +182,6 @@ namespace ExpansionPlugin
                    PlayerLocationNotifier == other.PlayerLocationNotifier &&
                    CompassBadgesColor == other.CompassBadgesColor;
         }
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -451,6 +447,53 @@ namespace ExpansionPlugin
                 }
             };
         }
+        public ExpansionMapSettings Clone()
+        {
+            return new ExpansionMapSettings()
+            {
+                m_Version = this.m_Version,
+                   EnableMap = this.EnableMap,
+                   UseMapOnMapItem = this.UseMapOnMapItem,
+                   ShowPlayerPosition = this.ShowPlayerPosition,
+                   ShowMapStats = this.ShowMapStats,
+                   NeedPenItemForCreateMarker = this.NeedPenItemForCreateMarker,
+                   NeedGPSItemForCreateMarker = this.NeedGPSItemForCreateMarker,
+                   CanCreateMarker = this.CanCreateMarker,
+                   CanCreate3DMarker = this.CanCreate3DMarker,
+                   CanOpenMapWithKeyBinding = this.CanOpenMapWithKeyBinding,
+                   ShowDistanceOnPersonalMarkers = this.ShowDistanceOnPersonalMarkers,
+                   EnableHUDGPS = this.EnableHUDGPS,
+                   NeedGPSItemForKeyBinding = this.NeedGPSItemForKeyBinding,
+                   NeedMapItemForKeyBinding = this.NeedMapItemForKeyBinding,
+                   EnableServerMarkers = this.EnableServerMarkers,
+                   ShowNameOnServerMarkers = this.ShowNameOnServerMarkers,
+                   ShowDistanceOnServerMarkers = this.ShowDistanceOnServerMarkers,
+                   ServerMarkers = CloneBindingList(this.ServerMarkers, CloneServerMarkers),
+                   EnableHUDCompass = this.EnableHUDCompass,
+                   NeedCompassItemForHUDCompass = this.NeedCompassItemForHUDCompass,
+                   NeedGPSItemForHUDCompass = this.NeedGPSItemForHUDCompass,
+                   CompassColor = this.CompassColor,
+                   CreateDeathMarker = this.CreateDeathMarker,
+                   PlayerLocationNotifier = this.PlayerLocationNotifier,
+                   CompassBadgesColor = this.CompassBadgesColor
+            };
+        }
+        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
+        {
+            if (source == null) return null;
+            var result = new BindingList<T>();
+            foreach (var item in source)
+            {
+                result.Add(item == null ? default : cloner(item));
+            }
+            return result;
+        }
+        private static ExpansionServerMarkerData CloneServerMarkers(ExpansionServerMarkerData src)
+        {
+            if (src == null) return null;
+
+            return src.Clone();
+        }
     }
     public class ExpansionServerMarkerData
     {
@@ -479,7 +522,6 @@ namespace ExpansionPlugin
                    m_Locked == other.m_Locked &&
                    m_Persist == other.m_Persist;
         }
-
         private static bool FloatArrayEquals(float[] a, float[] b, float epsilon = 1e-5f)
         {
             if (ReferenceEquals(a, b)) return true;
@@ -491,7 +533,21 @@ namespace ExpansionPlugin
             }
             return true;
         }
-
+        public ExpansionServerMarkerData Clone()
+        {
+            return new ExpansionServerMarkerData()
+            {
+                m_UID = this.m_UID,
+                m_Visibility = this.m_Visibility,
+                m_Is3D = this.m_Is3D,
+                m_Text = this.m_Text, 
+                m_IconName = this.m_IconName,
+                m_Color = this.m_Color,
+                m_Position = this.m_Position != null ? (float[])this.m_Position.Clone() : null,
+                m_Locked = this.m_Locked,
+                m_Persist = this.m_Persist
+            };
+        }
 
         public override string ToString()
         {

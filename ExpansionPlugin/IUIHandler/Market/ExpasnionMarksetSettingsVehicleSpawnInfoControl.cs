@@ -38,7 +38,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionMarketSpawnPosition ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -56,7 +56,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -82,18 +82,6 @@ namespace ExpansionPlugin
 
         #region Helper Methods
 
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionMarketSpawnPosition CloneData(ExpansionMarketSpawnPosition data)
-        {
-            // TODO: Implement actual cloning logic
-            return new ExpansionMarketSpawnPosition
-            {
-                Position = data.Position != null ? (float[])data.Position.Clone() : null,
-                Orientation = data.Orientation != null ? (float[])data.Orientation.Clone() : null
-            };
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data

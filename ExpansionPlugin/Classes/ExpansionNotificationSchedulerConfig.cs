@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -23,7 +24,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = null;
@@ -69,7 +69,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -77,8 +76,6 @@ namespace ExpansionPlugin
     }
     public class ExpansionNotificationSchedulerSettings
     {
-        const int CurrentVersion = 2;
-
         public int? m_Version { get; set; }
         public int? Enabled { get; set; }
         public int? UTC { get; set; }
@@ -224,6 +221,28 @@ namespace ExpansionPlugin
 
             return true;
         }
+        public ExpansionNotificationSchedulerSettings Clone()
+        {
+            return new ExpansionNotificationSchedulerSettings()
+            {
+                m_Version = this.m_Version,
+                Enabled = this.Enabled,
+                UTC = this.UTC,
+                UseMissionTime = this.UseMissionTime,
+                Notifications = CloneNotifications(this.Notifications)
+            };
+        }
+        private static BindingList<ExpansionNotificationSchedule>? CloneNotifications(BindingList<ExpansionNotificationSchedule>? source)
+        {
+            var list = new BindingList<ExpansionNotificationSchedule>();
+            if (source == null) return list;
+            
+            foreach (var marker in source)
+            {
+                list.Add(marker.Clone());
+            }
+            return list;
+        }
     }
     public class ExpansionNotificationSchedule
     {
@@ -256,6 +275,19 @@ namespace ExpansionPlugin
                    Text == other.Text &&
                    Icon == other.Icon &&
                    Color == other.Color;
+        }
+        public ExpansionNotificationSchedule Clone()
+        {
+            return new ExpansionNotificationSchedule
+            {
+                Hour =this.Hour,
+                Minute = this.Minute,
+                Second = this.Second,
+                Title = this.Title,
+                Text = this.Text,
+                Icon = this.Icon,
+                Color = this.Color
+            };
         }
     }
 }

@@ -67,7 +67,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -152,6 +151,19 @@ namespace ExpansionPlugin
                 MaxMissions == other.MaxMissions &&
                 MinPlayersToStartMissions == other.MinPlayersToStartMissions;
 
+        }
+        public MissionSettings Clone()
+        {
+            return new MissionSettings()
+            { 
+                m_Version = this.m_Version,
+                Enabled = this.Enabled,
+                InitialMissionStartDelay = this.InitialMissionStartDelay,
+                TimeBetweenMissions = this.TimeBetweenMissions,
+                MinMissions = this.MinMissions,
+                MaxMissions = this.MaxMissions,
+                MinPlayersToStartMissions= this.MinPlayersToStartMissions
+            };
         }
     }
 }

@@ -40,7 +40,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as MarketSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -82,7 +82,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -107,133 +107,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private MarketSettings CloneData(MarketSettings data)
-        {
-            if (data == null) return null;
-
-            return new MarketSettings
-            {
-                m_Version = data.m_Version,
-                MarketSystemEnabled = data.MarketSystemEnabled,
-                NetworkCategories = CloneBindingList(data.NetworkCategories, s => s),
-                CurrencyIcon = data.CurrencyIcon,
-                ATMSystemEnabled = data.ATMSystemEnabled,
-                MaxDepositMoney = data.MaxDepositMoney,
-                DefaultDepositMoney = data.DefaultDepositMoney,
-                ATMPlayerTransferEnabled = data.ATMPlayerTransferEnabled,
-                ATMPartyLockerEnabled = data.ATMPartyLockerEnabled,
-                MaxPartyDepositMoney = data.MaxPartyDepositMoney,
-                UseWholeMapForATMPlayerList = data.UseWholeMapForATMPlayerList,
-                SellPricePercent = data.SellPricePercent,
-                NetworkBatchSize = data.NetworkBatchSize,
-                MaxVehicleDistanceToTrader = data.MaxVehicleDistanceToTrader,
-                MaxLargeVehicleDistanceToTrader = data.MaxLargeVehicleDistanceToTrader,
-
-                LargeVehicles = CloneBindingList(data.LargeVehicles, s => s),
-
-                LandSpawnPositions = CloneBindingList(data.LandSpawnPositions, CloneSpawnPosition),
-                AirSpawnPositions = CloneBindingList(data.AirSpawnPositions, CloneSpawnPosition),
-                WaterSpawnPositions = CloneBindingList(data.WaterSpawnPositions, CloneSpawnPosition),
-                TrainSpawnPositions = CloneBindingList(data.TrainSpawnPositions, CloneSpawnPosition),
-
-                MarketMenuColors = CloneMarketMenuColours(data.MarketMenuColors),
-
-                Currencies = CloneBindingList(data.Currencies, s => s),
-                VehicleKeys = CloneBindingList(data.VehicleKeys, s => s),
-
-                MaxSZVehicleParkingTime = data.MaxSZVehicleParkingTime,
-                SZVehicleParkingTicketFine = data.SZVehicleParkingTicketFine,
-                SZVehicleParkingFineUseKey = data.SZVehicleParkingFineUseKey,
-                DisallowUnpersisted = data.DisallowUnpersisted,
-                DisableClientSellTransactionDetails = data.DisableClientSellTransactionDetails
-            };
-        }
-
-        /// <summary>
-        /// Deep clone a BindingList<T>. For reference types, provide a cloner lambda.
-        /// For strings, you can pass identity (s => s).
-        /// </summary>
-        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
-        {
-            if (source == null) return null;
-            var result = new BindingList<T>();
-            foreach (var item in source)
-            {
-                result.Add(item == null ? default : cloner(item));
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clone ExpansionMarketSpawnPosition, including its arrays.
-        /// </summary>
-        private static ExpansionMarketSpawnPosition CloneSpawnPosition(ExpansionMarketSpawnPosition src)
-        {
-            if (src == null) return null;
-
-            return new ExpansionMarketSpawnPosition
-            {
-                Position = src.Position != null ? (float[])src.Position.Clone() : null,
-                Orientation = src.Orientation != null ? (float[])src.Orientation.Clone() : null
-            };
-        }
-
-        /// <summary>
-        /// Deep clone MarketMenuColours by copying all properties explicitly.
-        /// </summary>
-
-
-        private static MarketMenuColours CloneMarketMenuColours(MarketMenuColours src)
-        {
-            if (src == null) return null;
-
-            return new MarketMenuColours
-            {
-                BaseColorVignette = src.BaseColorVignette,
-                BaseColorHeaders = src.BaseColorHeaders,
-                BaseColorLabels = src.BaseColorLabels,
-                BaseColorText = src.BaseColorText,
-                BaseColorCheckboxes = src.BaseColorCheckboxes,
-                BaseColorInfoSectionBackground = src.BaseColorInfoSectionBackground,
-                BaseColorTooltipsHeaders = src.BaseColorTooltipsHeaders,
-                BaseColorTooltipsBackground = src.BaseColorTooltipsBackground,
-                ColorDecreaseQuantityButton = src.ColorDecreaseQuantityButton,
-                ColorDecreaseQuantityIcon = src.ColorDecreaseQuantityIcon,
-                ColorSetQuantityButton = src.ColorSetQuantityButton,
-                ColorIncreaseQuantityButton = src.ColorIncreaseQuantityButton,
-                ColorIncreaseQuantityIcon = src.ColorIncreaseQuantityIcon,
-                ColorSellPanel = src.ColorSellPanel,
-                ColorSellButton = src.ColorSellButton,
-                ColorBuyPanel = src.ColorBuyPanel,
-                ColorBuyButton = src.ColorBuyButton,
-                ColorMarketIcon = src.ColorMarketIcon,
-                ColorFilterOptionsButton = src.ColorFilterOptionsButton,
-                ColorFilterOptionsIcon = src.ColorFilterOptionsIcon,
-                ColorSearchFilterButton = src.ColorSearchFilterButton,
-                ColorCategoryButton = src.ColorCategoryButton,
-                ColorCategoryCollapseIcon = src.ColorCategoryCollapseIcon,
-                ColorCurrencyDenominationText = src.ColorCurrencyDenominationText,
-                ColorItemButton = src.ColorItemButton,
-                ColorItemInfoIcon = src.ColorItemInfoIcon,
-                ColorItemInfoTitle = src.ColorItemInfoTitle,
-                ColorItemInfoHasContainerItems = src.ColorItemInfoHasContainerItems,
-                ColorItemInfoHasAttachments = src.ColorItemInfoHasAttachments,
-                ColorItemInfoHasBullets = src.ColorItemInfoHasBullets,
-                ColorItemInfoIsAttachment = src.ColorItemInfoIsAttachment,
-                ColorItemInfoIsEquiped = src.ColorItemInfoIsEquiped,
-                ColorItemInfoAttachments = src.ColorItemInfoAttachments,
-                ColorToggleCategoriesText = src.ColorToggleCategoriesText,
-                ColorCategoryCorners = src.ColorCategoryCorners,
-                ColorCategoryBackground = src.ColorCategoryBackground,
-                ColorPlayerStock = src.ColorPlayerStock,
-                ColorRequirementsNotMet = src.ColorRequirementsNotMet
-            };
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data
