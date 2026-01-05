@@ -296,6 +296,48 @@ namespace DynamicWeatherPlugin
                    use_global_temperature == other.use_global_temperature &&
                    global_temperature_override == other.global_temperature_override;
         }
-
+        public WeatherDynamic Clone()
+        {
+            return new WeatherDynamic()
+            {
+                chat_message = this.chat_message,
+                notify_message = this.notify_message,
+                name = this.name,
+                transition_min = this.transition_min,
+                transition_max = this.transition_max,
+                duration_min = this.duration_min,
+                duration_max = this.duration_max,
+                overcast_min = this.overcast_min,
+                overcast_max = this.overcast_max,
+                use_dyn_vol_fog = this.use_dyn_vol_fog,
+                dyn_vol_fog_dist_min = this.dyn_vol_fog_dist_min,
+                dyn_vol_fog_dist_max = this.dyn_vol_fog_dist_max,
+                dyn_vol_fog_height_min = this.dyn_vol_fog_height_min,
+                dyn_vol_fog_height_max = this.dyn_vol_fog_height_max,
+                dyn_vol_fog_bias = this.dyn_vol_fog_bias,
+                fog_transition_time = this.fog_transition_time,
+                fog_min = this.fog_min,
+                fog_max = this.fog_max,
+                wind_speed_min = this.wind_speed_min,
+                wind_speed_max = this.wind_speed_max,
+                wind_dir_min = this.wind_dir_min,
+                wind_dir_max = this.wind_dir_max,
+                rain_min = this.rain_min,
+                rain_max = this.rain_max,
+                snowfall_min = this.snowfall_min,
+                snowfall_max = this.snowfall_max,
+                snowfall_threshold_min = this.snowfall_threshold_min,
+                snowfall_threshold_max = this.snowfall_threshold_max,
+                snowfall_threshold_timeout = this.snowfall_threshold_timeout,
+                snowflake_scale_min = this.snowflake_scale_min,
+                snowflake_scale_max = this.snowflake_scale_max,
+                use_snowflake_scale = this.use_snowflake_scale,
+                storm = this.storm,
+                thunder_threshold = this.thunder_threshold,
+                thunder_timeout = this.thunder_timeout,
+                use_global_temperature = this.use_global_temperature,
+                global_temperature_override = this.global_temperature_override
+            };
+        }
     }
 }

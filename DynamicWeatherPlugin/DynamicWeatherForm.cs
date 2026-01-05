@@ -69,6 +69,7 @@ namespace DynamicWeatherPlugin
             {
                 ShowSavedFilesMessage(savedFiles);
             }
+            _originalData = CloneData(DynamicWeatherPlugin);
         }
         private void ShowSavedFilesMessage(IEnumerable<string> files)
         {
@@ -100,46 +101,7 @@ namespace DynamicWeatherPlugin
 
             foreach (var dynamic in data.m_Dynamics)
             {
-                clone.m_Dynamics.Add(new WeatherDynamic
-                {
-                    chat_message = dynamic.chat_message,
-                    notify_message = dynamic.notify_message,
-                    name = dynamic.name,
-                    transition_min = dynamic.transition_min,
-                    transition_max = dynamic.transition_max,
-                    duration_min = dynamic.duration_min,
-                    duration_max = dynamic.duration_max,
-                    overcast_min = dynamic.overcast_min,
-                    overcast_max = dynamic.overcast_max,
-                    use_dyn_vol_fog = dynamic.use_dyn_vol_fog,
-                    dyn_vol_fog_dist_min = dynamic.dyn_vol_fog_dist_min,
-                    dyn_vol_fog_dist_max = dynamic.dyn_vol_fog_dist_max,
-                    dyn_vol_fog_height_min = dynamic.dyn_vol_fog_height_min,
-                    dyn_vol_fog_height_max = dynamic.dyn_vol_fog_height_max,
-                    dyn_vol_fog_bias = dynamic.dyn_vol_fog_bias,
-                    fog_transition_time = dynamic.fog_transition_time,
-                    fog_min = dynamic.fog_min,
-                    fog_max = dynamic.fog_max,
-                    wind_speed_min = dynamic.wind_speed_min,
-                    wind_speed_max = dynamic.wind_speed_max,
-                    wind_dir_min = dynamic.wind_dir_min,
-                    wind_dir_max = dynamic.wind_dir_max,
-                    rain_min = dynamic.rain_min,
-                    rain_max = dynamic.rain_max,
-                    snowfall_min = dynamic.snowfall_min,
-                    snowfall_max = dynamic.snowfall_max,
-                    snowfall_threshold_min = dynamic.snowfall_threshold_min,
-                    snowfall_threshold_max = dynamic.snowfall_threshold_max,
-                    snowfall_threshold_timeout = dynamic.snowfall_threshold_timeout,
-                    snowflake_scale_min = dynamic.snowflake_scale_min,
-                    snowflake_scale_max = dynamic.snowflake_scale_max,
-                    use_snowflake_scale = dynamic.use_snowflake_scale,
-                    storm = dynamic.storm,
-                    thunder_threshold = dynamic.thunder_threshold,
-                    thunder_timeout = dynamic.thunder_timeout,
-                    use_global_temperature = dynamic.use_global_temperature,
-                    global_temperature_override = dynamic.global_temperature_override
-                });
+                clone.m_Dynamics.Add(dynamic.Clone());
             }
 
             return clone;
