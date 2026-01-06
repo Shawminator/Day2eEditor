@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAIPatrol ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
             var parentObj = _nodes.Last().FindParentOfType(_parentType);
@@ -357,7 +357,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -382,68 +382,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionAIPatrol CloneData(ExpansionAIPatrol data)
-        {
-            return new ExpansionAIPatrol
-            {
-                _waypoints = new BindingList<Vec3>(data._waypoints.Select(wp => new Vec3
-                {
-                    X = wp.X,
-                    Y = wp.Y,
-                    Z = wp.Z
-                }).ToList()),
-
-                Name = data.Name,
-                Persist = data.Persist,
-                Faction = data.Faction,
-                Formation = data.Formation,
-                FormationScale = data.FormationScale,
-                FormationLooseness = data.FormationLooseness,
-                Loadout = data.Loadout,
-                Units = new BindingList<string>(data.Units.ToList()),
-                NumberOfAI = data.NumberOfAI,
-                Behaviour = data.Behaviour,
-                LootingBehaviour = data.LootingBehaviour,
-                Speed = data.Speed,
-                UnderThreatSpeed = data.UnderThreatSpeed,
-                DefaultStance = data.DefaultStance,
-                DefaultLookAngle = data.DefaultLookAngle,
-                CanBeLooted = data.CanBeLooted,
-                LootDropOnDeath = data.LootDropOnDeath,
-                UnlimitedReload = data.UnlimitedReload,
-                SniperProneDistanceThreshold = data.SniperProneDistanceThreshold,
-                AccuracyMin = data.AccuracyMin,
-                AccuracyMax = data.AccuracyMax,
-                ThreatDistanceLimit = data.ThreatDistanceLimit,
-                NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
-                MaxFlankingDistance = data.MaxFlankingDistance,
-                EnableFlankingOutsideCombat = data.EnableFlankingOutsideCombat,
-                DamageMultiplier = data.DamageMultiplier,
-                DamageReceivedMultiplier = data.DamageReceivedMultiplier,
-                HeadshotResistance = data.HeadshotResistance,
-                CanBeTriggeredByAI = data.CanBeTriggeredByAI,
-                MinDistRadius = data.MinDistRadius,
-                MaxDistRadius = data.MaxDistRadius,
-                DespawnRadius = data.DespawnRadius,
-                MinSpreadRadius = data.MinSpreadRadius,
-                MaxSpreadRadius = data.MaxSpreadRadius,
-                Chance = data.Chance,
-                DespawnTime = data.DespawnTime,
-                RespawnTime = data.RespawnTime,
-                LoadBalancingCategory = data.LoadBalancingCategory,
-                ObjectClassName = data.ObjectClassName,
-                WaypointInterpolation = data.WaypointInterpolation,
-                UseRandomWaypointAsStartPoint = data.UseRandomWaypointAsStartPoint,
-                Waypoints = new BindingList<float[]>(data.Waypoints.Select(wp => wp.ToArray()).ToList())
-            };
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

@@ -41,7 +41,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as AILoadouts ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -80,7 +80,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -105,59 +105,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private AILoadouts CloneData(AILoadouts data)
-        {
-            var clone = new AILoadouts
-            {
-                ClassName = data.ClassName,
-                Include = data.Include,
-                Chance = data.Chance,
-                Quantity = new Quantity
-                {
-                    Min = data.Quantity.Min,
-                    Max = data.Quantity.Max
-                },
-                Health = new BindingList<Health>(
-                    data.Health.Select(h => new Health
-                    {
-                        Min = h.Min,
-                        Max = h.Max,
-                        Zone = h.Zone
-                    }).ToList()
-                ),
-                InventoryAttachments = new BindingList<Inventoryattachment>(
-                    data.InventoryAttachments.Select(att => new Inventoryattachment
-                    {
-                        SlotName = att.SlotName,
-                        Items = new BindingList<AILoadouts>(
-                            att.Items.Select(CloneData).ToList()
-                        )
-                    }).ToList()
-                ),
-                InventoryCargo = new BindingList<AILoadouts>(
-                    data.InventoryCargo.Select(CloneData).ToList()
-                ),
-                ConstructionPartsBuilt = new BindingList<object>(
-                    data.ConstructionPartsBuilt.ToList() // Assumes shallow copy is sufficient
-                ),
-                Sets = new BindingList<AILoadouts>(
-                    data.Sets.Select(CloneData).ToList()
-                ),
-                isDirty = data.isDirty,
-                ToDelete = data.ToDelete
-            };
-
-            clone.setpath(data.FilePath); // Preserve the original path
-
-            return clone;
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

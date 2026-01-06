@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAIPatrolSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -153,7 +153,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -178,114 +178,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionAIPatrolSettings CloneData(ExpansionAIPatrolSettings data)
-        {
-            return new ExpansionAIPatrolSettings
-            {
-                m_Version = data.m_Version,
-                Enabled = data.Enabled,
-                FormationScale = data.FormationScale,
-                DespawnTime = data.DespawnTime,
-                RespawnTime = data.RespawnTime,
-                MinDistRadius = data.MinDistRadius,
-                MaxDistRadius = data.MaxDistRadius,
-                DespawnRadius = data.DespawnRadius,
-                AccuracyMin = data.AccuracyMin,
-                AccuracyMax = data.AccuracyMax,
-                ThreatDistanceLimit = data.ThreatDistanceLimit,
-                NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
-                MaxFlankingDistance = data.MaxFlankingDistance,
-                EnableFlankingOutsideCombat = data.EnableFlankingOutsideCombat,
-                DamageMultiplier = data.DamageMultiplier,
-                DamageReceivedMultiplier = data.DamageReceivedMultiplier,
-
-                LoadBalancingCategories = data.LoadBalancingCategories?.ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => new BindingList<Loadbalancingcategories>(
-                        kvp.Value.Select(c => new Loadbalancingcategories
-                        {
-                            MinPlayers = c.MinPlayers,
-                            MaxPlayers = c.MaxPlayers,
-                            MaxPatrols = c.MaxPatrols
-                        }).ToList()
-                    )
-                ),
-
-                _LoadBalancingCategories = data._LoadBalancingCategories != null
-                    ? new BindingList<Loadbalancingcategorie>(
-                        data._LoadBalancingCategories.Select(cat => new Loadbalancingcategorie
-                        {
-                            name = cat.name,
-                            Categorieslist = new BindingList<Loadbalancingcategories>(
-                                cat.Categorieslist.Select(c => new Loadbalancingcategories
-                                {
-                                    MinPlayers = c.MinPlayers,
-                                    MaxPlayers = c.MaxPlayers,
-                                    MaxPatrols = c.MaxPatrols
-                                }).ToList()
-                            )
-                        }).ToList()
-                    )
-                    : null,
-
-                Patrols = data.Patrols != null
-                    ? new BindingList<ExpansionAIPatrol>(
-                        data.Patrols.Select(p => new ExpansionAIPatrol
-                        {
-                            Name = p.Name,
-                            Persist = p.Persist,
-                            Faction = p.Faction,
-                            Formation = p.Formation,
-                            FormationScale = p.FormationScale,
-                            FormationLooseness = p.FormationLooseness,
-                            Loadout = p.Loadout,
-                            Units = new BindingList<string>(p.Units.ToList()),
-                            NumberOfAI = p.NumberOfAI,
-                            Behaviour = p.Behaviour,
-                            LootingBehaviour = p.LootingBehaviour,
-                            Speed = p.Speed,
-                            UnderThreatSpeed = p.UnderThreatSpeed,
-                            DefaultStance = p.DefaultStance,
-                            DefaultLookAngle = p.DefaultLookAngle,
-                            CanBeLooted = p.CanBeLooted,
-                            LootDropOnDeath = p.LootDropOnDeath,
-                            UnlimitedReload = p.UnlimitedReload,
-                            SniperProneDistanceThreshold = p.SniperProneDistanceThreshold,
-                            AccuracyMin = p.AccuracyMin,
-                            AccuracyMax = p.AccuracyMax,
-                            ThreatDistanceLimit = p.ThreatDistanceLimit,
-                            NoiseInvestigationDistanceLimit = p.NoiseInvestigationDistanceLimit,
-                            MaxFlankingDistance = p.MaxFlankingDistance,
-                            EnableFlankingOutsideCombat = p.EnableFlankingOutsideCombat,
-                            DamageMultiplier = p.DamageMultiplier,
-                            DamageReceivedMultiplier = p.DamageReceivedMultiplier,
-                            CanBeTriggeredByAI = p.CanBeTriggeredByAI,
-                            MinDistRadius = p.MinDistRadius,
-                            MaxDistRadius = p.MaxDistRadius,
-                            DespawnRadius = p.DespawnRadius,
-                            MinSpreadRadius = p.MinSpreadRadius,
-                            MaxSpreadRadius = p.MaxSpreadRadius,
-                            Chance = p.Chance,
-                            DespawnTime = p.DespawnTime,
-                            RespawnTime = p.RespawnTime,
-                            LoadBalancingCategory = p.LoadBalancingCategory,
-                            ObjectClassName = p.ObjectClassName,
-                            WaypointInterpolation = p.WaypointInterpolation,
-                            UseRandomWaypointAsStartPoint = p.UseRandomWaypointAsStartPoint,
-                            Waypoints = new BindingList<float[]>(p.Waypoints.Select(wp => wp.ToArray()).ToList()),
-                            _waypoints = new BindingList<Vec3>(p._waypoints.Select(wp => new Vec3(wp.X, wp.Y, wp.Z)).ToList())
-                        }).ToList()
-                    )
-                    : null
-            };
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

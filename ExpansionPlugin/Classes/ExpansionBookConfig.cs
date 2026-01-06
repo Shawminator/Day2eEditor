@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -25,7 +26,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionBookSettings>(
@@ -68,7 +68,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -116,7 +115,6 @@ namespace ExpansionPlugin
             DefaultCraftingCategories();
             EnableCraftingRecipesTab = 0;
         }
-
         public void RenameRules()
         {
             for (int i = 0; i < RuleCategories.Count; i++)
@@ -561,7 +559,6 @@ namespace ExpansionPlugin
                 }
             };
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookSettings other)
@@ -692,8 +689,39 @@ namespace ExpansionPlugin
             
             return fixes;
         }
+        public ExpansionBookSettings Clone()
+        {
+            return new ExpansionBookSettings()
+            {
+                m_Version = this.m_Version,
+                EnableStatusTab = this.EnableStatusTab,
+                EnablePartyTab = this.EnablePartyTab,
+                EnableServerInfoTab = this.EnableServerInfoTab,
+                EnableServerRulesTab = this.EnableServerRulesTab,
+                EnableTerritoryTab = this.EnableTerritoryTab,
+                EnableBookMenu = this.EnableBookMenu,
+                CreateBookmarks = this.CreateBookmarks,
+                ShowHaBStats = this.ShowHaBStats,
+                ShowPlayerFaction = this.ShowPlayerFaction,
+                DisplayServerSettingsInServerInfoTab = this.DisplayServerSettingsInServerInfoTab,
+                EnableCraftingRecipesTab = this.EnableCraftingRecipesTab,
 
+                RuleCategories = new BindingList<ExpansionBookRuleCategory>(
+                    this.RuleCategories?.Select(rc => rc.Clone()).ToList() ?? new List<ExpansionBookRuleCategory>()),
 
+                SettingCategories = new BindingList<ExpansionBookSettingCategory>(
+                    this.SettingCategories?.Select(sc => sc.CLone()).ToList() ?? new List<ExpansionBookSettingCategory>()),
+
+                Links = new BindingList<ExpansionBookLink>(
+                    this.Links?.Select(l => l.Clone()).ToList() ?? new List<ExpansionBookLink>()),
+
+                Descriptions = new BindingList<ExpansionBookDescriptionCategory>(
+                    this.Descriptions?.Select(dc => dc.Clone()).ToList() ?? new List<ExpansionBookDescriptionCategory>()),
+
+                CraftingCategories = new BindingList<ExpansionBookCraftingCategory>(
+                    this.CraftingCategories?.Select(cc => cc.Clone()).ToList() ?? new List<ExpansionBookCraftingCategory>())
+            };
+        }
     }
     public class ExpansionBookRuleCategory
     {
@@ -704,7 +732,6 @@ namespace ExpansionPlugin
         {
             Rules = new BindingList<ExpansionBookRule>();
         }
-
         public override string ToString()
         {
             return CategoryName;
@@ -716,7 +743,6 @@ namespace ExpansionPlugin
                 Rules[j].RuleParagraph = i.ToString() + "." + (j + 1).ToString();
             }
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookRuleCategory other)
@@ -726,7 +752,15 @@ namespace ExpansionPlugin
             }
             return false;
         }
-
+        public ExpansionBookRuleCategory Clone()
+        {
+            return new ExpansionBookRuleCategory()
+            {
+                CategoryName = this.CategoryName,
+                Rules = new BindingList<ExpansionBookRule>(
+                    this.Rules?.Select(r => r.CLone()).ToList() ?? new List<ExpansionBookRule>())
+            };
+        }
     }
     public class ExpansionBookRule
     {
@@ -742,7 +776,6 @@ namespace ExpansionPlugin
         {
             return RuleParagraph;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookRule other)
@@ -751,6 +784,14 @@ namespace ExpansionPlugin
                        RuleText == other.RuleText;
             }
             return false;
+        }
+        public ExpansionBookRule CLone()
+        {
+            return new ExpansionBookRule()
+            {
+                RuleParagraph = data.RuleParagraph,
+                RuleText = data.RuleText
+            };
         }
 
     }
@@ -763,12 +804,10 @@ namespace ExpansionPlugin
         {
             Settings = new BindingList<ExpansionBookSetting>();
         }
-
         public override string ToString()
         {
             return CategoryName;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookSettingCategory other)
@@ -778,6 +817,20 @@ namespace ExpansionPlugin
             }
             return false;
         }
+        public ExpansionBookSettingCategory CLone()
+        {
+            return new ExpansionBookSettingCategory()
+            {
+                CategoryName = this.CategoryName,
+                Settings = new BindingList<ExpansionBookSetting>(
+                    this.Settings?.Select(r => new ExpansionBookSetting
+                    {
+                        SettingTitle = r.SettingTitle,
+                        SettingText = r.SettingText,
+                        SettingValue = r.SettingValue
+                    }).ToList() ?? new List<ExpansionBookSetting>())
+            };
+        }
 
     }
     public class ExpansionBookSetting
@@ -786,7 +839,10 @@ namespace ExpansionPlugin
         public string SettingText { get; set; }
         public string SettingValue { get; set; }
 
+        public ExpansionBookSetting()
+        {
 
+        }
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookSetting other)
@@ -796,6 +852,15 @@ namespace ExpansionPlugin
                        SettingValue == other.SettingValue;
             }
             return false;
+        }
+        public ExpansionBookSetting Clone()
+        {
+            return new ExpansionBookSetting()
+            {
+                SettingTitle = this.SettingTitle,
+                SettingText = this.SettingText,
+                SettingValue= this.SettingValue
+            };
         }
 
     }
@@ -810,7 +875,6 @@ namespace ExpansionPlugin
         {
             return Name;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookLink other)
@@ -822,7 +886,16 @@ namespace ExpansionPlugin
             }
             return false;
         }
-
+        public ExpansionBookLink Clone()
+        {
+            return new ExpansionBookLink()
+            {
+                Name = this.Name,
+                URL = this.URL,
+                IconName = this.IconName,
+                IconColor = this.IconColor
+            };
+        }
     }
     public class ExpansionBookDescriptionCategory
     {
@@ -833,12 +906,10 @@ namespace ExpansionPlugin
         {
             Descriptions = new BindingList<ExpansionBookDescription>();
         }
-
         public override string ToString()
         {
             return CategoryName;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookDescriptionCategory other)
@@ -847,6 +918,16 @@ namespace ExpansionPlugin
                        Descriptions.SequenceEqual(other.Descriptions);
             }
             return false;
+        }
+        public ExpansionBookDescriptionCategory Clone()
+        {
+            return new ExpansionBookDescriptionCategory()
+            {
+                CategoryName = this.CategoryName,
+                Descriptions = new BindingList<ExpansionBookDescription>(
+                    this.Descriptions.Select(d => d.Clone()).ToList()
+                )
+            };
         }
 
     }
@@ -861,7 +942,6 @@ namespace ExpansionPlugin
         {
             return DTName;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is ExpansionBookDescription other)
@@ -870,6 +950,14 @@ namespace ExpansionPlugin
                        DTName == other.DTName;
             }
             return false;
+        }
+        public ExpansionBookDescription Clone()
+        {
+            return new ExpansionBookDescription()
+            {
+                DescriptionText = this.DescriptionText,
+                DTName= this.DTName
+            };
         }
 
     }
@@ -897,6 +985,13 @@ namespace ExpansionPlugin
             }
             return false;
         }
-
+        public ExpansionBookCraftingCategory Clone()
+        {
+            return new ExpansionBookCraftingCategory()
+            {
+                CategoryName = this.CategoryName,
+                Results = new BindingList<string>(this.Results.ToList())
+            };
+        }
     }
 }

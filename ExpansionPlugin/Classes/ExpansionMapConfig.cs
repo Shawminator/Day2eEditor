@@ -468,7 +468,7 @@ namespace ExpansionPlugin
                    EnableServerMarkers = this.EnableServerMarkers,
                    ShowNameOnServerMarkers = this.ShowNameOnServerMarkers,
                    ShowDistanceOnServerMarkers = this.ShowDistanceOnServerMarkers,
-                   ServerMarkers = CloneBindingList(this.ServerMarkers, CloneServerMarkers),
+                   ServerMarkers = new BindingList<ExpansionServerMarkerData>(this.ServerMarkers.Select(p => p.Clone()).ToList()),
                    EnableHUDCompass = this.EnableHUDCompass,
                    NeedCompassItemForHUDCompass = this.NeedCompassItemForHUDCompass,
                    NeedGPSItemForHUDCompass = this.NeedGPSItemForHUDCompass,
@@ -477,22 +477,6 @@ namespace ExpansionPlugin
                    PlayerLocationNotifier = this.PlayerLocationNotifier,
                    CompassBadgesColor = this.CompassBadgesColor
             };
-        }
-        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
-        {
-            if (source == null) return null;
-            var result = new BindingList<T>();
-            foreach (var item in source)
-            {
-                result.Add(item == null ? default : cloner(item));
-            }
-            return result;
-        }
-        private static ExpansionServerMarkerData CloneServerMarkers(ExpansionServerMarkerData src)
-        {
-            if (src == null) return null;
-
-            return src.Clone();
         }
     }
     public class ExpansionServerMarkerData

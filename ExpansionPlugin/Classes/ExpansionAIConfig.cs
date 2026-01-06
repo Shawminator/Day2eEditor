@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -19,11 +20,11 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
         public const int CurrentVersion = 19;
+ 
         public ExpansionAIConfig(string path)
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = null;
@@ -66,19 +67,17 @@ namespace ExpansionPlugin
             if (isDirty)
             {
                 Data.CreateDictionary();
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                AppServices.GetRequired<FileService>().SaveJson(_path, this);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
         }
-
     }
     public class AILightEntries
     {
@@ -86,13 +85,20 @@ namespace ExpansionPlugin
         public decimal Value { get; set; }
 
         public override string ToString() => Key.ToString();
-
         public override bool Equals(object obj)
         {
             if (obj is not AILightEntries other)
                 return false;
 
             return Key == other.Key && Value == other.Value;
+        }
+        public AILightEntries Clone()
+        {
+            return new AILightEntries()
+            {
+                Key = this.Key,
+                Value = this.Value
+            };
         }
 
     }
@@ -131,15 +137,6 @@ namespace ExpansionPlugin
 
         [JsonIgnore]
         public BindingList<AILightEntries> AILightEntries { get; set; }
-
-        public void createlistfromdict()
-        {
-            AILightEntries = new BindingList<AILightEntries>(LightingConfigMinNightVisibilityMeters.Select(kvp => new AILightEntries { Key = kvp.Key, Value = kvp.Value }).ToList());
-        }
-        public void CreateDictionary()
-        {
-            LightingConfigMinNightVisibilityMeters = AILightEntries.ToDictionary(e => e.Key, e => e.Value);
-        }
 
         public ExpansionAISettings()
         {
@@ -180,8 +177,14 @@ namespace ExpansionPlugin
                 {1, 10.0m }
             };
         }
-
-
+        public void createlistfromdict()
+        {
+            AILightEntries = new BindingList<AILightEntries>(LightingConfigMinNightVisibilityMeters.Select(kvp => new AILightEntries { Key = kvp.Key, Value = kvp.Value }).ToList());
+        }
+        public void CreateDictionary()
+        {
+            LightingConfigMinNightVisibilityMeters = AILightEntries.ToDictionary(e => e.Key, e => e.Value);
+        }
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionAISettings other)
@@ -215,7 +218,36 @@ namespace ExpansionPlugin
                    SequenceEqual(PlayerFactions, other.PlayerFactions) &&
                    SequenceEqual(AILightEntries, other.AILightEntries);
         }
-
+        public ExpansionAISettings Clone()
+        {
+            return new ExpansionAISettings()
+            {
+                m_Version = this.m_Version,
+                AccuracyMin = this.AccuracyMin,
+                AccuracyMax = this.AccuracyMax,
+                ThreatDistanceLimit = this.ThreatDistanceLimit,
+                NoiseInvestigationDistanceLimit = this.NoiseInvestigationDistanceLimit,
+                MaxFlankingDistance = this.MaxFlankingDistance,
+                EnableFlankingOutsideCombat = this.EnableFlankingOutsideCombat,
+                DamageMultiplier = this.DamageMultiplier,
+                DamageReceivedMultiplier = this.DamageReceivedMultiplier,
+                Vaulting = this.Vaulting,
+                SniperProneDistanceThreshold = this.SniperProneDistanceThreshold,
+                Manners = this.Manners,
+                MemeLevel = this.MemeLevel,
+                CanRecruitFriendly = this.CanRecruitFriendly,
+                CanRecruitGuards = this.CanRecruitGuards,
+                FormationScale = this.FormationScale,
+                LogAIHitBy = this.LogAIHitBy,
+                LogAIKilled = this.LogAIKilled,
+                EnableZombieVehicleAttackHandler = this.EnableZombieVehicleAttackHandler,
+                EnableZombieVehicleAttackPhysics = this.EnableZombieVehicleAttackPhysics,
+                Admins = new BindingList<string>(this.Admins.ToList()),
+                PreventClimb = new BindingList<string>(this.PreventClimb.ToList()),
+                PlayerFactions = new BindingList<string>(this.PlayerFactions.ToList()),
+                AILightEntries = new BindingList<AILightEntries>(this.AILightEntries.Select(e => e.Clone()).ToList())
+            };
+        }
         private bool SequenceEqual(BindingList<string> a, BindingList<string> b)
         {
             return a != null && b != null && a.SequenceEqual(b);
@@ -413,7 +445,5 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-
-
     }
 }

@@ -152,47 +152,8 @@ namespace ExpansionPlugin
 
         private BindingList<ExpansionLoot> CloneData(BindingList<ExpansionLoot> data)
         {
-            var clonedList = new BindingList<ExpansionLoot>();
-
-            foreach (var loot in data)
-            {
-                var clonedLoot = new ExpansionLoot
-                {
-                    Name = loot.Name,
-                    Chance = loot.Chance,
-                    QuantityPercent = loot.QuantityPercent,
-                    Max = loot.Max,
-                    Min = loot.Min,
-                    Attachments = CloneVariants(loot.Attachments),
-                    Variants = CloneVariants(loot.Variants)
-                };
-
-                clonedList.Add(clonedLoot);
-            }
-
-            return clonedList;
+            return new BindingList<ExpansionLoot>(data.Select(e => e.Clone()).ToList());
         }
-
-        private BindingList<ExpansionLootVariant> CloneVariants(BindingList<ExpansionLootVariant> variants)
-        {
-            var clonedVariants = new BindingList<ExpansionLootVariant>();
-
-            foreach (var variant in variants)
-            {
-                var clonedVariant = new ExpansionLootVariant
-                {
-                    Name = variant.Name,
-                    Chance = variant.Chance,
-                    Attachments = CloneVariants(variant.Attachments)
-                };
-
-                clonedVariants.Add(clonedVariant);
-            }
-
-            return clonedVariants;
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

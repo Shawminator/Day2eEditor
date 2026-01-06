@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -24,7 +25,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionGarageSettings>(
@@ -67,7 +67,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -138,7 +137,6 @@ namespace ExpansionPlugin
             MaxRangeTier3 = (decimal)40.0;
             ParkingMeterEnableFlavor = 0;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionGarageSettings other)
@@ -170,7 +168,6 @@ namespace ExpansionPlugin
                    ParkingMeterEnableFlavor == other.ParkingMeterEnableFlavor &&
                    EntityWhitelist.SequenceEqual(other.EntityWhitelist ?? new BindingList<string>());
         }
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -326,6 +323,39 @@ namespace ExpansionPlugin
             }
 
             return fixes;
+        }
+        public ExpansionGarageSettings Clone()
+        {
+            return new ExpansionGarageSettings()
+            {
+                m_Version = this.m_Version,
+                Enabled = this.Enabled,
+                AllowStoringDEVehicles = this.AllowStoringDEVehicles,
+                GarageMode = this.GarageMode,
+                GarageStoreMode = this.GarageStoreMode,
+                GarageRetrieveMode = this.GarageRetrieveMode,
+                MaxStorableVehicles = this.MaxStorableVehicles,
+                VehicleSearchRadius = this.VehicleSearchRadius,
+                MaxDistanceFromStoredPosition = this.MaxDistanceFromStoredPosition,
+                CanStoreWithCargo = this.CanStoreWithCargo,
+                UseVirtualStorageForCargo = this.UseVirtualStorageForCargo,
+                NeedKeyToStore = this.NeedKeyToStore,
+                EnableGroupFeatures = this.EnableGroupFeatures,
+                GroupStoreMode = this.GroupStoreMode,
+                EnableMarketFeatures = this.EnableMarketFeatures,
+                StorePricePercent = this.StorePricePercent,
+                StaticStorePrice = this.StaticStorePrice,
+                MaxStorableTier1 = this.MaxStorableTier1,
+                MaxStorableTier2 = this.MaxStorableTier2,
+                MaxStorableTier3 = this.MaxStorableTier3,
+                MaxRangeTier1 = this.MaxRangeTier1,
+                MaxRangeTier2 = this.MaxRangeTier2,
+                MaxRangeTier3 = this.MaxRangeTier3,
+                ParkingMeterEnableFlavor = this.ParkingMeterEnableFlavor,
+                EntityWhitelist = this.EntityWhitelist != null
+                    ? new BindingList<string>(this.EntityWhitelist.ToList())
+                    : null
+            };
         }
     }
     public enum ExpansionGarageMode

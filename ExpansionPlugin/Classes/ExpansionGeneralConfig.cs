@@ -24,7 +24,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionGeneralSettings>(
@@ -67,7 +66,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -141,7 +139,6 @@ namespace ExpansionPlugin
             EnableEarPlugs = 1;
             InGameMenuLogoPath = "set:expansion_iconset image:logo_expansion_white";
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionGeneralSettings other)
@@ -431,8 +428,6 @@ namespace ExpansionPlugin
                 HUDColors = this.HUDColors.Clone()
             };
         }
-
-
     }
     public class ExpansionMapping
     {
@@ -441,8 +436,8 @@ namespace ExpansionPlugin
         public int BuildingInteriors { get; set; }
         public BindingList<string> Interiors { get; set; }
         public int BuildingIvys { get; set; }
-        public ExpansionMapping() { }
 
+        public ExpansionMapping() { }
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionMapping other)
@@ -493,6 +488,7 @@ namespace ExpansionPlugin
         public string? ReputationBaseColor { get; set; }
         public string? ReputationMedColor { get; set; }
         public string? ReputationHighColor { get; set; }
+ 
         public ExpansionHudIndicatorColors() { }
         public override bool Equals(object obj)
         {

@@ -20,7 +20,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as AILightEntries ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
             _suppressEvents = true;
 
             variablesvarvalueNUD.Value = _data.Value;
@@ -29,7 +29,7 @@ namespace ExpansionPlugin
         }
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
         public void Reset()
         {
@@ -58,14 +58,6 @@ namespace ExpansionPlugin
         {
             if (_nodes[0] != null)
                 _nodes[0].Text = $"Lighting Config {_data.Key} : Visibility {_data.Value}";
-        }
-        private AILightEntries CloneData(AILightEntries data)
-        {
-            return new AILightEntries
-            {
-                Key = data.Key,
-                Value = data.Value
-            };
         }
         private void variablesvarvalueNUD_ValueChanged(object sender, EventArgs e)
         {

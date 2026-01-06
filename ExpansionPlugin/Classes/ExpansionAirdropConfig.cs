@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -66,7 +67,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -121,7 +121,6 @@ namespace ExpansionPlugin
             DefaultBaseBuilding();
             DefaultMilitary();
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionAirdropSettings other)
@@ -146,8 +145,6 @@ namespace ExpansionPlugin
                    DropZoneProximityDistance == other.DropZoneProximityDistance &&
                    ExplodeAirVehiclesOnCollision == other.ExplodeAirVehiclesOnCollision;
         }
-
-
         void DefaultRegular()
         {
             BindingList<ExpansionLoot> Loot = ExpansionLootDefaults.Airdrop_Regular();
@@ -625,7 +622,30 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-
+        public ExpansionAirdropSettings Clone()
+        {
+            return new ExpansionAirdropSettings()
+            {
+                m_Version = this.m_Version,
+                ServerMarkerOnDropLocation = this.ServerMarkerOnDropLocation,
+                Server3DMarkerOnDropLocation = this.Server3DMarkerOnDropLocation,
+                ShowAirdropTypeOnMarker = this.ShowAirdropTypeOnMarker,
+                HideCargoWhileParachuteIsDeployed = this.HideCargoWhileParachuteIsDeployed,
+                HeightIsRelativeToGroundLevel = this.HeightIsRelativeToGroundLevel,
+                Height = this.Height,
+                DropZoneHeight = this.DropZoneHeight,
+                FollowTerrainFraction = this.FollowTerrainFraction,
+                Speed = this.Speed,
+                DropZoneSpeed = this.DropZoneSpeed,
+                Radius = this.Radius,
+                InfectedSpawnRadius = this.InfectedSpawnRadius,
+                InfectedSpawnInterval = this.InfectedSpawnInterval,
+                ItemCount = this.ItemCount,
+                AirdropPlaneClassName = this.AirdropPlaneClassName,
+                DropZoneProximityDistance = this.DropZoneProximityDistance,
+                ExplodeAirVehiclesOnCollision = this.ExplodeAirVehiclesOnCollision
+            };
+        }
     }
     public class ExpansionLootContainer
     {
@@ -653,7 +673,6 @@ namespace ExpansionPlugin
             ExplodeAirVehiclesOnCollision = -1;
             FallSpeed = fallSpeed;
         }
-
         public ExpansionLootContainer()
         {
             Container = "ExpansionAirdropContainer";
@@ -672,7 +691,6 @@ namespace ExpansionPlugin
         {
             return Container;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionLootContainer other)
@@ -689,7 +707,33 @@ namespace ExpansionPlugin
                    Infected.SequenceEqual(other.Infected) &&
                    Loot.SequenceEqual(other.Loot);
         }
-
+        public ExpansionLootContainer Clone()
+        {
+            return new ExpansionLootContainer
+            {
+                Container = this.Container,
+                FallSpeed = this.FallSpeed,
+                Usage = this.Usage,
+                Weight = this.Weight,
+                ItemCount = this.ItemCount,
+                InfectedCount = this.InfectedCount,
+                SpawnInfectedForPlayerCalledDrops = this.SpawnInfectedForPlayerCalledDrops,
+                ExplodeAirVehiclesOnCollision = this.ExplodeAirVehiclesOnCollision,
+                Infected = new BindingList<string>(this.Infected.ToList()),
+                Loot = new BindingList<ExpansionLoot>(
+                    this.Loot.Select(l => new ExpansionLoot
+                    {
+                        Name = l.Name,
+                        Chance = l.Chance,
+                        QuantityPercent = l.QuantityPercent,
+                        Max = l.Max,
+                        Min = l.Min,
+                        Attachments = new BindingList<ExpansionLootVariant>(l.Attachments.Select(a => a.Clone()).ToList()),
+                        Variants = new BindingList<ExpansionLootVariant>(l.Variants.Select(v => v.Clone()).ToList())
+                    }).ToList()
+                )
+            };
+        }
     }
     public class ExpansionLoot
     {
@@ -731,7 +775,6 @@ namespace ExpansionPlugin
         {
             return Name;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionLoot other)
@@ -745,7 +788,6 @@ namespace ExpansionPlugin
                    ListsAreEqual(Attachments, other.Attachments) &&
                    ListsAreEqual(Variants, other.Variants);
         }
-
         private bool ListsAreEqual(BindingList<ExpansionLootVariant> list1, BindingList<ExpansionLootVariant> list2)
         {
             if (list1 == null || list2 == null)
@@ -762,8 +804,19 @@ namespace ExpansionPlugin
 
             return true;
         }
-
-
+        public ExpansionLoot Clone()
+        {
+            return new ExpansionLoot()
+            {
+                Name = this.Name,
+                Chance = this.Chance,
+                QuantityPercent = this.QuantityPercent,
+                Max = this.Max,
+                Min = this.Min,
+                Attachments = new BindingList<ExpansionLootVariant>(this.Attachments.Select(a => a.Clone()).ToList()),
+                Variants = new BindingList<ExpansionLootVariant>(this.Variants.Select(v => v.Clone()).ToList())
+            };
+        }
     }
     public class ExpansionLootVariant
     {
@@ -790,7 +843,6 @@ namespace ExpansionPlugin
         {
             return Name;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionLootVariant other)
@@ -800,7 +852,6 @@ namespace ExpansionPlugin
                    Chance == other.Chance &&
                    ListsAreEqual(Attachments, other.Attachments);
         }
-
         private bool ListsAreEqual(BindingList<ExpansionLootVariant> list1, BindingList<ExpansionLootVariant> list2)
         {
             if (list1 == null || list2 == null)
@@ -817,7 +868,15 @@ namespace ExpansionPlugin
 
             return true;
         }
-
+        public ExpansionLootVariant Clone()
+        {
+            return new ExpansionLootVariant()
+            {
+                Name = this.Name,
+                Chance = this.Chance,
+                Attachments = new BindingList<ExpansionLootVariant>(this.Attachments.Select(a => a.Clone()).ToList())
+            };
+        }
     }
     public enum ContainerTypes
     {

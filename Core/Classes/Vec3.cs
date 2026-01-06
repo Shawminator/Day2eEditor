@@ -87,6 +87,17 @@ namespace Day2eEditor
 
             return X == other.X && Y == other.Y && Z == other.Z;
         }
+
+        public Vec3 Clone()
+        {
+            return new Vec3
+            {
+                X = this.X,
+                Y = this.Y,
+                Z = this.Z
+            };
+        }
+  
     }
 
     public class Vec3PandR
@@ -194,6 +205,13 @@ namespace Day2eEditor
                    Equals(Position, other.Position) &&
                    Equals(Rotation, other.Rotation);
         }
-
+        public Vec3PandR Clone()
+        {
+            return new Vec3PandR()
+            {
+                Position = Position.Clone(),
+                Rotation = Rotation.Clone()
+            };
+        }
     }
 }

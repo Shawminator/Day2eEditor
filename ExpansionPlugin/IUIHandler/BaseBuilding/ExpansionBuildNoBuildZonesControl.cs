@@ -32,7 +32,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBaseBuildingSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -46,7 +46,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -71,19 +71,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionBaseBuildingSettings CloneData(ExpansionBaseBuildingSettings data)
-        {
-            // TODO: Implement actual cloning logic
-            return new ExpansionBaseBuildingSettings
-            {
-                // Copy properties here
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

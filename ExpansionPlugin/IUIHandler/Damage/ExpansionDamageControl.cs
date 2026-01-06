@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionDamageSystemSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -52,7 +52,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -77,38 +77,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionDamageSystemSettings CloneData(ExpansionDamageSystemSettings data)
-        {
-            if (data == null)
-                return null;
-
-            var clone = new ExpansionDamageSystemSettings
-            {
-                m_Version = data.m_Version,
-                Enabled = data.Enabled,
-                CheckForBlockingObjects = data.CheckForBlockingObjects,
-                ExplosionTargets = data.ExplosionTargets != null
-                    ? new BindingList<string>(data.ExplosionTargets.ToList())
-                    : new BindingList<string>(),
-                _ExplosiveProjectiles = data._ExplosiveProjectiles != null
-                    ? new BindingList<ExplosiveProjectiles>(
-                        data._ExplosiveProjectiles.Select(ep => new ExplosiveProjectiles
-                        {
-                            explosion = ep.explosion,
-                            ammo = ep.ammo
-                        }).ToList())
-                    : new BindingList<ExplosiveProjectiles>()
-            };
-            return clone;
-        }
-
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

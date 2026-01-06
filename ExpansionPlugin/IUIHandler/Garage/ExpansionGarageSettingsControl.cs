@@ -38,7 +38,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionGarageSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
             GarageModeCB.DataSource = Enum.GetValues(typeof(ExpansionGarageMode));
@@ -77,7 +77,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -102,47 +102,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionGarageSettings CloneData(ExpansionGarageSettings data)
-        {
-            if (data == null)
-                return null;
-
-            return new ExpansionGarageSettings
-            {
-                m_Version = data.m_Version,
-                Enabled = data.Enabled,
-                AllowStoringDEVehicles = data.AllowStoringDEVehicles,
-                GarageMode = data.GarageMode,
-                GarageStoreMode = data.GarageStoreMode,
-                GarageRetrieveMode = data.GarageRetrieveMode,
-                MaxStorableVehicles = data.MaxStorableVehicles,
-                VehicleSearchRadius = data.VehicleSearchRadius,
-                MaxDistanceFromStoredPosition = data.MaxDistanceFromStoredPosition,
-                CanStoreWithCargo = data.CanStoreWithCargo,
-                UseVirtualStorageForCargo = data.UseVirtualStorageForCargo,
-                NeedKeyToStore = data.NeedKeyToStore,
-                EnableGroupFeatures = data.EnableGroupFeatures,
-                GroupStoreMode = data.GroupStoreMode,
-                EnableMarketFeatures = data.EnableMarketFeatures,
-                StorePricePercent = data.StorePricePercent,
-                StaticStorePrice = data.StaticStorePrice,
-                MaxStorableTier1 = data.MaxStorableTier1,
-                MaxStorableTier2 = data.MaxStorableTier2,
-                MaxStorableTier3 = data.MaxStorableTier3,
-                MaxRangeTier1 = data.MaxRangeTier1,
-                MaxRangeTier2 = data.MaxRangeTier2,
-                MaxRangeTier3 = data.MaxRangeTier3,
-                ParkingMeterEnableFlavor = data.ParkingMeterEnableFlavor,
-                EntityWhitelist = data.EntityWhitelist != null
-                    ? new BindingList<string>(data.EntityWhitelist.ToList())
-                    : null
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

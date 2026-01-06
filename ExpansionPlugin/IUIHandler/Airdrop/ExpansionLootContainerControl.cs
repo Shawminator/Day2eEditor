@@ -36,7 +36,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionLootContainer ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -133,7 +133,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -158,56 +158,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionLootContainer CloneData(ExpansionLootContainer data)
-        {
-            return new ExpansionLootContainer
-            {
-                Container = data.Container,
-                FallSpeed = data.FallSpeed,
-                Usage = data.Usage,
-                Weight = data.Weight,
-                ItemCount = data.ItemCount,
-                InfectedCount = data.InfectedCount,
-                SpawnInfectedForPlayerCalledDrops = data.SpawnInfectedForPlayerCalledDrops,
-                ExplodeAirVehiclesOnCollision = data.ExplodeAirVehiclesOnCollision,
-                Infected = new BindingList<string>(data.Infected.ToList()),
-                Loot = new BindingList<ExpansionLoot>(
-                    data.Loot.Select(l => new ExpansionLoot
-                    {
-                        Name = l.Name,
-                        Chance = l.Chance,
-                        QuantityPercent = l.QuantityPercent,
-                        Max = l.Max,
-                        Min = l.Min,
-                        Attachments = new BindingList<ExpansionLootVariant>(
-                            l.Attachments.Select(a => CloneVariant(a)).ToList()
-                        ),
-                        Variants = new BindingList<ExpansionLootVariant>(
-                            l.Variants.Select(v => CloneVariant(v)).ToList()
-                        )
-                    }).ToList()
-                )
-            };
-        }
-
-        private ExpansionLootVariant CloneVariant(ExpansionLootVariant variant)
-        {
-            return new ExpansionLootVariant
-            {
-                Name = variant.Name,
-                Chance = variant.Chance,
-                Attachments = new BindingList<ExpansionLootVariant>(
-                    variant.Attachments.Select(CloneVariant).ToList()
-                )
-            };
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

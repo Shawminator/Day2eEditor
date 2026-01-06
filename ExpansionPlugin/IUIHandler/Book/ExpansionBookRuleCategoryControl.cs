@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBookRuleCategory ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -51,7 +51,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -76,27 +76,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionBookRuleCategory CloneData(ExpansionBookRuleCategory data)
-        {
-            if (data == null)
-                return null;
-
-            return new ExpansionBookRuleCategory
-            {
-                CategoryName = data.CategoryName,
-                Rules = new BindingList<ExpansionBookRule>(
-                    data.Rules?.Select(r => new ExpansionBookRule
-                    {
-                        RuleParagraph = r.RuleParagraph,
-                        RuleText = r.RuleText
-                    }).ToList() ?? new List<ExpansionBookRule>())
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

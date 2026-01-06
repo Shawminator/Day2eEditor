@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -24,7 +25,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionChatSettings>(
@@ -67,7 +67,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -82,8 +81,7 @@ namespace ExpansionPlugin
         public int? EnableExpansionChat { get; set; }
         public ExpansionChatColors ChatColors { get; set; }
         public BindingList<string> BlacklistedWords { get; set; }
-
-
+ 
         public ExpansionChatSettings()
         { }
         public ExpansionChatSettings(int CurrentVersion)
@@ -197,6 +195,19 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+        public ExpansionChatSettings Clone()
+        {
+            return new ExpansionChatSettings()
+            {
+                m_Version = this.m_Version,
+                EnableExpansionChat = this.EnableExpansionChat,
+                EnableGlobalChat = this.EnableGlobalChat,
+                EnablePartyChat = this.EnablePartyChat,
+                EnableTransportChat = this.EnableTransportChat,
+                ChatColors = this.ChatColors.Clone(),
+                BlacklistedWords = new BindingList<string>(this.BlacklistedWords.ToList())
+            };
+        }
     }
     public class ExpansionChatColors
     {
@@ -213,11 +224,9 @@ namespace ExpansionPlugin
         public string ImportantMessageColor { get; set; }
         public string DefaultMessageColor { get; set; }
 
-
         public ExpansionChatColors()
         {
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionChatColors other)
@@ -235,6 +244,24 @@ namespace ExpansionPlugin
                    FriendlyMessageColor == other.FriendlyMessageColor &&
                    ImportantMessageColor == other.ImportantMessageColor &&
                    DefaultMessageColor == other.DefaultMessageColor;
+        }
+        public ExpansionChatColors Clone()
+        {
+            return new ExpansionChatColors()
+            {
+                SystemChatColor = this.SystemChatColor,
+                AdminChatColor = this.AdminChatColor,
+                GlobalChatColor = this.GlobalChatColor,
+                DirectChatColor = this.DirectChatColor,
+                TransportChatColor = this.TransportChatColor,
+                PartyChatColor = this.PartyChatColor,
+                TransmitterChatColor = this.TransmitterChatColor,
+                StatusMessageColor = this.StatusMessageColor,
+                ActionMessageColor = this.ActionMessageColor,
+                FriendlyMessageColor = this.FriendlyMessageColor,
+                ImportantMessageColor = this.ImportantMessageColor,
+                DefaultMessageColor = this.DefaultMessageColor
+            };
         }
 
     }

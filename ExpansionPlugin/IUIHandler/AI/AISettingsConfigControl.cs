@@ -1,5 +1,6 @@
 ﻿using Day2eEditor;
 using System.ComponentModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -33,7 +34,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAISettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -72,7 +73,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -97,51 +98,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionAISettings CloneData(ExpansionAISettings data)
-        {
-            return new ExpansionAISettings
-            {
-                m_Version = data.m_Version,
-                AccuracyMin = data.AccuracyMin,
-                AccuracyMax = data.AccuracyMax,
-                ThreatDistanceLimit = data.ThreatDistanceLimit,
-                NoiseInvestigationDistanceLimit = data.NoiseInvestigationDistanceLimit,
-                MaxFlankingDistance = data.MaxFlankingDistance,
-                EnableFlankingOutsideCombat = data.EnableFlankingOutsideCombat,
-                DamageMultiplier = data.DamageMultiplier,
-                DamageReceivedMultiplier = data.DamageReceivedMultiplier,
-                Vaulting = data.Vaulting,
-                SniperProneDistanceThreshold = data.SniperProneDistanceThreshold,
-                Manners = data.Manners,
-                MemeLevel = data.MemeLevel,
-                CanRecruitFriendly = data.CanRecruitFriendly,
-                CanRecruitGuards = data.CanRecruitGuards,
-                FormationScale = data.FormationScale,
-                LogAIHitBy = data.LogAIHitBy,
-                LogAIKilled = data.LogAIKilled,
-                EnableZombieVehicleAttackHandler = data.EnableZombieVehicleAttackHandler,
-                EnableZombieVehicleAttackPhysics = data.EnableZombieVehicleAttackPhysics,
-
-                Admins = new BindingList<string>(data.Admins.ToList()),
-                PreventClimb = new BindingList<string>(data.PreventClimb.ToList()),
-                PlayerFactions = new BindingList<string>(data.PlayerFactions.ToList()),
-
-                AILightEntries = new BindingList<AILightEntries>(
-                    data.AILightEntries.Select(e => new AILightEntries
-                    {
-                        Key = e.Key,
-                        Value = e.Value
-                    }).ToList()
-                )
-            };
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

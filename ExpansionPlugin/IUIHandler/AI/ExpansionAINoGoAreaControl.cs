@@ -39,7 +39,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAINoGoArea ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -58,7 +58,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -83,22 +83,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionAINoGoArea CloneData(ExpansionAINoGoArea data)
-        {
-            // TODO: Implement actual cloning logic
-            return new ExpansionAINoGoArea
-            {
-                Name = data.Name,
-                _Position = data._Position != null ? new Vec3(data._Position.X, data._Position.Y, data._Position.Z) : null,
-                Radius = data.Radius,
-                Height = data.Height,
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

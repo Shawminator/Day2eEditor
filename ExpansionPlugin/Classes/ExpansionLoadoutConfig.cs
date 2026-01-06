@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -193,6 +194,20 @@ namespace ExpansionPlugin
                    ConstructionPartsBuilt.SequenceEqual(other.ConstructionPartsBuilt) &&
                    Sets.SequenceEqual(other.Sets);
         }
+        public AILoadouts Clone()
+        {
+            return new AILoadouts()
+            {
+                ClassName = this.ClassName,
+                Include = this.Include,
+                Chance = this.Chance,
+                InventoryAttachments = new BindingList<Inventoryattachment>(this.InventoryAttachments.Select(x => x.Clone()).ToList()),
+                InventoryCargo = new BindingList<AILoadouts>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
+                ConstructionPartsBuilt = new BindingList<object>(this.ConstructionPartsBuilt.ToList()),
+                Sets = new BindingList<AILoadouts>(this.Sets.Select(x => x.Clone()).ToList()),
+                _path = this.FilePath
+            };
+        }
 
     }
 
@@ -206,7 +221,14 @@ namespace ExpansionPlugin
             if (obj is not Quantity other) return false;
             return Min == other.Min && Max == other.Max;
         }
-
+        public Quantity Clone()
+        {
+            return new Quantity()
+            {
+                Min = Min,
+                Max = Max
+            };
+        }
     }
 
     public class Health
@@ -227,7 +249,15 @@ namespace ExpansionPlugin
             if (obj is not Health other) return false;
             return Min == other.Min && Max == other.Max && Zone == other.Zone;
         }
-
+        public Health Clone()
+        {
+            return new Health()
+            {
+                Min = this.Min,
+                Max = this.Max,
+                Zone = this.Zone
+            };
+        }
     }
 
     public class Inventoryattachment
@@ -245,6 +275,14 @@ namespace ExpansionPlugin
             if (obj is not Inventoryattachment other) return false;
             return SlotName == other.SlotName &&
                    Items.SequenceEqual(other.Items);
+        }
+        public Inventoryattachment Clone()
+        {
+            return new Inventoryattachment()
+            {
+                SlotName = this.SlotName,
+                Items = new BindingList<AILoadouts>(this.Items.Select(x => x.Clone()).ToList())
+            };
         }
 
     }

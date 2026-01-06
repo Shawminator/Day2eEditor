@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -25,7 +26,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionDamageSystemSettings>(
@@ -70,7 +70,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -148,8 +147,6 @@ namespace ExpansionPlugin
                    _ExplosiveProjectiles.SequenceEqual(other._ExplosiveProjectiles);
                   
         }
-
-
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -186,7 +183,22 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-
+        public ExpansionDamageSystemSettings Clone()
+        {
+            return new ExpansionDamageSystemSettings()
+            {
+                m_Version = this.m_Version,
+                Enabled = this.Enabled,
+                CheckForBlockingObjects = this.CheckForBlockingObjects,
+                ExplosionTargets = this.ExplosionTargets != null
+                    ? new BindingList<string>(this.ExplosionTargets.ToList())
+                    : new BindingList<string>(),
+                _ExplosiveProjectiles = this._ExplosiveProjectiles != null
+                    ? new BindingList<ExplosiveProjectiles>(
+                        this._ExplosiveProjectiles.Select(ep => ep.Clone()).ToList())
+                    : new BindingList<ExplosiveProjectiles>()
+            };
+        }
     }
     public class ExplosiveProjectiles
     {
@@ -204,6 +216,15 @@ namespace ExpansionPlugin
 
             return explosion == other.explosion &&
                    ammo == other.ammo;
+        }
+        public ExplosiveProjectiles Clone()
+        {
+            // TODO: Implement actual cloning logic
+            return new ExplosiveProjectiles
+            {
+                explosion = this.explosion,
+                ammo = this.ammo
+            };
         }
     }
 }

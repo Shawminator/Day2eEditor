@@ -106,5 +106,13 @@ namespace ExpansionPlugin
             return m_Version == other.m_Version &&
                 Enabled == other.Enabled; 
         }
+        public MonitoringSettings Clone()
+        {
+            return new MonitoringSettings()
+            {
+                m_Version = this.m_Version,
+                Enabled = this.Enabled
+            };
+        }
     }
 }

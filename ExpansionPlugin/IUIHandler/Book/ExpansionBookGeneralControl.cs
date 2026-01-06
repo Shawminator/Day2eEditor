@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBookSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -61,7 +61,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -86,86 +86,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionBookSettings CloneData(ExpansionBookSettings data)
-        {
-            if (data == null)
-                return null;
-
-            return new ExpansionBookSettings
-            {
-                m_Version = data.m_Version,
-                EnableStatusTab = data.EnableStatusTab,
-                EnablePartyTab = data.EnablePartyTab,
-                EnableServerInfoTab = data.EnableServerInfoTab,
-                EnableServerRulesTab = data.EnableServerRulesTab,
-                EnableTerritoryTab = data.EnableTerritoryTab,
-                EnableBookMenu = data.EnableBookMenu,
-                CreateBookmarks = data.CreateBookmarks,
-                ShowHaBStats = data.ShowHaBStats,
-                ShowPlayerFaction = data.ShowPlayerFaction,
-                DisplayServerSettingsInServerInfoTab = data.DisplayServerSettingsInServerInfoTab,
-                EnableCraftingRecipesTab = data.EnableCraftingRecipesTab,
-
-                RuleCategories = new BindingList<ExpansionBookRuleCategory>(
-                    data.RuleCategories?.Select(rc => new ExpansionBookRuleCategory
-                    {
-                        CategoryName = rc.CategoryName,
-                        Rules = new BindingList<ExpansionBookRule>(
-                            rc.Rules?.Select(r => new ExpansionBookRule
-                            {
-                                RuleParagraph = r.RuleParagraph,
-                                RuleText = r.RuleText
-                            }).ToList() ?? new List<ExpansionBookRule>())
-                    }).ToList() ?? new List<ExpansionBookRuleCategory>()),
-
-                SettingCategories = new BindingList<ExpansionBookSettingCategory>(
-                    data.SettingCategories?.Select(sc => new ExpansionBookSettingCategory
-                    {
-                        CategoryName = sc.CategoryName,
-                        Settings = new BindingList<ExpansionBookSetting>(
-                            sc.Settings?.Select(s => new ExpansionBookSetting
-                            {
-                                SettingTitle = s.SettingTitle,
-                                SettingText = s.SettingText,
-                                SettingValue = s.SettingValue
-                            }).ToList() ?? new List<ExpansionBookSetting>())
-                    }).ToList() ?? new List<ExpansionBookSettingCategory>()),
-
-                Links = new BindingList<ExpansionBookLink>(
-                    data.Links?.Select(l => new ExpansionBookLink
-                    {
-                        Name = l.Name,
-                        URL = l.URL,
-                        IconName = l.IconName,
-                        IconColor = l.IconColor
-                    }).ToList() ?? new List<ExpansionBookLink>()),
-
-                Descriptions = new BindingList<ExpansionBookDescriptionCategory>(
-                    data.Descriptions?.Select(dc => new ExpansionBookDescriptionCategory
-                    {
-                        CategoryName = dc.CategoryName,
-                        Descriptions = new BindingList<ExpansionBookDescription>(
-                            dc.Descriptions?.Select(d => new ExpansionBookDescription
-                            {
-                                DescriptionText = d.DescriptionText,
-                                DTName = d.DTName
-                            }).ToList() ?? new List<ExpansionBookDescription>())
-                    }).ToList() ?? new List<ExpansionBookDescriptionCategory>()),
-
-                CraftingCategories = new BindingList<ExpansionBookCraftingCategory>(
-                    data.CraftingCategories?.Select(cc => new ExpansionBookCraftingCategory
-                    {
-                        CategoryName = cc.CategoryName,
-                        Results = new BindingList<string>(
-                            cc.Results?.ToList() ?? new List<string>())
-                    }).ToList() ?? new List<ExpansionBookCraftingCategory>())
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

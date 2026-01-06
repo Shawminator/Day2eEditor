@@ -527,7 +527,7 @@ namespace ExpansionPlugin
             {
                 m_Version = this.m_Version,
                 MarketSystemEnabled = this.MarketSystemEnabled,
-                NetworkCategories = CloneBindingList(this.NetworkCategories, s => s),
+                NetworkCategories = new BindingList<string>(this.NetworkCategories.Select(x => x.ToString()).ToList()),
                 CurrencyIcon = this.CurrencyIcon,
                 ATMSystemEnabled = this.ATMSystemEnabled,
                 MaxDepositMoney = this.MaxDepositMoney,
@@ -541,17 +541,17 @@ namespace ExpansionPlugin
                 MaxVehicleDistanceToTrader = this.MaxVehicleDistanceToTrader,
                 MaxLargeVehicleDistanceToTrader = this.MaxLargeVehicleDistanceToTrader,
 
-                LargeVehicles = CloneBindingList(this.LargeVehicles, s => s),
+                LargeVehicles = new BindingList<string>(this.LargeVehicles.Select(x => x.ToString()).ToList()),
 
-                LandSpawnPositions = CloneBindingList(this.LandSpawnPositions, CloneSpawnPosition),
-                AirSpawnPositions = CloneBindingList(this.AirSpawnPositions, CloneSpawnPosition),
-                WaterSpawnPositions = CloneBindingList(this.WaterSpawnPositions, CloneSpawnPosition),
-                TrainSpawnPositions = CloneBindingList(this.TrainSpawnPositions, CloneSpawnPosition),
+                LandSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>(this.LandSpawnPositions.Select(x => x.Clone()).ToList()),
+                AirSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>(this.AirSpawnPositions.Select(x => x.Clone()).ToList()),
+                WaterSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>(this.WaterSpawnPositions.Select(x => x.Clone()).ToList()),
+                TrainSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>(this.TrainSpawnPositions.Select(x => x.Clone()).ToList()),
 
                 MarketMenuColors = this.MarketMenuColors.Clone(),
 
-                Currencies = CloneBindingList(this.Currencies, s => s),
-                VehicleKeys = CloneBindingList(this.VehicleKeys, s => s),
+                Currencies = new BindingList<string>(this.Currencies.Select(x => x.ToString()).ToList()),
+                VehicleKeys = new BindingList<string>(this.VehicleKeys.Select(x => x.ToString()).ToList()),
                 MaxSZVehicleParkingTime = this.MaxSZVehicleParkingTime,
                 SZVehicleParkingTicketFine = this.SZVehicleParkingTicketFine,
                 SZVehicleParkingFineUseKey = this.SZVehicleParkingFineUseKey,
@@ -559,22 +559,6 @@ namespace ExpansionPlugin
                 DisableClientSellTransactionDetails = this.DisableClientSellTransactionDetails
 
             };
-        }
-        private static BindingList<T> CloneBindingList<T>(BindingList<T> source, Func<T, T> cloner)
-        {
-            if (source == null) return null;
-            var result = new BindingList<T>();
-            foreach (var item in source)
-            {
-                result.Add(item == null ? default : cloner(item));
-            }
-            return result;
-        }
-        private static ExpansionMarketSpawnPosition CloneSpawnPosition(ExpansionMarketSpawnPosition src)
-        {
-            if (src == null) return null;
-
-            return src.Clone();
         }
     }
     public class MarketMenuColours
@@ -709,43 +693,43 @@ namespace ExpansionPlugin
             return new MarketMenuColours()
             {
                 BaseColorVignette = this.BaseColorVignette,
-                       BaseColorHeaders = this.BaseColorHeaders,
-                       BaseColorLabels = this.BaseColorLabels,
-                       BaseColorText = this.BaseColorText,
-                       BaseColorCheckboxes = this.BaseColorCheckboxes,
-                       BaseColorInfoSectionBackground = this.BaseColorInfoSectionBackground,
-                       BaseColorTooltipsHeaders = this.BaseColorTooltipsHeaders,
-                       BaseColorTooltipsBackground = this.BaseColorTooltipsBackground,
-                       ColorDecreaseQuantityButton = this.ColorDecreaseQuantityButton,
-                       ColorDecreaseQuantityIcon = this.ColorDecreaseQuantityIcon,
-                       ColorSetQuantityButton = this.ColorSetQuantityButton,
-                       ColorIncreaseQuantityButton = this.ColorIncreaseQuantityButton,
-                       ColorIncreaseQuantityIcon = this.ColorIncreaseQuantityIcon,
-                       ColorSellPanel = this.ColorSellPanel,
-                       ColorSellButton = this.ColorSellButton,
-                       ColorBuyPanel = this.ColorBuyPanel,
-                       ColorBuyButton = this.ColorBuyButton,
-                       ColorMarketIcon = this.ColorMarketIcon,
-                       ColorFilterOptionsButton = this.ColorFilterOptionsButton,
-                       ColorFilterOptionsIcon = this.ColorFilterOptionsIcon,
-                       ColorSearchFilterButton = this.ColorSearchFilterButton,
-                       ColorCategoryButton = this.ColorCategoryButton,
-                       ColorCategoryCollapseIcon = this.ColorCategoryCollapseIcon,
-                       ColorCurrencyDenominationText = this.ColorCurrencyDenominationText,
-                       ColorItemButton = this.ColorItemButton,
-                       ColorItemInfoIcon = this.ColorItemInfoIcon,
-                       ColorItemInfoTitle = this.ColorItemInfoTitle,
-                       ColorItemInfoHasContainerItems = this.ColorItemInfoHasContainerItems,
-                       ColorItemInfoHasAttachments = this.ColorItemInfoHasAttachments,
-                       ColorItemInfoHasBullets = this.ColorItemInfoHasBullets,
-                       ColorItemInfoIsAttachment = this.ColorItemInfoIsAttachment,
-                       ColorItemInfoIsEquiped = this.ColorItemInfoIsEquiped,
-                       ColorItemInfoAttachments = this.ColorItemInfoAttachments,
-                       ColorToggleCategoriesText = this.ColorToggleCategoriesText,
-                       ColorCategoryCorners = this.ColorCategoryCorners,
-                       ColorCategoryBackground = this.ColorCategoryBackground,
-                       ColorPlayerStock = this.ColorPlayerStock,
-                       ColorRequirementsNotMet = this.ColorRequirementsNotMet
+                BaseColorHeaders = this.BaseColorHeaders,
+                BaseColorLabels = this.BaseColorLabels,
+                BaseColorText = this.BaseColorText,
+                BaseColorCheckboxes = this.BaseColorCheckboxes,
+                BaseColorInfoSectionBackground = this.BaseColorInfoSectionBackground,
+                BaseColorTooltipsHeaders = this.BaseColorTooltipsHeaders,
+                BaseColorTooltipsBackground = this.BaseColorTooltipsBackground,
+                ColorDecreaseQuantityButton = this.ColorDecreaseQuantityButton,
+                ColorDecreaseQuantityIcon = this.ColorDecreaseQuantityIcon,
+                ColorSetQuantityButton = this.ColorSetQuantityButton,
+                ColorIncreaseQuantityButton = this.ColorIncreaseQuantityButton,
+                ColorIncreaseQuantityIcon = this.ColorIncreaseQuantityIcon,
+                ColorSellPanel = this.ColorSellPanel,
+                ColorSellButton = this.ColorSellButton,
+                ColorBuyPanel = this.ColorBuyPanel,
+                ColorBuyButton = this.ColorBuyButton,
+                ColorMarketIcon = this.ColorMarketIcon,
+                ColorFilterOptionsButton = this.ColorFilterOptionsButton,
+                ColorFilterOptionsIcon = this.ColorFilterOptionsIcon,
+                ColorSearchFilterButton = this.ColorSearchFilterButton,
+                ColorCategoryButton = this.ColorCategoryButton,
+                ColorCategoryCollapseIcon = this.ColorCategoryCollapseIcon,
+                ColorCurrencyDenominationText = this.ColorCurrencyDenominationText,
+                ColorItemButton = this.ColorItemButton,
+                ColorItemInfoIcon = this.ColorItemInfoIcon,
+                ColorItemInfoTitle = this.ColorItemInfoTitle,
+                ColorItemInfoHasContainerItems = this.ColorItemInfoHasContainerItems,
+                ColorItemInfoHasAttachments = this.ColorItemInfoHasAttachments,
+                ColorItemInfoHasBullets = this.ColorItemInfoHasBullets,
+                ColorItemInfoIsAttachment = this.ColorItemInfoIsAttachment,
+                ColorItemInfoIsEquiped = this.ColorItemInfoIsEquiped,
+                ColorItemInfoAttachments = this.ColorItemInfoAttachments,
+                ColorToggleCategoriesText = this.ColorToggleCategoriesText,
+                ColorCategoryCorners = this.ColorCategoryCorners,
+                ColorCategoryBackground = this.ColorCategoryBackground,
+                ColorPlayerStock = this.ColorPlayerStock,
+                ColorRequirementsNotMet = this.ColorRequirementsNotMet
             };
         }
     }

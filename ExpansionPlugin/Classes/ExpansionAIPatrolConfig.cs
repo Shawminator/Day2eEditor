@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -379,6 +380,38 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+        public ExpansionAIPatrolSettings Clone()
+        {
+            return new ExpansionAIPatrolSettings()
+            {
+                m_Version = this.m_Version,
+                Enabled = this.Enabled,
+                FormationScale = this.FormationScale,
+                DespawnTime = this.DespawnTime,
+                RespawnTime = this.RespawnTime,
+                MinDistRadius = this.MinDistRadius,
+                MaxDistRadius = this.MaxDistRadius,
+                DespawnRadius = this.DespawnRadius,
+                AccuracyMin = this.AccuracyMin,
+                AccuracyMax = this.AccuracyMax,
+                ThreatDistanceLimit = this.ThreatDistanceLimit,
+                NoiseInvestigationDistanceLimit = this.NoiseInvestigationDistanceLimit,
+                MaxFlankingDistance = this.MaxFlankingDistance,
+                EnableFlankingOutsideCombat = this.EnableFlankingOutsideCombat,
+                DamageMultiplier = this.DamageMultiplier,
+                DamageReceivedMultiplier = this.DamageReceivedMultiplier,
+
+                _LoadBalancingCategories = this._LoadBalancingCategories != null
+                    ? new BindingList<Loadbalancingcategorie>(this._LoadBalancingCategories.Select(cat => cat.Clone()).ToList())
+                    : null,
+
+                Patrols = this.Patrols != null
+                    ? new BindingList<ExpansionAIPatrol>(
+                        this.Patrols.Select(p => p.Clone()).ToList()
+                    )
+                    : null
+            };
+        }
     }
     public class Loadbalancingcategories
     {
@@ -400,6 +433,15 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+        public Loadbalancingcategories Clone()
+        {
+            return new Loadbalancingcategories()
+            {
+                MinPlayers = this.MinPlayers,
+                MaxPlayers = this.MaxPlayers,
+                MaxPatrols = this.MaxPatrols
+            };
+        }
 
     }
     public class Loadbalancingcategorie
@@ -417,6 +459,14 @@ namespace ExpansionPlugin
 
             return name == other.name &&
                    Categorieslist.SequenceEqual(other.Categorieslist);
+        }
+        public Loadbalancingcategorie Clone()
+        {
+            return new Loadbalancingcategorie()
+            {
+                name = this.name,
+                Categorieslist = new BindingList<Loadbalancingcategories>(this.Categorieslist.Select(c => c.Clone()).ToList())
+            };
         }
 
     }
@@ -520,7 +570,6 @@ namespace ExpansionPlugin
         {
             return Name;
         }
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionAIPatrol other) return false;
@@ -568,7 +617,53 @@ namespace ExpansionPlugin
                    WaypointInterpolation == other.WaypointInterpolation &&
                    UseRandomWaypointAsStartPoint == other.UseRandomWaypointAsStartPoint;
         }
-
+        public ExpansionAIPatrol Clone()
+        {
+            return new ExpansionAIPatrol()
+            {
+                Name = this.Name,
+                Persist = this.Persist,
+                Faction = this.Faction,
+                Formation = this.Formation,
+                FormationScale = this.FormationScale,
+                FormationLooseness = this.FormationLooseness,
+                Loadout = this.Loadout,
+                Units = new BindingList<string>(this.Units.ToList()),
+                NumberOfAI = this.NumberOfAI,
+                Behaviour = this.Behaviour,
+                LootingBehaviour = this.LootingBehaviour,
+                Speed = this.Speed,
+                UnderThreatSpeed = this.UnderThreatSpeed,
+                DefaultStance = this.DefaultStance,
+                DefaultLookAngle = this.DefaultLookAngle,
+                CanBeLooted = this.CanBeLooted,
+                LootDropOnDeath = this.LootDropOnDeath,
+                UnlimitedReload = this.UnlimitedReload,
+                SniperProneDistanceThreshold = this.SniperProneDistanceThreshold,
+                AccuracyMin = this.AccuracyMin,
+                AccuracyMax = this.AccuracyMax,
+                ThreatDistanceLimit = this.ThreatDistanceLimit,
+                NoiseInvestigationDistanceLimit = this.NoiseInvestigationDistanceLimit,
+                MaxFlankingDistance = this.MaxFlankingDistance,
+                EnableFlankingOutsideCombat = this.EnableFlankingOutsideCombat,
+                DamageMultiplier = this.DamageMultiplier,
+                DamageReceivedMultiplier = this.DamageReceivedMultiplier,
+                CanBeTriggeredByAI = this.CanBeTriggeredByAI,
+                MinDistRadius = this.MinDistRadius,
+                MaxDistRadius = this.MaxDistRadius,
+                DespawnRadius = this.DespawnRadius,
+                MinSpreadRadius = this.MinSpreadRadius,
+                MaxSpreadRadius = this.MaxSpreadRadius,
+                Chance = this.Chance,
+                DespawnTime = this.DespawnTime,
+                RespawnTime = this.RespawnTime,
+                LoadBalancingCategory = this.LoadBalancingCategory,
+                ObjectClassName = this.ObjectClassName,
+                WaypointInterpolation = this.WaypointInterpolation,
+                UseRandomWaypointAsStartPoint = this.UseRandomWaypointAsStartPoint,
+                _waypoints = new BindingList<Vec3>(this._waypoints.Select(wp => new Vec3(wp.X, wp.Y, wp.Z)).ToList())
+            };
+        }
         public List<string> FixMissingOrInvalidFields(int i)
         {
             var fixes = new List<string>();
@@ -616,6 +711,5 @@ namespace ExpansionPlugin
             if (Waypoints == null ) { Waypoints = new BindingList<float[]>(); fixes.Add("Initialized empty waypoints list"); }
             return fixes;
         }
-
     }
 }

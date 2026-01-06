@@ -36,7 +36,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as Loadbalancingcategories ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -52,7 +52,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -77,21 +77,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Loadbalancingcategories CloneData(Loadbalancingcategories data)
-        {
-            // TODO: Implement actual cloning logic
-            return new Loadbalancingcategories
-            {
-                MinPlayers = data.MinPlayers,
-                MaxPlayers = data.MaxPlayers,
-                MaxPatrols = data.MaxPatrols,
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

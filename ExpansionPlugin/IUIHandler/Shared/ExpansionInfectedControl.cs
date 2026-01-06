@@ -111,14 +111,7 @@ namespace ExpansionPlugin
 
         private BindingList<string> CloneData(BindingList<string> data)
         {
-            var clonedList = new BindingList<string>();
-
-            foreach (var item in data)
-            {
-                clonedList.Add(item);
-            }
-
-            return clonedList;
+            return new BindingList<string>(data.ToList());
         }
 
 

@@ -41,9 +41,9 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBookLink ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
-            
-            
+            _originalData = _data.Clone();
+
+
 
             _suppressEvents = true;
             BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
@@ -62,7 +62,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -87,24 +87,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionBookLink CloneData(ExpansionBookLink data)
-        {
-            if (data == null)
-                return null;
-
-            return new ExpansionBookLink
-            {
-                Name = data.Name,
-                URL = data.URL,
-                IconName = data.IconName,
-                IconColor = data.IconColor
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

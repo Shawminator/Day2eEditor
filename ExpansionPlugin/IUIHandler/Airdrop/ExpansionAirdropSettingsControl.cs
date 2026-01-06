@@ -32,7 +32,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAirdropSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -62,7 +62,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -87,37 +87,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-
-        private ExpansionAirdropSettings CloneData(ExpansionAirdropSettings data)
-        {
-            return new ExpansionAirdropSettings
-            {
-                m_Version = data.m_Version,
-                ServerMarkerOnDropLocation = data.ServerMarkerOnDropLocation,
-                Server3DMarkerOnDropLocation = data.Server3DMarkerOnDropLocation,
-                ShowAirdropTypeOnMarker = data.ShowAirdropTypeOnMarker,
-                HideCargoWhileParachuteIsDeployed = data.HideCargoWhileParachuteIsDeployed,
-                HeightIsRelativeToGroundLevel = data.HeightIsRelativeToGroundLevel,
-                Height = data.Height,
-                DropZoneHeight = data.DropZoneHeight,
-                FollowTerrainFraction = data.FollowTerrainFraction,
-                Speed = data.Speed,
-                DropZoneSpeed = data.DropZoneSpeed,
-                Radius = data.Radius,
-                InfectedSpawnRadius = data.InfectedSpawnRadius,
-                InfectedSpawnInterval = data.InfectedSpawnInterval,
-                ItemCount = data.ItemCount,
-                AirdropPlaneClassName = data.AirdropPlaneClassName,
-                DropZoneProximityDistance = data.DropZoneProximityDistance,
-                ExplodeAirVehiclesOnCollision = data.ExplodeAirVehiclesOnCollision
-            };
-        }
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

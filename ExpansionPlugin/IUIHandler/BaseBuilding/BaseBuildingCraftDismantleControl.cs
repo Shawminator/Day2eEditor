@@ -36,7 +36,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBaseBuildingSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             
             
@@ -56,7 +56,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -81,56 +81,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private ExpansionBaseBuildingSettings CloneData(ExpansionBaseBuildingSettings data)
-        {
-            return new ExpansionBaseBuildingSettings
-            {
-                m_Version = data.m_Version,
-                CanBuildAnywhere = data.CanBuildAnywhere,
-                AllowBuildingWithoutATerritory = data.AllowBuildingWithoutATerritory,
-                DeployableOutsideATerritory = new BindingList<string>(data.DeployableOutsideATerritory.ToList()),
-                DeployableInsideAEnemyTerritory = new BindingList<string>(data.DeployableInsideAEnemyTerritory.ToList()),
-                CanCraftVanillaBasebuilding = data.CanCraftVanillaBasebuilding,
-                CanCraftExpansionBasebuilding = data.CanCraftExpansionBasebuilding,
-                DestroyFlagOnDismantle = data.DestroyFlagOnDismantle,
-                DismantleOutsideTerritory = data.DismantleOutsideTerritory,
-                DismantleInsideTerritory = data.DismantleInsideTerritory,
-                DismantleAnywhere = data.DismantleAnywhere,
-                CodelockActionsAnywhere = data.CodelockActionsAnywhere,
-                CodeLockLength = data.CodeLockLength,
-                DoDamageWhenEnterWrongCodeLock = data.DoDamageWhenEnterWrongCodeLock,
-                DamageWhenEnterWrongCodeLock = data.DamageWhenEnterWrongCodeLock,
-                RememberCode = data.RememberCode,
-                CanCraftTerritoryFlagKit = data.CanCraftTerritoryFlagKit,
-                SimpleTerritory = data.SimpleTerritory,
-                AutomaticFlagOnCreation = data.AutomaticFlagOnCreation,
-                GetTerritoryFlagKitAfterBuild = data.GetTerritoryFlagKitAfterBuild,
-                BuildZoneRequiredCustomMessage = data.BuildZoneRequiredCustomMessage,
-                ZonesAreNoBuildZones = data.ZonesAreNoBuildZones,
-                CodelockAttachMode = data.CodelockAttachMode,
-                DismantleFlagMode = data.DismantleFlagMode,
-                FlagMenuMode = data.FlagMenuMode,
-                PreventItemAccessThroughObstructingItems = data.PreventItemAccessThroughObstructingItems,
-                EnableVirtualStorage = data.EnableVirtualStorage,
-                VirtualStorageExcludedContainers = new BindingList<string>(data.VirtualStorageExcludedContainers.ToList()),
-                Zones = new BindingList<ExpansionBuildNoBuildZone>(
-                    data.Zones.Select(zone => new ExpansionBuildNoBuildZone
-                    {
-                        Name = zone.Name,
-                        Center = (float[])zone.Center.Clone(),
-                        Radius = zone.Radius,
-                        Items = new BindingList<string>(zone.Items.ToList()),
-                        IsWhitelist = zone.IsWhitelist,
-                        CustomMessage = zone.CustomMessage
-                    }).ToList()
-                )
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>

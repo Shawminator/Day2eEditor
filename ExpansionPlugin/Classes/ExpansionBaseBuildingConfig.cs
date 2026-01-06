@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -25,7 +26,6 @@ namespace ExpansionPlugin
         {
             _path = path;
         }
-
         public void Load()
         {
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionBaseBuildingSettings>(
@@ -69,7 +69,6 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-
         public bool needToSave()
         {
             return isDirty;
@@ -256,8 +255,6 @@ namespace ExpansionPlugin
             };
 
         }
-
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionBaseBuildingSettings other)
@@ -479,8 +476,43 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-
-
+        public ExpansionBaseBuildingSettings Clone()
+        {
+            return new ExpansionBaseBuildingSettings()
+            {
+                m_Version = this.m_Version,
+                CanBuildAnywhere = this.CanBuildAnywhere,
+                AllowBuildingWithoutATerritory = this.AllowBuildingWithoutATerritory,
+                DeployableOutsideATerritory = new BindingList<string>(this.DeployableOutsideATerritory.ToList()),
+                DeployableInsideAEnemyTerritory = new BindingList<string>(this.DeployableInsideAEnemyTerritory.ToList()),
+                CanCraftVanillaBasebuilding = this.CanCraftVanillaBasebuilding,
+                CanCraftExpansionBasebuilding = this.CanCraftExpansionBasebuilding,
+                DestroyFlagOnDismantle = this.DestroyFlagOnDismantle,
+                DismantleOutsideTerritory = this.DismantleOutsideTerritory,
+                DismantleInsideTerritory = this.DismantleInsideTerritory,
+                DismantleAnywhere = this.DismantleAnywhere,
+                CodelockActionsAnywhere = this.CodelockActionsAnywhere,
+                CodeLockLength = this.CodeLockLength,
+                DoDamageWhenEnterWrongCodeLock = this.DoDamageWhenEnterWrongCodeLock,
+                DamageWhenEnterWrongCodeLock = this.DamageWhenEnterWrongCodeLock,
+                RememberCode = this.RememberCode,
+                CanCraftTerritoryFlagKit = this.CanCraftTerritoryFlagKit,
+                SimpleTerritory = this.SimpleTerritory,
+                AutomaticFlagOnCreation = this.AutomaticFlagOnCreation,
+                GetTerritoryFlagKitAfterBuild = this.GetTerritoryFlagKitAfterBuild,
+                BuildZoneRequiredCustomMessage = this.BuildZoneRequiredCustomMessage,
+                ZonesAreNoBuildZones = this.ZonesAreNoBuildZones,
+                CodelockAttachMode = this.CodelockAttachMode,
+                DismantleFlagMode = this.DismantleFlagMode,
+                FlagMenuMode = this.FlagMenuMode,
+                PreventItemAccessThroughObstructingItems = this.PreventItemAccessThroughObstructingItems,
+                EnableVirtualStorage = this.EnableVirtualStorage,
+                VirtualStorageExcludedContainers = new BindingList<string>(this.VirtualStorageExcludedContainers.ToList()),
+                Zones = new BindingList<ExpansionBuildNoBuildZone>(
+                    this.Zones.Select(zone => zone.Clone()).ToList()
+                )
+            };
+        }
     }
     public class ExpansionBuildNoBuildZone
     {
@@ -495,13 +527,10 @@ namespace ExpansionPlugin
         {
             Items = new BindingList<string>();
         }
-
         public override string ToString()
         {
             return Name;
         }
-
-
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionBuildNoBuildZone other)
@@ -514,6 +543,19 @@ namespace ExpansionPlugin
                    Center.SequenceEqual(other.Center) &&
                    Items.SequenceEqual(other.Items);
         }
+        public ExpansionBuildNoBuildZone Clone()
+        {
 
+            return new ExpansionBuildNoBuildZone
+            {
+                Name = this.Name,
+                Center = (float[])this.Center.Clone(),
+                Radius = this.Radius,
+                Items = new BindingList<string>(this.Items.ToList()),
+                IsWhitelist = this.IsWhitelist,
+                CustomMessage = this.CustomMessage
+            };
+
+        }
     }
 }

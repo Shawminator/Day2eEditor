@@ -229,19 +229,8 @@ namespace ExpansionPlugin
                 Enabled = this.Enabled,
                 UTC = this.UTC,
                 UseMissionTime = this.UseMissionTime,
-                Notifications = CloneNotifications(this.Notifications)
+                Notifications = new BindingList<ExpansionNotificationSchedule>(this.Notifications.Select(p => p.Clone()).ToList())
             };
-        }
-        private static BindingList<ExpansionNotificationSchedule>? CloneNotifications(BindingList<ExpansionNotificationSchedule>? source)
-        {
-            var list = new BindingList<ExpansionNotificationSchedule>();
-            if (source == null) return list;
-            
-            foreach (var marker in source)
-            {
-                list.Add(marker.Clone());
-            }
-            return list;
         }
     }
     public class ExpansionNotificationSchedule

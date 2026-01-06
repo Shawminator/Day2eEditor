@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -204,7 +205,6 @@ namespace ExpansionPlugin
         {
             return Name;
         }
-
         public override bool Equals(object? obj)
         {
             if (obj is not ExpansionAIRoamingLocation other)
@@ -215,6 +215,17 @@ namespace ExpansionPlugin
                    Radius == other.Radius &&
                    Type == other.Type &&
                    Enabled == other.Enabled;
+        }
+        public ExpansionAIRoamingLocation Clone()
+        {
+            return new ExpansionAIRoamingLocation()
+            {
+                Name = this.Name,
+                Radius = this.Radius,
+                Type = this.Type,
+                Enabled = this.Enabled,
+                _Position = this._Position != null ? new Vec3(this._Position.X, this._Position.Y, this._Position.Z) : null
+            };
         }
 
     }
@@ -242,7 +253,15 @@ namespace ExpansionPlugin
                    Radius == other.Radius &&
                    Height == other.Height;
         }
-
-
+        public ExpansionAINoGoArea Clone()
+        {
+            return new ExpansionAINoGoArea()
+            {
+                Name = this.Name,
+                _Position = this._Position != null ? new Vec3(this._Position.X, this._Position.Y, this._Position.Z) : null,
+                Radius = this.Radius,
+                Height = this.Height,
+            };
+        }
     }
 }

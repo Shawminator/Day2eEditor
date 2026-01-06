@@ -37,7 +37,7 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as Inventoryattachment ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            _originalData = _data.Clone();
 
             _suppressEvents = true;
             ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\VanillaSlotNames.txt").ToList();
@@ -54,7 +54,7 @@ namespace ExpansionPlugin
         /// </summary>
         public void ApplyChanges()
         {
-            _originalData = CloneData(_data);
+            _originalData = _data.Clone();
         }
 
         /// <summary>
@@ -79,57 +79,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Inventoryattachment CloneData(Inventoryattachment data)
-        {
-            return new Inventoryattachment
-            {
-                SlotName = data.SlotName,
-                Items = new BindingList<AILoadouts>(
-                        data.Items.Select(item => CloneLoadout(item)).ToList()
-                    )
-            };
-        }
-        private AILoadouts CloneLoadout(AILoadouts original)
-        {
-            return new AILoadouts
-            {
-                ClassName = original.ClassName,
-                Include = original.Include,
-                Chance = original.Chance,
-                Quantity = new Quantity
-                {
-                    Min = original.Quantity.Min,
-                    Max = original.Quantity.Max
-                },
-                Health = new BindingList<Health>(
-                    original.Health.Select(h => new Health
-                    {
-                        Min = h.Min,
-                        Max = h.Max,
-                        Zone = h.Zone
-                    }).ToList()
-                ),
-                InventoryAttachments = new BindingList<Inventoryattachment>(
-                    original.InventoryAttachments.Select(CloneData).ToList()
-                ),
-                InventoryCargo = new BindingList<AILoadouts>(
-                    original.InventoryCargo.Select(CloneLoadout).ToList()
-                ),
-                ConstructionPartsBuilt = new BindingList<object>(
-                    original.ConstructionPartsBuilt.ToList()
-                ),
-                Sets = new BindingList<AILoadouts>(
-                    original.Sets.Select(CloneLoadout).ToList()
-                ),
-                isDirty = original.isDirty,
-                ToDelete = original.ToDelete
-            };
-        }
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
