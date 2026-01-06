@@ -34,7 +34,7 @@ namespace ExpansionPlugin
         public ExpansionNameTagsConfig ExpansionNameTagsConfig { get; set; }
         public ExpansionNotificationSchedulerConfig ExpansionNotificationSchedulerConfig { get; set; }
         public ExpansionNotificationConfig ExpansionNotificationConfig { get; set; }
-        //public ExpansionPartySettings PartySettings { get; set; }
+        public ExpansionPartyConfig ExpansionPartyConfig { get; set; }
         //public ExpansionPersonalStorageList PersonalStorageList { get; set; }
         //public ExpansionPersonalStorageNewSettings PersonalStorageSettingsNew { get; set; }
         //public ExpansionPersonalStorageSettings PersonalStorageSettings { get; set; }
@@ -71,6 +71,7 @@ namespace ExpansionPlugin
             _paths["NameTagsSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NameTagsSettings.json");
             _paths["NotificationSchedulerSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NotificationSchedulerSettings.json");
             _paths["NotificationSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NotificationSettings.json");
+            _paths["PartySettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "PartySettings.json");
 
             // settings files in missions files
             _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
@@ -152,6 +153,9 @@ namespace ExpansionPlugin
             ExpansionNotificationConfig = new ExpansionNotificationConfig(_paths["NotificationSettings"]);
             LoadConfigWithErrorReport("NotificationSettings", ExpansionNotificationConfig);
 
+            ExpansionPartyConfig = new ExpansionPartyConfig(_paths["PartySettings"]);
+            LoadConfigWithErrorReport("PartySettings", ExpansionPartyConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -192,7 +196,8 @@ namespace ExpansionPlugin
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,
                 ExpansionNotificationSchedulerConfig,
-                ExpansionNotificationConfig
+                ExpansionNotificationConfig,
+                ExpansionPartyConfig
 
             };
 
@@ -234,7 +239,8 @@ namespace ExpansionPlugin
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,
                 ExpansionNotificationSchedulerConfig,
-                ExpansionNotificationConfig
+                ExpansionNotificationConfig,
+                ExpansionPartyConfig
             };
             foreach (var obj in configs)
             {

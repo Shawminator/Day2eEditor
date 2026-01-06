@@ -67,7 +67,7 @@ namespace ExpansionPlugin
             if (isDirty)
             {
                 Data.CreateDictionary();
-                AppServices.GetRequired<FileService>().SaveJson(_path, this);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
@@ -213,6 +213,8 @@ namespace ExpansionPlugin
                    LogAIKilled == other.LogAIKilled &&
                    EnableZombieVehicleAttackHandler == other.EnableZombieVehicleAttackHandler &&
                    EnableZombieVehicleAttackPhysics == other.EnableZombieVehicleAttackPhysics &&
+                   OverrideClientWeaponFiring == other.OverrideClientWeaponFiring &&
+                   RecreateWeaponNetworkRepresentation == other.RecreateWeaponNetworkRepresentation &&
                    SequenceEqual(Admins, other.Admins) &&
                    SequenceEqual(PreventClimb, other.PreventClimb) &&
                    SequenceEqual(PlayerFactions, other.PlayerFactions) &&
@@ -233,15 +235,20 @@ namespace ExpansionPlugin
                 DamageReceivedMultiplier = this.DamageReceivedMultiplier,
                 Vaulting = this.Vaulting,
                 SniperProneDistanceThreshold = this.SniperProneDistanceThreshold,
+                AggressionTimeout = this.AggressionTimeout,
+                GuardAggressionTimeout = this.GuardAggressionTimeout,
                 Manners = this.Manners,
                 MemeLevel = this.MemeLevel,
                 CanRecruitFriendly = this.CanRecruitFriendly,
                 CanRecruitGuards = this.CanRecruitGuards,
+                MaxRecruitableAI = this.MaxRecruitableAI,
                 FormationScale = this.FormationScale,
                 LogAIHitBy = this.LogAIHitBy,
                 LogAIKilled = this.LogAIKilled,
                 EnableZombieVehicleAttackHandler = this.EnableZombieVehicleAttackHandler,
                 EnableZombieVehicleAttackPhysics = this.EnableZombieVehicleAttackPhysics,
+                OverrideClientWeaponFiring = this.OverrideClientWeaponFiring,
+                RecreateWeaponNetworkRepresentation = this.RecreateWeaponNetworkRepresentation,
                 Admins = new BindingList<string>(this.Admins.ToList()),
                 PreventClimb = new BindingList<string>(this.PreventClimb.ToList()),
                 PlayerFactions = new BindingList<string>(this.PlayerFactions.ToList()),

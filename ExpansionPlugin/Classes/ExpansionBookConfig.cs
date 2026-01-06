@@ -789,8 +789,8 @@ namespace ExpansionPlugin
         {
             return new ExpansionBookRule()
             {
-                RuleParagraph = data.RuleParagraph,
-                RuleText = data.RuleText
+                RuleParagraph = this.RuleParagraph,
+                RuleText = this.RuleText
             };
         }
 

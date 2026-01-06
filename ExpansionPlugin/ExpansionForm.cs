@@ -1042,7 +1042,7 @@ namespace ExpansionPlugin
             {
                 Tag = "AIrootNode"
             };
-
+            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
             AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLoadoutConfig, CreateExpansionLoadoutConfigNodes);
             AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLootDropConfig, CrateLootDropConfigNodes);
             AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
@@ -1053,12 +1053,19 @@ namespace ExpansionPlugin
             {
                 Tag = "MarketrootNode"
             };
+
+            AddFileToTree(MarketrootNode, "", "", _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
+
             rootNode.Nodes.Add(MarketrootNode);
 
             TreeNode MissionrootNode = new TreeNode("Missions")
             {
                 Tag = "MissionsrootNode"
             };
+            AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
+            AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
+           
+
             rootNode.Nodes.Add(MissionrootNode);
 
             TreeNode p2pmarketrootNode = new TreeNode("P2P Market")
@@ -1078,8 +1085,7 @@ namespace ExpansionPlugin
             {
                 Tag = "SettingsNode",
             };
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
+            
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionChatConfig, CreateExpansionChatConfigConfigNodes);
@@ -1090,13 +1096,12 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMapConfig, CreateExpansionMapConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMonitoringConfig, CreateExpansionMonitoringConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNameTagsConfig, CreateExpansionNameTagsConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig);
-            
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig); 
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPartyConfig, CreateExpansionPartyConfigConfig);
+
             rootNode.Nodes.Add(SettingsNode);
 
             TreeNode QuestsrootNode = new TreeNode("Quests")
@@ -2065,6 +2070,23 @@ namespace ExpansionPlugin
             return EconomyRootNode;
         }
         private static void CreateExpansionNotificationConfigNodes(ExpansionNotificationConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //Party
+        private TreeNode CreateExpansionPartyConfigConfig(ExpansionPartyConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionPartyConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionPartyConfigNodes(ExpansionPartyConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
             {
