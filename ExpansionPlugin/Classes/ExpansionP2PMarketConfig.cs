@@ -1,0 +1,614 @@
+﻿using Day2eEditor;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace ExpansionPlugin
+{
+    public class ExpansionP2PMarketConfig : IConfigLoader
+    {
+        private readonly string _path;
+        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
+        public string FilePath => _path;
+        public ExpasnionP2PMarketSettings Data { get; private set; }
+        public bool HasErrors { get; private set; }
+        public List<string> Errors { get; private set; } = new List<string>();
+        public bool isDirty { get; set; }
+        public const int CurrentVersion = 8;
+
+        public ExpansionP2PMarketConfig(string path)
+        {
+            _path = path;
+        }
+        public void Load()
+        {
+            Data = null;
+            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpasnionP2PMarketSettings>(
+                _path,
+                createNew: () => new ExpasnionP2PMarketSettings(CurrentVersion),
+                onAfterLoad: cfg => { },
+                onError: ex =>
+                {
+                    HasErrors = true;
+                    Console.WriteLine(
+                        "Error in " + Path.GetFileName(_path) + "\n" +
+                        ex.Message + "\n" +
+                        ex.InnerException?.Message + "\n"
+                    );
+                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
+                        ex.Message + "\n" +
+                        ex.InnerException?.Message);
+                },
+                configName: "ExpasnionP2PMarket"
+            );
+            var missingFields = Data.FixMissingOrInvalidFields();
+            if (missingFields.Any())
+            {
+                Console.WriteLine("Validation issues in " + FileName + ":");
+                foreach (var issue in missingFields)
+                {
+                    Console.WriteLine("- " + issue);
+                }
+                isDirty = true;
+            }
+        }
+        public IEnumerable<string> Save()
+        {
+            if (isDirty)
+            {
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                isDirty = false;
+                return new[] { Path.GetFileName(_path) };
+            }
+
+            return Array.Empty<string>();
+        }
+        public bool needToSave()
+        {
+            return isDirty;
+        }
+    }
+    public class ExpasnionP2PMarketSettings
+    {
+        public int m_Version { get; set; }
+        public int? Enabled { get; set; }
+        public int? MaxListingTime { get; set; }
+        public int? MaxListings { get; set; }
+        public int? ListingOwnerDiscountPercent { get; set; }
+        public int? ListingPricePercent { get; set; }
+        public BindingList<string> ExcludedClassNames { get; set; }
+        public BindingList<ExpansionP2PMarketMenuCategory> MenuCategories { get; set; }
+        public int? SalesDepositTime { get; set; }
+        public int? DisallowUnpersisted { get; set; }
+
+        public ExpasnionP2PMarketSettings()
+        {
+
+        }
+        public ExpasnionP2PMarketSettings(int CurrentVersion)
+        {
+            m_Version = CurrentVersion;
+
+            Enabled = 1;
+            MaxListingTime = 691200; //! 8 days by default.
+            MaxListings = 20; //! Max. listings a player can create.
+            ListingOwnerDiscountPercent = 70; //! 70% discount on the listed item price for the item owner.
+            ListingPricePercent = 30; //! 30% of the given listing price need to be paied to list a item.
+            SalesDepositTime = 691200; //! 8 days by default.
+            DisallowUnpersisted = 0;
+
+            DefaultMenuCategories();
+
+            DefaultExcludedClassNames();
+        }
+        public void DefaultMenuCategories()
+        {
+            //! Ammo
+            ExpansionP2PMarketMenuCategory cat_Ammo = new ExpansionP2PMarketMenuCategory();
+            cat_Ammo.SetDisplayName("Ammo");
+            cat_Ammo.SetIconPath("set:dayz_inventory image:bullets");
+            cat_Ammo.AddIncluded("Ammunition_Base");
+            cat_Ammo.AddIncluded("Box_Base");
+            MenuCategories.Add(cat_Ammo);
+
+            //! Ammo - Ammo-Boxes
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Ammo_Boxes = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Ammo_Boxes.SetDisplayName("Ammo-Boxes");
+            sub_Cat_Ammo_Boxes.SetIconPath("set:dayz_inventory image:bullets");
+            sub_Cat_Ammo_Boxes.AddIncluded("Box_Base");
+            cat_Ammo.AddSubCategory(sub_Cat_Ammo_Boxes);
+
+            //! Ammo - Bullets
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Ammo_Bullets = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Ammo_Bullets.SetDisplayName("Ammo-Bullets");
+            sub_Cat_Ammo_Bullets.SetIconPath("set:dayz_inventory image:bullets");
+            sub_Cat_Ammo_Bullets.AddIncluded("Ammunition_Base");
+            cat_Ammo.AddSubCategory(sub_Cat_Ammo_Bullets);
+
+            //! Containers
+            ExpansionP2PMarketMenuCategory cat_Containers = new ExpansionP2PMarketMenuCategory();
+            cat_Containers.SetDisplayName("Containers");
+            cat_Containers.SetIconPath("set:dayz_inventory image:barrel");
+            cat_Containers.AddIncluded("Container_Base");
+            MenuCategories.Add(cat_Containers);
+
+            //! Consumables
+            ExpansionP2PMarketMenuCategory cat_Consumables = new ExpansionP2PMarketMenuCategory();
+            cat_Consumables.SetDisplayName("Consumables");
+            cat_Consumables.SetIconPath("set:dayz_inventory image:food");
+            cat_Consumables.AddIncluded("Edible_Base");
+            MenuCategories.Add(cat_Consumables);
+
+            //! Consumables - Drinks
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Consumables_Drinks = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Consumables_Drinks.SetDisplayName("Drinks");
+            sub_Cat_Consumables_Drinks.SetIconPath("set:dayz_inventory image:canteen");
+            sub_Cat_Consumables_Drinks.AddIncluded("SodaCan_ColorBase");
+            sub_Cat_Consumables_Drinks.AddIncluded("WaterBottle");
+            sub_Cat_Consumables_Drinks.AddIncluded("Canteen");
+            sub_Cat_Consumables_Drinks.AddIncluded("Vodka");
+            sub_Cat_Consumables_Drinks.AddIncluded("ExpansionMilkBottle");
+            cat_Consumables.AddSubCategory(sub_Cat_Consumables_Drinks);
+
+            //! Consumables - Fish
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Consumables_Fish = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Consumables_Fish.SetDisplayName("Fish");
+            sub_Cat_Consumables_Fish.SetIconPath("set:dayz_inventory image:food");
+            sub_Cat_Consumables_Fish.AddIncluded("CarpFilletMeat");
+            sub_Cat_Consumables_Fish.AddIncluded("MackerelFilletMeat");
+            sub_Cat_Consumables_Fish.AddIncluded("Carp");
+            sub_Cat_Consumables_Fish.AddIncluded("Sardines");
+            sub_Cat_Consumables_Fish.AddIncluded("Mackerel");
+            cat_Consumables.AddSubCategory(sub_Cat_Consumables_Fish);
+
+            //! Consumables - Food
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Consumables_Food = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Consumables_Food.SetDisplayName("Food");
+            sub_Cat_Consumables_Food.SetIconPath("set:dayz_inventory image:food");
+            sub_Cat_Consumables_Food.AddIncluded("Zagorky");
+            sub_Cat_Consumables_Food.AddIncluded("ZagorkyChocolate");
+            sub_Cat_Consumables_Food.AddIncluded("ZagorkyPeanuts");
+            sub_Cat_Consumables_Food.AddIncluded("PowderedMilk");
+            sub_Cat_Consumables_Food.AddIncluded("BoxCerealCrunchin");
+            sub_Cat_Consumables_Food.AddIncluded("Rice");
+            sub_Cat_Consumables_Food.AddIncluded("Marmalade");
+            sub_Cat_Consumables_Food.AddIncluded("Honey");
+            sub_Cat_Consumables_Food.AddIncluded("SaltySticks");
+            sub_Cat_Consumables_Food.AddIncluded("Crackers");
+            sub_Cat_Consumables_Food.AddIncluded("Chips");
+            sub_Cat_Consumables_Food.AddIncluded("Pajka");
+            sub_Cat_Consumables_Food.AddIncluded("Pate");
+            sub_Cat_Consumables_Food.AddIncluded("BrisketSpread");
+            sub_Cat_Consumables_Food.AddIncluded("SardinesCan");
+            sub_Cat_Consumables_Food.AddIncluded("TunaCan");
+            sub_Cat_Consumables_Food.AddIncluded("DogFoodCan");
+            sub_Cat_Consumables_Food.AddIncluded("CatFoodCan");
+            sub_Cat_Consumables_Food.AddIncluded("PorkCan");
+            sub_Cat_Consumables_Food.AddIncluded("Lunchmeat");
+            sub_Cat_Consumables_Food.AddIncluded("UnknownFoodCan");
+            sub_Cat_Consumables_Food.AddIncluded("PeachesCan");
+            sub_Cat_Consumables_Food.AddIncluded("SpaghettiCan");
+            sub_Cat_Consumables_Food.AddIncluded("BakedBeansCan");
+            sub_Cat_Consumables_Food.AddIncluded("TacticalBaconCan");
+            cat_Consumables.AddSubCategory(sub_Cat_Consumables_Food);
+
+            //! Consumables - Meat
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Consumables_Meat = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Consumables_Meat.SetDisplayName("Meat");
+            sub_Cat_Consumables_Meat.SetIconPath("set:dayz_inventory image:food");
+            sub_Cat_Consumables_Meat.AddIncluded("BearSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("GoatSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("BoarSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("PigSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("DeerSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("WolfSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("CowSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("SheepSteakMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("ChickenBreastMeat");
+            sub_Cat_Consumables_Meat.AddIncluded("RabbitLegMeat");
+            cat_Consumables.AddSubCategory(sub_Cat_Consumables_Meat);
+
+            //! Consumables - Meds
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Consumables_Meds = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Consumables_Meds.SetDisplayName("Meds");
+            sub_Cat_Consumables_Meds.SetIconPath("set:dayz_inventory image:medicalbandage");
+            sub_Cat_Consumables_Meds.AddIncluded("CharcoalTablets");
+            sub_Cat_Consumables_Meds.AddIncluded("DisinfectantAlcohol");
+            sub_Cat_Consumables_Meds.AddIncluded("PurificationTablets");
+            sub_Cat_Consumables_Meds.AddIncluded("VitaminBottle");
+            sub_Cat_Consumables_Meds.AddIncluded("DisinfectantSpray");
+            sub_Cat_Consumables_Meds.AddIncluded("TetracyclineAntibiotics");
+            sub_Cat_Consumables_Meds.AddIncluded("PainkillerTablets");
+            sub_Cat_Consumables_Meds.AddIncluded("IodineTincture");
+            cat_Consumables.AddSubCategory(sub_Cat_Consumables_Meds);
+
+            //! Consumables - Vegetables
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Consumables_Vegetables = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Consumables_Vegetables.SetDisplayName("Vegetables");
+            sub_Cat_Consumables_Vegetables.SetIconPath("set:dayz_inventory image:food");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Apple");
+            sub_Cat_Consumables_Vegetables.AddIncluded("GreenBellPepper");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Zucchini");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Pumpkin");
+            sub_Cat_Consumables_Vegetables.AddIncluded("SlicedPumpkin");
+            sub_Cat_Consumables_Vegetables.AddIncluded("PotatoSeed");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Potato");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Tomato");
+            sub_Cat_Consumables_Vegetables.AddIncluded("SambucusBerry");
+            sub_Cat_Consumables_Vegetables.AddIncluded("CaninaBerry");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Plum");
+            sub_Cat_Consumables_Vegetables.AddIncluded("Pear");
+            sub_Cat_Consumables_Vegetables.AddIncluded("MushroomBase");
+            cat_Consumables.AddSubCategory(sub_Cat_Consumables_Vegetables);
+
+            //! Equipment
+            ExpansionP2PMarketMenuCategory cat_Equipment = new ExpansionP2PMarketMenuCategory();
+            cat_Equipment.SetDisplayName("Equipment");
+            cat_Equipment.SetIconPath("set:dayz_inventory image:body");
+            cat_Equipment.AddIncluded("ClothingBase");
+            cat_Equipment.AddIncluded("Clothing_Base");
+            MenuCategories.Add(cat_Equipment);
+
+            //! Equipment - Armbands
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Armbands = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Armbands.SetDisplayName("Armbands");
+            sub_Cat_Equipment_Armbands.SetIconPath("set:dayz_inventory image:armband");
+            sub_Cat_Equipment_Armbands.AddIncluded("Armband_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Armbands);
+
+            //! Equipment - Backpacks
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Backpacks = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Backpacks.SetDisplayName("Backpacks");
+            sub_Cat_Equipment_Backpacks.SetIconPath("set:dayz_inventory image:back");
+            sub_Cat_Equipment_Backpacks.AddIncluded("Backpack_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Backpacks);
+
+            //! Equipment - Belts
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Belts = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Belts.SetDisplayName("Belts");
+            sub_Cat_Equipment_Belts.SetIconPath("set:dayz_inventory image:hips");
+            sub_Cat_Equipment_Belts.AddIncluded("Belt_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Belts);
+
+            //! Equipment - Blouses & Suits
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_BlousesAndSuits = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_BlousesAndSuits.SetDisplayName("Blouses & Suits");
+            sub_Cat_Equipment_BlousesAndSuits.SetIconPath("set:dayz_inventory image:body");
+            sub_Cat_Equipment_BlousesAndSuits.AddIncluded("Blouse_ColorBase");
+            sub_Cat_Equipment_BlousesAndSuits.AddIncluded("ManSuit_ColorBase");
+            sub_Cat_Equipment_BlousesAndSuits.AddIncluded("WomanSuit_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_BlousesAndSuits);
+
+            //! Equipment - Boots & Shoes
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_BootsAndShoes = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_BootsAndShoes.SetDisplayName("Boots & Shoes");
+            sub_Cat_Equipment_BootsAndShoes.SetIconPath("set:dayz_inventory image:feet");
+            sub_Cat_Equipment_BootsAndShoes.AddIncluded("Shoes_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_BootsAndShoes);
+
+            //! Equipment - Caps
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Caps = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Caps.SetDisplayName("Caps");
+            sub_Cat_Equipment_Caps.SetIconPath("set:dayz_inventory image:headgear");
+            sub_Cat_Equipment_Caps.AddIncluded("BaseballCap_ColorBase");
+            sub_Cat_Equipment_Caps.AddIncluded("PrisonerCap");
+            sub_Cat_Equipment_Caps.AddIncluded("PilotkaCap");
+            sub_Cat_Equipment_Caps.AddIncluded("PoliceCap");
+            sub_Cat_Equipment_Caps.AddIncluded("FlatCap_ColorBase");
+            sub_Cat_Equipment_Caps.AddIncluded("ZmijovkaCap_ColorBase");
+            sub_Cat_Equipment_Caps.AddIncluded("RadarCap_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Caps);
+
+            //! Equipment - Coats & Jackets
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_CoatsAndJackets = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_CoatsAndJackets.SetDisplayName("Coats & Jackets");
+            sub_Cat_Equipment_CoatsAndJackets.SetIconPath("set:dayz_inventory image:body");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("LabCoat");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("TrackSuitJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("DenimJacket");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("WoolCoat_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("RidersJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("FirefighterJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("JumpsuitJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("BomberJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("QuiltedJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("PrisonUniformJacket");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("PoliceJacketOrel");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("PoliceJacket");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("ParamedicJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("HikingJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("Raincoat_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("TTsKOJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("BDUJacket");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("HuntingJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("M65Jacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("GorkaEJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("USMCJacket_ColorBase");
+            sub_Cat_Equipment_CoatsAndJackets.AddIncluded("NBCJacketBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_CoatsAndJackets);
+
+            //! Equipment - Eyewear
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Eyewear = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Eyewear.SetDisplayName("Eyewear");
+            sub_Cat_Equipment_Eyewear.SetIconPath("set:dayz_inventory image:eyewear");
+            sub_Cat_Equipment_Eyewear.AddIncluded("Glasses_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Eyewear);
+
+            //! Equipment - Ghillies
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Ghillies = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Ghillies.SetDisplayName("Ghillies");
+            sub_Cat_Equipment_Ghillies.SetIconPath("set:dayz_inventory image:missing");
+            sub_Cat_Equipment_Ghillies.AddIncluded("GhillieHood_ColorBase");
+            sub_Cat_Equipment_Ghillies.AddIncluded("GhillieBushrag_ColorBase");
+            sub_Cat_Equipment_Ghillies.AddIncluded("GhillieTop_ColorBase");
+            sub_Cat_Equipment_Ghillies.AddIncluded("GhillieSuit_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Ghillies);
+
+            //! Equipment - Gloves
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Gloves = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Gloves.SetDisplayName("Gloves");
+            sub_Cat_Equipment_Gloves.SetIconPath("set:dayz_inventory image:gloves");
+            sub_Cat_Equipment_Gloves.AddIncluded("Gloves_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Gloves);
+
+            //! Equipment - Hats & Hoods
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_HatsAndHoods = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_HatsAndHoods.SetDisplayName("Hats & Hoods");
+            sub_Cat_Equipment_HatsAndHoods.SetIconPath("set:dayz_inventory image:headgear");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("MedicalScrubsHat_ColorBase");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("CowboyHat_ColorBase");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("MilitaryBeret_ColorBase");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("BeanieHat_ColorBase");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("Ushanka_ColorBase");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("BoonieHat_ColorBase");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("OfficerHat");
+            sub_Cat_Equipment_HatsAndHoods.AddIncluded("NBCHood");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_HatsAndHoods);
+
+            //! Equipment - Helmets
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Helmets = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Helmets.SetDisplayName("Helmets");
+            sub_Cat_Equipment_Helmets.SetIconPath("set:dayz_inventory image:headgear");
+            sub_Cat_Equipment_Helmets.AddIncluded("HelmetBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Helmets);
+
+            //! Equipment - Masks
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Masks = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Masks.SetDisplayName("Masks");
+            sub_Cat_Equipment_Masks.SetIconPath("set:dayz_inventory image:mask");
+            sub_Cat_Equipment_Masks.AddIncluded("Mask_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Masks);
+
+            //! Equipment - Pants
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Pants = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Pants.SetDisplayName("Pants");
+            sub_Cat_Equipment_Pants.SetIconPath("set:dayz_inventory image:legs");
+            sub_Cat_Equipment_Pants.AddIncluded("Pants_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Pants);
+
+            //! Equipment - Shirts
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Shirts = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Shirts.SetDisplayName("Shirts");
+            sub_Cat_Equipment_Shirts.SetIconPath("set:dayz_inventory image:body");
+            sub_Cat_Equipment_Shirts.AddIncluded("TShirt_ColorBase");
+            sub_Cat_Equipment_Shirts.AddIncluded("Shirt_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Shirts);
+
+            //! Equipment - Skirts & Dresses
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_SkirtsAndDresses = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_SkirtsAndDresses.SetDisplayName("Skirts & Dresses");
+            sub_Cat_Equipment_SkirtsAndDresses.SetIconPath("set:dayz_inventory image:body");
+            sub_Cat_Equipment_SkirtsAndDresses.AddIncluded("Skirt_ColorBase");
+            sub_Cat_Equipment_SkirtsAndDresses.AddIncluded("MiniDress_ColorBase");
+            sub_Cat_Equipment_SkirtsAndDresses.AddIncluded("NurseDress_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_SkirtsAndDresses);
+
+            //! Equipment - Sweaters & Hoodies
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_SweatersAndHoodies = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_SweatersAndHoodies.SetDisplayName("Sweaters & Hoodies");
+            sub_Cat_Equipment_SweatersAndHoodies.SetIconPath("set:dayz_inventory image:body");
+            sub_Cat_Equipment_SweatersAndHoodies.AddIncluded("Sweater_ColorBase");
+            sub_Cat_Equipment_SweatersAndHoodies.AddIncluded("Hoodie_ColorBase");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_SweatersAndHoodies);
+
+            //! Equipment - Vests
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Equipment_Vests = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Equipment_Vests.SetDisplayName("Vests");
+            sub_Cat_Equipment_Vests.SetIconPath("set:dayz_inventory image:vest");
+            sub_Cat_Equipment_Vests.AddIncluded("Vest_Base");
+            cat_Equipment.AddSubCategory(sub_Cat_Equipment_Vests);
+
+            //! Explosives
+            ExpansionP2PMarketMenuCategory cat_Explosives = new ExpansionP2PMarketMenuCategory();
+            cat_Explosives.SetDisplayName("Explosives");
+            cat_Explosives.SetIconPath("set:dayz_inventory image:explosive");
+            cat_Explosives.AddIncluded("ExplosivesBase");
+            cat_Explosives.AddIncluded("RemoteDetonator");
+            cat_Explosives.AddIncluded("RemoteDetonatorTrigger");
+            cat_Explosives.AddIncluded("ExpansionSatchel");
+            cat_Explosives.AddIncluded("M18SmokeGrenade_ColorBase");
+            MenuCategories.Add(cat_Explosives);
+
+            //! Vehicles
+            ExpansionP2PMarketMenuCategory cat_Vehicles = new ExpansionP2PMarketMenuCategory();
+            cat_Vehicles.SetDisplayName("Vehicles");
+            cat_Vehicles.SetIconPath("set:dayz_inventory image:cat_vehicle_body");
+            cat_Vehicles.AddIncluded("CarScript");
+            cat_Vehicles.AddIncluded("BoatScript");
+            MenuCategories.Add(cat_Vehicles);
+
+            //! Vehicles - Cars
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Vehicles_Cars = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Vehicles_Cars.SetDisplayName("Cars");
+            sub_Cat_Vehicles_Cars.SetIconPath("set:dayz_inventory image:cat_vehicle_body");
+            sub_Cat_Vehicles_Cars.AddIncluded("OffroadHatchback");
+            sub_Cat_Vehicles_Cars.AddIncluded("Hatchback_02");
+            sub_Cat_Vehicles_Cars.AddIncluded("Sedan_02");
+            sub_Cat_Vehicles_Cars.AddIncluded("CivilianSedan");
+            sub_Cat_Vehicles_Cars.AddIncluded("Truck_01_Base");
+            sub_Cat_Vehicles_Cars.AddIncluded("Offroad_02");
+            sub_Cat_Vehicles_Cars.AddIncluded("ExpansionTractor");
+            sub_Cat_Vehicles_Cars.AddIncluded("ExpansionUAZ");
+            sub_Cat_Vehicles_Cars.AddIncluded("ExpansionBus");
+            sub_Cat_Vehicles_Cars.AddIncluded("ExpansionVodnik");
+            sub_Cat_Vehicles_Cars.AddIncluded("Expansion_Landrover");
+            cat_Vehicles.AddSubCategory(sub_Cat_Vehicles_Cars);
+
+            //! Vehicles - Helicopters
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Vehicles_Helis = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Vehicles_Helis.SetDisplayName("Helicopters");
+            sub_Cat_Vehicles_Helis.SetIconPath("set:dayz_inventory image:cat_vehicle_body");
+            sub_Cat_Vehicles_Helis.AddIncluded("ExpansionHelicopterScript");
+            cat_Vehicles.AddSubCategory(sub_Cat_Vehicles_Helis);
+
+            //! Vehicles - Boats
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Vehicles_Boats = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Vehicles_Boats.SetDisplayName("Boats");
+            sub_Cat_Vehicles_Boats.SetIconPath("set:dayz_inventory image:cat_vehicle_body");
+            sub_Cat_Vehicles_Boats.AddIncluded("ExpansionBoatScript");
+            cat_Vehicles.AddSubCategory(sub_Cat_Vehicles_Boats);
+            //! Weapons
+            ExpansionP2PMarketMenuCategory cat_Weapons = new ExpansionP2PMarketMenuCategory();
+            cat_Weapons.SetDisplayName("Weapons");
+            cat_Weapons.SetIconPath("set:dayz_inventory image:pistol");
+            cat_Weapons.AddIncluded("Weapon_Base");
+            cat_Weapons.AddIncluded("Weapon");
+            cat_Weapons.AddIncluded("ButtstockBase");
+            cat_Weapons.AddIncluded("OpticBase");
+            cat_Weapons.AddIncluded("Magazine_Base");
+            cat_Weapons.AddExcluded("Ammunition_Base");
+            MenuCategories.Add(cat_Weapons);
+
+            //! Weapons - Attachments
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Weapons_Attachments = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Weapons_Attachments.SetDisplayName("Attachments");
+            sub_Cat_Weapons_Attachments.SetIconPath("set:dayz_inventory image:weaponmuzzle");
+            sub_Cat_Weapons_Attachments.AddIncluded("ButtstockBase");
+            sub_Cat_Weapons_Attachments.AddIncluded("OpticBase");
+            sub_Cat_Weapons_Attachments.AddIncluded("Magazine_Base");
+            sub_Cat_Weapons_Attachments.AddExcluded("Ammunition_Base");
+            cat_Weapons.AddSubCategory(sub_Cat_Weapons_Attachments);
+
+            //! Weapons - Assault Rifles
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Weapons_AR = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Weapons_AR.SetDisplayName("Assault Rifles");
+            sub_Cat_Weapons_AR.SetIconPath("set:dayz_inventory image:pistol");
+            sub_Cat_Weapons_AR.AddIncluded("RifleBoltFree_Base");
+            cat_Weapons.AddSubCategory(sub_Cat_Weapons_AR);
+
+            //! Weapons - Pistols
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Weapons_Pistols = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Weapons_Pistols.SetDisplayName("Pistols");
+            sub_Cat_Weapons_Pistols.SetIconPath("set:dayz_inventory image:pistol");
+            sub_Cat_Weapons_Pistols.AddIncluded("Pistol_Base");
+            cat_Weapons.AddSubCategory(sub_Cat_Weapons_Pistols);
+
+            //! Weapons - Rifles
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Weapons_Rifles = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Weapons_Rifles.SetDisplayName("Rifles");
+            sub_Cat_Weapons_Rifles.SetIconPath("set:dayz_inventory image:pistol");
+            sub_Cat_Weapons_Rifles.AddIncluded("Izh18_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("Ruger1022_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("Repeater_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("Mosin9130_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("CZ527_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("CZ550_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("Winchester70_Base");
+            sub_Cat_Weapons_Rifles.AddIncluded("SSG82_Base");
+            cat_Weapons.AddSubCategory(sub_Cat_Weapons_Rifles);
+
+            //! Weapons - Shotguns
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Weapons_Shotguns = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Weapons_Shotguns.SetDisplayName("Shotguns");
+            sub_Cat_Weapons_Shotguns.SetIconPath("set:dayz_inventory image:pistol");
+            sub_Cat_Weapons_Shotguns.AddIncluded("Izh18Shotgun_Base");
+            sub_Cat_Weapons_Shotguns.AddIncluded("Izh43Shotgun_Base");
+            sub_Cat_Weapons_Shotguns.AddIncluded("Mp133Shotgun_Base");
+            sub_Cat_Weapons_Shotguns.AddIncluded("Remington12");
+            sub_Cat_Weapons_Shotguns.AddIncluded("Saiga_Base");
+            sub_Cat_Weapons_Shotguns.AddIncluded("SawedoffIzh18Shotgun");
+            cat_Weapons.AddSubCategory(sub_Cat_Weapons_Shotguns);
+
+            //! Weapons - Sniper-Rifles
+            ExpansionP2PMarketMenuSubCategory sub_Cat_Weapons_SniperRifles = new ExpansionP2PMarketMenuSubCategory();
+            sub_Cat_Weapons_SniperRifles.SetDisplayName("Sniper-Rifles");
+            sub_Cat_Weapons_SniperRifles.SetIconPath("set:dayz_inventory image:pistol");
+            sub_Cat_Weapons_SniperRifles.AddIncluded("VSS_Base");
+            sub_Cat_Weapons_SniperRifles.AddIncluded("B95_base");
+            sub_Cat_Weapons_SniperRifles.AddIncluded("SVD_Base");
+            sub_Cat_Weapons_SniperRifles.AddIncluded("Scout_Base");
+            sub_Cat_Weapons_SniperRifles.AddIncluded("SV98_Base");
+            cat_Weapons.AddSubCategory(sub_Cat_Weapons_SniperRifles);
+        }
+        public void DefaultExcludedClassNames()
+        {
+            ExcludedClassNames = new BindingList<string>()
+            {
+                "SurvivorBase",
+                "ExpansionMoneyBase"
+            };
+        }
+        public List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+
+            if (m_Version < ExpansionP2PMarketConfig.CurrentVersion)
+            {
+                fixes.Add($"Updated version from {m_Version} to {ExpansionP2PMarketConfig.CurrentVersion}");
+                m_Version = ExpansionP2PMarketConfig.CurrentVersion;
+            }
+            return fixes;
+        }
+    }
+    public class ExpansionP2PMarketMenuCategoryBase
+    {
+        public string? DisplayName { get; set; }
+        public string? IconPath { get; set; }
+        public BindingList<string> Included { get; set; }
+        public BindingList<string> Excluded { get; set; }
+
+        public ExpansionP2PMarketMenuCategoryBase()
+        {
+            Included = new BindingList<string>();
+            Excluded = new BindingList<string>();
+        }
+
+        public void SetDisplayName(string name)
+        {
+            DisplayName = name;
+        }
+        public void SetIconPath(string path)
+        {
+            IconPath = path;
+        }
+        public void AddIncluded(string typeName)
+        {
+            Included.Add(typeName);
+        }
+        public void AddExcluded(string typeName)
+        {
+            Excluded.Add(typeName);
+        }
+        
+    }
+    public class ExpansionP2PMarketMenuCategory : ExpansionP2PMarketMenuCategoryBase
+    {
+        public  BindingList<ExpansionP2PMarketMenuSubCategory> SubCategories { get; set; }
+        public ExpansionP2PMarketMenuCategory()
+        {
+            SubCategories = new BindingList<ExpansionP2PMarketMenuSubCategory>();
+        }
+        public void AddSubCategory(ExpansionP2PMarketMenuSubCategory category)
+        {
+            SubCategories.Add(category);
+        }
+    }
+    public class ExpansionP2PMarketMenuSubCategory : ExpansionP2PMarketMenuCategoryBase
+    {
+
+    }
+}

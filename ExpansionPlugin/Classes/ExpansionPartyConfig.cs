@@ -161,6 +161,104 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated version from {m_Version} to {ExpansionPartyConfig.CurrentVersion}");
                 m_Version = ExpansionPartyConfig.CurrentVersion;
             }
+            if (EnableParties is null or < 0 or > 1)
+            {
+                EnableParties = 1;
+                fixes.Add("Corrected EnableParties");
+            }
+            if (MaxMembersInParty is null)
+            {
+                MaxMembersInParty = 10;
+                fixes.Add("Corrected MaxMembersInParty");
+            }
+            if (UseWholeMapForInviteList is null or < 0 or > 1)
+            {
+                UseWholeMapForInviteList = 0;
+                fixes.Add("Corrected UseWholeMapForInviteList");
+            }
+            if (ShowPartyMember3DMarkers is null or < 0 or > 1)
+            {
+                ShowPartyMember3DMarkers = 1;
+                fixes.Add("Corrected ShowPartyMember3DMarkers");
+            }
+            if (ShowDistanceUnderPartyMembersMarkers is null or < 0 or > 1)
+            {
+                ShowDistanceUnderPartyMembersMarkers = 1;
+                fixes.Add("Corrected ShowDistanceUnderPartyMembersMarkers");
+            }
+            if (ShowNameOnPartyMembersMarkers is null or < 0 or > 1)
+            {
+                ShowNameOnPartyMembersMarkers = 1;
+                fixes.Add("Corrected ShowNameOnPartyMembersMarkers");
+            }
+            if (EnableQuickMarker is null or < 0 or > 1)
+            {
+                EnableQuickMarker = 1;
+                fixes.Add("Corrected EnableQuickMarker");
+            }
+            if (ShowDistanceUnderQuickMarkers is null or < 0 or > 1)
+            {
+                ShowDistanceUnderQuickMarkers = 1;
+                fixes.Add("Corrected ShowDistanceUnderQuickMarkers");
+            }
+            if (ShowNameOnQuickMarkers is null or < 0 or > 1)
+            {
+                ShowNameOnQuickMarkers = 1;
+                fixes.Add("Corrected ShowNameOnQuickMarkers");
+            }
+            if (CanCreatePartyMarkers is null or < 0 or > 1)
+            {
+                CanCreatePartyMarkers = 1;
+                fixes.Add("Corrected CanCreatePartyMarkers");
+            }
+            if (ShowPartyMemberHUD is null or < 0 or > 1)
+            {
+                ShowPartyMemberHUD = 1;
+                fixes.Add("Corrected ShowPartyMemberHUD");
+            }
+            if (ShowHUDMemberBlood is null or < 0 or > 1)
+            {
+                ShowHUDMemberBlood = 1;
+                fixes.Add("Corrected ShowHUDMemberBlood");
+            }
+            if (ShowHUDMemberStates is null or < 0 or > 1)
+            {
+                ShowHUDMemberStates = 1;
+                fixes.Add("Corrected ShowHUDMemberStates");
+            }
+            if (ShowHUDMemberStance is null or < 0 or > 1)
+            {
+                ShowHUDMemberStance = 1;
+                fixes.Add("Corrected ShowHUDMemberStance");
+            }
+            if (ShowPartyMemberMapMarkers is null or < 0 or > 1)
+            {
+                ShowPartyMemberMapMarkers = 1;
+                fixes.Add("Corrected ShowPartyMemberMapMarkers");
+            }
+            if (ShowHUDMemberDistance is null or < 0 or > 1)
+            {
+                ShowHUDMemberDistance = 1;
+                fixes.Add("Corrected ShowHUDMemberDistance");
+            }
+            if (ForcePartyToHaveTags is null or < 0 or > 1)
+            {
+                ForcePartyToHaveTags = 0;
+                fixes.Add("Corrected ForcePartyToHaveTags");
+            }
+            if (InviteCooldown is null or < 0 or > 1)
+            {
+                InviteCooldown = 0;
+                fixes.Add("Corrected InviteCooldown");
+            }
+            if (DisplayPartyTag is null or < 0 or > 1)
+            {
+                DisplayPartyTag = 1;
+                fixes.Add("Corrected DisplayPartyTag");
+            }
+            
+
+
             return fixes;
         }
         public override bool Equals(object obj)
