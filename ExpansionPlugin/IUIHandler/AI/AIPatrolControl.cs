@@ -75,7 +75,8 @@ namespace ExpansionPlugin
             StaticPatrolFormationCB.SelectedIndex = StaticPatrolFormationCB.FindStringExact(_data.Formation);
             StaticPatrolFormationLoosenessNUD.Value = (decimal)_data.FormationLooseness;
             StaticPatrolLoadoutsCB.SelectedIndex = StaticPatrolLoadoutsCB.FindStringExact(_data.Loadout);
-            StaticPatrolNumberOfAINUD.Value = (decimal)_data.NumberOfAI;
+            StaticPatrolNumberOfAINUD.Value = (int)_data.NumberOfAI;
+            StaticPatrolNumberOfAIMaxNUD.Value = (int)_data.NumberOfAIMax;
             StaticPatrolBehaviorCB.SelectedIndex = StaticPatrolBehaviorCB.FindStringExact(_data.Behaviour);
             StaticPatrolSpeedCB.SelectedIndex = StaticPatrolSpeedCB.FindStringExact(_data.Speed);
             StaticPatrolUnderThreatSpeedCB.SelectedIndex = StaticPatrolUnderThreatSpeedCB.FindStringExact(_data.UnderThreatSpeed);
@@ -265,7 +266,7 @@ namespace ExpansionPlugin
             {
                 StaticPatrolDespawnTimeNUD.Enabled = false;
                 StaticPatrolDespawnTimeGeneralCB.Checked = true;
-                 StaticPatrolDespawnTimeNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DespawnTime;
+                StaticPatrolDespawnTimeNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.DespawnTime;
             }
             else
             {
@@ -442,6 +443,12 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.NumberOfAI = (int)StaticPatrolNumberOfAINUD.Value;
+            HasChanges();
+        }
+        private void StaticPatrolNumberOfAIMaxNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.NumberOfAIMax = (int)StaticPatrolNumberOfAIMaxNUD.Value;
             HasChanges();
         }
         private void StaticPatrolPersistCB_CheckedChanged(object sender, EventArgs e)
@@ -901,7 +908,7 @@ namespace ExpansionPlugin
             else
             {
                 StaticPatrolEnableFlankingOutsideCombatCB.Enabled = true;
-                _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1: 0;
+                _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             }
             HasChanges();
         }
@@ -1074,7 +1081,7 @@ namespace ExpansionPlugin
             else
             {
                 StaticPatrolRespawnTimeGeneralCB.Visible = true;
-                if(StaticPatrolRespawnTimeGeneralCB.Checked)
+                if (StaticPatrolRespawnTimeGeneralCB.Checked)
                 {
                     _suppressEvents = true;
                     StaticPatrolRespawnTimeGeneralCB.Checked = false;

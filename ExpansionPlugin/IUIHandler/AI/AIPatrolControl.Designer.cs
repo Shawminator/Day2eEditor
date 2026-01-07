@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            StaticPatrolNumberOfAIMaxNUD = new NumericUpDown();
+            label11 = new Label();
             label10 = new Label();
             StaticPatrolFormationScaleGeneralCB = new CheckBox();
             StaticPatrolEnableFlankingOutsideCombatGeneralCB = new CheckBox();
@@ -129,6 +131,7 @@
             StaticPatrolDespawnTimeNUD = new NumericUpDown();
             StaticPatrolUseRandomWaypointAsStartPointCB = new CheckBox();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)StaticPatrolNumberOfAIMaxNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StsticPatrolMaxFlankingDistanceNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolDefaultLookAngleNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolHeadshotResistanceNUD).BeginInit();
@@ -156,6 +159,8 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(StaticPatrolNumberOfAIMaxNUD);
+            groupBox1.Controls.Add(label11);
             groupBox1.Controls.Add(label10);
             groupBox1.Controls.Add(StaticPatrolFormationScaleGeneralCB);
             groupBox1.Controls.Add(StaticPatrolEnableFlankingOutsideCombatGeneralCB);
@@ -256,11 +261,36 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(1266, 714);
+            groupBox1.Size = new Size(1266, 740);
             groupBox1.TabIndex = 138;
             groupBox1.TabStop = false;
             groupBox1.Text = "AI Patrol General";
             groupBox1.Enter += groupBox1_Enter;
+            // 
+            // StaticPatrolNumberOfAIMaxNUD
+            // 
+            StaticPatrolNumberOfAIMaxNUD.BackColor = Color.FromArgb(60, 63, 65);
+            StaticPatrolNumberOfAIMaxNUD.ForeColor = SystemColors.Control;
+            StaticPatrolNumberOfAIMaxNUD.Location = new Point(255, 228);
+            StaticPatrolNumberOfAIMaxNUD.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolNumberOfAIMaxNUD.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
+            StaticPatrolNumberOfAIMaxNUD.Minimum = new decimal(new int[] { 50, 0, 0, int.MinValue });
+            StaticPatrolNumberOfAIMaxNUD.Name = "StaticPatrolNumberOfAIMaxNUD";
+            StaticPatrolNumberOfAIMaxNUD.Size = new Size(122, 23);
+            StaticPatrolNumberOfAIMaxNUD.TabIndex = 405;
+            StaticPatrolNumberOfAIMaxNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolNumberOfAIMaxNUD.ValueChanged += StaticPatrolNumberOfAIMaxNUD_ValueChanged;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.ForeColor = Color.FromArgb(220, 220, 220);
+            label11.Location = new Point(24, 228);
+            label11.Margin = new Padding(4, 0, 4, 0);
+            label11.Name = "label11";
+            label11.Size = new Size(106, 15);
+            label11.TabIndex = 406;
+            label11.Text = "Number Of AI Max";
             // 
             // label10
             // 
@@ -404,7 +434,7 @@
             // 
             label7.AutoSize = true;
             label7.ForeColor = Color.FromArgb(220, 220, 220);
-            label7.Location = new Point(25, 684);
+            label7.Location = new Point(24, 713);
             label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.Size = new Size(202, 15);
@@ -430,7 +460,7 @@
             // 
             label6.AutoSize = true;
             label6.ForeColor = Color.FromArgb(220, 220, 220);
-            label6.Location = new Point(25, 486);
+            label6.Location = new Point(24, 515);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
             label6.Size = new Size(127, 15);
@@ -514,7 +544,7 @@
             // 
             label5.AutoSize = true;
             label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(25, 376);
+            label5.Location = new Point(24, 405);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new Size(84, 15);
@@ -540,7 +570,7 @@
             // 
             label4.AutoSize = true;
             label4.ForeColor = Color.FromArgb(220, 220, 220);
-            label4.Location = new Point(25, 630);
+            label4.Location = new Point(24, 659);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new Size(111, 15);
@@ -566,7 +596,7 @@
             // 
             label3.AutoSize = true;
             label3.ForeColor = Color.FromArgb(220, 220, 220);
-            label3.Location = new Point(25, 349);
+            label3.Location = new Point(24, 378);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.Size = new Size(108, 15);
@@ -594,7 +624,7 @@
             StaticPatrolDefaultLookAngleNUD.DecimalPlaces = 2;
             StaticPatrolDefaultLookAngleNUD.ForeColor = SystemColors.Control;
             StaticPatrolDefaultLookAngleNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
-            StaticPatrolDefaultLookAngleNUD.Location = new Point(255, 349);
+            StaticPatrolDefaultLookAngleNUD.Location = new Point(254, 378);
             StaticPatrolDefaultLookAngleNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolDefaultLookAngleNUD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             StaticPatrolDefaultLookAngleNUD.Minimum = new decimal(new int[] { 2, 0, 0, int.MinValue });
@@ -624,7 +654,7 @@
             StaticPatrolDefaultStanceCB.ForeColor = SystemColors.Control;
             StaticPatrolDefaultStanceCB.FormattingEnabled = true;
             StaticPatrolDefaultStanceCB.Items.AddRange(new object[] { "STANDING", "CROUCHED", "PRONE" });
-            StaticPatrolDefaultStanceCB.Location = new Point(255, 317);
+            StaticPatrolDefaultStanceCB.Location = new Point(254, 346);
             StaticPatrolDefaultStanceCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolDefaultStanceCB.Name = "StaticPatrolDefaultStanceCB";
             StaticPatrolDefaultStanceCB.Size = new Size(269, 23);
@@ -634,7 +664,7 @@
             // 
             label2.AutoSize = true;
             label2.ForeColor = Color.FromArgb(220, 220, 220);
-            label2.Location = new Point(25, 318);
+            label2.Location = new Point(24, 347);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(83, 15);
@@ -645,7 +675,7 @@
             // 
             label1.AutoSize = true;
             label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(25, 457);
+            label1.Location = new Point(24, 486);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(116, 15);
@@ -658,7 +688,7 @@
             StaticPatrolHeadshotResistanceNUD.DecimalPlaces = 2;
             StaticPatrolHeadshotResistanceNUD.ForeColor = SystemColors.Control;
             StaticPatrolHeadshotResistanceNUD.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            StaticPatrolHeadshotResistanceNUD.Location = new Point(253, 457);
+            StaticPatrolHeadshotResistanceNUD.Location = new Point(252, 486);
             StaticPatrolHeadshotResistanceNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolHeadshotResistanceNUD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             StaticPatrolHeadshotResistanceNUD.Name = "StaticPatrolHeadshotResistanceNUD";
@@ -672,7 +702,7 @@
             StaticPatrolLootDropOnDeathCB.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolLootDropOnDeathCB.ForeColor = SystemColors.Control;
             StaticPatrolLootDropOnDeathCB.FormattingEnabled = true;
-            StaticPatrolLootDropOnDeathCB.Location = new Point(253, 399);
+            StaticPatrolLootDropOnDeathCB.Location = new Point(252, 428);
             StaticPatrolLootDropOnDeathCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolLootDropOnDeathCB.Name = "StaticPatrolLootDropOnDeathCB";
             StaticPatrolLootDropOnDeathCB.Size = new Size(269, 23);
@@ -683,7 +713,7 @@
             // 
             darkLabel10.AutoSize = true;
             darkLabel10.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel10.Location = new Point(25, 400);
+            darkLabel10.Location = new Point(24, 429);
             darkLabel10.Margin = new Padding(4, 0, 4, 0);
             darkLabel10.Name = "darkLabel10";
             darkLabel10.Size = new Size(113, 15);
@@ -694,7 +724,7 @@
             // 
             textBox6.BackColor = Color.FromArgb(60, 63, 65);
             textBox6.ForeColor = SystemColors.Control;
-            textBox6.Location = new Point(253, 627);
+            textBox6.Location = new Point(252, 656);
             textBox6.Margin = new Padding(4, 3, 4, 3);
             textBox6.Name = "textBox6";
             textBox6.Size = new Size(267, 23);
@@ -718,7 +748,7 @@
             StaticPatrolLoadBalancingCategoryCB.ForeColor = SystemColors.Control;
             StaticPatrolLoadBalancingCategoryCB.FormattingEnabled = true;
             StaticPatrolLoadBalancingCategoryCB.Items.AddRange(new object[] { "", "CatmullRom", "NaturalCubic", "UniformCubic" });
-            StaticPatrolLoadBalancingCategoryCB.Location = new Point(253, 598);
+            StaticPatrolLoadBalancingCategoryCB.Location = new Point(252, 627);
             StaticPatrolLoadBalancingCategoryCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolLoadBalancingCategoryCB.Name = "StaticPatrolLoadBalancingCategoryCB";
             StaticPatrolLoadBalancingCategoryCB.Size = new Size(269, 23);
@@ -729,7 +759,7 @@
             // 
             darkLabel179.AutoSize = true;
             darkLabel179.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel179.Location = new Point(25, 601);
+            darkLabel179.Location = new Point(24, 630);
             darkLabel179.Margin = new Padding(4, 0, 4, 0);
             darkLabel179.Name = "darkLabel179";
             darkLabel179.Size = new Size(139, 15);
@@ -794,7 +824,7 @@
             StaticPatrolCanBeTriggeredByAICB.AutoSize = true;
             StaticPatrolCanBeTriggeredByAICB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolCanBeTriggeredByAICB.ForeColor = SystemColors.Control;
-            StaticPatrolCanBeTriggeredByAICB.Location = new Point(253, 486);
+            StaticPatrolCanBeTriggeredByAICB.Location = new Point(252, 515);
             StaticPatrolCanBeTriggeredByAICB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolCanBeTriggeredByAICB.Name = "StaticPatrolCanBeTriggeredByAICB";
             StaticPatrolCanBeTriggeredByAICB.Size = new Size(15, 14);
@@ -989,7 +1019,7 @@
             StaticPatrolSniperProneDistanceThresholdNUD.DecimalPlaces = 2;
             StaticPatrolSniperProneDistanceThresholdNUD.ForeColor = SystemColors.Control;
             StaticPatrolSniperProneDistanceThresholdNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
-            StaticPatrolSniperProneDistanceThresholdNUD.Location = new Point(253, 428);
+            StaticPatrolSniperProneDistanceThresholdNUD.Location = new Point(252, 457);
             StaticPatrolSniperProneDistanceThresholdNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolSniperProneDistanceThresholdNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             StaticPatrolSniperProneDistanceThresholdNUD.Minimum = new decimal(new int[] { 2, 0, 0, int.MinValue });
@@ -1014,7 +1044,7 @@
             // 
             darkLabel68.AutoSize = true;
             darkLabel68.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel68.Location = new Point(25, 430);
+            darkLabel68.Location = new Point(24, 459);
             darkLabel68.Margin = new Padding(4, 0, 4, 0);
             darkLabel68.Name = "darkLabel68";
             darkLabel68.Size = new Size(178, 15);
@@ -1063,7 +1093,7 @@
             StaticPatrolBehaviorCB.ForeColor = SystemColors.Control;
             StaticPatrolBehaviorCB.FormattingEnabled = true;
             StaticPatrolBehaviorCB.Items.AddRange(new object[] { "HALT", "LOOP", "ALTERNATE", "ONCE", "HALT_OR_LOOP", "HALT_OR_ALTERNATE", "ROAMING" });
-            StaticPatrolBehaviorCB.Location = new Point(256, 228);
+            StaticPatrolBehaviorCB.Location = new Point(255, 257);
             StaticPatrolBehaviorCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolBehaviorCB.Name = "StaticPatrolBehaviorCB";
             StaticPatrolBehaviorCB.Size = new Size(269, 23);
@@ -1085,7 +1115,7 @@
             // 
             darkLabel30.AutoSize = true;
             darkLabel30.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel30.Location = new Point(25, 229);
+            darkLabel30.Location = new Point(24, 258);
             darkLabel30.Margin = new Padding(4, 0, 4, 0);
             darkLabel30.Name = "darkLabel30";
             darkLabel30.Size = new Size(60, 15);
@@ -1113,7 +1143,7 @@
             StaticPatrolSpeedCB.ForeColor = SystemColors.Control;
             StaticPatrolSpeedCB.FormattingEnabled = true;
             StaticPatrolSpeedCB.Items.AddRange(new object[] { "STATIC", "WALK", "JOG", "SPRINT", "RANDOM", "RANDOM_NONSTATIC " });
-            StaticPatrolSpeedCB.Location = new Point(256, 257);
+            StaticPatrolSpeedCB.Location = new Point(255, 286);
             StaticPatrolSpeedCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolSpeedCB.Name = "StaticPatrolSpeedCB";
             StaticPatrolSpeedCB.Size = new Size(269, 23);
@@ -1124,7 +1154,7 @@
             // 
             darkLabel29.AutoSize = true;
             darkLabel29.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel29.Location = new Point(25, 258);
+            darkLabel29.Location = new Point(25, 293);
             darkLabel29.Margin = new Padding(4, 0, 4, 0);
             darkLabel29.Name = "darkLabel29";
             darkLabel29.Size = new Size(39, 15);
@@ -1137,7 +1167,7 @@
             StaticPatrolUnderThreatSpeedCB.ForeColor = SystemColors.Control;
             StaticPatrolUnderThreatSpeedCB.FormattingEnabled = true;
             StaticPatrolUnderThreatSpeedCB.Items.AddRange(new object[] { "STATIC", "WALK", "JOG", "SPRINT", "RANDOM", "RANDOM_NONSTATIC " });
-            StaticPatrolUnderThreatSpeedCB.Location = new Point(256, 288);
+            StaticPatrolUnderThreatSpeedCB.Location = new Point(255, 317);
             StaticPatrolUnderThreatSpeedCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolUnderThreatSpeedCB.Name = "StaticPatrolUnderThreatSpeedCB";
             StaticPatrolUnderThreatSpeedCB.Size = new Size(269, 23);
@@ -1148,7 +1178,7 @@
             // 
             darkLabel28.AutoSize = true;
             darkLabel28.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel28.Location = new Point(25, 289);
+            darkLabel28.Location = new Point(24, 318);
             darkLabel28.Margin = new Padding(4, 0, 4, 0);
             darkLabel28.Name = "darkLabel28";
             darkLabel28.Size = new Size(111, 15);
@@ -1160,7 +1190,7 @@
             StaticPatrolCanBeLotedCB.AutoSize = true;
             StaticPatrolCanBeLotedCB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolCanBeLotedCB.ForeColor = SystemColors.Control;
-            StaticPatrolCanBeLotedCB.Location = new Point(253, 379);
+            StaticPatrolCanBeLotedCB.Location = new Point(252, 408);
             StaticPatrolCanBeLotedCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolCanBeLotedCB.Name = "StaticPatrolCanBeLotedCB";
             StaticPatrolCanBeLotedCB.Size = new Size(15, 14);
@@ -1184,7 +1214,7 @@
             StaticPatrolMinSpreadRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolMinSpreadRadiusNUD.DecimalPlaces = 2;
             StaticPatrolMinSpreadRadiusNUD.ForeColor = SystemColors.Control;
-            StaticPatrolMinSpreadRadiusNUD.Location = new Point(253, 511);
+            StaticPatrolMinSpreadRadiusNUD.Location = new Point(252, 540);
             StaticPatrolMinSpreadRadiusNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolMinSpreadRadiusNUD.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             StaticPatrolMinSpreadRadiusNUD.Minimum = new decimal(new int[] { 10000000, 0, 0, int.MinValue });
@@ -1198,7 +1228,7 @@
             // 
             darkLabel13.AutoSize = true;
             darkLabel13.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel13.Location = new Point(25, 512);
+            darkLabel13.Location = new Point(24, 541);
             darkLabel13.Margin = new Padding(4, 0, 4, 0);
             darkLabel13.Name = "darkLabel13";
             darkLabel13.Size = new Size(102, 15);
@@ -1235,7 +1265,7 @@
             StaticPatrolMaxSpreadRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolMaxSpreadRadiusNUD.DecimalPlaces = 2;
             StaticPatrolMaxSpreadRadiusNUD.ForeColor = SystemColors.Control;
-            StaticPatrolMaxSpreadRadiusNUD.Location = new Point(253, 540);
+            StaticPatrolMaxSpreadRadiusNUD.Location = new Point(252, 569);
             StaticPatrolMaxSpreadRadiusNUD.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolMaxSpreadRadiusNUD.Maximum = new decimal(new int[] { 10000000, 0, 0, 0 });
             StaticPatrolMaxSpreadRadiusNUD.Minimum = new decimal(new int[] { 10000000, 0, 0, int.MinValue });
@@ -1274,7 +1304,7 @@
             // 
             darkLabel8.AutoSize = true;
             darkLabel8.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel8.Location = new Point(25, 540);
+            darkLabel8.Location = new Point(24, 569);
             darkLabel8.Margin = new Padding(4, 0, 4, 0);
             darkLabel8.Name = "darkLabel8";
             darkLabel8.Size = new Size(103, 15);
@@ -1360,7 +1390,7 @@
             // 
             darkLabel12.AutoSize = true;
             darkLabel12.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel12.Location = new Point(25, 571);
+            darkLabel12.Location = new Point(24, 600);
             darkLabel12.Margin = new Padding(4, 0, 4, 0);
             darkLabel12.Name = "darkLabel12";
             darkLabel12.Size = new Size(47, 15);
@@ -1387,7 +1417,7 @@
             StaticPatrolChanceCB.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolChanceCB.DecimalPlaces = 2;
             StaticPatrolChanceCB.ForeColor = SystemColors.Control;
-            StaticPatrolChanceCB.Location = new Point(253, 569);
+            StaticPatrolChanceCB.Location = new Point(252, 598);
             StaticPatrolChanceCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolChanceCB.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             StaticPatrolChanceCB.Name = "StaticPatrolChanceCB";
@@ -1475,7 +1505,7 @@
             // 
             darkLabel48.AutoSize = true;
             darkLabel48.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel48.Location = new Point(25, 659);
+            darkLabel48.Location = new Point(24, 688);
             darkLabel48.Margin = new Padding(4, 0, 4, 0);
             darkLabel48.Name = "darkLabel48";
             darkLabel48.Size = new Size(129, 15);
@@ -1499,7 +1529,7 @@
             StaticPatrolWaypointInterpolationCB.ForeColor = SystemColors.Control;
             StaticPatrolWaypointInterpolationCB.FormattingEnabled = true;
             StaticPatrolWaypointInterpolationCB.Items.AddRange(new object[] { "", "CatmullRom", "NaturalCubic", "UniformCubic" });
-            StaticPatrolWaypointInterpolationCB.Location = new Point(251, 656);
+            StaticPatrolWaypointInterpolationCB.Location = new Point(250, 685);
             StaticPatrolWaypointInterpolationCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolWaypointInterpolationCB.Name = "StaticPatrolWaypointInterpolationCB";
             StaticPatrolWaypointInterpolationCB.Size = new Size(269, 23);
@@ -1525,7 +1555,7 @@
             StaticPatrolUseRandomWaypointAsStartPointCB.AutoSize = true;
             StaticPatrolUseRandomWaypointAsStartPointCB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolUseRandomWaypointAsStartPointCB.ForeColor = SystemColors.Control;
-            StaticPatrolUseRandomWaypointAsStartPointCB.Location = new Point(251, 685);
+            StaticPatrolUseRandomWaypointAsStartPointCB.Location = new Point(250, 714);
             StaticPatrolUseRandomWaypointAsStartPointCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolUseRandomWaypointAsStartPointCB.Name = "StaticPatrolUseRandomWaypointAsStartPointCB";
             StaticPatrolUseRandomWaypointAsStartPointCB.Size = new Size(15, 14);
@@ -1541,9 +1571,10 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "AIPatrolControl";
-            Size = new Size(1266, 714);
+            Size = new Size(1266, 740);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)StaticPatrolNumberOfAIMaxNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StsticPatrolMaxFlankingDistanceNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolDefaultLookAngleNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolHeadshotResistanceNUD).EndInit();
@@ -1673,5 +1704,7 @@
         private CheckBox StaticPatrolMaxDistRadiusGeneralCB;
         private CheckBox StaticPatrolMinDistRadiusGeneralCB;
         private Label label10;
+        private NumericUpDown StaticPatrolNumberOfAIMaxNUD;
+        private Label label11;
     }
 }

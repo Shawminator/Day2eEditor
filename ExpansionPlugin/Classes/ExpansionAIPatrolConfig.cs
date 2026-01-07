@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        public const int CurrentVersion = 28;
+        public const int CurrentVersion = 30;
 
         public ExpansionAIPatrolConfig(string path)
         {
@@ -484,6 +485,7 @@ namespace ExpansionPlugin
         public string? Loadout { get; set; }
         public BindingList<string> Units { get; set; }
         public int? NumberOfAI { get; set; }
+        public int? NumberOfAIMax { get; set; }
         public string? Behaviour { get; set; }
         public string? LootingBehaviour { get; set; }
         public string? Speed { get; set; }
@@ -532,6 +534,7 @@ namespace ExpansionPlugin
             Loadout = loa;
             Units = new BindingList<string>();
             NumberOfAI = bod;
+            NumberOfAIMax = 0;
             Behaviour = beh;
             LootingBehaviour = "DEFAULT";
             Speed = spd;
@@ -574,7 +577,7 @@ namespace ExpansionPlugin
         {
             if (obj is not ExpansionAIPatrol other) return false;
 
-            return _waypoints.SequenceEqual(other._waypoints) &&
+            bool result = _waypoints.SequenceEqual(other._waypoints) &&
                    Name == other.Name &&
                    Persist == other.Persist &&
                    Faction == other.Faction &&
@@ -584,6 +587,7 @@ namespace ExpansionPlugin
                    Loadout == other.Loadout &&
                    Units.SequenceEqual(other.Units) &&
                    NumberOfAI == other.NumberOfAI &&
+                   NumberOfAIMax == other.NumberOfAIMax &&  
                    Behaviour == other.Behaviour &&
                    LootingBehaviour == other.LootingBehaviour &&
                    Speed == other.Speed &&
@@ -616,6 +620,8 @@ namespace ExpansionPlugin
                    ObjectClassName == other.ObjectClassName &&
                    WaypointInterpolation == other.WaypointInterpolation &&
                    UseRandomWaypointAsStartPoint == other.UseRandomWaypointAsStartPoint;
+
+            return result;
         }
         public ExpansionAIPatrol Clone()
         {
@@ -628,8 +634,9 @@ namespace ExpansionPlugin
                 FormationScale = this.FormationScale,
                 FormationLooseness = this.FormationLooseness,
                 Loadout = this.Loadout,
-                Units = new BindingList<string>(this.Units.ToList()),
+                Units = new BindingList<string>(this.Units.Select(x => x).ToList()),
                 NumberOfAI = this.NumberOfAI,
+                NumberOfAIMax = this.NumberOfAIMax,
                 Behaviour = this.Behaviour,
                 LootingBehaviour = this.LootingBehaviour,
                 Speed = this.Speed,
@@ -648,6 +655,7 @@ namespace ExpansionPlugin
                 EnableFlankingOutsideCombat = this.EnableFlankingOutsideCombat,
                 DamageMultiplier = this.DamageMultiplier,
                 DamageReceivedMultiplier = this.DamageReceivedMultiplier,
+                HeadshotResistance = this.HeadshotResistance,
                 CanBeTriggeredByAI = this.CanBeTriggeredByAI,
                 MinDistRadius = this.MinDistRadius,
                 MaxDistRadius = this.MaxDistRadius,
@@ -661,7 +669,7 @@ namespace ExpansionPlugin
                 ObjectClassName = this.ObjectClassName,
                 WaypointInterpolation = this.WaypointInterpolation,
                 UseRandomWaypointAsStartPoint = this.UseRandomWaypointAsStartPoint,
-                _waypoints = new BindingList<Vec3>(this._waypoints.Select(wp => new Vec3(wp.X, wp.Y, wp.Z)).ToList())
+                _waypoints = new BindingList<Vec3>(this._waypoints.Select(wp => wp.Clone()).ToList())
             };
         }
         public List<string> FixMissingOrInvalidFields(int i)
@@ -676,6 +684,7 @@ namespace ExpansionPlugin
             if (Loadout == null) { Loadout = ""; fixes.Add($"Loadout initialised"); }
             if (Units == null) { Units = new BindingList<string>(); fixes.Add("Initialized empty Units list"); }
             if (NumberOfAI == null) { NumberOfAI = 3; fixes.Add("Set NumberOfAI to 3"); }
+            if (NumberOfAIMax == null) { NumberOfAIMax = 0; fixes.Add("Set NumberOfAIMax to 0"); }
             if (Behaviour == null || string.IsNullOrWhiteSpace(Behaviour)) { Behaviour = "ALTERNATE"; fixes.Add($"Set Behaviour to ALTERNATE"); }
             if (LootingBehaviour == null || string.IsNullOrWhiteSpace(LootingBehaviour)) { LootingBehaviour = "DEFAULT"; fixes.Add($"Set LootingBehaviour to DEFAULT"); }
             if (DefaultStance == null || string.IsNullOrWhiteSpace(DefaultStance) || (DefaultStance != "STANDING" && DefaultStance != "CROUCHED" && DefaultStance != "PRONE")) { DefaultStance = "STANDING"; fixes.Add($"Set DefaultStance to STANDING"); }
