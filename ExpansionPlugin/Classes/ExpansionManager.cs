@@ -35,6 +35,7 @@ namespace ExpansionPlugin
         public ExpansionNotificationSchedulerConfig ExpansionNotificationSchedulerConfig { get; set; }
         public ExpansionNotificationConfig ExpansionNotificationConfig { get; set; }
         public ExpansionPartyConfig ExpansionPartyConfig { get; set; }
+        public ExpansionP2PMarketConfig ExpansionP2PMarketConfig { get; set; }
         //public ExpansionPersonalStorageList PersonalStorageList { get; set; }
         //public ExpansionPersonalStorageNewSettings PersonalStorageSettingsNew { get; set; }
         //public ExpansionPersonalStorageSettings PersonalStorageSettings { get; set; }
@@ -80,6 +81,7 @@ namespace ExpansionPlugin
             _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
             _paths["MapSettings"] = Path.Combine(basePath, "expansion", "settings", "MapSettings.json");
             _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
+            _paths["P2PMarketSettings"] = Path.Combine(basePath, "expansion", "settings", "P2PMarketSettings.json");
 
             LoadFiles(basePath);
         }
@@ -156,6 +158,9 @@ namespace ExpansionPlugin
             ExpansionPartyConfig = new ExpansionPartyConfig(_paths["PartySettings"]);
             LoadConfigWithErrorReport("PartySettings", ExpansionPartyConfig);
 
+            ExpansionP2PMarketConfig = new ExpansionP2PMarketConfig(_paths["P2PMarketSettings"]);
+            LoadConfigWithErrorReport("P2PMarketSettings", ExpansionP2PMarketConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -197,7 +202,8 @@ namespace ExpansionPlugin
                 ExpansionNameTagsConfig,
                 ExpansionNotificationSchedulerConfig,
                 ExpansionNotificationConfig,
-                ExpansionPartyConfig
+                ExpansionPartyConfig,
+                ExpansionP2PMarketConfig
 
             };
 
@@ -240,7 +246,8 @@ namespace ExpansionPlugin
                 ExpansionNameTagsConfig,
                 ExpansionNotificationSchedulerConfig,
                 ExpansionNotificationConfig,
-                ExpansionPartyConfig
+                ExpansionPartyConfig,
+                ExpansionP2PMarketConfig
             };
             foreach (var obj in configs)
             {

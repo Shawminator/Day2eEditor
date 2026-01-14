@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -18,7 +19,7 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-        public const int CurrentVersion = 8;
+        public const int CurrentVersion = 3;
 
         public ExpansionP2PMarketConfig(string path)
         {
@@ -102,11 +103,11 @@ namespace ExpansionPlugin
             DisallowUnpersisted = 0;
 
             DefaultMenuCategories();
-
             DefaultExcludedClassNames();
         }
         public void DefaultMenuCategories()
         {
+            MenuCategories = new BindingList<ExpansionP2PMarketMenuCategory>();
             //! Ammo
             ExpansionP2PMarketMenuCategory cat_Ammo = new ExpansionP2PMarketMenuCategory();
             cat_Ammo.SetDisplayName("Ammo");
@@ -556,10 +557,55 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionP2PMarketConfig.CurrentVersion)
+            if (m_Version != ExpansionP2PMarketConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionP2PMarketConfig.CurrentVersion}");
                 m_Version = ExpansionP2PMarketConfig.CurrentVersion;
+            }
+            if (Enabled == null || (Enabled != 0 && Enabled != 1))
+            {
+                Enabled = 1;
+                fixes.Add("Corrected Enabled to 1");
+            }
+            if (MaxListingTime == null )
+            {
+                MaxListingTime = 691200;
+                fixes.Add("Corrected MaxListingTime to 691200");
+            }
+            if (MaxListings == null)
+            {
+                MaxListings = 20;
+                fixes.Add("Corrected MaxListings to 20");
+            }
+            if (ListingOwnerDiscountPercent == null)
+            {
+                ListingOwnerDiscountPercent = 70;
+                fixes.Add("Corrected ListingOwnerDiscountPercent to 70");
+            }
+            if (ListingPricePercent == null)
+            {
+                ListingPricePercent = 30;
+                fixes.Add("Corrected ListingPricePercent to 30");
+            }
+            if (SalesDepositTime == null)
+            {
+                SalesDepositTime = 691200;
+                fixes.Add("Corrected SalesDepositTime to 691200");
+            }
+            if (DisallowUnpersisted == null || (DisallowUnpersisted != 0 && DisallowUnpersisted != 1))
+            {
+                DisallowUnpersisted = 0;
+                fixes.Add("Corrected DisallowUnpersisted to 1");
+            }
+            if (ExcludedClassNames == null)
+            {
+                DefaultExcludedClassNames();
+                fixes.Add("Corrected ExcludedClassNames to Default");
+            }
+            if (MenuCategories == null)
+            {
+                DefaultMenuCategories();
+                fixes.Add("Corrected MenuCategories to Default");
             }
             return fixes;
         }
@@ -597,6 +643,7 @@ namespace ExpansionPlugin
     }
     public class ExpansionP2PMarketMenuCategory : ExpansionP2PMarketMenuCategoryBase
     {
+        [JsonPropertyOrder(999)]
         public  BindingList<ExpansionP2PMarketMenuSubCategory> SubCategories { get; set; }
         public ExpansionP2PMarketMenuCategory()
         {

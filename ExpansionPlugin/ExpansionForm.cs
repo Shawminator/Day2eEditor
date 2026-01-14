@@ -1072,6 +1072,7 @@ namespace ExpansionPlugin
             {
                 Tag = "p2pmarketNode"
             };
+            AddFileToTree(p2pmarketrootNode, "", "", _expansionManager.ExpansionP2PMarketConfig, CreateExpansionP2PMarketConfig);
             rootNode.Nodes.Add(p2pmarketrootNode);
 
             TreeNode personalstoragerootNode = new TreeNode("Personal Storage")
@@ -2092,6 +2093,119 @@ namespace ExpansionPlugin
             {
                 Tag = ef.Data
             });
+        }
+        // P2P Market
+        private TreeNode CreateExpansionP2PMarketConfig(ExpansionP2PMarketConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionP2PMarketConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionP2PMarketConfigNodes(ExpansionP2PMarketConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded Classnames")
+            {
+                Tag = "P2PExludedClassnames"
+            };
+            foreach(string s in ef.Data.ExcludedClassNames)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "P2PExcludedClassname"
+                });
+            }
+            EconomyRootNode.Nodes.Add(ExludedclassnamesNode);
+            TreeNode MenuCategoriesNode = new TreeNode("Menu Categories")
+            {
+                Tag = "P2PMenuCategories"
+            };
+            foreach(ExpansionP2PMarketMenuCategory cat in ef.Data.MenuCategories)
+            {
+                MenuCategoriesNode.Nodes.Add(Createmenucatnodes(cat));
+            }
+            EconomyRootNode.Nodes.Add(MenuCategoriesNode);
+        }
+        private static TreeNode Createmenucatnodes(ExpansionP2PMarketMenuCategory cat)
+        {
+            TreeNode Menucatnoderoot = new TreeNode(cat.DisplayName)
+            {
+                Tag = cat
+            };
+            
+            TreeNode IncludedclassnamesNode = new TreeNode("Included")
+            {
+                Tag = "MenuCatsIncluded"
+            };
+            foreach (string s in cat.Included)
+            {
+                IncludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatIncluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(IncludedclassnamesNode);
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded")
+            {
+                Tag = "MenuCatsExluded"
+            };
+            foreach (string s in cat.Excluded)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatExluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
+            TreeNode SubCatNodes = new TreeNode("Sub Categories")
+            {
+                Tag = "P2PSubCategories"
+            };
+            foreach (ExpansionP2PMarketMenuSubCategory subcat in cat.SubCategories)
+            {
+                SubCatNodes.Nodes.Add(CreateSubCats(subcat));
+            }
+            Menucatnoderoot.Nodes.Add(SubCatNodes);
+            return Menucatnoderoot;
+        }
+
+        private static TreeNode CreateSubCats(ExpansionP2PMarketMenuSubCategory subcat)
+        {
+            TreeNode Menucatnoderoot = new TreeNode(subcat.DisplayName)
+            {
+                Tag = subcat
+            };
+            TreeNode IncludedclassnamesNode = new TreeNode("Included")
+            {
+                Tag = "MenuCatsIncluded"
+            };
+            foreach (string s in subcat.Included)
+            {
+                IncludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatIncluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(IncludedclassnamesNode);
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded")
+            {
+                Tag = "MenuCatsExluded"
+            };
+            foreach (string s in subcat.Excluded)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatExluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
+            return Menucatnoderoot;
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
