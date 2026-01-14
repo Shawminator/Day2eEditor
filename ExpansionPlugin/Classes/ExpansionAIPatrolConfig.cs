@@ -234,6 +234,12 @@ namespace ExpansionPlugin
         private void DefaultPatrols()
         {
             Patrols = new BindingList<ExpansionAIPatrol>();
+            Patrols.Add(new ExpansionAIPatrol(-3, "WALK", "SPRINT", "HALT_OR_ALTERNATE", "West", "", true, false, (decimal)1.0, -1, -1, "Wreck_UH1Y"));
+            Patrols.Add(new ExpansionAIPatrol(-3, "WALK", "SPRINT", "HALT_OR_ALTERNATE", "East", "", true, false, (decimal)1.0, -1, -1, "Wreck_Mi8_Crashed"));
+            Patrols.Add(new ExpansionAIPatrol(-3, "WALK", "SPRINT", "HALT_OR_ALTERNATE", "East", "PoliceLoadout", true, false, (decimal)1.0, -1, -1, "Land_Wreck_sed01_aban1_police"));
+            Patrols.Add(new ExpansionAIPatrol(-3, "WALK", "SPRINT", "HALT_OR_ALTERNATE", "East", "PoliceLoadout", true, false, (decimal)1.0, -1, -1, "Land_Wreck_sed01_aban2_police"));
+            Patrols.Add(new ExpansionAIPatrol(-3, "JOG", "SPRINT", "HALT_OR_ALTERNATE", "West", "NBCLoadout", true, false, (decimal)1.0, -1, -1, "ContaminatedArea_Static"));
+            Patrols.Add(new ExpansionAIPatrol(-3, "JOG", "SPRINT", "HALT_OR_ALTERNATE", "West", "NBCLoadout", true, false, (decimal)1.0, -1, -1, "ContaminatedArea_Dynamic"));
             Patrols.Add(new ExpansionAIPatrol(3, "WALK", "SPRINT", "ALTERNATE", "West", "", true, false, (decimal)1.0, -2, -2, -2, -100, new List<float[]>() { new float[] { 4211.222656f, 109.023384f, 6382.064453f }, new float[] { 4151.662598f, 105.450653f, 6080.294434f }, new float[] { 4160.971680f, 105.412598f, 6035.103027f }, new float[] { 4160.699219f, 106.251480f, 5906.830078f }, new float[] { 4107.862793f, 108.930527f, 5898.482910f }, new float[] { 4057.258057f, 114.174736f, 5584.595703f }, new float[] { 4084.560059f, 113.232422f, 5494.540039f }, new float[] { 4079f, .308105f, 113.801163f, 5435.953125f }, new float[] { 4081.735840f, 113.402504f, 5385.576172f }, new float[] { 4067.266113f, 109.788383f, 4904.508789f }, new float[] { 4126.504883f, 107.371178f, 4647.128906f } }));
             Patrols.Add(new ExpansionAIPatrol(3, "WALK", "SPRINT", "ALTERNATE", "West", "", true, false, (decimal)1.0, -2, -2, -2, -100, new List<float[]>() { new float[] { 4508.860352f, 109.347275f, 6230.751465f }, new float[] { 4448.490723f, 109.377792f, 6025.892578f }, new float[] { 4546.902832f, 112.057549f, 6126.590332f }, new float[] { 4613.975586f, 110.163887f, 6112.869629f }, new float[] { 4563.825684f, 110.696106f, 5797.450195f }, new float[] { 4551.805664f, 110.555084f, 5652.876953f }, new float[] { 4312.203613f, 110.752151f, 5366.941895f } }));
             Patrols.Add(new ExpansionAIPatrol(1, "WALK", "SPRINT", "ALTERNATE", "Raiders", "", true, false, (decimal)1.0, -2, -2, -2, -100, new List<float[]>() { new float[] { 10545.687500f, 38.037155f, 10384.205078f }, new float[] { 10502.615234f, 40.377762f, 10464.754883f }, new float[] { 10700.634766f, 34.346542f, 10461.470703f }, new float[] { 10645.350586f, 36.451836f, 10377.769531f } }));
@@ -568,6 +574,54 @@ namespace ExpansionPlugin
             ObjectClassName = "";
             UseRandomWaypointAsStartPoint = 1;
             Waypoints = new BindingList<float[]>(way);
+            _waypoints = new BindingList<Vec3>();
+        }
+        public ExpansionAIPatrol(int numberOfAI = 1, string speed = "JOG", string threatSpeed = "SPRINT", string bhv = "ALTERNATE", string faction = "West", string loadout = "", bool canBeLooted = true, bool unlimitedReload = false, decimal chance = (decimal)1.0, decimal minDistRadius = -1, decimal maxDistRadius = -1, string objClassName = "Wreck_UH1Y")
+        {
+            Name = "";
+            Persist = 0;
+            Faction = faction;
+            Formation = "";
+            FormationScale = (decimal)-1.0;
+            FormationLooseness = (decimal)0.0;
+            Loadout = loadout;
+            Units = new BindingList<string>();
+            NumberOfAI = numberOfAI;
+            NumberOfAIMax = 0;
+            Behaviour = bhv;
+            LootingBehaviour = "DEFAULT";
+            Speed = speed;
+            UnderThreatSpeed = threatSpeed;
+            DefaultStance = "STANDING";
+            DefaultLookAngle = (decimal)0.0;
+            CanBeLooted = canBeLooted == true ? 1 : 0;
+            LootDropOnDeath = "";
+            UnlimitedReload = unlimitedReload == true ? 1 : 0; ;
+            SniperProneDistanceThreshold = (decimal)0.0;
+            AccuracyMin = -1;
+            AccuracyMax = -1;
+            ThreatDistanceLimit = -1;
+            NoiseInvestigationDistanceLimit = -1;
+            MaxFlankingDistance = -1;
+            EnableFlankingOutsideCombat = -1;
+            DamageMultiplier = -1;
+            DamageReceivedMultiplier = (decimal)-1.0;
+            HeadshotResistance = (decimal)0.0;
+            CanBeTriggeredByAI = 0;
+            MinDistRadius = minDistRadius;
+            MaxDistRadius = maxDistRadius;
+            DespawnRadius = -1;
+            MinSpreadRadius = 5;
+            MaxSpreadRadius = 20;
+            Chance = chance;
+            WaypointInterpolation = "";
+            DespawnTime = -1;
+            RespawnTime = -2;
+            LoadBalancingCategory = "";
+            ObjectClassName = objClassName;
+            UseRandomWaypointAsStartPoint = 1;
+            _waypoints = new BindingList<Vec3>();
+            Waypoints = new BindingList<float[]>();
         }
         public override string ToString()
         {
