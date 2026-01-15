@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
+using static ExpansionPlugin.ExpansionPersonalStorageNewSettings;
 
 namespace ExpansionPlugin
 {
@@ -1079,6 +1080,8 @@ namespace ExpansionPlugin
             {
                 Tag = "personalstoragerootNode"
             };
+            AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageNewConfig, CreateExpansionPersonalStorageNewConfig);
+            AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageConfig, CreateExpansionPersonalStorageConfig);
             rootNode.Nodes.Add(personalstoragerootNode);
 
 
@@ -1102,6 +1105,8 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig); 
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPartyConfig, CreateExpansionPartyConfigConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPlayerListConfig, CreateExpansionPlayerListConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionRaidConfig, CreateExpansionRaidConfig);
 
             rootNode.Nodes.Add(SettingsNode);
 
@@ -1109,6 +1114,7 @@ namespace ExpansionPlugin
             {
                 Tag = "QuestsrootNode"
             };
+            AddFileToTree(QuestsrootNode, "", "", _expansionManager.ExpansionQuestConfig, CreateExpansionQuestConfig);
             rootNode.Nodes.Add(QuestsrootNode);
 
             ExpansionTV.Nodes.Add(rootNode);
@@ -2174,7 +2180,6 @@ namespace ExpansionPlugin
             Menucatnoderoot.Nodes.Add(SubCatNodes);
             return Menucatnoderoot;
         }
-
         private static TreeNode CreateSubCats(ExpansionP2PMarketMenuSubCategory subcat)
         {
             TreeNode Menucatnoderoot = new TreeNode(subcat.DisplayName)
@@ -2206,6 +2211,287 @@ namespace ExpansionPlugin
             }
             Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
             return Menucatnoderoot;
+        }
+        //Personal Storage New
+        private TreeNode CreateExpansionPersonalStorageNewConfig(ExpansionPersonalStorageNewConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionPersonalStorageNewConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionPersonalStorageNewConfigNodes(ExpansionPersonalStorageNewConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded Items")
+            {
+                Tag = "PersonalStorageNewExludedItems"
+            };
+            foreach (string s in ef.Data.ExcludedItems)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "PersonalStorageNewExludedItem"
+                });
+            }
+            EconomyRootNode.Nodes.Add(ExludedclassnamesNode);
+            TreeNode StorageLevelsNode = new TreeNode("Storage Levels")
+            {
+                Tag = "PersonalStorageNewStorageLevels"
+            };
+            foreach(KeyValuePair<int, ExpansionPersonalStorageLevel> lvs in ef.Data.StorageLevels)
+            {
+                StorageLevelsNode.Nodes.Add(new TreeNode(lvs.Key.ToString())
+                {
+                    Tag = lvs
+                });
+            }
+            EconomyRootNode.Nodes.Add(StorageLevelsNode);
+        }
+        //Personal Storage
+        private TreeNode CreateExpansionPersonalStorageConfig(ExpansionPersonalStorageConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionPersonalStorageConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionPersonalStorageConfigNodes(ExpansionPersonalStorageConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded ClassNames")
+            {
+                Tag = "PersonalStorageExcludedClassNames"
+            };
+            foreach (string s in ef.Data.ExcludedClassNames)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "PersonalStorageExcludedClassName"
+                });
+            }
+            EconomyRootNode.Nodes.Add(ExludedclassnamesNode);
+            TreeNode MenuCategoriesNode = new TreeNode("Menu Categories")
+            {
+                Tag = "PersonalStorageMenuCategories"
+            };
+            foreach (ExpansionPersonalStorageMenuCategory cat in ef.Data.MenuCategories)
+            {
+                MenuCategoriesNode.Nodes.Add(Createmenucatnodes(cat));
+            }
+            EconomyRootNode.Nodes.Add(MenuCategoriesNode);
+        }
+        private static TreeNode Createmenucatnodes(ExpansionPersonalStorageMenuCategory cat)
+        {
+            TreeNode Menucatnoderoot = new TreeNode(cat.DisplayName)
+            {
+                Tag = cat
+            };
+
+            TreeNode IncludedclassnamesNode = new TreeNode("Included")
+            {
+                Tag = "MenuCatsIncluded"
+            };
+            foreach (string s in cat.Included)
+            {
+                IncludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatIncluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(IncludedclassnamesNode);
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded")
+            {
+                Tag = "MenuCatsExluded"
+            };
+            foreach (string s in cat.Excluded)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatExluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
+            TreeNode SubCatNodes = new TreeNode("Sub Categories")
+            {
+                Tag = "P2PSubCategories"
+            };
+            foreach (ExpansionPersonalStorageMenuSubCategory subcat in cat.SubCategories)
+            {
+                SubCatNodes.Nodes.Add(CreateSubCats(subcat));
+            }
+            Menucatnoderoot.Nodes.Add(SubCatNodes);
+            return Menucatnoderoot;
+        }
+        private static TreeNode CreateSubCats(ExpansionPersonalStorageMenuSubCategory subcat)
+        {
+            TreeNode Menucatnoderoot = new TreeNode(subcat.DisplayName)
+            {
+                Tag = subcat
+            };
+            TreeNode IncludedclassnamesNode = new TreeNode("Included")
+            {
+                Tag = "MenuCatsIncluded"
+            };
+            foreach (string s in subcat.Included)
+            {
+                IncludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatIncluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(IncludedclassnamesNode);
+            TreeNode ExludedclassnamesNode = new TreeNode("Excluded")
+            {
+                Tag = "MenuCatsExluded"
+            };
+            foreach (string s in subcat.Excluded)
+            {
+                ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "MenuCatExluded"
+                });
+            }
+            Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
+            return Menucatnoderoot;
+        }
+        //Player List
+        private TreeNode CreateExpansionPlayerListConfig(ExpansionPlayerListConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionPlayerListConfiggNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionPlayerListConfiggNodes(ExpansionPlayerListConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //Quest
+        private TreeNode CreateExpansionQuestConfig(ExpansionQuestConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionQuestConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionQuestConfigNodes(ExpansionQuestConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
+        //Raid
+        private TreeNode CreateExpansionRaidConfig(ExpansionRaidConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionRaidConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionRaidConfigNodes(ExpansionRaidConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            TreeNode Explosivesroot = new TreeNode("Explosives")
+            {
+                Tag = "Explosives"
+            };
+            foreach (string edwl in ef.Data.ExplosiveDamageWhitelist)
+            {
+                Explosivesroot.Nodes.Add(new TreeNode(edwl)
+                {
+                    Tag = "RaidExplosiveWhiteListItem"
+                });
+            }
+            EconomyRootNode.Nodes.Add(Explosivesroot);
+
+            TreeNode BarbedWireRoot = new TreeNode("Barbed Wire")
+            {
+                Tag = "RaidBarbedWireRaidTools"
+            };
+            foreach (string edwl in ef.Data.BarbedWireRaidTools)
+            {
+                BarbedWireRoot.Nodes.Add(new TreeNode(edwl)
+                {
+                    Tag = "RaidBarbedWireRaidTool"
+                });
+            }
+            EconomyRootNode.Nodes.Add(BarbedWireRoot);
+
+            TreeNode SafesRoot = new TreeNode("Safes")
+            {
+                Tag = "RaidSafeRaidTools"
+            };
+            foreach (string edwl in ef.Data.SafeRaidTools)
+            {
+                SafesRoot.Nodes.Add(new TreeNode(edwl)
+                {
+                    Tag = "RaidSafeRaidTool"
+                });
+            }
+            EconomyRootNode.Nodes.Add(SafesRoot);
+
+            TreeNode ContainersRoot = new TreeNode("Containers")
+            {
+                Tag = "RaidContainerRaidTools"
+            };
+            foreach (string edwl in ef.Data.LockOnContainerRaidTools)
+            {
+                ContainersRoot.Nodes.Add(new TreeNode(edwl)
+                {
+                    Tag = "RaidContainerRaidTool"
+                });
+            }
+            EconomyRootNode.Nodes.Add(ContainersRoot);
+
+            TreeNode LocksRoot = new TreeNode("Locks")
+            {
+                Tag = "RaidLockRaidTools"
+            };
+            foreach (string edwl in ef.Data.LockRaidTools)
+            {
+                LocksRoot.Nodes.Add(new TreeNode(edwl)
+                {
+                    Tag = "RaidLockRaidTool"
+                });
+            }
+            EconomyRootNode.Nodes.Add(LocksRoot);
+
+            TreeNode RadScheduleRoot = new TreeNode("Raid Schedule")
+            {
+                Tag = "RaidSchedule"
+            };
+            foreach(ExpansionRaidSchedule rs in ef.Data.Schedule)
+            {
+                RadScheduleRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(RadScheduleRoot);
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)

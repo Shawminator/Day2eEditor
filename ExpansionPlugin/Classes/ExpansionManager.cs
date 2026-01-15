@@ -36,11 +36,11 @@ namespace ExpansionPlugin
         public ExpansionNotificationConfig ExpansionNotificationConfig { get; set; }
         public ExpansionPartyConfig ExpansionPartyConfig { get; set; }
         public ExpansionP2PMarketConfig ExpansionP2PMarketConfig { get; set; }
-        //public ExpansionPersonalStorageList PersonalStorageList { get; set; }
-        //public ExpansionPersonalStorageNewSettings PersonalStorageSettingsNew { get; set; }
-        //public ExpansionPersonalStorageSettings PersonalStorageSettings { get; set; }
-        //public ExpansionPlayerListSettings PlayerListSettings { get; set; }
-        //public ExpansionRaidSettings RaidSettings { get; set; }
+        public ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig { get; set; }
+        public ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig { get; set; }
+        public ExpansionPlayerListConfig ExpansionPlayerListConfig { get; set; }
+        public ExpansionQuestConfig ExpansionQuestConfig { get; set; }
+        public ExpansionRaidConfig ExpansionRaidConfig { get; set; }
         //public ExpansionSafeZoneSettings SafeZoneSettings { get; set; }
         //public ExpansionSocialMediaSettings SocialMediaSettings { get; set; }
         //public ExpansionSpawnSettings SpawnSettings { get; set; }
@@ -73,6 +73,10 @@ namespace ExpansionPlugin
             _paths["NotificationSchedulerSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NotificationSchedulerSettings.json");
             _paths["NotificationSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "NotificationSettings.json");
             _paths["PartySettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "PartySettings.json");
+            _paths["PersonalStorageNewSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "PersonalStorageNewSettings.json"); 
+            _paths["PlayerListSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "PlayerListSettings.json");
+            _paths["QuestSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "QuestSettings.json");
+            _paths["RaidSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "RaidSettings.json");
 
             // settings files in missions files
             _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
@@ -81,7 +85,8 @@ namespace ExpansionPlugin
             _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
             _paths["MapSettings"] = Path.Combine(basePath, "expansion", "settings", "MapSettings.json");
             _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
-            _paths["P2PMarketSettings"] = Path.Combine(basePath, "expansion", "settings", "P2PMarketSettings.json");
+            _paths["P2PMarketSettings"] = Path.Combine(basePath, "expansion", "settings", "P2PMarketSettings.json"); 
+            _paths["PersonalStorageSettings"] = Path.Combine(basePath, "expansion", "settings", "PersonalStorageSettings.json");
 
             LoadFiles(basePath);
         }
@@ -161,6 +166,21 @@ namespace ExpansionPlugin
             ExpansionP2PMarketConfig = new ExpansionP2PMarketConfig(_paths["P2PMarketSettings"]);
             LoadConfigWithErrorReport("P2PMarketSettings", ExpansionP2PMarketConfig);
 
+            ExpansionPersonalStorageNewConfig = new ExpansionPersonalStorageNewConfig(_paths["PersonalStorageNewSettings"]);
+            LoadConfigWithErrorReport("PersonalStorageNewSettings", ExpansionPersonalStorageNewConfig);
+            
+            ExpansionPersonalStorageConfig = new ExpansionPersonalStorageConfig(_paths["PersonalStorageSettings"]);
+            LoadConfigWithErrorReport("PersonalStorageSettings", ExpansionPersonalStorageConfig);
+
+            ExpansionPlayerListConfig = new ExpansionPlayerListConfig(_paths["PlayerListSettings"]);
+            LoadConfigWithErrorReport("PlayerListSettings", ExpansionPlayerListConfig);
+
+            ExpansionQuestConfig = new ExpansionQuestConfig(_paths["QuestSettings"]);
+            LoadConfigWithErrorReport("QuestSettings", ExpansionQuestConfig);
+
+            ExpansionRaidConfig = new ExpansionRaidConfig(_paths["RaidSettings"]);
+            LoadConfigWithErrorReport("RaidSettings", ExpansionRaidConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -203,7 +223,12 @@ namespace ExpansionPlugin
                 ExpansionNotificationSchedulerConfig,
                 ExpansionNotificationConfig,
                 ExpansionPartyConfig,
-                ExpansionP2PMarketConfig
+                ExpansionP2PMarketConfig,
+                ExpansionPersonalStorageNewConfig,
+                ExpansionPersonalStorageConfig,
+                ExpansionPlayerListConfig,
+                ExpansionQuestConfig,
+                ExpansionRaidConfig
 
             };
 
@@ -247,7 +272,12 @@ namespace ExpansionPlugin
                 ExpansionNotificationSchedulerConfig,
                 ExpansionNotificationConfig,
                 ExpansionPartyConfig,
-                ExpansionP2PMarketConfig
+                ExpansionP2PMarketConfig,
+                ExpansionPersonalStorageNewConfig,
+                ExpansionPersonalStorageConfig,
+                ExpansionPlayerListConfig,
+                ExpansionQuestConfig,
+                ExpansionRaidConfig
             };
             foreach (var obj in configs)
             {
