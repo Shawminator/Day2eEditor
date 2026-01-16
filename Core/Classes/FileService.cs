@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Day2eEditor;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
@@ -24,6 +25,35 @@ public class FileService
             return false;
         }
     }
+    public class Vec3Converter : JsonConverter<Vec3>
+    {
+        public override Vec3 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            // Expecting: [ float, float, float ]
+            if (reader.TokenType != JsonTokenType.StartArray)
+                throw new JsonException("Expected start of array for Vec3");
+
+            reader.Read();
+            float x = reader.GetSingle();
+            reader.Read();
+            float y = reader.GetSingle();
+            reader.Read();
+            float z = reader.GetSingle();
+            reader.Read(); // EndArray
+
+            return new Vec3(x, y, z);
+        }
+
+        public override void Write(Utf8JsonWriter writer, Vec3 value, JsonSerializerOptions options)
+        {
+            writer.WriteStartArray();
+            writer.WriteNumberValue(value.X);
+            writer.WriteNumberValue(value.Y);
+            writer.WriteNumberValue(value.Z);
+            writer.WriteEndArray();
+        }
+    }
+
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
@@ -38,7 +68,8 @@ public class FileService
         Func<T, bool>? checkVersionAndUpdate = null,
         Action<Exception>? onError = null,
         string configName = "Configuration",
-        bool useBoolConvertor = false
+        bool useBoolConvertor = false,
+        bool useVecConvertor = false
     )
     {
         if (File.Exists(path))
@@ -50,6 +81,10 @@ public class FileService
                 if (useBoolConvertor)
                 {
                     options.Converters.Add(new BoolConverter());
+                }
+                if (useVecConvertor)
+                {
+                    options.Converters.Add(new Vec3Converter());
                 }
                 T? data = JsonSerializer.Deserialize<T>(File.ReadAllText(path), options);
 
@@ -85,16 +120,25 @@ public class FileService
         {
             Console.WriteLine($"{Path.GetFileName(path)} not found. Creating new {configName}...");
             var newData = createNew();
-            SaveJson(path, newData);
+            SaveJson(path, newData, useBoolConvertor, useVecConvertor);
             return newData;
         }
     }
 
-    public void SaveJson<T>(string path, T data)
+    public void SaveJson<T>(string path, T data, bool useBoolConvertor = false,  bool useVecConvertor = false)
     {
+        var options = new JsonSerializerOptions(_jsonOptions);
+        if (useBoolConvertor)
+        {
+            options.Converters.Add(new BoolConverter());
+        }
+        if (useVecConvertor)
+        {
+            options.Converters.Add(new Vec3Converter());
+        }
         try
         {
-            var json = JsonSerializer.Serialize(data, _jsonOptions);
+            var json = JsonSerializer.Serialize(data, options);
             File.WriteAllText(path, json);
         }
         catch (Exception ex)

@@ -41,9 +41,9 @@ namespace ExpansionPlugin
         public ExpansionPlayerListConfig ExpansionPlayerListConfig { get; set; }
         public ExpansionQuestConfig ExpansionQuestConfig { get; set; }
         public ExpansionRaidConfig ExpansionRaidConfig { get; set; }
-        //public ExpansionSafeZoneSettings SafeZoneSettings { get; set; }
-        //public ExpansionSocialMediaSettings SocialMediaSettings { get; set; }
-        //public ExpansionSpawnSettings SpawnSettings { get; set; }
+        public ExpansionSafeZoneConfig ExpansionSafeZoneConfig { get; set; }
+        public ExpansionSocialMediaConfig ExpansionSocialMediaConfig { get; set; }
+        public ExpansionSpawnConfig ExpansionSpawnConfig { get; set; }
         //public ExpansionTerritorySettings TerritorySettings { get; set; }
         //public ExpansionVehicleSettings VehicleSettings { get; set; }
 
@@ -76,7 +76,8 @@ namespace ExpansionPlugin
             _paths["PersonalStorageNewSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "PersonalStorageNewSettings.json"); 
             _paths["PlayerListSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "PlayerListSettings.json");
             _paths["QuestSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "QuestSettings.json");
-            _paths["RaidSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "RaidSettings.json");
+            _paths["RaidSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "RaidSettings.json"); 
+            _paths["SocialMediaSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "SocialMediaSettings.json");
 
             // settings files in missions files
             _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
@@ -86,7 +87,9 @@ namespace ExpansionPlugin
             _paths["MapSettings"] = Path.Combine(basePath, "expansion", "settings", "MapSettings.json");
             _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
             _paths["P2PMarketSettings"] = Path.Combine(basePath, "expansion", "settings", "P2PMarketSettings.json"); 
-            _paths["PersonalStorageSettings"] = Path.Combine(basePath, "expansion", "settings", "PersonalStorageSettings.json");
+            _paths["PersonalStorageSettings"] = Path.Combine(basePath, "expansion", "settings", "PersonalStorageSettings.json"); 
+            _paths["SafeZoneSettings"] = Path.Combine(basePath, "expansion", "settings", "SafeZoneSettings.json");
+            _paths["SpawnSettings"] = Path.Combine(basePath, "expansion", "settings", "SpawnSettings.json");
 
             LoadFiles(basePath);
         }
@@ -181,6 +184,15 @@ namespace ExpansionPlugin
             ExpansionRaidConfig = new ExpansionRaidConfig(_paths["RaidSettings"]);
             LoadConfigWithErrorReport("RaidSettings", ExpansionRaidConfig);
 
+            ExpansionSafeZoneConfig = new ExpansionSafeZoneConfig(_paths["SafeZoneSettings"]);
+            LoadConfigWithErrorReport("SafeZoneSettings", ExpansionSafeZoneConfig);
+
+            ExpansionSocialMediaConfig = new ExpansionSocialMediaConfig(_paths["SocialMediaSettings"]);
+            LoadConfigWithErrorReport("SocialMediaSettings", ExpansionSocialMediaConfig);
+
+            ExpansionSpawnConfig = new ExpansionSpawnConfig(_paths["SpawnSettings"]);
+            LoadConfigWithErrorReport("SpawnSettings", ExpansionSpawnConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -228,7 +240,10 @@ namespace ExpansionPlugin
                 ExpansionPersonalStorageConfig,
                 ExpansionPlayerListConfig,
                 ExpansionQuestConfig,
-                ExpansionRaidConfig
+                ExpansionRaidConfig,
+                ExpansionSafeZoneConfig,
+                ExpansionSocialMediaConfig,
+                ExpansionSpawnConfig
 
             };
 
@@ -277,7 +292,10 @@ namespace ExpansionPlugin
                 ExpansionPersonalStorageConfig,
                 ExpansionPlayerListConfig,
                 ExpansionQuestConfig,
-                ExpansionRaidConfig
+                ExpansionRaidConfig,
+                ExpansionSafeZoneConfig,
+                ExpansionSocialMediaConfig,
+                ExpansionSpawnConfig
             };
             foreach (var obj in configs)
             {

@@ -1,9 +1,11 @@
 using Day2eEditor;
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -1107,6 +1109,9 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPartyConfig, CreateExpansionPartyConfigConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPlayerListConfig, CreateExpansionPlayerListConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionRaidConfig, CreateExpansionRaidConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSafeZoneConfig, CreateExpansionSafeZoneConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSocialMediaConfig, CreateExpansionSocialMediaConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSpawnConfig, CreateExpansionSpawnConfig);
 
             rootNode.Nodes.Add(SettingsNode);
 
@@ -2492,6 +2497,267 @@ namespace ExpansionPlugin
                 });
             }
             EconomyRootNode.Nodes.Add(RadScheduleRoot);
+        }
+        //SafeZone
+        private TreeNode CreateExpansionSafeZoneConfig(ExpansionSafeZoneConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionSafeZoneConfiNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionSafeZoneConfiNodes(ExpansionSafeZoneConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+
+            TreeNode CircleZonesRoot = new TreeNode("Circle Zones")
+            {
+                Tag = "CircleZones"
+            };
+            foreach (ExpansionSafeZoneCircle rs in ef.Data.CircleZones)
+            {
+                CircleZonesRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(CircleZonesRoot);
+
+            TreeNode PolygonZonesRoot = new TreeNode("Polygon Zones")
+            {
+                Tag = "PolygonZones"
+            };
+            foreach (ExpansionSafeZonePolygon rs in ef.Data.PolygonZones)
+            {
+                PolygonZonesRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(PolygonZonesRoot);
+
+            TreeNode CylinderZonesRoot = new TreeNode("Cylinder Zones")
+            {
+                Tag = "CylinderZones"
+            };
+            foreach (ExpansionSafeZoneCylinder rs in ef.Data.CylinderZones)
+            {
+                CylinderZonesRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(CylinderZonesRoot);
+
+            TreeNode ForceSZCleanup_ExcludedItemsRoot = new TreeNode("Force SZ Cleanup ExcludedItems")
+            {
+                Tag = "ForceSZCleanup_ExcludedItems"
+            };
+            foreach (string rs in ef.Data.ForceSZCleanup_ExcludedItems)
+            {
+                ForceSZCleanup_ExcludedItemsRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(ForceSZCleanup_ExcludedItemsRoot);
+        }
+        //Social Media
+        private TreeNode CreateExpansionSocialMediaConfig(ExpansionSocialMediaConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionSocialMediaConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionSocialMediaConfigNodes(ExpansionSocialMediaConfig ef, TreeNode EconomyRootNode)
+        {
+            TreeNode NewsFeedTextsRoot = new TreeNode("News Feed Texts")
+            {
+                Tag = "NewsFeedTexts"
+            };
+            foreach (ExpansionNewsFeedTextSetting rs in ef.Data.NewsFeedTexts)
+            {
+                NewsFeedTextsRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(NewsFeedTextsRoot);
+
+            TreeNode NewsFeedLinksRoot = new TreeNode("News Feed Links")
+            {
+                Tag = "NewsFeedLinks"
+            };
+            foreach (ExpansionNewsFeedLinkSetting rs in ef.Data.NewsFeedLinks)
+            {
+                NewsFeedLinksRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(NewsFeedLinksRoot);
+        }
+        //Spawn
+        private TreeNode CreateExpansionSpawnConfig(ExpansionSpawnConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionSpawnConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionSpawnConfigNodes(ExpansionSpawnConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+            
+            TreeNode SpawnLocationsRoot = new TreeNode("Spawn Locations")
+            {
+                Tag = "SpawnLocations"
+            };
+            foreach (ExpansionSpawnLocation rs in ef.Data.SpawnLocations)
+            {
+
+                TreeNode SLNode = new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                };
+                TreeNode WaypointsNode = new TreeNode("Positions")
+                {
+                    Tag = "SpawnLocationPositions"
+                };
+                foreach (Vec3 v3 in rs.Positions)
+                {
+                    WaypointsNode.Nodes.Add(new TreeNode(v3.GetString())
+                    {
+                        Tag = v3
+                    });
+                }
+                SLNode.Nodes.Add(WaypointsNode);
+                SpawnLocationsRoot.Nodes.Add(SLNode);
+            }
+            EconomyRootNode.Nodes.Add(SpawnLocationsRoot);
+            
+            EconomyRootNode.Nodes.Add(BuildStartingClothingTree(ef.Data.StartingClothing));
+            EconomyRootNode.Nodes.Add(BuildStartingGearTree(ef.Data.StartingGear));
+
+            TreeNode MaleLoadoutsRoot = new TreeNode("Male Loadouts")
+            {
+                Tag = "MaleLoadouts"
+            };
+            foreach (ExpansionSpawnGearLoadouts rs in ef.Data.MaleLoadouts)
+            {
+                MaleLoadoutsRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(MaleLoadoutsRoot);
+
+            TreeNode FemaleLoadoutsRoot = new TreeNode("Female Loadouts")
+            {
+                Tag = "FemaleLoadouts"
+            };
+            foreach (ExpansionSpawnGearLoadouts rs in ef.Data.FemaleLoadouts)
+            {
+                FemaleLoadoutsRoot.Nodes.Add(new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                });
+            }
+            EconomyRootNode.Nodes.Add(FemaleLoadoutsRoot);
+        }
+        private TreeNode BuildStartingClothingTree(ExpansionStartingClothing sc)
+        {
+            TreeNode root = new TreeNode("Starting Clothing") { Tag = "StartingClothingRoot" };
+
+            // Loop through all list properties in the class
+            var listProperties = typeof(ExpansionStartingClothing)
+                .GetProperties()
+                .Where(p => p.PropertyType == typeof(BindingList<string>));
+
+            foreach (var prop in listProperties)
+            {
+                BindingList<string> list = (BindingList<string>)prop.GetValue(sc);
+
+                // Create category node
+                TreeNode categoryNode = new TreeNode(prop.Name)
+                {
+                    Tag = prop.Name
+                };
+
+                if (list != null)
+                {
+                    foreach (var item in list)
+                    {
+                        categoryNode.Nodes.Add(new TreeNode(item)
+                        {
+                            Tag = prop.Name + "Item"
+                        });
+                    }
+                }
+
+                root.Nodes.Add(categoryNode);
+            }
+
+            return root;
+        }
+        private TreeNode BuildStartingGearTree(ExpansionStartingGear gear)
+        {
+            TreeNode root = new TreeNode("Starting Gear")
+            {
+                Tag = "StartingGearRoot"
+            };
+
+            var listProps = typeof(ExpansionStartingGear)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.PropertyType == typeof(BindingList<ExpansionStartingGearItem>));
+
+            foreach (var prop in listProps)
+            {
+                var list = (BindingList<ExpansionStartingGearItem>)prop.GetValue(gear);
+                var categoryNode = new TreeNode(prop.Name) { Tag = prop.Name };
+                if (list == null || list.Count == 0)
+                {
+                    root.Nodes.Add(categoryNode);
+                    continue;
+                }
+                foreach (var item in list)
+                {
+                    categoryNode.Nodes.Add(new TreeNode(item.ClassName)
+                    {
+                        Tag = item // store the actual object
+                    });
+                }
+                root.Nodes.Add(categoryNode);
+            }
+            AddSingleItemNodeIfNotEmpty(root, gear.PrimaryWeapon, nameof(gear.PrimaryWeapon));
+            AddSingleItemNodeIfNotEmpty(root, gear.SecondaryWeapon, nameof(gear.SecondaryWeapon));
+
+            return root;
+        }
+        private void AddSingleItemNodeIfNotEmpty(TreeNode root, ExpansionStartingGearItem item, string name)
+        {
+            TreeNode categoryNode = new TreeNode(name) { Tag = name };
+            if (item.ClassName != null && item.Quantity != null && item.Attachments != null)
+            {
+                categoryNode.Nodes.Add(new TreeNode((item.ClassName))
+                {
+                    Tag = item // store the actual object
+                });
+            }
+            root.Nodes.Add(categoryNode);
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)

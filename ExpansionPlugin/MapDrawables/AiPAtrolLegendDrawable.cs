@@ -24,7 +24,7 @@ namespace ExpansionPlugin
 
             // Bottom-left of the visible screen/control
             float startX = padding;
-            float startY = _controlSize.Height - (itemHeight * 8) - padding;
+            float startY = _controlSize.Height - (itemHeight * 10) - padding;
 
             using (var font = new Font("Tahoma", 8))
             {
@@ -35,9 +35,11 @@ namespace ExpansionPlugin
                 DrawLegendItem(g, startX, startY, Color.Green, "ONCE →", font); startY += itemHeight;
                 DrawLegendItem(g, startX, startY, Color.Blue, "LOOP ⟳", font); startY += itemHeight;
                 DrawLegendItem(g, startX, startY, Color.Orange, "ALTERNATE ↔", font); startY += itemHeight;
+                DrawLegendItem(g, startX, startY, Color.Yellow, "LOOP_OR_ALTERNATE ⟳ or ↔", font); startY += itemHeight;
                 DrawLegendItem(g, startX, startY, Color.Blue, "HALT_OR_LOOP (dashed)", font); startY += itemHeight;
                 DrawLegendItem(g, startX, startY, Color.Orange, "HALT_OR_ALTERNATE (dashed)", font); startY += itemHeight;
-                DrawLegendItem(g, startX, startY, Color.Gray, "ROAMING 🧭", font);
+                DrawLegendItem(g, startX, startY, Color.Gray, "ROAMING 🧭", font); startY += itemHeight;
+                DrawLegendItem(g, startX, startY, Color.LimeGreen, "ROAMING_LOCAL 🧭", font);
             }
         }
         private void DrawLegendItem(Graphics g, float x, float y, Color color, string label, Font font)

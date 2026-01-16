@@ -16,9 +16,11 @@ namespace ExpansionPlugin
         ONCE,
         LOOP,
         ALTERNATE,
+        LOOP_OR_ALTERNATE,
         HALT_OR_ALTERNATE,
         HALT_OR_LOOP,
-        ROAMING
+        ROAMING,
+        ROAMING_LOCAL
     }
 
     public class AIPatrolDrawable : IMapDrawable
@@ -100,6 +102,29 @@ namespace ExpansionPlugin
                     }
                 }
             }
+            else if (Behaviour == PatrolBehaviour.ROAMING_LOCAL)
+            {
+                int lineCount = 10;
+
+                // Normalize line length to stay consistent across zoom
+                float desiredScreenLength = 100f;
+                float normalizedLengthX = desiredScreenLength / _mapSize.Width * drawBounds.Height;
+                float normalizedLengthY = desiredScreenLength / _mapSize.Height * drawBounds.Width;
+                float lineLength = (normalizedLengthX + normalizedLengthY) / 2f;
+
+                using (var roamPen = new Pen(Color.LimeGreen, 2) { DashStyle = DashStyle.Dot })
+                {
+                    for (int i = 0; i < lineCount; i++)
+                    {
+                        double angle = i * (2 * Math.PI / lineCount); // Even spacing
+                        float dx = (float)(Math.Cos(angle) * lineLength);
+                        float dy = (float)(Math.Sin(angle) * lineLength);
+
+                        PointF endPoint = new PointF(center.X + dx, center.Y + dy);
+                        g.DrawLine(roamPen, center, endPoint);
+                    }
+                }
+            }
             else if (Behaviour == PatrolBehaviour.ONCE)
             {
                 g.DrawLine(GetArrowPen(), center, center2);
@@ -119,6 +144,12 @@ namespace ExpansionPlugin
             else if (Behaviour == PatrolBehaviour.ALTERNATE)
             {
                 g.DrawLine(GetArrowPen(), center, center2);
+                DrawArrow(g, center, center2, GetArrowPen());
+                DrawArrow(g, center2, center, GetArrowPen());
+            }
+            else if (Behaviour == PatrolBehaviour.LOOP_OR_ALTERNATE)
+            {
+                g.DrawLine(GetArrowPen(true), center, center2);
                 DrawArrow(g, center, center2, GetArrowPen());
                 DrawArrow(g, center2, center, GetArrowPen());
             }
@@ -213,6 +244,10 @@ namespace ExpansionPlugin
                     break;
                 case PatrolBehaviour.HALT_OR_LOOP:
                     arrowColor = Color.Blue;
+                    dashStyle = DashStyle.Dash;
+                    break;
+                case PatrolBehaviour.LOOP_OR_ALTERNATE:
+                    arrowColor = Color.Yellow;
                     dashStyle = DashStyle.Dash;
                     break;
             }

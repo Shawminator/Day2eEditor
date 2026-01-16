@@ -312,7 +312,7 @@
             darkLabel53.Location = new Point(20, 122);
             darkLabel53.Margin = new Padding(4, 0, 4, 0);
             darkLabel53.Name = "darkLabel53";
-            darkLabel53.Size = new Size(85, 15);
+            darkLabel53.Size = new Size(84, 15);
             darkLabel53.TabIndex = 341;
             darkLabel53.Text = "Despawn Time";
             // 
@@ -323,7 +323,7 @@
             darkLabel55.Location = new Point(20, 267);
             darkLabel55.Margin = new Padding(4, 0, 4, 0);
             darkLabel55.Name = "darkLabel55";
-            darkLabel55.Size = new Size(81, 15);
+            darkLabel55.Size = new Size(82, 15);
             darkLabel55.TabIndex = 345;
             darkLabel55.Text = "Accuracy Max";
             // 
@@ -489,7 +489,7 @@
             darkLabel43.Location = new Point(20, 298);
             darkLabel43.Margin = new Padding(4, 0, 4, 0);
             darkLabel43.Name = "darkLabel43";
-            darkLabel43.Size = new Size(119, 15);
+            darkLabel43.Size = new Size(118, 15);
             darkLabel43.TabIndex = 347;
             darkLabel43.Text = "Threat Distance Limit";
             // 
@@ -526,7 +526,7 @@
             label8.Location = new Point(18, 420);
             label8.Margin = new Padding(4, 0, 4, 0);
             label8.Name = "label8";
-            label8.Size = new Size(125, 15);
+            label8.Size = new Size(126, 15);
             label8.TabIndex = 387;
             label8.Text = "Max Flanking Distance";
             // 
@@ -620,7 +620,7 @@
             darkLabel26.Location = new Point(20, 180);
             darkLabel26.Margin = new Padding(4, 0, 4, 0);
             darkLabel26.Name = "darkLabel26";
-            darkLabel26.Size = new Size(90, 15);
+            darkLabel26.Size = new Size(91, 15);
             darkLabel26.TabIndex = 324;
             darkLabel26.Text = "Max Dist Radius";
             // 
@@ -646,7 +646,7 @@
             darkLabel6.Location = new Point(20, 90);
             darkLabel6.Margin = new Padding(4, 0, 4, 0);
             darkLabel6.Name = "darkLabel6";
-            darkLabel6.Size = new Size(84, 15);
+            darkLabel6.Size = new Size(83, 15);
             darkLabel6.TabIndex = 331;
             darkLabel6.Text = "Respawn Time";
             // 
@@ -889,7 +889,7 @@
             label11.Location = new Point(24, 228);
             label11.Margin = new Padding(4, 0, 4, 0);
             label11.Name = "label11";
-            label11.Size = new Size(106, 15);
+            label11.Size = new Size(107, 15);
             label11.TabIndex = 406;
             label11.Text = "Number Of AI Max";
             // 
@@ -911,7 +911,7 @@
             label6.Location = new Point(24, 515);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new Size(127, 15);
+            label6.Size = new Size(126, 15);
             label6.TabIndex = 385;
             label6.Text = "Can Be Triggered By AI";
             // 
@@ -1287,7 +1287,7 @@
             darkLabel68.Location = new Point(24, 459);
             darkLabel68.Margin = new Padding(4, 0, 4, 0);
             darkLabel68.Name = "darkLabel68";
-            darkLabel68.Size = new Size(178, 15);
+            darkLabel68.Size = new Size(177, 15);
             darkLabel68.TabIndex = 355;
             darkLabel68.Text = "Sniper Prone Distance Threshold";
             // 
@@ -1332,7 +1332,7 @@
             StaticPatrolBehaviorCB.BackColor = Color.FromArgb(60, 63, 65);
             StaticPatrolBehaviorCB.ForeColor = SystemColors.Control;
             StaticPatrolBehaviorCB.FormattingEnabled = true;
-            StaticPatrolBehaviorCB.Items.AddRange(new object[] { "HALT", "LOOP", "ALTERNATE", "ONCE", "HALT_OR_LOOP", "HALT_OR_ALTERNATE", "ROAMING" });
+            StaticPatrolBehaviorCB.Items.AddRange(new object[] { "HALT", "LOOP", "ALTERNATE", "LOOP_OR_ALTERNATE", "ONCE", "HALT_OR_LOOP", "HALT_OR_ALTERNATE", "ROAMING", "ROAMING_LOCAL" });
             StaticPatrolBehaviorCB.Location = new Point(255, 257);
             StaticPatrolBehaviorCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolBehaviorCB.Name = "StaticPatrolBehaviorCB";
@@ -1421,7 +1421,7 @@
             darkLabel28.Location = new Point(24, 318);
             darkLabel28.Margin = new Padding(4, 0, 4, 0);
             darkLabel28.Name = "darkLabel28";
-            darkLabel28.Size = new Size(111, 15);
+            darkLabel28.Size = new Size(110, 15);
             darkLabel28.TabIndex = 320;
             darkLabel28.Text = "Under Threat Speed";
             // 
@@ -1486,7 +1486,7 @@
             darkLabel8.Location = new Point(23, 571);
             darkLabel8.Margin = new Padding(4, 0, 4, 0);
             darkLabel8.Name = "darkLabel8";
-            darkLabel8.Size = new Size(103, 15);
+            darkLabel8.Size = new Size(104, 15);
             darkLabel8.TabIndex = 333;
             darkLabel8.Text = "Max Spread radius";
             // 

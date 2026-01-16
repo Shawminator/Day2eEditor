@@ -20,7 +20,7 @@ namespace ExpansionPlugin
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
 
-        public const int CurrentVersion = 2;
+        public const int CurrentVersion = 3;
 
         public ExpansionAILocationConfig(string path)
         {
@@ -131,7 +131,8 @@ namespace ExpansionPlugin
 			    "Land_Shed_W2",  //! Pathfinding tends to find a way in, but not out.
 			    "Land_Tenement_Big",  //! AI can get stuck on upper floors when climbing the broken stairs
 			    "Land_Misc_Toilet_Mobile",  //! Too many door interactions
-			    "Land_Ship_Medium2"  //! AI can get stuck
+			    "Land_Ship_Medium2",  //! AI can get stuck
+                "Land_Train_Wagon_Box"//! Inside may not be Reachable
             };
             foreach(string value in defaults)
             {
