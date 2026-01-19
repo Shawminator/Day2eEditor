@@ -94,7 +94,7 @@ namespace ExpansionPlugin
             textBox6.Text = _data.ObjectClassName;
             StaticPatrolWaypointInterpolationCB.SelectedIndex = StaticPatrolWaypointInterpolationCB.FindStringExact(_data.WaypointInterpolation);
             StaticPatrolUseRandomWaypointAsStartPointCB.Checked = _data.UseRandomWaypointAsStartPoint == 1 ? true : false;
-
+            StaticPatrolCanSpawnInContaminatedAreaCB.Checked = _data.CanSpawnInContaminatedArea == 1 ? true : false;
             if (_data.FormationScale == -1)
             {
                 StaticPatrolFormationScaleNUD.Enabled = false;
@@ -319,7 +319,7 @@ namespace ExpansionPlugin
             if (_data.RespawnTime == -2)
             {
                 StaticPatrolRespawnTimeGeneralCB.Checked = true;
-                
+
                 if (AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.RespawnTime == -1)
                 {
                     StaticPatrolRespawnTimeNWonttRespawnCB.Enabled = false;
@@ -747,14 +747,18 @@ namespace ExpansionPlugin
             _data.UseRandomWaypointAsStartPoint = StaticPatrolUseRandomWaypointAsStartPointCB.Checked == true ? 1 : 0;
             HasChanges();
         }
-
+        private void StaticPatrolCanSpawnInContaminatedAreaCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CanSpawnInContaminatedArea = StaticPatrolCanSpawnInContaminatedAreaCB.Checked == true ? 1 : 0;
+            HasChanges();
+        }
         private void StaticPatrolHeadshotResistanceNUD_Valuechanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HeadshotResistance = StaticPatrolHeadshotResistanceNUD.Value;
             HasChanges();
         }
-
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
@@ -809,7 +813,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolAccuracyMaxGenerralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -835,7 +838,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolThreatDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -860,7 +862,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolNoiseInvestigationDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -885,7 +886,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StsticPatrolMaxFlankingDistanceGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -910,7 +910,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolEnableFlankingOutsideCombatGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -935,7 +934,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolDamageMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -960,7 +958,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolDamageReceivedMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -985,7 +982,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolMinDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -1003,7 +999,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolMaxDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -1021,7 +1016,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolDespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -1039,7 +1033,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolDespawnRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -1057,7 +1050,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolRespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -1092,7 +1084,6 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
         private void StaticPatrolRespawnTimeNWonttRespawnCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -1114,7 +1105,5 @@ namespace ExpansionPlugin
             }
             HasChanges();
         }
-
-
     }
 }

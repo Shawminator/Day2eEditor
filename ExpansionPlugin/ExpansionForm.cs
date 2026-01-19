@@ -1112,6 +1112,7 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSafeZoneConfig, CreateExpansionSafeZoneConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSocialMediaConfig, CreateExpansionSocialMediaConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSpawnConfig, CreateExpansionSpawnConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionTerritoryConfig, CreateExpansionTerritoryConfig);
 
             rootNode.Nodes.Add(SettingsNode);
 
@@ -1269,7 +1270,7 @@ namespace ExpansionPlugin
             {
                 Tag = "AIPatrolWayPoints"
             };
-            foreach (Vec3 v3 in pat._waypoints)
+            foreach (Vec3 v3 in pat.Waypoints)
             {
                 WaypointsNode.Nodes.Add(new TreeNode(v3.GetString())
                 {
@@ -2759,6 +2760,23 @@ namespace ExpansionPlugin
             }
             root.Nodes.Add(categoryNode);
         }
+        //Territory
+        private TreeNode CreateExpansionTerritoryConfig(ExpansionTerritoryConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionTerritoryConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionTerritoryConfigNodes(ExpansionTerritoryConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef.Data
+            });
+        }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
         where THandler : IUIHandler
@@ -3038,12 +3056,12 @@ namespace ExpansionPlugin
                     Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
                 }
 
-                for (int i = 0; i < patrol._waypoints.Count; i++)
+                for (int i = 0; i < patrol.Waypoints.Count; i++)
                 {
-                    Vec3 waypoints = patrol._waypoints[i];
+                    Vec3 waypoints = patrol.Waypoints[i];
 
                     // Determine next waypoint index
-                    bool isLast = i == patrol._waypoints.Count - 1;
+                    bool isLast = i == patrol.Waypoints.Count - 1;
                     Vec3 nextWaypoint;
 
                     if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
@@ -3053,7 +3071,7 @@ namespace ExpansionPlugin
                     }
                     else
                     {
-                        nextWaypoint = patrol._waypoints[(i + 1) % patrol._waypoints.Count];
+                        nextWaypoint = patrol.Waypoints[(i + 1) % patrol.Waypoints.Count];
                     }
 
                     var marker = new AIPatrolDrawable(
@@ -4093,6 +4111,7 @@ namespace ExpansionPlugin
                 DamageMultiplier = -1,
                 DamageReceivedMultiplier = -1,
                 CanBeTriggeredByAI = 0,
+                CanSpawnInContaminatedArea = 0,
                 MinDistRadius = -1,
                 MaxDistRadius = -1,
                 DespawnRadius = -1,
@@ -4105,8 +4124,7 @@ namespace ExpansionPlugin
                 ObjectClassName = "",
                 WaypointInterpolation = "",
                 UseRandomWaypointAsStartPoint = 1,
-                Waypoints = new BindingList<float[]>(),
-                _waypoints = new BindingList<Vec3>()
+                Waypoints = new BindingList<Vec3>()
             };
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrolConfig.Data.Patrols.Add(newpatrol);
@@ -4129,11 +4147,11 @@ namespace ExpansionPlugin
         {
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
-            if (ExpansionAIPatrol._waypoints.Count == null)
-                ExpansionAIPatrol._waypoints = new BindingList<Vec3>();
+            if (ExpansionAIPatrol.Waypoints.Count == null)
+                ExpansionAIPatrol.Waypoints = new BindingList<Vec3>();
 
             Vec3 newvec3 = null;
-            if (ExpansionAIPatrol._waypoints.Count == 0)
+            if (ExpansionAIPatrol.Waypoints.Count == 0)
             {
                 newvec3 = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2);
                 if (MapData.FileExists)
@@ -4143,7 +4161,7 @@ namespace ExpansionPlugin
             }
             else
             {
-                Vec3 vec3 = ExpansionAIPatrol._waypoints.Last();
+                Vec3 vec3 = ExpansionAIPatrol.Waypoints.Last();
                 newvec3 = new Vec3(vec3.X + 25, 0f, vec3.Z);
                 if (MapData.FileExists)
                 {
@@ -4155,7 +4173,7 @@ namespace ExpansionPlugin
                 Tag = newvec3
             };
             currentTreeNode.Nodes.Add(newvec3node);
-            ExpansionAIPatrol._waypoints.Add(newvec3);
+            ExpansionAIPatrol.Waypoints.Add(newvec3);
             ExpansionAIPatrolConfig.isDirty = true;
             ExpansionTV.SelectedNode = newvec3node;
         }
@@ -4163,7 +4181,7 @@ namespace ExpansionPlugin
         {
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
-            ExpansionAIPatrol._waypoints.Remove(currentTreeNode.Tag as Vec3);
+            ExpansionAIPatrol.Waypoints.Remove(currentTreeNode.Tag as Vec3);
             ExpansionAIPatrolConfig.isDirty = true;
             currentTreeNode.Remove();
 
@@ -4181,7 +4199,7 @@ namespace ExpansionPlugin
                 DialogResult dialogResult = MessageBox.Show("Clear Exisitng Position?", "Clear position", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    ExpansionAIPatrol._waypoints.Clear();
+                    ExpansionAIPatrol.Waypoints.Clear();
                     currentTreeNode.Nodes.Clear();
                 }
                 switch (openFileDialog.FilterIndex)
@@ -4193,25 +4211,25 @@ namespace ExpansionPlugin
                             if (fileContent[i] == "") continue;
                             string[] linesplit = fileContent[i].Split('|');
                             string[] XYZ = linesplit[1].Split(' ');
-                            ExpansionAIPatrol._waypoints.Add(new Vec3(XYZ));
+                            ExpansionAIPatrol.Waypoints.Add(new Vec3(XYZ));
                         }
                         break;
                     case 2:
                         ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
                         foreach (SpawnObjects so in newobjectspawner.Objects)
                         {
-                            ExpansionAIPatrol._waypoints.Add(new Vec3(so.pos));
+                            ExpansionAIPatrol.Waypoints.Add(new Vec3(so.pos));
                         }
                         break;
                     case 3:
                         DZE importfile = DZEHelpers.LoadFile(filePath);
                         foreach (Editorobject eo in importfile.EditorObjects)
                         {
-                            ExpansionAIPatrol._waypoints.Add(new Vec3(eo.Position));
+                            ExpansionAIPatrol.Waypoints.Add(new Vec3(eo.Position));
                         }
                         break;
                 }
-                foreach (Vec3 v3 in ExpansionAIPatrol._waypoints)
+                foreach (Vec3 v3 in ExpansionAIPatrol.Waypoints)
                 {
                     currentTreeNode.Nodes.Add(new TreeNode(v3.GetString())
                     {
@@ -4234,7 +4252,7 @@ namespace ExpansionPlugin
                 {
                     case 1:
                         StringBuilder SB = new StringBuilder();
-                        foreach (Vec3 array in ExpansionAIPatrol._waypoints)
+                        foreach (Vec3 array in ExpansionAIPatrol.Waypoints)
                         {
                             SB.AppendLine("eAI_SurvivorM_Lewis|" + array.GetString() + "|0.0 0.0 0.0");
                         }
@@ -4243,7 +4261,7 @@ namespace ExpansionPlugin
                     case 2:
                         ObjectSpawnerArr newobjectspawner = new ObjectSpawnerArr();
                         newobjectspawner.Objects = new BindingList<SpawnObjects>();
-                        foreach (Vec3 array in ExpansionAIPatrol._waypoints)
+                        foreach (Vec3 array in ExpansionAIPatrol.Waypoints)
                         {
                             SpawnObjects newobject = new SpawnObjects();
                             newobject.name = "eAI_SurvivorM_Lewis";
@@ -4279,8 +4297,8 @@ namespace ExpansionPlugin
             if (index > 0)
             {
                 siblings.RemoveAt(index);
-                ExpansionAIPatrol._waypoints.RemoveAt(index);
-                ExpansionAIPatrol._waypoints.Insert(index - 1, waypoint);
+                ExpansionAIPatrol.Waypoints.RemoveAt(index);
+                ExpansionAIPatrol.Waypoints.Insert(index - 1, waypoint);
                 siblings.Insert(index - 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
@@ -4305,8 +4323,8 @@ namespace ExpansionPlugin
             if (index < siblings.Count - 1)
             {
                 siblings.RemoveAt(index);
-                ExpansionAIPatrol._waypoints.RemoveAt(index);
-                ExpansionAIPatrol._waypoints.Insert(index + 1, waypoint);
+                ExpansionAIPatrol.Waypoints.RemoveAt(index);
+                ExpansionAIPatrol.Waypoints.Insert(index + 1, waypoint);
                 siblings.Insert(index + 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }

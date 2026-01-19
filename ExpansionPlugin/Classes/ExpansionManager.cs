@@ -44,7 +44,7 @@ namespace ExpansionPlugin
         public ExpansionSafeZoneConfig ExpansionSafeZoneConfig { get; set; }
         public ExpansionSocialMediaConfig ExpansionSocialMediaConfig { get; set; }
         public ExpansionSpawnConfig ExpansionSpawnConfig { get; set; }
-        //public ExpansionTerritorySettings TerritorySettings { get; set; }
+        public ExpansionTerritoryConfig ExpansionTerritoryConfig { get; set; }
         //public ExpansionVehicleSettings VehicleSettings { get; set; }
 
         public ExpansionManager() { }
@@ -78,6 +78,7 @@ namespace ExpansionPlugin
             _paths["QuestSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "QuestSettings.json");
             _paths["RaidSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "RaidSettings.json"); 
             _paths["SocialMediaSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "SocialMediaSettings.json");
+            _paths["TerritorySettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "TerritorySettings.json");
 
             // settings files in missions files
             _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
@@ -193,6 +194,9 @@ namespace ExpansionPlugin
             ExpansionSpawnConfig = new ExpansionSpawnConfig(_paths["SpawnSettings"]);
             LoadConfigWithErrorReport("SpawnSettings", ExpansionSpawnConfig);
 
+            ExpansionTerritoryConfig = new ExpansionTerritoryConfig(_paths["TerritorySettings"]);
+            LoadConfigWithErrorReport("TerritorySettings", ExpansionTerritoryConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -243,7 +247,8 @@ namespace ExpansionPlugin
                 ExpansionRaidConfig,
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
-                ExpansionSpawnConfig
+                ExpansionSpawnConfig,
+                ExpansionTerritoryConfig
 
             };
 
@@ -295,7 +300,8 @@ namespace ExpansionPlugin
                 ExpansionRaidConfig,
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
-                ExpansionSpawnConfig
+                ExpansionSpawnConfig,
+                ExpansionTerritoryConfig
             };
             foreach (var obj in configs)
             {
