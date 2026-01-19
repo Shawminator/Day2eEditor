@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Day2eEditor
 {
@@ -37,6 +38,7 @@ namespace Day2eEditor
                 },
                 configName: "cfgeconomycore"
             );
+            CheckCE();
         }
         public IEnumerable<string> Save()
         {
@@ -156,9 +158,59 @@ namespace Day2eEditor
             return result;
 
         }
+
+        public void CheckCE()
+        {
+            bool needToSave = false;
+            List<economycoreCE> ceToRemove = new List<economycoreCE>();
+
+            foreach (var ce in Data.ce)
+            {
+                string fullFolderPath = Path.Combine(
+                    AppServices.GetRequired<EconomyManager>().basePath,
+                    ce.folder
+                );
+
+                List<economycoreCEFile> filesToRemove = new List<economycoreCEFile>();
+                foreach (var ceFile in ce.file)
+                {
+                    string filePath = Path.Combine(fullFolderPath, ceFile.name);
+
+                    if (!File.Exists(filePath))
+                    {
+                        filesToRemove.Add(ceFile);
+                        Console.WriteLine($"\tNon-existing file found, removing {ceFile.name} from {ce.folder}");
+                        needToSave = true;
+                    }
+                }
+                foreach (economycoreCEFile f in filesToRemove)
+                {
+                    ce.removefile(f);
+                }
+
+                if (ce.file == null || ce.file.Count == 0)
+                {
+                    Console.WriteLine($"\tEmpty CE entry found in economy core, removing {ce.folder}");
+                    ceToRemove.Add(ce);
+                    needToSave = true;
+                }
+            }
+
+            foreach (economycoreCE ce in ceToRemove)
+            {
+                Data.ce.Remove(ce);
+            }
+
+            if (needToSave)
+            {
+                isDirty = true;
+                Save();
+            }
+        }
+
     }
-    
-    
+
+
     // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
     /// <remarks/>
     [System.SerializableAttribute()]
