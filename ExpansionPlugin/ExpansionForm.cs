@@ -297,13 +297,13 @@ namespace ExpansionPlugin
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
                 },
                 //Monitoring
-                [typeof(MonitoringSettings)] = (node,selected) =>
+                [typeof(MonitoringSettings)] = (node, selected) =>
                 {
                     MonitoringSettings MonitoringSettings = node.Tag as MonitoringSettings;
                     ShowHandler(new ExpansionMonitoringSettingsControl(), typeof(ExpansionMonitoringConfig), MonitoringSettings, selected);
                 },
                 //NameTag
-                [typeof(NameTagsSettings)] = (node,selected) =>
+                [typeof(NameTagsSettings)] = (node, selected) =>
                 {
                     NameTagsSettings NameTagsSettings = node.Tag as NameTagsSettings;
                     ShowHandler(new ExpansionNameTagSettingsControl(), typeof(ExpansionNameTagsConfig), NameTagsSettings, selected);
@@ -571,6 +571,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeVehicleSpawnToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionNotificationSchedule)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeNotificationToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+
                 },
             };
             // ----------------------
@@ -885,6 +892,12 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewTrainSpawnToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                ["Notifications"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewNotificationToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
         }
 
@@ -1080,7 +1093,7 @@ namespace ExpansionPlugin
             };
             AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
             AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
-           
+
 
             rootNode.Nodes.Add(MissionrootNode);
 
@@ -1104,7 +1117,7 @@ namespace ExpansionPlugin
             {
                 Tag = "SettingsNode",
             };
-            
+
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionChatConfig, CreateExpansionChatConfigConfigNodes);
@@ -1118,7 +1131,7 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMonitoringConfig, CreateExpansionMonitoringConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNameTagsConfig, CreateExpansionNameTagsConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig); 
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPartyConfig, CreateExpansionPartyConfigConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPlayerListConfig, CreateExpansionPlayerListConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionRaidConfig, CreateExpansionRaidConfig);
@@ -1139,7 +1152,7 @@ namespace ExpansionPlugin
 
             ExpansionTV.Nodes.Add(rootNode);
         }
-        
+
         //AI
         private TreeNode CreateExpansionLoadoutConfigNodes(ExpansionLoadoutConfig ef)
         {
@@ -2076,13 +2089,13 @@ namespace ExpansionPlugin
             {
                 Tag = "Notifications"
             };
-            foreach(ExpansionNotificationSchedule ns in ef.Data.Notifications)
+            foreach (ExpansionNotificationSchedule ns in ef.Data.Notifications)
             {
                 Notificationsnodes.Nodes.Add(new TreeNode(ns.Title)
                 {
                     Tag = ns
                 });
-                
+
             }
             EconomyRootNode.Nodes.Add(Notificationsnodes);
         }
@@ -2140,7 +2153,7 @@ namespace ExpansionPlugin
             {
                 Tag = "P2PExludedClassnames"
             };
-            foreach(string s in ef.Data.ExcludedClassNames)
+            foreach (string s in ef.Data.ExcludedClassNames)
             {
                 ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
                 {
@@ -2152,7 +2165,7 @@ namespace ExpansionPlugin
             {
                 Tag = "P2PMenuCategories"
             };
-            foreach(ExpansionP2PMarketMenuCategory cat in ef.Data.MenuCategories)
+            foreach (ExpansionP2PMarketMenuCategory cat in ef.Data.MenuCategories)
             {
                 MenuCategoriesNode.Nodes.Add(Createmenucatnodes(cat));
             }
@@ -2164,7 +2177,7 @@ namespace ExpansionPlugin
             {
                 Tag = cat
             };
-            
+
             TreeNode IncludedclassnamesNode = new TreeNode("Included")
             {
                 Tag = "MenuCatsIncluded"
@@ -2264,7 +2277,7 @@ namespace ExpansionPlugin
             {
                 Tag = "PersonalStorageNewStorageLevels"
             };
-            foreach(KeyValuePair<int, ExpansionPersonalStorageLevel> lvs in ef.Data.StorageLevels)
+            foreach (KeyValuePair<int, ExpansionPersonalStorageLevel> lvs in ef.Data.StorageLevels)
             {
                 StorageLevelsNode.Nodes.Add(new TreeNode(lvs.Key.ToString())
                 {
@@ -2504,7 +2517,7 @@ namespace ExpansionPlugin
             {
                 Tag = "RaidSchedule"
             };
-            foreach(ExpansionRaidSchedule rs in ef.Data.Schedule)
+            foreach (ExpansionRaidSchedule rs in ef.Data.Schedule)
             {
                 RadScheduleRoot.Nodes.Add(new TreeNode(rs.ToString())
                 {
@@ -2636,7 +2649,7 @@ namespace ExpansionPlugin
             {
                 Tag = ef.Data
             });
-            
+
             TreeNode SpawnLocationsRoot = new TreeNode("Spawn Locations")
             {
                 Tag = "SpawnLocations"
@@ -2663,7 +2676,7 @@ namespace ExpansionPlugin
                 SpawnLocationsRoot.Nodes.Add(SLNode);
             }
             EconomyRootNode.Nodes.Add(SpawnLocationsRoot);
-            
+
             EconomyRootNode.Nodes.Add(BuildStartingClothingTree(ef.Data.StartingClothing));
             EconomyRootNode.Nodes.Add(BuildStartingGearTree(ef.Data.StartingGear));
 
@@ -2823,7 +2836,7 @@ namespace ExpansionPlugin
             {
                 Tag = "VehicleSettingsVehicleConfigs"
             };
-            foreach(ExpansionVehiclesLockConfig lockConfig in ef.Data.VehiclesConfig)
+            foreach (ExpansionVehiclesLockConfig lockConfig in ef.Data.VehiclesConfig)
             {
                 VehicleConfigNodes.Nodes.Add(new TreeNode(lockConfig.ClassName)
                 {
@@ -3631,7 +3644,7 @@ namespace ExpansionPlugin
                         ExpansionMarketSpawnPosition.Position[1] = (MapData.gethieght(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
                     }
                 }
-                _mapControl.ClearDrawables(); 
+                _mapControl.ClearDrawables();
                 _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
                 ShowHandler(new ExpasnionMarksetSettingsVehicleSpawnInfoControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, new List<TreeNode>() { currentTreeNode });
                 DrawbaseVehicleSpawnPositions(_expansionManager.ExpansionMarketSettingsConfig);
@@ -4973,7 +4986,6 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionMapConfig.isDirty = true;
         }
         //Market Settings
-
         private void addNewLargeVehicleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddItemfromTypes form = new AddItemfromTypes { };
@@ -5160,7 +5172,7 @@ namespace ExpansionPlugin
         private void removeVehicleSpawnToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string spawntype = currentTreeNode.Parent.Tag.ToString();
-            switch(spawntype)
+            switch (spawntype)
             {
                 case "LandSpawnPositions":
                     _expansionManager.ExpansionMarketSettingsConfig.Data.LandSpawnPositions.Remove(currentTreeNode.Tag as ExpansionMarketSpawnPosition);
@@ -5177,6 +5189,24 @@ namespace ExpansionPlugin
             }
             currentTreeNode.Remove();
             _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+        }
+        //Notifications
+        private void addNewNotificationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionNotificationSchedule newsched = new ExpansionNotificationSchedule()
+            {
+                Title = "New Notification",
+                Hour = 00,
+                Minute = 00,
+                Second = 00,
+                Text = "",
+                Icon = "Info",
+                Color = "27272DFF"
+            };
+        }
+        private void removeNotificationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
         #endregion right click methods
 

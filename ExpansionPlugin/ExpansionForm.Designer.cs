@@ -121,6 +121,8 @@
             addNewWaterSpawnToolStripMenuItem = new ToolStripMenuItem();
             addNewTrainSpawnToolStripMenuItem = new ToolStripMenuItem();
             removeVehicleSpawnToolStripMenuItem = new ToolStripMenuItem();
+            addNewNotificationToolStripMenuItem = new ToolStripMenuItem();
+            removeNotificationToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -707,10 +709,10 @@
             // ChatCM
             // 
             ChatCM.BackColor = Color.FromArgb(60, 63, 65);
-            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem });
+            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(190, 48);
+            ChatCM.Size = new Size(190, 114);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -814,7 +816,7 @@
             MarketSettingsCM.Items.AddRange(new ToolStripItem[] { addNewLargeVehicleToolStripMenuItem, removeLargeVehicleToolStripMenuItem, addNewCurrencyToolStripMenuItem, removeCurrencyToolStripMenuItem, addNewVehicleKeyToolStripMenuItem, removeVehicleKeyToolStripMenuItem, addNewLandSpawnToolStripMenuItem, addNewAirSpawnToolStripMenuItem, addNewWaterSpawnToolStripMenuItem, addNewTrainSpawnToolStripMenuItem, removeVehicleSpawnToolStripMenuItem });
             MarketSettingsCM.Name = "ChatCM";
             MarketSettingsCM.ShowImageMargin = false;
-            MarketSettingsCM.Size = new Size(171, 268);
+            MarketSettingsCM.Size = new Size(171, 246);
             // 
             // addNewLargeVehicleToolStripMenuItem
             // 
@@ -903,6 +905,22 @@
             removeVehicleSpawnToolStripMenuItem.Size = new Size(170, 22);
             removeVehicleSpawnToolStripMenuItem.Text = "Remove Vehicle Spawn";
             removeVehicleSpawnToolStripMenuItem.Click += removeVehicleSpawnToolStripMenuItem_Click;
+            // 
+            // addNewNotificationToolStripMenuItem
+            // 
+            addNewNotificationToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewNotificationToolStripMenuItem.Name = "addNewNotificationToolStripMenuItem";
+            addNewNotificationToolStripMenuItem.Size = new Size(189, 22);
+            addNewNotificationToolStripMenuItem.Text = "Add New Notification";
+            addNewNotificationToolStripMenuItem.Click += addNewNotificationToolStripMenuItem_Click;
+            // 
+            // removeNotificationToolStripMenuItem
+            // 
+            removeNotificationToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNotificationToolStripMenuItem.Name = "removeNotificationToolStripMenuItem";
+            removeNotificationToolStripMenuItem.Size = new Size(189, 22);
+            removeNotificationToolStripMenuItem.Text = "Remove Notification";
+            removeNotificationToolStripMenuItem.Click += removeNotificationToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1029,5 +1047,7 @@
         private ToolStripMenuItem addNewWaterSpawnToolStripMenuItem;
         private ToolStripMenuItem addNewTrainSpawnToolStripMenuItem;
         private ToolStripMenuItem removeVehicleSpawnToolStripMenuItem;
+        private ToolStripMenuItem addNewNotificationToolStripMenuItem;
+        private ToolStripMenuItem removeNotificationToolStripMenuItem;
     }
 }
