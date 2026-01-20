@@ -116,7 +116,7 @@ namespace ExpansionPlugin
                 StartingClothing = new ExpansionStartingClothing();
                 StartingClothing.DefaultStartingClothing();
             }
-            if (UseLoadouts is null and < 0 or > 1)
+            if (UseLoadouts is null or < 0 or > 1)
             {
                 fixes.Add("UseLoadouts was null — set to 0.");
                 UseLoadouts = 0;
@@ -131,7 +131,7 @@ namespace ExpansionPlugin
                 fixes.Add("FemaleLoadouts was missing — created empty list.");
                 FemaleLoadouts = new BindingList<ExpansionSpawnGearLoadouts>();
             }
-            if (EnableSpawnSelection is null and < 0 or > 1)
+            if (EnableSpawnSelection is null or < 0 or > 1)
             {
                 fixes.Add("EnableSpawnSelection was null — set to 1.");
                 EnableSpawnSelection = 1;
@@ -142,7 +142,7 @@ namespace ExpansionPlugin
                 SpawnOnTerritory = 0;
             }
 
-            if (EnableRespawnCooldowns is null and < 0 or > 1)
+            if (EnableRespawnCooldowns is null or < 0 or > 1)
             {
                 fixes.Add("EnableRespawnCooldowns was null — set to 0.");
                 EnableRespawnCooldowns = 0;
@@ -157,7 +157,7 @@ namespace ExpansionPlugin
                 fixes.Add("TerritoryRespawnCooldown was null — set to 0.");
                 TerritoryRespawnCooldown = 0;
             }
-            if (PunishMultispawn is null and < 0 or > 1)
+            if (PunishMultispawn is null or < 0 or > 1)
             {
                 fixes.Add("PunishMultispawn was null — set to 1.");
                 PunishMultispawn = 1;
@@ -172,7 +172,7 @@ namespace ExpansionPlugin
                 fixes.Add("PunishTimeframe was null — set to 0.");
                 PunishTimeframe = 0;
             }
-            if (CreateDeathMarker is null and < 0 or > 1)
+            if (CreateDeathMarker is null or < 0 or > 1)
             {
                 fixes.Add("CreateDeathMarker was null — set to 1.");
                 CreateDeathMarker = 1;

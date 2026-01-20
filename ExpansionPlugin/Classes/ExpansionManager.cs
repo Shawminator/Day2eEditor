@@ -45,7 +45,7 @@ namespace ExpansionPlugin
         public ExpansionSocialMediaConfig ExpansionSocialMediaConfig { get; set; }
         public ExpansionSpawnConfig ExpansionSpawnConfig { get; set; }
         public ExpansionTerritoryConfig ExpansionTerritoryConfig { get; set; }
-        //public ExpansionVehicleSettings VehicleSettings { get; set; }
+        public ExpansionVehiclesConfig ExpansionVehiclesConfig { get; set; }
 
         public ExpansionManager() { }
         public void SetExpansionStuff()
@@ -79,6 +79,7 @@ namespace ExpansionPlugin
             _paths["RaidSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "RaidSettings.json"); 
             _paths["SocialMediaSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "SocialMediaSettings.json");
             _paths["TerritorySettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "TerritorySettings.json");
+            _paths["VehicleSettings"] = Path.Combine(profilePath, "Expansionmod", "settings", "VehicleSettings.json");
 
             // settings files in missions files
             _paths["AILocationSettings"] = Path.Combine(basePath, "expansion", "settings", "AILocationSettings.json");
@@ -197,6 +198,9 @@ namespace ExpansionPlugin
             ExpansionTerritoryConfig = new ExpansionTerritoryConfig(_paths["TerritorySettings"]);
             LoadConfigWithErrorReport("TerritorySettings", ExpansionTerritoryConfig);
 
+            ExpansionVehiclesConfig = new ExpansionVehiclesConfig(_paths["VehicleSettings"]);
+            LoadConfigWithErrorReport("VehicleSettings", ExpansionVehiclesConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -248,7 +252,8 @@ namespace ExpansionPlugin
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
                 ExpansionSpawnConfig,
-                ExpansionTerritoryConfig
+                ExpansionTerritoryConfig,
+                ExpansionVehiclesConfig
 
             };
 
@@ -301,7 +306,8 @@ namespace ExpansionPlugin
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
                 ExpansionSpawnConfig,
-                ExpansionTerritoryConfig
+                ExpansionTerritoryConfig,
+                ExpansionVehiclesConfig
             };
             foreach (var obj in configs)
             {
@@ -639,7 +645,6 @@ namespace ExpansionPlugin
             "Expansion",
             "Expansion B/W"
         };
-
     }
     
     public static class ResourceHelper

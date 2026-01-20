@@ -1,4 +1,5 @@
 using Day2eEditor;
+using EconomyPlugin;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -294,6 +295,18 @@ namespace ExpansionPlugin
                     ShowHandler(control, typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, selected);
                     SetupVehicleSpawnLocation(ExpansionMarketSpawnPosition, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
+                },
+                //Monitoring
+                [typeof(MonitoringSettings)] = (node,selected) =>
+                {
+                    MonitoringSettings MonitoringSettings = node.Tag as MonitoringSettings;
+                    ShowHandler(new ExpansionMonitoringSettingsControl(), typeof(ExpansionMonitoringConfig), MonitoringSettings, selected);
+                },
+                //NameTag
+                [typeof(NameTagsSettings)] = (node,selected) =>
+                {
+                    NameTagsSettings NameTagsSettings = node.Tag as NameTagsSettings;
+                    ShowHandler(new ExpansionNameTagSettingsControl(), typeof(ExpansionNameTagsConfig), NameTagsSettings, selected);
                 },
                 //Notification
                 [typeof(ExpansionNotificationSettings)] = (node, selected) =>
@@ -1113,6 +1126,7 @@ namespace ExpansionPlugin
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSocialMediaConfig, CreateExpansionSocialMediaConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSpawnConfig, CreateExpansionSpawnConfig);
             AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionTerritoryConfig, CreateExpansionTerritoryConfig);
+            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionVehiclesConfig, CreateExpansionVehiclesConfig);
 
             rootNode.Nodes.Add(SettingsNode);
 
@@ -2776,6 +2790,47 @@ namespace ExpansionPlugin
             {
                 Tag = ef.Data
             });
+        }
+        //Vehicle
+        private TreeNode CreateExpansionVehiclesConfig(ExpansionVehiclesConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreateExpansionVehiclesConfigNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreateExpansionVehiclesConfigNodes(ExpansionVehiclesConfig ef, TreeNode EconomyRootNode)
+        {
+            EconomyRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = "VehicleSettingsGeneral"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Keys")
+            {
+                Tag = "VehicleSettingsKeys"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("Locks")
+            {
+                Tag = "VehicleSettingsLocks"
+            });
+            EconomyRootNode.Nodes.Add(new TreeNode("CF CLoud")
+            {
+                Tag = "VehicleSettingsCFCloud"
+            });
+            TreeNode VehicleConfigNodes = new TreeNode("Vehicle Configs")
+            {
+                Tag = "VehicleSettingsVehicleConfigs"
+            };
+            foreach(ExpansionVehiclesLockConfig lockConfig in ef.Data.VehiclesConfig)
+            {
+                VehicleConfigNodes.Nodes.Add(new TreeNode(lockConfig.ClassName)
+                {
+                    Tag = lockConfig
+                });
+            }
+            EconomyRootNode.Nodes.Add(VehicleConfigNodes);
         }
 
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
