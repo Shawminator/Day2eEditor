@@ -586,7 +586,7 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version < ExpansionBookConfig.CurrentVersion)
+            if (m_Version != ExpansionBookConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionBookConfig.CurrentVersion}");
                 m_Version = ExpansionBookConfig.CurrentVersion;

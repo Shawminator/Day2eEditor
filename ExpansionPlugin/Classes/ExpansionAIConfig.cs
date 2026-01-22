@@ -267,7 +267,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionAIConfig.CurrentVersion)
+            if (m_Version != ExpansionAIConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionAIConfig.CurrentVersion}");
                 m_Version = ExpansionAIConfig.CurrentVersion;

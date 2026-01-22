@@ -374,7 +374,7 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version < ExpansionAIPatrolConfig.CurrentVersion)
+            if (m_Version != ExpansionAIPatrolConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionAIPatrolConfig.CurrentVersion}");
                 m_Version = ExpansionAIPatrolConfig.CurrentVersion;

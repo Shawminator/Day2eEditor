@@ -158,7 +158,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionAILocationConfig.CurrentVersion)
+            if (m_Version != ExpansionAILocationConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionAILocationConfig.CurrentVersion}");
                 m_Version = ExpansionAILocationConfig.CurrentVersion;

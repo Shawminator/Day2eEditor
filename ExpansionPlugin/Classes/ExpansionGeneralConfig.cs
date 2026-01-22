@@ -175,7 +175,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionGeneralConfig.CurrentVersion)
+            if (m_Version != ExpansionGeneralConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionGeneralConfig.CurrentVersion}");
                 m_Version = ExpansionGeneralConfig.CurrentVersion;

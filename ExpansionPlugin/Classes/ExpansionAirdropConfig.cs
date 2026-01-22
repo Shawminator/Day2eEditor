@@ -501,7 +501,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionAirdropConfig.CurrentVersion)
+            if (m_Version != ExpansionAirdropConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionAirdropConfig.CurrentVersion}");
                 m_Version = ExpansionAirdropConfig.CurrentVersion;

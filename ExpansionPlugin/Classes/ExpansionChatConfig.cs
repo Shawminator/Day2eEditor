@@ -125,7 +125,7 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version < ExpansionChatConfig.CurrentVersion)
+            if (m_Version != ExpansionChatConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionChatConfig.CurrentVersion}");
                 m_Version = ExpansionChatConfig.CurrentVersion;

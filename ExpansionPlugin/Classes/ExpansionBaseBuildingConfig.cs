@@ -294,7 +294,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
             // Version check
-            if (m_Version < ExpansionBaseBuildingConfig.CurrentVersion)
+            if (m_Version != ExpansionBaseBuildingConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionBaseBuildingConfig.CurrentVersion}");
                 m_Version = ExpansionBaseBuildingConfig.CurrentVersion;

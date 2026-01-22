@@ -1811,7 +1811,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionHardlineConfig.CurrentVersion)
+            if (m_Version != ExpansionHardlineConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionHardlineConfig.CurrentVersion}");
                 m_Version = ExpansionHardlineConfig.CurrentVersion;

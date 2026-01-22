@@ -155,7 +155,7 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version < ExpansionMarketSettingsConfig.CurrentVersion)
+            if (m_Version != ExpansionMarketSettingsConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionMarketSettingsConfig.CurrentVersion}");
                 m_Version = ExpansionMarketSettingsConfig.CurrentVersion;

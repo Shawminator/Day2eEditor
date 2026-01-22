@@ -186,10 +186,10 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionGeneralConfig.CurrentVersion)
+            if (m_Version != ExpansionMapConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionGeneralConfig.CurrentVersion}");
-                m_Version = ExpansionGeneralConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionMapConfig.CurrentVersion}");
+                m_Version = ExpansionMapConfig.CurrentVersion;
             }
             if (EnableMap == null || (EnableMap != 0 && EnableMap != 1))
             {

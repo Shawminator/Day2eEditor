@@ -19,7 +19,7 @@ namespace ExpansionPlugin
         public bool HasErrors { get; private set; }
         public List<string> Errors { get; private set; } = new List<string>();
         public bool isDirty { get; set; }
-        public const int CurrentVersion = 1;
+        public const int CurrentVersion = 2;
         public ExpansionNotificationSchedulerConfig(string path)
         {
             _path = path;
@@ -117,10 +117,10 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version != ExpansionMonitoringConfig.CurrentVersion)
+            if (m_Version != ExpansionNotificationSchedulerConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionMonitoringConfig.CurrentVersion}");
-                m_Version = ExpansionMonitoringConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionNotificationSchedulerConfig.CurrentVersion}");
+                m_Version = ExpansionNotificationSchedulerConfig.CurrentVersion;
             }
             if (Enabled is null or < 0 or > 1)
             {

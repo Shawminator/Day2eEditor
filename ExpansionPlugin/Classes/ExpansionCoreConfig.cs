@@ -100,7 +100,7 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version < ExpansionCoreConfig.CurrentVersion)
+            if (m_Version != ExpansionCoreConfig.CurrentVersion)
             {
                 fixes.Add($"Updated version from {m_Version} to {ExpansionCoreConfig.CurrentVersion}");
                 m_Version = ExpansionCoreConfig.CurrentVersion;
