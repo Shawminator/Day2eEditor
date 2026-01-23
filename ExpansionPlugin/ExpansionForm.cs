@@ -4958,6 +4958,8 @@ namespace ExpansionPlugin
                 m_UID = "ServerMarker_New_Marker",
                 m_Visibility = 6,
                 m_Is3D = 1,
+                m_Locked = 0,
+                m_Persist = 1,
                 m_Text = "New Server Marker",
                 m_IconName = "Trader",
                 m_Color = -13710223,
