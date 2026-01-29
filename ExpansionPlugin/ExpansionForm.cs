@@ -311,8 +311,37 @@ namespace ExpansionPlugin
                 //Notification
                 [typeof(ExpansionNotificationSettings)] = (node, selected) =>
                 {
-                    ExpansionNotificationConfig ExpansionNotificationConfig = node.Parent.Tag as ExpansionNotificationConfig;
-                    ShowHandler(new ExpansionNotificationSettingsControl(), typeof(ExpansionNotificationConfig), ExpansionNotificationConfig.Data, selected);
+                    ExpansionNotificationSettings ExpansionNotificationSettings = node.Tag as ExpansionNotificationSettings;
+                    ShowHandler(new ExpansionNotificationSettingsControl(), typeof(ExpansionNotificationConfig), ExpansionNotificationSettings, selected);
+                },
+                //NotificationScheduler
+                [typeof(ExpansionNotificationSchedulerSettings)] = (node,selected) =>
+                {
+                    ExpansionNotificationSchedulerSettings ExpansionNotificationSchedulerSettings = node.Tag as ExpansionNotificationSchedulerSettings;
+                    ShowHandler(new ExpansionNotificationSchedulerSettingsControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedulerSettings, selected);
+                },
+                [typeof(ExpansionNotificationSchedule)] = (node,selected) =>
+                {
+                    ExpansionNotificationSchedule ExpansionNotificationSchedule = node.Tag as ExpansionNotificationSchedule;
+                    ShowHandler(new ExpansionNotificationScheduleControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedule, selected);
+                },
+                //Party
+                [typeof(ExpansionPartySettings)]= (node,selected)=>
+                {
+                    ExpansionPartySettings ExpansionPartySettings = node.Tag as ExpansionPartySettings;
+                    ShowHandler(new ExpansionPartySettingsControl(), typeof(ExpansionPartyConfig), ExpansionPartySettings, selected);
+                },
+                //PlayerList
+                [typeof(ExpansionPlayerListSettings)] = (node,selected)=>
+                {
+                    ExpansionPlayerListSettings ExpansionPlayerListSettings = node.Tag as ExpansionPlayerListSettings;
+                    ShowHandler(new ExpansionPlayerListSettingsControl(), typeof(ExpansionPlayerListConfig), ExpansionPlayerListSettings, selected);
+                },
+                //Raid
+                [typeof(ExpansionRaidSettings)] = (node,selected) =>
+                {
+                    ExpansionRaidSettings ExpansionRaidSettings = node.Tag as ExpansionRaidSettings;
+                    ShowHandler(new ExpansionRaidSettingsControl(), typeof(ExpansionRaidConfig), ExpansionRaidSettings, selected);
                 },
             };
             // ----------------------
@@ -416,6 +445,16 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapServerMarkerControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
+                //Raid
+                ["RaidExplosives"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionRaidSettingsExplosionsControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
+                },
+                ["RaidBarbedWire"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionRaidSettingsBarbedWireControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
+                    
+                }
             };
         }
         private void InitializeContextMenuHandlers()
@@ -2450,67 +2489,92 @@ namespace ExpansionPlugin
             });
             TreeNode Explosivesroot = new TreeNode("Explosives")
             {
-                Tag = "Explosives"
+                Tag = "RaidExplosives"
+            };
+            TreeNode ExplosivesWhitelistBode = new TreeNode("Whitelist")
+            {
+                Tag = "RaidExplosiveWhiteList"
             };
             foreach (string edwl in ef.Data.ExplosiveDamageWhitelist)
             {
-                Explosivesroot.Nodes.Add(new TreeNode(edwl)
+                ExplosivesWhitelistBode.Nodes.Add(new TreeNode(edwl)
                 {
                     Tag = "RaidExplosiveWhiteListItem"
                 });
             }
+            Explosivesroot.Nodes.Add(ExplosivesWhitelistBode);
             EconomyRootNode.Nodes.Add(Explosivesroot);
 
             TreeNode BarbedWireRoot = new TreeNode("Barbed Wire")
+            {
+                Tag = "RaidBarbedWire"
+            };
+            TreeNode BarbedWireToolsNode = new TreeNode("Raid Tools")
             {
                 Tag = "RaidBarbedWireRaidTools"
             };
             foreach (string edwl in ef.Data.BarbedWireRaidTools)
             {
-                BarbedWireRoot.Nodes.Add(new TreeNode(edwl)
+                BarbedWireToolsNode.Nodes.Add(new TreeNode(edwl)
                 {
                     Tag = "RaidBarbedWireRaidTool"
                 });
             }
+            BarbedWireRoot.Nodes.Add(BarbedWireToolsNode);
             EconomyRootNode.Nodes.Add(BarbedWireRoot);
 
             TreeNode SafesRoot = new TreeNode("Safes")
+            {
+                Tag = "RaidSafes"
+            };
+            TreeNode RaidSafeRaidToolsNode = new TreeNode("Raid Tools")
             {
                 Tag = "RaidSafeRaidTools"
             };
             foreach (string edwl in ef.Data.SafeRaidTools)
             {
-                SafesRoot.Nodes.Add(new TreeNode(edwl)
+                RaidSafeRaidToolsNode.Nodes.Add(new TreeNode(edwl)
                 {
                     Tag = "RaidSafeRaidTool"
                 });
             }
+            SafesRoot.Nodes.Add(RaidSafeRaidToolsNode);
             EconomyRootNode.Nodes.Add(SafesRoot);
 
             TreeNode ContainersRoot = new TreeNode("Containers")
+            {
+                Tag = "RaidContainers"
+            };
+            TreeNode RaidContainerRaidToolsNode = new TreeNode("Raid Tools")
             {
                 Tag = "RaidContainerRaidTools"
             };
             foreach (string edwl in ef.Data.LockOnContainerRaidTools)
             {
-                ContainersRoot.Nodes.Add(new TreeNode(edwl)
+                RaidContainerRaidToolsNode.Nodes.Add(new TreeNode(edwl)
                 {
                     Tag = "RaidContainerRaidTool"
                 });
             }
+            ContainersRoot.Nodes.Add(RaidContainerRaidToolsNode);
             EconomyRootNode.Nodes.Add(ContainersRoot);
 
             TreeNode LocksRoot = new TreeNode("Locks")
+            {
+                Tag = "RaidLocks"
+            };
+            TreeNode RaidLockRaidToolsNode = new TreeNode("Raid Tools")
             {
                 Tag = "RaidLockRaidTools"
             };
             foreach (string edwl in ef.Data.LockRaidTools)
             {
-                LocksRoot.Nodes.Add(new TreeNode(edwl)
+                RaidLockRaidToolsNode.Nodes.Add(new TreeNode(edwl)
                 {
                     Tag = "RaidLockRaidTool"
                 });
             }
+            LocksRoot.Nodes.Add(RaidLockRaidToolsNode);
             EconomyRootNode.Nodes.Add(LocksRoot);
 
             TreeNode RadScheduleRoot = new TreeNode("Raid Schedule")

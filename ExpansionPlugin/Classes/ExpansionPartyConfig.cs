@@ -313,5 +313,9 @@ namespace ExpansionPlugin
                 DisplayPartyTag = this.DisplayPartyTag
             };
         }
+        public void SetIntValue(string mytype, int myvalue)
+        {
+            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+        }
     }
 }

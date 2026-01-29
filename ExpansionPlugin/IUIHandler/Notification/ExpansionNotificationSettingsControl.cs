@@ -40,7 +40,63 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            JoinMessageTypeCB.DataSource = Enum.GetValues(typeof(ExpansionAnnouncementType));
+            LeftMessageTypeCB.DataSource = Enum.GetValues(typeof(ExpansionAnnouncementType));
+            KillFeedMessageTypeCB.DataSource = Enum.GetValues(typeof(ExpansionAnnouncementType));
+
+            EnableNotificationCB.Checked = (bool)_data.EnableNotification;
+            ShowPlayerJoinServerCB.Checked = (bool)_data.ShowPlayerJoinServer;
+            JoinMessageTypeCB.SelectedItem = (ExpansionAnnouncementType)_data.JoinMessageType;
+            ShowPlayerLeftServerCB.Checked = (bool)_data.ShowPlayerLeftServer;
+            LeftMessageTypeCB.SelectedItem = (ExpansionAnnouncementType)_data.LeftMessageType;
+
+            ShowAirdropStartedCB.Checked = (bool)_data.ShowAirdropStarted;
+            ShowAirdropClosingOnCB.Checked = (bool)_data.ShowAirdropClosingOn;
+            ShowAirdropDroppedCB.Checked = (bool)_data.ShowAirdropDropped;
+            ShowAirdropEndedCB.Checked = (bool)_data.ShowAirdropEnded;
+            ShowPlayerAirdropStartedCB.Checked = (bool)_data.ShowPlayerAirdropStarted;
+            ShowPlayerAirdropClosingOnCB.Checked = (bool)_data.ShowPlayerAirdropClosingOn;
+            ShowPlayerAirdropDroppedCB.Checked = (bool)_data.ShowPlayerAirdropDropped;
+
+            ShowTerritoryNotificationsCB.Checked = (bool)_data.ShowTerritoryNotifications;
+
+            EnableKillFeedCB.Checked = (bool)_data.EnableKillFeed;
+            KillFeedMessageTypeCB.SelectedItem = (ExpansionAnnouncementType)_data.KillFeedMessageType;
+            KillFeedFallCB.Checked = (bool)_data.KillFeedFall;
+ 
+            KillFeedCarHitDriverCB.Checked = (bool)_data.KillFeedCarHitDriver;
+            KillFeedCarHitNoDriverCB.Checked = (bool)_data.KillFeedCarHitNoDriver;
+            KillFeedCarCrashCB.Checked = (bool)_data.KillFeedCarCrash;
+            KillFeedCarCrashCrewCB.Checked = (bool)_data.KillFeedCarCrashCrew;
+
+            KillFeedHeliHitDriverCB.Checked = (bool)_data.KillFeedHeliHitDriver;
+            KillFeedHeliHitNoDriverCB.Checked = (bool)_data.KillFeedHeliHitNoDriver;
+            KillFeedHeliCrashCB.Checked = (bool)_data.KillFeedHeliCrash;
+            KillFeedHeliCrashCrewCB.Checked = (bool)_data.KillFeedHeliCrashCrew;
+ 
+            KillFeedBoatHitDriverCB.Checked = (bool)_data.KillFeedBoatHitDriver;
+            KillFeedBoatHitNoDriverCB.Checked = (bool)_data.KillFeedBoatHitNoDriver;
+            KillFeedBoatCrashCB.Checked = (bool)_data.KillFeedBoatCrash;
+            KillFeedBoatCrashCrewCB.Checked = (bool)_data.KillFeedBoatCrashCrew;
+
+            KillFeedBarbedWireCB.Checked = (bool)_data.KillFeedBarbedWire;
+            KillFeedFireCB.Checked = (bool)_data.KillFeedFire;
+            KillFeedWeaponExplosionCB.Checked = (bool)_data.KillFeedWeaponExplosion;
+            KillFeedDehydrationCB.Checked = (bool)_data.KillFeedDehydration;
+            KillFeedStarvationCB.Checked = (bool)_data.KillFeedStarvation;
+            KillFeedBleedingCB.Checked = (bool)_data.KillFeedBleeding;
+            KillFeedStatusEffectsCB.Checked = (bool)_data.KillFeedStatusEffects;
+            KillFeedSuicideCB.Checked = (bool)_data.KillFeedSuicide;
+            KillFeedWeaponCB.Checked = (bool)_data.KillFeedWeapon;
+            KillFeedMeleeWeaponCB.Checked = (bool)_data.KillFeedMeleeWeapon;
+            KillFeedBarehandsCB.Checked = (bool)_data.KillFeedBarehands;
+            KillFeedInfectedCB.Checked = (bool)_data.KillFeedInfected;
+            KillFeedAnimalCB.Checked = (bool)_data.KillFeedAnimal;
+            KillFeedAICB.Checked = (bool)_data.KillFeedAI;
+            KillFeedKilledUnknownCB.Checked = (bool)_data.KillFeedKilledUnknown;
+            KillFeedDiedUnknownCB.Checked = (bool)_data.KillFeedDiedUnknown;
+
+            EnableKillFeedDiscordMsgCB.Checked = (bool)_data.EnableKillFeedDiscordMsg;
 
             _suppressEvents = false;
         }
@@ -88,5 +144,34 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void NotificationCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            CheckBox cb = sender as CheckBox;
+            _data.SetBoolValue(cb.Name.Substring(0, cb.Name.Length - 2), cb.Checked);
+            HasChanges();
+        }
+        private void JoinMessageTypeCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            ExpansionAnnouncementType cacl = (ExpansionAnnouncementType)JoinMessageTypeCB.SelectedItem;
+            _data.JoinMessageType = cacl;
+            HasChanges();
+        }
+        private void LeftMessageTypeCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            ExpansionAnnouncementType cacl = (ExpansionAnnouncementType)LeftMessageTypeCB.SelectedItem;
+            _data.LeftMessageType = cacl;
+            HasChanges();
+        }
+        private void KillFeedMessageTypeCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            ExpansionAnnouncementType cacl = (ExpansionAnnouncementType)KillFeedMessageTypeCB.SelectedItem;
+            _data.KillFeedMessageType = cacl;
+            HasChanges();
+        }
     }
 }

@@ -41,7 +41,8 @@ namespace ExpansionPlugin
                         ex.Message + "\n" +
                         ex.InnerException?.Message);
                 },
-                configName: "ExpansionNotificationSettings"
+                configName: "ExpansionNotificationSettings",
+                useBoolConvertor: true
             );
 
 
@@ -60,7 +61,7 @@ namespace ExpansionPlugin
         {
             if (isDirty)
             {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, true);
                 isDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
@@ -75,117 +76,120 @@ namespace ExpansionPlugin
     public class ExpansionNotificationSettings
     {
         public int m_Version { get; set; }
-        public int? EnableNotification { get; set; }
-        public int? ShowPlayerJoinServer { get; set; }
-        public int? JoinMessageType { get; set; }
-        public int? ShowPlayerLeftServer { get; set; }
-        public int? LeftMessageType { get; set; }
-        public int? ShowAirdropStarted { get; set; }
-        public int? ShowAirdropClosingOn { get; set; }
-        public int? ShowAirdropDropped { get; set; }
-        public int? ShowAirdropEnded { get; set; }
-        public int? ShowPlayerAirdropStarted { get; set; }
-        public int? ShowPlayerAirdropClosingOn { get; set; }
-        public int? ShowPlayerAirdropDropped { get; set; }
-        public int? ShowTerritoryNotifications { get; set; }
-        public int? EnableKillFeed { get; set; }
-        public int? KillFeedMessageType { get; set; }
-        public int? KillFeedFall { get; set; }
-        public int? KillFeedCarHitDriver { get; set; }
-        public int? KillFeedCarHitNoDriver { get; set; }
-        public int? KillFeedCarCrash { get; set; }
-        public int? KillFeedCarCrashCrew { get; set; }
-        public int? KillFeedHeliHitDriver { get; set; }
-        public int? KillFeedHeliHitNoDriver { get; set; }
-        public int? KillFeedHeliCrash { get; set; }
-        public int? KillFeedHeliCrashCrew { get; set; }
-        public int? KillFeedBoatHitDriver { get; set; }
-        public int? KillFeedBoatHitNoDriver { get; set; }
-        public int? KillFeedBoatCrash { get; set; }
-        public int? KillFeedBoatCrashCrew { get; set; }
-        public int? KillFeedBarbedWire { get; set; }
-        public int? KillFeedFire { get; set; }
-        public int? KillFeedWeaponExplosion { get; set; }
-        public int? KillFeedDehydration { get; set; }
-        public int? KillFeedStarvation { get; set; }
-        public int? KillFeedBleeding { get; set; }
-        public int? KillFeedStatusEffects { get; set; }
-        public int? KillFeedSuicide { get; set; }
-        public int? KillFeedWeapon { get; set; }
-        public int? KillFeedMeleeWeapon { get; set; }
-        public int? KillFeedBarehands { get; set; }
-        public int? KillFeedInfected { get; set; }
-        public int? KillFeedAnimal { get; set; }
-        public int? KillFeedAI { get; set; }
-        public int? KillFeedKilledUnknown { get; set; }
-        public int? KillFeedDiedUnknown { get; set; }
-        public int? EnableKillFeedDiscordMsg { get; set; }
+        public bool? EnableNotification { get; set; }
+        public bool? ShowPlayerJoinServer { get; set; }
+        public ExpansionAnnouncementType? JoinMessageType { get; set; }
+        public bool? ShowPlayerLeftServer { get; set; }
+        public ExpansionAnnouncementType? LeftMessageType { get; set; }
+        public bool? ShowAirdropStarted { get; set; }
+        public bool? ShowAirdropClosingOn { get; set; }
+        public bool? ShowAirdropDropped { get; set; }
+        public bool? ShowAirdropEnded { get; set; }
+        public bool? ShowPlayerAirdropStarted { get; set; }
+        public bool? ShowPlayerAirdropClosingOn { get; set; }
+        public bool? ShowPlayerAirdropDropped { get; set; }
+        //public bool? ShowAIMissionStarted { get; set; }
+        //public bool? ShowAIMissionAction { get; set; }
+        //public bool? ShowAIMissionEnded { get; set; }
+        public bool? ShowTerritoryNotifications { get; set; }
+        public bool? EnableKillFeed { get; set; }
+        public ExpansionAnnouncementType? KillFeedMessageType { get; set; }
+        public bool? KillFeedFall { get; set; }
+        public bool? KillFeedCarHitDriver { get; set; }
+        public bool? KillFeedCarHitNoDriver { get; set; }
+        public bool? KillFeedCarCrash { get; set; }
+        public bool? KillFeedCarCrashCrew { get; set; }
+        public bool? KillFeedHeliHitDriver { get; set; }
+        public bool? KillFeedHeliHitNoDriver { get; set; }
+        public bool? KillFeedHeliCrash { get; set; }
+        public bool? KillFeedHeliCrashCrew { get; set; }
+        public bool? KillFeedBoatHitDriver { get; set; }
+        public bool? KillFeedBoatHitNoDriver { get; set; }
+        public bool? KillFeedBoatCrash { get; set; }
+        public bool? KillFeedBoatCrashCrew { get; set; }
+        public bool? KillFeedBarbedWire { get; set; }
+        public bool? KillFeedFire { get; set; }
+        public bool? KillFeedWeaponExplosion { get; set; }
+        public bool? KillFeedDehydration { get; set; }
+        public bool? KillFeedStarvation { get; set; }
+        public bool? KillFeedBleeding { get; set; }
+        public bool? KillFeedStatusEffects { get; set; }
+        public bool? KillFeedSuicide { get; set; }
+        public bool? KillFeedWeapon { get; set; }
+        public bool? KillFeedMeleeWeapon { get; set; }
+        public bool? KillFeedBarehands { get; set; }
+        public bool? KillFeedInfected { get; set; }
+        public bool? KillFeedAnimal { get; set; }
+        public bool? KillFeedAI { get; set; }
+        public bool? KillFeedKilledUnknown { get; set; }
+        public bool? KillFeedDiedUnknown { get; set; }
+        public bool? EnableKillFeedDiscordMsg { get; set; }
 
         public ExpansionNotificationSettings() { }
         public ExpansionNotificationSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
-            EnableNotification = 1;
+            EnableNotification = true;
 
-            ShowPlayerJoinServer = 1;
-            JoinMessageType = 1;
-            ShowPlayerLeftServer = 1;
-            LeftMessageType = 1;
+            ShowPlayerJoinServer = true;
+            JoinMessageType = ExpansionAnnouncementType.NOTIFICATION;
+            ShowPlayerLeftServer = true;
+            LeftMessageType = ExpansionAnnouncementType.NOTIFICATION;
 
-            ShowAirdropStarted = 1;
-            ShowAirdropClosingOn = 1;
-            ShowAirdropDropped = 1;
-            ShowAirdropEnded = 1;
-            ShowPlayerAirdropStarted = 1;
-            ShowPlayerAirdropClosingOn = 1;
-            ShowPlayerAirdropDropped = 1;
+            ShowAirdropStarted = true;
+            ShowAirdropClosingOn = true;
+            ShowAirdropDropped = true;
+            ShowAirdropEnded = true;
+            ShowPlayerAirdropStarted = true;
+            ShowPlayerAirdropClosingOn = true;
+            ShowPlayerAirdropDropped = true;
 
-            ShowTerritoryNotifications = 1;
+            ShowTerritoryNotifications = true;
 
-            EnableKillFeed = 1;
-            KillFeedMessageType = 1;
+            EnableKillFeed = true;
+            KillFeedMessageType = ExpansionAnnouncementType.NOTIFICATION;
 
             //! These are not implemented, uncomment once done
-            //ShowDistanceOnKillFeed = 1;
-            //ShowVictimOnKillFeed = 1;
-            //ShowKillerOnKillFeed = 1;
-            //ShowWeaponOnKillFeed = 1;
+            //ShowDistanceOnKillFeed = true;
+            //ShowVictimOnKillFeed = true;
+            //ShowKillerOnKillFeed = true;
+            //ShowWeaponOnKillFeed = true;
 
-            KillFeedFall = 1;
-            KillFeedCarHitDriver = 1;
-            KillFeedCarHitNoDriver = 1;
-            KillFeedCarCrash = 1;
-            KillFeedCarCrashCrew = 1;
-            KillFeedHeliHitDriver = 1;
-            KillFeedHeliHitNoDriver = 1;
-            KillFeedHeliCrash = 1;
-            KillFeedHeliCrashCrew = 1;
-            KillFeedBoatHitDriver = 1;
-            KillFeedBoatHitNoDriver = 1;
-            KillFeedBoatCrash = 1;
-            KillFeedBoatCrashCrew = 1;
-            /*KillFeedPlaneHitDriver = 1;
-            KillFeedPlaneHitNoDriver = 1;
-            KillFeedBikeHitDriver = 1;
-            KillFeedBikeHitNoDriver = 1;*/
-            KillFeedBarbedWire = 1;
-            KillFeedFire = 1;
-            KillFeedWeaponExplosion = 1;
-            KillFeedDehydration = 1;
-            KillFeedStarvation = 1;
-            KillFeedBleeding = 1;
-            KillFeedStatusEffects = 1;
-            KillFeedSuicide = 1;
-            KillFeedWeapon = 1;
-            KillFeedMeleeWeapon = 1;
-            KillFeedBarehands = 1;
-            KillFeedInfected = 1;
-            KillFeedAnimal = 1;
-            KillFeedAI = 1;
-            KillFeedKilledUnknown = 1;
-            KillFeedDiedUnknown = 1;
+            KillFeedFall = true;
+            KillFeedCarHitDriver = true;
+            KillFeedCarHitNoDriver = true;
+            KillFeedCarCrash = true;
+            KillFeedCarCrashCrew = true;
+            KillFeedHeliHitDriver = true;
+            KillFeedHeliHitNoDriver = true;
+            KillFeedHeliCrash = true;
+            KillFeedHeliCrashCrew = true;
+            KillFeedBoatHitDriver = true;
+            KillFeedBoatHitNoDriver = true;
+            KillFeedBoatCrash = true;
+            KillFeedBoatCrashCrew = true;
+            /*KillFeedPlaneHitDriver = true;
+            KillFeedPlaneHitNoDriver = true;
+            KillFeedBikeHitDriver = true;
+            KillFeedBikeHitNoDriver = true;*/
+            KillFeedBarbedWire = true;
+            KillFeedFire = true;
+            KillFeedWeaponExplosion = true;
+            KillFeedDehydration = true;
+            KillFeedStarvation = true;
+            KillFeedBleeding = true;
+            KillFeedStatusEffects = true;
+            KillFeedSuicide = true;
+            KillFeedWeapon = true;
+            KillFeedMeleeWeapon = true;
+            KillFeedBarehands = true;
+            KillFeedInfected = true;
+            KillFeedAnimal = true;
+            KillFeedAI = true;
+            KillFeedKilledUnknown = true;
+            KillFeedDiedUnknown = true;
 
-            EnableKillFeedDiscordMsg = 0;
+            EnableKillFeedDiscordMsg = false;
         }
         public List<string> FixMissingOrInvalidFields()
         {
@@ -195,49 +199,66 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated version from {m_Version} to {ExpansionNotificationConfig.CurrentVersion}");
                 m_Version = ExpansionNotificationConfig.CurrentVersion;
             }
-            if (EnableNotification is null or < 0 or > 1) { EnableNotification = 1; fixes.Add("Corrected EnableNotification"); }
-            if (ShowPlayerJoinServer is null or < 0 or > 1) { ShowPlayerJoinServer = 1; fixes.Add("Corrected ShowPlayerJoinServer"); }
-            if (LeftMessageType is null or < 0 or > 2) { LeftMessageType = 1; fixes.Add("Corrected LeftMessageType"); }
-            if (ShowAirdropStarted is null or < 0 or > 1) { ShowAirdropStarted = 1; fixes.Add("Corrected ShowAirdropStarted"); }
-            if (ShowAirdropClosingOn is null or < 0 or > 1) { ShowAirdropClosingOn = 1; fixes.Add("Corrected ShowAirdropClosingOn"); }
-            if (ShowAirdropDropped is null or < 0 or > 1) { ShowAirdropDropped = 1; fixes.Add("Corrected ShowAirdropDropped"); }
-            if (ShowAirdropEnded is null or < 0 or > 1) { ShowAirdropEnded = 1; fixes.Add("Corrected ShowAirdropEnded"); }
-            if (ShowPlayerAirdropStarted is null or < 0 or > 1) { ShowPlayerAirdropStarted = 1; fixes.Add("Corrected ShowPlayerAirdropStarted"); }
-            if (ShowPlayerAirdropClosingOn is null or < 0 or > 1) { ShowPlayerAirdropClosingOn = 1; fixes.Add("Corrected ShowPlayerAirdropClosingOn"); }
-            if (ShowPlayerAirdropDropped is null or < 0 or > 1) { ShowPlayerAirdropDropped = 1; fixes.Add("Corrected ShowPlayerAirdropDropped"); }
-            if (ShowTerritoryNotifications is null or < 0 or > 1) { ShowTerritoryNotifications = 1; fixes.Add("Corrected ShowTerritoryNotifications"); }
-            if (EnableKillFeed is null or < 0 or > 1) { EnableKillFeed = 1; fixes.Add("Corrected EnableKillFeed"); }
-            if (KillFeedMessageType is null or < 0 or > 1) { KillFeedMessageType = 1; fixes.Add("Corrected KillFeedMessageType"); }
-            if (KillFeedFall is null or < 0 or > 1) { KillFeedFall = 1; fixes.Add("Corrected KillFeedFall"); }
-            if (KillFeedCarHitDriver is null or < 0 or > 1) { KillFeedCarHitDriver = 1; fixes.Add("Corrected KillFeedCarHitDriver"); }
-            if (KillFeedCarHitNoDriver is null or < 0 or > 1) { KillFeedCarHitNoDriver = 1; fixes.Add("Corrected KillFeedCarHitNoDriver"); }
-            if (KillFeedCarCrash is null or < 0 or > 1) { KillFeedCarCrash = 1; fixes.Add("Corrected KillFeedCarCrash"); }
-            if (KillFeedCarCrashCrew is null or < 0 or > 1) { KillFeedCarCrashCrew = 1; fixes.Add("Corrected KillFeedCarCrashCrew"); }
-            if (KillFeedHeliHitDriver is null or < 0 or > 1) { KillFeedHeliHitDriver = 1; fixes.Add("Corrected KillFeedHeliHitDriver"); }
-            if (KillFeedHeliHitNoDriver is null or < 0 or > 1) { KillFeedHeliHitNoDriver = 1; fixes.Add("Corrected KillFeedHeliHitNoDriver"); }
-            if (KillFeedHeliCrash is null or < 0 or > 1) { KillFeedHeliCrash = 1; fixes.Add("Corrected KillFeedHeliCrash"); }
-            if (KillFeedHeliCrashCrew is null or < 0 or > 1) { KillFeedHeliCrashCrew = 1; fixes.Add("Corrected KillFeedHeliCrashCrew"); }
-            if (KillFeedBoatHitDriver is null or < 0 or > 1) { KillFeedBoatHitDriver = 1; fixes.Add("Corrected KillFeedBoatHitDriver"); }
-            if (KillFeedBoatHitNoDriver is null or < 0 or > 1) { KillFeedBoatHitNoDriver = 1; fixes.Add("Corrected KillFeedBoatHitNoDriver"); }
-            if (KillFeedBoatCrash is null or < 0 or > 1) { KillFeedBoatCrash = 1; fixes.Add("Corrected KillFeedBoatCrash"); }
-            if (KillFeedBoatCrashCrew is null or < 0 or > 1) { KillFeedBoatCrashCrew = 1; fixes.Add("Corrected KillFeedBoatCrashCrew"); }
-            if (KillFeedBarbedWire is null or < 0 or > 1) { KillFeedBarbedWire = 1; fixes.Add("Corrected KillFeedBarbedWire"); }
-            if (KillFeedFire is null or < 0 or > 1) { KillFeedFire = 1; fixes.Add("Corrected KillFeedFire"); }
-            if (KillFeedWeaponExplosion is null or < 0 or > 1) { KillFeedWeaponExplosion = 1; fixes.Add("Corrected KillFeedWeaponExplosion"); }
-            if (KillFeedDehydration is null or < 0 or > 1) { KillFeedDehydration = 1; fixes.Add("Corrected KillFeedDehydration"); }
-            if (KillFeedStarvation is null or < 0 or > 1) { KillFeedStarvation = 1; fixes.Add("Corrected KillFeedStarvation"); }
-            if (KillFeedBleeding is null or < 0 or > 1) { KillFeedBleeding = 1; fixes.Add("Corrected KillFeedBleeding"); }
-            if (KillFeedStatusEffects is null or < 0 or > 1) { KillFeedStatusEffects = 1; fixes.Add("Corrected KillFeedStatusEffects"); }
-            if (KillFeedSuicide is null or < 0 or > 1) { KillFeedSuicide = 1; fixes.Add("Corrected KillFeedSuicide"); }
-            if (KillFeedWeapon is null or < 0 or > 1) { KillFeedWeapon = 1; fixes.Add("Corrected KillFeedWeapon"); }
-            if (KillFeedMeleeWeapon is null or < 0 or > 1) { KillFeedMeleeWeapon = 1; fixes.Add("Corrected KillFeedMeleeWeapon"); }
-            if (KillFeedBarehands is null or < 0 or > 1) { KillFeedBarehands = 1; fixes.Add("Corrected KillFeedBarehands"); }
-            if (KillFeedInfected is null or < 0 or > 1) { KillFeedInfected = 1; fixes.Add("Corrected KillFeedInfected"); }
-            if (KillFeedAnimal is null or < 0 or > 1) { KillFeedAnimal = 1; fixes.Add("Corrected KillFeedAnimal"); }
-            if (KillFeedAI is null or < 0 or > 1) { KillFeedAI = 1; fixes.Add("Corrected KillFeedAI"); }
-            if (KillFeedKilledUnknown is null or < 0 or > 1) { KillFeedKilledUnknown = 1; fixes.Add("Corrected KillFeedKilledUnknown"); }
-            if (KillFeedDiedUnknown is null or < 0 or > 1) { KillFeedDiedUnknown = 1; fixes.Add("Corrected KillFeedDiedUnknown"); }
-            if (EnableKillFeedDiscordMsg is null or < 0 or > 1) { EnableKillFeedDiscordMsg = 0; fixes.Add("Corrected EnableKillFeedDiscordMsg"); }
+            if (EnableNotification is null ) { EnableNotification = true; fixes.Add("Corrected EnableNotification"); }
+            if (ShowPlayerJoinServer is null) { ShowPlayerJoinServer = true; fixes.Add("Corrected ShowPlayerJoinServer"); }
+            if (!Enum.IsDefined(typeof(ExpansionAnnouncementType), JoinMessageType) ||
+                    (JoinMessageType != ExpansionAnnouncementType.CHAT && JoinMessageType != ExpansionAnnouncementType.NOTIFICATION && JoinMessageType != ExpansionAnnouncementType.MUTEDNOTIFICATION))
+            {
+                fixes.Add($"Corrected JoinMessageType from '{JoinMessageType}' to '{ExpansionAnnouncementType.NOTIFICATION}'");
+                JoinMessageType = ExpansionAnnouncementType.NOTIFICATION;
+            }
+            if (ShowPlayerLeftServer is null ) { ShowPlayerLeftServer = true; fixes.Add("Corrected ShowPlayerLeftServer"); }
+            if (!Enum.IsDefined(typeof(ExpansionAnnouncementType), LeftMessageType) ||
+                    (LeftMessageType != ExpansionAnnouncementType.CHAT && LeftMessageType != ExpansionAnnouncementType.NOTIFICATION && LeftMessageType != ExpansionAnnouncementType.MUTEDNOTIFICATION))
+            {
+                fixes.Add($"Corrected LeftMessageType from '{LeftMessageType}' to '{ExpansionAnnouncementType.NOTIFICATION}'");
+                LeftMessageType = ExpansionAnnouncementType.NOTIFICATION;
+            }
+            if (ShowAirdropStarted is null ) { ShowAirdropStarted = true; fixes.Add("Corrected ShowAirdropStarted"); }
+            if (ShowAirdropClosingOn is null) { ShowAirdropClosingOn = true; fixes.Add("Corrected ShowAirdropClosingOn"); }
+            if (ShowAirdropDropped is null ) { ShowAirdropDropped = true; fixes.Add("Corrected ShowAirdropDropped"); }
+            if (ShowAirdropEnded is null ) { ShowAirdropEnded = true; fixes.Add("Corrected ShowAirdropEnded"); }
+            if (ShowPlayerAirdropStarted is null ) { ShowPlayerAirdropStarted = true; fixes.Add("Corrected ShowPlayerAirdropStarted"); }
+            if (ShowPlayerAirdropClosingOn is null) { ShowPlayerAirdropClosingOn = true; fixes.Add("Corrected ShowPlayerAirdropClosingOn"); }
+            if (ShowPlayerAirdropDropped is null) { ShowPlayerAirdropDropped = true; fixes.Add("Corrected ShowPlayerAirdropDropped"); }
+            if (ShowTerritoryNotifications is null) { ShowTerritoryNotifications = true; fixes.Add("Corrected ShowTerritoryNotifications"); }
+            if (EnableKillFeed is null) { EnableKillFeed = true; fixes.Add("Corrected EnableKillFeed"); }
+            if (!Enum.IsDefined(typeof(ExpansionAnnouncementType), KillFeedMessageType) ||
+                    (KillFeedMessageType != ExpansionAnnouncementType.CHAT && KillFeedMessageType != ExpansionAnnouncementType.NOTIFICATION && KillFeedMessageType != ExpansionAnnouncementType.MUTEDNOTIFICATION))
+            {
+                fixes.Add($"Corrected VehicleSync from '{KillFeedMessageType}' to '{ExpansionAnnouncementType.NOTIFICATION}'");
+                KillFeedMessageType = ExpansionAnnouncementType.NOTIFICATION;
+            }
+            if (KillFeedFall is null) { KillFeedFall = true; fixes.Add("Corrected KillFeedFall"); }
+            if (KillFeedCarHitDriver is null) { KillFeedCarHitDriver = true; fixes.Add("Corrected KillFeedCarHitDriver"); }
+            if (KillFeedCarHitNoDriver is null) { KillFeedCarHitNoDriver = true; fixes.Add("Corrected KillFeedCarHitNoDriver"); }
+            if (KillFeedCarCrash is null) { KillFeedCarCrash = true; fixes.Add("Corrected KillFeedCarCrash"); }
+            if (KillFeedCarCrashCrew is null) { KillFeedCarCrashCrew = true; fixes.Add("Corrected KillFeedCarCrashCrew"); }
+            if (KillFeedHeliHitDriver is null) { KillFeedHeliHitDriver = true; fixes.Add("Corrected KillFeedHeliHitDriver"); }
+            if (KillFeedHeliHitNoDriver is null) { KillFeedHeliHitNoDriver = true; fixes.Add("Corrected KillFeedHeliHitNoDriver"); }
+            if (KillFeedHeliCrash is null) { KillFeedHeliCrash = true; fixes.Add("Corrected KillFeedHeliCrash"); }
+            if (KillFeedHeliCrashCrew is null) { KillFeedHeliCrashCrew = true; fixes.Add("Corrected KillFeedHeliCrashCrew"); }
+            if (KillFeedBoatHitDriver is null) { KillFeedBoatHitDriver = true; fixes.Add("Corrected KillFeedBoatHitDriver"); }
+            if (KillFeedBoatHitNoDriver is null) { KillFeedBoatHitNoDriver = true; fixes.Add("Corrected KillFeedBoatHitNoDriver"); }
+            if (KillFeedBoatCrash is null) { KillFeedBoatCrash = true; fixes.Add("Corrected KillFeedBoatCrash"); }
+            if (KillFeedBoatCrashCrew is null) { KillFeedBoatCrashCrew = true; fixes.Add("Corrected KillFeedBoatCrashCrew"); }
+            if (KillFeedBarbedWire is null) { KillFeedBarbedWire = true; fixes.Add("Corrected KillFeedBarbedWire"); }
+            if (KillFeedFire is null) { KillFeedFire = true; fixes.Add("Corrected KillFeedFire"); }
+            if (KillFeedWeaponExplosion is null) { KillFeedWeaponExplosion = true; fixes.Add("Corrected KillFeedWeaponExplosion"); }
+            if (KillFeedDehydration is null) { KillFeedDehydration = true; fixes.Add("Corrected KillFeedDehydration"); }
+            if (KillFeedStarvation is null) { KillFeedStarvation = true; fixes.Add("Corrected KillFeedStarvation"); }
+            if (KillFeedBleeding is null) { KillFeedBleeding = true; fixes.Add("Corrected KillFeedBleeding"); }
+            if (KillFeedStatusEffects is null) { KillFeedStatusEffects = true; fixes.Add("Corrected KillFeedStatusEffects"); }
+            if (KillFeedSuicide is null) { KillFeedSuicide = true; fixes.Add("Corrected KillFeedSuicide"); }
+            if (KillFeedWeapon is null) { KillFeedWeapon = true; fixes.Add("Corrected KillFeedWeapon"); }
+            if (KillFeedMeleeWeapon is null) { KillFeedMeleeWeapon = true; fixes.Add("Corrected KillFeedMeleeWeapon"); }
+            if (KillFeedBarehands is null) { KillFeedBarehands = true; fixes.Add("Corrected KillFeedBarehands"); }
+            if (KillFeedInfected is null) { KillFeedInfected = true; fixes.Add("Corrected KillFeedInfected"); }
+            if (KillFeedAnimal is null) { KillFeedAnimal = true; fixes.Add("Corrected KillFeedAnimal"); }
+            if (KillFeedAI is null) { KillFeedAI = true; fixes.Add("Corrected KillFeedAI"); }
+            if (KillFeedKilledUnknown is null) { KillFeedKilledUnknown = true; fixes.Add("Corrected KillFeedKilledUnknown"); }
+            if (KillFeedDiedUnknown is null) { KillFeedDiedUnknown = true; fixes.Add("Corrected KillFeedDiedUnknown"); }
+            if (EnableKillFeedDiscordMsg is null) { EnableKillFeedDiscordMsg = false; fixes.Add("Corrected EnableKillFeedDiscordMsg"); }
             return fixes;
         }
         public override bool Equals(object obj)
@@ -345,5 +366,16 @@ namespace ExpansionPlugin
 
             };
         }
+
+        internal void SetBoolValue(string v, bool @checked)
+        {
+            GetType().GetProperty(v).SetValue(this, @checked, null);
+        }
     }
+    public enum ExpansionAnnouncementType
+    {
+        CHAT = 0,
+        NOTIFICATION,
+        MUTEDNOTIFICATION
+    };
 }
