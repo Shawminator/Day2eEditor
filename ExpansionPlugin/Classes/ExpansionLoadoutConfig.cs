@@ -105,19 +105,6 @@ namespace ExpansionPlugin
             ConstructionPartsBuilt = new BindingList<object>();
             Sets = new BindingList<AILoadouts>();
         }
-        public AILoadouts(string _name)
-        {
-            name = _name;
-            ClassName = "";
-            Include = "";
-            Chance = (decimal)1;
-            Quantity = new Quantity();
-            Health = new BindingList<Health>();
-            InventoryAttachments = new BindingList<Inventoryattachment>();
-            InventoryCargo = new BindingList<AILoadouts>();
-            ConstructionPartsBuilt = new BindingList<object>();
-            Sets = new BindingList<AILoadouts>();
-        }
 
         internal IEnumerable<string> Save()
         {
