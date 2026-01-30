@@ -18,7 +18,6 @@ namespace ExpansionPlugin
         public event Action<ExpansionServerMarkerData> MarkerChanged;
         private Type _parentType;
         private ExpansionServerMarkerData _data;
-        private ExpansionServerMarkerData _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -40,7 +39,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionServerMarkerData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
             BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
@@ -73,35 +71,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
 
         /// <summary>
@@ -121,45 +90,45 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.m_Persist = m_PersistCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void m_LockedCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_Locked = m_LockedCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void m_Is3DCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_Is3D = m_Is3DCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_UID = textBox9.Text;
-            HasChanges();
+            
             UpdateTreeNodeText();
         }
         private void textBox11_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_Text = textBox11.Text;
-            HasChanges();
+            
 
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_Visibility = (int)comboBox1.SelectedValue;
-            HasChanges();
+            
         }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_IconName = comboBox3.SelectedItem.ToString();
-            HasChanges();
+            
             MarkerChanged?.Invoke(_data);
         }
         private void m_ColorPB_Click(object sender, EventArgs e)
@@ -173,7 +142,7 @@ namespace ExpansionPlugin
                     Color color = picker.SelectedColor;
                     _data.m_Color = color.ToArgb();
                     m_ColorPB.BackColor = color;
-                    HasChanges();
+                    
                     MarkerChanged?.Invoke(_data);
                 }
             }
@@ -183,20 +152,20 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.m_Position[0] = (float)numericUpDown24.Value;
-            HasChanges();
+            
             MarkerChanged?.Invoke(_data);
         }
         private void numericUpDown25_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_Position[1] = (float)numericUpDown25.Value;
-            HasChanges();
+            
         }
         private void numericUpDown26_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.m_Position[2] = (float)numericUpDown26.Value;
-            HasChanges();
+            
             MarkerChanged?.Invoke(_data);
         }
     }

@@ -16,7 +16,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionGeneralSettings _data;
-        private ExpansionGeneralSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionGeneralSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -59,35 +57,6 @@ namespace ExpansionPlugin
             var field = value.GetType().GetField(value.ToString());
             var attr = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
             return attr?.Description ?? value.ToString();
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -174,34 +143,34 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.EnableLamps = (int)(LampModeEnum)EnableLampsComboBox.SelectedItem;
-            HasChanges();
+            
         }
         private void EnableGeneratorsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableGenerators = EnableGeneratorsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void EnableLighthousesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableLighthouses = EnableLighthousesCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void numericUpDown34_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LampAmount_OneInX = (int)numericUpDown34.Value;
-            HasChanges();
+            
         }
 
         private void LampSelectionModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LampSelectionMode = LampSelectionModeCB.GetItemText(LampSelectionModeCB.SelectedIndex);
-            HasChanges();
+            
         }
     }
 }

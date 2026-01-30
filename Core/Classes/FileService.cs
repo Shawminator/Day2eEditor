@@ -54,18 +54,24 @@ public class FileService
         }
     }
 
-    private readonly JsonSerializerOptions _jsonOptions = new()
+    private readonly JsonSerializerOptions _defaultOptions = new()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
+    private JsonSerializerOptions BuildOptions(bool useBool, bool useVec)
+    {
+        var options = new JsonSerializerOptions(_defaultOptions);
 
+        if (useBool) options.Converters.Add(new BoolConverter());
+        if (useVec) options.Converters.Add(new Vec3Converter());
+
+        return options;
+    }
     public T LoadOrCreateJson<T>(
         string path,
         Func<T> createNew,
-        Action<T>? onAfterLoad = null,
-        Func<T, bool>? checkVersionAndUpdate = null,
         Action<Exception>? onError = null,
         string configName = "Configuration",
         bool useBoolConvertor = false,
@@ -77,27 +83,11 @@ public class FileService
             Console.Write($"[Load] Loading {configName} ({Path.GetFileName(path)})... ");
             try
             {
-                var options = new JsonSerializerOptions(_jsonOptions);
-                if (useBoolConvertor)
-                {
-                    options.Converters.Add(new BoolConverter());
-                }
-                if (useVecConvertor)
-                {
-                    options.Converters.Add(new Vec3Converter());
-                }
+                var options = BuildOptions(useBoolConvertor, useVecConvertor);
                 T? data = JsonSerializer.Deserialize<T>(File.ReadAllText(path), options);
 
                 if (data == null)
                     throw new Exception("Deserialized object is null.");
-
-                if (checkVersionAndUpdate?.Invoke(data) == true)
-                {
-                    SaveJson(path, data);
-                    Console.WriteLine($"{configName} version updated.");
-                }
-
-                onAfterLoad?.Invoke(data);
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("OK");
@@ -127,15 +117,7 @@ public class FileService
 
     public void SaveJson<T>(string path, T data, bool useBoolConvertor = false,  bool useVecConvertor = false)
     {
-        var options = new JsonSerializerOptions(_jsonOptions);
-        if (useBoolConvertor)
-        {
-            options.Converters.Add(new BoolConverter());
-        }
-        if (useVecConvertor)
-        {
-            options.Converters.Add(new Vec3Converter());
-        }
+        var options = BuildOptions(useBoolConvertor, useVecConvertor);
         try
         {
             var json = JsonSerializer.Serialize(data, options);

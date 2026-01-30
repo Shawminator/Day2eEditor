@@ -22,7 +22,6 @@ namespace Day2eEditor
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<cfgundergroundtriggers>(
                 _path,
                 createNew: () => new cfgundergroundtriggers(),
-                onAfterLoad: _ => { },
                 onError: ex => LogError("cfgundergroundtriggers", ex),
                 configName: "cfgundergroundtriggers",
                 useBoolConvertor: false

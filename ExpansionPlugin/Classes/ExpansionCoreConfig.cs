@@ -7,69 +7,23 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionCoreConfig : IConfigLoader
+    public class ExpansionCoreConfig : ExpansionBaseIConfigLoader<ExpansionCoreSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionCoreSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 9;
  
-        public ExpansionCoreConfig(string path)
+        public ExpansionCoreConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionCoreSettings CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionCoreSettings>(
-                _path,
-                createNew: () => new ExpansionCoreSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionCore"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionCoreSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionCoreSettings
+    public class ExpansionCoreSettings : IEquatable<ExpansionCoreSettings>, IDeepCloneable<ExpansionCoreSettings>
     {
         public int m_Version { get; set; }
         public int? ServerUpdateRateLimit { get; set; }
@@ -86,16 +40,18 @@ namespace ExpansionPlugin
             ForceExactCEItemLifetime = 0;
             EnableInventoryCargoTidy = 0;
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionCoreSettings? other)
         {
-            if (obj is not ExpansionCoreSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-            return m_Version == other.m_Version &&
-                   ServerUpdateRateLimit == other.ServerUpdateRateLimit &&
-                   ForceExactCEItemLifetime == other.ForceExactCEItemLifetime &&
-                   EnableInventoryCargoTidy == other.EnableInventoryCargoTidy;
+            return m_Version == other.m_Version
+                && ServerUpdateRateLimit == other.ServerUpdateRateLimit
+                && ForceExactCEItemLifetime == other.ForceExactCEItemLifetime
+                && EnableInventoryCargoTidy == other.EnableInventoryCargoTidy;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionCoreSettings);
+
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

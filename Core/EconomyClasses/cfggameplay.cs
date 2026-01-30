@@ -31,8 +31,6 @@ namespace Day2eEditor
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<cfggameplay>(
                 _path,
                 createNew: () => new cfggameplay(),
-                onAfterLoad: _ => { },
-                checkVersionAndUpdate: cfg => cfg.checkver(),
                 onError: ex => LogError("CFGGameplay", ex),
                 configName: "CFGGameplay",
                 useBoolConvertor: false

@@ -14,7 +14,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionNotificationSchedulerSettings _data;
-        private ExpansionNotificationSchedulerSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionNotificationSchedulerSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone(); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -47,34 +45,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
 
         #region Helper Methods
         /// <summary>
@@ -94,21 +64,21 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Enabled = SchedulerEnabledCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UTCTimeCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UTC = UTCTimeCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseMissionTimeCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseMissionTime = UseMissionTimeCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

@@ -14,7 +14,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionBookRule _data;
-        private ExpansionBookRule _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBookRule ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.CLone();
 
             _suppressEvents = true;
 
@@ -44,35 +42,6 @@ namespace ExpansionPlugin
             textBox7.Text = _data.RuleText;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.CLone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -94,7 +63,7 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.RuleParagraph = textBox6.Text;
             UpdateTreeNodeText();
-            HasChanges();
+            
 
         }
 
@@ -102,7 +71,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.RuleText = textBox7.Text;
-            HasChanges();
+            
         }
     }
 }

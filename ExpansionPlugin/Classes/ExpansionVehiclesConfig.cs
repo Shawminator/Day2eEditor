@@ -9,71 +9,23 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionVehiclesConfig: IConfigLoader
+    public class ExpansionVehiclesConfig: ExpansionBaseIConfigLoader<ExpansionVehicleSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionVehicleSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 21;
 
-        public ExpansionVehiclesConfig(string path)
+        public ExpansionVehiclesConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionVehicleSettings CreateDefaultData()
         {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionVehicleSettings>(
-                _path,
-                createNew: () => new ExpansionVehicleSettings(CurrentVersion),
-                onAfterLoad: cfg => { },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionVehicle",
-                useVecConvertor: true
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionVehicleSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data, true);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionVehicleSettings
+    public class ExpansionVehicleSettings : IEquatable<ExpansionVehicleSettings>, IDeepCloneable<ExpansionVehicleSettings>
     {
         public int m_Version { get; set; }
         public ExpansionVehicleNetworkMode? VehicleSync { get; set; } //! 0 = SERVER | 1 = CLIENT
@@ -207,7 +159,7 @@ namespace ExpansionPlugin
             };
         }
 
-        internal IEnumerable<object> FixMissingOrInvalidFields()
+        public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
 
@@ -444,13 +396,10 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionVehicleSettings other)
         {
-            if (obj is not ExpansionVehicleSettings other)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             if (m_Version != other.m_Version ||
                 VehicleSync != other.VehicleSync ||
@@ -509,6 +458,7 @@ namespace ExpansionPlugin
             return true;
 
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionVehicleSettings);
         private static bool ListEquals<T>(IList<T> a, IList<T> b)
         {
             if (ReferenceEquals(a, b))

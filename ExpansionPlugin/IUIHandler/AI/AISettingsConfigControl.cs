@@ -12,7 +12,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionAISettings _data;
-        private ExpansionAISettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -34,7 +33,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAISettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -68,35 +66,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -115,149 +84,149 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.AccuracyMin = AccuracyMinNUD.Value;
-            HasChanges();
+            
         }
         private void AccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMax = AccuracyMaxNUD.Value;
-            HasChanges();
+            
         }
         private void ThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ThreatDistanceLimit = ThreatDistanceLimitNUD.Value;
-            HasChanges();
+            
         }
         private void NoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NoiseInvestigationDistanceLimit = NoiseInvestigationDistanceLimitNUD.Value;
-            HasChanges();
+            
         }
         private void DamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageMultiplier = DamageMultiplierNUD.Value;
-            HasChanges();
+            
         }
         private void FormationScaleNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationScale = FormationScaleNUD.Value;
-            HasChanges();
+            
         }
         private void SniperProneDistanceThresholdNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.SniperProneDistanceThreshold = SniperProneDistanceThresholdNUD.Value;
-            HasChanges();
+            
         }
         private void DamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageReceivedMultiplier = DamageReceivedMultiplierNUD.Value;
-            HasChanges();
+            
         }
         private void MemeLevelNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MemeLevel = (int)MemeLevelNUD.Value;
-            HasChanges();
+            
         }
         private void AggressionTimeoutNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AggressionTimeout = AggressionTimeoutNUD.Value;
-            HasChanges();
+            
         }
         private void GuardAggressionTimeoutNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.GuardAggressionTimeout = GuardAggressionTimeoutNUD.Value;
-            HasChanges();
+            
         }
         private void VaultingCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Vaulting = VaultingCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void MannersCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Manners = MannersCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void CanRecruitFriendlyCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanRecruitFriendly = CanRecruitFriendlyCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void CanRecruitGuardsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanRecruitGuards = CanRecruitGuardsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
 
         }
         private void LogAIHitByCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LogAIHitBy = LogAIHitByCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void LogAIKilledCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LogAIKilled = LogAIKilledCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void EnableZombieVehicleAttackHandlerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableZombieVehicleAttackHandler = EnableZombieVehicleAttackHandlerCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void EnableZombieVehicleAttackPhysicsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableZombieVehicleAttackPhysics = EnableZombieVehicleAttackPhysicsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void MaxRecruitableAINUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxRecruitableAI = (int)MaxRecruitableAINUD.Value;
-            HasChanges();
+            
         }
         private void OverrideClientWeaponFiringCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.OverrideClientWeaponFiring = OverrideClientWeaponFiringCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void RecreateWeaponNetworkRepresentationCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.RecreateWeaponNetworkRepresentation = RecreateWeaponNetworkRepresentationCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void MaxFlankingDistanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxFlankingDistance = MaxFlankingDistanceNUD.Value;
-            HasChanges();
+            
         }
 
         private void EnableFlankingOutsideCombatCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableFlankingOutsideCombat = EnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

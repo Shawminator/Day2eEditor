@@ -17,7 +17,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private AILoadouts _data;
-        private AILoadouts _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -41,7 +40,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as AILoadouts ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -75,34 +73,6 @@ namespace ExpansionPlugin
             e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
             e.DrawFocusRectangle();
         }
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindLastParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
 
         #region Helper Methods
         /// <summary>
@@ -122,7 +92,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Chance = numericUpDown1.Value;
-            HasChanges();
+            
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
@@ -130,7 +100,7 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (_data.Quantity == null) _data.Quantity = new Quantity();
             _data.Quantity.Min = numericUpDown2.Value;
-            HasChanges();
+            
         }
 
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
@@ -138,7 +108,7 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             if (_data.Quantity == null) _data.Quantity = new Quantity();
             _data.Quantity.Max = numericUpDown3.Value;
-            HasChanges();
+            
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -163,7 +133,7 @@ namespace ExpansionPlugin
             };
             _data.Health.Add(newhealth);
 
-            HasChanges();
+            
 
             groupBox1.Visible = true;
             listBox1.SelectedIndex = _data.Health.Count - 1;
@@ -174,7 +144,7 @@ namespace ExpansionPlugin
         {
             int index = listBox1.SelectedIndex;
             _data.Health.Remove(Currenthealth);
-            HasChanges();
+            
             if (_data.Health.Count > 0)
                 listBox1.SelectedIndex = Math.Max(0, index - 1);
             else
@@ -185,21 +155,21 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             Currenthealth.Min = numericUpDown4.Value;
-            HasChanges();
+            
         }
 
         private void numericUpDown5_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             Currenthealth.Max = numericUpDown5.Value;
-            HasChanges();
+            
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             Currenthealth.Zone = textBox2.Text;
-            HasChanges();
+            
         }
 
         private void darkButton11_Click(object sender, EventArgs e)
@@ -223,7 +193,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.ClassName = textBox1.Text;
-            HasChanges();
+            
             UpdateTreeNodeText();
         }
     }

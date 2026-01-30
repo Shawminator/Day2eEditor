@@ -216,6 +216,7 @@ namespace ExpansionPlugin
                 Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
             }
         }
+
         public IEnumerable<string> Save()
         {
             var configs = new object[]

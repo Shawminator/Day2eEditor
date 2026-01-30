@@ -10,69 +10,23 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAirdropConfig : IConfigLoader
+    public class ExpansionAirdropConfig : ExpansionBaseIConfigLoader<ExpansionAirdropSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionAirdropSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 8;
-        public ExpansionAirdropConfig(string path)
+        public ExpansionAirdropConfig(string path) : base(path)
         {
-            _path = path;
+        }
+        protected override ExpansionAirdropSettings CreateDefaultData()
+        {
+            return new ExpansionAirdropSettings(CurrentVersion);
         }
 
-        public void Load()
+        protected override IEnumerable<string> ValidateData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionAirdropSettings>(
-                _path,
-                createNew: () => new ExpansionAirdropSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionAirdrop"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionAirdropSettings
+    public class ExpansionAirdropSettings : IEquatable<ExpansionAirdropSettings>, IDeepCloneable<ExpansionAirdropSettings>
     {
         public int m_Version { get; set; }
         public int? ServerMarkerOnDropLocation { get; set; }
@@ -121,10 +75,10 @@ namespace ExpansionPlugin
             DefaultBaseBuilding();
             DefaultMilitary();
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionAirdropSettings other)
         {
-            if (obj is not ExpansionAirdropSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    ServerMarkerOnDropLocation == other.ServerMarkerOnDropLocation &&
@@ -145,6 +99,7 @@ namespace ExpansionPlugin
                    DropZoneProximityDistance == other.DropZoneProximityDistance &&
                    ExplodeAirVehiclesOnCollision == other.ExplodeAirVehiclesOnCollision;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionCoreSettings);
         void DefaultRegular()
         {
             BindingList<ExpansionLoot> Loot = ExpansionLootDefaults.Airdrop_Regular();

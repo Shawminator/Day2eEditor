@@ -17,7 +17,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionMapSettings _data;
-        private ExpansionMapSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -39,7 +38,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionMapSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -54,34 +52,6 @@ namespace ExpansionPlugin
             CompassBadgesColorPB.BackColor = CompassBadgesColor;
 
             _suppressEvents = false;
-        }
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -102,21 +72,21 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.EnableHUDCompass = EnableHUDCompassCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void NeedGPSItemForHUDCompassCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NeedGPSItemForHUDCompass = NeedGPSItemForHUDCompassCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void NeedCompassItemForHUDCompassCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NeedCompassItemForHUDCompass = NeedCompassItemForHUDCompassCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void CompassColor_Click(object sender, EventArgs e)
         {
@@ -129,7 +99,7 @@ namespace ExpansionPlugin
                     Color color = picker.SelectedColor;
                     _data.CompassColor = color.ToArgb();
                     CompassColorPB.BackColor = color;
-                    HasChanges();
+                    
                 }
             }
         }
@@ -145,7 +115,7 @@ namespace ExpansionPlugin
                     Color color = picker.SelectedColor;
                     _data.CompassBadgesColor = color.ToArgb();
                     CompassBadgesColorPB.BackColor = color;
-                    HasChanges();
+                    
                 }
             }
         }

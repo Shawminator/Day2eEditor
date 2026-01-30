@@ -7,71 +7,22 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionNameTagsConfig : IConfigLoader
+    public class ExpansionNameTagsConfig : ExpansionBaseIConfigLoader<NameTagsSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public NameTagsSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 4;
-        public ExpansionNameTagsConfig(string path)
+        public ExpansionNameTagsConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override NameTagsSettings CreateDefaultData()
         {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<NameTagsSettings>(
-                _path,
-                createNew: () => new NameTagsSettings(CurrentVersion),
-                onAfterLoad: cfg => { },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionNameTagsSettings"
-            );
-
-
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new NameTagsSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class NameTagsSettings
+    public class NameTagsSettings : IEquatable<NameTagsSettings>, IDeepCloneable<NameTagsSettings>
     {
         public int m_Version { get; set; }
         public int? EnablePlayerTags { get; set; }
@@ -176,10 +127,10 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public override bool Equals(object obj)
+        public bool Equals(NameTagsSettings other)
         {
-            if (obj is not NameTagsSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
 
             return m_Version == other.m_Version &&
@@ -195,6 +146,7 @@ namespace ExpansionPlugin
                ShowPlayerFaction == other.ShowPlayerFaction &&
                UseRarityColorForItemInHands == other.UseRarityColorForItemInHands;
         }
+        public override bool Equals(object? obj) => Equals(obj as NameTagsSettings);
         public NameTagsSettings Clone()
         {
             return new NameTagsSettings

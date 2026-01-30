@@ -14,7 +14,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private BindingList<string> _data;
-        private BindingList<string> _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -63,7 +62,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as BindingList<string> ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -72,35 +70,6 @@ namespace ExpansionPlugin
             listBox1.DataSource = _data;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.SequenceEqual(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -141,7 +110,7 @@ namespace ExpansionPlugin
                 _data.Remove(s);
                 
             }
-            HasChanges();
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -158,7 +127,7 @@ namespace ExpansionPlugin
                     MessageBox.Show("Infected Type allready in the list.....");
                 }
             }
-            HasChanges();
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -167,7 +136,7 @@ namespace ExpansionPlugin
             if (!_data.Contains(zombie))
             {
                 _data.Add(zombie);
-                HasChanges();
+                
             }
             else
             {

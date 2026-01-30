@@ -9,70 +9,23 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionSocialMediaConfig : IConfigLoader
+    public class ExpansionSocialMediaConfig : ExpansionBaseIConfigLoader<ExpansionSocialMediaSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionSocialMediaSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 2;
 
-        public ExpansionSocialMediaConfig(string path)
+        public ExpansionSocialMediaConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionSocialMediaSettings CreateDefaultData()
         {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionSocialMediaSettings>(
-                _path,
-                createNew: () => new ExpansionSocialMediaSettings(CurrentVersion),
-                onAfterLoad: cfg => { },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionSocialMedia"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionSocialMediaSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionSocialMediaSettings
+    public class ExpansionSocialMediaSettings : IEquatable<ExpansionSocialMediaSettings>, IDeepCloneable<ExpansionSocialMediaSettings>
     {
         public int m_Version { get; set; }
         public BindingList<ExpansionNewsFeedTextSetting> NewsFeedTexts { get; set; }
@@ -178,14 +131,11 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionSocialMediaSettings other)
         {
 
-            if (obj is not ExpansionSocialMediaSettings other)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             if (m_Version != other.m_Version) return false;
             
@@ -220,6 +170,7 @@ namespace ExpansionPlugin
 
             return true;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionSocialMediaSettings);
         public ExpansionSocialMediaSettings Clone()
         {
 

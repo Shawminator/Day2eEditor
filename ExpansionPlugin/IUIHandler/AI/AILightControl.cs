@@ -20,35 +20,15 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as AILightEntries ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
             _suppressEvents = true;
 
             variablesvarvalueNUD.Value = _data.Value;
 
             _suppressEvents = false;
         }
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-        public void Reset()
-        {
-            // Reset the data and controls to the original state
-        }
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         private AILightEntries _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
-        private AILightEntries _originalData; 
 
         public AILightControl()
         {
@@ -64,7 +44,6 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Value = variablesvarvalueNUD.Value;
             UpdateTreeNodeText();
-            HasChanges();
         }
     }
 }

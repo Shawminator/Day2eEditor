@@ -9,70 +9,23 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionGarageConfig : IConfigLoader
+    public class ExpansionGarageConfig : ExpansionBaseIConfigLoader<ExpansionGarageSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionGarageSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 6;
 
-        public ExpansionGarageConfig(string path)
+        public ExpansionGarageConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionGarageSettings CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionGarageSettings>(
-                _path,
-                createNew: () => new ExpansionGarageSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionGarage"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionGarageSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionGarageSettings
+    public class ExpansionGarageSettings : IEquatable<ExpansionGarageSettings>, IDeepCloneable<ExpansionGarageSettings>
     {
         public int m_Version { get; set; }
         public int? Enabled { get; set; }
@@ -137,10 +90,10 @@ namespace ExpansionPlugin
             MaxRangeTier3 = (decimal)40.0;
             ParkingMeterEnableFlavor = 0;
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionGarageSettings other)
         {
-            if (obj is not ExpansionGarageSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    Enabled == other.Enabled &&
@@ -168,6 +121,7 @@ namespace ExpansionPlugin
                    ParkingMeterEnableFlavor == other.ParkingMeterEnableFlavor &&
                    EntityWhitelist.SequenceEqual(other.EntityWhitelist ?? new BindingList<string>());
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionGarageSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

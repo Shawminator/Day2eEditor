@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionDamageSystemSettings _data;
-        private ExpansionDamageSystemSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionDamageSystemSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -45,35 +43,6 @@ namespace ExpansionPlugin
             CheckForBlockingObjectsCB.Checked = _data.CheckForBlockingObjects == 1 ? true : false;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -94,14 +63,12 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Enabled = DSEnabledCB.Checked == true ? 1 : 0;
-            HasChanges();
         }
 
         private void CheckForBlockingObjectsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CheckForBlockingObjects = CheckForBlockingObjectsCB.Checked == true ? 1 : 0;
-            HasChanges();
         }
     }
 }

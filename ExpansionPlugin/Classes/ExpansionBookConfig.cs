@@ -31,7 +31,6 @@ namespace ExpansionPlugin
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionBookSettings>(
                 _path,
                 createNew: () => new ExpansionBookSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
                 onError: ex =>
                 {
                     HasErrors = true;

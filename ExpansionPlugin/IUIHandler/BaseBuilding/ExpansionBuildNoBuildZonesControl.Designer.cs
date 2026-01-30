@@ -71,6 +71,7 @@
             ZonesAreNoBuildZonesCB.Text = "Zones Are No Build Zones";
             ZonesAreNoBuildZonesCB.TextAlign = ContentAlignment.MiddleRight;
             ZonesAreNoBuildZonesCB.UseVisualStyleBackColor = true;
+            ZonesAreNoBuildZonesCB.CheckedChanged += ZonesAreNoBuildZonesCB_CheckedChanged;
             // 
             // textBox2
             // 

@@ -16,7 +16,6 @@ namespace ExpansionPlugin
         public event Action<Vec3> PositionChanged;
         private Type _parentType;
         private Vec3 _data;
-        private Vec3 _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data is Vec3 v ? v : throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -48,35 +46,6 @@ namespace ExpansionPlugin
 
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -98,7 +67,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.X = (float)POSXNUD.Value;
-            HasChanges();
+            
             UpdateTreeNodeText();
             PositionChanged?.Invoke(_data);
         }
@@ -107,7 +76,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Y= (float)POSYNUD.Value;
-            HasChanges();
+            
             UpdateTreeNodeText();
             PositionChanged?.Invoke(_data);
         }
@@ -116,7 +85,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Z = (float)POSZNUD.Value;
-            HasChanges();
+            
             UpdateTreeNodeText();
             PositionChanged?.Invoke(_data);
         }

@@ -15,7 +15,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private MonitoringSettings _data;
-        private MonitoringSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,42 +36,12 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as MonitoringSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone(); // Store original data for reset
 
             _suppressEvents = true;
 
             MonitoringSettingsEnabledCB.Checked = _data.Enabled == 1 ? true : false;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -93,7 +62,6 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.Enabled = MonitoringSettingsEnabledCB.Checked == true ? 1 : 0;
-            HasChanges();
         }
     }
 }

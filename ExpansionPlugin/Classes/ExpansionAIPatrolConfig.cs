@@ -12,56 +12,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAIPatrolConfig : IConfigLoader
+    public class ExpansionAIPatrolConfig : ExpansionBaseIConfigLoader<ExpansionAIPatrolSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionAIPatrolSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 31;
 
-        public ExpansionAIPatrolConfig(string path)
+        public ExpansionAIPatrolConfig(string path) :base(path)
         {
-            _path = path;
         }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionAIPatrolSettings>(
-                _path,
-                createNew: () => new ExpansionAIPatrolSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionAIPatrol",
-                useVecConvertor: true
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-            GetLoadBalancingCategoriestoList();
-        }
-        public IEnumerable<string> Save()
+        public override IEnumerable<string> Save()
         {
             if (isDirty)
             {
@@ -73,9 +31,17 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-        public bool needToSave()
+        protected override ExpansionAIPatrolSettings CreateDefaultData()
         {
-            return isDirty;
+            return new ExpansionAIPatrolSettings(CurrentVersion);
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoad(ExpansionAIPatrolSettings data)
+        {
+            GetLoadBalancingCategoriestoList();
         }
         //additional functions
         public bool GetLoadBalancingCategoriestoList()
@@ -101,7 +67,7 @@ namespace ExpansionPlugin
             }
         }
     }
-    public class ExpansionAIPatrolSettings
+    public class ExpansionAIPatrolSettings : IEquatable<ExpansionAIPatrolSettings>, IDeepCloneable<ExpansionAIPatrolSettings>
     {
         public int m_Version { get; set; }
         public int? Enabled { get; set; }
@@ -348,9 +314,11 @@ namespace ExpansionPlugin
             patrol.LootingBehaviour = "DEFAULT | CLOTHING_BODY | CLOTHING_LEGS | CLOTHING_FEET | CLOTHING_SIMILAR";
             Patrols.Add(patrol);
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionAIPatrolSettings other)
         {
-            if (obj is not ExpansionAIPatrolSettings other) return false;
+            if(other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
 
             return m_Version == other.m_Version &&
                    Enabled == other.Enabled &&
@@ -371,6 +339,7 @@ namespace ExpansionPlugin
                    Patrols.SequenceEqual(other.Patrols) &&
                    _LoadBalancingCategories.SequenceEqual(other._LoadBalancingCategories);
         }
+        public override bool Equals(object obj) => Equals(obj as ExpansionAIPatrolSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

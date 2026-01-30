@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionHardlineSettings _data;
-        private ExpansionHardlineSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionHardlineSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -54,36 +52,6 @@ namespace ExpansionPlugin
             ItemRarityParentSearchCB.Checked = _data.ItemRarityParentSearch == 1 ? true : false;
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
 
         /// <summary>
@@ -103,61 +71,61 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.ShowHardlineHUD = ShowHardlineHUDCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void UseReputationCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseReputation = UseReputationCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void EnableItemRarityCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableItemRarity = EnableItemRarityCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void UseItemRarityOnInventoryIconsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseItemRarityOnInventoryIcons = UseItemRarityOnInventoryIconsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void UseItemRarityForMarketPurchaseNCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseItemRarityForMarketPurchase = UseItemRarityForMarketPurchaseNCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void UseItemRarityForMarketSellCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseItemRarityForMarketSell = UseItemRarityForMarketSellCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void UseFactionReputationCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseFactionReputation = UseFactionReputationCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void EnableFactionPersistenceCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableFactionPersistence = EnableFactionPersistenceCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void DefaultItemRarityCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DefaultItemRarity = (int)(ExpansionHardlineItemRarity)DefaultItemRarityCB.SelectedItem;
-            HasChanges();
+            
         }
         private void ItemRarityParentSearchCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ItemRarityParentSearch = ItemRarityParentSearchCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

@@ -8,70 +8,23 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionGeneralConfig : IConfigLoader
+    public class ExpansionGeneralConfig : ExpansionBaseIConfigLoader<ExpansionGeneralSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionGeneralSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 16;
 
-        public ExpansionGeneralConfig(string path)
+        public ExpansionGeneralConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionGeneralSettings CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionGeneralSettings>(
-                _path,
-                createNew: () => new ExpansionGeneralSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionGeneral"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionGeneralSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionGeneralSettings
+    public class ExpansionGeneralSettings : IEquatable<ExpansionGeneralSettings>, IDeepCloneable<ExpansionGeneralSettings>
     {
         public int m_Version { get; set; }
         public int? DisableShootToUnlock { get; set; }
@@ -139,10 +92,10 @@ namespace ExpansionPlugin
             EnableEarPlugs = 1;
             InGameMenuLogoPath = "set:expansion_iconset image:logo_expansion_white";
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionGeneralSettings other)
         {
-            if (obj is not ExpansionGeneralSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    DisableShootToUnlock == other.DisableShootToUnlock &&
@@ -171,6 +124,7 @@ namespace ExpansionPlugin
                    Mapping.Equals(other.Mapping) &&
                    HUDColors.Equals(other.HUDColors);
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionGeneralSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

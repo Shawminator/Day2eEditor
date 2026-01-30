@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionAIPatrol _data;
-        private ExpansionAIPatrol _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAIPatrol ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
             var parentObj = _nodes.Last().FindParentOfType(_parentType);
@@ -376,35 +374,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -424,200 +393,200 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Name = StaticPatrolNameTB.Text;
             UpdateTreeNodeText();
-            HasChanges();
+            
         }
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ObjectClassName = textBox6.Text;
-            HasChanges();
+            
         }
         private void StaticPatrolFactionCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Faction = StaticPatrolFactionCB.GetItemText(StaticPatrolFactionCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolFormationCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Formation = StaticPatrolFormationCB.GetItemText(StaticPatrolFormationCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolFormationLoosenessNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationLooseness = (int)StaticPatrolFormationLoosenessNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolFormationScaleNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolLoadoutsCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Loadout = StaticPatrolLoadoutsCB.GetItemText(StaticPatrolLoadoutsCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolNumberOfAINUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NumberOfAI = (int)StaticPatrolNumberOfAINUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolNumberOfAIMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NumberOfAIMax = (int)StaticPatrolNumberOfAIMaxNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolPersistCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Persist = StaticPatrolPersistCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void StaticPatrolCanBeTriggeredByAICB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanBeTriggeredByAI = StaticPatrolCanBeTriggeredByAICB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void StaticPatrolBehaviorCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Behaviour = StaticPatrolBehaviorCB.GetItemText(StaticPatrolBehaviorCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolSpeedCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Speed = StaticPatrolSpeedCB.GetItemText(StaticPatrolSpeedCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolUnderThreatSpeedCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UnderThreatSpeed = StaticPatrolUnderThreatSpeedCB.GetItemText(StaticPatrolUnderThreatSpeedCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolWaypointInterpolationCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.WaypointInterpolation = StaticPatrolWaypointInterpolationCB.GetItemText(StaticPatrolWaypointInterpolationCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolLoadBalancingCategoryCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LoadBalancingCategory = StaticPatrolLoadBalancingCategoryCB.GetItemText(StaticPatrolLoadBalancingCategoryCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolLootDropOnDeathCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LootDropOnDeath = StaticPatrolLootDropOnDeathCB.GetItemText(StaticPatrolLootDropOnDeathCB.SelectedItem);
-            HasChanges();
+            
         }
         private void StaticPatrolAccuracyMinNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMin = StaticPatrolAccuracyMinNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolAccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMax = StaticPatrolAccuracyMaxNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ThreatDistanceLimit = StaticPatrolThreatDistanceLimitNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolSniperProneDistanceThresholdNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.SniperProneDistanceThreshold = StaticPatrolSniperProneDistanceThresholdNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolDamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageReceivedMultiplier = StaticPatrolDamageReceivedMultiplierNUD.Value;
-            HasChanges();
+            
 
         }
         private void StaticPatrolDamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageMultiplier = StaticPatrolDamageMultiplierNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolNoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NoiseInvestigationDistanceLimit = StaticPatrolNoiseInvestigationDistanceLimitNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolMinSpreadRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinSpreadRadius = (int)StaticPatrolMinSpreadRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolMaxSpreadRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxSpreadRadius = (int)StaticPatrolMaxSpreadRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolDespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnTime = StaticPatrolDespawnTimeNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnRadius = StaticPatrolDespawnRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxDistRadius = StaticPatrolMaxDistRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolMinDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinDistRadius = StaticPatrolMinDistRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolChanceCB_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Chance = StaticPatrolChanceCB.Value;
-            HasChanges();
+            
         }
         private void StaticPatrolCanBeLotedCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanBeLooted = StaticPatrolCanBeLotedCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void StaticPatrolURBitmaskCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -630,7 +599,7 @@ namespace ExpansionPlugin
             if (StaticPatrolUnlimitedReloadBitmask == 30)
                 StaticPatrolUnlimitedReloadBitmask = 1;
             _data.UnlimitedReload = StaticPatrolUnlimitedReloadBitmask;
-            HasChanges();
+            
         }
         private void StaticPatrolLootingBehaviousCLB_ItemCheck(object sender, ItemCheckEventArgs e)
         {
@@ -722,7 +691,7 @@ namespace ExpansionPlugin
             // Finally, update the checked items string (now safely updated)
 
             _data.LootingBehaviour = UpdateCheckedItemsString(list, e.Index, e.NewValue);
-            HasChanges();
+            
         }
         private string UpdateCheckedItemsString(CheckedListBox list, int changingIndex, CheckState newState)
         {
@@ -745,19 +714,19 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.UseRandomWaypointAsStartPoint = StaticPatrolUseRandomWaypointAsStartPointCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void StaticPatrolCanSpawnInContaminatedAreaCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanSpawnInContaminatedArea = StaticPatrolCanSpawnInContaminatedAreaCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void StaticPatrolHeadshotResistanceNUD_Valuechanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HeadshotResistance = StaticPatrolHeadshotResistanceNUD.Value;
-            HasChanges();
+            
         }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
@@ -786,7 +755,7 @@ namespace ExpansionPlugin
                 StaticPatrolFormationScaleNUD.Enabled = true;
                 _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolAccuracyMinGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -811,7 +780,7 @@ namespace ExpansionPlugin
                 StaticPatrolAccuracyMinNUD.Enabled = true;
                 _data.AccuracyMin = StaticPatrolAccuracyMinNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolAccuracyMaxGenerralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -836,7 +805,7 @@ namespace ExpansionPlugin
                 StaticPatrolAccuracyMaxNUD.Enabled = true;
                 _data.AccuracyMax = StaticPatrolAccuracyMaxNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolThreatDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -860,7 +829,7 @@ namespace ExpansionPlugin
                 StaticPatrolThreatDistanceLimitNUD.Enabled = true;
                 _data.ThreatDistanceLimit = StaticPatrolThreatDistanceLimitNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolNoiseInvestigationDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -884,7 +853,7 @@ namespace ExpansionPlugin
                 StaticPatrolNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 _data.NoiseInvestigationDistanceLimit = StaticPatrolNoiseInvestigationDistanceLimitNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StsticPatrolMaxFlankingDistanceGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -908,7 +877,7 @@ namespace ExpansionPlugin
                 StsticPatrolMaxFlankingDistanceNUD.Enabled = true;
                 _data.MaxFlankingDistance = StsticPatrolMaxFlankingDistanceNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolEnableFlankingOutsideCombatGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -932,7 +901,7 @@ namespace ExpansionPlugin
                 StaticPatrolEnableFlankingOutsideCombatCB.Enabled = true;
                 _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolDamageMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -956,7 +925,7 @@ namespace ExpansionPlugin
                 StaticPatrolDamageMultiplierNUD.Enabled = true;
                 _data.DamageMultiplier = StaticPatrolDamageMultiplierNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolDamageReceivedMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -980,7 +949,7 @@ namespace ExpansionPlugin
                 StaticPatrolDamageReceivedMultiplierNUD.Enabled = true;
                 _data.DamageReceivedMultiplier = StaticPatrolDamageReceivedMultiplierNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolMinDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -997,7 +966,7 @@ namespace ExpansionPlugin
                 StaticPatrolMinDistRadiusNUD.Enabled = true;
                 _data.MinDistRadius = StaticPatrolMinDistRadiusNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolMaxDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1014,7 +983,7 @@ namespace ExpansionPlugin
                 StaticPatrolMaxDistRadiusNUD.Enabled = true;
                 _data.MaxDistRadius = StaticPatrolMaxDistRadiusNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolDespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1031,7 +1000,7 @@ namespace ExpansionPlugin
                 StaticPatrolDespawnTimeNUD.Enabled = true;
                 _data.DespawnTime = StaticPatrolDespawnTimeNUD.Value;
             }
-            HasChanges();
+            
         }
         private void StaticPatrolDespawnRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1048,7 +1017,6 @@ namespace ExpansionPlugin
                 StaticPatrolDespawnRadiusNUD.Enabled = true;
                 _data.DespawnRadius = StaticPatrolDespawnRadiusNUD.Value;
             }
-            HasChanges();
         }
         private void StaticPatrolRespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1082,7 +1050,6 @@ namespace ExpansionPlugin
                 StaticPatrolRespawnTimeNWonttRespawnCB.Visible = true;
                 _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
             }
-            HasChanges();
         }
         private void StaticPatrolRespawnTimeNWonttRespawnCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1103,7 +1070,6 @@ namespace ExpansionPlugin
                 StaticPatrolRespawnTimeNUD.Visible = true;
                 _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
             }
-            HasChanges();
         }
     }
 }

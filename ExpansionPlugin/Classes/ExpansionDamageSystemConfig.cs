@@ -10,69 +10,24 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionDamageSystemConfig : IConfigLoader
+    public class ExpansionDamageSystemConfig : ExpansionBaseIConfigLoader<ExpansionDamageSystemSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionDamageSystemSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 1;
 
-        public ExpansionDamageSystemConfig(string path)
+        public ExpansionDamageSystemConfig(string path):base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionDamageSystemSettings CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionDamageSystemSettings>(
-                _path,
-                createNew: () => new ExpansionDamageSystemSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionDamageSystem"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionDamageSystemSettings(CurrentVersion);
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoad(ExpansionDamageSystemSettings data)
+        {
             GetExplosiveProjectilesList();
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
-            {
-                SetExplosiveProjectilesDictionary();
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
         }
         public void GetExplosiveProjectilesList()
         {
@@ -95,7 +50,7 @@ namespace ExpansionPlugin
             }
         }
     }
-    public class ExpansionDamageSystemSettings
+    public class ExpansionDamageSystemSettings : IEquatable<ExpansionDamageSystemSettings>, IDeepCloneable<ExpansionDamageSystemSettings>
     {
         public int m_Version { get; set; }
         public int? Enabled { get; set; }
@@ -135,10 +90,10 @@ namespace ExpansionPlugin
             };
 
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionDamageSystemSettings other)
         {
-            if (obj is not ExpansionDamageSystemSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    Enabled == other.Enabled &&
@@ -147,6 +102,7 @@ namespace ExpansionPlugin
                    _ExplosiveProjectiles.SequenceEqual(other._ExplosiveProjectiles);
                   
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionCoreSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

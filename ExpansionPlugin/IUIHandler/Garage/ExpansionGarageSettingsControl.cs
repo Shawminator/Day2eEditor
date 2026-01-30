@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionGarageSettings _data;
-        private ExpansionGarageSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionGarageSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
             GarageModeCB.DataSource = Enum.GetValues(typeof(ExpansionGarageMode));
@@ -72,35 +70,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -119,144 +88,144 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Enabled = GarageEnabledCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void AllowStoringDEVehiclesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AllowStoringDEVehicles = AllowStoringDEVehiclesCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void GarageModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionGarageMode cacl = (ExpansionGarageMode)GarageModeCB.SelectedItem;
             _data.GarageMode = (int)cacl;
-            HasChanges();
+            
         }
         private void GarageStoreModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionGarageStoreMode cacl = (ExpansionGarageStoreMode)GarageStoreModeCB.SelectedItem;
             _data.GarageStoreMode = (int)cacl;
-            HasChanges();
+            
         }
         private void GarageRetrieveModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionGarageRetrieveMode cacl = (ExpansionGarageRetrieveMode)GarageRetrieveModeCB.SelectedItem;
             _data.GarageRetrieveMode = (int)cacl;
-            HasChanges();
+            
         }
         private void MaxStorableVehiclesNUD_ValueChanged(object sender, EventArgs e)
         {
 
             if (_suppressEvents) return;
             _data.MaxStorableVehicles = (int)MaxStorableVehiclesNUD.Value;
-            HasChanges();
+            
         }
         private void GarageVehicleSearchRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.VehicleSearchRadius = GarageVehicleSearchRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxDistanceFromStoredPositionNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxDistanceFromStoredPosition = GarageMaxDistanceFromStoredPositionNUD.Value;
-            HasChanges();
+            
         }
         private void GarageCanStoreWithCargoCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanStoreWithCargo = GarageCanStoreWithCargoCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void GarageUseVirtualStorageForCargoCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseVirtualStorageForCargo = GarageUseVirtualStorageForCargoCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void GarageNeedKeyToStoreCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NeedKeyToStore = GarageNeedKeyToStoreCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void GarageEnableGroupFeaturesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableGroupFeatures = GarageEnableGroupFeaturesCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void GarageGroupStoreModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionGarageGroupStoreMode cacl = (ExpansionGarageGroupStoreMode)GarageGroupStoreModeCB.SelectedItem;
             _data.GroupStoreMode = (int)cacl;
-            HasChanges();
+            
         }
         private void GarageEnableMarketFeaturesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableMarketFeatures = GarageEnableMarketFeaturesCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void GarageStorePricePercentNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StorePricePercent = GarageStorePricePercentNUD.Value;
-            HasChanges();
+            
         }
         private void GarageStaticStorePriceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaticStorePrice = (int)GarageStaticStorePriceNUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxStorableTier1NUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxStorableTier1 = (int)GarageMaxStorableTier1NUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxStorableTier2NUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxStorableTier2 = (int)GarageMaxStorableTier2NUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxStorableTier3NUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxStorableTier3 = (int)GarageMaxStorableTier3NUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxRangeTier1NUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxRangeTier1 = GarageMaxRangeTier1NUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxRangeTier2NUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxRangeTier2 = GarageMaxRangeTier2NUD.Value;
-            HasChanges();
+            
         }
         private void GarageMaxRangeTier3NUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxRangeTier3 = GarageMaxRangeTier3NUD.Value;
-            HasChanges();
+            
         }
         private void GarageParkingMeterEnableFlavorCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ParkingMeterEnableFlavor = GarageParkingMeterEnableFlavorCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

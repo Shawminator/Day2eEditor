@@ -9,53 +9,12 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionHardlineConfig : IConfigLoader
+    public class ExpansionHardlineConfig : ExpansionBaseIConfigLoader<ExpansionHardlineSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionHardlineSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 11;
 
-        public ExpansionHardlineConfig(string path)
+        public ExpansionHardlineConfig(string path) : base(path)
         {
-            _path = path;
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionHardlineSettings>(
-                _path,
-                createNew: () => new ExpansionHardlineSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionHardline"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-            ConvertDictionarytoLevels();
-            ConvertReputationDictionarytolist();
         }
         public IEnumerable<string> Save()
         {
@@ -70,9 +29,18 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-        public bool needToSave()
+        protected override ExpansionHardlineSettings CreateDefaultData()
         {
-            return isDirty;
+            return new ExpansionHardlineSettings(CurrentVersion);
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoad(ExpansionHardlineSettings data)
+        {
+            ConvertDictionarytoLevels();
+            ConvertReputationDictionarytolist();
         }
         //Additional Functions
         public void ConvertDictionarytoLevels()
@@ -196,7 +164,7 @@ namespace ExpansionPlugin
         }
 
     }
-    public class ExpansionHardlineSettings
+    public class ExpansionHardlineSettings : IEquatable<ExpansionHardlineSettings>, IDeepCloneable<ExpansionHardlineSettings>
     {
         public int m_Version { get; set; }
         public int? PoorItemRequirement { get; set; }
@@ -1764,10 +1732,10 @@ namespace ExpansionPlugin
             type.ToLower();
             ItemRarity.Add(type, (int)rarity);
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionHardlineSettings other)
         {
-            if (obj is not ExpansionHardlineSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             bool areListsEqual<T>(BindingList<T> a, BindingList<T> b) =>
                 a == null && b == null || a != null && b != null && a.SequenceEqual(b);
@@ -1807,6 +1775,7 @@ namespace ExpansionPlugin
                    areListsEqual(IngredientItems, other.IngredientItems) &&
                    areListsEqual(entityreps, other.entityreps);
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionCoreSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

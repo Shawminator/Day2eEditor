@@ -7,70 +7,22 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionQuestConfig : IConfigLoader
+    public class ExpansionQuestConfig : ExpansionBaseIConfigLoader<ExpansionQuestSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionQuestSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 10;
-
-        public ExpansionQuestConfig(string path)
+        public ExpansionQuestConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionQuestSettings CreateDefaultData()
         {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionQuestSettings>(
-                _path,
-                createNew: () => new ExpansionQuestSettings(CurrentVersion),
-                onAfterLoad: cfg => { },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionQuest"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionQuestSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionQuestSettings
+    public class ExpansionQuestSettings : IEquatable<ExpansionQuestSettings>, IDeepCloneable<ExpansionQuestSettings>
     {
         public int m_Version { get; set; }
         public int? EnableQuests { get; set; }
@@ -334,7 +286,7 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public bool Equals(ExpansionQuestSettings? other)
+        public bool Equals(ExpansionQuestSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -380,6 +332,7 @@ namespace ExpansionPlugin
                 UseQuestNPCIndicators == other.UseQuestNPCIndicators &&
                 MaxActiveQuests == other.MaxActiveQuests;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionQuestSettings);
         public ExpansionQuestSettings Clone()
         {
             return new ExpansionQuestSettings

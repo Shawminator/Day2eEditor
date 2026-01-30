@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionAIPatrolSettings _data;
-        private ExpansionAIPatrolSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAIPatrolSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -147,36 +145,6 @@ namespace ExpansionPlugin
             }
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -195,13 +163,13 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Enabled = AIGeneralEnabledCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void AIGeneralFormationScaleNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationScale = AIGeneralFormationScaleNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralFormationScaleDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -219,19 +187,19 @@ namespace ExpansionPlugin
                 AIGeneralFormationScaleNUD.Enabled = true;
                 _data.FormationScale = AIGeneralFormationScaleNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGeneralDespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralRespawnTimeNWonttRespawnCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -246,31 +214,31 @@ namespace ExpansionPlugin
                 AIGeneralRespawnTimeNUD.Visible = true;
                 _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGeneralMinDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnRadius = AIGeneralDespawnRadiusNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralAccuracyMinNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralAccuracyMinDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -288,13 +256,13 @@ namespace ExpansionPlugin
                 AIGeneralAccuracyMinNUD.Enabled = true;
                 _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGenralAccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralAccuracyMaxDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -312,13 +280,13 @@ namespace ExpansionPlugin
                 AIGeneralAccuracyMaxNUD.Enabled = true;
                 _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGeneralThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralThreatDistanceLimitDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -336,13 +304,13 @@ namespace ExpansionPlugin
                 AIGeneralThreatDistanceLimitNUD.Enabled = true;
                 _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
             }
-            HasChanges();
+            
         }
         private void NoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralNoiseInvestigationDistanceLimitDewfaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -360,13 +328,13 @@ namespace ExpansionPlugin
                 AIGeneralNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGeneralMaxFlankingDistanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralMaxFlankingDistanceDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -384,13 +352,13 @@ namespace ExpansionPlugin
                 AIGeneralMaxFlankingDistanceNUD.Enabled = true;
                 _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGeneralEnableFlankingOutsideCombatCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void AIGeneralEnableFlankingOutsideCombatDefailtCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -408,13 +376,13 @@ namespace ExpansionPlugin
                 AIGeneralEnableFlankingOutsideCombatCB.Enabled = true;
                 _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             }
-            HasChanges();
+            
         }
         private void AIGeneralDanageMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralDanageMultiplierDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -432,13 +400,13 @@ namespace ExpansionPlugin
                 AIGeneralDanageMultiplierNUD.Enabled = true;
                 _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
             }
-            HasChanges();
+            
         }
         private void AIGeneralDamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
-            HasChanges();
+            
         }
         private void AIGeneralDamageReceivedMultiplierDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -456,7 +424,7 @@ namespace ExpansionPlugin
                 AIGeneralDamageReceivedMultiplierNUD.Enabled = true;
                 _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
             }
-            HasChanges();
+            
         }
 
 

@@ -1,78 +1,28 @@
 ﻿using Day2eEditor;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionChatConfig : IConfigLoader
+    public class ExpansionChatConfig : ExpansionBaseIConfigLoader<ExpansionChatSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionChatSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 4;
 
-        public ExpansionChatConfig(string path)
+        public ExpansionChatConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionChatSettings>(
-                _path,
-                createNew: () => new ExpansionChatSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionChat"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
 
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
+        protected override ExpansionChatSettings CreateDefaultData()
         {
-            return isDirty;
+            return new ExpansionChatSettings(CurrentVersion);
         }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+
     }
-    public class ExpansionChatSettings
+    public class ExpansionChatSettings : IEquatable<ExpansionChatSettings>, IDeepCloneable<ExpansionChatSettings>
     {
         public int m_Version { get; set; }
         public int? EnableGlobalChat { get; set; }
@@ -109,10 +59,10 @@ namespace ExpansionPlugin
             ChatColors.ImportantMessageColor = "F22613FF";
             ChatColors.DefaultMessageColor = "FFFFFFFF";
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionChatSettings other)
         {
-            if (obj is not ExpansionChatSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    EnableGlobalChat == other.EnableGlobalChat &&
@@ -122,6 +72,7 @@ namespace ExpansionPlugin
                    ChatColors.Equals(other.ChatColors) &&
                    BlacklistedWords.SequenceEqual(other.BlacklistedWords);
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionCoreSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

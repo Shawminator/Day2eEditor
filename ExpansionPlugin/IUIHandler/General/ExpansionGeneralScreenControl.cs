@@ -16,7 +16,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionGeneralSettings _data;
-        private ExpansionGeneralSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionGeneralSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -51,35 +49,6 @@ namespace ExpansionPlugin
             InGameMenuLogoPathTB.Text = _data.InGameMenuLogoPath;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -164,49 +133,49 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.UseDeathScreen = UseDeathScreenCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseDeathScreenStatisticsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseDeathScreenStatistics = UseDeathScreenStatisticsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseExpansionMainMenuLogoCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseExpansionMainMenuLogo = UseExpansionMainMenuLogoCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseExpansionMainMenuIconsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseExpansionMainMenuIcons = UseExpansionMainMenuIconsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseExpansionMainMenuIntroSceneCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseExpansionMainMenuIntroScene = UseExpansionMainMenuIntroSceneCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseNewsFeedInGameMenuCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseNewsFeedInGameMenu = UseNewsFeedInGameMenuCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void InGameMenuLogoPathTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.InGameMenuLogoPath = InGameMenuLogoPathTB.Text;
-            HasChanges();
+            
         }
     }
 }

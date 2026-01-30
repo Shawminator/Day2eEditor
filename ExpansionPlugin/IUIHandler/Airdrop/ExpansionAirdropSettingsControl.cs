@@ -10,7 +10,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionAirdropSettings _data;
-        private ExpansionAirdropSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -32,7 +31,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAirdropSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -57,35 +55,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -103,103 +72,103 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.ServerMarkerOnDropLocation = checkBox1.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Server3DMarkerOnDropLocation = checkBox1.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShowAirdropTypeOnMarker = checkBox3.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HeightIsRelativeToGroundLevel = checkBox1.Checked == true ? 1 : 0;
-             HasChanges();
+             
         }
         private void checkBox8_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HideCargoWhileParachuteIsDeployed = checkBox8.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void checkBox11_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ExplodeAirVehiclesOnCollision = checkBox11.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Height = (decimal)numericUpDown1.Value;
-            HasChanges();
+            
         }
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FollowTerrainFraction = (decimal)numericUpDown2.Value;
-            HasChanges();
+            
         }
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Speed = (decimal)numericUpDown3.Value;
-            HasChanges();
+            
         }
         private void numericUpDown4_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Radius = (decimal)numericUpDown4.Value;
-            HasChanges();
+            
         }
         private void numericUpDown12_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DropZoneHeight = (decimal)numericUpDown12.Value;
-            HasChanges();
+            
         }
         private void numericUpDown31_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DropZoneSpeed = (decimal)numericUpDown31.Value;
-            HasChanges();
+            
         }
         private void numericUpDown33_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DropZoneProximityDistance = (decimal)numericUpDown33.Value;
-            HasChanges();
+            
         }
         private void numericUpDown5_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.InfectedSpawnRadius = (decimal)numericUpDown5.Value;
-            HasChanges();
+            
         }
         private void numericUpDown6_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.InfectedSpawnInterval = (int)numericUpDown6.Value;
-            HasChanges();
+            
         }
         private void numericUpDown7_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ItemCount = (int)numericUpDown7.Value;
-            HasChanges();
+            
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AirdropPlaneClassName = textBox1.Text;
-            HasChanges();
+            
         }
     }
 }

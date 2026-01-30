@@ -1,5 +1,4 @@
 ﻿using Day2eEditor;
-using System.ComponentModel;
 
 namespace ExpansionPlugin
 {
@@ -11,7 +10,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionBaseBuildingSettings _data;
-        private ExpansionBaseBuildingSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,10 +34,9 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBaseBuildingSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
-            
-            
+            _suppressEvents = true;
+
             CanCraftVanillaBasebuildingCB.Checked = _data.CanCraftVanillaBasebuilding == 1 ? true : false;
             CanCraftExpansionBasebuildingCB.Checked = _data.CanCraftExpansionBasebuilding == 1 ? true : false;
             DestroyFlagOnDismantleCB.Checked = _data.DestroyFlagOnDismantle == 1 ? true : false;
@@ -48,36 +45,7 @@ namespace ExpansionPlugin
             CanCraftTerritoryFlagKitCB.Checked = _data.CanCraftTerritoryFlagKit == 1 ? true : false;
             GetTerritoryFlagKitAfterBuildCB.Checked = _data.GetTerritoryFlagKitAfterBuild == 1 ? true : false;
 
-           
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
+            _suppressEvents = false;
         }
 
         #region Helper Methods
@@ -98,28 +66,28 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.CanCraftVanillaBasebuilding = CanCraftVanillaBasebuildingCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void CanCraftExpansionBasebuildingCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanCraftExpansionBasebuilding = CanCraftExpansionBasebuildingCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void CanCraftTerritoryFlagKitCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanCraftTerritoryFlagKit = CanCraftTerritoryFlagKitCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void DestroyFlagOnDismantleCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DestroyFlagOnDismantle = DestroyFlagOnDismantleCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void DismantleFlagModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -127,21 +95,21 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             ExpansionDismantleFlagMode cacl = (ExpansionDismantleFlagMode)DismantleFlagModeComboBox.SelectedItem;
             _data.DismantleFlagMode = (int)cacl;
-            HasChanges();
+            
         }
 
         private void DismantleAnywhereCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DismantleAnywhere = DismantleAnywhereCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void GetTerritoryFlagKitAfterBuildCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.GetTerritoryFlagKitAfterBuild = GetTerritoryFlagKitAfterBuildCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

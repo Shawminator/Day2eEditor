@@ -21,10 +21,6 @@ namespace Day2eEditor
             Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<cfgeffectarea>(
                 _path,
                 createNew: () => new cfgeffectarea(),
-                onAfterLoad: _ => 
-                {
-                    
-                },
                 onError: ex => LogError("cfgeffectarea", ex),
                 configName: "cfgeffectarea",
                 useBoolConvertor: true

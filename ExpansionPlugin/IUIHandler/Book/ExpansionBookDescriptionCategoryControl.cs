@@ -16,7 +16,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionBookDescriptionCategory _data;
-        private ExpansionBookDescriptionCategory _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
         private ExpansionBookDescription? currentdecriptiontext;
@@ -57,7 +56,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionBookDescriptionCategory ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -77,35 +75,6 @@ namespace ExpansionPlugin
             listBox12.DataSource = _data.Descriptions;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -136,7 +105,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.CategoryName = textBox10.Text;
-            HasChanges();
+            
             UpdateTreeNodeText();
         }
         private void darkButton20_Click(object sender, EventArgs e)
@@ -148,7 +117,7 @@ namespace ExpansionPlugin
                 dt.DTName = "Decription Text " + i.ToString();
                 i++;
             }
-            HasChanges();
+            
             listBox12.SelectedIndex = -1;
             listBox12.SelectedIndex = listBox12.Items.Count - 1;
         }
@@ -157,14 +126,14 @@ namespace ExpansionPlugin
         {
             textBox8.Text = "";
             _data.Descriptions.Remove(currentdecriptiontext);
-            HasChanges();
+            
         }
 
         private void textBox8_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentdecriptiontext.DescriptionText = "<p>" + textBox8.Text + "</p>";
-            HasChanges();
+            
         }
 
 

@@ -10,56 +10,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAILocationConfig : IConfigLoader
+    public class ExpansionAILocationConfig : ExpansionBaseIConfigLoader<ExpansionAILocationSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionAILocationSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 3;
 
-        public ExpansionAILocationConfig(string path)
+        public ExpansionAILocationConfig(string path) : base(path)
         {
-            _path = path;
         }
-
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionAILocationSettings>(
-                _path,
-                createNew: () => new ExpansionAILocationSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "AILocation"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-            GetVec3Points();
-        }
-        public IEnumerable<string> Save()
+        public override IEnumerable<string> Save()
         {
             if (isDirty)
             {
@@ -71,9 +29,17 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-        public bool needToSave()
+        protected override ExpansionAILocationSettings CreateDefaultData()
         {
-            return isDirty;
+            return new ExpansionAILocationSettings(CurrentVersion);
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoad(ExpansionAILocationSettings data)
+        {
+            GetVec3Points();
         }
         public void GetVec3Points()
         {
@@ -98,7 +64,7 @@ namespace ExpansionPlugin
             }
         }
     }
-    public class ExpansionAILocationSettings
+    public class ExpansionAILocationSettings : IEquatable<ExpansionAILocationSettings>, IDeepCloneable<ExpansionAILocationSettings>
     {
         public int m_Version { get; set; }
         public BindingList<ExpansionAIRoamingLocation> RoamingLocations { get; set; }
@@ -144,16 +110,17 @@ namespace ExpansionPlugin
             }
             return result;
         }
-        public override bool Equals(object? obj)
+        public bool Equals(ExpansionAILocationSettings other)
         {
-            if (obj is not ExpansionAILocationSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    RoamingLocations.SequenceEqual(other.RoamingLocations) &&
                    ExcludedRoamingBuildings.SequenceEqual(other.ExcludedRoamingBuildings) &&
                    NoGoAreas.SequenceEqual(other.NoGoAreas);
         }
+        public override bool Equals(object obj) => Equals(obj as ExpansionAILocationSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -189,6 +156,22 @@ namespace ExpansionPlugin
                 fixes.Add("Initilised RoamingLocations");
             }
             return fixes;
+        }
+        public ExpansionAILocationSettings Clone()
+        {
+            return new ExpansionAILocationSettings
+            {
+                m_Version = this.m_Version,
+                RoamingLocations = this.RoamingLocations != null
+                    ? new BindingList<ExpansionAIRoamingLocation>(this.RoamingLocations.Select(cat => cat.Clone()).ToList())
+                    : null,
+                ExcludedRoamingBuildings = this.ExcludedRoamingBuildings != null
+                    ? new BindingList<string>(this.ExcludedRoamingBuildings.ToList())
+                    : null,
+                NoGoAreas = this.NoGoAreas != null
+                    ? new BindingList<ExpansionAINoGoArea>(this.NoGoAreas.Select(cat => cat.Clone()).ToList())
+                    : null
+            };
         }
     }
     public class ExpansionAIRoamingLocation

@@ -12,70 +12,41 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLoadoutConfig : IConfigLoader
+    public class ExpansionLoadoutConfig : MultiFileConfigLoader<AILoadouts>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        private readonly string _basepath;
-        public List<AILoadouts> AllData { get; private set; } = new List<AILoadouts>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public ExpansionLoadoutConfig(string path)
+        public ExpansionLoadoutConfig(string path) : base(path)
         {
-            _basepath = path;
         }
-        public void Load()
+        protected override AILoadouts LoadItem(string filePath)
         {
-            HasErrors = false;
-            Errors.Clear();
-            string[] PresetPaths = Directory.GetFiles(_basepath, "*.json");
-            foreach (string filename in PresetPaths)
-            {
-                var preset = AppServices.GetRequired<FileService>().LoadOrCreateJson<AILoadouts>(
-                     filename,
-                     createNew: () => new AILoadouts(),
-                     onAfterLoad: cfg => { },
-                     onError: ex =>
-                     {
-                         HasErrors = true;
-                         Console.WriteLine(
-                             "Error in " + Path.GetFileName(filename) + "\n" +
-                             ex.Message + "\n" +
-                             ex.InnerException?.Message + "\n"
-                         );
-                         Errors.Add("Error in " + Path.GetFileName(filename) + "\n" +
-                             ex.Message + "\n" +
-                             ex.InnerException?.Message);
-                     },
-                     configName: "Loadouts",
-                     useBoolConvertor: false
-                 );
-                preset.setpath(filename);
-                AllData.Add(preset);
-            }
+            var item = AppServices.GetRequired<FileService>().LoadOrCreateJson(
+                    filePath,
+                    createNew: () => new AILoadouts(),
+                    onError: ex => HandleItemError(filePath, ex),
+                    configName: "Loadout",
+                    useBoolConvertor: true
+                );
+
+            item.SetPath(filePath);
+            return item;
         }
-        public IEnumerable<string> Save()
+
+        protected override void SaveItem(AILoadouts item)
         {
-            var savedFiles = new List<string>();
-
-            foreach (var data in AllData.ToList())
-            {
-                var result = data.Save();
-                savedFiles.AddRange(result);
-
-                if (data.ToDelete)
-                {
-                    AllData.Remove(data); // cleanup after deleting
-                }
-            }
-
-            return savedFiles;
+            AppServices.GetRequired<FileService>().SaveJson(item._path, item);
         }
-        public bool needToSave()
+        protected override string GetItemFileName(AILoadouts item)
+            => item.FileName;
+
+        protected override bool ShouldDelete(AILoadouts item)
+            => item.ToDelete;
+
+        protected override void DeleteItemFile(AILoadouts item)
         {
-            return false;
+            if (!string.IsNullOrWhiteSpace(item._path) && File.Exists(item._path))
+                File.Delete(item._path);
         }
+
 
         internal bool AddNewLoadoutFile(AILoadouts newAILoadouts)
         {
@@ -88,25 +59,29 @@ namespace ExpansionPlugin
             return true;
 
         }
-
         internal void RemoveFile(AILoadouts aILoadouts)
         {
             AllData.Remove(aILoadouts);
 
         }
+
+        public bool needToSave()
+        {
+            return false;
+        }
     }
-    public class AILoadouts
+    public class AILoadouts : IDeepCloneable<AILoadouts>, IEquatable<AILoadouts>
     {
         [JsonIgnore]
-        private string _path;
+        public string _path { get; private set; }
         [JsonIgnore]
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        [JsonIgnore]
-        public string FilePath => _path;
+        public string FileName => Path.GetFileName(_path);
         [JsonIgnore]
         public bool isDirty { get; set; }
         [JsonIgnore]
         public bool ToDelete { get; set; }
+        
+        public void SetPath(string path) => _path = path;
 
         public string ClassName { get; set; }
         public string Include { get; set; }
@@ -118,10 +93,6 @@ namespace ExpansionPlugin
         public BindingList<object> ConstructionPartsBuilt { get; set; }
         public BindingList<AILoadouts> Sets { get; set; }
 
-        public void setpath(string path)
-        {
-            _path = path;
-        }
         public AILoadouts()
         {
             ClassName = "";
@@ -134,9 +105,9 @@ namespace ExpansionPlugin
             ConstructionPartsBuilt = new BindingList<object>();
             Sets = new BindingList<AILoadouts>();
         }
-        public AILoadouts(string name)
+        public AILoadouts(string _name)
         {
-            name = name;
+            name = _name;
             ClassName = "";
             Include = "";
             Chance = (decimal)1;
@@ -172,17 +143,12 @@ namespace ExpansionPlugin
             return Array.Empty<string>();
         }
 
-        public override string ToString()
-        {
-            if (ClassName == "")
-                return FileName;
 
-            return ClassName;
-        }
 
-        public override bool Equals(object obj)
+        public bool Equals(AILoadouts other)
         {
-            if (obj is not AILoadouts other) return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return ClassName == other.ClassName &&
                    Include == other.Include &&
@@ -194,6 +160,7 @@ namespace ExpansionPlugin
                    ConstructionPartsBuilt.SequenceEqual(other.ConstructionPartsBuilt) &&
                    Sets.SequenceEqual(other.Sets);
         }
+        public override bool Equals(object? obj) => Equals(obj as AILoadouts);
         public AILoadouts Clone()
         {
             return new AILoadouts()
@@ -209,6 +176,14 @@ namespace ExpansionPlugin
             };
         }
 
+
+        public override string ToString()
+        {
+            if (ClassName == "")
+                return FileName;
+
+            return ClassName;
+        }
     }
 
     public class Quantity

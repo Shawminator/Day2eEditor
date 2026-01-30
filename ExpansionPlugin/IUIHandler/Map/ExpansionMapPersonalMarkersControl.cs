@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionMapSettings _data;
-        private ExpansionMapSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionMapSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -49,36 +47,6 @@ namespace ExpansionPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
 
         /// <summary>
@@ -98,35 +66,35 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.CanCreateMarker = CanCreateMarkerCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void NeedGPSItemForCreateMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NeedGPSItemForCreateMarker = NeedGPSItemForCreateMarkerCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void CanCreate3DMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanCreate3DMarker = CanCreate3DMarkerCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void ShowDistanceOnPersonalMarkersCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShowDistanceOnPersonalMarkers = ShowDistanceOnPersonalMarkersCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void NeedPenItemForCreateMarkerCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NeedPenItemForCreateMarker = NeedPenItemForCreateMarkerCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

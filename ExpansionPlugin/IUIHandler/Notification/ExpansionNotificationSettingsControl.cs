@@ -14,7 +14,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionNotificationSettings _data;
-        private ExpansionNotificationSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionNotificationSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();  // Store original data for reset
 
             _suppressEvents = true;
 
@@ -101,35 +99,6 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
 
         /// <summary>
@@ -150,28 +119,28 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             CheckBox cb = sender as CheckBox;
             _data.SetBoolValue(cb.Name.Substring(0, cb.Name.Length - 2), cb.Checked);
-            HasChanges();
+            
         }
         private void JoinMessageTypeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionAnnouncementType cacl = (ExpansionAnnouncementType)JoinMessageTypeCB.SelectedItem;
             _data.JoinMessageType = cacl;
-            HasChanges();
+            
         }
         private void LeftMessageTypeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionAnnouncementType cacl = (ExpansionAnnouncementType)LeftMessageTypeCB.SelectedItem;
             _data.LeftMessageType = cacl;
-            HasChanges();
+            
         }
         private void KillFeedMessageTypeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ExpansionAnnouncementType cacl = (ExpansionAnnouncementType)KillFeedMessageTypeCB.SelectedItem;
             _data.KillFeedMessageType = cacl;
-            HasChanges();
+            
         }
     }
 }

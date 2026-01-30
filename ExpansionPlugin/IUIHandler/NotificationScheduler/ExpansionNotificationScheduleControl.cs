@@ -17,7 +17,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionNotificationSchedule _data;
-        private ExpansionNotificationSchedule _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -39,7 +38,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionNotificationSchedule ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone(); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -86,34 +84,6 @@ namespace ExpansionPlugin
         {
             return (Image)(new Bitmap(imgToResize, size));
         }
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
 
         #region Helper Methods
         /// <summary>
@@ -134,7 +104,7 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Title = NSTitleTB.Text;
             UpdateTreeNodeText();
-            HasChanges();
+            
         }
 
         private void NSTimeTP_ValueChanged(object sender, EventArgs e)
@@ -144,14 +114,14 @@ namespace ExpansionPlugin
             _data.Hour = Dtime.Hour;
             _data.Minute = Dtime.Minute;
             _data.Second = Dtime.Second;
-            HasChanges();
+            
         }
 
         private void NSTextTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Text = NSTextTB.Text;
-            HasChanges();
+            
         }
 
         private void NotfifcationIconComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -159,7 +129,7 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Icon = NotfifcationIconComboBox.SelectedItem.ToString();
             GetIcon();
-            HasChanges();
+            
         }
 
         private void ColorPB_Click(object sender, EventArgs e)
@@ -175,7 +145,7 @@ namespace ExpansionPlugin
                     ColorPB.BackColor = selectedColor;
                     _data.Color = colorHex.Substring(4, 6) + colorHex.Substring(2, 2);
                     GetIcon();
-                    HasChanges();
+                    
                 }
             }
         }

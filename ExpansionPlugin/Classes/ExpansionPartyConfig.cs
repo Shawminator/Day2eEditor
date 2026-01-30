@@ -7,70 +7,22 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPartyConfig : IConfigLoader
+    public class ExpansionPartyConfig : ExpansionBaseIConfigLoader<ExpansionPartySettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionPartySettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 8;
-
-        public ExpansionPartyConfig(string path)
+        public ExpansionPartyConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionPartySettings CreateDefaultData()
         {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionPartySettings>(
-                _path,
-                createNew: () => new ExpansionPartySettings(CurrentVersion),
-                onAfterLoad: cfg => { },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionParty"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionPartySettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionPartySettings
+    public class ExpansionPartySettings : IEquatable<ExpansionPartySettings>, IDeepCloneable<ExpansionPartySettings>
     {
         public int m_Version{ get; set; }
         public int? EnableParties{ get; set; } //! Enable party module, allow players to create parties
@@ -261,10 +213,10 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionPartySettings other)
         {
-            if (obj is not ExpansionPartySettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                 EnableParties == other.EnableParties &&
@@ -287,6 +239,7 @@ namespace ExpansionPlugin
                 InviteCooldown == other.InviteCooldown &&
                 DisplayPartyTag == other.DisplayPartyTag;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionPartySettings);
         public ExpansionPartySettings Clone()
         {
             return new ExpansionPartySettings()

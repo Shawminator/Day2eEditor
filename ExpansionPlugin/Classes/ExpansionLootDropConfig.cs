@@ -10,18 +10,10 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLootDropConfig : IConfigLoader
+    public class ExpansionLootDropConfig : MultiFileConfigLoader<AILootDrops>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        private readonly string _basepath;
-        public List<AILootDrops> AllData { get; private set; } = new List<AILootDrops>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public ExpansionLootDropConfig(string path)
+        public ExpansionLootDropConfig(string path) : base(path)
         {
-            _basepath = path;
         }
         public void Load()
         {
@@ -36,7 +28,6 @@ namespace ExpansionPlugin
                 var preset = AppServices.GetRequired<FileService>().LoadOrCreateJson<BindingList<AILoadouts>>(
                      filename,
                      createNew: () => new BindingList<AILoadouts>(),
-                     onAfterLoad: cfg => { },
                      onError: ex =>
                      {
                          HasErrors = true;

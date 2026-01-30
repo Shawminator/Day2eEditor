@@ -8,70 +8,23 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLogsConfig : IConfigLoader
+    public class ExpansionLogsConfig : ExpansionBaseIConfigLoader<ExpansionLogsSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public ExpansionLogsSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 8;
 
-        public ExpansionLogsConfig(string path)
+        public ExpansionLogsConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionLogsSettings CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionLogsSettings>(
-                _path,
-                createNew: () => new ExpansionLogsSettings(CurrentVersion),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionLogs"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionLogsSettings(CurrentVersion);
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateData()
         {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionLogsSettings
+    public class ExpansionLogsSettings : IEquatable<ExpansionLogsSettings>, IDeepCloneable<ExpansionLogsSettings>
     {
         public int? m_Version { get; set; }
         public int? Safezone { get; set; }
@@ -145,10 +98,10 @@ namespace ExpansionPlugin
             EntityStorage = 1;
             Quests = 1;
         }
-        public override bool Equals(object obj)
+        public  bool Equals(ExpansionLogsSettings other)
         {
-            if (obj is not ExpansionLogsSettings other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return m_Version == other.m_Version &&
                    Safezone == other.Safezone &&
@@ -184,6 +137,7 @@ namespace ExpansionPlugin
                    EntityStorage == other.EntityStorage &&
                    Quests == other.Quests;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionLogsSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

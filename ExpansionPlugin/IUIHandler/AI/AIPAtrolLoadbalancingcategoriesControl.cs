@@ -14,7 +14,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private Loadbalancingcategories _data;
-        private Loadbalancingcategories _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as Loadbalancingcategories ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -46,36 +44,6 @@ namespace ExpansionPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -94,20 +62,17 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.MinPlayers = (int)MinPlayersLBCNUD.Value;
-            HasChanges();
         }
         private void MaxPlayersLBCNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxPlayers = (int)MaxPlayersLBCNUD.Value;
-            HasChanges();
         }
 
         private void MaxPatrolsLBCNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxPatrols = (int)MaxPatrolsLBCNUD.Value;
-            HasChanges();
         }
     }
 }

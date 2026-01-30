@@ -1,68 +1,17 @@
 ﻿using Day2eEditor;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAIConfig : IConfigLoader
+    public class ExpansionAIConfig : ExpansionBaseIConfigLoader<ExpansionAISettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionAISettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 19;
  
-        public ExpansionAIConfig(string path)
+        public ExpansionAIConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
-        {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionAISettings>(
-                _path,
-                createNew: () => new ExpansionAISettings(CurrentVersion),
-                onAfterLoad: cfg => {  },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionAISettings"
-            );
-
-
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-
-
-            Data.createlistfromdict();
-        }
-        public IEnumerable<string> Save()
+        public override IEnumerable<string> Save()
         {
             if (isDirty)
             {
@@ -74,35 +23,21 @@ namespace ExpansionPlugin
 
             return Array.Empty<string>();
         }
-        public bool needToSave()
+        protected override ExpansionAISettings CreateDefaultData()
         {
-            return isDirty;
+            return new ExpansionAISettings(CurrentVersion);
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoad(ExpansionAISettings data)
+        {
+            Data.createlistfromdict();
         }
     }
-    public class AILightEntries
-    {
-        public int Key { get; set; }
-        public decimal Value { get; set; }
 
-        public override string ToString() => Key.ToString();
-        public override bool Equals(object obj)
-        {
-            if (obj is not AILightEntries other)
-                return false;
-
-            return Key == other.Key && Value == other.Value;
-        }
-        public AILightEntries Clone()
-        {
-            return new AILightEntries()
-            {
-                Key = this.Key,
-                Value = this.Value
-            };
-        }
-
-    }
-    public class ExpansionAISettings
+    public class ExpansionAISettings : IEquatable<ExpansionAISettings>, IDeepCloneable<ExpansionAISettings>
     {
         public int m_Version { get; set; }
 
@@ -185,10 +120,11 @@ namespace ExpansionPlugin
         {
             LightingConfigMinNightVisibilityMeters = AILightEntries.ToDictionary(e => e.Key, e => e.Value);
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionAISettings other)
         {
-            if (obj is not ExpansionAISettings other)
-                return false;
+            if(other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
 
             return m_Version == other.m_Version &&
                    AccuracyMin == other.AccuracyMin &&
@@ -220,6 +156,7 @@ namespace ExpansionPlugin
                    SequenceEqual(PlayerFactions, other.PlayerFactions) &&
                    SequenceEqual(AILightEntries, other.AILightEntries);
         }
+        public override bool Equals(object obj) => Equals(obj as ExpansionAISettings);
         public ExpansionAISettings Clone()
         {
             return new ExpansionAISettings()
@@ -452,5 +389,28 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+    }
+    public class AILightEntries
+    {
+        public int Key { get; set; }
+        public decimal Value { get; set; }
+
+        public override string ToString() => Key.ToString();
+        public override bool Equals(object obj)
+        {
+            if (obj is not AILightEntries other)
+                return false;
+
+            return Key == other.Key && Value == other.Value;
+        }
+        public AILightEntries Clone()
+        {
+            return new AILightEntries()
+            {
+                Key = this.Key,
+                Value = this.Value
+            };
+        }
+
     }
 }

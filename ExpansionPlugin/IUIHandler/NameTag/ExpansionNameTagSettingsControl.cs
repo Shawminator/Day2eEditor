@@ -16,7 +16,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private NameTagsSettings _data;
-        private NameTagsSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as NameTagsSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone(); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -55,35 +53,6 @@ namespace EconomyPlugin
             UseRarityColorForItemInHandsCB.Checked = _data.UseRarityColorForItemInHands == 1 ? true : false;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -104,19 +73,19 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.EnablePlayerTags = EnablePlayerTagsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
         private void PlayerTagViewRangeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.PlayerTagViewRange = (int)PlayerTagViewRangeNUD.Value;
-            HasChanges();
+            
         }
         private void PlayerTagsIconTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.PlayerTagsIcon = PlayerTagsIconTB.Text;
-            HasChanges();
+            
         }
         private void PlayerTagsColorPB_Click(object sender, EventArgs e)
         {
@@ -145,7 +114,7 @@ namespace EconomyPlugin
                         prop.SetValue(_data, (int?)pb.BackColor.ToArgb());
                     }
 
-                    HasChanges();
+                    
                 }
             }
         }
@@ -153,42 +122,42 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.OnlyInSafeZones = OnlyInSafeZonesCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void OnlyInTerritoriesCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.OnlyInTerritories = OnlyInTerritoriesCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void ShowPlayerItemInHandsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShowPlayerItemInHands = ShowPlayerItemInHandsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void ShowNPCTagsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShowNPCTags = ShowNPCTagsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void ShowPlayerFactionCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShowPlayerFaction = ShowPlayerFactionCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void UseRarityColorForItemInHandsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UseRarityColorForItemInHands = UseRarityColorForItemInHandsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
     }
 }

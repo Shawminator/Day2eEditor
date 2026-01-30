@@ -16,7 +16,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionChatColors _data;
-        private ExpansionChatColors _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionChatColors ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = _data.Clone();
 
             _suppressEvents = true;
 
@@ -66,35 +64,6 @@ namespace ExpansionPlugin
             string formattedColor = "#" + hexColor.Substring(6) + hexColor.Remove(6, 2);
             Color selectedColor = ColorTranslator.FromHtml(formattedColor);
             targetPB.BackColor = selectedColor;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = _data.Clone();
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -140,7 +109,7 @@ namespace ExpansionPlugin
                         prop.SetValue(_data, colorHex.Substring(4, 6) + colorHex.Substring(2, 2));
                     }
 
-                    HasChanges();
+                    
                 }
             }
         }

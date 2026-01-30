@@ -454,6 +454,14 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsBarbedWireControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                     
+                },
+                ["RaidSafes"] = (node,selected)=>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionRaidSettingsSafesControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
+                },
+                ["RaidContainers"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new expansionRaidContainersControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                 }
             };
         }

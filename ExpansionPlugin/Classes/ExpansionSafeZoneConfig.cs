@@ -10,74 +10,29 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionSafeZoneConfig : IConfigLoader
+    public class ExpansionSafeZoneConfig : ExpansionBaseIConfigLoader<ExpansionSafeZoneSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionSafeZoneSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
         public const int CurrentVersion = 11;
 
-        public ExpansionSafeZoneConfig(string path)
+        public ExpansionSafeZoneConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionSafeZoneSettings CreateDefaultData()
         {
-            Data = null;
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionSafeZoneSettings>(
-                _path,
-                createNew: () => new ExpansionSafeZoneSettings(CurrentVersion),
-                onAfterLoad: cfg => { },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionSafeZone",
-                useVecConvertor: true
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
+            return new ExpansionSafeZoneSettings(CurrentVersion);
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoad(ExpansionSafeZoneSettings data)
+        {
             Data.SetCircleNames();
             Data.SetPolygonNames();
             Data.SetCylinderNames();
         }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data, true);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
-        }
     }
-    public class ExpansionSafeZoneSettings
+    public class ExpansionSafeZoneSettings : IEquatable<ExpansionSafeZoneSettings>, IDeepCloneable<ExpansionSafeZoneSettings>
     {
         public int m_Version { get; set; }
         public int? Enabled { get; set; }                                                                   // Enable Safezone when set to 1
@@ -243,13 +198,10 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionSafeZoneSettings other)
         {
-            if (obj is not ExpansionSafeZoneSettings other)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             if (m_Version != other.m_Version ||
                 Enabled != other.Enabled ||
@@ -277,6 +229,7 @@ namespace ExpansionPlugin
 
             return true;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionSafeZoneSettings);
         private static bool ListEquals<T>(IList<T> a, IList<T> b)
         {
             if (ReferenceEquals(a, b))

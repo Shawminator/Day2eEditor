@@ -11,7 +11,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private BindingList<ExpansionLoot> _data;
-        private BindingList<ExpansionLoot> _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
         private TreeNode? currentTreeNode;
@@ -79,7 +78,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as BindingList<ExpansionLoot> ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -96,35 +94,6 @@ namespace ExpansionPlugin
             root.Expand();
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !AreLootListsEqual(_data, _originalData);
-            }
         }
 
         private bool AreLootListsEqual(BindingList<ExpansionLoot> list1, BindingList<ExpansionLoot> list2)
@@ -298,7 +267,7 @@ namespace ExpansionPlugin
         {
             if (currentExpanionLootItem == null) return;
             currentExpanionLootItem.Chance = ((decimal)trackBar1.Value) / 100;
-            HasChanges();
+            
         }
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
@@ -312,7 +281,7 @@ namespace ExpansionPlugin
         {
             if (CurrentLootVArient == null) return;
             CurrentLootVArient.Chance = ((decimal)trackBar2.Value) / 100;
-            HasChanges();
+            
         }
 
         private void ExpansionLootitemSetAllChanceButton_Click(object sender, EventArgs e)
@@ -321,7 +290,7 @@ namespace ExpansionPlugin
             {
                 el.Chance = ((decimal)trackBar2.Value) / 100;
             }
-            HasChanges();
+            
         }
 
         private void ExpansionLootitemSetAllRandomChanceButton_Click(object sender, EventArgs e)
@@ -361,28 +330,28 @@ namespace ExpansionPlugin
 
                 el.Chance = (decimal)rnd.Next(chancemin, chancemax) / 100;
             }
-            HasChanges();
+            
         }
 
         private void numericUpDown31_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentExpanionLootItem.QuantityPercent = (int)numericUpDown31.Value;
-            HasChanges();
+            
         }
 
         private void numericUpDown12_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentExpanionLootItem.Max = (int)numericUpDown12.Value;
-            HasChanges();
+            
         }
 
         private void numericUpDown33_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentExpanionLootItem.Min = (int)numericUpDown33.Value;
-            HasChanges();
+            
         }
 
         private void addLootItemsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -411,7 +380,7 @@ namespace ExpansionPlugin
                     TreeNode tn = CreateLootNode(Newloot);
                     ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                     FocusNode = tn;
-                    HasChanges();
+                    
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
@@ -438,7 +407,7 @@ namespace ExpansionPlugin
                     TreeNode tn = getLootVarients(Newloot);
                     ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                     FocusNode = tn;
-                    HasChanges();
+                    
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
@@ -486,7 +455,7 @@ namespace ExpansionPlugin
                         ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                         FocusNode = tn;
                     }
-                    HasChanges();
+                    
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
@@ -533,7 +502,7 @@ namespace ExpansionPlugin
                 }
             }
 
-            HasChanges();
+            
         }
     }
 }

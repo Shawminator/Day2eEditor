@@ -15,7 +15,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionMapping _data;
-        private ExpansionMapping _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionMapping ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -47,35 +45,6 @@ namespace ExpansionPlugin
             BuildingIvysComboBox.SelectedItem = (buildingIvy)_data.BuildingIvys;
 
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -177,7 +146,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.UseCustomMappingModule = UseCustomMappingModuleCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
             UpdateMappingNode();
         }
 
@@ -185,7 +154,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.BuildingInteriors = BuildingInteriorsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
             UpdateInteriorsNode();
         }
 
@@ -193,7 +162,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.BuildingIvys = (int)(buildingIvy)BuildingIvysComboBox.SelectedItem;
-            HasChanges();
+            
         }
     }
 }

@@ -16,7 +16,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private ExpansionGeneralSettings _data;
-        private ExpansionGeneralSettings _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionGeneralSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -49,35 +47,6 @@ namespace ExpansionPlugin
             EnableEarPlugsCB.Checked = _data.EnableEarPlugs == 1 ? true : false;
            
             _suppressEvents = false;
-        }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
         }
 
         #region Helper Methods
@@ -164,35 +133,35 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.DisableShootToUnlock = DisableShootToUnlockCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void EnableHUDNightvisionOverlayCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableHUDNightvisionOverlay = EnableHUDNightvisionOverlayCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void DisableMagicCrosshairCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DisableMagicCrosshair = DisableMagicCrosshairCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void EnableAutoRunCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableAutoRun = EnableAutoRunCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         private void EnableEarPlugsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableEarPlugs = EnableEarPlugsCB.Checked == true ? 1 : 0;
-            HasChanges();
+            
         }
 
         
