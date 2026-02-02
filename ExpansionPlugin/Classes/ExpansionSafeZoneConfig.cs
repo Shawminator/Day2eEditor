@@ -287,7 +287,7 @@ namespace ExpansionPlugin
             if (obj is not ExpansionSafeZoneCircle other)
                 return false;
 
-            return Center == other.Center &&
+            return Center.Equals(other.Center) &&
                 Radius == other.Radius;
         }
         public ExpansionSafeZoneCircle Clone()

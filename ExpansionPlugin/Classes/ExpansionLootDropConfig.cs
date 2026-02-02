@@ -34,7 +34,7 @@ namespace ExpansionPlugin
 
         protected override void SaveItem(AILootDrops item)
         {
-            AppServices.GetRequired<FileService>().SaveJson(item._path, item);
+            AppServices.GetRequired<FileService>().SaveJson(item._path, item.LootdropList);
         }
         protected override string GetItemFileName(AILootDrops item)
             => item.FileName;
@@ -84,30 +84,6 @@ namespace ExpansionPlugin
             LootdropList = new BindingList<AILoadouts>();
         }
         public BindingList<AILoadouts> LootdropList { get; set; }
-        internal IEnumerable<string> Save()
-        {
-            if (ToDelete)
-            {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    //ShellHelper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
-            }
-
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, LootdropList);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
-        }
-
         public override string ToString()
         {
             return FileName;

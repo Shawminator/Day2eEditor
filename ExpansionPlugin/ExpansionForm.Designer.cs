@@ -99,6 +99,8 @@
             ChatCM = new ContextMenuStrip(components);
             addNewBlacklistedWordToolStripMenuItem = new ToolStripMenuItem();
             removeBlacklistedWordToolStripMenuItem = new ToolStripMenuItem();
+            addNewNotificationToolStripMenuItem = new ToolStripMenuItem();
+            removeNotificationToolStripMenuItem = new ToolStripMenuItem();
             GarageCM = new ContextMenuStrip(components);
             addNewEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
             removeEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
@@ -121,8 +123,19 @@
             addNewWaterSpawnToolStripMenuItem = new ToolStripMenuItem();
             addNewTrainSpawnToolStripMenuItem = new ToolStripMenuItem();
             removeVehicleSpawnToolStripMenuItem = new ToolStripMenuItem();
-            addNewNotificationToolStripMenuItem = new ToolStripMenuItem();
-            removeNotificationToolStripMenuItem = new ToolStripMenuItem();
+            RaidSettingsCM = new ContextMenuStrip(components);
+            AddNewExplosiveWhitelistItemToolStripMenuItem = new ToolStripMenuItem();
+            RemoveExplosiveWhitelistItemToolStripMenuItem = new ToolStripMenuItem();
+            AddNewSafeRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            RemoveSafeRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            AddNewBarbedWireRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            RemoveBarbedWireRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            AddNewLockOnContainerRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            RemoveLockOnContainerRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            AddNewLockRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            RemoveLockRaidToolToolStripMenuItem = new ToolStripMenuItem();
+            addNewRaidScheduleToolStripMenuItem = new ToolStripMenuItem();
+            RemoveRaidScheduleToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -135,6 +148,7 @@
             GarageCM.SuspendLayout();
             DamageCM.SuspendLayout();
             MarketSettingsCM.SuspendLayout();
+            RaidSettingsCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -712,7 +726,7 @@
             ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(190, 114);
+            ChatCM.Size = new Size(190, 92);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -729,6 +743,22 @@
             removeBlacklistedWordToolStripMenuItem.Size = new Size(189, 22);
             removeBlacklistedWordToolStripMenuItem.Text = "Remove Blacklisted Word";
             removeBlacklistedWordToolStripMenuItem.Click += removeBlacklistedWordToolStripMenuItem_Click;
+            // 
+            // addNewNotificationToolStripMenuItem
+            // 
+            addNewNotificationToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewNotificationToolStripMenuItem.Name = "addNewNotificationToolStripMenuItem";
+            addNewNotificationToolStripMenuItem.Size = new Size(189, 22);
+            addNewNotificationToolStripMenuItem.Text = "Add New Notification";
+            addNewNotificationToolStripMenuItem.Click += addNewNotificationToolStripMenuItem_Click;
+            // 
+            // removeNotificationToolStripMenuItem
+            // 
+            removeNotificationToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNotificationToolStripMenuItem.Name = "removeNotificationToolStripMenuItem";
+            removeNotificationToolStripMenuItem.Size = new Size(189, 22);
+            removeNotificationToolStripMenuItem.Text = "Remove Notification";
+            removeNotificationToolStripMenuItem.Click += removeNotificationToolStripMenuItem_Click;
             // 
             // GarageCM
             // 
@@ -906,21 +936,109 @@
             removeVehicleSpawnToolStripMenuItem.Text = "Remove Vehicle Spawn";
             removeVehicleSpawnToolStripMenuItem.Click += removeVehicleSpawnToolStripMenuItem_Click;
             // 
-            // addNewNotificationToolStripMenuItem
+            // RaidSettingsCM
             // 
-            addNewNotificationToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewNotificationToolStripMenuItem.Name = "addNewNotificationToolStripMenuItem";
-            addNewNotificationToolStripMenuItem.Size = new Size(189, 22);
-            addNewNotificationToolStripMenuItem.Text = "Add New Notification";
-            addNewNotificationToolStripMenuItem.Click += addNewNotificationToolStripMenuItem_Click;
+            RaidSettingsCM.BackColor = Color.FromArgb(60, 63, 65);
+            RaidSettingsCM.Items.AddRange(new ToolStripItem[] { AddNewExplosiveWhitelistItemToolStripMenuItem, RemoveExplosiveWhitelistItemToolStripMenuItem, AddNewSafeRaidToolToolStripMenuItem, RemoveSafeRaidToolToolStripMenuItem, AddNewBarbedWireRaidToolToolStripMenuItem, RemoveBarbedWireRaidToolToolStripMenuItem, AddNewLockOnContainerRaidToolToolStripMenuItem, RemoveLockOnContainerRaidToolToolStripMenuItem, AddNewLockRaidToolToolStripMenuItem, RemoveLockRaidToolToolStripMenuItem, addNewRaidScheduleToolStripMenuItem, RemoveRaidScheduleToolStripMenuItem });
+            RaidSettingsCM.Name = "RaidSettingsCM";
+            RaidSettingsCM.ShowImageMargin = false;
+            RaidSettingsCM.Size = new Size(252, 290);
             // 
-            // removeNotificationToolStripMenuItem
+            // AddNewExplosiveWhitelistItemToolStripMenuItem
             // 
-            removeNotificationToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeNotificationToolStripMenuItem.Name = "removeNotificationToolStripMenuItem";
-            removeNotificationToolStripMenuItem.Size = new Size(189, 22);
-            removeNotificationToolStripMenuItem.Text = "Remove Notification";
-            removeNotificationToolStripMenuItem.Click += removeNotificationToolStripMenuItem_Click;
+            AddNewExplosiveWhitelistItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewExplosiveWhitelistItemToolStripMenuItem.Name = "AddNewExplosiveWhitelistItemToolStripMenuItem";
+            AddNewExplosiveWhitelistItemToolStripMenuItem.Size = new Size(251, 22);
+            AddNewExplosiveWhitelistItemToolStripMenuItem.Text = "Add New Explosive Whitelist Item";
+            AddNewExplosiveWhitelistItemToolStripMenuItem.Click += AddNewExplosiveWhitelistItemToolStripMenuItem_Click;
+            // 
+            // RemoveExplosiveWhitelistItemToolStripMenuItem
+            // 
+            RemoveExplosiveWhitelistItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveExplosiveWhitelistItemToolStripMenuItem.Name = "RemoveExplosiveWhitelistItemToolStripMenuItem";
+            RemoveExplosiveWhitelistItemToolStripMenuItem.Size = new Size(251, 22);
+            RemoveExplosiveWhitelistItemToolStripMenuItem.Text = "Remove Explosive Whitelist Item";
+            RemoveExplosiveWhitelistItemToolStripMenuItem.Click += RemoveExplosiveWhitelistItemToolStripMenuItem_Click;
+            // 
+            // AddNewSafeRaidToolToolStripMenuItem
+            // 
+            AddNewSafeRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewSafeRaidToolToolStripMenuItem.Name = "AddNewSafeRaidToolToolStripMenuItem";
+            AddNewSafeRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            AddNewSafeRaidToolToolStripMenuItem.Text = "Add New Safe Raid Tool";
+            AddNewSafeRaidToolToolStripMenuItem.Click += AddNewSafeRaidToolToolStripMenuItem_Click;
+            // 
+            // RemoveSafeRaidToolToolStripMenuItem
+            // 
+            RemoveSafeRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveSafeRaidToolToolStripMenuItem.Name = "RemoveSafeRaidToolToolStripMenuItem";
+            RemoveSafeRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            RemoveSafeRaidToolToolStripMenuItem.Text = "Remove Safe Raid Tool";
+            RemoveSafeRaidToolToolStripMenuItem.Click += RemoveSafeRaidToolToolStripMenuItem_Click;
+            // 
+            // AddNewBarbedWireRaidToolToolStripMenuItem
+            // 
+            AddNewBarbedWireRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewBarbedWireRaidToolToolStripMenuItem.Name = "AddNewBarbedWireRaidToolToolStripMenuItem";
+            AddNewBarbedWireRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            AddNewBarbedWireRaidToolToolStripMenuItem.Text = "Add New BarbedWire Raid Tool";
+            AddNewBarbedWireRaidToolToolStripMenuItem.Click += AddNewBarbedWireRaidToolToolStripMenuItem_Click;
+            // 
+            // RemoveBarbedWireRaidToolToolStripMenuItem
+            // 
+            RemoveBarbedWireRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveBarbedWireRaidToolToolStripMenuItem.Name = "RemoveBarbedWireRaidToolToolStripMenuItem";
+            RemoveBarbedWireRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            RemoveBarbedWireRaidToolToolStripMenuItem.Text = "Remove BarbedWire Raid Tool";
+            RemoveBarbedWireRaidToolToolStripMenuItem.Click += RemoveBarbedWireRaidToolToolStripMenuItem_Click;
+            // 
+            // AddNewLockOnContainerRaidToolToolStripMenuItem
+            // 
+            AddNewLockOnContainerRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewLockOnContainerRaidToolToolStripMenuItem.Name = "AddNewLockOnContainerRaidToolToolStripMenuItem";
+            AddNewLockOnContainerRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            AddNewLockOnContainerRaidToolToolStripMenuItem.Text = "Add New Lock On Container Raid Tool";
+            AddNewLockOnContainerRaidToolToolStripMenuItem.Click += AddNewLockOnContainerRaidToolToolStripMenuItem_Click;
+            // 
+            // RemoveLockOnContainerRaidToolToolStripMenuItem
+            // 
+            RemoveLockOnContainerRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveLockOnContainerRaidToolToolStripMenuItem.Name = "RemoveLockOnContainerRaidToolToolStripMenuItem";
+            RemoveLockOnContainerRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            RemoveLockOnContainerRaidToolToolStripMenuItem.Text = "Remove Lock On Container Raid Tool";
+            RemoveLockOnContainerRaidToolToolStripMenuItem.Click += RemoveLockOnContainerRaidToolToolStripMenuItem_Click;
+            // 
+            // AddNewLockRaidToolToolStripMenuItem
+            // 
+            AddNewLockRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewLockRaidToolToolStripMenuItem.Name = "AddNewLockRaidToolToolStripMenuItem";
+            AddNewLockRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            AddNewLockRaidToolToolStripMenuItem.Text = "Add New Lock Raid Tool";
+            AddNewLockRaidToolToolStripMenuItem.Click += AddNewLockRaidToolToolStripMenuItem_Click;
+            // 
+            // RemoveLockRaidToolToolStripMenuItem
+            // 
+            RemoveLockRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveLockRaidToolToolStripMenuItem.Name = "RemoveLockRaidToolToolStripMenuItem";
+            RemoveLockRaidToolToolStripMenuItem.Size = new Size(251, 22);
+            RemoveLockRaidToolToolStripMenuItem.Text = "Remove Lock Raid Tool";
+            RemoveLockRaidToolToolStripMenuItem.Click += RemoveLockRaidToolToolStripMenuItem_Click;
+            // 
+            // addNewRaidScheduleToolStripMenuItem
+            // 
+            addNewRaidScheduleToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewRaidScheduleToolStripMenuItem.Name = "addNewRaidScheduleToolStripMenuItem";
+            addNewRaidScheduleToolStripMenuItem.Size = new Size(251, 22);
+            addNewRaidScheduleToolStripMenuItem.Text = "Add New Raid Schedule";
+            addNewRaidScheduleToolStripMenuItem.Click += AddNewRaidScheduleToolStripMenuItem_Click;
+            // 
+            // RemoveRaidScheduleToolStripMenuItem
+            // 
+            RemoveRaidScheduleToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveRaidScheduleToolStripMenuItem.Name = "RemoveRaidScheduleToolStripMenuItem";
+            RemoveRaidScheduleToolStripMenuItem.Size = new Size(251, 22);
+            RemoveRaidScheduleToolStripMenuItem.Text = "Remove Raid Schedule";
+            RemoveRaidScheduleToolStripMenuItem.Click += RemoveRaidScheduleToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -950,6 +1068,7 @@
             GarageCM.ResumeLayout(false);
             DamageCM.ResumeLayout(false);
             MarketSettingsCM.ResumeLayout(false);
+            RaidSettingsCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1049,5 +1168,18 @@
         private ToolStripMenuItem removeVehicleSpawnToolStripMenuItem;
         private ToolStripMenuItem addNewNotificationToolStripMenuItem;
         private ToolStripMenuItem removeNotificationToolStripMenuItem;
+        private ContextMenuStrip RaidSettingsCM;
+        private ToolStripMenuItem AddNewExplosiveWhitelistItemToolStripMenuItem;
+        private ToolStripMenuItem RemoveExplosiveWhitelistItemToolStripMenuItem;
+        private ToolStripMenuItem AddNewBarbedWireRaidToolToolStripMenuItem;
+        private ToolStripMenuItem RemoveBarbedWireRaidToolToolStripMenuItem;
+        private ToolStripMenuItem AddNewLockOnContainerRaidToolToolStripMenuItem;
+        private ToolStripMenuItem RemoveLockOnContainerRaidToolToolStripMenuItem;
+        private ToolStripMenuItem AddNewSafeRaidToolToolStripMenuItem;
+        private ToolStripMenuItem RemoveSafeRaidToolToolStripMenuItem;
+        private ToolStripMenuItem addNewRaidScheduleToolStripMenuItem;
+        private ToolStripMenuItem RemoveRaidScheduleToolStripMenuItem;
+        private ToolStripMenuItem AddNewLockRaidToolToolStripMenuItem;
+        private ToolStripMenuItem RemoveLockRaidToolToolStripMenuItem;
     }
 }

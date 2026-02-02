@@ -315,34 +315,39 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionNotificationSettingsControl(), typeof(ExpansionNotificationConfig), ExpansionNotificationSettings, selected);
                 },
                 //NotificationScheduler
-                [typeof(ExpansionNotificationSchedulerSettings)] = (node,selected) =>
+                [typeof(ExpansionNotificationSchedulerSettings)] = (node, selected) =>
                 {
                     ExpansionNotificationSchedulerSettings ExpansionNotificationSchedulerSettings = node.Tag as ExpansionNotificationSchedulerSettings;
                     ShowHandler(new ExpansionNotificationSchedulerSettingsControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedulerSettings, selected);
                 },
-                [typeof(ExpansionNotificationSchedule)] = (node,selected) =>
+                [typeof(ExpansionNotificationSchedule)] = (node, selected) =>
                 {
                     ExpansionNotificationSchedule ExpansionNotificationSchedule = node.Tag as ExpansionNotificationSchedule;
                     ShowHandler(new ExpansionNotificationScheduleControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedule, selected);
                 },
                 //Party
-                [typeof(ExpansionPartySettings)]= (node,selected)=>
+                [typeof(ExpansionPartySettings)] = (node, selected) =>
                 {
                     ExpansionPartySettings ExpansionPartySettings = node.Tag as ExpansionPartySettings;
                     ShowHandler(new ExpansionPartySettingsControl(), typeof(ExpansionPartyConfig), ExpansionPartySettings, selected);
                 },
                 //PlayerList
-                [typeof(ExpansionPlayerListSettings)] = (node,selected)=>
+                [typeof(ExpansionPlayerListSettings)] = (node, selected) =>
                 {
                     ExpansionPlayerListSettings ExpansionPlayerListSettings = node.Tag as ExpansionPlayerListSettings;
                     ShowHandler(new ExpansionPlayerListSettingsControl(), typeof(ExpansionPlayerListConfig), ExpansionPlayerListSettings, selected);
                 },
                 //Raid
-                [typeof(ExpansionRaidSettings)] = (node,selected) =>
+                [typeof(ExpansionRaidSettings)] = (node, selected) =>
                 {
                     ExpansionRaidSettings ExpansionRaidSettings = node.Tag as ExpansionRaidSettings;
                     ShowHandler(new ExpansionRaidSettingsControl(), typeof(ExpansionRaidConfig), ExpansionRaidSettings, selected);
                 },
+                [typeof(ExpansionRaidSchedule)] = (node, selected) =>
+                {
+                    ExpansionRaidSchedule ExpansionRaidSchedule = node.Tag as ExpansionRaidSchedule;
+                    ShowHandler(new ExpansionRaidSettingsRaidScheduleControl(), typeof(ExpansionRaidConfig), ExpansionRaidSchedule, selected);
+                }
             };
             // ----------------------
             // String handlers
@@ -446,22 +451,26 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionMapServerMarkerControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
                 },
                 //Raid
-                ["RaidExplosives"] = (node,selected) =>
+                ["RaidExplosives"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsExplosionsControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                 },
-                ["RaidBarbedWire"] = (node,selected) =>
+                ["RaidBarbedWire"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsBarbedWireControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
-                    
+
                 },
-                ["RaidSafes"] = (node,selected)=>
+                ["RaidSafes"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsSafesControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                 },
-                ["RaidContainers"] = (node,selected) =>
+                ["RaidContainers"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new expansionRaidContainersControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
+                },
+                ["RaidLocks"] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionRaidSettingsLockControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                 }
             };
         }
@@ -626,6 +635,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
 
                 },
+                //Raid
+                [typeof(ExpansionRaidSchedule)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveRaidScheduleToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
             };
             // ----------------------
             // String handlers
@@ -945,6 +961,73 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewNotificationToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //Raid
+                ["RaidSchedule"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewRaidScheduleToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidExplosiveWhiteList"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewExplosiveWhitelistItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidExplosiveWhiteListItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveExplosiveWhitelistItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidBarbedWireRaidTools"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewBarbedWireRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidBarbedWireRaidTool"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveBarbedWireRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidSafeRaidTools"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewSafeRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidSafeRaidTool"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveSafeRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidContainerRaidTools"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewLockOnContainerRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidContainerRaidTool"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveLockOnContainerRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidLockRaidTools"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewLockRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["RaidLockRaidTool"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveLockRaidToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
             };
         }
 
@@ -5049,13 +5132,11 @@ namespace ExpansionPlugin
             {
                 Tag = newSM
             });
-            _expansionManager.ExpansionMapConfig.isDirty = true;
         }
         private void removeServerMarkerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionMapConfig.Data.ServerMarkers.Remove(currentTreeNode.Tag as ExpansionServerMarkerData);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionMapConfig.isDirty = true;
         }
         //Market Settings
         private void addNewLargeVehicleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5275,10 +5356,164 @@ namespace ExpansionPlugin
                 Icon = "Info",
                 Color = "27272DFF"
             };
+            _expansionManager.ExpansionNotificationSchedulerConfig.Data.Notifications.Add(newsched);
+            currentTreeNode.Nodes.Add(new TreeNode(newsched.Title)
+            {
+                Tag = newsched
+            });
         }
         private void removeNotificationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            _expansionManager.ExpansionNotificationSchedulerConfig.Data.Notifications.Remove(currentTreeNode.Tag as ExpansionNotificationSchedule);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        // Raid Settings
+        private void AddNewExplosiveWhitelistItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Contains(l))
+                    {
+                        _expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "RaidExplosiveWhiteListItem"
+                        });
+                    }
+                }
+            }
+        }
+        private void RemoveExplosiveWhitelistItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void AddNewSafeRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionRaidConfig.Data.SafeRaidTools.Contains(l))
+                    {
+                        _expansionManager.ExpansionRaidConfig.Data.SafeRaidTools.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "RaidSafeRaidTool"
+                        });
+                    }
+                }
+            }
+        }
+        private void RemoveSafeRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionRaidConfig.Data.SafeRaidTools.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void AddNewBarbedWireRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionRaidConfig.Data.BarbedWireRaidTools.Contains(l))
+                    {
+                        _expansionManager.ExpansionRaidConfig.Data.BarbedWireRaidTools.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "RaidBarbedWireRaidTool"
+                        });
+                    }
+                }
+            }
+        }
+        private void RemoveBarbedWireRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionRaidConfig.Data.BarbedWireRaidTools.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void AddNewLockOnContainerRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionRaidConfig.Data.LockOnContainerRaidTools.Contains(l))
+                    {
+                        _expansionManager.ExpansionRaidConfig.Data.LockOnContainerRaidTools.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "RaidContainerRaidTool"
+                        });
+                    }
+                }
+            }
+        }
+        private void RemoveLockOnContainerRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionRaidConfig.Data.LockOnContainerRaidTools.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void AddNewLockRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionRaidConfig.Data.LockRaidTools.Contains(l))
+                    {
+                        _expansionManager.ExpansionRaidConfig.Data.LockRaidTools.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "RaidLockRaidTool"
+                        });
+                    }
+                }
+            }
+        }
 
+        private void RemoveLockRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionRaidConfig.Data.LockRaidTools.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void AddNewRaidScheduleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionRaidSchedule newsched = new ExpansionRaidSchedule()
+            {
+                Weekday = "SUNDAY",
+                StartHour = 0,
+                StartMinute = 0,
+                DurationMinutes = 0
+            };
+            _expansionManager.ExpansionRaidConfig.Data.Schedule.Add(newsched);
+            currentTreeNode.Nodes.Add(new TreeNode(newsched.ToString())
+            {
+                Tag = newsched
+            });
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void RemoveRaidScheduleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionRaidConfig.Data.Schedule.Remove(currentTreeNode.Tag as ExpansionRaidSchedule);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         #endregion right click methods
 
@@ -5336,6 +5571,8 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
+
 
 
 

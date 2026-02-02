@@ -688,7 +688,7 @@ namespace ExpansionPlugin
         }
         public override bool Equals(object obj)
         {
-            if (obj is not ExpansionP2PMarketMenuCategory other)
+            if (obj is not ExpansionPersonalStorageMenuCategory other)
                 return false;
 
             if (DisplayName != other.DisplayName ||
@@ -728,13 +728,10 @@ namespace ExpansionPlugin
             if (obj is not ExpansionPersonalStorageMenuSubCategory other)
                 return false;
 
-            if (DisplayName != other.DisplayName ||
-                   IconPath != other.IconPath ||
+            return DisplayName == other.DisplayName ||
+                   IconPath == other.IconPath ||
                    Included.SequenceEqual(other.Included) ||
-                   Excluded.SequenceEqual(other.Excluded))
-                return false;
-
-            return true;
+                   Excluded.SequenceEqual(other.Excluded);
         }
         public ExpansionPersonalStorageMenuSubCategory Clone()
         {

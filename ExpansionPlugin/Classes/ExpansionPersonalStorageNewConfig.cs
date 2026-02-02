@@ -168,13 +168,10 @@ namespace ExpansionPlugin
             if (obj is not ExpansionPersonalStorageLevel other)
                 return false;
 
-            if (ReputationRequirement != other.ReputationRequirement ||
+            return ReputationRequirement != other.ReputationRequirement ||
                    QuestID != other.QuestID ||
                    ExcludedSlots.SequenceEqual(other.ExcludedSlots) ||
-                   AllowAttachmentCargo != other.AllowAttachmentCargo)
-                return false;
-
-            return true;
+                   AllowAttachmentCargo != other.AllowAttachmentCargo;
         }
         public ExpansionPersonalStorageLevel Clone()
         {

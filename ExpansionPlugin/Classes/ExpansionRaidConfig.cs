@@ -511,7 +511,7 @@ namespace ExpansionPlugin
     public class ExpansionRaidSchedule
     {
         [JsonIgnore]
-        private static readonly string[] WEEKDAYS = { "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY" };
+        public static readonly string[] WEEKDAYS = { "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY" };
 
 
         public string? Weekday { get; set; }
@@ -526,17 +526,31 @@ namespace ExpansionPlugin
             var issues = new List<string>();
 
             int weekdayIndex = -1;  //! Everyday
+
             if (!string.IsNullOrWhiteSpace(Weekday))
             {
-                var weekdayUpper = Weekday!.Trim().ToUpperInvariant();
+                var trimmed = Weekday.Trim();
+                var weekdayUpper = trimmed.ToUpperInvariant();
+
                 weekdayIndex = Array.IndexOf(WEEKDAYS, weekdayUpper);
+
                 if (weekdayIndex == -1)
                 {
                     issues.Add(
                         $"Invalid Weekday '{Weekday}'. Expected one of: {string.Join(", ", WEEKDAYS)} " +
                         $"or leave empty/null for 'everyday'.");
                 }
+                else
+                {
+                    var needsNormalization = !string.Equals(trimmed, weekdayUpper, StringComparison.Ordinal);
+                    if (needsNormalization)
+                    {
+                        issues.Add($"Weekday '{Weekday}' normalized to '{weekdayUpper}'.");
+                    }
+                    Weekday = weekdayUpper;
+                }
             }
+
 
             if (StartHour is null)
             {

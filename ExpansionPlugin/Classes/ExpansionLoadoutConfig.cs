@@ -155,6 +155,8 @@ namespace ExpansionPlugin
                 ClassName = this.ClassName,
                 Include = this.Include,
                 Chance = this.Chance,
+                Quantity = this.Quantity.Clone(),
+                Health = new BindingList<Health>(this.Health.Select(x => x.Clone()).ToList()),
                 InventoryAttachments = new BindingList<Inventoryattachment>(this.InventoryAttachments.Select(x => x.Clone()).ToList()),
                 InventoryCargo = new BindingList<AILoadouts>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
                 ConstructionPartsBuilt = new BindingList<object>(this.ConstructionPartsBuilt.ToList()),

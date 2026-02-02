@@ -495,9 +495,9 @@ namespace ExpansionPlugin
                 ApplyEnergySources = this.ApplyEnergySources,
                 SetRandomHealth = this.SetRandomHealth,
                 UpperGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
-                PantsGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
-                BackpackGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
-                VestGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
+                PantsGear = new BindingList<ExpansionStartingGearItem>(this.PantsGear.Select(x => x.Clone()).ToList()),
+                BackpackGear = new BindingList<ExpansionStartingGearItem>(this.BackpackGear.Select(x => x.Clone()).ToList()),
+                VestGear = new BindingList<ExpansionStartingGearItem>(this.VestGear.Select(x => x.Clone()).ToList()),
                 PrimaryWeapon = this.PrimaryWeapon?.Clone(),
                 SecondaryWeapon = this.SecondaryWeapon?.Clone()
             };
