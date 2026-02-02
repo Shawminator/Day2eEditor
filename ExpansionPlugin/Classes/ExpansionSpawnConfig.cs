@@ -498,8 +498,8 @@ namespace ExpansionPlugin
                 PantsGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
                 BackpackGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
                 VestGear = new BindingList<ExpansionStartingGearItem>(this.UpperGear.Select(x => x.Clone()).ToList()),
-                PrimaryWeapon = this.PrimaryWeapon.Clone(),
-                SecondaryWeapon = this.SecondaryWeapon.Clone()
+                PrimaryWeapon = this.PrimaryWeapon?.Clone(),
+                SecondaryWeapon = this.SecondaryWeapon?.Clone()
             };
         }
         public void DefaultStartingGear()

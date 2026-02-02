@@ -50,18 +50,18 @@ namespace ExpansionPlugin
 
         internal bool AddNewLoadoutFile(AILoadouts newAILoadouts)
         {
-            bool exists = AllData.Any(ld => ld.FileName.ToLower() == newAILoadouts.FileName.ToLower());
+            bool exists = Items.Any(ld => ld.FileName.ToLower() == newAILoadouts.FileName.ToLower());
 
             if (exists)
                 return false; // File with same name already exists
 
-            AllData.Add(newAILoadouts);
+            Items.Add(newAILoadouts);
             return true;
 
         }
         internal void RemoveFile(AILoadouts aILoadouts)
         {
-            AllData.Remove(aILoadouts);
+            Items.Remove(aILoadouts);
 
         }
 
@@ -159,7 +159,7 @@ namespace ExpansionPlugin
                 InventoryCargo = new BindingList<AILoadouts>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
                 ConstructionPartsBuilt = new BindingList<object>(this.ConstructionPartsBuilt.ToList()),
                 Sets = new BindingList<AILoadouts>(this.Sets.Select(x => x.Clone()).ToList()),
-                _path = this.FilePath
+                _path = this._path
             };
         }
 

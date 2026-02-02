@@ -14,6 +14,54 @@ namespace ExpansionPlugin
         public ExpansionNotificationConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName,
+                        useBoolConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    isDirty = true;
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
+        public virtual IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            {
+                isDirty = false;
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, true, false);
+                ClonedData = CloneData(Data);
+                return new[] { Path.GetFileName(_path) };
+            }
+
+            return Array.Empty<string>();
+        }
         protected override ExpansionNotificationSettings CreateDefaultData()
         {
             return new ExpansionNotificationSettings(CurrentVersion);

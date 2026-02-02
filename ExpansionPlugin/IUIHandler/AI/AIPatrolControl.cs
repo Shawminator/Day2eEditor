@@ -46,7 +46,7 @@ namespace ExpansionPlugin
                 {
                     ""
                 };
-                foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.AllData)
+                foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
                 {
                     LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
                 }
@@ -54,7 +54,7 @@ namespace ExpansionPlugin
                 {
                     ""
                 };
-                foreach (AILootDrops AILootDrops in AppServices.GetRequired<ExpansionManager>().ExpansionLootDropConfig.AllData)
+                foreach (AILootDrops AILootDrops in AppServices.GetRequired<ExpansionManager>().ExpansionLootDropConfig.Items)
                 {
                     LootDropOnDeathNameList.Add(Path.GetFileNameWithoutExtension(AILootDrops.FileName));
                 }

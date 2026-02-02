@@ -107,7 +107,7 @@ namespace ExpansionPlugin
                     ExpansionAIRoamingLocation ExpansionAIRoamingLocation = node.Tag as ExpansionAIRoamingLocation;
                     ShowHandler(new AIRoamingLocationControl(), typeof(ExpansionAILocationConfig), ExpansionAIRoamingLocation, selected);
                     SetupAILocationRoamingLocations(ExpansionAIRoamingLocation, node);
-                    _mapControl.EnsureVisible(new PointF((float)ExpansionAIRoamingLocation.Position[0], (float)ExpansionAIRoamingLocation.Position[2]));
+                    _mapControl.EnsureVisible(new PointF((float)ExpansionAIRoamingLocation.Position.X, (float)ExpansionAIRoamingLocation.Position.Z));
                 },
                 [typeof(ExpansionAIPatrolSettings)] = (node, selected) =>
                 {
@@ -143,7 +143,7 @@ namespace ExpansionPlugin
 
                     ShowHandler(control, typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, selected);
                     SetupAILocationNoGoAreas(ExpansionAINoGoArea, node);
-                    _mapControl.EnsureVisible(new PointF(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z));
+                    _mapControl.EnsureVisible(new PointF(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z));
                 },
                 //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
@@ -984,8 +984,6 @@ namespace ExpansionPlugin
         public void savefiles(bool updated = false)
         {
             var savedFiles = _expansionManager.Save();
-            if (_currentHandler != null)
-                _currentHandler.ApplyChanges();
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
@@ -1207,7 +1205,7 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            foreach (AILoadouts AILoadouts in ef.AllData)
+            foreach (AILoadouts AILoadouts in ef.Items)
             {
                 AILoadoutConfigRootNode.Nodes.Add(SetupLoadoutTreeView(AILoadouts));
             }
@@ -1274,7 +1272,7 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            foreach (AILootDrops AILootdrops in ef.AllData)
+            foreach (AILootDrops AILootdrops in ef.Items)
             {
                 TreeNode fileNode = new TreeNode(AILootdrops.FileName) { Tag = AILootdrops };
                 foreach (AILoadouts entry in AILootdrops.LootdropList)
@@ -2850,7 +2848,7 @@ namespace ExpansionPlugin
         private void AddSingleItemNodeIfNotEmpty(TreeNode root, ExpansionStartingGearItem item, string name)
         {
             TreeNode categoryNode = new TreeNode(name) { Tag = name };
-            if (item.ClassName != null && item.Quantity != null && item.Attachments != null)
+            if (item != null && item.ClassName != null && item.Quantity != null && item.Attachments != null)
             {
                 categoryNode.Nodes.Add(new TreeNode((item.ClassName))
                 {
@@ -3171,7 +3169,7 @@ namespace ExpansionPlugin
         {
             foreach (ExpansionAIRoamingLocation pos in ExpansionAILocationConfig.Data.RoamingLocations)
             {
-                var marker = new MarkerDrawable(new PointF((float)pos.Position[0], (float)pos.Position[2]), _mapControl.MapSize)
+                var marker = new MarkerDrawable(new PointF((float)pos.Position.X, (float)pos.Position.Z), _mapControl.MapSize)
                 {
                     Color = Color.Red,
                     Radius = (float)pos.Radius,
@@ -3241,7 +3239,7 @@ namespace ExpansionPlugin
         {
             foreach (ExpansionAINoGoArea ExpansionAINoGoArea in ExpansionAILocationConfig.Data.NoGoAreas)
             {
-                var marker = new MarkerDrawable(new PointF(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z), _mapControl.MapSize)
+                var marker = new MarkerDrawable(new PointF(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z), _mapControl.MapSize)
                 {
                     Color = Color.Red,
                     Radius = (float)ExpansionAINoGoArea.Radius,
@@ -3408,7 +3406,7 @@ namespace ExpansionPlugin
                 if (child.Tag is ExpansionAIRoamingLocation pos)
                 {
                     // Node position in screen space
-                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.Position[0], (float)pos.Position[2]));
+                    PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.Position.X, (float)pos.Position.Z));
 
                     double dx = clickScreen.X - posScreen.X;
                     double dy = clickScreen.Y - posScreen.Y;
@@ -3529,7 +3527,7 @@ namespace ExpansionPlugin
                 if (child.Tag is ExpansionAINoGoArea pos)
                 {
                     // Node position in screen space
-                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos._Position.X, pos._Position.Z));
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos.Position.X, pos.Position.Z));
 
                     double dx = clickScreen.X - posScreen.X;
                     double dy = clickScreen.Y - posScreen.Y;
@@ -3563,11 +3561,11 @@ namespace ExpansionPlugin
         {
             if (currentTreeNode.Tag is ExpansionAINoGoArea ExpansionAINoGoArea)
             {
-                ExpansionAINoGoArea._Position.X = (float)e.MapCoordinates.X;
-                ExpansionAINoGoArea._Position.Z = (float)e.MapCoordinates.Y;
+                ExpansionAINoGoArea.Position.X = (float)e.MapCoordinates.X;
+                ExpansionAINoGoArea.Position.Z = (float)e.MapCoordinates.Y;
                 if (MapData.FileExists)
                 {
-                    ExpansionAINoGoArea._Position.Y = (MapData.gethieght(ExpansionAINoGoArea._Position.X, ExpansionAINoGoArea._Position.Z));
+                    ExpansionAINoGoArea.Position.Y = (MapData.gethieght(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z));
                 }
                 _expansionManager.ExpansionAILocationConfig.isDirty = true;
 
@@ -4034,7 +4032,7 @@ namespace ExpansionPlugin
                     Quantity = new Quantity(),
                     isDirty = true
                 };
-                newAILoadouts.setpath(newPath);
+                newAILoadouts.SetPath(newPath);
                 newAILoadouts.isDirty = true;
                 bool added = _expansionManager.ExpansionLoadoutConfig.AddNewLoadoutFile(newAILoadouts);
                 if (added)
@@ -4082,7 +4080,7 @@ namespace ExpansionPlugin
                     LootdropList = new BindingList<AILoadouts>(),
                     isDirty = true
                 };
-                newAILootDrops.setpath(newPath);
+                newAILootDrops.SetPath(newPath);
                 newAILootDrops.isDirty = true;
                 bool added = _expansionManager.ExpansionLootDropConfig.AddNewLootDropFile(newAILootDrops);
                 if (added)
@@ -4596,13 +4594,13 @@ namespace ExpansionPlugin
             ExpansionAINoGoArea newnogo = new ExpansionAINoGoArea()
             {
                 Name = "New NoGO Area",
-                _Position = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2),
+                Position = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2),
                 Radius = 300,
                 Height = MapData.gethieght(AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2) + 200
             };
             if (MapData.FileExists)
             {
-                newnogo._Position.Y = (MapData.gethieght(newnogo._Position.X, newnogo._Position.Z));
+                newnogo.Position.Y = (MapData.gethieght(newnogo.Position.X, newnogo.Position.Z));
             }
             ExpansionAIPatrolConfig.Data.NoGoAreas.Add(newnogo);
             TreeNode newtreenode = new TreeNode($"{newnogo.Name}")

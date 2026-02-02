@@ -42,9 +42,9 @@ namespace ExpansionPlugin
             _suppressEvents = true;
 
             NameTB.Text = _data.Name;
-            POSXNUD.Value = (decimal)_data._Position.X;
-            POSYNUD.Value = (decimal)_data._Position.Y;
-            POSZNUD.Value = (decimal)_data._Position.Z;
+            POSXNUD.Value = (decimal)_data.Position.X;
+            POSYNUD.Value = (decimal)_data.Position.Y;
+            POSZNUD.Value = (decimal)_data.Position.Z;
             RadiusNUD.Value = (decimal)_data.Radius;
             HieghtNUD.Value = (decimal)_data.Height;
 
@@ -75,20 +75,20 @@ namespace ExpansionPlugin
         private void POSXNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data._Position.X = (float)POSXNUD.Value;
+            _data.Position.X = (float)POSXNUD.Value;
             
             PositionChanged?.Invoke(_data);
         }
         private void POSYNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data._Position.Y = (float)POSYNUD.Value;
+            _data.Position.Y = (float)POSYNUD.Value;
             
         }
         private void POSZNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data._Position.Z = (float)POSZNUD.Value;
+            _data.Position.Z = (float)POSZNUD.Value;
             
             PositionChanged?.Invoke(_data);
         }

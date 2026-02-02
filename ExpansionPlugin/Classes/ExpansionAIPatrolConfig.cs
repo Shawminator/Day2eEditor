@@ -19,13 +19,50 @@ namespace ExpansionPlugin
         public ExpansionAIPatrolConfig(string path) :base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName,
+                        useVecConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    isDirty = true;
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
         public override IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
             {
+                isDirty = false;
                 SetLoadBalancingCategoriestoDictionary();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 

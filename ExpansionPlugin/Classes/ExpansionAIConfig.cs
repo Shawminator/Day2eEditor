@@ -13,11 +13,15 @@ namespace ExpansionPlugin
         }
         public override IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
             {
+                isDirty = false;
                 Data.CreateDictionary();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 

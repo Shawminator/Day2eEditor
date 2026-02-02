@@ -10,70 +10,24 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionBookConfig : IConfigLoader
+    public class ExpansionBookConfig : ExpansionBaseIConfigLoader<ExpansionBookSettings>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ExpansionBookSettings Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
         public const int CurrentVersion = 5;
 
-        public ExpansionBookConfig(string path)
+        public ExpansionBookConfig(string path) : base(path)
         {
-            _path = path;
         }
-        public void Load()
+        protected override ExpansionBookSettings CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ExpansionBookSettings>(
-                _path,
-                createNew: () => new ExpansionBookSettings(CurrentVersion),
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "ExpansionBook"
-            );
-            var missingFields = Data.FixMissingOrInvalidFields();
-            if (missingFields.Any())
-            {
-                Console.WriteLine("Validation issues in " + FileName + ":");
-                foreach (var issue in missingFields)
-                {
-                    Console.WriteLine("- " + issue);
-                }
-                isDirty = true;
-            }
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
-                return new[] { Path.GetFileName(_path) };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
+            return new ExpansionBookSettings(CurrentVersion);
         }
 
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Data.FixMissingOrInvalidFields();
+        }
     }
-    public class ExpansionBookSettings
+    public class ExpansionBookSettings : IEquatable<ExpansionBookSettings>, IDeepCloneable<ExpansionBookSettings>
     {
         public int m_Version { get; set; }
         public int EnableStatusTab { get; set; }
@@ -558,11 +512,12 @@ namespace ExpansionPlugin
                 }
             };
         }
-        public override bool Equals(object obj)
+        public bool Equals(ExpansionBookSettings other)
         {
-            if (obj is ExpansionBookSettings other)
-            {
-                return m_Version == other.m_Version &&
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return m_Version == other.m_Version &&
                        EnableStatusTab == other.EnableStatusTab &&
                        EnablePartyTab == other.EnablePartyTab &&
                        EnableServerInfoTab == other.EnableServerInfoTab &&
@@ -579,9 +534,8 @@ namespace ExpansionPlugin
                        Links.SequenceEqual(other.Links) &&
                        Descriptions.SequenceEqual(other.Descriptions) &&
                        CraftingCategories.SequenceEqual(other.CraftingCategories);
-            }
-            return false;
         }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionBookSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

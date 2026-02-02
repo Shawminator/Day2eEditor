@@ -17,13 +17,49 @@ namespace ExpansionPlugin
         public ExpansionAILocationConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName,
+                        useVecConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    isDirty = true;
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
         public override IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
             {
-                SetAILocationsPoints();
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 isDirty = false;
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data,false, true);
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
@@ -36,32 +72,6 @@ namespace ExpansionPlugin
         protected override IEnumerable<string> ValidateData()
         {
             return Data.FixMissingOrInvalidFields();
-        }
-        protected override void OnAfterLoad(ExpansionAILocationSettings data)
-        {
-            GetVec3Points();
-        }
-        public void GetVec3Points()
-        {
-            foreach (ExpansionAIRoamingLocation location in Data.RoamingLocations)
-            {
-                location._Position = new Vec3(location.Position);
-            }
-            foreach (ExpansionAINoGoArea area in Data.NoGoAreas)
-            {
-                area._Position = new Vec3(area.Position);
-            }
-        }
-        public void SetAILocationsPoints()
-        {
-            foreach (ExpansionAIRoamingLocation location in Data.RoamingLocations)
-            {
-                location.Position = location._Position.getfloatarray();
-            }
-            foreach (ExpansionAINoGoArea area in Data.NoGoAreas)
-            {
-                area.Position = area._Position.getfloatarray();
-            }
         }
     }
     public class ExpansionAILocationSettings : IEquatable<ExpansionAILocationSettings>, IDeepCloneable<ExpansionAILocationSettings>
@@ -177,13 +187,11 @@ namespace ExpansionPlugin
     public class ExpansionAIRoamingLocation
     {
         public string? Name { get; set; }
-        public float[]? Position { get; set; }
+        public Vec3? Position { get; set; }
         public decimal? Radius { get; set; }
         public string? Type { get; set; }
         public int? Enabled { get; set; }
 
-        [JsonIgnore]
-        public Vec3 _Position { get; set; }
 
         public override string ToString()
         {
@@ -195,7 +203,7 @@ namespace ExpansionPlugin
                 return false;
 
             return Name == other.Name &&
-                   _Position.Equals(other._Position) &&
+                   Position.Equals(other.Position) &&
                    Radius == other.Radius &&
                    Type == other.Type &&
                    Enabled == other.Enabled;
@@ -208,7 +216,7 @@ namespace ExpansionPlugin
                 Radius = this.Radius,
                 Type = this.Type,
                 Enabled = this.Enabled,
-                _Position = this._Position != null ? new Vec3(this._Position.X, this._Position.Y, this._Position.Z) : null
+                Position = this.Position.Clone()
             };
         }
 
@@ -216,12 +224,10 @@ namespace ExpansionPlugin
     public class ExpansionAINoGoArea
     {
         public string? Name { get; set; }
-        public float[]? Position { get; set; }
+        public Vec3? Position { get; set; }
         public float? Radius { get; set; }
         public float? Height { get; set; }
 
-        [JsonIgnore]
-        public Vec3 _Position { get; set; }
 
         public override string ToString()
         {
@@ -233,7 +239,7 @@ namespace ExpansionPlugin
                 return false;
 
             return Name == other.Name &&
-                   _Position.Equals(other._Position) &&
+                   Position.Equals(other.Position) &&
                    Radius == other.Radius &&
                    Height == other.Height;
         }
@@ -242,7 +248,7 @@ namespace ExpansionPlugin
             return new ExpansionAINoGoArea()
             {
                 Name = this.Name,
-                _Position = this._Position != null ? new Vec3(this._Position.X, this._Position.Y, this._Position.Z) : null,
+                Position = this.Position.Clone(),
                 Radius = this.Radius,
                 Height = this.Height,
             };
