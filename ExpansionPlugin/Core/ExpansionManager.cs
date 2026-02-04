@@ -93,9 +93,9 @@ namespace ExpansionPlugin
             _paths["SafeZoneSettings"] = Path.Combine(basePath, "expansion", "settings", "SafeZoneSettings.json");
             _paths["SpawnSettings"] = Path.Combine(basePath, "expansion", "settings", "SpawnSettings.json");
 
-            LoadFiles(basePath);
+            LoadFiles();
         }
-        private void LoadFiles(string basePath)
+        private void LoadFiles()
         {
             Console.WriteLine($"\n[Expansion Manager] Loading all files associated with the Expansion Mod.");
 

@@ -10,18 +10,64 @@ using System.Threading.Tasks;
 
 namespace DynamicWeatherPlugin
 {
-    public class DynamicWeatherPluginConfig
+    public class DynamicWeatherConfig : DynamicWeatherBaseIConfigLoader<DynamicWeatherSettings>
     {
-        [JsonIgnore]
-        public bool isDirty { get; set; }
-        [JsonIgnore]
-        public string Filename { get; set; }
-
-        public BindingList<WeatherDynamic> m_Dynamics { get; set; }
-
-        public override bool Equals(object obj)
+        public DynamicWeatherConfig(string path) : base(path)
+        { 
+        }
+        public override void Load()
         {
-            if (obj is not DynamicWeatherPluginConfig other)
+            try
+            {
+                Data = new DynamicWeatherSettings()
+                {
+                    m_Dynamics = AppServices.GetRequired<FileService>().LoadOrCreateJson<BindingList<WeatherDynamic>>(
+                        _path,
+                        createNew: () => new BindingList<WeatherDynamic>(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName
+                    )
+                };
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            {
+                isDirty = false;
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data.m_Dynamics);
+                ClonedData = CloneData(Data);
+                return new[] { Path.GetFileName(_path) };
+            }
+
+            return Array.Empty<string>();
+        }
+        protected override DynamicWeatherSettings CreateDefaultData()
+        {
+            return new DynamicWeatherSettings();
+        }
+    }
+    public class DynamicWeatherSettings : IEquatable<DynamicWeatherSettings>, IDeepCloneable<DynamicWeatherSettings>
+    {
+        public BindingList<WeatherDynamic> m_Dynamics { get; set; }
+        public DynamicWeatherSettings()
+        {
+        }
+        public bool Equals(DynamicWeatherSettings obj)
+        {
+            if (obj is not DynamicWeatherSettings other)
                 return false;
 
             if (m_Dynamics == null && other.m_Dynamics == null)
@@ -38,174 +84,13 @@ namespace DynamicWeatherPlugin
 
             return true;
         }
-        public IEnumerable<string> Save()
+        public override bool Equals(object? obj) => Equals(obj as DynamicWeatherSettings);
+        public DynamicWeatherSettings Clone()
         {
-            List<string> filesnames = new List<string>();
-            if (isDirty)
+            return new DynamicWeatherSettings
             {
-                AppServices.GetRequired<FileService>().SaveJson(Filename, m_Dynamics);
-                isDirty = false;
-                filesnames.Add(Path.GetFileName(Filename));
-            }
-            return filesnames.ToArray();
-        }
-
-        internal void CreateDefaults()
-        {
-            m_Dynamics = new BindingList<WeatherDynamic>
-            {
-                new WeatherDynamic
-                {
-                    chat_message = true,
-                    notify_message = true,
-                    name = "HOT SUN",
-                    transition_min = 0.1m,
-                    transition_max = 0.2m,
-                    duration_min = 0.5m,
-                    duration_max = 1.0m,
-                    overcast_min = 0.0m,
-                    overcast_max = 0.1m,
-                    use_dyn_vol_fog = false,
-                    dyn_vol_fog_dist_min = 0.0m,
-                    dyn_vol_fog_dist_max = 0.0m,
-                    dyn_vol_fog_height_min = 0.0m,
-                    dyn_vol_fog_height_max = 0.0m,
-                    dyn_vol_fog_bias = 0.0m,
-                    fog_transition_time = 0.0m,
-                    fog_min = 0.0m,
-                    fog_max = 0.0m,
-                    wind_speed_min = 0.0m,
-                    wind_speed_max = 0.1m,
-                    wind_dir_min = 0.0m,
-                    wind_dir_max = 360.0m,
-                    rain_min = 0.0m,
-                    rain_max = 0.0m,
-                    snowfall_min = 0.0m,
-                    snowfall_max = 0.0m,
-                    snowflake_scale_min = 0.0m,
-                    snowflake_scale_max = 0.0m,
-                    use_snowflake_scale = false,
-                    storm = false,
-                    thunder_threshold = 0.0m,
-                    thunder_timeout = 0.0m,
-                    use_global_temperature = true,
-                    global_temperature_override = 35.0m
-                },
-                new WeatherDynamic
-                {
-                    chat_message = true,
-                    notify_message = true,
-                    name = "QUICK FREEZE",
-                    transition_min = 0.1m,
-                    transition_max = 0.2m,
-                    duration_min = 0.5m,
-                    duration_max = 1.0m,
-                    overcast_min = 0.2m,
-                    overcast_max = 0.4m,
-                    use_dyn_vol_fog = false,
-                    dyn_vol_fog_dist_min = 0.0m,
-                    dyn_vol_fog_dist_max = 0.0m,
-                    dyn_vol_fog_height_min = 0.0m,
-                    dyn_vol_fog_height_max = 0.0m,
-                    dyn_vol_fog_bias = 0.0m,
-                    fog_transition_time = 0.0m,
-                    fog_min = 0.1m,
-                    fog_max = 0.3m,
-                    wind_speed_min = 0.0m,
-                    wind_speed_max = 0.2m,
-                    wind_dir_min = 0.0m,
-                    wind_dir_max = 360.0m,
-                    rain_min = 0.0m,
-                    rain_max = 0.0m,
-                    snowfall_min = 0.6m,
-                    snowfall_max = 1.0m,
-                    snowflake_scale_min = 1.0m,
-                    snowflake_scale_max = 3.0m,
-                    use_snowflake_scale = true,
-                    storm = false,
-                    thunder_threshold = 0.0m,
-                    thunder_timeout = 0.0m,
-                    use_global_temperature = true,
-                    global_temperature_override = -15.0m
-                },
-                new WeatherDynamic
-                {
-                    chat_message = true,
-                    notify_message = true,
-                    name = "MICRO STORM",
-                    transition_min = 0.1m,
-                    transition_max = 0.2m,
-                    duration_min = 0.5m,
-                    duration_max = 1.0m,
-                    overcast_min = 0.8m,
-                    overcast_max = 1.0m,
-                    use_dyn_vol_fog = true,
-                    dyn_vol_fog_dist_min = 0.4m,
-                    dyn_vol_fog_dist_max = 0.6m,
-                    dyn_vol_fog_height_min = 0.2m,
-                    dyn_vol_fog_height_max = 0.3m,
-                    dyn_vol_fog_bias = 10.0m,
-                    fog_transition_time = 5.0m,
-                    fog_min = 0.5m,
-                    fog_max = 0.8m,
-                    wind_speed_min = 0.4m,
-                    wind_speed_max = 0.8m,
-                    wind_dir_min = 0.0m,
-                    wind_dir_max = 360.0m,
-                    rain_min = 0.4m,
-                    rain_max = 0.8m,
-                    snowfall_min = 0.0m,
-                    snowfall_max = 0.0m,
-                    snowflake_scale_min = 0.0m,
-                    snowflake_scale_max = 0.0m,
-                    use_snowflake_scale = false,
-                    storm = true,
-                    thunder_threshold = 0.0m,
-                    thunder_timeout = 5.0m,
-                    use_global_temperature = false,
-                    global_temperature_override = 0.0m
-                },
-                new WeatherDynamic
-                {
-                    chat_message = true,
-                    notify_message = true,
-                    name = "FULL OVERCAST QUICK",
-                    transition_min = 0.1m,
-                    transition_max = 0.2m,
-                    duration_min = 0.5m,
-                    duration_max = 1.0m,
-                    overcast_min = 1.0m,
-                    overcast_max = 1.0m,
-                    use_dyn_vol_fog = true,
-                    dyn_vol_fog_dist_min = 0.5m,
-                    dyn_vol_fog_dist_max = 0.7m,
-                    dyn_vol_fog_height_min = 0.3m,
-                    dyn_vol_fog_height_max = 0.5m,
-                    dyn_vol_fog_bias = 10.0m,
-                    fog_transition_time = 5.0m,
-                    fog_min = 0.3m,
-                    fog_max = 0.6m,
-                    wind_speed_min = 0.1m,
-                    wind_speed_max = 0.3m,
-                    wind_dir_min = 0.0m,
-                    wind_dir_max = 360.0m,
-                    rain_min = 0.0m,
-                    rain_max = 0.2m,
-                    snowfall_min = 0.0m,
-                    snowfall_max = 0.0m,
-                    snowflake_scale_min = 0.0m,
-                    snowflake_scale_max = 0.0m,
-                    use_snowflake_scale = false,
-                    storm = false,
-                    thunder_threshold = 0.0m,
-                    thunder_timeout = 0.0m,
-                    use_global_temperature = false,
-                    global_temperature_override = 0.0m
-                }
+                m_Dynamics = new BindingList<WeatherDynamic>(this.m_Dynamics.Select(x => x.Clone()).ToList()),
             };
-
-            // Mark as dirty since defaults were created
-            isDirty = true;
         }
     }
     public class WeatherDynamic

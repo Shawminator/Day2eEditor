@@ -9,41 +9,28 @@ namespace DynamicWeatherPlugin
     public partial class DynamicWeatherForm : Form
     {
         private IPluginForm _plugin;
-        public string DynamicWeatherPluginPath { get; private set; }
 
-        public DynamicWeatherPluginConfig DynamicWeatherPlugin;
-        private bool _suppressEvents;
+        private DynamicWeatherManager _DynamicWeatherManager { get; set; }
+
         private TreeNode? currentTreeNode;
-        private DynamicWeatherPluginConfig _originalData;
+        private bool _suppressEvents;
 
         public DynamicWeatherForm(IPluginForm plugin)
         {
             InitializeComponent();
             _plugin = plugin;
+            _DynamicWeatherManager = new DynamicWeatherManager();
+            _DynamicWeatherManager.SetDynamicweatherStuff();
+            AppServices.Register(_DynamicWeatherManager);
+
         }
         private void DynamicWeatherForm_Load(object sender, EventArgs e)
         {
-            DynamicWeatherPluginPath = Path.Combine(AppServices.GetRequired<EconomyManager>().basePath, "weather.json");
-            DynamicWeatherPlugin = new DynamicWeatherPluginConfig();
-            DynamicWeatherPlugin.Filename = DynamicWeatherPluginPath;
-            if (File.Exists(DynamicWeatherPluginPath))
-            {
-                DynamicWeatherPlugin.m_Dynamics = new BindingList<WeatherDynamic>(JsonSerializer.Deserialize<WeatherDynamic[]>(File.ReadAllText(DynamicWeatherPluginPath), new JsonSerializerOptions { Converters = { new BoolConverter() } }).ToList());
-                DynamicWeatherPlugin.isDirty = false;
-            }
-            else
-            {
-                DynamicWeatherPlugin.CreateDefaults();
-                DynamicWeatherPlugin.Save();
-                MessageBox.Show("No Config Found, default Config Created....");
-            }
-
-            _originalData = CloneData(DynamicWeatherPlugin);
             TreeNode Root = new TreeNode("Dynamic Weather")
             {
-                Tag = DynamicWeatherPlugin
+                Tag = _DynamicWeatherManager.DynamicWeatherPluginConfig
             };
-            foreach (WeatherDynamic wd in DynamicWeatherPlugin.m_Dynamics)
+            foreach (WeatherDynamic wd in _DynamicWeatherManager.DynamicWeatherPluginConfig.Data.m_Dynamics)
             {
                 TreeNode wdnode = new TreeNode(wd.name)
                 {
@@ -59,7 +46,7 @@ namespace DynamicWeatherPlugin
         }
         public void savefiles(bool updated = false)
         {
-            var savedFiles = DynamicWeatherPlugin.Save();
+            var savedFiles = _DynamicWeatherManager.Save();
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
@@ -69,7 +56,6 @@ namespace DynamicWeatherPlugin
             {
                 ShowSavedFilesMessage(savedFiles);
             }
-            _originalData = CloneData(DynamicWeatherPlugin);
         }
         private void ShowSavedFilesMessage(IEnumerable<string> files)
         {
@@ -90,36 +76,32 @@ namespace DynamicWeatherPlugin
                 MessageBoxIcon.Information
             );
         }
-        private DynamicWeatherPluginConfig CloneData(DynamicWeatherPluginConfig data)
+        private void DynamicWeatherForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var clone = new DynamicWeatherPluginConfig
+            if (_DynamicWeatherManager.needToSave())
             {
-                isDirty = data.isDirty,
-                Filename = data.Filename,
-                m_Dynamics = new BindingList<WeatherDynamic>()
-            };
-
-            foreach (var dynamic in data.m_Dynamics)
-            {
-                clone.m_Dynamics.Add(dynamic.Clone());
+                DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    savefiles();
+                }
             }
-
-            return clone;
         }
-        public void HasChanges()
+        private void DynamicWeatherForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (DynamicWeatherPlugin != null)
-            {
-                DynamicWeatherPlugin.isDirty = !DynamicWeatherPlugin.Equals(_originalData);
-            }
+            AppServices.Unregister<DynamicWeatherManager>();
         }
         private void DynamicWeatherTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
             _suppressEvents = true;
             currentTreeNode = e.Node;
-
+            if (e.Node.Tag is DynamicWeatherConfig)
+            {
+                panel2.Visible = false;
+            }
             if (e.Node.Tag is WeatherDynamic CurrentDynamicWeather)
             {
+                panel2.Visible = true;
                 chat_messageCB.Checked = CurrentDynamicWeather.chat_message;
                 notify_messageCB.Checked = CurrentDynamicWeather.notify_message;
                 nameTB.Text = CurrentDynamicWeather.name;
@@ -206,18 +188,16 @@ namespace DynamicWeatherPlugin
                 use_global_temperature = true,
                 global_temperature_override = 35.0m
             };
-            DynamicWeatherPlugin.m_Dynamics.Add(newweather);
+            _DynamicWeatherManager.DynamicWeatherPluginConfig.Data.m_Dynamics.Add(newweather);
             currentTreeNode.Nodes.Add(new TreeNode(newweather.name)
             {
                 Tag = newweather
             });
-            HasChanges();
         }
         private void removeWeatherToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DynamicWeatherPlugin.m_Dynamics.Remove(currentTreeNode.Tag as WeatherDynamic);
+            _DynamicWeatherManager.DynamicWeatherPluginConfig.Data.m_Dynamics.Remove(currentTreeNode.Tag as WeatherDynamic);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            HasChanges();
         }
         private void DynamicWeatherTV_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -232,7 +212,7 @@ namespace DynamicWeatherPlugin
                 DynamicWeatherCM.Items.Add(removeWeatherToolStripMenuItem);
                 DynamicWeatherCM.Show(Cursor.Position);
             }
-            else if (e.Node.Tag != null && e.Node.Tag is DynamicWeatherPluginConfig)
+            else if (e.Node.Tag != null && e.Node.Tag is DynamicWeatherConfig)
             {
                 DynamicWeatherCM.Items.Clear();
                 DynamicWeatherCM.Items.Add(addNewWeatherToolStripMenuItem);
@@ -245,33 +225,21 @@ namespace DynamicWeatherPlugin
             TextBox textbox = sender as TextBox;
             ShellHelper.SetStringValue(currentTreeNode.Tag as WeatherDynamic, textbox.Name.Substring(0, textbox.Name.Length - 2), textbox.Text);
             currentTreeNode.Text = textbox.Text;
-            HasChanges();
         }
         private void DWPBoolsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             CheckBox chk = sender as CheckBox;
             ShellHelper.SetBoolValue(currentTreeNode.Tag as WeatherDynamic, chk.Name.Substring(0, chk.Name.Length - 2), chk.Checked);
-            HasChanges();
         }
         private void DWPDecimalsNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             NumericUpDown nud = sender as NumericUpDown;
             ShellHelper.SetDecimalValue(currentTreeNode.Tag as WeatherDynamic, nud.Name.Substring(0, nud.Name.Length - 3), nud.Value);
-            HasChanges();
         }
-        private void DynamicWeatherForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (DynamicWeatherPlugin.isDirty)
-            {
-                DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    savefiles();
-                }
-            }
-        }
+
+
     }
 
     [PluginInfo("Dynamic Weather Manager", "DynamicWeatherPlugin", "DynamicWeatherPlugin.DynamicWeather.png")]
