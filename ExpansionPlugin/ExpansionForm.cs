@@ -74,7 +74,7 @@ namespace ExpansionPlugin
                             DrawbaseAIPatrols(node.Parent.Parent.Parent.Parent.Tag as ExpansionAIPatrolConfig);
                         };
                         ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
-                    
+
                         ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Nodes[0].Tag as ExpansionAIPatrol;
                         SetupAIPatrols(ExpansionAIPatrol, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
@@ -365,12 +365,12 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionRaidSettingsRaidScheduleControl(), typeof(ExpansionRaidConfig), ExpansionRaidSchedule, selected);
                 },
                 //SafeZone
-                [typeof(ExpansionSafeZoneSettings)] = (node,selected) =>
+                [typeof(ExpansionSafeZoneSettings)] = (node, selected) =>
                 {
                     ExpansionSafeZoneSettings ExpansionSafeZoneSettings = node.Tag as ExpansionSafeZoneSettings;
                     ShowHandler(new ExpansionSafeZoneSettingsControl(), typeof(ExpansionSafeZoneConfig), ExpansionSafeZoneSettings, selected);
                 },
-                [typeof(ExpansionSafeZoneCircle)] = (node,selected) =>
+                [typeof(ExpansionSafeZoneCircle)] = (node, selected) =>
                 {
                     ExpansionSafeZoneCircle ExpansionSafeZoneCircle = node.Tag as ExpansionSafeZoneCircle;
                     var control = new ExpansionSafeZoneCircleControl();
@@ -417,12 +417,12 @@ namespace ExpansionPlugin
                     _mapControl.EnsureVisible(new PointF(ExpansionSafeZoneCylinder.Center.X, ExpansionSafeZoneCylinder.Center.Z));
                 },
                 //SocialMedia
-                [typeof(ExpansionNewsFeedTextSetting)] = (node,selected) =>
+                [typeof(ExpansionNewsFeedTextSetting)] = (node, selected) =>
                 {
                     ExpansionNewsFeedTextSetting ExpansionNewsFeedTextSetting = node.Tag as ExpansionNewsFeedTextSetting;
                     ShowHandler(new ExpansionSocialMediaSettingsTextControl(), typeof(ExpansionSocialMediaConfig), ExpansionNewsFeedTextSetting, selected);
                 },
-                [typeof(ExpansionNewsFeedLinkSetting)] = (node,selected) =>
+                [typeof(ExpansionNewsFeedLinkSetting)] = (node, selected) =>
                 {
                     ExpansionNewsFeedLinkSetting ExpansionNewsFeedLinkSetting = node.Tag as ExpansionNewsFeedLinkSetting;
                     ShowHandler(new ExpansionSocialMediaSettingsLinkControl(), typeof(ExpansionSocialMediaConfig), ExpansionNewsFeedLinkSetting, selected);
@@ -573,6 +573,15 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(moveWaypointDownToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
+                    else if (node.Parent.Tag is ExpansionSafeZonePolygon)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeSafeZonePolygonPointToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveSafeZonePolygonPointUpToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(moveSafeZonePolygonPointDownToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 },
                 //AI
                 [typeof(ExpansionAIPatrol)] = node =>
@@ -720,6 +729,25 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(RemoveRaidScheduleToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //safezone
+                [typeof(ExpansionSafeZoneCircle)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemovesafeZoneCircleZoneToolStripmenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionSafeZonePolygon)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeSafeZonePolygonPointToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionSafeZoneCylinder)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveSafeZOneCylinderZoneToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -3559,7 +3587,7 @@ namespace ExpansionPlugin
             foreach (ExpansionSafeZonePolygon pos in ExpansionSafeZoneConfig.Data.PolygonZones)
             {
                 var myPointsList = new List<PointF>();
-                foreach(Vec3 _vec3 in pos.Positions)
+                foreach (Vec3 _vec3 in pos.Positions)
                 {
                     myPointsList.Add(new PointF(_vec3.X, _vec3.Z));
                 }
@@ -4054,9 +4082,9 @@ namespace ExpansionPlugin
                             closestDistance = distance;
                             closestPos = pos1;
                         }
-                        foreach(TreeNode chi in child.Nodes)
+                        foreach (TreeNode chi in child.Nodes)
                         {
-                            if(chi.Tag is Vec3 pos12)
+                            if (chi.Tag is Vec3 pos12)
                             {
                                 PointF posScreen1 = _mapControl.MapToScreen(new PointF(pos12.X, pos12.Z));
 
@@ -4087,7 +4115,7 @@ namespace ExpansionPlugin
                             closestPos = pos2;
                         }
                     }
-                    
+
                 }
             }
 
@@ -4104,9 +4132,9 @@ namespace ExpansionPlugin
                             ExpansionTV.SelectedNode = child;
                             break;
                         }
-                        foreach(TreeNode chi in child.Nodes)
+                        foreach (TreeNode chi in child.Nodes)
                         {
-                            if(chi.Tag == closestPos)
+                            if (chi.Tag == closestPos)
                             {
                                 ExpansionTV.SelectedNode = chi;
                                 break;
@@ -5841,7 +5869,6 @@ namespace ExpansionPlugin
                 }
             }
         }
-
         private void RemoveLockRaidToolToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionRaidConfig.Data.LockRaidTools.Remove(currentTreeNode.Text);
@@ -5867,6 +5894,55 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionRaidConfig.Data.Schedule.Remove(currentTreeNode.Tag as ExpansionRaidSchedule);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        //SafeZone
+        private void AddNewSafeZoneCircleZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void RemovesafeZoneCircleZoneToolStripmenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void AddNewsafeZonePolygonZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void RemoveSafeZonePolygonZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void AddNewSafeZonePolygonPointtoolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeSafeZonePolygonPointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void moveSafeZonePolygonPointUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void moveSafeZonePolygonPointDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void AddNewSafeZoneCylinderZoneToolStripmenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void RemoveSafeZOneCylinderZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void AddSafeZoneForceCleanUpItemsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void RemoveSafeZoneForcecleanUpItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
         #endregion right click methods
 
@@ -5925,6 +6001,7 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
 
 
 
