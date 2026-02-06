@@ -17,6 +17,54 @@ namespace ExpansionPlugin
         public ExpansionSafeZoneConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName,
+                        useVecConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    isDirty = true;
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            {
+                isDirty = false;
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
+                ClonedData = CloneData(Data);
+                return new[] { Path.GetFileName(_path) };
+            }
+
+            return Array.Empty<string>();
+        }
         protected override ExpansionSafeZoneSettings CreateDefaultData()
         {
             return new ExpansionSafeZoneSettings(CurrentVersion);
@@ -288,14 +336,16 @@ namespace ExpansionPlugin
                 return false;
 
             return Center.Equals(other.Center) &&
-                Radius == other.Radius;
+                Radius == other.Radius &&
+                CircleSafeZoneName == other.CircleSafeZoneName;
         }
         public ExpansionSafeZoneCircle Clone()
         {
             return new ExpansionSafeZoneCircle()
             {
                 Center = this.Center.Clone(),
-                Radius = this.Radius
+                Radius = this.Radius,
+                CircleSafeZoneName = this.CircleSafeZoneName
             };
         }
     }
@@ -314,6 +364,9 @@ namespace ExpansionPlugin
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionSafeZonePolygon other)
+                return false;
+
+            if (polygonSafeZoneName != other.polygonSafeZoneName)
                 return false;
 
             if (RadiusPolygon != other.RadiusPolygon)
@@ -341,7 +394,8 @@ namespace ExpansionPlugin
             return new ExpansionSafeZonePolygon()
             {
                 Positions = new BindingList<Vec3>(this.Positions.Select(x => x.Clone()).ToList()),
-                RadiusPolygon = this.RadiusPolygon
+                RadiusPolygon = this.RadiusPolygon,
+                polygonSafeZoneName = this.polygonSafeZoneName
             };
         }
     }
@@ -363,9 +417,10 @@ namespace ExpansionPlugin
             if (obj is not ExpansionSafeZoneCylinder other)
                 return false;
 
-            return Center == other.Center &&
+            return Center.Equals(other.Center) &&
                 Radius == other.Radius &&
-                Height == other.Height;
+                Height == other.Height &&
+                CylinderSafeZoneName == other.CylinderSafeZoneName;
         }
         public ExpansionSafeZoneCylinder Clone()
         {
@@ -373,7 +428,8 @@ namespace ExpansionPlugin
             {
                 Center = this.Center.Clone(),
                 Radius = this.Radius,
-                Height = this.Height
+                Height = this.Height,
+                CylinderSafeZoneName = this.CylinderSafeZoneName
             };
         }
     }

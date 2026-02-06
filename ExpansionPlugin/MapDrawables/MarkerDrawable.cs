@@ -12,9 +12,12 @@ namespace ExpansionPlugin
         public PointF MapPosition { get; set; }
         public Color Color { get; set; } = Color.Red;
         public float Radius { get; set; } = 5f;
-
+        public bool Fill { get; set; } = false;
+        public int FillAlpha { get; set; } = 60;
         public bool Scaleradius { get; set; } = false;
         public bool Shade { get; set; } = false;
+        public int ShadeAlpha { get; set; } = 175;
+        public float ShadeSpacing { get; set; } = 7.5f;
 
         private readonly Size _mapSize;
 
@@ -66,41 +69,41 @@ namespace ExpansionPlugin
             }
 
 
-            // Diagonal shading lines clipped to circle
             if (Shade)
             {
                 using (var path = new System.Drawing.Drawing2D.GraphicsPath())
                 {
-                    // Define the circular clipping region
                     path.AddEllipse(
                         screenX - screenRadius,
                         screenY - screenRadius,
                         screenRadius * 2,
                         screenRadius * 2);
 
-                    // Save original clip
-                    var originalClip = g.Clip.Clone();
-
-                    // Apply circular clip
-                    g.SetClip(path);
-
-                    using (var pen = new Pen(Color.FromArgb(175, Color))) // semi-transparent
+                    if (Fill)
                     {
-                        float spacing = 7.5f * zoom; // scale spacing with zoom
-                        float left = screenX - screenRadius;
-                        float top = screenY - screenRadius;
-                        float diameter = screenRadius * 2;
-
-                        for (float i = -diameter; i < diameter * 2; i += spacing)
-                        {
-                            PointF start = new PointF(left + i, top);
-                            PointF end = new PointF(left, top + i);
-                            g.DrawLine(pen, start, end);
-                        }
+                        using var fillBrush = new SolidBrush(Color.FromArgb(FillAlpha, Color));
+                        g.FillPath(fillBrush, path);
                     }
 
-                    // Restore original clip
-                    g.SetClip(originalClip, System.Drawing.Drawing2D.CombineMode.Replace);
+                    var state = g.Save();
+                    g.SetClip(path);
+                    using var pen = new Pen(Color.FromArgb(ShadeAlpha, Color), 1f);
+
+                     var b = path.GetBounds();
+                    float left = b.Left;
+                    float top = b.Top;
+                    float width = b.Width;
+                    float height = b.Height;
+
+                    float max = width + height;
+                    for (float i = -max; i < max * 2; i += ShadeSpacing)
+                    {
+                        PointF start = new PointF(left + i, top);
+                        PointF end = new PointF(left, top + i);
+                        g.DrawLine(pen, start, end);
+                    }
+
+                    g.Restore(state);
                 }
             }
 

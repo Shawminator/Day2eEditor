@@ -64,18 +64,34 @@ namespace ExpansionPlugin
                 //vec3
                 [typeof(Vec3)] = (node, selected) =>
                 {
-                    Vec3 v3 = node.Tag as Vec3;
-                    var control = new Vector3Control();
-                    control.PositionChanged += (updatedPos) =>
-                    {
-                        _mapControl.ClearDrawables();
-                        DrawbaseAIPatrols(node.Parent.Parent.Parent.Parent.Tag as ExpansionAIPatrolConfig);
-                    };
-                    ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
                     if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
                     {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            DrawbaseAIPatrols(node.Parent.Parent.Parent.Parent.Tag as ExpansionAIPatrolConfig);
+                        };
+                        ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
+                    
                         ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Nodes[0].Tag as ExpansionAIPatrol;
                         SetupAIPatrols(ExpansionAIPatrol, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                    else if (node.Parent.Tag is ExpansionSafeZonePolygon)
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            DrawbaseSafeZoneData(node.FindParentOfType<ExpansionSafeZoneConfig>());
+                        };
+                        ShowHandler(control, typeof(ExpansionSafeZoneConfig), v3, selected);
+
+                        ExpansionSafeZonePolygon ExpansionSafeZonePolygon = node.Parent.Tag as ExpansionSafeZonePolygon;
+                        SetupSafeZonePolygonMarkers(ExpansionSafeZonePolygon, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                 },
@@ -347,6 +363,69 @@ namespace ExpansionPlugin
                 {
                     ExpansionRaidSchedule ExpansionRaidSchedule = node.Tag as ExpansionRaidSchedule;
                     ShowHandler(new ExpansionRaidSettingsRaidScheduleControl(), typeof(ExpansionRaidConfig), ExpansionRaidSchedule, selected);
+                },
+                //SafeZone
+                [typeof(ExpansionSafeZoneSettings)] = (node,selected) =>
+                {
+                    ExpansionSafeZoneSettings ExpansionSafeZoneSettings = node.Tag as ExpansionSafeZoneSettings;
+                    ShowHandler(new ExpansionSafeZoneSettingsControl(), typeof(ExpansionSafeZoneConfig), ExpansionSafeZoneSettings, selected);
+                },
+                [typeof(ExpansionSafeZoneCircle)] = (node,selected) =>
+                {
+                    ExpansionSafeZoneCircle ExpansionSafeZoneCircle = node.Tag as ExpansionSafeZoneCircle;
+                    var control = new ExpansionSafeZoneCircleControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseSafeZoneData(node.FindParentOfType<ExpansionSafeZoneConfig>());
+                    };
+                    control.RadiusChanged += (UpdateRadius) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseSafeZoneData(node.FindParentOfType<ExpansionSafeZoneConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionSafeZoneConfig), ExpansionSafeZoneCircle, selected);
+
+                    SetupSafeZoneCircleMarkers(ExpansionSafeZoneCircle, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionSafeZoneCircle.Center.X, ExpansionSafeZoneCircle.Center.Z));
+                },
+                [typeof(ExpansionSafeZonePolygon)] = (node, selected) =>
+                {
+                    ExpansionSafeZonePolygon ExpansionSafeZonePolygon = node.Tag as ExpansionSafeZonePolygon;
+                    ShowHandler<IUIHandler>(null, typeof(ExpansionSafeZoneConfig), ExpansionSafeZonePolygon, selected);
+
+                    SetupSafeZonePolygonMarkers(ExpansionSafeZonePolygon, node);
+                    _mapControl.EnsureVisible(PolygonPanTarget.GetPanTargetXZ(ExpansionSafeZonePolygon.Positions));
+                },
+                [typeof(ExpansionSafeZoneCylinder)] = (node, selected) =>
+                {
+                    ExpansionSafeZoneCylinder ExpansionSafeZoneCylinder = node.Tag as ExpansionSafeZoneCylinder;
+                    var control = new ExpansionSafeZoneCylinderControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseSafeZoneData(node.FindParentOfType<ExpansionSafeZoneConfig>());
+                    };
+                    control.RadiusChanged += (UpdateRadius) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseSafeZoneData(node.FindParentOfType<ExpansionSafeZoneConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionSafeZoneConfig), ExpansionSafeZoneCylinder, selected);
+
+                    SetupSafeZoneCylinderMarkers(ExpansionSafeZoneCylinder, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionSafeZoneCylinder.Center.X, ExpansionSafeZoneCylinder.Center.Z));
+                },
+                //SocialMedia
+                [typeof(ExpansionNewsFeedTextSetting)] = (node,selected) =>
+                {
+                    ExpansionNewsFeedTextSetting ExpansionNewsFeedTextSetting = node.Tag as ExpansionNewsFeedTextSetting;
+                    ShowHandler(new ExpansionSocialMediaSettingsTextControl(), typeof(ExpansionSocialMediaConfig), ExpansionNewsFeedTextSetting, selected);
+                },
+                [typeof(ExpansionNewsFeedLinkSetting)] = (node,selected) =>
+                {
+                    ExpansionNewsFeedLinkSetting ExpansionNewsFeedLinkSetting = node.Tag as ExpansionNewsFeedLinkSetting;
+                    ShowHandler(new ExpansionSocialMediaSettingsLinkControl(), typeof(ExpansionSocialMediaConfig), ExpansionNewsFeedLinkSetting, selected);
                 }
             };
             // ----------------------
@@ -474,6 +553,7 @@ namespace ExpansionPlugin
                 }
             };
         }
+
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -2715,10 +2795,18 @@ namespace ExpansionPlugin
             };
             foreach (ExpansionSafeZonePolygon rs in ef.Data.PolygonZones)
             {
-                PolygonZonesRoot.Nodes.Add(new TreeNode(rs.ToString())
+                TreeNode SFP = new TreeNode(rs.ToString())
                 {
                     Tag = rs
-                });
+                };
+                foreach (Vec3 v3 in rs.Positions)
+                {
+                    SFP.Nodes.Add(new TreeNode(v3.GetString())
+                    {
+                        Tag = v3
+                    });
+                }
+                PolygonZonesRoot.Nodes.Add(SFP);
             }
             EconomyRootNode.Nodes.Add(PolygonZonesRoot);
 
@@ -3066,6 +3154,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_ServerMarkerDataDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_VehicleSpawnPositionSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_VehicleSpawnPositionDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_ServerSafeZoneSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_ServerSafeZoneDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -3074,6 +3164,9 @@ namespace ExpansionPlugin
             _selectedAINOGoArea = null;
             _selectedServerMarkerData = null;
             _selectedVehicleSpanPosition = null;
+            _selectedSafeZoneCircle = null;
+            _selectedSafeZonePolygon = null;
+            _selectedSafeZoneCylinder = null;
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -3138,6 +3231,9 @@ namespace ExpansionPlugin
         private ExpansionAINoGoArea _selectedAINOGoArea;
         private ExpansionServerMarkerData _selectedServerMarkerData;
         private ExpansionMarketSpawnPosition _selectedVehicleSpanPosition;
+        private ExpansionSafeZoneCircle _selectedSafeZoneCircle;
+        private ExpansionSafeZonePolygon _selectedSafeZonePolygon;
+        private ExpansionSafeZoneCylinder _selectedSafeZoneCylinder;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -3228,7 +3324,45 @@ namespace ExpansionPlugin
                     DrawbaseVehicleSpawnPositions(ExpansionMarketSettingsConfig);
             });
         }
+        private void SetupSafeZoneCircleMarkers(ExpansionSafeZoneCircle expansionSafeZoneCircle, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedSafeZoneCircle = expansionSafeZoneCircle;
+                _mapControl.MapsingleClicked += MapControl_ServerSafeZoneSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ServerSafeZoneDoubleclicked;
 
+                var ExpansionSafeZoneConfig = node.FindParentOfType<ExpansionSafeZoneConfig>();
+                if (ExpansionSafeZoneConfig != null)
+                    DrawbaseSafeZoneData(ExpansionSafeZoneConfig);
+            });
+        }
+        private void SetupSafeZonePolygonMarkers(ExpansionSafeZonePolygon ExpansionSafeZonePolygon, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedSafeZonePolygon = ExpansionSafeZonePolygon;
+                _mapControl.MapsingleClicked += MapControl_ServerSafeZoneSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ServerSafeZoneDoubleclicked;
+
+                var ExpansionSafeZoneConfig = node.FindParentOfType<ExpansionSafeZoneConfig>();
+                if (ExpansionSafeZoneConfig != null)
+                    DrawbaseSafeZoneData(ExpansionSafeZoneConfig);
+            });
+        }
+        private void SetupSafeZoneCylinderMarkers(ExpansionSafeZoneCylinder ExpansionSafeZoneCylinder, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedSafeZoneCylinder = ExpansionSafeZoneCylinder;
+                _mapControl.MapsingleClicked += MapControl_ServerSafeZoneSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ServerSafeZoneDoubleclicked;
+
+                var ExpansionSafeZoneConfig = node.FindParentOfType<ExpansionSafeZoneConfig>();
+                if (ExpansionSafeZoneConfig != null)
+                    DrawbaseSafeZoneData(ExpansionSafeZoneConfig);
+            });
+        }
         //Draw Methods
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
         {
@@ -3401,6 +3535,70 @@ namespace ExpansionPlugin
             if (selectedMarker != null)
             {
                 _mapControl.RegisterDrawable(selectedMarker);
+            }
+        }
+        private void DrawbaseSafeZoneData(ExpansionSafeZoneConfig ExpansionSafeZoneConfig)
+        {
+            foreach (ExpansionSafeZoneCircle pos in ExpansionSafeZoneConfig.Data.CircleZones)
+            {
+                var marker = new MarkerDrawable(new PointF((float)pos.Center.X, (float)pos.Center.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)pos.Radius,
+                    Scaleradius = true,
+                    Fill = true,
+                    FillAlpha = 80,
+                    Shade = true
+                };
+                if (_selectedSafeZoneCircle == pos)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
+            }
+            foreach (ExpansionSafeZonePolygon pos in ExpansionSafeZoneConfig.Data.PolygonZones)
+            {
+                var myPointsList = new List<PointF>();
+                foreach(Vec3 _vec3 in pos.Positions)
+                {
+                    myPointsList.Add(new PointF(_vec3.X, _vec3.Z));
+                }
+                var marker = new PolygonDrawable(myPointsList, _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    StrokeWidth = 2f,
+                    Fill = true,
+                    FillAlpha = 80,
+                    Shade = true,
+                    DrawVertices = true,
+                    VertexRadius = 5f,
+                    Selectedvec3 = currentTreeNode.Tag as Vec3
+
+                };
+                if (_selectedSafeZonePolygon == pos)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+
+                _mapControl.RegisterDrawable(marker);
+            }
+
+            foreach (ExpansionSafeZoneCylinder pos in ExpansionSafeZoneConfig.Data.CylinderZones)
+            {
+                var marker = new MarkerDrawable(new PointF((float)pos.Center.X, (float)pos.Center.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)pos.Radius,
+                    Scaleradius = true,
+                    Fill = true,
+                    FillAlpha = 80,
+                    Shade = true
+                };
+                if (_selectedSafeZoneCylinder == pos)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
             }
         }
         //map click methods
@@ -3802,6 +4000,161 @@ namespace ExpansionPlugin
                 ShowHandler(new ExpasnionMarksetSettingsVehicleSpawnInfoControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, new List<TreeNode>() { currentTreeNode });
                 DrawbaseVehicleSpawnPositions(_expansionManager.ExpansionMarketSettingsConfig);
                 currentTreeNode.Text = ExpansionMarketSpawnPosition.ToString();
+            }
+        }
+        private void MapControl_ServerSafeZoneSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            if (currentTreeNode.Tag is Vec3)
+            {
+                parentNode = currentTreeNode.Parent.Parent.Parent;
+            }
+
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child2 in parentNode.Nodes)
+            {
+                foreach (TreeNode child in child2.Nodes)
+                {
+                    if (child.Tag is ExpansionSafeZoneCircle pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.Center.X, pos.Center.Z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                    else if (child.Tag is ExpansionSafeZonePolygon pos1)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(PolygonPanTarget.GetPanTargetXZ(pos1.Positions));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos1;
+                        }
+                        foreach(TreeNode chi in child.Nodes)
+                        {
+                            if(chi.Tag is Vec3 pos12)
+                            {
+                                PointF posScreen1 = _mapControl.MapToScreen(new PointF(pos12.X, pos12.Z));
+
+                                double dx1 = clickScreen.X - posScreen1.X;
+                                double dy1 = clickScreen.Y - posScreen1.Y;
+                                double distance1 = Math.Sqrt(dx1 * dx1 + dy1 * dy1);
+
+                                if (distance1 < closestDistance)
+                                {
+                                    closestDistance = distance1;
+                                    closestPos = pos12;
+                                }
+                            }
+                        }
+                    }
+                    else if (child.Tag is ExpansionSafeZoneCylinder pos2)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos2.Center.X, pos2.Center.Z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos2;
+                        }
+                    }
+                    
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 30) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child2 in parentNode.Nodes)
+                {
+                    foreach (TreeNode child in child2.Nodes)
+                    {
+                        if (child.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child;
+                            break;
+                        }
+                        foreach(TreeNode chi in child.Nodes)
+                        {
+                            if(chi.Tag == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = chi;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_ServerSafeZoneDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is ExpansionSafeZoneCircle ExpansionSafeZoneCircle)
+            {
+                ExpansionSafeZoneCircle.Center.X = (float)e.MapCoordinates.X;
+                ExpansionSafeZoneCircle.Center.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    ExpansionSafeZoneCircle.Center.Y = (MapData.gethieght(ExpansionSafeZoneCircle.Center.X, ExpansionSafeZoneCircle.Center.Z));
+                }
+                _mapControl.ClearDrawables();
+                ShowHandler(new ExpansionSafeZoneCircleControl(), typeof(ExpansionSafeZoneConfig), ExpansionSafeZoneCircle, new List<TreeNode>() { currentTreeNode });
+                DrawbaseSafeZoneData(_expansionManager.ExpansionSafeZoneConfig);
+            }
+            else if (currentTreeNode.Tag is ExpansionSafeZoneCylinder ExpansionSafeZoneCylinder)
+            {
+                ExpansionSafeZoneCylinder.Center.X = (float)e.MapCoordinates.X;
+                ExpansionSafeZoneCylinder.Center.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    ExpansionSafeZoneCylinder.Center.Y = (MapData.gethieght(ExpansionSafeZoneCylinder.Center.X, ExpansionSafeZoneCylinder.Center.Z));
+                }
+                _mapControl.ClearDrawables();
+                ShowHandler(new ExpansionSafeZoneCylinderControl(), typeof(ExpansionSafeZoneConfig), ExpansionSafeZoneCylinder, new List<TreeNode>() { currentTreeNode });
+                DrawbaseSafeZoneData(_expansionManager.ExpansionSafeZoneConfig);
+            }
+            else if (currentTreeNode.Tag is Vec3 vec3)
+            {
+                vec3.X = (float)e.MapCoordinates.X;
+                vec3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    vec3.Y = (MapData.gethieght(vec3.X, vec3.Z));
+                }
+                _mapControl.ClearDrawables();
+                ShowHandler(new Vector3Control(), typeof(ExpansionSafeZoneConfig), vec3, new List<TreeNode>() { currentTreeNode });
+                DrawbaseSafeZoneData(_expansionManager.ExpansionSafeZoneConfig);
             }
         }
         #endregion mapstuff
@@ -5520,6 +5873,7 @@ namespace ExpansionPlugin
         #region Search Treeview
         private List<TreeNode> _searchResults = new();
         private int _currentIndex = -1;
+
         private void button2_Click(object sender, EventArgs e)
         {
             string searchText = txtSearch.Text.Trim();
