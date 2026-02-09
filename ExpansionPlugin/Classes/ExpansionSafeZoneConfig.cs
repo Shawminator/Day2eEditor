@@ -352,7 +352,6 @@ namespace ExpansionPlugin
     public class ExpansionSafeZonePolygon
     {
         public BindingList<Vec3> Positions { get; set; }
-        public decimal? RadiusPolygon { get; set; }
 
         [JsonIgnore]
         public string polygonSafeZoneName { get; set; }
@@ -367,9 +366,6 @@ namespace ExpansionPlugin
                 return false;
 
             if (polygonSafeZoneName != other.polygonSafeZoneName)
-                return false;
-
-            if (RadiusPolygon != other.RadiusPolygon)
                 return false;
 
             if (Positions == null && other.Positions == null)
@@ -394,7 +390,6 @@ namespace ExpansionPlugin
             return new ExpansionSafeZonePolygon()
             {
                 Positions = new BindingList<Vec3>(this.Positions.Select(x => x.Clone()).ToList()),
-                RadiusPolygon = this.RadiusPolygon,
                 polygonSafeZoneName = this.polygonSafeZoneName
             };
         }

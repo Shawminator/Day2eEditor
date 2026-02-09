@@ -550,7 +550,7 @@ namespace ExpansionPlugin
                 ["RaidLocks"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsLockControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
-                }
+                },
             };
         }
 
@@ -741,7 +741,9 @@ namespace ExpansionPlugin
                 [typeof(ExpansionSafeZonePolygon)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
-                    ExpansionSettingsCM.Items.Add(removeSafeZonePolygonPointToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(RemoveSafeZonePolygonZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(AddNewSafeZonePolygonPointtoolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 [typeof(ExpansionSafeZoneCylinder)] = node =>
@@ -1135,7 +1137,38 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(RemoveLockRaidToolToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-                }
+                },
+                //SafeZone
+                ["CircleZones"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewSafeZoneCircleZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["PolygonZones"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewsafeZonePolygonZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["CylinderZones"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewSafeZoneCylinderZoneToolStripmenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ForceSZCleanup_ExcludedItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddSafeZoneForceCleanUpItemsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ForceSZCleanup_ExcludedItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveSafeZoneForcecleanUpItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
             };
         }
 
@@ -2859,7 +2892,7 @@ namespace ExpansionPlugin
             {
                 ForceSZCleanup_ExcludedItemsRoot.Nodes.Add(new TreeNode(rs.ToString())
                 {
-                    Tag = rs
+                    Tag = "ForceSZCleanup_ExcludedItem"
                 });
             }
             EconomyRootNode.Nodes.Add(ForceSZCleanup_ExcludedItemsRoot);
@@ -4776,7 +4809,6 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(newvec3node);
             ExpansionAIPatrol.Waypoints.Add(newvec3);
-            ExpansionAIPatrolConfig.isDirty = true;
             ExpansionTV.SelectedNode = newvec3node;
         }
         private void removeWaypointToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5898,43 +5930,182 @@ namespace ExpansionPlugin
         //SafeZone
         private void AddNewSafeZoneCircleZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionSafeZoneCircle newzone = new ExpansionSafeZoneCircle()
+            {
+                CircleSafeZoneName = "Circle Zone " + _expansionManager.ExpansionSafeZoneConfig.Data.CircleZones.Count.ToString(),
+                Center = new Vec3(pos, 0, pos),
+                Radius = 500
+            };
+            if (MapData.FileExists)
+            {
+                newzone.Center.Y = (MapData.gethieght(pos, pos));
+            }
+            _expansionManager.ExpansionSafeZoneConfig.Data.CircleZones.Add(newzone);
+            currentTreeNode.Nodes.Add(new TreeNode(newzone.ToString())
+            {
+                Tag = newzone
+            });
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void RemovesafeZoneCircleZoneToolStripmenuItem_Click(object sender, EventArgs e)
         {
-
+            _expansionManager.ExpansionSafeZoneConfig.Data.CircleZones.Remove(currentTreeNode.Tag as ExpansionSafeZoneCircle);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void AddNewsafeZonePolygonZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            float halfSize = 50f;
+            ExpansionSafeZonePolygon newzone = new ExpansionSafeZonePolygon()
+            {
+                polygonSafeZoneName = "Polygon Zone " + _expansionManager.ExpansionSafeZoneConfig.Data.PolygonZones.Count.ToString(),
+                Positions = new BindingList<Vec3>()
+                {
+                    new Vec3(pos - halfSize, 0, pos - halfSize),
+                    new Vec3(pos + halfSize, 0, pos - halfSize),
+                    new Vec3(pos + halfSize, 0, pos + halfSize),
+                    new Vec3(pos - halfSize, 0, pos + halfSize),
+                }
+            };
+            if (MapData.FileExists)
+            {
+                foreach (Vec3 v3 in newzone.Positions)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+            }
+            _expansionManager.ExpansionSafeZoneConfig.Data.PolygonZones.Add(newzone);
+            TreeNode SFP = new TreeNode(newzone.ToString())
+            {
+                Tag = newzone
+            };
+            foreach (Vec3 v3 in newzone.Positions)
+            {
+                SFP.Nodes.Add(new TreeNode(v3.GetString())
+                {
+                    Tag = v3
+                });
+            }
+            currentTreeNode.Nodes.Add(SFP);
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void RemoveSafeZonePolygonZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            _expansionManager.ExpansionSafeZoneConfig.Data.PolygonZones.Remove(currentTreeNode.Tag as ExpansionSafeZonePolygon);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void AddNewSafeZonePolygonPointtoolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionSafeZonePolygon ExpansionSafeZonePolygon = currentTreeNode.FindParentOfType<ExpansionSafeZonePolygon>();
+            if (ExpansionSafeZonePolygon.Positions.Count == null)
+                ExpansionSafeZonePolygon.Positions = new BindingList<Vec3>();
 
+            Vec3 newvec3 = null;
+            if (ExpansionSafeZonePolygon.Positions.Count == 0)
+            {
+                newvec3 = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2);
+                if (MapData.FileExists)
+                {
+                    newvec3.Y = (MapData.gethieght(newvec3.X, newvec3.Z));
+                }
+            }
+            else
+            {
+                Vec3 vec3 = ExpansionSafeZonePolygon.Positions.Last();
+                newvec3 = new Vec3(vec3.X + 25, 0f, vec3.Z);
+                if (MapData.FileExists)
+                {
+                    newvec3.Y = (MapData.gethieght(newvec3.X, newvec3.Z));
+                }
+            }
+            TreeNode newvec3node = new TreeNode(newvec3.GetString())
+            {
+                Tag = newvec3
+            };
+            currentTreeNode.Nodes.Add(newvec3node);
+            ExpansionSafeZonePolygon.Positions.Add(newvec3);
+            ExpansionTV.SelectedNode = newvec3node;
         }
         private void removeSafeZonePolygonPointToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ExpansionSafeZonePolygon ExpansionSafeZonePolygon = currentTreeNode.FindParentOfType<ExpansionSafeZonePolygon>();
+            ExpansionSafeZonePolygon.Positions.Remove(currentTreeNode.Tag as Vec3);
+            currentTreeNode.Remove();
         }
         private void moveSafeZonePolygonPointUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionSafeZonePolygon ExpansionSafeZonePolygon = currentTreeNode.FindParentOfType<ExpansionSafeZonePolygon>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
 
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index > 0)
+            {
+                siblings.RemoveAt(index);
+                ExpansionSafeZonePolygon.Positions.RemoveAt(index);
+                ExpansionSafeZonePolygon.Positions.Insert(index - 1, waypoint);
+                siblings.Insert(index - 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode;
+            }
         }
         private void moveSafeZonePolygonPointDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionSafeZonePolygon ExpansionSafeZonePolygon = currentTreeNode.FindParentOfType<ExpansionSafeZonePolygon>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
 
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index < siblings.Count - 1)
+            {
+                siblings.RemoveAt(index);
+                ExpansionSafeZonePolygon.Positions.RemoveAt(index);
+                ExpansionSafeZonePolygon.Positions.Insert(index + 1, waypoint);
+                siblings.Insert(index + 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode;
+            }
         }
         private void AddNewSafeZoneCylinderZoneToolStripmenuItem_Click(object sender, EventArgs e)
         {
-
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            ExpansionSafeZoneCylinder newzone = new ExpansionSafeZoneCylinder()
+            {
+                CylinderSafeZoneName = "Cylinder Zone " + _expansionManager.ExpansionSafeZoneConfig.Data.CylinderZones.Count.ToString(),
+                Center = new Vec3(pos, 0, pos),
+                Radius = 500,
+                Height = 500
+            };
+            if (MapData.FileExists)
+            {
+                newzone.Center.Y = (MapData.gethieght(pos, pos));
+            }
+            _expansionManager.ExpansionSafeZoneConfig.Data.CylinderZones.Add(newzone);
+            currentTreeNode.Nodes.Add(new TreeNode(newzone.ToString())
+            {
+                Tag = newzone
+            });
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void RemoveSafeZOneCylinderZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            _expansionManager.ExpansionSafeZoneConfig.Data.CylinderZones.Remove(currentTreeNode.Tag as ExpansionSafeZoneCylinder);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void AddSafeZoneForceCleanUpItemsToolStripMenuItem_Click(object sender, EventArgs e)
         {
