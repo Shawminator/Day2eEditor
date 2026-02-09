@@ -426,6 +426,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionNewsFeedLinkSetting ExpansionNewsFeedLinkSetting = node.Tag as ExpansionNewsFeedLinkSetting;
                     ShowHandler(new ExpansionSocialMediaSettingsLinkControl(), typeof(ExpansionSocialMediaConfig), ExpansionNewsFeedLinkSetting, selected);
+                },
+                //Spawn
+                [typeof(ExpansionSpawnSettings)] = (node,selected) =>
+                {
+                    ExpansionSpawnSettings ExpansionSpawnSettings = node.Tag as ExpansionSpawnSettings;
+                    ShowHandler(new ExpansionSpawnSettingsGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnSettings, selected);
                 }
             };
             // ----------------------
