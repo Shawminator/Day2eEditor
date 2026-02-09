@@ -6109,11 +6109,28 @@ namespace ExpansionPlugin
         }
         private void AddSafeZoneForceCleanUpItemsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionSafeZoneConfig.Data.ForceSZCleanup_ExcludedItems.Contains(l))
+                    {
+                        _expansionManager.ExpansionSafeZoneConfig.Data.ForceSZCleanup_ExcludedItems.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "ForceSZCleanup_ExcludedItem"
+                        });
+                    }
+                }
+            }
         }
         private void RemoveSafeZoneForcecleanUpItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            _expansionManager.ExpansionSafeZoneConfig.Data.ForceSZCleanup_ExcludedItems.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         #endregion right click methods
 
@@ -6172,12 +6189,6 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
-
-
-
-
-
-
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

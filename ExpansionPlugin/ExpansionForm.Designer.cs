@@ -1060,7 +1060,7 @@
             SafeZoneCM.Items.AddRange(new ToolStripItem[] { AddNewSafeZoneCircleZoneToolStripMenuItem, RemovesafeZoneCircleZoneToolStripmenuItem, AddNewsafeZonePolygonZoneToolStripMenuItem, RemoveSafeZonePolygonZoneToolStripMenuItem, AddNewSafeZonePolygonPointtoolStripMenuItem, removeSafeZonePolygonPointToolStripMenuItem, moveSafeZonePolygonPointUpToolStripMenuItem, moveSafeZonePolygonPointDownToolStripMenuItem, AddNewSafeZoneCylinderZoneToolStripmenuItem, RemoveSafeZOneCylinderZoneToolStripMenuItem, AddSafeZoneForceCleanUpItemsToolStripMenuItem, RemoveSafeZoneForcecleanUpItemToolStripMenuItem });
             SafeZoneCM.Name = "ExpansionAICM";
             SafeZoneCM.ShowImageMargin = false;
-            SafeZoneCM.Size = new Size(244, 290);
+            SafeZoneCM.Size = new Size(244, 268);
             // 
             // AddNewSafeZoneCircleZoneToolStripMenuItem
             // 
