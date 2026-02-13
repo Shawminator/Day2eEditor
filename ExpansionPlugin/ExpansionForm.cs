@@ -837,6 +837,12 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(addNewSpawnPointToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionStartingGearItem)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeStartingGearItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
             // ----------------------
@@ -1260,6 +1266,36 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewSpawnLocationToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["StartingClothing"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addStartingClothingItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["StartingClothingItem"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeStartingClothingItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["StartingGear"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addStartingGearItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ExpansionStartingGearItemAttachments"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addStartingGearAttachmentToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ExpansionStartingGearItemAttachment"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeStartingGearAttachmentToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -3116,7 +3152,7 @@ namespace ExpansionPlugin
                     // Create category node
                     TreeNode categoryNode = new TreeNode(prop.Name)
                     {
-                        Tag = prop.Name
+                        Tag = "StartingClothing"
                     };
 
                     if (list != null)
@@ -3125,7 +3161,7 @@ namespace ExpansionPlugin
                         {
                             categoryNode.Nodes.Add(new TreeNode(item)
                             {
-                                Tag = prop.Name + "Item"
+                                Tag = "StartingClothingItem"
                             });
                         }
                     }
@@ -3152,7 +3188,10 @@ namespace ExpansionPlugin
                 foreach (var prop in listProps)
                 {
                     var list = (BindingList<ExpansionStartingGearItem>)prop.GetValue(gear);
-                    var categoryNode = new TreeNode(prop.Name) { Tag = prop.Name };
+                    var categoryNode = new TreeNode(prop.Name) 
+                    { 
+                        Tag = "StartingGear"
+                    };
                     if (list == null || list.Count == 0)
                     {
                         root.Nodes.Add(categoryNode);
@@ -3162,7 +3201,7 @@ namespace ExpansionPlugin
                     {
                         TreeNode Itemnode = new TreeNode(item.ClassName)
                         {
-                            Tag = item // store the actual object
+                            Tag = item 
                         };
                         TreeNode itemAttchmentsNode = new TreeNode("Attachments")
                         {
@@ -6537,6 +6576,163 @@ namespace ExpansionPlugin
                 ExpansionTV.SelectedNode = currentTreeNode;
             }
         }
+        private void addStartingClothingItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<string> Addeditems = new List<string>();
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!Addeditems.Contains(l))
+                    {
+                        Addeditems.Add(l);
+                    }
+                }
+            }
+            string clothingType = currentTreeNode.Text;
+            ExpansionStartingClothing ExpansionStartingClothing = _expansionManager.ExpansionSpawnConfig.Data.StartingClothing;
+            var prop = typeof(ExpansionStartingClothing)
+                .GetProperty(clothingType, BindingFlags.Public | BindingFlags.Instance);
+
+            var list = (BindingList<string>)prop.GetValue(ExpansionStartingClothing);
+            if (list == null)
+            {
+                list = new BindingList<string>();
+                prop.SetValue(ExpansionStartingClothing, list);
+            }
+
+            foreach (var item in Addeditems.Distinct())
+            {
+                if (!list.Contains(item))
+                {
+                    list.Add(item);
+                    currentTreeNode.Nodes.Add(new TreeNode(item) { Tag = "StartingClothingItem" });
+                }
+            }
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void removeStartingClothingItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string clothingType = currentTreeNode.Parent.Text;
+            ExpansionStartingClothing ExpansionStartingClothing = _expansionManager.ExpansionSpawnConfig.Data.StartingClothing;
+            var prop = typeof(ExpansionStartingClothing)
+                .GetProperty(clothingType, BindingFlags.Public | BindingFlags.Instance);
+
+            var list = (BindingList<string>)prop.GetValue(ExpansionStartingClothing);
+            if (list.Contains(currentTreeNode.Text))
+            {
+                list.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+        }
+        private void AddStartingGearItem(ExpansionStartingGearItem startingGearItem)
+        {
+            switch (currentTreeNode.Text)
+            {
+                case "UpperGear":
+                    if(!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.UpperGear.Any(x => x == startingGearItem))
+                        _expansionManager.ExpansionSpawnConfig.Data.StartingGear.UpperGear.Add(startingGearItem);
+                    break;
+                case "PantsGear":
+                    if (!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.PantsGear.Any(x => x == startingGearItem))
+                        _expansionManager.ExpansionSpawnConfig.Data.StartingGear.PantsGear.Add(startingGearItem);
+                    break;
+                case "BackpackGear":
+                    if (!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.BackpackGear.Any(x => x == startingGearItem))
+                        _expansionManager.ExpansionSpawnConfig.Data.StartingGear.BackpackGear.Add(startingGearItem);
+                    break;
+                case "VestGear":
+                    if (!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.VestGear.Any(x => x == startingGearItem))
+                        _expansionManager.ExpansionSpawnConfig.Data.StartingGear.VestGear.Add(startingGearItem);
+                    break;
+            }
+        }
+        private void addStartingGearItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    ExpansionStartingGearItem newExpansionStartingGearItem = new ExpansionStartingGearItem()
+                    {
+                        ClassName = l,
+                        Attachments = new BindingList<string>(),
+                        Quantity = -1
+                    };
+                    AddStartingGearItem(newExpansionStartingGearItem);
+                    TreeNode Itemnode = new TreeNode(newExpansionStartingGearItem.ClassName)
+                    {
+                        Tag = newExpansionStartingGearItem
+                    };
+                    TreeNode itemAttchmentsNode = new TreeNode("Attachments")
+                    {
+                        Tag = "ExpansionStartingGearItemAttachments"
+                    };
+                    foreach (string itemclassanme in newExpansionStartingGearItem.Attachments)
+                    {
+                        itemAttchmentsNode.Nodes.Add(new TreeNode(itemclassanme)
+                        {
+                            Tag = "ExpansionStartingGearItemAttachment"
+                        });
+                    }
+                    Itemnode.Nodes.Add(itemAttchmentsNode);
+                    currentTreeNode.Nodes.Add(Itemnode);
+                }
+            }
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void removeStartingGearItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            switch (currentTreeNode.Parent.Text)
+            {
+                case "UpperGear":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.UpperGear.Remove(currentTreeNode.Tag as ExpansionStartingGearItem);
+                    break;
+                case "PantsGear":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.PantsGear.Remove(currentTreeNode.Tag as ExpansionStartingGearItem);
+                    break;
+                case "BackpackGear":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.BackpackGear.Remove(currentTreeNode.Tag as ExpansionStartingGearItem);
+                    break;
+                case "VestGear":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.VestGear.Remove(currentTreeNode.Tag as ExpansionStartingGearItem);
+                    break;
+            }
+            currentTreeNode.Remove();
+        }
+        private void addStartingGearAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionStartingGearItem ExpansionStartingGearItem = currentTreeNode.Parent.Tag as ExpansionStartingGearItem;
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!ExpansionStartingGearItem.Attachments.Contains(l))
+                    {
+                        ExpansionStartingGearItem.Attachments.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "ExpansionStartingGearItemAttachment"
+                        });
+                    }
+                }
+            }
+        }
+        private void removeStartingGearAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionStartingGearItem ExpansionStartingGearItem = currentTreeNode.Parent.Parent.Tag as ExpansionStartingGearItem;
+            ExpansionStartingGearItem.Attachments.Remove(currentTreeNode.Text);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -6594,6 +6790,8 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
+
 
 
 

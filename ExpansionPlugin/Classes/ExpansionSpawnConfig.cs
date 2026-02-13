@@ -588,15 +588,23 @@ namespace ExpansionPlugin
             if (obj is not ExpansionStartingGearItem other)
                 return false;
 
-            return ClassName == other.ClassName &&
-                Quantity == other.Quantity;
+            if (ClassName != other.ClassName ||
+                Quantity != other.Quantity)
+                return false;
+            if (!Attachments.SequenceEqual(other.Attachments))
+                return false;
+
+            return true;
         }
         public ExpansionStartingGearItem Clone()
         {
             return new ExpansionStartingGearItem()
             {
                 ClassName = this.ClassName,
-                Quantity = this.Quantity
+                Quantity = this.Quantity,
+                Attachments = this.Attachments != null
+                    ? new BindingList<string>(this.Attachments.ToList())
+                    : null
             };
         }
     }
