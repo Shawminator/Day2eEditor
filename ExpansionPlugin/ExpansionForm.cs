@@ -474,6 +474,11 @@ namespace ExpansionPlugin
                 {
                     ExpansionStartingGearItem ExpansionStartingGearItem = node.Tag as ExpansionStartingGearItem;
                     ShowHandler(new ExpansionStartingGearItemControl(), typeof(ExpansionSpawnConfig), ExpansionStartingGearItem, selected);
+                },
+                [typeof(ExpansionSpawnGearLoadouts)] = (node,selected) =>
+                {
+                    ExpansionSpawnGearLoadouts ExpansionSpawnGearLoadouts = node.Tag as ExpansionSpawnGearLoadouts;
+                    ShowHandler(new ExpansionSpawnGearLoadoutControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnGearLoadouts, selected);
                 }
         };
             // ----------------------
@@ -601,6 +606,10 @@ namespace ExpansionPlugin
                 },
                 //Spawn
                 ["MaleLoadouts"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionSpawnGearLoadoutsControl(), typeof(ExpansionSpawnConfig), _expansionManager.ExpansionSpawnConfig.Data, selected);
+                },
+                ["FemaleLoadouts"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionSpawnGearLoadoutsControl(), typeof(ExpansionSpawnConfig), _expansionManager.ExpansionSpawnConfig.Data, selected);
                 }

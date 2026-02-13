@@ -17,6 +17,25 @@ namespace ExpansionPlugin
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
+        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            ListBox lb = sender as ListBox;
+            e.DrawBackground();
+            Brush myBrush = Brushes.Black;
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+            }
+            else
+            {
+                myBrush = Brushes.White;
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(60, 63, 65)), e.Bounds);
+            }
+            e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
+            e.DrawFocusRectangle();
+        }
+
         public ExpansionSpawnGearLoadoutsControl()
         {
             InitializeComponent();
@@ -47,11 +66,23 @@ namespace ExpansionPlugin
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
-        private void UpdateTreeNodeText()
+        private void UpdateTreeNodeText(ExpansionSpawnGearLoadouts rs)
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                TreeNode parentNode = _nodes.Last();
+                TreeNode NewSpawnLoadoutNode = new TreeNode(rs.ToString())
+                {
+                    Tag = rs
+                };
+                parentNode.Nodes.Add(NewSpawnLoadoutNode);
+
+                TreeView tv = parentNode.TreeView;
+                if (tv != null)
+                {
+                    tv.SelectedNode = NewSpawnLoadoutNode;
+                    NewSpawnLoadoutNode.EnsureVisible();
+                }
             }
         }
 
@@ -59,7 +90,28 @@ namespace ExpansionPlugin
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            String LoadoutName = Path.GetFileNameWithoutExtension(SpawnLoadoutsLB.GetItemText(SpawnLoadoutsLB.SelectedItem));
+            ExpansionSpawnGearLoadouts newExpansionSpawnGearLoadouts = new ExpansionSpawnGearLoadouts()
+            {
+                Loadout = LoadoutName,
+                Chance = 1.0m
+            };
+            if (_nodes.Last().Tag.ToString() == "MaleLoadouts")
+            {
+                if (!_data.MaleLoadouts.Any(x => x.Loadout == LoadoutName))
+                {
+                    _data.MaleLoadouts.Add(newExpansionSpawnGearLoadouts);
+                    UpdateTreeNodeText(newExpansionSpawnGearLoadouts);
+                }
+            }
+            else if (_nodes.Last().Tag.ToString() == "FemaleLoadouts")
+            {
+                if (!_data.FemaleLoadouts.Any(x => x.Loadout == LoadoutName))
+                {
+                    _data.FemaleLoadouts.Add(newExpansionSpawnGearLoadouts);
+                    UpdateTreeNodeText(newExpansionSpawnGearLoadouts);
+                }
+            }
         }
     }
 }

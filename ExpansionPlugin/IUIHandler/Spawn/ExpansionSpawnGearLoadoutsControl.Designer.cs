@@ -70,6 +70,7 @@
             SpawnLoadoutsLB.Name = "SpawnLoadoutsLB";
             SpawnLoadoutsLB.Size = new Size(316, 372);
             SpawnLoadoutsLB.TabIndex = 0;
+            SpawnLoadoutsLB.DrawItem += listBox_DrawItem;
             // 
             // ExpansionSpawnGearLoadoutsControl
             // 
