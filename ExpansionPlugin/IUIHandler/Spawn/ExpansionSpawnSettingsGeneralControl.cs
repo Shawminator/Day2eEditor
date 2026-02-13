@@ -68,10 +68,70 @@ namespace ExpansionPlugin
         }
 
         #endregion
-
+        private void EnableSpawnSelectionCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.EnableSpawnSelection = EnableSpawnSelectionCB.Checked == true ? 1 : 0;
+        }
+        private void SpawnOnTerritoryCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.SpawnOnTerritory = SpawnOnTerritoryCB.Checked ? 1 : 0;
+        }
+        private void SpawnHealthValueNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.SpawnHealthValue = (decimal)SpawnHealthValueNUD.Value;
+        }
+        private void SpawnEnergyValueNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.SpawnEnergyValue = (decimal)SpawnEnergyValueNUD.Value;
+        }
+        private void SpawnWaterValueNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.SpawnWaterValue = (decimal)SpawnWaterValueNUD.Value;
+        }
+        private void EnableRespawnCooldownsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EnableRespawnCooldowns = EnableRespawnCooldownsCB.Checked ? 1 : 0;
+        }
+        private void RespawnCooldownNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.RespawnCooldown = (int)RespawnCooldownNUD.Value;
+        }
+        private void TerritoryRespawnCooldownNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.TerritoryRespawnCooldown = (int)TerritoryRespawnCooldownNUD.Value;
+        }
         private void PunishMultispawnCB_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            _data.PunishMultispawn = PunishMultispawnCB.Checked ? 1 : 0;
+        }
+        private void PunishCooldownNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.PunishCooldown = (int)PunishCooldownNUD.Value;
+        }
+        private void PunishTimeframeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.PunishTimeframe = (int)PunishTimeframeNUD.Value;
+        }
+        private void SpawnCreateDeathMarkerCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CreateDeathMarker = SpawnCreateDeathMarkerCB.Checked ? 1 : 0;
+        }
+        private void BackgroundImagePathTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.BackgroundImagePath = BackgroundImagePathTB.Text;
         }
     }
 }

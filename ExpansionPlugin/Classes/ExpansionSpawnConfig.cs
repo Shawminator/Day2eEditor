@@ -10,6 +10,54 @@ namespace ExpansionPlugin
         public ExpansionSpawnConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName,
+                        useVecConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    isDirty = true;
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            {
+                isDirty = false;
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
+                ClonedData = CloneData(Data);
+                return new[] { Path.GetFileName(_path) };
+            }
+
+            return Array.Empty<string>();
+        }
         protected override ExpansionSpawnSettings CreateDefaultData()
         {
             return new ExpansionSpawnSettings(CurrentVersion);
@@ -266,7 +314,7 @@ namespace ExpansionPlugin
             if (obj is not ExpansionSpawnLocation other)
                 return false;
 
-            if( Name != other.Name &&
+            if( Name != other.Name ||
                 UseCooldown != other.UseCooldown)
                 return false;
 

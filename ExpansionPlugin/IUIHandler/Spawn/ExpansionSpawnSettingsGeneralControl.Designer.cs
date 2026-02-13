@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox44 = new GroupBox();
+            label6 = new Label();
             label5 = new Label();
             label4 = new Label();
             label3 = new Label();
@@ -54,7 +55,6 @@
             SpawnHealthValueNUD = new NumericUpDown();
             SpawnOnTerritoryCB = new CheckBox();
             EnableSpawnSelectionCB = new CheckBox();
-            label6 = new Label();
             groupBox44.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)TerritoryRespawnCooldownNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PunishTimeframeNUD).BeginInit();
@@ -102,6 +102,17 @@
             groupBox44.TabIndex = 4;
             groupBox44.TabStop = false;
             groupBox44.Text = "Spawn Settings";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.FromArgb(220, 220, 220);
+            label6.Location = new Point(14, 385);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(159, 15);
+            label6.TabIndex = 25;
+            label6.Text = "Territory Respawn Cooldown";
             // 
             // label5
             // 
@@ -167,6 +178,7 @@
             BackgroundImagePathTB.Name = "BackgroundImagePathTB";
             BackgroundImagePathTB.Size = new Size(307, 23);
             BackgroundImagePathTB.TabIndex = 19;
+            BackgroundImagePathTB.TextChanged += BackgroundImagePathTB_TextChanged;
             // 
             // darkLabel161
             // 
@@ -191,6 +203,7 @@
             TerritoryRespawnCooldownNUD.TabIndex = 18;
             TerritoryRespawnCooldownNUD.Tag = "SpawnHealthValue";
             TerritoryRespawnCooldownNUD.TextAlign = HorizontalAlignment.Center;
+            TerritoryRespawnCooldownNUD.ValueChanged += TerritoryRespawnCooldownNUD_ValueChanged;
             // 
             // SpawnCreateDeathMarkerCB
             // 
@@ -202,6 +215,7 @@
             SpawnCreateDeathMarkerCB.TabIndex = 4;
             SpawnCreateDeathMarkerCB.Tag = "CreateDeathMarker";
             SpawnCreateDeathMarkerCB.UseVisualStyleBackColor = true;
+            SpawnCreateDeathMarkerCB.CheckedChanged += SpawnCreateDeathMarkerCB_CheckedChanged;
             // 
             // PunishMultispawnCB
             // 
@@ -238,6 +252,7 @@
             PunishTimeframeNUD.TabIndex = 16;
             PunishTimeframeNUD.Tag = "SpawnWaterValue";
             PunishTimeframeNUD.TextAlign = HorizontalAlignment.Center;
+            PunishTimeframeNUD.ValueChanged += PunishTimeframeNUD_ValueChanged;
             // 
             // darkLabel160
             // 
@@ -262,6 +277,7 @@
             PunishCooldownNUD.TabIndex = 12;
             PunishCooldownNUD.Tag = "SpawnEnergyValue";
             PunishCooldownNUD.TextAlign = HorizontalAlignment.Center;
+            PunishCooldownNUD.ValueChanged += PunishCooldownNUD_ValueChanged;
             // 
             // RespawnCooldownLbl
             // 
@@ -286,6 +302,7 @@
             RespawnCooldownNUD.TabIndex = 8;
             RespawnCooldownNUD.Tag = "SpawnHealthValue";
             RespawnCooldownNUD.TextAlign = HorizontalAlignment.Center;
+            RespawnCooldownNUD.ValueChanged += RespawnCooldownNUD_ValueChanged;
             // 
             // EnableRespawnCooldownsCB
             // 
@@ -297,6 +314,7 @@
             EnableRespawnCooldownsCB.TabIndex = 2;
             EnableRespawnCooldownsCB.Tag = "EnableRespawnCooldowns";
             EnableRespawnCooldownsCB.UseVisualStyleBackColor = true;
+            EnableRespawnCooldownsCB.CheckedChanged += EnableRespawnCooldownsCB_CheckedChanged;
             // 
             // darkLabel136
             // 
@@ -321,6 +339,7 @@
             SpawnWaterValueNUD.TabIndex = 15;
             SpawnWaterValueNUD.Tag = "SpawnWaterValue";
             SpawnWaterValueNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnWaterValueNUD.ValueChanged += SpawnWaterValueNUD_ValueChanged;
             // 
             // darkLabel135
             // 
@@ -345,6 +364,7 @@
             SpawnEnergyValueNUD.TabIndex = 11;
             SpawnEnergyValueNUD.Tag = "SpawnEnergyValue";
             SpawnEnergyValueNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnEnergyValueNUD.ValueChanged += SpawnEnergyValueNUD_ValueChanged;
             // 
             // darkLabel134
             // 
@@ -369,6 +389,7 @@
             SpawnHealthValueNUD.TabIndex = 7;
             SpawnHealthValueNUD.Tag = "SpawnHealthValue";
             SpawnHealthValueNUD.TextAlign = HorizontalAlignment.Center;
+            SpawnHealthValueNUD.ValueChanged += SpawnHealthValueNUD_ValueChanged;
             // 
             // SpawnOnTerritoryCB
             // 
@@ -380,6 +401,7 @@
             SpawnOnTerritoryCB.TabIndex = 1;
             SpawnOnTerritoryCB.Tag = "SpawnOnTerritory";
             SpawnOnTerritoryCB.UseVisualStyleBackColor = true;
+            SpawnOnTerritoryCB.CheckedChanged += SpawnOnTerritoryCB_CheckedChanged;
             // 
             // EnableSpawnSelectionCB
             // 
@@ -391,17 +413,7 @@
             EnableSpawnSelectionCB.TabIndex = 0;
             EnableSpawnSelectionCB.Tag = "EnableSpawnSelection";
             EnableSpawnSelectionCB.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.ForeColor = Color.FromArgb(220, 220, 220);
-            label6.Location = new Point(14, 385);
-            label6.Margin = new Padding(4, 0, 4, 0);
-            label6.Name = "label6";
-            label6.Size = new Size(159, 15);
-            label6.TabIndex = 25;
-            label6.Text = "Territory Respawn Cooldown";
+            EnableSpawnSelectionCB.CheckedChanged += EnableSpawnSelectionCB_CheckedChanged;
             // 
             // ExpansionSpawnSettingsGeneralControl
             // 

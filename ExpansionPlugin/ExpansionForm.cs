@@ -1,4 +1,5 @@
 using Day2eEditor;
+using DayZeLib;
 using EconomyPlugin;
 using System;
 using System.Collections;
@@ -15,6 +16,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml.Linq;
 using static ExpansionPlugin.ExpansionPersonalStorageNewSettings;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace ExpansionPlugin
 {
@@ -92,6 +94,21 @@ namespace ExpansionPlugin
 
                         ExpansionSafeZonePolygon ExpansionSafeZonePolygon = node.Parent.Tag as ExpansionSafeZonePolygon;
                         SetupSafeZonePolygonMarkers(ExpansionSafeZonePolygon, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                    else if (node.Parent.Tag is ExpansionSpawnLocation)
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            DrawbaseSpawnLocationData(node.FindParentOfType<ExpansionSpawnConfig>());
+                        };
+                        ShowHandler(control, typeof(ExpansionSpawnConfig), v3, selected);
+
+                        ExpansionSpawnLocation ExpansionSpawnLocation = node.Parent.Tag as ExpansionSpawnLocation;
+                        SetupSpawnLocationMarkers(ExpansionSpawnLocation, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                 },
@@ -432,8 +449,33 @@ namespace ExpansionPlugin
                 {
                     ExpansionSpawnSettings ExpansionSpawnSettings = node.Tag as ExpansionSpawnSettings;
                     ShowHandler(new ExpansionSpawnSettingsGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnSettings, selected);
+                },
+                [typeof(ExpansionSpawnLocation)] = (node,selected) =>
+                {
+                    ExpansionSpawnLocation ExpansionSpawnLocation = node.Tag as ExpansionSpawnLocation;
+                    ShowHandler(new ExpansionSpawnLocationControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnLocation, selected);
+                    SetupSpawnLocationMarkers(ExpansionSpawnLocation, node);
+                    if (ExpansionSpawnLocation.Positions.Count > 0)
+                    {
+                        _mapControl.EnsureVisible(new PointF(ExpansionSpawnLocation.Positions[0].X, ExpansionSpawnLocation.Positions[0].Z));
+                    }
+                },
+                [typeof(ExpansionStartingClothing)] = (node,selected)=>
+                {
+                    ExpansionStartingClothing ExpansionStartingClothing = node.Tag as ExpansionStartingClothing;
+                    ShowHandler(new ExpansionStartingClothingGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionStartingClothing, selected);
+                },
+                [typeof(ExpansionStartingGear)] = (node, selected) =>
+                {
+                    ExpansionStartingGear ExpansionStartingGear = node.Tag as ExpansionStartingGear;
+                    ShowHandler(new ExpansionStartingGearGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionStartingGear, selected);
+                },
+                [typeof(ExpansionStartingGearItem)] = (node,selected) =>
+                {
+                    ExpansionStartingGearItem ExpansionStartingGearItem = node.Tag as ExpansionStartingGearItem;
+                    ShowHandler(new ExpansionStartingGearItemControl(), typeof(ExpansionSpawnConfig), ExpansionStartingGearItem, selected);
                 }
-            };
+        };
             // ----------------------
             // String handlers
             // ----------------------
@@ -557,6 +599,11 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsLockControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                 },
+                //Spawn
+                ["MaleLoadouts"] = (node,selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionSpawnGearLoadoutsControl(), typeof(ExpansionSpawnConfig), _expansionManager.ExpansionSpawnConfig.Data, selected);
+                }
             };
         }
 
@@ -2964,23 +3011,17 @@ namespace ExpansionPlugin
             };
             foreach (ExpansionSpawnLocation rs in ef.Data.SpawnLocations)
             {
-
                 TreeNode SLNode = new TreeNode(rs.ToString())
                 {
                     Tag = rs
                 };
-                TreeNode WaypointsNode = new TreeNode("Positions")
-                {
-                    Tag = "SpawnLocationPositions"
-                };
                 foreach (Vec3 v3 in rs.Positions)
                 {
-                    WaypointsNode.Nodes.Add(new TreeNode(v3.GetString())
+                    SLNode.Nodes.Add(new TreeNode(v3.GetString())
                     {
                         Tag = v3
                     });
                 }
-                SLNode.Nodes.Add(WaypointsNode);
                 SpawnLocationsRoot.Nodes.Add(SLNode);
             }
             EconomyRootNode.Nodes.Add(SpawnLocationsRoot);
@@ -3016,35 +3057,41 @@ namespace ExpansionPlugin
         }
         private TreeNode BuildStartingClothingTree(ExpansionStartingClothing sc)
         {
-            TreeNode root = new TreeNode("Starting Clothing") { Tag = "StartingClothingRoot" };
+            TreeNode root = new TreeNode("Starting Clothing")
+            { 
+                Tag = sc
+            };
 
-            // Loop through all list properties in the class
-            var listProperties = typeof(ExpansionStartingClothing)
-                .GetProperties()
-                .Where(p => p.PropertyType == typeof(BindingList<string>));
-
-            foreach (var prop in listProperties)
+            if (sc.EnableCustomClothing == 1)
             {
-                BindingList<string> list = (BindingList<string>)prop.GetValue(sc);
+                // Loop through all list properties in the class
+                var listProperties = typeof(ExpansionStartingClothing)
+                    .GetProperties()
+                    .Where(p => p.PropertyType == typeof(BindingList<string>));
 
-                // Create category node
-                TreeNode categoryNode = new TreeNode(prop.Name)
+                foreach (var prop in listProperties)
                 {
-                    Tag = prop.Name
-                };
+                    BindingList<string> list = (BindingList<string>)prop.GetValue(sc);
 
-                if (list != null)
-                {
-                    foreach (var item in list)
+                    // Create category node
+                    TreeNode categoryNode = new TreeNode(prop.Name)
                     {
-                        categoryNode.Nodes.Add(new TreeNode(item)
-                        {
-                            Tag = prop.Name + "Item"
-                        });
-                    }
-                }
+                        Tag = prop.Name
+                    };
 
-                root.Nodes.Add(categoryNode);
+                    if (list != null)
+                    {
+                        foreach (var item in list)
+                        {
+                            categoryNode.Nodes.Add(new TreeNode(item)
+                            {
+                                Tag = prop.Name + "Item"
+                            });
+                        }
+                    }
+
+                    root.Nodes.Add(categoryNode);
+                }
             }
 
             return root;
@@ -3053,34 +3100,49 @@ namespace ExpansionPlugin
         {
             TreeNode root = new TreeNode("Starting Gear")
             {
-                Tag = "StartingGearRoot"
+                Tag = gear
             };
 
-            var listProps = typeof(ExpansionStartingGear)
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.PropertyType == typeof(BindingList<ExpansionStartingGearItem>));
-
-            foreach (var prop in listProps)
+            if (gear.EnableStartingGear == 1)
             {
-                var list = (BindingList<ExpansionStartingGearItem>)prop.GetValue(gear);
-                var categoryNode = new TreeNode(prop.Name) { Tag = prop.Name };
-                if (list == null || list.Count == 0)
-                {
-                    root.Nodes.Add(categoryNode);
-                    continue;
-                }
-                foreach (var item in list)
-                {
-                    categoryNode.Nodes.Add(new TreeNode(item.ClassName)
-                    {
-                        Tag = item // store the actual object
-                    });
-                }
-                root.Nodes.Add(categoryNode);
-            }
-            AddSingleItemNodeIfNotEmpty(root, gear.PrimaryWeapon, nameof(gear.PrimaryWeapon));
-            AddSingleItemNodeIfNotEmpty(root, gear.SecondaryWeapon, nameof(gear.SecondaryWeapon));
+                var listProps = typeof(ExpansionStartingGear)
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.PropertyType == typeof(BindingList<ExpansionStartingGearItem>));
 
+                foreach (var prop in listProps)
+                {
+                    var list = (BindingList<ExpansionStartingGearItem>)prop.GetValue(gear);
+                    var categoryNode = new TreeNode(prop.Name) { Tag = prop.Name };
+                    if (list == null || list.Count == 0)
+                    {
+                        root.Nodes.Add(categoryNode);
+                        continue;
+                    }
+                    foreach (ExpansionStartingGearItem item in list)
+                    {
+                        TreeNode Itemnode = new TreeNode(item.ClassName)
+                        {
+                            Tag = item // store the actual object
+                        };
+                        TreeNode itemAttchmentsNode = new TreeNode("Attachments")
+                        {
+                            Tag = "ExpansionStartingGearItemAttachments"
+                        };
+                        foreach(string itemclassanme in item.Attachments)
+                        {
+                            itemAttchmentsNode.Nodes.Add(new TreeNode(itemclassanme)
+                            {
+                                Tag = "ExpansionStartingGearItemAttachment"
+                            });
+                        }
+                        Itemnode.Nodes.Add(itemAttchmentsNode);
+                        categoryNode.Nodes.Add(Itemnode);
+                    }
+                    root.Nodes.Add(categoryNode);
+                }
+                AddSingleItemNodeIfNotEmpty(root, gear.PrimaryWeapon, nameof(gear.PrimaryWeapon));
+                AddSingleItemNodeIfNotEmpty(root, gear.SecondaryWeapon, nameof(gear.SecondaryWeapon));
+            }
             return root;
         }
         private void AddSingleItemNodeIfNotEmpty(TreeNode root, ExpansionStartingGearItem item, string name)
@@ -3088,10 +3150,23 @@ namespace ExpansionPlugin
             TreeNode categoryNode = new TreeNode(name) { Tag = name };
             if (item != null && item.ClassName != null && item.Quantity != null && item.Attachments != null)
             {
-                categoryNode.Nodes.Add(new TreeNode((item.ClassName))
+                TreeNode Itemnode = new TreeNode((item.ClassName))
                 {
-                    Tag = item // store the actual object
-                });
+                    Tag = item 
+                };
+                TreeNode itemAttchmentsNode = new TreeNode("Attachments")
+                {
+                    Tag = "ExpansionStartingGearItemAttachments"
+                };
+                foreach (string itemclassanme in item.Attachments)
+                {
+                    itemAttchmentsNode.Nodes.Add(new TreeNode(itemclassanme)
+                    {
+                        Tag = "ExpansionStartingGearItemAttachment"
+                    });
+                }
+                Itemnode.Nodes.Add(itemAttchmentsNode);
+                categoryNode.Nodes.Add(Itemnode);
             }
             root.Nodes.Add(categoryNode);
         }
@@ -3223,6 +3298,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_VehicleSpawnPositionDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_ServerSafeZoneSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_ServerSafeZoneDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_SpawnLocationPositionSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_SpawnLocationPositionDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -3234,6 +3311,8 @@ namespace ExpansionPlugin
             _selectedSafeZoneCircle = null;
             _selectedSafeZonePolygon = null;
             _selectedSafeZoneCylinder = null;
+            _selectedSpawnLocation = null;
+
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -3301,6 +3380,7 @@ namespace ExpansionPlugin
         private ExpansionSafeZoneCircle _selectedSafeZoneCircle;
         private ExpansionSafeZonePolygon _selectedSafeZonePolygon;
         private ExpansionSafeZoneCylinder _selectedSafeZoneCylinder;
+        private ExpansionSpawnLocation _selectedSpawnLocation;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -3428,6 +3508,19 @@ namespace ExpansionPlugin
                 var ExpansionSafeZoneConfig = node.FindParentOfType<ExpansionSafeZoneConfig>();
                 if (ExpansionSafeZoneConfig != null)
                     DrawbaseSafeZoneData(ExpansionSafeZoneConfig);
+            });
+        }
+         private void SetupSpawnLocationMarkers(ExpansionSpawnLocation ExpansionSpawnLocation, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedSpawnLocation = ExpansionSpawnLocation;
+                _mapControl.MapsingleClicked += MapControl_SpawnLocationPositionSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_SpawnLocationPositionDoubleclicked;
+
+                var ExpansionSpawnConfig = node.FindParentOfType<ExpansionSpawnConfig>();
+                if (ExpansionSpawnConfig != null)
+                    DrawbaseSpawnLocationData(ExpansionSpawnConfig);
             });
         }
         //Draw Methods
@@ -3668,6 +3761,56 @@ namespace ExpansionPlugin
                 _mapControl.RegisterDrawable(marker);
             }
         }
+        private void DrawbaseSpawnLocationData(ExpansionSpawnConfig ExpansionSpawnConfig)
+        {
+            foreach (ExpansionSpawnLocation ExpansionSpawnLocation in ExpansionSpawnConfig.Data.SpawnLocations)
+            {
+                if (_selectedSpawnLocation == ExpansionSpawnLocation)
+                {
+                    foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
+                    {
+                        if (currentTreeNode.Tag == vec3)
+                        {
+                            var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                            {
+                                Color = Color.Yellow,
+                                Radius = 8,
+                                Scaleradius = false
+                            };
+                            _mapControl.RegisterDrawable(marker);
+                        }
+                        else
+                        {
+                            var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                            {
+                                Color = Color.LimeGreen,
+                                Radius = 8,
+                                Scaleradius = false
+                            };
+                            _mapControl.RegisterDrawable(marker);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
+                    {
+                        var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                        {
+                            Color = Color.Red,
+                            Radius = 8,
+                            Scaleradius = false
+                        };
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+                var outline = new OutlineDrawable(ExpansionSpawnLocation.Positions, _mapControl.MapSize)
+                {
+
+                };
+                _mapControl.RegisterDrawable(outline);
+            }
+        }
         //map click methods
         private void MapControl_BuildZoneSingleclicked(object sender, MapClickEventArgs e)
         {
@@ -3851,7 +3994,6 @@ namespace ExpansionPlugin
                 _mapControl.ClearDrawables();
 
                 ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
-                ExpansionAIPatrolConfig.isDirty = true;
                 ShowHandler(new Vector3Control(), typeof(ExpansionAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
                 DrawbaseAIPatrols(ExpansionAIPatrolConfig);
                 currentTreeNode.Text = v3.GetString();
@@ -4222,6 +4364,105 @@ namespace ExpansionPlugin
                 _mapControl.ClearDrawables();
                 ShowHandler(new Vector3Control(), typeof(ExpansionSafeZoneConfig), vec3, new List<TreeNode>() { currentTreeNode });
                 DrawbaseSafeZoneData(_expansionManager.ExpansionSafeZoneConfig);
+            }
+        }
+        private void MapControl_SpawnLocationPositionSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            if (currentTreeNode.Tag is Vec3)
+            {
+                parentNode = currentTreeNode.Parent.Parent.Parent;
+            }
+
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child2 in parentNode.Nodes)
+            {
+                foreach (TreeNode child in child2.Nodes)
+                {
+                    if (child.Tag is ExpansionSpawnLocation ExpansionSpawnLocation)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(PolygonPanTarget.GetPanTargetXZ(ExpansionSpawnLocation.Positions));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = ExpansionSpawnLocation;
+                        }
+                        foreach (TreeNode chi in child.Nodes)
+                        {
+                            if (chi.Tag is Vec3 pos12)
+                            {
+                                PointF posScreen1 = _mapControl.MapToScreen(new PointF(pos12.X, pos12.Z));
+
+                                double dx1 = clickScreen.X - posScreen1.X;
+                                double dy1 = clickScreen.Y - posScreen1.Y;
+                                double distance1 = Math.Sqrt(dx1 * dx1 + dy1 * dy1);
+
+                                if (distance1 < closestDistance)
+                                {
+                                    closestDistance = distance1;
+                                    closestPos = pos12;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (closestPos != null && closestDistance <= 30) 
+            {
+                foreach (TreeNode child2 in parentNode.Nodes)
+                {
+                    foreach (TreeNode child in child2.Nodes)
+                    {
+                        if (child.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child;
+                            break;
+                        }
+                        foreach (TreeNode chi in child.Nodes)
+                        {
+                            if (chi.Tag == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = chi;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_SpawnLocationPositionDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 v3)
+            {
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionSpawnConfig ExpansionSpawnConfig = currentTreeNode.FindParentOfType<ExpansionSpawnConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionSpawnConfig), v3, new List<TreeNode>() { currentTreeNode });
+                DrawbaseSpawnLocationData(ExpansionSpawnConfig);
+                currentTreeNode.Text = v3.GetString();
             }
         }
         #endregion mapstuff

@@ -29,36 +29,23 @@ namespace ExpansionPlugin
 
         public void Draw(Graphics g, RectangleF drawBounds, float zoom, PointF panOffset)
         {
-            // Convert map → screen
             float normalizedX = MapPosition.X / _mapSize.Width;
             float normalizedY = 1f - (MapPosition.Y / _mapSize.Height);
-
             float screenX = drawBounds.X + normalizedX * drawBounds.Width;
             float screenY = drawBounds.Y + normalizedY * drawBounds.Height;
-
-
-            // Convert radius from map units to screen pixels
             float screenRadius;
             if (Scaleradius)
             {
-                // Convert map radius to normalized units
                 float normalizedRadiusX = Radius / _mapSize.Width;
                 float normalizedRadiusY = Radius / _mapSize.Height;
-
-                // Convert normalized units to screen space
                 float screenRadiusX = normalizedRadiusX * drawBounds.Width;
                 float screenRadiusY = normalizedRadiusY * drawBounds.Height;
-
-                // Average the X and Y scaling to get a consistent radius
                 screenRadius = (screenRadiusX + screenRadiusY) / 2f;
             }
             else
             {
                 screenRadius = Radius;
             }
-
-
-            // Outer circle
             using (var pen = new Pen(Color, 2))
             {
                 g.DrawEllipse(pen,
@@ -67,8 +54,6 @@ namespace ExpansionPlugin
                     screenRadius * 2,
                     screenRadius * 2);
             }
-
-
             if (Shade)
             {
                 using (var path = new System.Drawing.Drawing2D.GraphicsPath())
@@ -106,13 +91,7 @@ namespace ExpansionPlugin
                     g.Restore(state);
                 }
             }
-
-
-
-
-            // Inner dot
-            //float dotRadius = 5f * 0.3f; // adjust as needed
-            float dotRadius = 2f; // adjust as needed
+            float dotRadius = 2f; 
             using (var brush = new SolidBrush(Color))
             {
                 g.FillEllipse(brush,
@@ -121,10 +100,6 @@ namespace ExpansionPlugin
                     dotRadius * 2,
                     dotRadius * 2);
             }
-
-
-
-
         }
     }
 
