@@ -154,6 +154,8 @@
             removeSpawnLocationToolStripMenuItem = new ToolStripMenuItem();
             addNewSpawnPointToolStripMenuItem = new ToolStripMenuItem();
             removeSpawnPointToolStripMenuItem = new ToolStripMenuItem();
+            moveSpawnPointUpToolStripMenuItem = new ToolStripMenuItem();
+            moveSpawnPointDownToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1062,10 +1064,10 @@
             // SafeZoneCM
             // 
             SafeZoneCM.BackColor = Color.FromArgb(60, 63, 65);
-            SafeZoneCM.Items.AddRange(new ToolStripItem[] { AddNewSafeZoneCircleZoneToolStripMenuItem, RemovesafeZoneCircleZoneToolStripmenuItem, AddNewsafeZonePolygonZoneToolStripMenuItem, RemoveSafeZonePolygonZoneToolStripMenuItem, AddNewSafeZonePolygonPointtoolStripMenuItem, removeSafeZonePolygonPointToolStripMenuItem, moveSafeZonePolygonPointUpToolStripMenuItem, moveSafeZonePolygonPointDownToolStripMenuItem, AddNewSafeZoneCylinderZoneToolStripmenuItem, RemoveSafeZOneCylinderZoneToolStripMenuItem, AddSafeZoneForceCleanUpItemsToolStripMenuItem, RemoveSafeZoneForcecleanUpItemToolStripMenuItem, removeLoadoutfromSpawnLoadoutToolStripMenuItem, addNewSpawnLocationToolStripMenuItem, removeSpawnLocationToolStripMenuItem, addNewSpawnPointToolStripMenuItem, removeSpawnPointToolStripMenuItem });
+            SafeZoneCM.Items.AddRange(new ToolStripItem[] { AddNewSafeZoneCircleZoneToolStripMenuItem, RemovesafeZoneCircleZoneToolStripmenuItem, AddNewsafeZonePolygonZoneToolStripMenuItem, RemoveSafeZonePolygonZoneToolStripMenuItem, AddNewSafeZonePolygonPointtoolStripMenuItem, removeSafeZonePolygonPointToolStripMenuItem, moveSafeZonePolygonPointUpToolStripMenuItem, moveSafeZonePolygonPointDownToolStripMenuItem, AddNewSafeZoneCylinderZoneToolStripmenuItem, RemoveSafeZOneCylinderZoneToolStripMenuItem, AddSafeZoneForceCleanUpItemsToolStripMenuItem, RemoveSafeZoneForcecleanUpItemToolStripMenuItem, removeLoadoutfromSpawnLoadoutToolStripMenuItem, addNewSpawnLocationToolStripMenuItem, removeSpawnLocationToolStripMenuItem, addNewSpawnPointToolStripMenuItem, removeSpawnPointToolStripMenuItem, moveSpawnPointUpToolStripMenuItem, moveSpawnPointDownToolStripMenuItem });
             SafeZoneCM.Name = "ExpansionAICM";
             SafeZoneCM.ShowImageMargin = false;
-            SafeZoneCM.Size = new Size(244, 400);
+            SafeZoneCM.Size = new Size(244, 444);
             // 
             // AddNewSafeZoneCircleZoneToolStripMenuItem
             // 
@@ -1202,6 +1204,22 @@
             removeSpawnPointToolStripMenuItem.Size = new Size(243, 22);
             removeSpawnPointToolStripMenuItem.Text = "Remove Spawn Point";
             removeSpawnPointToolStripMenuItem.Click += removeSpawnPointToolStripMenuItem_Click;
+            // 
+            // moveSpawnPointUpToolStripMenuItem
+            // 
+            moveSpawnPointUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveSpawnPointUpToolStripMenuItem.Name = "moveSpawnPointUpToolStripMenuItem";
+            moveSpawnPointUpToolStripMenuItem.Size = new Size(243, 22);
+            moveSpawnPointUpToolStripMenuItem.Text = "Move Spawn Point Up";
+            moveSpawnPointUpToolStripMenuItem.Click += moveSpawnPointUpToolStripMenuItem_Click;
+            // 
+            // moveSpawnPointDownToolStripMenuItem
+            // 
+            moveSpawnPointDownToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveSpawnPointDownToolStripMenuItem.Name = "moveSpawnPointDownToolStripMenuItem";
+            moveSpawnPointDownToolStripMenuItem.Size = new Size(243, 22);
+            moveSpawnPointDownToolStripMenuItem.Text = "Move Spawn Point Down";
+            moveSpawnPointDownToolStripMenuItem.Click += moveSpawnPointDownToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1363,5 +1381,7 @@
         private ToolStripMenuItem removeSpawnLocationToolStripMenuItem;
         private ToolStripMenuItem addNewSpawnPointToolStripMenuItem;
         private ToolStripMenuItem removeSpawnPointToolStripMenuItem;
+        private ToolStripMenuItem moveSpawnPointUpToolStripMenuItem;
+        private ToolStripMenuItem moveSpawnPointDownToolStripMenuItem;
     }
 }

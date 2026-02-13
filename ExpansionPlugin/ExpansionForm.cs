@@ -648,6 +648,9 @@ namespace ExpansionPlugin
                     {
                         ExpansionSettingsCM.Items.Clear();
                         ExpansionSettingsCM.Items.Add(removeSpawnPointToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveSpawnPointUpToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(moveSpawnPointDownToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
@@ -6472,7 +6475,7 @@ namespace ExpansionPlugin
             {
                 v3.Y = (MapData.gethieght(pos, pos));
             }
-            
+
             ExpansionSpawnLocation.Positions.Add(v3);
             currentTreeNode.Nodes.Add(new TreeNode(v3.ToString())
             {
@@ -6485,6 +6488,54 @@ namespace ExpansionPlugin
             ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.FindParentOfType<ExpansionSpawnLocation>();
             ExpansionSpawnLocation.Positions.Remove(currentTreeNode.Tag as Vec3);
             currentTreeNode.Remove();
+        }
+        private void moveSpawnPointUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.FindParentOfType<ExpansionSpawnLocation>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index > 0)
+            {
+                siblings.RemoveAt(index);
+                ExpansionSpawnLocation.Positions.RemoveAt(index);
+                ExpansionSpawnLocation.Positions.Insert(index - 1, waypoint);
+                siblings.Insert(index - 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode;
+            }
+        }
+        private void moveSpawnPointDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.FindParentOfType<ExpansionSpawnLocation>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index < siblings.Count - 1)
+            {
+                siblings.RemoveAt(index);
+                ExpansionSpawnLocation.Positions.RemoveAt(index);
+                ExpansionSpawnLocation.Positions.Insert(index + 1, waypoint);
+                siblings.Insert(index + 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode;
+            }
         }
         #endregion right click methods
 
@@ -6543,6 +6594,7 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
 
 
 
