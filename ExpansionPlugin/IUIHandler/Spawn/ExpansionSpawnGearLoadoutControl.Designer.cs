@@ -50,7 +50,6 @@
             groupBox66.TabIndex = 6;
             groupBox66.TabStop = false;
             groupBox66.Text = "Spawn Loadouts";
-            groupBox66.Visible = false;
             // 
             // darkLabel172
             // 

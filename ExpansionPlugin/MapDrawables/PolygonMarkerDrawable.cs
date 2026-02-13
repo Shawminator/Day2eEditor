@@ -149,7 +149,7 @@ namespace ExpansionPlugin
     {
         public static PointF GetPanTargetXZ(IReadOnlyList<Vec3> pts)
         {
-            if (pts == null || pts.Count < 3)
+            if (pts == null || pts.Count < 1)
                 throw new ArgumentException("Polygon requires at least 3 points.", nameof(pts));
 
             // Bounds center

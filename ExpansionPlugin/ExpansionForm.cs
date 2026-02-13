@@ -445,12 +445,12 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionSocialMediaSettingsLinkControl(), typeof(ExpansionSocialMediaConfig), ExpansionNewsFeedLinkSetting, selected);
                 },
                 //Spawn
-                [typeof(ExpansionSpawnSettings)] = (node,selected) =>
+                [typeof(ExpansionSpawnSettings)] = (node, selected) =>
                 {
                     ExpansionSpawnSettings ExpansionSpawnSettings = node.Tag as ExpansionSpawnSettings;
                     ShowHandler(new ExpansionSpawnSettingsGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnSettings, selected);
                 },
-                [typeof(ExpansionSpawnLocation)] = (node,selected) =>
+                [typeof(ExpansionSpawnLocation)] = (node, selected) =>
                 {
                     ExpansionSpawnLocation ExpansionSpawnLocation = node.Tag as ExpansionSpawnLocation;
                     ShowHandler(new ExpansionSpawnLocationControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnLocation, selected);
@@ -460,7 +460,7 @@ namespace ExpansionPlugin
                         _mapControl.EnsureVisible(new PointF(ExpansionSpawnLocation.Positions[0].X, ExpansionSpawnLocation.Positions[0].Z));
                     }
                 },
-                [typeof(ExpansionStartingClothing)] = (node,selected)=>
+                [typeof(ExpansionStartingClothing)] = (node, selected) =>
                 {
                     ExpansionStartingClothing ExpansionStartingClothing = node.Tag as ExpansionStartingClothing;
                     ShowHandler(new ExpansionStartingClothingGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionStartingClothing, selected);
@@ -470,17 +470,17 @@ namespace ExpansionPlugin
                     ExpansionStartingGear ExpansionStartingGear = node.Tag as ExpansionStartingGear;
                     ShowHandler(new ExpansionStartingGearGeneralControl(), typeof(ExpansionSpawnConfig), ExpansionStartingGear, selected);
                 },
-                [typeof(ExpansionStartingGearItem)] = (node,selected) =>
+                [typeof(ExpansionStartingGearItem)] = (node, selected) =>
                 {
                     ExpansionStartingGearItem ExpansionStartingGearItem = node.Tag as ExpansionStartingGearItem;
                     ShowHandler(new ExpansionStartingGearItemControl(), typeof(ExpansionSpawnConfig), ExpansionStartingGearItem, selected);
                 },
-                [typeof(ExpansionSpawnGearLoadouts)] = (node,selected) =>
+                [typeof(ExpansionSpawnGearLoadouts)] = (node, selected) =>
                 {
                     ExpansionSpawnGearLoadouts ExpansionSpawnGearLoadouts = node.Tag as ExpansionSpawnGearLoadouts;
                     ShowHandler(new ExpansionSpawnGearLoadoutControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnGearLoadouts, selected);
                 }
-        };
+            };
             // ----------------------
             // String handlers
             // ----------------------
@@ -605,7 +605,7 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionRaidSettingsLockControl(), typeof(ExpansionRaidConfig), _expansionManager.ExpansionRaidConfig.Data, selected);
                 },
                 //Spawn
-                ["MaleLoadouts"] = (node,selected) =>
+                ["MaleLoadouts"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionSpawnGearLoadoutsControl(), typeof(ExpansionSpawnConfig), _expansionManager.ExpansionSpawnConfig.Data, selected);
                 },
@@ -642,6 +642,12 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                         ExpansionSettingsCM.Items.Add(moveSafeZonePolygonPointUpToolStripMenuItem);
                         ExpansionSettingsCM.Items.Add(moveSafeZonePolygonPointDownToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                    else if (node.Parent.Tag is ExpansionSpawnLocation)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeSpawnPointToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
@@ -812,6 +818,21 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(RemoveSafeZOneCylinderZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Spawn
+                [typeof(ExpansionSpawnGearLoadouts)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeLoadoutfromSpawnLoadoutToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionSpawnLocation)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeSpawnLocationToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewSpawnPointToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -1231,6 +1252,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(RemoveSafeZoneForcecleanUpItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //Spawn
+                ["SpawnLocations"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewSpawnLocationToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
             };
         }
 
@@ -3067,7 +3095,7 @@ namespace ExpansionPlugin
         private TreeNode BuildStartingClothingTree(ExpansionStartingClothing sc)
         {
             TreeNode root = new TreeNode("Starting Clothing")
-            { 
+            {
                 Tag = sc
             };
 
@@ -3137,7 +3165,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "ExpansionStartingGearItemAttachments"
                         };
-                        foreach(string itemclassanme in item.Attachments)
+                        foreach (string itemclassanme in item.Attachments)
                         {
                             itemAttchmentsNode.Nodes.Add(new TreeNode(itemclassanme)
                             {
@@ -3161,7 +3189,7 @@ namespace ExpansionPlugin
             {
                 TreeNode Itemnode = new TreeNode((item.ClassName))
                 {
-                    Tag = item 
+                    Tag = item
                 };
                 TreeNode itemAttchmentsNode = new TreeNode("Attachments")
                 {
@@ -3519,7 +3547,7 @@ namespace ExpansionPlugin
                     DrawbaseSafeZoneData(ExpansionSafeZoneConfig);
             });
         }
-         private void SetupSpawnLocationMarkers(ExpansionSpawnLocation ExpansionSpawnLocation, TreeNode node)
+        private void SetupSpawnLocationMarkers(ExpansionSpawnLocation ExpansionSpawnLocation, TreeNode node)
         {
             SetupMap(() =>
             {
@@ -4421,7 +4449,7 @@ namespace ExpansionPlugin
                                 double dy1 = clickScreen.Y - posScreen1.Y;
                                 double distance1 = Math.Sqrt(dx1 * dx1 + dy1 * dy1);
 
-                                if (distance1 < closestDistance)
+                                if (distance1 <= closestDistance)
                                 {
                                     closestDistance = distance1;
                                     closestPos = pos12;
@@ -4431,7 +4459,7 @@ namespace ExpansionPlugin
                     }
                 }
             }
-            if (closestPos != null && closestDistance <= 30) 
+            if (closestPos != null && closestDistance <= 30)
             {
                 foreach (TreeNode child2 in parentNode.Nodes)
                 {
@@ -6388,6 +6416,76 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionSafeZoneConfig.Data.ForceSZCleanup_ExcludedItems.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
+        //Spawn
+        private void removeLoadoutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Tag.ToString() == "MaleLoadouts")
+            {
+                _expansionManager.ExpansionSpawnConfig.Data.MaleLoadouts.Remove(currentTreeNode.Tag as ExpansionSpawnGearLoadouts);
+            }
+            else if (currentTreeNode.Parent.Tag.ToString() == "FemaleLoadouts")
+            {
+                _expansionManager.ExpansionSpawnConfig.Data.FemaleLoadouts.Remove(currentTreeNode.Tag as ExpansionSpawnGearLoadouts);
+            }
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewSpawnLocationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSpawnLocation newspawnlocation = new ExpansionSpawnLocation()
+            {
+                Name = "New Spawn Location",
+                Positions = new BindingList<Vec3>(),
+                UseCooldown = 1
+            };
+            _expansionManager.ExpansionSpawnConfig.Data.SpawnLocations.Add(newspawnlocation);
+            TreeNode SLNode = new TreeNode(newspawnlocation.ToString())
+            {
+                Tag = newspawnlocation
+            };
+            foreach (Vec3 v3 in newspawnlocation.Positions)
+            {
+                SLNode.Nodes.Add(new TreeNode(v3.GetString())
+                {
+                    Tag = v3
+                });
+            }
+            currentTreeNode.Nodes.Add(SLNode);
+            ExpansionTV.SelectedNode = SLNode;
+            SLNode.EnsureVisible();
+        }
+        private void removeSpawnLocationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionSpawnConfig.Data.SpawnLocations.Remove(currentTreeNode.Tag as ExpansionSpawnLocation);
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewSpawnPointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.Tag as ExpansionSpawnLocation;
+            float pos = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+            Vec3 v3 = new Vec3(pos, 0, pos);
+            if (ExpansionSpawnLocation.Positions.Count > 0)
+            {
+                Vec3 vec3 = ExpansionSpawnLocation.Positions.Last();
+                v3 = new Vec3(vec3.X + 25, 0f, vec3.Z);
+            }
+            if (MapData.FileExists)
+            {
+                v3.Y = (MapData.gethieght(pos, pos));
+            }
+            
+            ExpansionSpawnLocation.Positions.Add(v3);
+            currentTreeNode.Nodes.Add(new TreeNode(v3.ToString())
+            {
+                Tag = v3
+            });
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+        }
+        private void removeSpawnPointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.FindParentOfType<ExpansionSpawnLocation>();
+            ExpansionSpawnLocation.Positions.Remove(currentTreeNode.Tag as Vec3);
+            currentTreeNode.Remove();
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -6445,6 +6543,9 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
+
+
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]
