@@ -1,5 +1,7 @@
 ﻿using Day2eEditor;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+using static FileService;
 
 namespace ExpansionPlugin
 {
@@ -51,7 +53,7 @@ namespace ExpansionPlugin
             if (!AreEqual(Data, ClonedData) || isDirty == true)
             {
                 isDirty = false;
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true, true);
                 ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
@@ -457,83 +459,52 @@ namespace ExpansionPlugin
         public BindingList<ExpansionStartingGearItem> PantsGear { get; set; }
         public BindingList<ExpansionStartingGearItem> BackpackGear { get; set; }
         public BindingList<ExpansionStartingGearItem> VestGear { get; set; }
+        [JsonConverter(typeof(EmptyObjectWhenNullConverter<ExpansionStartingGearItem>))]
         public ExpansionStartingGearItem? PrimaryWeapon { get; set; }
+        [JsonConverter(typeof(EmptyObjectWhenNullConverter<ExpansionStartingGearItem>))]
         public ExpansionStartingGearItem? SecondaryWeapon { get; set; }
 
         public ExpansionStartingGear() { }
+
         public override bool Equals(object obj)
         {
             if (obj is not ExpansionStartingGear other)
                 return false;
 
-            if (EnableStartingGear != other.EnableStartingGear &&
-                ApplyEnergySources != other.ApplyEnergySources &&
-                SetRandomHealth != other.SetRandomHealth &&
-                PrimaryWeapon != other.PrimaryWeapon &&
-                SecondaryWeapon != other.SecondaryWeapon)
-                return false;
-            
-            if (UpperGear == null && other.UpperGear == null)
-                return true;
-
-            if (UpperGear == null || other.UpperGear == null)
+            if (EnableStartingGear != other.EnableStartingGear ||
+                ApplyEnergySources != other.ApplyEnergySources ||
+                SetRandomHealth != other.SetRandomHealth)
                 return false;
 
-            if (UpperGear.Count != other.UpperGear.Count)
-                return false;
+            if (!ListEquals(UpperGear, other.UpperGear)) return false;
+            if (!ListEquals(PantsGear, other.PantsGear)) return false;
+            if (!ListEquals(BackpackGear, other.BackpackGear)) return false;
+            if (!ListEquals(VestGear, other.VestGear)) return false;
 
-            for (int i = 0; i < UpperGear.Count; i++)
+            if (!ObjectEquals(PrimaryWeapon, other.PrimaryWeapon)) return false;
+            if (!ObjectEquals(SecondaryWeapon, other.SecondaryWeapon)) return false;
+
+            return true;
+        }
+        private static bool ListEquals<T>(IList<T> a, IList<T> b)
+        {
+            if (a == null && b == null) return true;
+            if (a == null || b == null) return false;
+            if (a.Count != b.Count) return false;
+
+            for (int i = 0; i < a.Count; i++)
             {
-                if (!UpperGear[i].Equals(other.UpperGear[i]))
-                    return false;
-            }
-
-            if (PantsGear == null && other.PantsGear == null)
-                return true;
-
-            if (PantsGear == null || other.PantsGear == null)
-                return false;
-
-            if (PantsGear.Count != other.PantsGear.Count)
-                return false;
-
-            for (int i = 0; i < PantsGear.Count; i++)
-            {
-                if (!PantsGear[i].Equals(other.PantsGear[i]))
-                    return false;
-            }
-
-            if (BackpackGear == null && other.BackpackGear == null)
-                return true;
-
-            if (BackpackGear == null || other.BackpackGear == null)
-                return false;
-
-            if (BackpackGear.Count != other.BackpackGear.Count)
-                return false;
-
-            for (int i = 0; i < BackpackGear.Count; i++)
-            {
-                if (!BackpackGear[i].Equals(other.BackpackGear[i]))
-                    return false;
-            }
-
-            if (VestGear == null && other.VestGear == null)
-                return true;
-
-            if (VestGear == null || other.VestGear == null)
-                return false;
-
-            if (VestGear.Count != other.VestGear.Count)
-                return false;
-
-            for (int i = 0; i < VestGear.Count; i++)
-            {
-                if (!VestGear[i].Equals(other.VestGear[i]))
+                if (!ObjectEquals(a[i], b[i]))
                     return false;
             }
 
             return true;
+        }
+        private static bool ObjectEquals<T>(T a, T b)
+        {
+            if (a == null && b == null) return true;
+            if (a == null || b == null) return false;
+            return a.Equals(b);
         }
         public ExpansionStartingGear Clone()
         {

@@ -840,9 +840,19 @@ namespace ExpansionPlugin
                 },
                 [typeof(ExpansionStartingGearItem)] = node =>
                 {
-                    ExpansionSettingsCM.Items.Clear();
-                    ExpansionSettingsCM.Items.Add(removeStartingGearItemToolStripMenuItem);
-                    ExpansionSettingsCM.Show(Cursor.Position);
+                    if (node.Parent.Tag.ToString() == "PrimaryWeapon" ||
+                            node.Parent.Tag.ToString() == "SecondaryWeapon")
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeStartingWeaponToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                    else
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeStartingGearItemToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 }
             };
             // ----------------------
@@ -1297,6 +1307,24 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeStartingGearAttachmentToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["PrimaryWeapon"] = node =>
+                { 
+                    if (_expansionManager.ExpansionSpawnConfig.Data.StartingGear.PrimaryWeapon == null)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(addStartingWeaponToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                },
+                ["SecondaryWeapon"] = node =>
+                {
+                    if (_expansionManager.ExpansionSpawnConfig.Data.StartingGear.SecondaryWeapon == null)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(addStartingWeaponToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 }
             };
         }
@@ -3188,8 +3216,8 @@ namespace ExpansionPlugin
                 foreach (var prop in listProps)
                 {
                     var list = (BindingList<ExpansionStartingGearItem>)prop.GetValue(gear);
-                    var categoryNode = new TreeNode(prop.Name) 
-                    { 
+                    var categoryNode = new TreeNode(prop.Name)
+                    {
                         Tag = "StartingGear"
                     };
                     if (list == null || list.Count == 0)
@@ -3201,7 +3229,7 @@ namespace ExpansionPlugin
                     {
                         TreeNode Itemnode = new TreeNode(item.ClassName)
                         {
-                            Tag = item 
+                            Tag = item
                         };
                         TreeNode itemAttchmentsNode = new TreeNode("Attachments")
                         {
@@ -6633,7 +6661,7 @@ namespace ExpansionPlugin
             switch (currentTreeNode.Text)
             {
                 case "UpperGear":
-                    if(!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.UpperGear.Any(x => x == startingGearItem))
+                    if (!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.UpperGear.Any(x => x == startingGearItem))
                         _expansionManager.ExpansionSpawnConfig.Data.StartingGear.UpperGear.Add(startingGearItem);
                     break;
                 case "PantsGear":
@@ -6647,6 +6675,12 @@ namespace ExpansionPlugin
                 case "VestGear":
                     if (!_expansionManager.ExpansionSpawnConfig.Data.StartingGear.VestGear.Any(x => x == startingGearItem))
                         _expansionManager.ExpansionSpawnConfig.Data.StartingGear.VestGear.Add(startingGearItem);
+                    break;
+                case "PrimaryWeapon":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.PrimaryWeapon = startingGearItem;
+                    break;
+                case "SecondaryWeapon":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.SecondaryWeapon = startingGearItem;
                     break;
             }
         }
@@ -6733,6 +6767,60 @@ namespace ExpansionPlugin
             ExpansionStartingGearItem.Attachments.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
+        private void addStartingWeaponToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes 
+            {
+                UseOnlySingleItem = true
+            };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    ExpansionStartingGearItem newExpansionStartingGearItem = new ExpansionStartingGearItem()
+                    {
+                        ClassName = l,
+                        Attachments = new BindingList<string>(),
+                        Quantity = -1
+                    };
+                    AddStartingGearItem(newExpansionStartingGearItem);
+                    TreeNode Itemnode = new TreeNode(newExpansionStartingGearItem.ClassName)
+                    {
+                        Tag = newExpansionStartingGearItem
+                    };
+                    TreeNode itemAttchmentsNode = new TreeNode("Attachments")
+                    {
+                        Tag = "ExpansionStartingGearItemAttachments"
+                    };
+                    foreach (string itemclassanme in newExpansionStartingGearItem.Attachments)
+                    {
+                        itemAttchmentsNode.Nodes.Add(new TreeNode(itemclassanme)
+                        {
+                            Tag = "ExpansionStartingGearItemAttachment"
+                        });
+                    }
+                    Itemnode.Nodes.Add(itemAttchmentsNode);
+                    currentTreeNode.Nodes.Add(Itemnode);
+                }
+            }
+            ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+
+        }
+        private void removeStartingWeaponToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            switch (currentTreeNode.Parent.Text)
+            {
+                case "PrimaryWeapon":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.PrimaryWeapon = null;
+                    break;
+                case "SecondaryWeapon":
+                    _expansionManager.ExpansionSpawnConfig.Data.StartingGear.SecondaryWeapon = null;
+                    break;
+            }
+            currentTreeNode.Remove();
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -6790,12 +6878,6 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
-
-
-
-
-
-
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

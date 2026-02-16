@@ -6,6 +6,45 @@ using System.Xml.Serialization;
 
 public class FileService
 {
+
+    public class EmptyObjectWhenNullConverter<T> : JsonConverter<T> where T : class, new()
+    {
+        public override bool HandleNull => true;
+        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.Null)
+                return null;
+
+            if (reader.TokenType == JsonTokenType.StartObject)
+            {
+                using var doc = JsonDocument.ParseValue(ref reader);
+                var elem = doc.RootElement;
+
+                if (elem.ValueKind == JsonValueKind.Object && elem.GetRawText() == "{}")
+                    return null; 
+
+                return (T?)JsonSerializer.Deserialize(elem.GetRawText(), typeToConvert, options);
+            }
+
+            throw new JsonException($"Unexpected token {reader.TokenType} when parsing {typeof(T).Name}");
+        }
+
+
+        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteStartObject();
+                writer.WriteEndObject();
+                return;
+            }
+
+            JsonSerializer.Serialize(writer, value, options);
+        }
+
+    }
+
+
     public class BoolConverter : JsonConverter<bool>
     {
         public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options) =>
@@ -58,7 +97,7 @@ public class FileService
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
     private JsonSerializerOptions BuildOptions(bool useBool, bool useVec)
     {
@@ -115,9 +154,13 @@ public class FileService
         }
     }
 
-    public void SaveJson<T>(string path, T data, bool useBoolConvertor = false,  bool useVecConvertor = false)
+    public void SaveJson<T>(string path, T data, bool useBoolConvertor = false, bool useVecConvertor = false, bool writenull = false)
     {
         var options = BuildOptions(useBoolConvertor, useVecConvertor);
+        if(writenull == true)
+        {
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+        }
         try
         {
             var json = JsonSerializer.Serialize(data, options);

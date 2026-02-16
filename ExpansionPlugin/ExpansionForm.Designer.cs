@@ -162,6 +162,8 @@
             removeStartingGearItemToolStripMenuItem = new ToolStripMenuItem();
             addStartingGearAttachmentToolStripMenuItem = new ToolStripMenuItem();
             removeStartingGearAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            addStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
+            removeStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -297,13 +299,13 @@
             ExpansionSettingsCM.Items.AddRange(new ToolStripItem[] { addNewAirdropContainerToolStripMenuItem, removeAirdropContainerToolStripMenuItem, addAIAdminToolStripMenuItem, addAIPreventClimbToolStripMenuItem, addAIPlayerFactionToolStripMenuItem, removeAIAdminToolStripMenuItem, removeAIPreventClimbToolStripMenuItem, removeAIPlayerFactionToolStripMenuItem, addNewDeployableOutsideTerritoryToolStripMenuItem, removeDeployableOutsideTerritoryToolStripMenuItem, addNewDeployableInsideEnemyTerritoryToolStripMenuItem, removeDeployableInsideEnemyTerritoryToolStripMenuItem, addNewVirtualStorageExcludedContainerToolStripMenuItem, removeVirtualStorageExcludedContainerToolStripMenuItem, addNewNoBuildZoneToolStripMenuItem, RemoveNoBuildZoneToolStripMenuItem, addBuildZoneItemToolStripMenuItem, removeBuildZoneItemToolStripMenuItem, addNewDescriptionCategoryToolStripMenuItem, removeDescriptionCategoryToolStripMenuItem, addNewLinkToolStripMenuItem, removeLinkToolStripMenuItem, addNewCraftingCategoryToolStripMenuItem, removeCraftingCategoryToolStripMenuItem, addNewRuleCategoryToolStripMenuItem, removeRuleCategoryToolStripMenuItem, addNewRuleParagraphToolStripMenuItem, removeRuleParagrapghToolStripMenuItem });
             ExpansionSettingsCM.Name = "TypesCM";
             ExpansionSettingsCM.ShowImageMargin = false;
-            ExpansionSettingsCM.Size = new Size(282, 620);
+            ExpansionSettingsCM.Size = new Size(283, 620);
             // 
             // addNewAirdropContainerToolStripMenuItem
             // 
             addNewAirdropContainerToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewAirdropContainerToolStripMenuItem.Name = "addNewAirdropContainerToolStripMenuItem";
-            addNewAirdropContainerToolStripMenuItem.Size = new Size(281, 22);
+            addNewAirdropContainerToolStripMenuItem.Size = new Size(282, 22);
             addNewAirdropContainerToolStripMenuItem.Text = "Add New Airdrop Container";
             addNewAirdropContainerToolStripMenuItem.Click += addNewAirdropContainerToolStripMenuItem_Click;
             // 
@@ -311,7 +313,7 @@
             // 
             removeAirdropContainerToolStripMenuItem.ForeColor = SystemColors.Control;
             removeAirdropContainerToolStripMenuItem.Name = "removeAirdropContainerToolStripMenuItem";
-            removeAirdropContainerToolStripMenuItem.Size = new Size(281, 22);
+            removeAirdropContainerToolStripMenuItem.Size = new Size(282, 22);
             removeAirdropContainerToolStripMenuItem.Text = "Remove Airdrop Container";
             removeAirdropContainerToolStripMenuItem.Click += removeAirdropContainerToolStripMenuItem_Click;
             // 
@@ -319,7 +321,7 @@
             // 
             addAIAdminToolStripMenuItem.ForeColor = SystemColors.Control;
             addAIAdminToolStripMenuItem.Name = "addAIAdminToolStripMenuItem";
-            addAIAdminToolStripMenuItem.Size = new Size(281, 22);
+            addAIAdminToolStripMenuItem.Size = new Size(282, 22);
             addAIAdminToolStripMenuItem.Text = "Add AI Admin";
             addAIAdminToolStripMenuItem.Click += addAIAdminToolStripMenuItem_Click;
             // 
@@ -327,7 +329,7 @@
             // 
             addAIPreventClimbToolStripMenuItem.ForeColor = SystemColors.Control;
             addAIPreventClimbToolStripMenuItem.Name = "addAIPreventClimbToolStripMenuItem";
-            addAIPreventClimbToolStripMenuItem.Size = new Size(281, 22);
+            addAIPreventClimbToolStripMenuItem.Size = new Size(282, 22);
             addAIPreventClimbToolStripMenuItem.Text = "Add AI Prevent Climb";
             addAIPreventClimbToolStripMenuItem.Click += addAIPreventClimbToolStripMenuItem_Click;
             // 
@@ -335,7 +337,7 @@
             // 
             addAIPlayerFactionToolStripMenuItem.ForeColor = SystemColors.Control;
             addAIPlayerFactionToolStripMenuItem.Name = "addAIPlayerFactionToolStripMenuItem";
-            addAIPlayerFactionToolStripMenuItem.Size = new Size(281, 22);
+            addAIPlayerFactionToolStripMenuItem.Size = new Size(282, 22);
             addAIPlayerFactionToolStripMenuItem.Text = "Add AI Player Faction";
             addAIPlayerFactionToolStripMenuItem.Click += addAIPlayerFactionToolStripMenuItem_Click;
             // 
@@ -343,7 +345,7 @@
             // 
             removeAIAdminToolStripMenuItem.ForeColor = SystemColors.Control;
             removeAIAdminToolStripMenuItem.Name = "removeAIAdminToolStripMenuItem";
-            removeAIAdminToolStripMenuItem.Size = new Size(281, 22);
+            removeAIAdminToolStripMenuItem.Size = new Size(282, 22);
             removeAIAdminToolStripMenuItem.Text = "Remove AI Admin";
             removeAIAdminToolStripMenuItem.Click += removeAIAdminToolStripMenuItem_Click;
             // 
@@ -351,7 +353,7 @@
             // 
             removeAIPreventClimbToolStripMenuItem.ForeColor = SystemColors.Control;
             removeAIPreventClimbToolStripMenuItem.Name = "removeAIPreventClimbToolStripMenuItem";
-            removeAIPreventClimbToolStripMenuItem.Size = new Size(281, 22);
+            removeAIPreventClimbToolStripMenuItem.Size = new Size(282, 22);
             removeAIPreventClimbToolStripMenuItem.Text = "Remove AI Prevent Climb";
             removeAIPreventClimbToolStripMenuItem.Click += removeAIPreventClimbToolStripMenuItem_Click;
             // 
@@ -359,7 +361,7 @@
             // 
             removeAIPlayerFactionToolStripMenuItem.ForeColor = SystemColors.Control;
             removeAIPlayerFactionToolStripMenuItem.Name = "removeAIPlayerFactionToolStripMenuItem";
-            removeAIPlayerFactionToolStripMenuItem.Size = new Size(281, 22);
+            removeAIPlayerFactionToolStripMenuItem.Size = new Size(282, 22);
             removeAIPlayerFactionToolStripMenuItem.Text = "Remove AI Player Faction";
             removeAIPlayerFactionToolStripMenuItem.Click += removeAIPlayerFactionToolStripMenuItem_Click;
             // 
@@ -367,7 +369,7 @@
             // 
             addNewDeployableOutsideTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewDeployableOutsideTerritoryToolStripMenuItem.Name = "addNewDeployableOutsideTerritoryToolStripMenuItem";
-            addNewDeployableOutsideTerritoryToolStripMenuItem.Size = new Size(281, 22);
+            addNewDeployableOutsideTerritoryToolStripMenuItem.Size = new Size(282, 22);
             addNewDeployableOutsideTerritoryToolStripMenuItem.Text = "Add New Deployable Outside Territory";
             addNewDeployableOutsideTerritoryToolStripMenuItem.Click += addNewDeployableOutsideTerritoryToolStripMenuItem_Click;
             // 
@@ -375,7 +377,7 @@
             // 
             removeDeployableOutsideTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
             removeDeployableOutsideTerritoryToolStripMenuItem.Name = "removeDeployableOutsideTerritoryToolStripMenuItem";
-            removeDeployableOutsideTerritoryToolStripMenuItem.Size = new Size(281, 22);
+            removeDeployableOutsideTerritoryToolStripMenuItem.Size = new Size(282, 22);
             removeDeployableOutsideTerritoryToolStripMenuItem.Text = "Remove Deployable Outside Territory";
             removeDeployableOutsideTerritoryToolStripMenuItem.Click += removeDeployableOutsideTerritoryToolStripMenuItem_Click;
             // 
@@ -383,7 +385,7 @@
             // 
             addNewDeployableInsideEnemyTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewDeployableInsideEnemyTerritoryToolStripMenuItem.Name = "addNewDeployableInsideEnemyTerritoryToolStripMenuItem";
-            addNewDeployableInsideEnemyTerritoryToolStripMenuItem.Size = new Size(281, 22);
+            addNewDeployableInsideEnemyTerritoryToolStripMenuItem.Size = new Size(282, 22);
             addNewDeployableInsideEnemyTerritoryToolStripMenuItem.Text = "Add New Deployable Inside Enemy Territory";
             addNewDeployableInsideEnemyTerritoryToolStripMenuItem.Click += addNewDeployableInsideEnemyTerritoryToolStripMenuItem_Click;
             // 
@@ -391,7 +393,7 @@
             // 
             removeDeployableInsideEnemyTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
             removeDeployableInsideEnemyTerritoryToolStripMenuItem.Name = "removeDeployableInsideEnemyTerritoryToolStripMenuItem";
-            removeDeployableInsideEnemyTerritoryToolStripMenuItem.Size = new Size(281, 22);
+            removeDeployableInsideEnemyTerritoryToolStripMenuItem.Size = new Size(282, 22);
             removeDeployableInsideEnemyTerritoryToolStripMenuItem.Text = "Remove Deployable Inside Enemy Territory";
             removeDeployableInsideEnemyTerritoryToolStripMenuItem.Click += removeDeployableInsideEnemyTerritoryToolStripMenuItem_Click;
             // 
@@ -399,7 +401,7 @@
             // 
             addNewVirtualStorageExcludedContainerToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewVirtualStorageExcludedContainerToolStripMenuItem.Name = "addNewVirtualStorageExcludedContainerToolStripMenuItem";
-            addNewVirtualStorageExcludedContainerToolStripMenuItem.Size = new Size(281, 22);
+            addNewVirtualStorageExcludedContainerToolStripMenuItem.Size = new Size(282, 22);
             addNewVirtualStorageExcludedContainerToolStripMenuItem.Text = "Add new Virtual Storage Excluded Container";
             addNewVirtualStorageExcludedContainerToolStripMenuItem.Click += addNewVirtualStorageExcludedContainerToolStripMenuItem_Click;
             // 
@@ -407,7 +409,7 @@
             // 
             removeVirtualStorageExcludedContainerToolStripMenuItem.ForeColor = SystemColors.Control;
             removeVirtualStorageExcludedContainerToolStripMenuItem.Name = "removeVirtualStorageExcludedContainerToolStripMenuItem";
-            removeVirtualStorageExcludedContainerToolStripMenuItem.Size = new Size(281, 22);
+            removeVirtualStorageExcludedContainerToolStripMenuItem.Size = new Size(282, 22);
             removeVirtualStorageExcludedContainerToolStripMenuItem.Text = "Remove Virtual Storage Excluded Container";
             removeVirtualStorageExcludedContainerToolStripMenuItem.Click += removeVirtualStorageExcludedContainerToolStripMenuItem_Click;
             // 
@@ -415,7 +417,7 @@
             // 
             addNewNoBuildZoneToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewNoBuildZoneToolStripMenuItem.Name = "addNewNoBuildZoneToolStripMenuItem";
-            addNewNoBuildZoneToolStripMenuItem.Size = new Size(281, 22);
+            addNewNoBuildZoneToolStripMenuItem.Size = new Size(282, 22);
             addNewNoBuildZoneToolStripMenuItem.Text = "Add New Build Zone";
             addNewNoBuildZoneToolStripMenuItem.Click += addNewNoBuildZoneToolStripMenuItem_Click;
             // 
@@ -423,7 +425,7 @@
             // 
             RemoveNoBuildZoneToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveNoBuildZoneToolStripMenuItem.Name = "RemoveNoBuildZoneToolStripMenuItem";
-            RemoveNoBuildZoneToolStripMenuItem.Size = new Size(281, 22);
+            RemoveNoBuildZoneToolStripMenuItem.Size = new Size(282, 22);
             RemoveNoBuildZoneToolStripMenuItem.Text = "Remove Build Zone";
             RemoveNoBuildZoneToolStripMenuItem.Click += RemoveNoBuildZoneToolStripMenuItem_Click;
             // 
@@ -431,7 +433,7 @@
             // 
             addBuildZoneItemToolStripMenuItem.ForeColor = SystemColors.Control;
             addBuildZoneItemToolStripMenuItem.Name = "addBuildZoneItemToolStripMenuItem";
-            addBuildZoneItemToolStripMenuItem.Size = new Size(281, 22);
+            addBuildZoneItemToolStripMenuItem.Size = new Size(282, 22);
             addBuildZoneItemToolStripMenuItem.Text = "Add Build Zone Item";
             addBuildZoneItemToolStripMenuItem.Click += addBuildZoneItemToolStripMenuItem_Click;
             // 
@@ -439,7 +441,7 @@
             // 
             removeBuildZoneItemToolStripMenuItem.ForeColor = SystemColors.Control;
             removeBuildZoneItemToolStripMenuItem.Name = "removeBuildZoneItemToolStripMenuItem";
-            removeBuildZoneItemToolStripMenuItem.Size = new Size(281, 22);
+            removeBuildZoneItemToolStripMenuItem.Size = new Size(282, 22);
             removeBuildZoneItemToolStripMenuItem.Text = "Remove Build Zone Item";
             removeBuildZoneItemToolStripMenuItem.Click += removeBuildZoneItemToolStripMenuItem_Click;
             // 
@@ -447,7 +449,7 @@
             // 
             addNewDescriptionCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewDescriptionCategoryToolStripMenuItem.Name = "addNewDescriptionCategoryToolStripMenuItem";
-            addNewDescriptionCategoryToolStripMenuItem.Size = new Size(281, 22);
+            addNewDescriptionCategoryToolStripMenuItem.Size = new Size(282, 22);
             addNewDescriptionCategoryToolStripMenuItem.Text = "Add New Description Category";
             addNewDescriptionCategoryToolStripMenuItem.Click += addNewDescriptionCategoryToolStripMenuItem_Click;
             // 
@@ -455,7 +457,7 @@
             // 
             removeDescriptionCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             removeDescriptionCategoryToolStripMenuItem.Name = "removeDescriptionCategoryToolStripMenuItem";
-            removeDescriptionCategoryToolStripMenuItem.Size = new Size(281, 22);
+            removeDescriptionCategoryToolStripMenuItem.Size = new Size(282, 22);
             removeDescriptionCategoryToolStripMenuItem.Text = "Remove DescriptionCategory";
             removeDescriptionCategoryToolStripMenuItem.Click += removeDescriptionCategoryToolStripMenuItem_Click;
             // 
@@ -463,7 +465,7 @@
             // 
             addNewLinkToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewLinkToolStripMenuItem.Name = "addNewLinkToolStripMenuItem";
-            addNewLinkToolStripMenuItem.Size = new Size(281, 22);
+            addNewLinkToolStripMenuItem.Size = new Size(282, 22);
             addNewLinkToolStripMenuItem.Text = "Add New Link";
             addNewLinkToolStripMenuItem.Click += addNewLinkToolStripMenuItem_Click;
             // 
@@ -471,7 +473,7 @@
             // 
             removeLinkToolStripMenuItem.ForeColor = SystemColors.Control;
             removeLinkToolStripMenuItem.Name = "removeLinkToolStripMenuItem";
-            removeLinkToolStripMenuItem.Size = new Size(281, 22);
+            removeLinkToolStripMenuItem.Size = new Size(282, 22);
             removeLinkToolStripMenuItem.Text = "Remove Link";
             removeLinkToolStripMenuItem.Click += removeLinkToolStripMenuItem_Click;
             // 
@@ -479,7 +481,7 @@
             // 
             addNewCraftingCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewCraftingCategoryToolStripMenuItem.Name = "addNewCraftingCategoryToolStripMenuItem";
-            addNewCraftingCategoryToolStripMenuItem.Size = new Size(281, 22);
+            addNewCraftingCategoryToolStripMenuItem.Size = new Size(282, 22);
             addNewCraftingCategoryToolStripMenuItem.Text = "Add New Crafting Category";
             addNewCraftingCategoryToolStripMenuItem.Click += addNewCraftingCategoryToolStripMenuItem_Click;
             // 
@@ -487,7 +489,7 @@
             // 
             removeCraftingCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             removeCraftingCategoryToolStripMenuItem.Name = "removeCraftingCategoryToolStripMenuItem";
-            removeCraftingCategoryToolStripMenuItem.Size = new Size(281, 22);
+            removeCraftingCategoryToolStripMenuItem.Size = new Size(282, 22);
             removeCraftingCategoryToolStripMenuItem.Text = "Remove Crafting Category";
             removeCraftingCategoryToolStripMenuItem.Click += removeCraftingCategoryToolStripMenuItem_Click;
             // 
@@ -495,7 +497,7 @@
             // 
             addNewRuleCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewRuleCategoryToolStripMenuItem.Name = "addNewRuleCategoryToolStripMenuItem";
-            addNewRuleCategoryToolStripMenuItem.Size = new Size(281, 22);
+            addNewRuleCategoryToolStripMenuItem.Size = new Size(282, 22);
             addNewRuleCategoryToolStripMenuItem.Text = "Add New Rule Category";
             addNewRuleCategoryToolStripMenuItem.Click += addNewRuleCategoryToolStripMenuItem_Click;
             // 
@@ -503,7 +505,7 @@
             // 
             removeRuleCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             removeRuleCategoryToolStripMenuItem.Name = "removeRuleCategoryToolStripMenuItem";
-            removeRuleCategoryToolStripMenuItem.Size = new Size(281, 22);
+            removeRuleCategoryToolStripMenuItem.Size = new Size(282, 22);
             removeRuleCategoryToolStripMenuItem.Text = "Remove Rule Category";
             removeRuleCategoryToolStripMenuItem.Click += removeRuleCategoryToolStripMenuItem_Click;
             // 
@@ -511,7 +513,7 @@
             // 
             addNewRuleParagraphToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewRuleParagraphToolStripMenuItem.Name = "addNewRuleParagraphToolStripMenuItem";
-            addNewRuleParagraphToolStripMenuItem.Size = new Size(281, 22);
+            addNewRuleParagraphToolStripMenuItem.Size = new Size(282, 22);
             addNewRuleParagraphToolStripMenuItem.Text = "Add New Rule Paragraph";
             addNewRuleParagraphToolStripMenuItem.Click += addNewRuleParagraphToolStripMenuItem_Click;
             // 
@@ -519,7 +521,7 @@
             // 
             removeRuleParagrapghToolStripMenuItem.ForeColor = SystemColors.Control;
             removeRuleParagrapghToolStripMenuItem.Name = "removeRuleParagrapghToolStripMenuItem";
-            removeRuleParagrapghToolStripMenuItem.Size = new Size(281, 22);
+            removeRuleParagrapghToolStripMenuItem.Size = new Size(282, 22);
             removeRuleParagrapghToolStripMenuItem.Text = "Remove Rule Paragrapgh";
             removeRuleParagrapghToolStripMenuItem.Click += removeRuleParagrapghToolStripMenuItem_Click;
             // 
@@ -833,13 +835,13 @@
             DamageCM.Items.AddRange(new ToolStripItem[] { addNewExplosionTargetToolStripMenuItem, removeExplosionTargetToolStripMenuItem, addNewExplosiveProjectileToolStripMenuItem, removeExplosiveProjectileToolStripMenuItem });
             DamageCM.Name = "DamageCM";
             DamageCM.ShowImageMargin = false;
-            DamageCM.Size = new Size(202, 92);
+            DamageCM.Size = new Size(203, 92);
             // 
             // addNewExplosionTargetToolStripMenuItem
             // 
             addNewExplosionTargetToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewExplosionTargetToolStripMenuItem.Name = "addNewExplosionTargetToolStripMenuItem";
-            addNewExplosionTargetToolStripMenuItem.Size = new Size(201, 22);
+            addNewExplosionTargetToolStripMenuItem.Size = new Size(202, 22);
             addNewExplosionTargetToolStripMenuItem.Text = "Add New Explosion Target";
             addNewExplosionTargetToolStripMenuItem.Click += addNewExplosionTargetToolStripMenuItem_Click;
             // 
@@ -847,7 +849,7 @@
             // 
             removeExplosionTargetToolStripMenuItem.ForeColor = SystemColors.Control;
             removeExplosionTargetToolStripMenuItem.Name = "removeExplosionTargetToolStripMenuItem";
-            removeExplosionTargetToolStripMenuItem.Size = new Size(201, 22);
+            removeExplosionTargetToolStripMenuItem.Size = new Size(202, 22);
             removeExplosionTargetToolStripMenuItem.Text = "Remove Explosion Target";
             removeExplosionTargetToolStripMenuItem.Click += removeExplosionTargetToolStripMenuItem_Click;
             // 
@@ -855,7 +857,7 @@
             // 
             addNewExplosiveProjectileToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewExplosiveProjectileToolStripMenuItem.Name = "addNewExplosiveProjectileToolStripMenuItem";
-            addNewExplosiveProjectileToolStripMenuItem.Size = new Size(201, 22);
+            addNewExplosiveProjectileToolStripMenuItem.Size = new Size(202, 22);
             addNewExplosiveProjectileToolStripMenuItem.Text = "Add New Explosive Projectile";
             addNewExplosiveProjectileToolStripMenuItem.Click += addNewExplosiveProjectileToolStripMenuItem_Click;
             // 
@@ -863,7 +865,7 @@
             // 
             removeExplosiveProjectileToolStripMenuItem.ForeColor = SystemColors.Control;
             removeExplosiveProjectileToolStripMenuItem.Name = "removeExplosiveProjectileToolStripMenuItem";
-            removeExplosiveProjectileToolStripMenuItem.Size = new Size(201, 22);
+            removeExplosiveProjectileToolStripMenuItem.Size = new Size(202, 22);
             removeExplosiveProjectileToolStripMenuItem.Text = "Remove Explosive Projectile";
             removeExplosiveProjectileToolStripMenuItem.Click += removeExplosiveProjectileToolStripMenuItem_Click;
             // 
@@ -969,13 +971,13 @@
             RaidSettingsCM.Items.AddRange(new ToolStripItem[] { AddNewExplosiveWhitelistItemToolStripMenuItem, RemoveExplosiveWhitelistItemToolStripMenuItem, AddNewSafeRaidToolToolStripMenuItem, RemoveSafeRaidToolToolStripMenuItem, AddNewBarbedWireRaidToolToolStripMenuItem, RemoveBarbedWireRaidToolToolStripMenuItem, AddNewLockOnContainerRaidToolToolStripMenuItem, RemoveLockOnContainerRaidToolToolStripMenuItem, AddNewLockRaidToolToolStripMenuItem, RemoveLockRaidToolToolStripMenuItem, addNewRaidScheduleToolStripMenuItem, RemoveRaidScheduleToolStripMenuItem });
             RaidSettingsCM.Name = "RaidSettingsCM";
             RaidSettingsCM.ShowImageMargin = false;
-            RaidSettingsCM.Size = new Size(253, 268);
+            RaidSettingsCM.Size = new Size(252, 268);
             // 
             // AddNewExplosiveWhitelistItemToolStripMenuItem
             // 
             AddNewExplosiveWhitelistItemToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewExplosiveWhitelistItemToolStripMenuItem.Name = "AddNewExplosiveWhitelistItemToolStripMenuItem";
-            AddNewExplosiveWhitelistItemToolStripMenuItem.Size = new Size(252, 22);
+            AddNewExplosiveWhitelistItemToolStripMenuItem.Size = new Size(251, 22);
             AddNewExplosiveWhitelistItemToolStripMenuItem.Text = "Add New Explosive Whitelist Item";
             AddNewExplosiveWhitelistItemToolStripMenuItem.Click += AddNewExplosiveWhitelistItemToolStripMenuItem_Click;
             // 
@@ -983,7 +985,7 @@
             // 
             RemoveExplosiveWhitelistItemToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveExplosiveWhitelistItemToolStripMenuItem.Name = "RemoveExplosiveWhitelistItemToolStripMenuItem";
-            RemoveExplosiveWhitelistItemToolStripMenuItem.Size = new Size(252, 22);
+            RemoveExplosiveWhitelistItemToolStripMenuItem.Size = new Size(251, 22);
             RemoveExplosiveWhitelistItemToolStripMenuItem.Text = "Remove Explosive Whitelist Item";
             RemoveExplosiveWhitelistItemToolStripMenuItem.Click += RemoveExplosiveWhitelistItemToolStripMenuItem_Click;
             // 
@@ -991,7 +993,7 @@
             // 
             AddNewSafeRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewSafeRaidToolToolStripMenuItem.Name = "AddNewSafeRaidToolToolStripMenuItem";
-            AddNewSafeRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            AddNewSafeRaidToolToolStripMenuItem.Size = new Size(251, 22);
             AddNewSafeRaidToolToolStripMenuItem.Text = "Add New Safe Raid Tool";
             AddNewSafeRaidToolToolStripMenuItem.Click += AddNewSafeRaidToolToolStripMenuItem_Click;
             // 
@@ -999,7 +1001,7 @@
             // 
             RemoveSafeRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveSafeRaidToolToolStripMenuItem.Name = "RemoveSafeRaidToolToolStripMenuItem";
-            RemoveSafeRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            RemoveSafeRaidToolToolStripMenuItem.Size = new Size(251, 22);
             RemoveSafeRaidToolToolStripMenuItem.Text = "Remove Safe Raid Tool";
             RemoveSafeRaidToolToolStripMenuItem.Click += RemoveSafeRaidToolToolStripMenuItem_Click;
             // 
@@ -1007,7 +1009,7 @@
             // 
             AddNewBarbedWireRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewBarbedWireRaidToolToolStripMenuItem.Name = "AddNewBarbedWireRaidToolToolStripMenuItem";
-            AddNewBarbedWireRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            AddNewBarbedWireRaidToolToolStripMenuItem.Size = new Size(251, 22);
             AddNewBarbedWireRaidToolToolStripMenuItem.Text = "Add New BarbedWire Raid Tool";
             AddNewBarbedWireRaidToolToolStripMenuItem.Click += AddNewBarbedWireRaidToolToolStripMenuItem_Click;
             // 
@@ -1015,7 +1017,7 @@
             // 
             RemoveBarbedWireRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveBarbedWireRaidToolToolStripMenuItem.Name = "RemoveBarbedWireRaidToolToolStripMenuItem";
-            RemoveBarbedWireRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            RemoveBarbedWireRaidToolToolStripMenuItem.Size = new Size(251, 22);
             RemoveBarbedWireRaidToolToolStripMenuItem.Text = "Remove BarbedWire Raid Tool";
             RemoveBarbedWireRaidToolToolStripMenuItem.Click += RemoveBarbedWireRaidToolToolStripMenuItem_Click;
             // 
@@ -1023,7 +1025,7 @@
             // 
             AddNewLockOnContainerRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewLockOnContainerRaidToolToolStripMenuItem.Name = "AddNewLockOnContainerRaidToolToolStripMenuItem";
-            AddNewLockOnContainerRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            AddNewLockOnContainerRaidToolToolStripMenuItem.Size = new Size(251, 22);
             AddNewLockOnContainerRaidToolToolStripMenuItem.Text = "Add New Lock On Container Raid Tool";
             AddNewLockOnContainerRaidToolToolStripMenuItem.Click += AddNewLockOnContainerRaidToolToolStripMenuItem_Click;
             // 
@@ -1031,7 +1033,7 @@
             // 
             RemoveLockOnContainerRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveLockOnContainerRaidToolToolStripMenuItem.Name = "RemoveLockOnContainerRaidToolToolStripMenuItem";
-            RemoveLockOnContainerRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            RemoveLockOnContainerRaidToolToolStripMenuItem.Size = new Size(251, 22);
             RemoveLockOnContainerRaidToolToolStripMenuItem.Text = "Remove Lock On Container Raid Tool";
             RemoveLockOnContainerRaidToolToolStripMenuItem.Click += RemoveLockOnContainerRaidToolToolStripMenuItem_Click;
             // 
@@ -1039,7 +1041,7 @@
             // 
             AddNewLockRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewLockRaidToolToolStripMenuItem.Name = "AddNewLockRaidToolToolStripMenuItem";
-            AddNewLockRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            AddNewLockRaidToolToolStripMenuItem.Size = new Size(251, 22);
             AddNewLockRaidToolToolStripMenuItem.Text = "Add New Lock Raid Tool";
             AddNewLockRaidToolToolStripMenuItem.Click += AddNewLockRaidToolToolStripMenuItem_Click;
             // 
@@ -1047,7 +1049,7 @@
             // 
             RemoveLockRaidToolToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveLockRaidToolToolStripMenuItem.Name = "RemoveLockRaidToolToolStripMenuItem";
-            RemoveLockRaidToolToolStripMenuItem.Size = new Size(252, 22);
+            RemoveLockRaidToolToolStripMenuItem.Size = new Size(251, 22);
             RemoveLockRaidToolToolStripMenuItem.Text = "Remove Lock Raid Tool";
             RemoveLockRaidToolToolStripMenuItem.Click += RemoveLockRaidToolToolStripMenuItem_Click;
             // 
@@ -1055,7 +1057,7 @@
             // 
             addNewRaidScheduleToolStripMenuItem.ForeColor = SystemColors.Control;
             addNewRaidScheduleToolStripMenuItem.Name = "addNewRaidScheduleToolStripMenuItem";
-            addNewRaidScheduleToolStripMenuItem.Size = new Size(252, 22);
+            addNewRaidScheduleToolStripMenuItem.Size = new Size(251, 22);
             addNewRaidScheduleToolStripMenuItem.Text = "Add New Raid Schedule";
             addNewRaidScheduleToolStripMenuItem.Click += AddNewRaidScheduleToolStripMenuItem_Click;
             // 
@@ -1063,17 +1065,17 @@
             // 
             RemoveRaidScheduleToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveRaidScheduleToolStripMenuItem.Name = "RemoveRaidScheduleToolStripMenuItem";
-            RemoveRaidScheduleToolStripMenuItem.Size = new Size(252, 22);
+            RemoveRaidScheduleToolStripMenuItem.Size = new Size(251, 22);
             RemoveRaidScheduleToolStripMenuItem.Text = "Remove Raid Schedule";
             RemoveRaidScheduleToolStripMenuItem.Click += RemoveRaidScheduleToolStripMenuItem_Click;
             // 
             // SafeZoneCM
             // 
             SafeZoneCM.BackColor = Color.FromArgb(60, 63, 65);
-            SafeZoneCM.Items.AddRange(new ToolStripItem[] { AddNewSafeZoneCircleZoneToolStripMenuItem, RemovesafeZoneCircleZoneToolStripmenuItem, AddNewsafeZonePolygonZoneToolStripMenuItem, RemoveSafeZonePolygonZoneToolStripMenuItem, AddNewSafeZonePolygonPointtoolStripMenuItem, removeSafeZonePolygonPointToolStripMenuItem, moveSafeZonePolygonPointUpToolStripMenuItem, moveSafeZonePolygonPointDownToolStripMenuItem, AddNewSafeZoneCylinderZoneToolStripmenuItem, RemoveSafeZOneCylinderZoneToolStripMenuItem, AddSafeZoneForceCleanUpItemsToolStripMenuItem, RemoveSafeZoneForcecleanUpItemToolStripMenuItem, removeLoadoutfromSpawnLoadoutToolStripMenuItem, addNewSpawnLocationToolStripMenuItem, removeSpawnLocationToolStripMenuItem, addNewSpawnPointToolStripMenuItem, removeSpawnPointToolStripMenuItem, moveSpawnPointUpToolStripMenuItem, moveSpawnPointDownToolStripMenuItem, addStartingClothingItemToolStripMenuItem, removeStartingClothingItemToolStripMenuItem, addStartingGearItemToolStripMenuItem, removeStartingGearItemToolStripMenuItem, addStartingGearAttachmentToolStripMenuItem, removeStartingGearAttachmentToolStripMenuItem });
+            SafeZoneCM.Items.AddRange(new ToolStripItem[] { AddNewSafeZoneCircleZoneToolStripMenuItem, RemovesafeZoneCircleZoneToolStripmenuItem, AddNewsafeZonePolygonZoneToolStripMenuItem, RemoveSafeZonePolygonZoneToolStripMenuItem, AddNewSafeZonePolygonPointtoolStripMenuItem, removeSafeZonePolygonPointToolStripMenuItem, moveSafeZonePolygonPointUpToolStripMenuItem, moveSafeZonePolygonPointDownToolStripMenuItem, AddNewSafeZoneCylinderZoneToolStripmenuItem, RemoveSafeZOneCylinderZoneToolStripMenuItem, AddSafeZoneForceCleanUpItemsToolStripMenuItem, RemoveSafeZoneForcecleanUpItemToolStripMenuItem, removeLoadoutfromSpawnLoadoutToolStripMenuItem, addNewSpawnLocationToolStripMenuItem, removeSpawnLocationToolStripMenuItem, addNewSpawnPointToolStripMenuItem, removeSpawnPointToolStripMenuItem, moveSpawnPointUpToolStripMenuItem, moveSpawnPointDownToolStripMenuItem, addStartingClothingItemToolStripMenuItem, removeStartingClothingItemToolStripMenuItem, addStartingGearItemToolStripMenuItem, removeStartingGearItemToolStripMenuItem, addStartingGearAttachmentToolStripMenuItem, removeStartingGearAttachmentToolStripMenuItem, addStartingWeaponToolStripMenuItem, removeStartingWeaponToolStripMenuItem });
             SafeZoneCM.Name = "ExpansionAICM";
             SafeZoneCM.ShowImageMargin = false;
-            SafeZoneCM.Size = new Size(244, 576);
+            SafeZoneCM.Size = new Size(244, 620);
             // 
             // AddNewSafeZoneCircleZoneToolStripMenuItem
             // 
@@ -1275,6 +1277,22 @@
             removeStartingGearAttachmentToolStripMenuItem.Text = "Remove Starting Gear Attachment";
             removeStartingGearAttachmentToolStripMenuItem.Click += removeStartingGearAttachmentToolStripMenuItem_Click;
             // 
+            // addStartingWeaponToolStripMenuItem
+            // 
+            addStartingWeaponToolStripMenuItem.ForeColor = SystemColors.Control;
+            addStartingWeaponToolStripMenuItem.Name = "addStartingWeaponToolStripMenuItem";
+            addStartingWeaponToolStripMenuItem.Size = new Size(243, 22);
+            addStartingWeaponToolStripMenuItem.Text = "Add Starting Weapon";
+            addStartingWeaponToolStripMenuItem.Click += addStartingWeaponToolStripMenuItem_Click;
+            // 
+            // removeStartingWeaponToolStripMenuItem
+            // 
+            removeStartingWeaponToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeStartingWeaponToolStripMenuItem.Name = "removeStartingWeaponToolStripMenuItem";
+            removeStartingWeaponToolStripMenuItem.Size = new Size(243, 22);
+            removeStartingWeaponToolStripMenuItem.Text = "Remove Starting Weapon";
+            removeStartingWeaponToolStripMenuItem.Click += removeStartingWeaponToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1443,5 +1461,7 @@
         private ToolStripMenuItem removeStartingGearItemToolStripMenuItem;
         private ToolStripMenuItem addStartingGearAttachmentToolStripMenuItem;
         private ToolStripMenuItem removeStartingGearAttachmentToolStripMenuItem;
+        private ToolStripMenuItem addStartingWeaponToolStripMenuItem;
+        private ToolStripMenuItem removeStartingWeaponToolStripMenuItem;
     }
 }
