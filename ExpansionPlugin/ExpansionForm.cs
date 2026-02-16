@@ -479,6 +479,18 @@ namespace ExpansionPlugin
                 {
                     ExpansionSpawnGearLoadouts ExpansionSpawnGearLoadouts = node.Tag as ExpansionSpawnGearLoadouts;
                     ShowHandler(new ExpansionSpawnGearLoadoutControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnGearLoadouts, selected);
+                },
+                //Territory
+                [typeof(ExpansionTerritorySettings)] = (node,selected) =>
+                {
+                    ExpansionTerritorySettings ExpansionTerritorySettings = node.Tag as ExpansionTerritorySettings;
+                    ShowHandler(new ExpansionTerritorySettingsControl(), typeof(ExpansionTerritoryConfig), ExpansionTerritorySettings, selected);
+                },
+                //Vehicles
+                [typeof(ExpansionVehiclesLockConfig)] = (node,selected) =>
+                {
+                    ExpansionVehiclesLockConfig ExpansionVehiclesLockConfig = node.Tag as ExpansionVehiclesLockConfig;
+                    ShowHandler(new ExpansionVehiclesLockConfigControl(), typeof(ExpansionVehiclesConfig), ExpansionVehiclesLockConfig, selected);
                 }
             };
             // ----------------------
@@ -612,6 +624,27 @@ namespace ExpansionPlugin
                 ["FemaleLoadouts"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionSpawnGearLoadoutsControl(), typeof(ExpansionSpawnConfig), _expansionManager.ExpansionSpawnConfig.Data, selected);
+                },
+                //Vehicles
+                ["VehicleSettingsGeneral"] = (node,selected)=>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionVehicleSettingsGeneralControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
+                },
+                ["VehicleSettingsCovers"] = (node,selected)=>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionVehicleSettingsCoversControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
+                },
+                ["VehicleSettingsKeys"] = (node,selected)=>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionVehicleSettingsKeysControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
+                },
+                ["VehicleSettingsLocks"] = (node,selected)=>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionVehicleSettingsLocksControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
+                },
+                ["VehicleSettingsCFCloud"] = (node,selected)=>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionVehicleSettingsCFCloudControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 }
             };
         }
@@ -3310,14 +3343,49 @@ namespace ExpansionPlugin
             {
                 Tag = "VehicleSettingsGeneral"
             });
+            EconomyRootNode.Nodes.Add(new TreeNode("Covers")
+            {
+                Tag = "VehicleSettingsCovers"
+            });
             EconomyRootNode.Nodes.Add(new TreeNode("Keys")
             {
                 Tag = "VehicleSettingsKeys"
             });
-            EconomyRootNode.Nodes.Add(new TreeNode("Locks")
+            TreeNode VechileLockNodes = new TreeNode("Locks")
             {
                 Tag = "VehicleSettingsLocks"
-            });
+            };
+            if (ef.Data.CanPickLock == 1 ? true : false)
+            {
+                TreeNode PickLockNodes = new TreeNode("Pick Lock Tools")
+                {
+                    Tag = "VehiclePickLockTools"
+                };
+                foreach (string tool in ef.Data.PickLockTools)
+                {
+                    PickLockNodes.Nodes.Add(new TreeNode(tool)
+                    {
+                        Tag = "VehiclePickLockTool"
+                    });
+                }
+                VechileLockNodes.Nodes.Add(PickLockNodes);
+            }
+            if (ef.Data.CanChangeLock == 1 ? true : false)
+            {
+                TreeNode ChangeLockNodes = new TreeNode("Change Lock Tools")
+                {
+                    Tag = "VehicleChangeLockTools"
+                };
+                foreach (string tool in ef.Data.ChangeLockTools)
+                {
+                    ChangeLockNodes.Nodes.Add(new TreeNode(tool)
+                    {
+                        Tag = "VehiclePickLockTool"
+                    });
+                }
+                VechileLockNodes.Nodes.Add(ChangeLockNodes);
+            }
+            EconomyRootNode.Nodes.Add(VechileLockNodes);
             EconomyRootNode.Nodes.Add(new TreeNode("CF CLoud")
             {
                 Tag = "VehicleSettingsCFCloud"

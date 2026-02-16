@@ -162,5 +162,13 @@ namespace ExpansionPlugin
                 MaxCodeLocksOnItemsPerTerritory = MaxCodeLocksOnItemsPerTerritory
             };
         }
+        public void SetIntValue(string mytype, int myvalue)
+        {
+            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+        }
+        public void SetdeciamlValue(string mytype, decimal myvalue)
+        {
+            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+        }
     }
 }
