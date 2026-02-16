@@ -14,6 +14,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
+using System.Xml;
 using System.Xml.Linq;
 using static ExpansionPlugin.ExpansionPersonalStorageNewSettings;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
@@ -481,13 +482,13 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionSpawnGearLoadoutControl(), typeof(ExpansionSpawnConfig), ExpansionSpawnGearLoadouts, selected);
                 },
                 //Territory
-                [typeof(ExpansionTerritorySettings)] = (node,selected) =>
+                [typeof(ExpansionTerritorySettings)] = (node, selected) =>
                 {
                     ExpansionTerritorySettings ExpansionTerritorySettings = node.Tag as ExpansionTerritorySettings;
                     ShowHandler(new ExpansionTerritorySettingsControl(), typeof(ExpansionTerritoryConfig), ExpansionTerritorySettings, selected);
                 },
                 //Vehicles
-                [typeof(ExpansionVehiclesLockConfig)] = (node,selected) =>
+                [typeof(ExpansionVehiclesLockConfig)] = (node, selected) =>
                 {
                     ExpansionVehiclesLockConfig ExpansionVehiclesLockConfig = node.Tag as ExpansionVehiclesLockConfig;
                     ShowHandler(new ExpansionVehiclesLockConfigControl(), typeof(ExpansionVehiclesConfig), ExpansionVehiclesLockConfig, selected);
@@ -626,23 +627,23 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionSpawnGearLoadoutsControl(), typeof(ExpansionSpawnConfig), _expansionManager.ExpansionSpawnConfig.Data, selected);
                 },
                 //Vehicles
-                ["VehicleSettingsGeneral"] = (node,selected)=>
+                ["VehicleSettingsGeneral"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsGeneralControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 },
-                ["VehicleSettingsCovers"] = (node,selected)=>
+                ["VehicleSettingsCovers"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsCoversControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 },
-                ["VehicleSettingsKeys"] = (node,selected)=>
+                ["VehicleSettingsKeys"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsKeysControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 },
-                ["VehicleSettingsLocks"] = (node,selected)=>
+                ["VehicleSettingsLocks"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsLocksControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 },
-                ["VehicleSettingsCFCloud"] = (node,selected)=>
+                ["VehicleSettingsCFCloud"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsCFCloudControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 }
@@ -886,6 +887,13 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(removeStartingGearItemToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
+                },
+                //Vehicle
+                [typeof(ExpansionVehiclesLockConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeVehicleConfigToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
             // ----------------------
@@ -1342,7 +1350,7 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 ["PrimaryWeapon"] = node =>
-                { 
+                {
                     if (_expansionManager.ExpansionSpawnConfig.Data.StartingGear.PrimaryWeapon == null)
                     {
                         ExpansionSettingsCM.Items.Clear();
@@ -1358,6 +1366,37 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(addStartingWeaponToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
+                },
+                //Vehicle
+                ["VehiclePickLockTools"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["VehiclePickLockTool"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["VehicleChangeLockTools"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["VehicleChangeLockTool"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeToolToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["VehicleSettingsVehicleConfigs"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewVehicleConfigToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
         }
@@ -3380,7 +3419,7 @@ namespace ExpansionPlugin
                 {
                     ChangeLockNodes.Nodes.Add(new TreeNode(tool)
                     {
-                        Tag = "VehiclePickLockTool"
+                        Tag = "VehicleChangeLockTool"
                     });
                 }
                 VechileLockNodes.Nodes.Add(ChangeLockNodes);
@@ -6837,7 +6876,7 @@ namespace ExpansionPlugin
         }
         private void addStartingWeaponToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddItemfromTypes form = new AddItemfromTypes 
+            AddItemfromTypes form = new AddItemfromTypes
             {
                 UseOnlySingleItem = true
             };
@@ -6887,6 +6926,90 @@ namespace ExpansionPlugin
                     _expansionManager.ExpansionSpawnConfig.Data.StartingGear.SecondaryWeapon = null;
                     break;
             }
+            currentTreeNode.Remove();
+        }
+        //Vehicle
+        private void addNewToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    AddNewVehicleLockTool(l);
+                }
+            }
+        }
+        private void AddNewVehicleLockTool(string Classname)
+        {
+            switch(currentTreeNode.Tag.ToString())
+            {
+                case "VehiclePickLockTools":
+                    if (!_expansionManager.ExpansionVehiclesConfig.Data.PickLockTools.Contains(Classname))
+                    {
+                        _expansionManager.ExpansionVehiclesConfig.Data.PickLockTools.Add(Classname);
+                        currentTreeNode.Nodes.Add(new TreeNode(Classname)
+                        {
+                            Tag = "VehiclePickLockTool"
+                        });
+                    }
+                    break;
+                case "VehicleChangeLockTools":
+                    if (!_expansionManager.ExpansionVehiclesConfig.Data.ChangeLockTools.Contains(Classname))
+                    {
+                        _expansionManager.ExpansionVehiclesConfig.Data.ChangeLockTools.Add(Classname);
+                        currentTreeNode.Nodes.Add(new TreeNode(Classname)
+                        {
+                            Tag = "VehicleChangeLockTool"
+                        });
+                    }
+                    break;
+            }
+        }
+        private void removeToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            switch (currentTreeNode.Parent.Tag.ToString())
+            {
+                case "VehiclePickLockTools":
+                    _expansionManager.ExpansionVehiclesConfig.Data.PickLockTools.Remove(currentTreeNode.Text);
+                    break;
+                case "VehicleChangeLockTools":
+                    _expansionManager.ExpansionVehiclesConfig.Data.ChangeLockTools.Remove(currentTreeNode.Text);
+                    break;
+            }
+            currentTreeNode.Remove();
+        }
+        private void addNewVehicleConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if(!_expansionManager.ExpansionVehiclesConfig.Data.VehiclesConfig.Any(x => x.ClassName == l))
+                    {
+                        ExpansionVehiclesLockConfig newvc = new ExpansionVehiclesLockConfig()
+                        {
+                            ClassName = l,
+                            LockComplexity = 10
+                        };
+                        _expansionManager.ExpansionVehiclesConfig.Data.VehiclesConfig.Add(newvc);
+                        currentTreeNode.Nodes.Add(new TreeNode(newvc.ClassName)
+                        {
+                            Tag = newvc
+                        });
+                    }
+                }
+                ExpansionTV.SelectedNode = currentTreeNode.LastNode;
+            }
+        }
+        private void removeVehicleConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionVehiclesConfig.Data.VehiclesConfig.Remove(currentTreeNode.Tag as ExpansionVehiclesLockConfig);
             currentTreeNode.Remove();
         }
         #endregion right click methods
@@ -6946,6 +7069,8 @@ namespace ExpansionPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
+
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

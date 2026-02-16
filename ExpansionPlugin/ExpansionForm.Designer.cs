@@ -164,6 +164,10 @@
             removeStartingGearAttachmentToolStripMenuItem = new ToolStripMenuItem();
             addStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
             removeStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
+            addNewToolToolStripMenuItem = new ToolStripMenuItem();
+            removeToolToolStripMenuItem = new ToolStripMenuItem();
+            addNewVehicleConfigToolStripMenuItem = new ToolStripMenuItem();
+            removeVehicleConfigToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -792,10 +796,10 @@
             // GarageCM
             // 
             GarageCM.BackColor = Color.FromArgb(60, 63, 65);
-            GarageCM.Items.AddRange(new ToolStripItem[] { addNewEntityWhitelistToolStripMenuItem, removeEntityWhitelistToolStripMenuItem, addNewServerMarkerToolStripMenuItem, removeServerMarkerToolStripMenuItem });
+            GarageCM.Items.AddRange(new ToolStripItem[] { addNewEntityWhitelistToolStripMenuItem, removeEntityWhitelistToolStripMenuItem, addNewServerMarkerToolStripMenuItem, removeServerMarkerToolStripMenuItem, addNewToolToolStripMenuItem, removeToolToolStripMenuItem, addNewVehicleConfigToolStripMenuItem, removeVehicleConfigToolStripMenuItem });
             GarageCM.Name = "GarageCM";
             GarageCM.ShowImageMargin = false;
-            GarageCM.Size = new Size(181, 92);
+            GarageCM.Size = new Size(181, 202);
             // 
             // addNewEntityWhitelistToolStripMenuItem
             // 
@@ -1075,7 +1079,7 @@
             SafeZoneCM.Items.AddRange(new ToolStripItem[] { AddNewSafeZoneCircleZoneToolStripMenuItem, RemovesafeZoneCircleZoneToolStripmenuItem, AddNewsafeZonePolygonZoneToolStripMenuItem, RemoveSafeZonePolygonZoneToolStripMenuItem, AddNewSafeZonePolygonPointtoolStripMenuItem, removeSafeZonePolygonPointToolStripMenuItem, moveSafeZonePolygonPointUpToolStripMenuItem, moveSafeZonePolygonPointDownToolStripMenuItem, AddNewSafeZoneCylinderZoneToolStripmenuItem, RemoveSafeZOneCylinderZoneToolStripMenuItem, AddSafeZoneForceCleanUpItemsToolStripMenuItem, RemoveSafeZoneForcecleanUpItemToolStripMenuItem, removeLoadoutfromSpawnLoadoutToolStripMenuItem, addNewSpawnLocationToolStripMenuItem, removeSpawnLocationToolStripMenuItem, addNewSpawnPointToolStripMenuItem, removeSpawnPointToolStripMenuItem, moveSpawnPointUpToolStripMenuItem, moveSpawnPointDownToolStripMenuItem, addStartingClothingItemToolStripMenuItem, removeStartingClothingItemToolStripMenuItem, addStartingGearItemToolStripMenuItem, removeStartingGearItemToolStripMenuItem, addStartingGearAttachmentToolStripMenuItem, removeStartingGearAttachmentToolStripMenuItem, addStartingWeaponToolStripMenuItem, removeStartingWeaponToolStripMenuItem });
             SafeZoneCM.Name = "ExpansionAICM";
             SafeZoneCM.ShowImageMargin = false;
-            SafeZoneCM.Size = new Size(244, 620);
+            SafeZoneCM.Size = new Size(244, 598);
             // 
             // AddNewSafeZoneCircleZoneToolStripMenuItem
             // 
@@ -1293,6 +1297,38 @@
             removeStartingWeaponToolStripMenuItem.Text = "Remove Starting Weapon";
             removeStartingWeaponToolStripMenuItem.Click += removeStartingWeaponToolStripMenuItem_Click;
             // 
+            // addNewToolToolStripMenuItem
+            // 
+            addNewToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewToolToolStripMenuItem.Name = "addNewToolToolStripMenuItem";
+            addNewToolToolStripMenuItem.Size = new Size(180, 22);
+            addNewToolToolStripMenuItem.Text = "Add New Tool";
+            addNewToolToolStripMenuItem.Click += addNewToolToolStripMenuItem_Click;
+            // 
+            // removeToolToolStripMenuItem
+            // 
+            removeToolToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeToolToolStripMenuItem.Name = "removeToolToolStripMenuItem";
+            removeToolToolStripMenuItem.Size = new Size(180, 22);
+            removeToolToolStripMenuItem.Text = "Remove Tool";
+            removeToolToolStripMenuItem.Click += removeToolToolStripMenuItem_Click;
+            // 
+            // addNewVehicleConfigToolStripMenuItem
+            // 
+            addNewVehicleConfigToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewVehicleConfigToolStripMenuItem.Name = "addNewVehicleConfigToolStripMenuItem";
+            addNewVehicleConfigToolStripMenuItem.Size = new Size(180, 22);
+            addNewVehicleConfigToolStripMenuItem.Text = "Add New Vehicle Config";
+            addNewVehicleConfigToolStripMenuItem.Click += addNewVehicleConfigToolStripMenuItem_Click;
+            // 
+            // removeVehicleConfigToolStripMenuItem
+            // 
+            removeVehicleConfigToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeVehicleConfigToolStripMenuItem.Name = "removeVehicleConfigToolStripMenuItem";
+            removeVehicleConfigToolStripMenuItem.Size = new Size(180, 22);
+            removeVehicleConfigToolStripMenuItem.Text = "Remove Vehicle Config";
+            removeVehicleConfigToolStripMenuItem.Click += removeVehicleConfigToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1463,5 +1499,9 @@
         private ToolStripMenuItem removeStartingGearAttachmentToolStripMenuItem;
         private ToolStripMenuItem addStartingWeaponToolStripMenuItem;
         private ToolStripMenuItem removeStartingWeaponToolStripMenuItem;
+        private ToolStripMenuItem addNewToolToolStripMenuItem;
+        private ToolStripMenuItem removeToolToolStripMenuItem;
+        private ToolStripMenuItem addNewVehicleConfigToolStripMenuItem;
+        private ToolStripMenuItem removeVehicleConfigToolStripMenuItem;
     }
 }
