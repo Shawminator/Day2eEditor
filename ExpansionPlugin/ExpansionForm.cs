@@ -336,6 +336,16 @@ namespace ExpansionPlugin
                     ExpansionMissionSettings ExpansionMissionSettings = node.Tag as ExpansionMissionSettings;
                     ShowHandler(new ExpansionMissionSettingsControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionSettings, selected);
                 },
+                [typeof(ExpansionMissionEventAirdrop)] = (node,selected) =>
+                {
+                    ExpansionMissionEventBase ExpansionMissionEventBase = node.Tag as ExpansionMissionEventBase;
+                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventBase, selected);
+                },
+                [typeof(ExpansionMissionEventContaminatedArea)] = (node, selected) =>
+                {
+                    ExpansionMissionEventBase ExpansionMissionEventBase = node.Tag as ExpansionMissionEventBase;
+                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventBase, selected);
+                },
                 //Monitoring
                 [typeof(MonitoringSettings)] = (node, selected) =>
                 {
@@ -514,13 +524,29 @@ namespace ExpansionPlugin
                 //Airdrops
                 ["AirdropContainersLoot"] = (node, selected) =>
                 {
-                    ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
-                    ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionAirdropConfig), cfg.Loot, selected);
+                    if (node.Parent.Tag is ExpansionMissionEventAirdrop)
+                    {
+                        ExpansionMissionEventAirdrop cfg = node.FindParentOfType<ExpansionMissionEventAirdrop>();
+                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionMissionEventAirdrop), cfg.Loot, selected);
+                    }
+                    else
+                    {
+                        ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
+                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionAirdropConfig), cfg.Loot, selected);
+                    }
                 },
                 ["AirdropContainersInfected"] = (node, selected) =>
                 {
-                    ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
-                    ShowHandler<IUIHandler>(new ExpansionInfectedControl(), typeof(ExpansionAirdropConfig), cfg.Infected, selected);
+                    if (node.Parent.Tag is ExpansionMissionEventAirdrop)
+                    {
+                        ExpansionMissionEventAirdrop cfg = node.FindParentOfType<ExpansionMissionEventAirdrop>();
+                        ShowHandler<IUIHandler>(new ExpansionInfectedControl(), typeof(ExpansionMissionEventAirdrop), cfg.Infected, selected);
+                    }
+                    else
+                    {
+                        ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
+                        ShowHandler<IUIHandler>(new ExpansionInfectedControl(), typeof(ExpansionAirdropConfig), cfg.Infected, selected);
+                    }
                 },
                 //Basebuilding
                 ["BaseBuildingNoBuldZones"] = (node, selected) =>
@@ -2554,10 +2580,56 @@ namespace ExpansionPlugin
         }
         private static void CreateExpansionMissionsNodes(ExpansionMissionEventBase MB, TreeNode economyRootNode)
         {
+            ExpansionMissionEventBase MissionBase = MB;
             TreeNode missionNode = new TreeNode(MB.FileName)
             {
-                Tag = MB
+                Tag = MissionBase
             };
+            if(MB is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+            {
+                missionNode.Nodes.Add(new TreeNode(ExpansionMissionEventAirdrop.MissionName)
+                {
+                    Tag = "MissionAirdrop"
+                });
+                missionNode.Nodes.Add(new TreeNode($"Drop Location - {ExpansionMissionEventAirdrop.DropLocation.Name}")
+                {
+                    Tag = "AirdropDropLocation"
+                });
+                TreeNode alcinodes = new TreeNode("Infected")
+                {
+                    Tag = "AirdropContainersInfected"
+                };
+                missionNode.Nodes.Add(alcinodes);
+
+                TreeNode alclnodes = new TreeNode("Loot")
+                {
+                    Tag = "AirdropContainersLoot"
+                };
+                missionNode.Nodes.Add(alclnodes);
+            }
+            else if(MB is ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea)
+            {
+                missionNode.Nodes.Add(new TreeNode(ExpansionMissionEventContaminatedArea.MissionName)
+                {
+                    Tag = "MissionContaminatedArea"
+                });
+                missionNode.Nodes.Add(new TreeNode($"Drop Location - {ExpansionMissionEventAirdrop.DropLocation.Name}")
+                {
+                    Tag = "AirdropDropLocation"
+                });
+                TreeNode alcinodes = new TreeNode("Infected")
+                {
+                    Tag = "AirdropContainersInfected"
+                };
+                missionNode.Nodes.Add(alcinodes);
+
+                TreeNode alclnodes = new TreeNode("Loot")
+                {
+                    Tag = "AirdropContainersLoot"
+                };
+                missionNode.Nodes.Add(alclnodes);
+            }
+
             economyRootNode.Nodes.Add(missionNode);
         }
 

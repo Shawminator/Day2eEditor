@@ -21,5 +21,10 @@ namespace DayZeEditor
         {
 
         }
+
+        private void ContaminatedAreaGB_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
