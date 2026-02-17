@@ -95,7 +95,7 @@ namespace Day2eEditor
                 {
                     File.Delete(_path);
                     // Delete empty directories if needed
-                    ShellHelper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
+                    Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
                     return new[] { FileName + " (deleted)" };
                 }
                 return Array.Empty<string>();

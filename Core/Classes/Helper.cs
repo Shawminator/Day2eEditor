@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Day2eEditor
 {
-    public static class ShellHelper
+    public static class Helper
     {
         public static void DeleteEmptyFoldersUpToBase(string startDir, string stopDir)
         {
@@ -164,6 +164,22 @@ namespace Day2eEditor
         public static void SetBoolValue(object src, string mytype, bool myvalue)
         {
             src.GetType().GetProperty(mytype).SetValue(src, myvalue, null);
+        }
+        public static double ConvertMinutesToMilliseconds(double minutes)
+        {
+            return TimeSpan.FromMinutes(minutes).TotalMilliseconds;
+        }
+        public static double ConvertMillisecondsToMinutes(double milliseconds)
+        {
+            return TimeSpan.FromMilliseconds(milliseconds).TotalMinutes;
+        }
+        public static double ConvertMinutesToSeconds(double minutes)
+        {
+            return TimeSpan.FromMinutes(minutes).TotalSeconds;
+        }
+        public static double ConvertSecondsToMinutes(double seconds)
+        {
+            return TimeSpan.FromSeconds(seconds).TotalMinutes;
         }
     }
 }

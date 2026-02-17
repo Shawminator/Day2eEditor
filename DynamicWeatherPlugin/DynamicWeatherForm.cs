@@ -223,20 +223,20 @@ namespace DynamicWeatherPlugin
         {
             if (_suppressEvents) return;
             TextBox textbox = sender as TextBox;
-            ShellHelper.SetStringValue(currentTreeNode.Tag as WeatherDynamic, textbox.Name.Substring(0, textbox.Name.Length - 2), textbox.Text);
+            Helper.SetStringValue(currentTreeNode.Tag as WeatherDynamic, textbox.Name.Substring(0, textbox.Name.Length - 2), textbox.Text);
             currentTreeNode.Text = textbox.Text;
         }
         private void DWPBoolsCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             CheckBox chk = sender as CheckBox;
-            ShellHelper.SetBoolValue(currentTreeNode.Tag as WeatherDynamic, chk.Name.Substring(0, chk.Name.Length - 2), chk.Checked);
+            Helper.SetBoolValue(currentTreeNode.Tag as WeatherDynamic, chk.Name.Substring(0, chk.Name.Length - 2), chk.Checked);
         }
         private void DWPDecimalsNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             NumericUpDown nud = sender as NumericUpDown;
-            ShellHelper.SetDecimalValue(currentTreeNode.Tag as WeatherDynamic, nud.Name.Substring(0, nud.Name.Length - 3), nud.Value);
+            Helper.SetDecimalValue(currentTreeNode.Tag as WeatherDynamic, nud.Name.Substring(0, nud.Name.Length - 3), nud.Value);
         }
 
 

@@ -13,7 +13,7 @@ namespace Day2eEditor
             using (BinaryReader br = new BinaryReader(fs))
             {
                 int Length = br.ReadInt32();
-                if (Length == 12 && ShellHelper.ReadCString(br, 12) == BIN_CHECK)
+                if (Length == 12 && Helper.ReadCString(br, 12) == BIN_CHECK)
                     return true;
             }
             return false;
@@ -60,25 +60,25 @@ namespace Day2eEditor
             using (BinaryReader br = new BinaryReader(fs))
             {
                 int Length = br.ReadInt32();
-                string bincheck = ShellHelper.ReadCString(br, 12);
+                string bincheck = Helper.ReadCString(br, 12);
                 int fileversion = br.ReadInt32();
                 if (fileversion > Version)
                 {
                     //MessageBox.Show("The version number of the this dze file Newer\nPlease let me know to update the DayZeEditor");
                     return;
                 }
-                MapName = ShellHelper.ReadCString(br, br.ReadInt32());
+                MapName = Helper.ReadCString(br, br.ReadInt32());
                 int loop = br.ReadInt32();
                 CameraPosition = new float[3];
                 for (int i = 0; i < loop; i++)
                 {
                     CameraPosition[i] = (float)br.ReadSingle();
                 }
-                AuthorID = ShellHelper.ReadCString(br, br.ReadInt32());
+                AuthorID = Helper.ReadCString(br, br.ReadInt32());
                 int creditscount = br.ReadInt32();
                 for (int i = 0; i < creditscount; i++)
                 {
-                    CreditsID = ShellHelper.ReadCString(br, br.ReadInt32());
+                    CreditsID = Helper.ReadCString(br, br.ReadInt32());
                 }
                 LastModified = new DateTime(br.ReadInt32());
                 CreationDate = new DateTime(br.ReadInt32());
@@ -157,8 +157,8 @@ namespace Day2eEditor
         }
         public Editorobject(BinaryReader br, int fileversion)
         {
-            Type = ShellHelper.ReadCString(br, br.ReadInt32());
-            DisplayName = ShellHelper.ReadCString(br, br.ReadInt32());
+            Type = Helper.ReadCString(br, br.ReadInt32());
+            DisplayName = Helper.ReadCString(br, br.ReadInt32());
             int loop = br.ReadInt32();
             Position = new float[3];
             for (int i = 0; i < loop; i++)
@@ -181,8 +181,8 @@ namespace Day2eEditor
             params_count = br.ReadInt32();
             for (int k = 0; k < params_count; k++)
             {
-                string param_key = ShellHelper.ReadCString(br, br.ReadInt32());
-                string param_type = ShellHelper.ReadCString(br, br.ReadInt32());
+                string param_key = Helper.ReadCString(br, br.ReadInt32());
+                string param_type = Helper.ReadCString(br, br.ReadInt32());
                 switch (param_type)
                 {
                     case "SerializableParam1<bool>":
@@ -212,7 +212,7 @@ namespace Day2eEditor
             if (fileversion < 5)
                 return;
 
-            Model = ShellHelper.ReadCString(br, br.ReadInt32());
+            Model = Helper.ReadCString(br, br.ReadInt32());
             long pos = br.BaseStream.Position;
 
             attachments_count = br.ReadInt32();
@@ -238,7 +238,7 @@ namespace Day2eEditor
         }
         public Editordeletedobject(BinaryReader br)
         {
-            Type = ShellHelper.ReadCString(br, br.ReadInt32());
+            Type = Helper.ReadCString(br, br.ReadInt32());
             int loop = br.ReadInt32();
             Position = new float[3];
             for (int i = 0; i < loop; i++)
@@ -246,7 +246,7 @@ namespace Day2eEditor
                 Position[i] = br.ReadSingle();
             }
             Flags = br.ReadInt32();
-            ModelName = ShellHelper.ReadCString(br, br.ReadInt32());
+            ModelName = Helper.ReadCString(br, br.ReadInt32());
         }
     }
     public class EditorCameraTrackData

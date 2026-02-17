@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMissionConfig : ExpansionBaseIConfigLoader<MissionSettings>
+    public class ExpansionMissionSettingsConfig : ExpansionBaseIConfigLoader<ExpansionMissionSettings>
     {
         public const int CurrentVersion = 2;
-        public ExpansionMissionConfig(string path) : base(path)
+        public ExpansionMissionSettingsConfig(string path) : base(path)
         {
         }
-        protected override MissionSettings CreateDefaultData()
+        protected override ExpansionMissionSettings CreateDefaultData()
         {
-            return new MissionSettings(CurrentVersion);
+            return new ExpansionMissionSettings(CurrentVersion);
         }
         protected override IEnumerable<string> ValidateData()
         {
@@ -23,7 +23,7 @@ namespace ExpansionPlugin
         }
     }
 
-    public class MissionSettings : IEquatable<MissionSettings>, IDeepCloneable<MissionSettings>
+    public class ExpansionMissionSettings : IEquatable<ExpansionMissionSettings>, IDeepCloneable<ExpansionMissionSettings>
     {
         public int m_Version { get; set; }
         public int? Enabled { get; set; }
@@ -33,8 +33,8 @@ namespace ExpansionPlugin
         public int? MaxMissions { get; set; }
         public int? MinPlayersToStartMissions { get; set; }
 
-        public MissionSettings() { }
-        public MissionSettings(int CurrentVersion)
+        public ExpansionMissionSettings() { }
+        public ExpansionMissionSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
             Enabled = 1;
@@ -50,10 +50,10 @@ namespace ExpansionPlugin
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
-            if (m_Version != ExpansionMissionConfig.CurrentVersion)
+            if (m_Version != ExpansionMissionSettingsConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionMissionConfig.CurrentVersion}");
-                m_Version = ExpansionMissionConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionMissionSettingsConfig.CurrentVersion}");
+                m_Version = ExpansionMissionSettingsConfig.CurrentVersion;
             }
             if (Enabled == null || (Enabled != 0 && Enabled != 1))
             {
@@ -87,7 +87,7 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public bool Equals(MissionSettings other)
+        public bool Equals(ExpansionMissionSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -102,10 +102,10 @@ namespace ExpansionPlugin
                 MinPlayersToStartMissions == other.MinPlayersToStartMissions;
 
         }
-        public override bool Equals(object? obj) => Equals(obj as MissionSettings);
-        public MissionSettings Clone()
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMissionSettings);
+        public ExpansionMissionSettings Clone()
         {
-            return new MissionSettings()
+            return new ExpansionMissionSettings()
             { 
                 m_Version = this.m_Version,
                 Enabled = this.Enabled,

@@ -14,6 +14,7 @@ namespace ExpansionPlugin
 
         public ExpansionLoadoutConfig ExpansionLoadoutConfig { get; set; }
         public ExpansionLootDropConfig ExpansionLootDropConfig { get; set; }
+        public ExpansionMissionsConfig ExpansionMissionsConfig { get; set; }
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionAILocationConfig ExpansionAILocationConfig { get; set; }
@@ -29,7 +30,7 @@ namespace ExpansionPlugin
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         public ExpansionMapConfig ExpansionMapConfig { get; set; }
         public ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig { get; set; }
-        public ExpansionMissionConfig ExpansionMissionConfig { get; set; }
+        public ExpansionMissionSettingsConfig ExpansionMissionConfig { get; set; }
         public ExpansionMonitoringConfig ExpansionMonitoringConfig { get; set; }
         public ExpansionNameTagsConfig ExpansionNameTagsConfig { get; set; }
         public ExpansionNotificationSchedulerConfig ExpansionNotificationSchedulerConfig { get; set; }
@@ -56,6 +57,7 @@ namespace ExpansionPlugin
             //Multiple files. not settings files,
             _paths["ExpansionLoadouts"] = Path.Combine(profilePath, "ExpansionMod", "Loadouts");
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
+            _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
 
             //Settings files in profiles
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
@@ -105,6 +107,9 @@ namespace ExpansionPlugin
             ExpansionLootDropConfig = new ExpansionLootDropConfig(_paths["ExpansionLootDrops"]);
             LoadConfigWithErrorReport("ExpansionLootDrops", ExpansionLootDropConfig);
 
+            ExpansionMissionsConfig = new ExpansionMissionsConfig(_paths["ExpansionMissions"]);
+            LoadConfigWithErrorReport("ExpansionMissions", ExpansionMissionsConfig);
+
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
 
@@ -150,7 +155,7 @@ namespace ExpansionPlugin
             ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
             LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
 
-            ExpansionMissionConfig = new ExpansionMissionConfig(_paths["MissionSettings"]);
+            ExpansionMissionConfig = new ExpansionMissionSettingsConfig(_paths["MissionSettings"]);
             LoadConfigWithErrorReport("MissionSettings", ExpansionMissionConfig);
 
             ExpansionMonitoringConfig = new ExpansionMonitoringConfig(_paths["MonitoringSettings"]);
@@ -223,6 +228,7 @@ namespace ExpansionPlugin
             {
                 ExpansionLoadoutConfig,
                 ExpansionLootDropConfig,
+                ExpansionMissionsConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -277,6 +283,7 @@ namespace ExpansionPlugin
             {
                 ExpansionLoadoutConfig,
                 ExpansionLootDropConfig,
+                ExpansionMissionsConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,

@@ -6,7 +6,6 @@ using System.Xml.Serialization;
 
 public class FileService
 {
-
     public class EmptyObjectWhenNullConverter<T> : JsonConverter<T> where T : class, new()
     {
         public override bool HandleNull => true;
@@ -28,8 +27,6 @@ public class FileService
 
             throw new JsonException($"Unexpected token {reader.TokenType} when parsing {typeof(T).Name}");
         }
-
-
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
             if (value == null)
@@ -41,10 +38,7 @@ public class FileService
 
             JsonSerializer.Serialize(writer, value, options);
         }
-
     }
-
-
     public class BoolConverter : JsonConverter<bool>
     {
         public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options) =>
@@ -92,7 +86,6 @@ public class FileService
             writer.WriteEndArray();
         }
     }
-
     private readonly JsonSerializerOptions _defaultOptions = new()
     {
         WriteIndented = true,
@@ -154,6 +147,58 @@ public class FileService
         }
     }
 
+    public object LoadOrCreateJson(
+        string path,
+        Func<object> createNew,
+        Action<Exception>? onError = null,
+        string configName = "Configuration",
+        bool useBoolConvertor = false,
+        bool useVecConvertor = false,
+        Type? targetType = null
+    )
+    {
+        if (File.Exists(path))
+        {
+            Console.Write($"[Load] Loading {configName} ({Path.GetFileName(path)})... ");
+            try
+            {
+                var options = BuildOptions(useBoolConvertor, useVecConvertor);
+
+                object? data = JsonSerializer.Deserialize(
+                    File.ReadAllText(path),
+                    targetType ?? typeof(object),
+                    options
+                );
+
+                if (data == null)
+                    throw new Exception("Deserialized object is null.");
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("OK");
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Failed");
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+                onError?.Invoke(ex);
+
+                return createNew();
+            }
+        }
+        else
+        {
+            Console.WriteLine($"{Path.GetFileName(path)} not found. Creating new {configName}...");
+            var newData = createNew();
+            SaveJson(path, newData, useBoolConvertor, useVecConvertor);
+            return newData;
+        }
+    }
+
     public void SaveJson<T>(string path, T data, bool useBoolConvertor = false, bool useVecConvertor = false, bool writenull = false)
     {
         var options = BuildOptions(useBoolConvertor, useVecConvertor);
@@ -171,7 +216,6 @@ public class FileService
             Console.WriteLine($"[SaveJson] Failed to write JSON: {ex.Message}");
         }
     }
-
     public T LoadOrCreateXml<T>(
         string path,
         Func<T> createNew,

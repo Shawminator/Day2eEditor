@@ -122,7 +122,7 @@ namespace Day2eEditor
                 }
 
                 // --- MapSize validation ---
-                var newSize = ShellHelper.Getmapsizefrommissionpath(p.MpMissionPath);
+                var newSize = Helper.Getmapsizefrommissionpath(p.MpMissionPath);
                 if (p.MapSize != newSize)
                 {
                     p.MapSize = newSize;

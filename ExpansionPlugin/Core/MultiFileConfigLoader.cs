@@ -105,8 +105,5 @@ namespace ExpansionPlugin
             Errors.Add($"Error in {Path.GetFileName(path)}: {ex.Message}");
             Console.WriteLine($"[ERROR] {Path.GetFileName(path)}: {ex.Message}");
         }
-
-
     }
-
 }

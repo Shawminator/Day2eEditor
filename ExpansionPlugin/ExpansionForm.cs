@@ -330,6 +330,12 @@ namespace ExpansionPlugin
                     SetupVehicleSpawnLocation(ExpansionMarketSpawnPosition, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
                 },
+                //Missions
+                [typeof(ExpansionMissionSettings)] = (node, selected) =>
+                {
+                    ExpansionMissionSettings ExpansionMissionSettings = node.Tag as ExpansionMissionSettings;
+                    ShowHandler(new ExpansionMissionSettingsControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionSettings, selected);
+                },
                 //Monitoring
                 [typeof(MonitoringSettings)] = (node, selected) =>
                 {
@@ -1591,7 +1597,7 @@ namespace ExpansionPlugin
             };
             AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
             AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
-
+            AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionMissionsConfig, CreateExpansionMissionsConfigNodes);
 
             rootNode.Nodes.Add(MissionrootNode);
 
@@ -2517,7 +2523,7 @@ namespace ExpansionPlugin
             EconomyRootNode.Nodes.Add(spawnpointnodes);
         }
         //Mission
-        private TreeNode CreateExpansionMissionConfig(ExpansionMissionConfig ef)
+        private TreeNode CreateExpansionMissionConfig(ExpansionMissionSettingsConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode(ef.FileName)
             {
@@ -2526,13 +2532,35 @@ namespace ExpansionPlugin
             CreateExpansionMissionConfigNodes(ef, EconomyRootNode);
             return EconomyRootNode;
         }
-        private static void CreateExpansionMissionConfigNodes(ExpansionMissionConfig ef, TreeNode EconomyRootNode)
+        private static void CreateExpansionMissionConfigNodes(ExpansionMissionSettingsConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
             {
                 Tag = ef.Data
             });
         }
+        //Missions
+        private TreeNode CreateExpansionMissionsConfigNodes(ExpansionMissionsConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Missions")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionMissionEventBase file in ef.Items)
+            {
+                CreateExpansionMissionsNodes(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMissionsNodes(ExpansionMissionEventBase MB, TreeNode economyRootNode)
+        {
+            TreeNode missionNode = new TreeNode(MB.FileName)
+            {
+                Tag = MB
+            };
+            economyRootNode.Nodes.Add(missionNode);
+        }
+
         //Monitoring
         private TreeNode CreateExpansionMonitoringConfig(ExpansionMonitoringConfig ef)
         {

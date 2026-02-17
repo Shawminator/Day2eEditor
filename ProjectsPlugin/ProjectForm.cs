@@ -305,7 +305,7 @@ namespace ProjectsPlugin
 
                 Project project = new Project();
                 project.AddNames(ProjectName);
-                project.MapSize = ShellHelper.Getmapsizefrommissionpath(mpmissionpath);
+                project.MapSize = Helper.Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
                 project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
@@ -313,7 +313,7 @@ namespace ProjectsPlugin
                 _ProjectManager.AddProject(project);
                 CheckMapanddownload(project);
                 MessageBox.Show("Project created, Please Close the editor and populate the missions files before trying to load this project");
-                ShellHelper.OpenFolderInExplorer(project.ProjectRoot);
+                Helper.OpenFolderInExplorer(project.ProjectRoot);
                 listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
                 
             }
@@ -335,7 +335,7 @@ namespace ProjectsPlugin
 
                 Project project = new Project();
                 project.AddNames(ProjectName);
-                project.MapSize = ShellHelper.Getmapsizefrommissionpath(mpmissionpath);
+                project.MapSize = Helper.Getmapsizefrommissionpath(mpmissionpath);
                 project.MpMissionPath = mpmissionpath;
                 project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
