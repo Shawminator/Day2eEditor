@@ -10,14 +10,14 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionMonitoringSettingsControl : UserControl, IUIHandler
+    public partial class ExpansionMIssionAirdropSettingsControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private MonitoringSettings _data;
+        private ExpansionMissionEventAirdrop _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionMonitoringSettingsControl()
+        public ExpansionMIssionAirdropSettingsControl()
         {
             InitializeComponent();
         }
@@ -33,13 +33,22 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as MonitoringSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionMissionEventAirdrop ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
 
-            MonitoringSettingsEnabledCB.Checked = _data.Enabled == 1 ? true : false;
-
+            MissionShowNotificationCB.Checked = _data.ShowNotification == 1 ? true : false;
+            MissionHeightNUD.Value = (decimal)_data.Height;
+            MIssionDropZoneHeightNUD.Value = (decimal)_data.Height;
+            MissionSpeedNUD.Value = (decimal)_data.Speed;
+            MissionDropZoneSpeedNUD.Value = (decimal)_data.DropZoneSpeed;
+            MIssionContainerCB.SelectedIndex = MIssionContainerCB.FindStringExact(_data.Container);
+            MissionFallSpeedNUD.Value = (decimal)_data.FallSpeed;
+            MissionItemCountNUD.Value = (decimal)_data.ItemCount;
+            MissionInfectedCountNUD.Value = (decimal)_data.InfectedCount;
+            MissionAirdropPlaneClassNameTB.Text = _data.AirdropPlaneClassName;
+            
             _suppressEvents = false;
         }
 
@@ -56,11 +65,5 @@ namespace ExpansionPlugin
         }
 
         #endregion
-
-        private void MonitoringSettingsEnabledCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.Enabled = MonitoringSettingsEnabledCB.Checked == true ? 1 : 0;
-        }
     }
 }

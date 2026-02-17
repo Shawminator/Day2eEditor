@@ -338,13 +338,29 @@ namespace ExpansionPlugin
                 },
                 [typeof(ExpansionMissionEventAirdrop)] = (node,selected) =>
                 {
-                    ExpansionMissionEventBase ExpansionMissionEventBase = node.Tag as ExpansionMissionEventBase;
-                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventBase, selected);
+                    ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop = node.Tag as ExpansionMissionEventAirdrop;
+                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventAirdrop, selected);
                 },
+                [typeof(ExpansionAirdropLocation)] = (node,selected) =>
+                {
+                    ExpansionAirdropLocation ExpansionAirdropLocation = node.Tag as ExpansionAirdropLocation;
+                    ShowHandler(new ExpansionAirdropLocationControl(), typeof(ExpansionMissionSettingsConfig), ExpansionAirdropLocation, selected);
+                },
+                
                 [typeof(ExpansionMissionEventContaminatedArea)] = (node, selected) =>
                 {
-                    ExpansionMissionEventBase ExpansionMissionEventBase = node.Tag as ExpansionMissionEventBase;
-                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventBase, selected);
+                    ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea = node.Tag as ExpansionMissionEventContaminatedArea;
+                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventContaminatedArea, selected);
+                },
+                [typeof(Data)] = (node, selected) =>
+                {
+                    Data Data = node.Tag as Data;
+                    ShowHandler<IUIHandler>(new cfgeffectAreaDataControl(), typeof(ExpansionMissionEventBase), Data, selected);
+                },
+                [typeof(PlayerData)] = (node, selected) =>
+                {
+                    PlayerData PlayerData = node.Tag as PlayerData;
+                    ShowHandler<IUIHandler>(new cfgeffectAreaPlayerDataControl(), typeof(ExpansionMissionEventBase), PlayerData, selected);
                 },
                 //Monitoring
                 [typeof(MonitoringSettings)] = (node, selected) =>
@@ -626,6 +642,11 @@ namespace ExpansionPlugin
                 ["ServerMarkersSettings"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapServerMarkerControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
+                },
+                //Missions
+                ["MissionAirdrop"] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionMIssionAirdropSettingsControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventAirdrop, selected);
                 },
                 //Raid
                 ["RaidExplosives"] = (node, selected) =>
@@ -2593,7 +2614,7 @@ namespace ExpansionPlugin
                 });
                 missionNode.Nodes.Add(new TreeNode($"Drop Location - {ExpansionMissionEventAirdrop.DropLocation.Name}")
                 {
-                    Tag = "AirdropDropLocation"
+                    Tag = ExpansionMissionEventAirdrop.DropLocation
                 });
                 TreeNode alcinodes = new TreeNode("Infected")
                 {
@@ -2613,21 +2634,10 @@ namespace ExpansionPlugin
                 {
                     Tag = "MissionContaminatedArea"
                 });
-                missionNode.Nodes.Add(new TreeNode($"Drop Location - {ExpansionMissionEventAirdrop.DropLocation.Name}")
-                {
-                    Tag = "AirdropDropLocation"
-                });
-                TreeNode alcinodes = new TreeNode("Infected")
-                {
-                    Tag = "AirdropContainersInfected"
-                };
-                missionNode.Nodes.Add(alcinodes);
-
-                TreeNode alclnodes = new TreeNode("Loot")
-                {
-                    Tag = "AirdropContainersLoot"
-                };
-                missionNode.Nodes.Add(alclnodes);
+                if (ExpansionMissionEventContaminatedArea.Data != null)
+                    missionNode.Nodes.Add(new TreeNode("Data") { Tag = ExpansionMissionEventContaminatedArea.Data });
+                if (ExpansionMissionEventContaminatedArea.PlayerData != null)
+                    missionNode.Nodes.Add(new TreeNode("PlayerData") { Tag = ExpansionMissionEventContaminatedArea.PlayerData });
             }
 
             economyRootNode.Nodes.Add(missionNode);

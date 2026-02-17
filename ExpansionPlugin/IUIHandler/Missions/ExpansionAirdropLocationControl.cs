@@ -10,14 +10,14 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class ExpansionMonitoringSettingsControl : UserControl, IUIHandler
+    public partial class ExpansionAirdropLocationControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private MonitoringSettings _data;
+        private ExpansionAirdropLocation _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public ExpansionMonitoringSettingsControl()
+        public ExpansionAirdropLocationControl()
         {
             InitializeComponent();
         }
@@ -33,13 +33,15 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as MonitoringSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionAirdropLocation ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
 
-            MonitoringSettingsEnabledCB.Checked = _data.Enabled == 1 ? true : false;
-
+            MissionDropXNUD.Value = (decimal)_data.x;
+            MissionDropYNUD.Value = (decimal)_data.z;
+            MissionDropRadiusNUD.Value = (decimal)_data.Radius;
+            MissionDropNameTB.Text = _data.Name;
             _suppressEvents = false;
         }
 
@@ -56,11 +58,5 @@ namespace ExpansionPlugin
         }
 
         #endregion
-
-        private void MonitoringSettingsEnabledCB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.Enabled = MonitoringSettingsEnabledCB.Checked == true ? 1 : 0;
-        }
     }
 }
