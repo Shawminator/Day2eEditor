@@ -143,6 +143,26 @@ namespace ExpansionPlugin
             {
                 AIGeneralDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
             }
+            if (_data.ShoryukenChance == -1)
+            {
+                AIGeneralShoryukenChanceNUD.Enabled = false;
+                AIGeneralShoryukenChanceDefaultCB.Checked = true;
+                AIGeneralShoryukenChanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenChance;
+            }
+            else
+            {
+                AIGeneralShoryukenChanceNUD.Value = (decimal)_data.ShoryukenChance;
+            }
+            if (_data.ShoryukenDamageMultiplier == -1)
+            {
+                AIGeneralShoryukenDamageMultiplierNUD.Enabled = false;
+                AIGeneralShoryukenDamageMultiplierdefaultCB.Checked = true;
+                AIGeneralShoryukenDamageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenDamageMultiplier;
+            }
+            else
+            {
+                AIGeneralShoryukenDamageMultiplierNUD.Value = (decimal)_data.ShoryukenDamageMultiplier;
+            }
             _suppressEvents = false;
         }
         #region Helper Methods
@@ -163,13 +183,13 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Enabled = AIGeneralEnabledCB.Checked == true ? 1 : 0;
-            
+
         }
         private void AIGeneralFormationScaleNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationScale = AIGeneralFormationScaleNUD.Value;
-            
+
         }
         private void AIGeneralFormationScaleDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -187,19 +207,19 @@ namespace ExpansionPlugin
                 AIGeneralFormationScaleNUD.Enabled = true;
                 _data.FormationScale = AIGeneralFormationScaleNUD.Value;
             }
-            
+
         }
         private void AIGeneralDespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnTime = AIGeneralDespawnTimeNUD.Value;
-            
+
         }
         private void AIGeneralRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
-            
+
         }
         private void AIGeneralRespawnTimeNWonttRespawnCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -214,31 +234,31 @@ namespace ExpansionPlugin
                 AIGeneralRespawnTimeNUD.Visible = true;
                 _data.RespawnTime = AIGeneralRespawnTimeNUD.Value;
             }
-            
+
         }
         private void AIGeneralMinDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinDistRadius = AIGeneralMinDistRadiusNUD.Value;
-            
+
         }
         private void AIGeneralMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxDistRadius = AIGeneralMaxDistRadiusNUD.Value;
-            
+
         }
         private void AIGeneralDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnRadius = AIGeneralDespawnRadiusNUD.Value;
-            
+
         }
         private void AIGeneralAccuracyMinNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
-            
+
         }
         private void AIGeneralAccuracyMinDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -256,13 +276,13 @@ namespace ExpansionPlugin
                 AIGeneralAccuracyMinNUD.Enabled = true;
                 _data.AccuracyMin = AIGeneralAccuracyMinNUD.Value;
             }
-            
+
         }
         private void AIGenralAccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
-            
+
         }
         private void AIGeneralAccuracyMaxDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -280,13 +300,13 @@ namespace ExpansionPlugin
                 AIGeneralAccuracyMaxNUD.Enabled = true;
                 _data.AccuracyMax = AIGeneralAccuracyMaxNUD.Value;
             }
-            
+
         }
         private void AIGeneralThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
-            
+
         }
         private void AIGeneralThreatDistanceLimitDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -304,13 +324,13 @@ namespace ExpansionPlugin
                 AIGeneralThreatDistanceLimitNUD.Enabled = true;
                 _data.ThreatDistanceLimit = AIGeneralThreatDistanceLimitNUD.Value;
             }
-            
+
         }
         private void NoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
-            
+
         }
         private void AIGeneralNoiseInvestigationDistanceLimitDewfaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -328,13 +348,13 @@ namespace ExpansionPlugin
                 AIGeneralNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 _data.NoiseInvestigationDistanceLimit = AIGeneralNoiseInvestigationDistanceLimitNUD.Value;
             }
-            
+
         }
         private void AIGeneralMaxFlankingDistanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
-            
+
         }
         private void AIGeneralMaxFlankingDistanceDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -352,13 +372,13 @@ namespace ExpansionPlugin
                 AIGeneralMaxFlankingDistanceNUD.Enabled = true;
                 _data.MaxFlankingDistance = AIGeneralMaxFlankingDistanceNUD.Value;
             }
-            
+
         }
         private void AIGeneralEnableFlankingOutsideCombatCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
-            
+
         }
         private void AIGeneralEnableFlankingOutsideCombatDefailtCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -376,13 +396,13 @@ namespace ExpansionPlugin
                 AIGeneralEnableFlankingOutsideCombatCB.Enabled = true;
                 _data.EnableFlankingOutsideCombat = AIGeneralEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             }
-            
+
         }
         private void AIGeneralDanageMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
-            
+
         }
         private void AIGeneralDanageMultiplierDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -400,13 +420,13 @@ namespace ExpansionPlugin
                 AIGeneralDanageMultiplierNUD.Enabled = true;
                 _data.DamageMultiplier = AIGeneralDanageMultiplierNUD.Value;
             }
-            
+
         }
         private void AIGeneralDamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
-            
+
         }
         private void AIGeneralDamageReceivedMultiplierDefaultCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -424,9 +444,51 @@ namespace ExpansionPlugin
                 AIGeneralDamageReceivedMultiplierNUD.Enabled = true;
                 _data.DamageReceivedMultiplier = AIGeneralDamageReceivedMultiplierNUD.Value;
             }
-            
+
         }
-
-
+        private void AIGeneralShoryukenChanceNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ShoryukenChance = AIGeneralShoryukenChanceNUD.Value;
+        }
+        private void AIGeneralShoryukenChanceDefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralShoryukenChanceDefaultCB.Checked)
+            {
+                AIGeneralShoryukenChanceNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralShoryukenChanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenChance;
+                _suppressEvents = false;
+                _data.ShoryukenChance = -1;
+            }
+            else
+            {
+                AIGeneralShoryukenChanceNUD.Enabled = true;
+                _data.ShoryukenChance = AIGeneralShoryukenChanceNUD.Value;
+            }
+        }
+        private void AIGeneralShoryukenDamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ShoryukenDamageMultiplier = AIGeneralShoryukenDamageMultiplierNUD.Value;
+        }
+        private void AIGeneralShoryukenDamageMultiplierdefaultCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (AIGeneralShoryukenDamageMultiplierdefaultCB.Checked)
+            {
+                AIGeneralShoryukenDamageMultiplierNUD.Enabled = false;
+                _suppressEvents = true;
+                AIGeneralShoryukenDamageMultiplierNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenDamageMultiplier;
+                _suppressEvents = false;
+                _data.ShoryukenDamageMultiplier = -1;
+            }
+            else
+            {
+                AIGeneralShoryukenDamageMultiplierNUD.Enabled = true;
+                _data.ShoryukenDamageMultiplier = AIGeneralShoryukenDamageMultiplierNUD.Value;
+            }
+        }
     }
 }

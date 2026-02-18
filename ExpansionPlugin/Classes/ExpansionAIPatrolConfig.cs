@@ -14,7 +14,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionAIPatrolConfig : ExpansionBaseIConfigLoader<ExpansionAIPatrolSettings>
     {
-        public const int CurrentVersion = 31;
+        public const int CurrentVersion = 32;
 
         public ExpansionAIPatrolConfig(string path) :base(path)
         {
@@ -122,7 +122,8 @@ namespace ExpansionPlugin
         public int? EnableFlankingOutsideCombat { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
-
+        public decimal? ShoryukenChance { get; set; }
+        public decimal? ShoryukenDamageMultiplier { get; set; }
         public Dictionary<string, BindingList<Loadbalancingcategories>> LoadBalancingCategories { get; set; } //added version 24
         public BindingList<ExpansionAIPatrol> Patrols { get; set; }
 
@@ -150,6 +151,8 @@ namespace ExpansionPlugin
             MaxFlankingDistance = (decimal)-1;
             EnableFlankingOutsideCombat = -1;
             DamageReceivedMultiplier = (decimal)-1.0;
+            ShoryukenChance = 0.009999999776482582m;
+            ShoryukenDamageMultiplier = 3.0m;
             DefaultLoadBalancing();
             DefaultObjectPatrols();
         }
@@ -373,6 +376,8 @@ namespace ExpansionPlugin
                    EnableFlankingOutsideCombat == other.EnableFlankingOutsideCombat &&
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
+                   ShoryukenChance == other.ShoryukenChance &&
+                   ShoryukenDamageMultiplier == other.ShoryukenDamageMultiplier &&
                    Patrols.SequenceEqual(other.Patrols) &&
                    _LoadBalancingCategories.SequenceEqual(other._LoadBalancingCategories);
         }
@@ -460,7 +465,17 @@ namespace ExpansionPlugin
                 DamageReceivedMultiplier = -1;
                 fixes.Add("Corrected DamageReceivedMultiplier to -1");
             }
-            if(LoadBalancingCategories == null)
+            if (ShoryukenChance == null)
+            {
+                ShoryukenChance = 0.009999999776482582m;
+                fixes.Add("Set default ShoryukenChance");
+            }
+            if (ShoryukenDamageMultiplier == null)
+            {
+                ShoryukenDamageMultiplier = 3.0m;
+                fixes.Add("Set default ShoryukenDamageMultiplier");
+            }
+            if (LoadBalancingCategories == null)
             {
                 DefaultLoadBalancing();
                 fixes.Add("Initialized default LoadBalancingCategories");
@@ -510,7 +525,8 @@ namespace ExpansionPlugin
                 EnableFlankingOutsideCombat = this.EnableFlankingOutsideCombat,
                 DamageMultiplier = this.DamageMultiplier,
                 DamageReceivedMultiplier = this.DamageReceivedMultiplier,
-
+                ShoryukenChance = this.ShoryukenChance,
+                ShoryukenDamageMultiplier = this.ShoryukenDamageMultiplier,
                 _LoadBalancingCategories = this._LoadBalancingCategories != null
                     ? new BindingList<Loadbalancingcategorie>(this._LoadBalancingCategories.Select(cat => cat.Clone()).ToList())
                     : null,
@@ -611,6 +627,8 @@ namespace ExpansionPlugin
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
         public decimal? HeadshotResistance { get; set; }
+        public decimal? ShoryukenChance { get; set; }
+        public decimal? ShoryukenDamageMultiplier { get; set; }
         public decimal? CanSpawnInContaminatedArea { get; set; }
         public int? CanBeTriggeredByAI { get; set; }
         public decimal? MinDistRadius { get; set; }
@@ -661,6 +679,8 @@ namespace ExpansionPlugin
             DamageMultiplier = -1;
             DamageReceivedMultiplier = (decimal)-1.0;
             HeadshotResistance = (decimal)0.0;
+            ShoryukenChance = -1.0M;
+            ShoryukenDamageMultiplier = -1.0M;
             CanBeTriggeredByAI = 0;
             CanSpawnInContaminatedArea = 0;
             MinDistRadius = -1;
@@ -708,6 +728,8 @@ namespace ExpansionPlugin
             DamageMultiplier = -1;
             DamageReceivedMultiplier = (decimal)-1.0;
             HeadshotResistance = (decimal)0.0;
+            ShoryukenChance = -1.0M;
+            ShoryukenDamageMultiplier = -1.0M;
             CanBeTriggeredByAI = 0;
             CanSpawnInContaminatedArea = 0;
             MinDistRadius = minDistRadius;
@@ -762,6 +784,8 @@ namespace ExpansionPlugin
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
                    HeadshotResistance == other.HeadshotResistance &&
+                   ShoryukenChance == other.ShoryukenChance &&
+                   ShoryukenDamageMultiplier == other.ShoryukenDamageMultiplier &&
                    CanBeTriggeredByAI == other.CanBeTriggeredByAI &&
                    MinDistRadius == other.MinDistRadius &&
                    MaxDistRadius == other.MaxDistRadius &&
@@ -811,6 +835,8 @@ namespace ExpansionPlugin
                 DamageMultiplier = this.DamageMultiplier,
                 DamageReceivedMultiplier = this.DamageReceivedMultiplier,
                 HeadshotResistance = this.HeadshotResistance,
+                ShoryukenChance = this.ShoryukenChance,
+                ShoryukenDamageMultiplier = this.ShoryukenDamageMultiplier,
                 CanBeTriggeredByAI = this.CanBeTriggeredByAI,
                 MinDistRadius = this.MinDistRadius,
                 MaxDistRadius = this.MaxDistRadius,
@@ -859,6 +885,8 @@ namespace ExpansionPlugin
             if (DamageMultiplier == null || DamageMultiplier < -1) { DamageMultiplier = -1; fixes.Add("Set DamageMultiplier to -1"); }
             if (DamageReceivedMultiplier == null || DamageReceivedMultiplier < -1) { DamageReceivedMultiplier = -1; fixes.Add("Set DamageReceivedMultiplier to -1"); }
             if (HeadshotResistance == null) { HeadshotResistance = 0; fixes.Add("Set HeadshotResistance to 0"); }
+            if (ShoryukenChance == null) { ShoryukenChance = 0.009999999776482582m; fixes.Add("Set default ShoryukenChance");}
+            if (ShoryukenDamageMultiplier == null) { ShoryukenDamageMultiplier = 3.0m; fixes.Add("Set default ShoryukenDamageMultiplier");}
             if (CanBeTriggeredByAI == null || (CanBeTriggeredByAI != 0 && CanBeTriggeredByAI != 1)) { CanBeTriggeredByAI = 0; fixes.Add("Corrected CanBeTriggeredByAI to 0"); }
             if (CanSpawnInContaminatedArea == null || (CanSpawnInContaminatedArea != 0 && CanSpawnInContaminatedArea != 1)) { CanSpawnInContaminatedArea = 0; fixes.Add("Corrected CanSpawnInContaminatedArea to 0"); }
             if (MinDistRadius == null || MinDistRadius < -1) { MinDistRadius = -1; fixes.Add("Set MinDistRadius to -1"); }

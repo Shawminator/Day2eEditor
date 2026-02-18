@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            ShoryukenDamageMultiplierNUD = new NumericUpDown();
+            label6 = new Label();
+            ShoryukenChanceNUD = new NumericUpDown();
+            label7 = new Label();
+            EnableFlankingOutsideCombatCB = new CheckBox();
+            MaxFlankingDistanceNUD = new NumericUpDown();
+            label5 = new Label();
             GuardAggressionTimeoutNUD = new NumericUpDown();
             label4 = new Label();
             AggressionTimeoutNUD = new NumericUpDown();
@@ -63,10 +70,10 @@
             darkLabel2 = new Label();
             FormationScaleNUD = new NumericUpDown();
             darkLabel17 = new Label();
-            MaxFlankingDistanceNUD = new NumericUpDown();
-            label5 = new Label();
-            EnableFlankingOutsideCombatCB = new CheckBox();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ShoryukenDamageMultiplierNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ShoryukenChanceNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MaxFlankingDistanceNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)GuardAggressionTimeoutNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AggressionTimeoutNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRecruitableAINUD).BeginInit();
@@ -79,11 +86,14 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)MaxFlankingDistanceNUD).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(ShoryukenDamageMultiplierNUD);
+            groupBox1.Controls.Add(label6);
+            groupBox1.Controls.Add(ShoryukenChanceNUD);
+            groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(EnableFlankingOutsideCombatCB);
             groupBox1.Controls.Add(MaxFlankingDistanceNUD);
             groupBox1.Controls.Add(label5);
@@ -127,17 +137,108 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(755, 334);
+            groupBox1.Size = new Size(743, 347);
             groupBox1.TabIndex = 131;
             groupBox1.TabStop = false;
             groupBox1.Text = "AI Settings";
+            // 
+            // ShoryukenDamageMultiplierNUD
+            // 
+            ShoryukenDamageMultiplierNUD.BackColor = Color.FromArgb(60, 63, 65);
+            ShoryukenDamageMultiplierNUD.DecimalPlaces = 2;
+            ShoryukenDamageMultiplierNUD.ForeColor = SystemColors.Control;
+            ShoryukenDamageMultiplierNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
+            ShoryukenDamageMultiplierNUD.Location = new Point(567, 113);
+            ShoryukenDamageMultiplierNUD.Margin = new Padding(4, 3, 4, 3);
+            ShoryukenDamageMultiplierNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
+            ShoryukenDamageMultiplierNUD.Name = "ShoryukenDamageMultiplierNUD";
+            ShoryukenDamageMultiplierNUD.Size = new Size(124, 23);
+            ShoryukenDamageMultiplierNUD.TabIndex = 221;
+            ShoryukenDamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            ShoryukenDamageMultiplierNUD.ValueChanged += ShoryukenDamageMultiplierNUD_ValueChanged;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.FromArgb(220, 220, 220);
+            label6.Location = new Point(367, 115);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(164, 15);
+            label6.TabIndex = 222;
+            label6.Text = "Shoryuken Damage Multiplier";
+            // 
+            // ShoryukenChanceNUD
+            // 
+            ShoryukenChanceNUD.BackColor = Color.FromArgb(60, 63, 65);
+            ShoryukenChanceNUD.DecimalPlaces = 2;
+            ShoryukenChanceNUD.ForeColor = SystemColors.Control;
+            ShoryukenChanceNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
+            ShoryukenChanceNUD.Location = new Point(224, 111);
+            ShoryukenChanceNUD.Margin = new Padding(4, 3, 4, 3);
+            ShoryukenChanceNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            ShoryukenChanceNUD.Name = "ShoryukenChanceNUD";
+            ShoryukenChanceNUD.Size = new Size(124, 23);
+            ShoryukenChanceNUD.TabIndex = 219;
+            ShoryukenChanceNUD.TextAlign = HorizontalAlignment.Center;
+            ShoryukenChanceNUD.ValueChanged += ShoryukenChanceNUD_ValueChanged;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.ForeColor = Color.FromArgb(220, 220, 220);
+            label7.Location = new Point(21, 113);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(106, 15);
+            label7.TabIndex = 220;
+            label7.Text = "Shoryuken Chance";
+            // 
+            // EnableFlankingOutsideCombatCB
+            // 
+            EnableFlankingOutsideCombatCB.AutoSize = true;
+            EnableFlankingOutsideCombatCB.CheckAlign = ContentAlignment.MiddleRight;
+            EnableFlankingOutsideCombatCB.ForeColor = SystemColors.Control;
+            EnableFlankingOutsideCombatCB.Location = new Point(286, 313);
+            EnableFlankingOutsideCombatCB.Margin = new Padding(4, 3, 4, 3);
+            EnableFlankingOutsideCombatCB.Name = "EnableFlankingOutsideCombatCB";
+            EnableFlankingOutsideCombatCB.Size = new Size(199, 19);
+            EnableFlankingOutsideCombatCB.TabIndex = 218;
+            EnableFlankingOutsideCombatCB.Text = "Enable Flanking Outside Combat";
+            EnableFlankingOutsideCombatCB.UseVisualStyleBackColor = true;
+            EnableFlankingOutsideCombatCB.CheckedChanged += EnableFlankingOutsideCombatCB_CheckedChanged;
+            // 
+            // MaxFlankingDistanceNUD
+            // 
+            MaxFlankingDistanceNUD.BackColor = Color.FromArgb(60, 63, 65);
+            MaxFlankingDistanceNUD.DecimalPlaces = 2;
+            MaxFlankingDistanceNUD.ForeColor = SystemColors.Control;
+            MaxFlankingDistanceNUD.Location = new Point(224, 227);
+            MaxFlankingDistanceNUD.Margin = new Padding(4, 3, 4, 3);
+            MaxFlankingDistanceNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            MaxFlankingDistanceNUD.Name = "MaxFlankingDistanceNUD";
+            MaxFlankingDistanceNUD.Size = new Size(124, 23);
+            MaxFlankingDistanceNUD.TabIndex = 216;
+            MaxFlankingDistanceNUD.TextAlign = HorizontalAlignment.Center;
+            MaxFlankingDistanceNUD.ValueChanged += MaxFlankingDistanceNUD_ValueChanged;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.ForeColor = Color.FromArgb(220, 220, 220);
+            label5.Location = new Point(21, 231);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(125, 15);
+            label5.TabIndex = 217;
+            label5.Text = "Max Flanking Distance";
             // 
             // GuardAggressionTimeoutNUD
             // 
             GuardAggressionTimeoutNUD.BackColor = Color.FromArgb(60, 63, 65);
             GuardAggressionTimeoutNUD.DecimalPlaces = 2;
             GuardAggressionTimeoutNUD.ForeColor = SystemColors.Control;
-            GuardAggressionTimeoutNUD.Location = new Point(567, 172);
+            GuardAggressionTimeoutNUD.Location = new Point(567, 200);
             GuardAggressionTimeoutNUD.Margin = new Padding(4, 3, 4, 3);
             GuardAggressionTimeoutNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             GuardAggressionTimeoutNUD.Name = "GuardAggressionTimeoutNUD";
@@ -150,7 +251,7 @@
             // 
             label4.AutoSize = true;
             label4.ForeColor = Color.FromArgb(220, 220, 220);
-            label4.Location = new Point(367, 174);
+            label4.Location = new Point(367, 202);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new Size(149, 15);
@@ -162,7 +263,7 @@
             AggressionTimeoutNUD.BackColor = Color.FromArgb(60, 63, 65);
             AggressionTimeoutNUD.DecimalPlaces = 2;
             AggressionTimeoutNUD.ForeColor = SystemColors.Control;
-            AggressionTimeoutNUD.Location = new Point(224, 170);
+            AggressionTimeoutNUD.Location = new Point(224, 198);
             AggressionTimeoutNUD.Margin = new Padding(4, 3, 4, 3);
             AggressionTimeoutNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             AggressionTimeoutNUD.Name = "AggressionTimeoutNUD";
@@ -175,7 +276,7 @@
             // 
             label3.AutoSize = true;
             label3.ForeColor = Color.FromArgb(220, 220, 220);
-            label3.Location = new Point(21, 174);
+            label3.Location = new Point(21, 202);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.Size = new Size(114, 15);
@@ -187,7 +288,7 @@
             RecreateWeaponNetworkRepresentationCB.AutoSize = true;
             RecreateWeaponNetworkRepresentationCB.CheckAlign = ContentAlignment.MiddleRight;
             RecreateWeaponNetworkRepresentationCB.ForeColor = SystemColors.Control;
-            RecreateWeaponNetworkRepresentationCB.Location = new Point(17, 285);
+            RecreateWeaponNetworkRepresentationCB.Location = new Point(17, 313);
             RecreateWeaponNetworkRepresentationCB.Margin = new Padding(4, 3, 4, 3);
             RecreateWeaponNetworkRepresentationCB.Name = "RecreateWeaponNetworkRepresentationCB";
             RecreateWeaponNetworkRepresentationCB.Size = new Size(248, 19);
@@ -201,7 +302,7 @@
             OverrideClientWeaponFiringCB.AutoSize = true;
             OverrideClientWeaponFiringCB.CheckAlign = ContentAlignment.MiddleRight;
             OverrideClientWeaponFiringCB.ForeColor = SystemColors.Control;
-            OverrideClientWeaponFiringCB.Location = new Point(524, 259);
+            OverrideClientWeaponFiringCB.Location = new Point(524, 287);
             OverrideClientWeaponFiringCB.Margin = new Padding(4, 3, 4, 3);
             OverrideClientWeaponFiringCB.Name = "OverrideClientWeaponFiringCB";
             OverrideClientWeaponFiringCB.Size = new Size(185, 19);
@@ -215,7 +316,7 @@
             MaxRecruitableAINUD.BackColor = Color.FromArgb(60, 63, 65);
             MaxRecruitableAINUD.DecimalPlaces = 2;
             MaxRecruitableAINUD.ForeColor = SystemColors.Control;
-            MaxRecruitableAINUD.Location = new Point(567, 141);
+            MaxRecruitableAINUD.Location = new Point(567, 169);
             MaxRecruitableAINUD.Margin = new Padding(4, 3, 4, 3);
             MaxRecruitableAINUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             MaxRecruitableAINUD.Name = "MaxRecruitableAINUD";
@@ -228,7 +329,7 @@
             // 
             label2.AutoSize = true;
             label2.ForeColor = Color.FromArgb(220, 220, 220);
-            label2.Location = new Point(367, 143);
+            label2.Location = new Point(367, 171);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(105, 15);
@@ -239,7 +340,7 @@
             // 
             MemeLevelNUD.BackColor = Color.FromArgb(60, 63, 65);
             MemeLevelNUD.ForeColor = SystemColors.Control;
-            MemeLevelNUD.Location = new Point(224, 141);
+            MemeLevelNUD.Location = new Point(224, 169);
             MemeLevelNUD.Margin = new Padding(4, 3, 4, 3);
             MemeLevelNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             MemeLevelNUD.Name = "MemeLevelNUD";
@@ -252,7 +353,7 @@
             // 
             label1.AutoSize = true;
             label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(21, 143);
+            label1.Location = new Point(21, 171);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(71, 15);
@@ -264,7 +365,7 @@
             EnableZombieVehicleAttackHandlerCB.AutoSize = true;
             EnableZombieVehicleAttackHandlerCB.CheckAlign = ContentAlignment.MiddleRight;
             EnableZombieVehicleAttackHandlerCB.ForeColor = SystemColors.Control;
-            EnableZombieVehicleAttackHandlerCB.Location = new Point(17, 260);
+            EnableZombieVehicleAttackHandlerCB.Location = new Point(17, 288);
             EnableZombieVehicleAttackHandlerCB.Margin = new Padding(4, 3, 4, 3);
             EnableZombieVehicleAttackHandlerCB.Name = "EnableZombieVehicleAttackHandlerCB";
             EnableZombieVehicleAttackHandlerCB.Size = new Size(227, 19);
@@ -278,7 +379,7 @@
             EnableZombieVehicleAttackPhysicsCB.AutoSize = true;
             EnableZombieVehicleAttackPhysicsCB.CheckAlign = ContentAlignment.MiddleRight;
             EnableZombieVehicleAttackPhysicsCB.ForeColor = SystemColors.Control;
-            EnableZombieVehicleAttackPhysicsCB.Location = new Point(286, 260);
+            EnableZombieVehicleAttackPhysicsCB.Location = new Point(286, 288);
             EnableZombieVehicleAttackPhysicsCB.Margin = new Padding(4, 3, 4, 3);
             EnableZombieVehicleAttackPhysicsCB.Name = "EnableZombieVehicleAttackPhysicsCB";
             EnableZombieVehicleAttackPhysicsCB.Size = new Size(186, 19);
@@ -292,7 +393,7 @@
             LogAIHitByCB.AutoSize = true;
             LogAIHitByCB.CheckAlign = ContentAlignment.MiddleRight;
             LogAIHitByCB.ForeColor = SystemColors.Control;
-            LogAIHitByCB.Location = new Point(501, 234);
+            LogAIHitByCB.Location = new Point(501, 262);
             LogAIHitByCB.Margin = new Padding(4, 3, 4, 3);
             LogAIHitByCB.Name = "LogAIHitByCB";
             LogAIHitByCB.Size = new Size(95, 19);
@@ -306,7 +407,7 @@
             LogAIKilledCB.AutoSize = true;
             LogAIKilledCB.CheckAlign = ContentAlignment.MiddleRight;
             LogAIKilledCB.ForeColor = SystemColors.Control;
-            LogAIKilledCB.Location = new Point(618, 234);
+            LogAIKilledCB.Location = new Point(618, 262);
             LogAIKilledCB.Margin = new Padding(4, 3, 4, 3);
             LogAIKilledCB.Name = "LogAIKilledCB";
             LogAIKilledCB.Size = new Size(92, 19);
@@ -373,7 +474,7 @@
             CanRecruitFriendlyCB.AutoSize = true;
             CanRecruitFriendlyCB.CheckAlign = ContentAlignment.MiddleRight;
             CanRecruitFriendlyCB.ForeColor = SystemColors.Control;
-            CanRecruitFriendlyCB.Location = new Point(193, 234);
+            CanRecruitFriendlyCB.Location = new Point(193, 262);
             CanRecruitFriendlyCB.Margin = new Padding(4, 3, 4, 3);
             CanRecruitFriendlyCB.Name = "CanRecruitFriendlyCB";
             CanRecruitFriendlyCB.Size = new Size(132, 19);
@@ -388,7 +489,7 @@
             SniperProneDistanceThresholdNUD.DecimalPlaces = 2;
             SniperProneDistanceThresholdNUD.ForeColor = SystemColors.Control;
             SniperProneDistanceThresholdNUD.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
-            SniperProneDistanceThresholdNUD.Location = new Point(224, 112);
+            SniperProneDistanceThresholdNUD.Location = new Point(224, 140);
             SniperProneDistanceThresholdNUD.Margin = new Padding(4, 3, 4, 3);
             SniperProneDistanceThresholdNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             SniperProneDistanceThresholdNUD.Name = "SniperProneDistanceThresholdNUD";
@@ -401,7 +502,7 @@
             // 
             darkLabel66.AutoSize = true;
             darkLabel66.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel66.Location = new Point(21, 114);
+            darkLabel66.Location = new Point(21, 142);
             darkLabel66.Margin = new Padding(4, 0, 4, 0);
             darkLabel66.Name = "darkLabel66";
             darkLabel66.Size = new Size(178, 15);
@@ -413,7 +514,7 @@
             CanRecruitGuardsCB.AutoSize = true;
             CanRecruitGuardsCB.CheckAlign = ContentAlignment.MiddleRight;
             CanRecruitGuardsCB.ForeColor = SystemColors.Control;
-            CanRecruitGuardsCB.Location = new Point(348, 234);
+            CanRecruitGuardsCB.Location = new Point(348, 262);
             CanRecruitGuardsCB.Margin = new Padding(4, 3, 4, 3);
             CanRecruitGuardsCB.Name = "CanRecruitGuardsCB";
             CanRecruitGuardsCB.Size = new Size(127, 19);
@@ -490,7 +591,7 @@
             MannersCB.AutoSize = true;
             MannersCB.CheckAlign = ContentAlignment.MiddleRight;
             MannersCB.ForeColor = SystemColors.Control;
-            MannersCB.Location = new Point(104, 234);
+            MannersCB.Location = new Point(104, 262);
             MannersCB.Margin = new Padding(4, 3, 4, 3);
             MannersCB.Name = "MannersCB";
             MannersCB.Size = new Size(72, 19);
@@ -504,7 +605,7 @@
             VaultingCB.AutoSize = true;
             VaultingCB.CheckAlign = ContentAlignment.MiddleRight;
             VaultingCB.ForeColor = SystemColors.Control;
-            VaultingCB.Location = new Point(20, 234);
+            VaultingCB.Location = new Point(20, 262);
             VaultingCB.Margin = new Padding(4, 3, 4, 3);
             VaultingCB.Name = "VaultingCB";
             VaultingCB.Size = new Size(69, 19);
@@ -559,7 +660,7 @@
             FormationScaleNUD.BackColor = Color.FromArgb(60, 63, 65);
             FormationScaleNUD.DecimalPlaces = 2;
             FormationScaleNUD.ForeColor = SystemColors.Control;
-            FormationScaleNUD.Location = new Point(567, 112);
+            FormationScaleNUD.Location = new Point(567, 140);
             FormationScaleNUD.Margin = new Padding(4, 3, 4, 3);
             FormationScaleNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             FormationScaleNUD.Name = "FormationScaleNUD";
@@ -572,51 +673,12 @@
             // 
             darkLabel17.AutoSize = true;
             darkLabel17.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel17.Location = new Point(367, 114);
+            darkLabel17.Location = new Point(367, 142);
             darkLabel17.Margin = new Padding(4, 0, 4, 0);
             darkLabel17.Name = "darkLabel17";
             darkLabel17.Size = new Size(92, 15);
             darkLabel17.TabIndex = 124;
             darkLabel17.Text = "Formation Scale";
-            // 
-            // MaxFlankingDistanceNUD
-            // 
-            MaxFlankingDistanceNUD.BackColor = Color.FromArgb(60, 63, 65);
-            MaxFlankingDistanceNUD.DecimalPlaces = 2;
-            MaxFlankingDistanceNUD.ForeColor = SystemColors.Control;
-            MaxFlankingDistanceNUD.Location = new Point(224, 199);
-            MaxFlankingDistanceNUD.Margin = new Padding(4, 3, 4, 3);
-            MaxFlankingDistanceNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            MaxFlankingDistanceNUD.Name = "MaxFlankingDistanceNUD";
-            MaxFlankingDistanceNUD.Size = new Size(124, 23);
-            MaxFlankingDistanceNUD.TabIndex = 216;
-            MaxFlankingDistanceNUD.TextAlign = HorizontalAlignment.Center;
-            MaxFlankingDistanceNUD.ValueChanged += MaxFlankingDistanceNUD_ValueChanged;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(21, 203);
-            label5.Margin = new Padding(4, 0, 4, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(125, 15);
-            label5.TabIndex = 217;
-            label5.Text = "Max Flanking Distance";
-            // 
-            // EnableFlankingOutsideCombatCB
-            // 
-            EnableFlankingOutsideCombatCB.AutoSize = true;
-            EnableFlankingOutsideCombatCB.CheckAlign = ContentAlignment.MiddleRight;
-            EnableFlankingOutsideCombatCB.ForeColor = SystemColors.Control;
-            EnableFlankingOutsideCombatCB.Location = new Point(286, 285);
-            EnableFlankingOutsideCombatCB.Margin = new Padding(4, 3, 4, 3);
-            EnableFlankingOutsideCombatCB.Name = "EnableFlankingOutsideCombatCB";
-            EnableFlankingOutsideCombatCB.Size = new Size(199, 19);
-            EnableFlankingOutsideCombatCB.TabIndex = 218;
-            EnableFlankingOutsideCombatCB.Text = "Enable Flanking Outside Combat";
-            EnableFlankingOutsideCombatCB.UseVisualStyleBackColor = true;
-            EnableFlankingOutsideCombatCB.CheckedChanged += EnableFlankingOutsideCombatCB_CheckedChanged;
             // 
             // AISettingsConfigControl
             // 
@@ -626,9 +688,12 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "AISettingsConfigControl";
-            Size = new Size(755, 334);
+            Size = new Size(743, 347);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)ShoryukenDamageMultiplierNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ShoryukenChanceNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MaxFlankingDistanceNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)GuardAggressionTimeoutNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)AggressionTimeoutNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MaxRecruitableAINUD).EndInit();
@@ -641,7 +706,6 @@
             ((System.ComponentModel.ISupportInitialize)AccuracyMaxNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)AccuracyMinNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)FormationScaleNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)MaxFlankingDistanceNUD).EndInit();
             ResumeLayout(false);
         }
 
@@ -685,5 +749,9 @@
         private CheckBox EnableFlankingOutsideCombatCB;
         private NumericUpDown MaxFlankingDistanceNUD;
         private Label label5;
+        private NumericUpDown ShoryukenDamageMultiplierNUD;
+        private Label label6;
+        private NumericUpDown ShoryukenChanceNUD;
+        private Label label7;
     }
 }

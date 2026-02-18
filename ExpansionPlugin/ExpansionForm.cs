@@ -336,6 +336,11 @@ namespace ExpansionPlugin
                     ExpansionMissionSettings ExpansionMissionSettings = node.Tag as ExpansionMissionSettings;
                     ShowHandler(new ExpansionMissionSettingsControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionSettings, selected);
                 },
+                [typeof(ExpansionMissionEventBase)] = (node, selected) =>
+                {
+                    ExpansionMissionEventBase ExpansionMissionEventBase = node.Tag as ExpansionMissionEventBase;
+                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventBase, selected);
+                },
                 [typeof(ExpansionMissionEventAirdrop)] = (node,selected) =>
                 {
                     ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop = node.Tag as ExpansionMissionEventAirdrop;
@@ -5302,10 +5307,13 @@ namespace ExpansionPlugin
                 Loadout = "",
                 Units = new BindingList<string>(),
                 NumberOfAI = -3,
+                NumberOfAIMax = 3,
                 Behaviour = "ALTERNATE",
                 LootingBehaviour = "DEFAULT",
                 Speed = "WALK",
                 UnderThreatSpeed = "SPRINT",
+                DefaultStance = "STANDING",
+                DefaultLookAngle = (decimal)0.0,
                 CanBeLooted = 1,
                 LootDropOnDeath = "",
                 UnlimitedReload = 1,
@@ -5314,8 +5322,13 @@ namespace ExpansionPlugin
                 AccuracyMax = -1,
                 ThreatDistanceLimit = -1,
                 NoiseInvestigationDistanceLimit = -1,
+                MaxFlankingDistance = -1,
+                EnableFlankingOutsideCombat = -1,
                 DamageMultiplier = -1,
                 DamageReceivedMultiplier = -1,
+                HeadshotResistance = (decimal)0.0,
+                ShoryukenChance = -1.0M,
+                ShoryukenDamageMultiplier = -1.0M,
                 CanBeTriggeredByAI = 0,
                 CanSpawnInContaminatedArea = 0,
                 MinDistRadius = -1,

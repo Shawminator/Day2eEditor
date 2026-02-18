@@ -266,6 +266,44 @@ namespace ExpansionPlugin
                 StaticPatrolDamageReceivedMultiplierNUD.Enabled = true;
                 StaticPatrolDamageReceivedMultiplierNUD.Value = (decimal)_data.DamageReceivedMultiplier;
             }
+            if (_data.ShoryukenChance == -1)
+            {
+                StaticPatrolShoryukenChanceNUD.Enabled = false;
+                staticPatrolShoryukenChanceGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenChance == -1)
+                {
+                    StaticPatrolShoryukenChanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenChance;
+                }
+                else
+                {
+                    StaticPatrolShoryukenChanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenChance;
+                }
+            }
+            else
+            {
+                staticPatrolShoryukenChanceGeneralCB.Checked = false;
+                StaticPatrolShoryukenChanceNUD.Enabled = true;
+                StaticPatrolShoryukenChanceNUD.Value = (decimal)_data.ShoryukenChance;
+            }
+            if (_data.ShoryukenDamageMultiplier == -1)
+            {
+                StaticPatrolShoryukenDamageMultiplierNID.Enabled = false;
+                StaticPatrolShoryukenDamageMultiplierGeneralCB.Checked = true;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenDamageMultiplier == -1)
+                {
+                    StaticPatrolShoryukenDamageMultiplierNID.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenDamageMultiplier;
+                }
+                else
+                {
+                    StaticPatrolShoryukenDamageMultiplierNID.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenDamageMultiplier;
+                }
+            }
+            else
+            {
+                StaticPatrolShoryukenDamageMultiplierGeneralCB.Checked = false;
+                StaticPatrolShoryukenDamageMultiplierNID.Enabled = true;
+                StaticPatrolShoryukenDamageMultiplierNID.Value = (decimal)_data.ShoryukenDamageMultiplier;
+            }
             if (_data.MinDistRadius == -1)
             {
                 StaticPatrolMinDistRadiusNUD.Enabled = false;
@@ -393,200 +431,208 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Name = StaticPatrolNameTB.Text;
             UpdateTreeNodeText();
-            
+
         }
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ObjectClassName = textBox6.Text;
-            
+
         }
         private void StaticPatrolFactionCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Faction = StaticPatrolFactionCB.GetItemText(StaticPatrolFactionCB.SelectedItem);
-            
+
         }
         private void StaticPatrolFormationCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Formation = StaticPatrolFormationCB.GetItemText(StaticPatrolFormationCB.SelectedItem);
-            
+
         }
         private void StaticPatrolFormationLoosenessNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationLooseness = (int)StaticPatrolFormationLoosenessNUD.Value;
-            
+
         }
         private void StaticPatrolFormationScaleNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
-            
+
         }
         private void StaticPatrolLoadoutsCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Loadout = StaticPatrolLoadoutsCB.GetItemText(StaticPatrolLoadoutsCB.SelectedItem);
-            
+
         }
         private void StaticPatrolNumberOfAINUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NumberOfAI = (int)StaticPatrolNumberOfAINUD.Value;
-            
+
         }
         private void StaticPatrolNumberOfAIMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NumberOfAIMax = (int)StaticPatrolNumberOfAIMaxNUD.Value;
-            
+
         }
         private void StaticPatrolPersistCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Persist = StaticPatrolPersistCB.Checked == true ? 1 : 0;
-            
+
         }
         private void StaticPatrolCanBeTriggeredByAICB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanBeTriggeredByAI = StaticPatrolCanBeTriggeredByAICB.Checked == true ? 1 : 0;
-            
+
         }
         private void StaticPatrolBehaviorCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Behaviour = StaticPatrolBehaviorCB.GetItemText(StaticPatrolBehaviorCB.SelectedItem);
-            
+
         }
         private void StaticPatrolSpeedCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Speed = StaticPatrolSpeedCB.GetItemText(StaticPatrolSpeedCB.SelectedItem);
-            
+
         }
         private void StaticPatrolUnderThreatSpeedCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.UnderThreatSpeed = StaticPatrolUnderThreatSpeedCB.GetItemText(StaticPatrolUnderThreatSpeedCB.SelectedItem);
-            
+
         }
         private void StaticPatrolWaypointInterpolationCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.WaypointInterpolation = StaticPatrolWaypointInterpolationCB.GetItemText(StaticPatrolWaypointInterpolationCB.SelectedItem);
-            
+
         }
         private void StaticPatrolLoadBalancingCategoryCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LoadBalancingCategory = StaticPatrolLoadBalancingCategoryCB.GetItemText(StaticPatrolLoadBalancingCategoryCB.SelectedItem);
-            
+
         }
         private void StaticPatrolLootDropOnDeathCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.LootDropOnDeath = StaticPatrolLootDropOnDeathCB.GetItemText(StaticPatrolLootDropOnDeathCB.SelectedItem);
-            
+
         }
         private void StaticPatrolAccuracyMinNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMin = StaticPatrolAccuracyMinNUD.Value;
-            
+
         }
         private void StaticPatrolAccuracyMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AccuracyMax = StaticPatrolAccuracyMaxNUD.Value;
-            
+
         }
         private void StaticPatrolThreatDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ThreatDistanceLimit = StaticPatrolThreatDistanceLimitNUD.Value;
-            
+
         }
         private void StaticPatrolSniperProneDistanceThresholdNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.SniperProneDistanceThreshold = StaticPatrolSniperProneDistanceThresholdNUD.Value;
-            
+
         }
         private void StaticPatrolDamageReceivedMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageReceivedMultiplier = StaticPatrolDamageReceivedMultiplierNUD.Value;
-            
-
+        }
+        private void StaticPatrolShoryukenDamageMultiplierNID_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ShoryukenDamageMultiplier = StaticPatrolShoryukenDamageMultiplierNID.Value;
+        }
+        private void StaticPatrolShoryukenChanceNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ShoryukenChance = StaticPatrolShoryukenChanceNUD.Value;
         }
         private void StaticPatrolDamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DamageMultiplier = StaticPatrolDamageMultiplierNUD.Value;
-            
+
         }
         private void StaticPatrolNoiseInvestigationDistanceLimitNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.NoiseInvestigationDistanceLimit = StaticPatrolNoiseInvestigationDistanceLimitNUD.Value;
-            
+
         }
         private void StaticPatrolMinSpreadRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinSpreadRadius = (int)StaticPatrolMinSpreadRadiusNUD.Value;
-            
+
         }
         private void StaticPatrolMaxSpreadRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxSpreadRadius = (int)StaticPatrolMaxSpreadRadiusNUD.Value;
-            
+
         }
         private void StaticPatrolRespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
-            
+
         }
         private void StaticPatrolDespawnTimeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnTime = StaticPatrolDespawnTimeNUD.Value;
-            
+
         }
         private void StaticPatrolDespawnRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DespawnRadius = StaticPatrolDespawnRadiusNUD.Value;
-            
+
         }
         private void StaticPatrolMaxDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxDistRadius = StaticPatrolMaxDistRadiusNUD.Value;
-            
+
         }
         private void StaticPatrolMinDistRadiusNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinDistRadius = StaticPatrolMinDistRadiusNUD.Value;
-            
+
         }
         private void StaticPatrolChanceCB_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Chance = StaticPatrolChanceCB.Value;
-            
+
         }
         private void StaticPatrolCanBeLotedCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanBeLooted = StaticPatrolCanBeLotedCB.Checked == true ? 1 : 0;
-            
+
         }
         private void StaticPatrolURBitmaskCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -599,7 +645,7 @@ namespace ExpansionPlugin
             if (StaticPatrolUnlimitedReloadBitmask == 30)
                 StaticPatrolUnlimitedReloadBitmask = 1;
             _data.UnlimitedReload = StaticPatrolUnlimitedReloadBitmask;
-            
+
         }
         private void StaticPatrolLootingBehaviousCLB_ItemCheck(object sender, ItemCheckEventArgs e)
         {
@@ -691,7 +737,7 @@ namespace ExpansionPlugin
             // Finally, update the checked items string (now safely updated)
 
             _data.LootingBehaviour = UpdateCheckedItemsString(list, e.Index, e.NewValue);
-            
+
         }
         private string UpdateCheckedItemsString(CheckedListBox list, int changingIndex, CheckState newState)
         {
@@ -714,19 +760,19 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.UseRandomWaypointAsStartPoint = StaticPatrolUseRandomWaypointAsStartPointCB.Checked == true ? 1 : 0;
-            
+
         }
         private void StaticPatrolCanSpawnInContaminatedAreaCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.CanSpawnInContaminatedArea = StaticPatrolCanSpawnInContaminatedAreaCB.Checked == true ? 1 : 0;
-            
+
         }
         private void StaticPatrolHeadshotResistanceNUD_Valuechanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HeadshotResistance = StaticPatrolHeadshotResistanceNUD.Value;
-            
+
         }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
@@ -755,7 +801,7 @@ namespace ExpansionPlugin
                 StaticPatrolFormationScaleNUD.Enabled = true;
                 _data.FormationScale = StaticPatrolFormationScaleNUD.Value;
             }
-            
+
         }
         private void StaticPatrolAccuracyMinGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -780,7 +826,7 @@ namespace ExpansionPlugin
                 StaticPatrolAccuracyMinNUD.Enabled = true;
                 _data.AccuracyMin = StaticPatrolAccuracyMinNUD.Value;
             }
-            
+
         }
         private void StaticPatrolAccuracyMaxGenerralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -805,7 +851,7 @@ namespace ExpansionPlugin
                 StaticPatrolAccuracyMaxNUD.Enabled = true;
                 _data.AccuracyMax = StaticPatrolAccuracyMaxNUD.Value;
             }
-            
+
         }
         private void StaticPatrolThreatDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -829,7 +875,7 @@ namespace ExpansionPlugin
                 StaticPatrolThreatDistanceLimitNUD.Enabled = true;
                 _data.ThreatDistanceLimit = StaticPatrolThreatDistanceLimitNUD.Value;
             }
-            
+
         }
         private void StaticPatrolNoiseInvestigationDistanceLimitGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -853,7 +899,7 @@ namespace ExpansionPlugin
                 StaticPatrolNoiseInvestigationDistanceLimitNUD.Enabled = true;
                 _data.NoiseInvestigationDistanceLimit = StaticPatrolNoiseInvestigationDistanceLimitNUD.Value;
             }
-            
+
         }
         private void StsticPatrolMaxFlankingDistanceGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -877,7 +923,7 @@ namespace ExpansionPlugin
                 StsticPatrolMaxFlankingDistanceNUD.Enabled = true;
                 _data.MaxFlankingDistance = StsticPatrolMaxFlankingDistanceNUD.Value;
             }
-            
+
         }
         private void StaticPatrolEnableFlankingOutsideCombatGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -901,7 +947,7 @@ namespace ExpansionPlugin
                 StaticPatrolEnableFlankingOutsideCombatCB.Enabled = true;
                 _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
             }
-            
+
         }
         private void StaticPatrolDamageMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -925,7 +971,7 @@ namespace ExpansionPlugin
                 StaticPatrolDamageMultiplierNUD.Enabled = true;
                 _data.DamageMultiplier = StaticPatrolDamageMultiplierNUD.Value;
             }
-            
+
         }
         private void StaticPatrolDamageReceivedMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -949,7 +995,7 @@ namespace ExpansionPlugin
                 StaticPatrolDamageReceivedMultiplierNUD.Enabled = true;
                 _data.DamageReceivedMultiplier = StaticPatrolDamageReceivedMultiplierNUD.Value;
             }
-            
+
         }
         private void StaticPatrolMinDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -966,7 +1012,7 @@ namespace ExpansionPlugin
                 StaticPatrolMinDistRadiusNUD.Enabled = true;
                 _data.MinDistRadius = StaticPatrolMinDistRadiusNUD.Value;
             }
-            
+
         }
         private void StaticPatrolMaxDistRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -983,7 +1029,7 @@ namespace ExpansionPlugin
                 StaticPatrolMaxDistRadiusNUD.Enabled = true;
                 _data.MaxDistRadius = StaticPatrolMaxDistRadiusNUD.Value;
             }
-            
+
         }
         private void StaticPatrolDespawnTimeGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1000,7 +1046,7 @@ namespace ExpansionPlugin
                 StaticPatrolDespawnTimeNUD.Enabled = true;
                 _data.DespawnTime = StaticPatrolDespawnTimeNUD.Value;
             }
-            
+
         }
         private void StaticPatrolDespawnRadiusGeneralCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -1071,5 +1117,55 @@ namespace ExpansionPlugin
                 _data.RespawnTime = StaticPatrolRespawnTimeNUD.Value;
             }
         }
+        private void staticPatrolShoryukenChanceGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (staticPatrolShoryukenChanceGeneralCB.Checked)
+            {
+                StaticPatrolShoryukenChanceNUD.Enabled = false;
+                _data.ShoryukenChance = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenChance == -1)
+                {
+                    StaticPatrolShoryukenChanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenChance;
+                }
+                else
+                {
+                    StaticPatrolShoryukenChanceNUD.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenChance;
+                }
+                _suppressEvents = false;
+            }
+            else
+            {
+                StaticPatrolShoryukenChanceNUD.Enabled = true;
+                _data.ShoryukenChance = StaticPatrolShoryukenChanceNUD.Value;
+            }
+        }
+        private void StaticPatrolShoryukenDamageMultiplierGeneralCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (StaticPatrolShoryukenDamageMultiplierGeneralCB.Checked)
+            {
+                StaticPatrolShoryukenDamageMultiplierNID.Enabled = false;
+                _data.ShoryukenDamageMultiplier = -1;
+                if ((decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenDamageMultiplier == -1)
+                {
+                    StaticPatrolShoryukenDamageMultiplierNID.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIConfig.Data.ShoryukenDamageMultiplier;
+                }
+                else
+                {
+                    StaticPatrolShoryukenDamageMultiplierNID.Value = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data.ShoryukenDamageMultiplier;
+                }
+                _suppressEvents = false;
+            }
+            else
+            {
+                StaticPatrolShoryukenDamageMultiplierNID.Enabled = true;
+                _data.ShoryukenDamageMultiplier = StaticPatrolShoryukenDamageMultiplierNID.Value;
+            }
+        }
+
+
+
+
     }
 }

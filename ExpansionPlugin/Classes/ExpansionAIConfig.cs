@@ -6,7 +6,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionAIConfig : ExpansionBaseIConfigLoader<ExpansionAISettings>
     {
-        public const int CurrentVersion = 19;
+        public const int CurrentVersion = 20;
  
         public ExpansionAIConfig(string path) : base(path)
         {
@@ -53,6 +53,8 @@ namespace ExpansionPlugin
         public int? EnableFlankingOutsideCombat { get; set; }
         public decimal? DamageMultiplier { get; set; }
         public decimal? DamageReceivedMultiplier { get; set; }
+        public decimal? ShoryukenChance { get; set; }
+        public decimal? ShoryukenDamageMultiplier { get; set; }
         public BindingList<string> Admins { get; set; }
         public int? Vaulting { get; set; }
         public decimal? SniperProneDistanceThreshold { get; set; }
@@ -91,6 +93,8 @@ namespace ExpansionPlugin
             MaxFlankingDistance = (decimal)200.0;
             EnableFlankingOutsideCombat = 0;
             DamageMultiplier = (decimal)1.0;
+            ShoryukenChance = 0.009999999776482582m;
+            ShoryukenDamageMultiplier = 3.0m;
             Admins = new BindingList<string>();
             Vaulting = 1;
             SniperProneDistanceThreshold = (decimal)0.0;
@@ -139,6 +143,8 @@ namespace ExpansionPlugin
                    EnableFlankingOutsideCombat == other.EnableFlankingOutsideCombat &&
                    DamageMultiplier == other.DamageMultiplier &&
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
+                   ShoryukenChance == other.ShoryukenChance &&
+                   ShoryukenDamageMultiplier == other.ShoryukenDamageMultiplier &&
                    Vaulting == other.Vaulting &&
                    SniperProneDistanceThreshold == other.SniperProneDistanceThreshold &&
                    AggressionTimeout == other.AggressionTimeout &&
@@ -174,6 +180,8 @@ namespace ExpansionPlugin
                 EnableFlankingOutsideCombat = this.EnableFlankingOutsideCombat,
                 DamageMultiplier = this.DamageMultiplier,
                 DamageReceivedMultiplier = this.DamageReceivedMultiplier,
+                ShoryukenChance = this.ShoryukenChance,
+                ShoryukenDamageMultiplier = this.ShoryukenDamageMultiplier,
                 Vaulting = this.Vaulting,
                 SniperProneDistanceThreshold = this.SniperProneDistanceThreshold,
                 AggressionTimeout = this.AggressionTimeout,
@@ -264,6 +272,18 @@ namespace ExpansionPlugin
             {
                 DamageReceivedMultiplier = 1.0m;
                 fixes.Add("Set default DamageReceivedMultiplier");
+            }
+
+            if (ShoryukenChance == null)
+            {
+                ShoryukenChance = 0.009999999776482582m;
+                fixes.Add("Set default ShoryukenChance");
+            }
+
+            if (ShoryukenDamageMultiplier == null)
+            {
+                ShoryukenDamageMultiplier = 3.0m;
+                fixes.Add("Set default ShoryukenDamageMultiplier");
             }
 
             if (Admins == null)
