@@ -95,11 +95,12 @@
             // 
             MissionAirdropPlaneClassNameTB.BackColor = Color.FromArgb(60, 63, 65);
             MissionAirdropPlaneClassNameTB.ForeColor = SystemColors.Control;
-            MissionAirdropPlaneClassNameTB.Location = new Point(167, 292);
+            MissionAirdropPlaneClassNameTB.Location = new Point(167, 295);
             MissionAirdropPlaneClassNameTB.Margin = new Padding(4, 3, 4, 3);
             MissionAirdropPlaneClassNameTB.Name = "MissionAirdropPlaneClassNameTB";
             MissionAirdropPlaneClassNameTB.Size = new Size(361, 23);
             MissionAirdropPlaneClassNameTB.TabIndex = 30;
+            MissionAirdropPlaneClassNameTB.TextChanged += MissionAirdropPlaneClassNameTB_TextChanged;
             // 
             // darkLabel296
             // 
@@ -125,6 +126,7 @@
             MissionDropZoneSpeedNUD.TabIndex = 28;
             MissionDropZoneSpeedNUD.Tag = "Speed";
             MissionDropZoneSpeedNUD.TextAlign = HorizontalAlignment.Center;
+            MissionDropZoneSpeedNUD.ValueChanged += MissionDropZoneSpeedNUD_ValueChanged;
             // 
             // darkLabel268
             // 
@@ -150,6 +152,7 @@
             MIssionDropZoneHeightNUD.TabIndex = 26;
             MIssionDropZoneHeightNUD.Tag = "Height";
             MIssionDropZoneHeightNUD.TextAlign = HorizontalAlignment.Center;
+            MIssionDropZoneHeightNUD.ValueChanged += MIssionDropZoneHeightNUD_ValueChanged;
             // 
             // darkLabel267
             // 
@@ -176,6 +179,7 @@
             MissionFallSpeedNUD.TabIndex = 17;
             MissionFallSpeedNUD.Tag = "Speed";
             MissionFallSpeedNUD.TextAlign = HorizontalAlignment.Center;
+            MissionFallSpeedNUD.ValueChanged += MissionFallSpeedNUD_ValueChanged;
             // 
             // darkLabel12
             // 
@@ -199,6 +203,7 @@
             MissionInfectedCountNUD.Size = new Size(140, 23);
             MissionInfectedCountNUD.TabIndex = 22;
             MissionInfectedCountNUD.TextAlign = HorizontalAlignment.Center;
+            MissionInfectedCountNUD.ValueChanged += MissionInfectedCountNUD_ValueChanged;
             // 
             // darkLabel271
             // 
@@ -222,6 +227,7 @@
             MissionItemCountNUD.Size = new Size(140, 23);
             MissionItemCountNUD.TabIndex = 20;
             MissionItemCountNUD.TextAlign = HorizontalAlignment.Center;
+            MissionItemCountNUD.ValueChanged += MissionItemCountNUD_ValueChanged;
             // 
             // darkLabel270
             // 
@@ -245,6 +251,7 @@
             MIssionContainerCB.Name = "MIssionContainerCB";
             MIssionContainerCB.Size = new Size(353, 23);
             MIssionContainerCB.TabIndex = 15;
+            MIssionContainerCB.SelectedIndexChanged += MIssionContainerCB_SelectedIndexChanged;
             // 
             // MissionWeightl
             // 
@@ -270,6 +277,7 @@
             MissionShowNotificationCB.Tag = "ShowNotification";
             MissionShowNotificationCB.TextAlign = ContentAlignment.MiddleRight;
             MissionShowNotificationCB.UseVisualStyleBackColor = true;
+            MissionShowNotificationCB.CheckedChanged += MissionShowNotificationCB_CheckedChanged;
             // 
             // MissionHeightNUD
             // 
@@ -284,6 +292,7 @@
             MissionHeightNUD.TabIndex = 11;
             MissionHeightNUD.Tag = "Height";
             MissionHeightNUD.TextAlign = HorizontalAlignment.Center;
+            MissionHeightNUD.ValueChanged += MissionHeightNUD_ValueChanged;
             // 
             // darkLabel105
             // 
@@ -321,6 +330,7 @@
             MissionSpeedNUD.TabIndex = 13;
             MissionSpeedNUD.Tag = "Speed";
             MissionSpeedNUD.TextAlign = HorizontalAlignment.Center;
+            MissionSpeedNUD.ValueChanged += MissionSpeedNUD_ValueChanged;
             // 
             // darkLabel102
             // 

@@ -48,7 +48,7 @@ namespace ExpansionPlugin
             MissionItemCountNUD.Value = (decimal)_data.ItemCount;
             MissionInfectedCountNUD.Value = (decimal)_data.InfectedCount;
             MissionAirdropPlaneClassNameTB.Text = _data.AirdropPlaneClassName;
-            
+
             _suppressEvents = false;
         }
 
@@ -65,5 +65,66 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void MissionShowNotificationCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ShowNotification = MissionShowNotificationCB.Checked == true ? 1 : 0;
+        }
+
+        private void MissionHeightNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Height = MissionHeightNUD.Value;
+        }
+
+        private void MIssionDropZoneHeightNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DropZoneHeight = MIssionDropZoneHeightNUD.Value;
+        }
+
+        private void MissionSpeedNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Speed = MissionSpeedNUD.Value;
+        }
+
+        private void MissionDropZoneSpeedNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DropZoneSpeed = MissionDropZoneSpeedNUD.Value;
+        }
+
+        private void MIssionContainerCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Container = MIssionContainerCB.SelectedItem.ToString();
+
+        }
+
+        private void MissionFallSpeedNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.FallSpeed = MissionFallSpeedNUD.Value;
+        }
+
+        private void MissionItemCountNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.ItemCount = (int)MissionInfectedCountNUD.Value;
+        }
+
+        private void MissionInfectedCountNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.InfectedCount = (int)MissionInfectedCountNUD.Value;
+        }
+
+        private void MissionAirdropPlaneClassNameTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AirdropPlaneClassName = MissionAirdropPlaneClassNameTB.Text;
+        }
     }
 }

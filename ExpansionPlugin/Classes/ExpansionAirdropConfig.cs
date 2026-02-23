@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -97,7 +98,8 @@ namespace ExpansionPlugin
                    ItemCount == other.ItemCount &&
                    AirdropPlaneClassName == other.AirdropPlaneClassName &&
                    DropZoneProximityDistance == other.DropZoneProximityDistance &&
-                   ExplodeAirVehiclesOnCollision == other.ExplodeAirVehiclesOnCollision;
+                   ExplodeAirVehiclesOnCollision == other.ExplodeAirVehiclesOnCollision &&
+                   Containers.SequenceEqual(other.Containers);
         }
         public override bool Equals(object? obj) => Equals(obj as ExpansionCoreSettings);
         void DefaultRegular()
@@ -598,7 +600,8 @@ namespace ExpansionPlugin
                 ItemCount = this.ItemCount,
                 AirdropPlaneClassName = this.AirdropPlaneClassName,
                 DropZoneProximityDistance = this.DropZoneProximityDistance,
-                ExplodeAirVehiclesOnCollision = this.ExplodeAirVehiclesOnCollision
+                ExplodeAirVehiclesOnCollision = this.ExplodeAirVehiclesOnCollision,
+                Containers = new BindingList<ExpansionLootContainer>(this.Containers.Select(Container => Container.Clone()).ToList())
             };
         }
     }

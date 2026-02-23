@@ -84,6 +84,7 @@
             MissionDropNameTB.Size = new Size(377, 23);
             MissionDropNameTB.TabIndex = 1;
             MissionDropNameTB.Tag = "Name";
+            MissionDropNameTB.TextChanged += MissionDropNameTB_TextChanged;
             // 
             // MissionDropXNUD
             // 
@@ -99,6 +100,7 @@
             MissionDropXNUD.TabIndex = 3;
             MissionDropXNUD.Tag = "x";
             MissionDropXNUD.TextAlign = HorizontalAlignment.Center;
+            MissionDropXNUD.ValueChanged += MissionDropXNUD_ValueChanged;
             // 
             // darkLabel106
             // 
@@ -135,6 +137,7 @@
             MissionDropRadiusNUD.TabIndex = 7;
             MissionDropRadiusNUD.Tag = "Radius";
             MissionDropRadiusNUD.TextAlign = HorizontalAlignment.Center;
+            MissionDropRadiusNUD.ValueChanged += MissionDropRadiusNUD_ValueChanged;
             // 
             // MissionDropYNUD
             // 
@@ -150,6 +153,7 @@
             MissionDropYNUD.TabIndex = 5;
             MissionDropYNUD.Tag = "z";
             MissionDropYNUD.TextAlign = HorizontalAlignment.Center;
+            MissionDropYNUD.ValueChanged += MissionDropYNUD_ValueChanged;
             // 
             // darkLabel108
             // 

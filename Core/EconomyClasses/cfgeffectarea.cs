@@ -172,6 +172,27 @@ namespace Day2eEditor
                 EffectDuration == other.EffectDuration &&
                 EffectModifier == other.EffectModifier;
         }
+        public Data Clone()
+        {
+            return new Data
+            {
+                Pos = Pos != null ? (decimal[])Pos.Clone() : null,
+                Radius = Radius,
+                PosHeight = PosHeight,
+                NegHeight = NegHeight,
+                InnerRingCount = InnerRingCount,
+                InnerPartDist = InnerPartDist,
+                OuterRingToggle = OuterRingToggle,
+                OuterPartDist = OuterPartDist,
+                OuterOffset = OuterOffset,
+                VerticalLayers = VerticalLayers,
+                VerticalOffset = VerticalOffset,
+                ParticleName = ParticleName,
+                EffectInterval = EffectInterval,
+                EffectDuration = EffectDuration,
+                EffectModifier = EffectModifier
+            };
+        }
     }
     public class PlayerData
     {
@@ -185,6 +206,15 @@ namespace Day2eEditor
                 return false;
 
             return AroundPartName == other.AroundPartName && TinyPartName == other.TinyPartName && PPERequesterType == other.PPERequesterType;
+        }
+        public PlayerData Clone()
+        {
+            return new PlayerData
+            {
+                AroundPartName = AroundPartName,
+                TinyPartName = TinyPartName,
+                PPERequesterType = PPERequesterType
+            };
         }
     }
 }

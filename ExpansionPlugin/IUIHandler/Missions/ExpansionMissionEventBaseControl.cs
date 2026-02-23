@@ -62,5 +62,40 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void EnabledCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Enabled = EnabledCB.Checked == true ? 1 : 0;
+        }
+        private void WeightNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Weight = WeightNUD.Value;
+
+        }
+        private void MissionMaxTimeNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MissionMaxTime = (int)Helper.ConvertMinutesToSeconds((int)MissionMaxTimeNUD.Value);
+        }
+        private void MissionNameTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.MissionName = MissionNameTB.Text;
+        }
+        private void DifficultyNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+        }
+        private void ObjectiveNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+        }
+        private void RewardTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+
+        }
     }
 }

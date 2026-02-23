@@ -14,7 +14,6 @@ namespace ExpansionPlugin
     {
         private Type _parentType;
         private Data _data;
-        private Data _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as Data ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -74,61 +72,7 @@ namespace ExpansionPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Data CloneData(Data data)
-        {
-            return new Data
-            {
-                Pos = data.Pos?.ToArray(),
-                Radius = data.Radius,
-                PosHeight = data.PosHeight,
-                NegHeight = data.NegHeight,
-                InnerRingCount = data.InnerRingCount,
-                InnerPartDist = data.InnerPartDist,
-                OuterRingToggle = data.OuterRingToggle,
-                OuterPartDist = data.OuterPartDist,
-                OuterOffset = data.OuterOffset,
-                VerticalLayers = data.VerticalLayers,
-                VerticalOffset = data.VerticalOffset,
-                ParticleName = data.ParticleName,
-                EffectInterval = data.EffectInterval,
-                EffectDuration = data.EffectDuration,
-                EffectModifier = data.EffectModifier
-            };
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -152,7 +96,6 @@ namespace ExpansionPlugin
                 _data.InnerRingCount = 0;
             else
                 _data.InnerRingCount = null;
-            HasChanges();
         }
         private void UseInnerPartDistCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -162,7 +105,6 @@ namespace ExpansionPlugin
                 _data.InnerPartDist = 0;
             else
                 _data.InnerPartDist = null;
-            HasChanges();
         }
         private void UseOuterRingToggleCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -172,7 +114,6 @@ namespace ExpansionPlugin
                 _data.OuterRingToggle = false;
             else
                 _data.OuterRingToggle = null;
-            HasChanges();
         }
         private void UseOuterPartDistCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -182,7 +123,6 @@ namespace ExpansionPlugin
                 _data.OuterPartDist = 0;
             else
                 _data.OuterPartDist = null;
-            HasChanges();
         }
         private void UseOuterOffsetCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -192,7 +132,6 @@ namespace ExpansionPlugin
                 _data.OuterOffset = 0;
             else
                 _data.OuterOffset = null;
-            HasChanges();
         }
         private void UseVerticalLayersCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -202,7 +141,6 @@ namespace ExpansionPlugin
                 _data.VerticalLayers = 0;
             else
                 _data.VerticalLayers = null;
-            HasChanges();
         }
         private void UseVerticalOffsetCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -212,7 +150,6 @@ namespace ExpansionPlugin
                 _data.VerticalOffset = 0;
             else
                 _data.VerticalOffset = null;
-            HasChanges();
         }
         private void UseParticleNameCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -222,7 +159,6 @@ namespace ExpansionPlugin
                 _data.ParticleName = "";
             else
                 _data.ParticleName = null;
-            HasChanges();
         }
         private void UseEffectIntervalCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -232,7 +168,6 @@ namespace ExpansionPlugin
                 _data.EffectInterval = 0;
             else
                 _data.EffectInterval = null;
-            HasChanges();
         }
         private void UseEffectDurationCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -242,7 +177,6 @@ namespace ExpansionPlugin
                 _data.EffectDuration = 0;
             else
                 _data.EffectDuration = null;
-            HasChanges();
         }
         private void UseEffectModifierCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -252,7 +186,6 @@ namespace ExpansionPlugin
                 _data.EffectModifier = false;
             else
                 _data.EffectModifier = null;
-            HasChanges();
         }
         #endregion usecases
 
@@ -260,7 +193,6 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Pos = new decimal[] { (decimal)PosXNUD.Value, (decimal)posYNUD.Value, (decimal)posZNUD.Value };
-            HasChanges();
         }
         private void AreaNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -270,37 +202,31 @@ namespace ExpansionPlugin
                _data.SetdecimalValue(nud.Name.Substring(0, nud.Name.Length - 3), (decimal)nud.Value);
             else
                 _data.SetIntValue(nud.Name.Substring(0, nud.Name.Length - 3), (int)nud.Value);
-            HasChanges();
         }
         private void OuterRingToggleCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.OuterRingToggle = OuterRingToggleCB.Checked;
-            HasChanges();
         }
         private void EffectIntervalNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EffectInterval = (int)EffectIntervalNUD.Value;
-            HasChanges();
-        }
+         }
         private void EffectDurationNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EffectDuration = (int)EffectDurationNUD.Value;
-            HasChanges();
         }
         private void ParticleNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ParticleName = ParticleNameTB.Text;
-            HasChanges();
         }
         private void EffectModifierCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EffectModifier = EffectModifierCB.Checked;
-            HasChanges();
         }
     }
 }

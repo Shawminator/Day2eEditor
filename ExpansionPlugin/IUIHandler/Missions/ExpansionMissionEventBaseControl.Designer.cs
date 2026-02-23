@@ -86,6 +86,7 @@
             RewardTB.Name = "RewardTB";
             RewardTB.Size = new Size(257, 23);
             RewardTB.TabIndex = 15;
+            RewardTB.TextChanged += RewardTB_TextChanged;
             // 
             // ObjectiveNUD
             // 
@@ -100,6 +101,7 @@
             ObjectiveNUD.TabIndex = 14;
             ObjectiveNUD.Tag = "MissionMaxTime";
             ObjectiveNUD.TextAlign = HorizontalAlignment.Center;
+            ObjectiveNUD.ValueChanged += ObjectiveNUD_ValueChanged;
             // 
             // DifficultyNUD
             // 
@@ -114,6 +116,7 @@
             DifficultyNUD.TabIndex = 13;
             DifficultyNUD.Tag = "MissionMaxTime";
             DifficultyNUD.TextAlign = HorizontalAlignment.Center;
+            DifficultyNUD.ValueChanged += DifficultyNUD_ValueChanged;
             // 
             // label4
             // 
@@ -202,6 +205,7 @@
             MissionNameTB.Name = "MissionNameTB";
             MissionNameTB.Size = new Size(416, 23);
             MissionNameTB.TabIndex = 3;
+            MissionNameTB.TextChanged += MissionNameTB_TextChanged;
             // 
             // EnabledCB
             // 
@@ -215,6 +219,7 @@
             EnabledCB.Tag = "Enabled";
             EnabledCB.TextAlign = ContentAlignment.MiddleRight;
             EnabledCB.UseVisualStyleBackColor = true;
+            EnabledCB.CheckedChanged += EnabledCB_CheckedChanged;
             // 
             // WeightNUD
             // 
@@ -229,6 +234,7 @@
             WeightNUD.TabIndex = 7;
             WeightNUD.Tag = "Weight";
             WeightNUD.TextAlign = HorizontalAlignment.Center;
+            WeightNUD.ValueChanged += WeightNUD_ValueChanged;
             // 
             // MissionMaxTimeNUD
             // 
@@ -242,6 +248,7 @@
             MissionMaxTimeNUD.TabIndex = 9;
             MissionMaxTimeNUD.Tag = "MissionMaxTime";
             MissionMaxTimeNUD.TextAlign = HorizontalAlignment.Center;
+            MissionMaxTimeNUD.ValueChanged += MissionMaxTimeNUD_ValueChanged;
             // 
             // ExpansionMissionEventBaseControl
             // 

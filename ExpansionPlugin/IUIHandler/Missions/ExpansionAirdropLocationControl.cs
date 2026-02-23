@@ -12,6 +12,8 @@ namespace ExpansionPlugin
     /// </summary>
     public partial class ExpansionAirdropLocationControl : UserControl, IUIHandler
     {
+        public event Action<decimal> PositionChanged;
+        public event Action<decimal> RadiusChanged;
         private Type _parentType;
         private ExpansionAirdropLocation _data;
         private List<TreeNode> _nodes;
@@ -53,10 +55,38 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = $"Drop Location - {_data.Name}";
             }
         }
 
         #endregion
+
+        private void MissionDropNameTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Name = MissionDropNameTB.Text;
+            UpdateTreeNodeText();
+        }
+
+        private void MissionDropXNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.x = (decimal)MissionDropXNUD.Value;
+            PositionChanged?.Invoke((decimal)_data.x);
+        }
+
+        private void MissionDropYNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.z = (decimal)MissionDropYNUD.Value;
+            PositionChanged?.Invoke((decimal)_data.z);
+        }
+
+        private void MissionDropRadiusNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Radius = (decimal)MissionDropRadiusNUD.Value;
+            RadiusChanged?.Invoke((decimal)_data.Radius);
+        }
     }
 }
