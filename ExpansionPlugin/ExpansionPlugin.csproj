@@ -150,10 +150,13 @@
     <Compile Update="IUIHandler\General\ExpansionGeneralGraveCrossControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\Missions\cfgeffectAreaDataControl.cs">
+    <Compile Update="IUIHandler\Missions\ExpansionMissionEventContaminatedAreaDataControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\Missions\cfgeffectAreaPlayerDataControl.cs">
+    <Compile Update="IUIHandler\Missions\ExpansionMissionEventContaminatedAreaPlayerDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\Missions\ExpansionMissionEffectAreaControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="IUIHandler\SafeZone\ExpansionSafeZoneCylinderControl.cs">

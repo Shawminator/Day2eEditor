@@ -16,7 +16,7 @@ namespace ExpansionPlugin
         public string FileName => Path.GetFileName(BasePath);
 
         public List<TItem> Items { get; protected set; } = new();
-        public List<TItem> ClonedItems { get; protected set; } = new();
+        public Dictionary<Guid, TItem> ClonedItems { get; protected set; } = new();
 
         public bool HasErrors { get; protected set; }
         public List<string> Errors { get; protected set; } = new();
@@ -44,7 +44,7 @@ namespace ExpansionPlugin
                     OnAfterItemLoad(item, file);
 
                     Items.Add(item);
-                    ClonedItems.Add(item.Clone());
+                    ClonedItems.Add(GetID(item), item.Clone());
                 }
                 catch (Exception ex)
                 {
@@ -55,7 +55,6 @@ namespace ExpansionPlugin
 
             OnAfterLoadAll();
         }
-
         public virtual IEnumerable<string> Save()
         {
             var saved = new List<string>();
@@ -63,35 +62,47 @@ namespace ExpansionPlugin
             for (int i = Items.Count - 1; i >= 0; i--)
             {
                 var item = Items[i];
-                var cloned = ClonedItems[i];
-
-                if (!item.Equals(cloned))
-                {
-                    SaveItem(item);
-                    ClonedItems[i] = item.Clone();
-                    saved.Add(GetItemFileName(item));
-                }
-
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+                //delete file from disk
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
                     Items.RemoveAt(i);
-                    ClonedItems.RemoveAt(i);
+                    ClonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
+                }
+                //new file, needs to be written to disk and cloned
+                if (!ClonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    ClonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+                //edit to existing file, needs to be recloned
+                if (!item.Equals(baseline))
+                {
+                    SaveItem(item);
+                    ClonedItems[id] = item.Clone();
+                    saved.Add(fileName);
                 }
             }
-
             return saved;
         }
+
+
         public bool needToSave()
         {
             return false;
         }
 
         // --- abstract hooks the subclass MUST implement ---
-
         protected abstract TItem LoadItem(string filePath);
         protected abstract void SaveItem(TItem item);
         protected abstract string GetItemFileName(TItem item);
+        protected abstract Guid GetID(TItem item);
         protected abstract bool ShouldDelete(TItem item);
         protected abstract void DeleteItemFile(TItem item);
 
@@ -99,7 +110,6 @@ namespace ExpansionPlugin
 
         protected virtual void OnAfterItemLoad(TItem item, string path) { }
         protected virtual void OnAfterLoadAll() { }
-
         protected virtual void HandleItemError(string path, Exception ex)
         {
             Errors.Add($"Error in {Path.GetFileName(path)}: {ex.Message}");

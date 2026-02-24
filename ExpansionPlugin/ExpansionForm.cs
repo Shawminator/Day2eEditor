@@ -342,12 +342,12 @@ namespace ExpansionPlugin
                     ExpansionMissionEventBase ExpansionMissionEventBase = node.Tag as ExpansionMissionEventBase;
                     ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventBase, selected);
                 },
-                [typeof(ExpansionMissionEventAirdrop)] = (node,selected) =>
+                [typeof(ExpansionMissionEventAirdrop)] = (node, selected) =>
                 {
                     ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop = node.Tag as ExpansionMissionEventAirdrop;
                     ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), ExpansionMissionEventAirdrop, selected);
                 },
-                [typeof(ExpansionAirdropLocation)] = (node,selected) =>
+                [typeof(ExpansionAirdropLocation)] = (node, selected) =>
                 {
                     ExpansionAirdropLocation ExpansionAirdropLocation = node.Tag as ExpansionAirdropLocation;
                     var control = new ExpansionAirdropLocationControl();
@@ -365,7 +365,7 @@ namespace ExpansionPlugin
                     SetupMissionMarkers(ExpansionAirdropLocation, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionAirdropLocation.x, (float)ExpansionAirdropLocation.z));
                 },
-                
+
                 [typeof(ExpansionMissionEventContaminatedArea)] = (node, selected) =>
                 {
                     ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea = node.Tag as ExpansionMissionEventContaminatedArea;
@@ -373,13 +373,26 @@ namespace ExpansionPlugin
                 },
                 [typeof(Data)] = (node, selected) =>
                 {
-                    Data Data = node.Tag as Data;
-                    ShowHandler<IUIHandler>(new cfgeffectAreaDataControl(), typeof(ExpansionMissionEventBase), Data, selected);
+                    ExpansionMissionEventContaminatedArea area = node.Parent.Tag as ExpansionMissionEventContaminatedArea;
+                    ExpansionMissionEffectAreaControl control = new ExpansionMissionEffectAreaControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables();
+                        DrawbaseMissionMarkerData(node.FindParentOfType<ExpansionMissionsConfig>());
+                    };
+                    control.RadiusChanged += (UpdateRadius) =>
+                    {
+                        _mapControl.ClearDrawables();
+                        DrawbaseMissionMarkerData(node.FindParentOfType<ExpansionMissionsConfig>());
+                    };
+                    ShowHandler(control, typeof(cfgeffectareaConfig), area, selected);
+                    SetupEffectAreaMap(area, node);
+                    _mapControl.EnsureVisible(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]));
                 },
                 [typeof(PlayerData)] = (node, selected) =>
                 {
                     PlayerData PlayerData = node.Tag as PlayerData;
-                    ShowHandler<IUIHandler>(new cfgeffectAreaPlayerDataControl(), typeof(ExpansionMissionEventBase), PlayerData, selected);
+                    ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaPlayerDataControl(), typeof(ExpansionMissionEventBase), PlayerData, selected);
                 },
                 //Monitoring
                 [typeof(MonitoringSettings)] = (node, selected) =>
@@ -667,6 +680,15 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionMIssionAirdropSettingsControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventAirdrop, selected);
                 },
+                ["MissionContaminatedAreaData"] = (node, selected) =>
+                {
+                    ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea = node.Parent.Tag as ExpansionMissionEventContaminatedArea;
+                    ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaDataControl(), typeof(ExpansionMissionEventBase), ExpansionMissionEventContaminatedArea.Data, selected);
+                },
+                ["MissionContaminatedAreaGeneral"] = (node, selected) =>
+                {
+                    ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventContaminatedArea, selected);
+                },
                 //Raid
                 ["RaidExplosives"] = (node, selected) =>
                 {
@@ -721,7 +743,6 @@ namespace ExpansionPlugin
                 }
             };
         }
-
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -899,7 +920,33 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeNotificationToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-
+                },
+                //Missions
+                [typeof(ExpansionMissionEventAirdrop)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMissionEventContaminatedArea)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMissionEventHeliCrash)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMissionsConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewAirdropMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewContaminatedMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Raid
                 [typeof(ExpansionRaidSchedule)] = node =>
@@ -2625,7 +2672,7 @@ namespace ExpansionPlugin
             {
                 Tag = MissionBase
             };
-            if(MB is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+            if (MB is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
             {
                 missionNode.Nodes.Add(new TreeNode(ExpansionMissionEventAirdrop.MissionName)
                 {
@@ -2647,14 +2694,21 @@ namespace ExpansionPlugin
                 };
                 missionNode.Nodes.Add(alclnodes);
             }
-            else if(MB is ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea)
+            else if (MB is ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea)
             {
                 missionNode.Nodes.Add(new TreeNode(ExpansionMissionEventContaminatedArea.MissionName)
                 {
-                    Tag = "MissionContaminatedArea"
+                    Tag = ExpansionMissionEventContaminatedArea.Data
+                });
+                missionNode.Nodes.Add(new TreeNode("General")
+                {
+                    Tag = "MissionContaminatedAreaGeneral"
                 });
                 if (ExpansionMissionEventContaminatedArea.Data != null)
-                    missionNode.Nodes.Add(new TreeNode("Data") { Tag = ExpansionMissionEventContaminatedArea.Data });
+                    missionNode.Nodes.Add(new TreeNode("Data")
+                    {
+                        Tag = "MissionContaminatedAreaData"
+                    });
                 if (ExpansionMissionEventContaminatedArea.PlayerData != null)
                     missionNode.Nodes.Add(new TreeNode("PlayerData") { Tag = ExpansionMissionEventContaminatedArea.PlayerData });
             }
@@ -3672,6 +3726,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_ServerSafeZoneDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_SpawnLocationPositionSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_SpawnLocationPositionDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_MissionLocationPositionSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_MissionLocationPositionDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -3757,6 +3813,7 @@ namespace ExpansionPlugin
         private ExpansionSpawnLocation _selectedSpawnLocation;
         private ExpansionAirdropLocation _selectedAirdropLocation;
         private ExpansionMissionEventContaminatedArea _selectedExpansionMissionEventContaminatedArea;
+        private Data _selectedData;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -3904,8 +3961,21 @@ namespace ExpansionPlugin
             SetupMap(() =>
             {
                 _selectedAirdropLocation = ExpansionAirdropLocation;
-                //_mapControl.MapsingleClicked += MapControl_SpawnLocationPositionSingleclicked;
-                //_mapControl.MapDoubleClicked += MapControl_SpawnLocationPositionDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
+
+                var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
+                if (ExpansionMissionsConfig != null)
+                    DrawbaseMissionMarkerData(ExpansionMissionsConfig);
+            });
+        }
+        private void SetupEffectAreaMap(ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedExpansionMissionEventContaminatedArea = ExpansionMissionEventContaminatedArea;
+                _mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
 
                 var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
                 if (ExpansionMissionsConfig != null)
@@ -4202,9 +4272,9 @@ namespace ExpansionPlugin
         }
         private void DrawbaseMissionMarkerData(ExpansionMissionsConfig ExpansionMissionsConfig)
         {
-            foreach(ExpansionMissionEventBase mb in ExpansionMissionsConfig.Items)
+            foreach (ExpansionMissionEventBase mb in ExpansionMissionsConfig.Items)
             {
-                if(mb is ExpansionMissionEventAirdrop airdrop)
+                if (mb is ExpansionMissionEventAirdrop airdrop)
                 {
                     var marker = new TextMarkerDrawable(new PointF((float)airdrop.DropLocation.x, (float)airdrop.DropLocation.z), _mapControl.MapSize)
                     {
@@ -4917,6 +4987,94 @@ namespace ExpansionPlugin
                 currentTreeNode.Text = v3.GetString();
             }
         }
+        private void MapControl_MissionLocationPositionSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child2 in parentNode.Nodes)
+            {
+                foreach (TreeNode child in child2.Nodes)
+                {
+                    if (child.Tag is Data Data)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF((float)Data.Pos[0], (float)Data.Pos[2]));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = Data;
+                        }
+                    }
+                    if (child.Tag is ExpansionAirdropLocation ExpansionAirdropLocation)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF((float)ExpansionAirdropLocation.x, (float)ExpansionAirdropLocation.z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = ExpansionAirdropLocation;
+                        }
+                    }
+                }
+            }
+            if (closestPos != null && closestDistance <= 30)
+            {
+                foreach (TreeNode child2 in parentNode.Nodes)
+                {
+                    foreach (TreeNode child in child2.Nodes)
+                    {
+                        if (child.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child;
+                            break;
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+
+        }
+        private void MapControl_MissionLocationPositionDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is ExpansionAirdropLocation ExpansionAirdropLocation)
+            {
+                ExpansionAirdropLocation.x = (decimal)e.MapCoordinates.X;
+                ExpansionAirdropLocation.z = (decimal)e.MapCoordinates.Y;
+                _mapControl.ClearDrawables();
+                ShowHandler(new ExpansionAirdropLocationControl(), typeof(ExpansionMissionsConfig), ExpansionAirdropLocation, new List<TreeNode>() { currentTreeNode });
+                DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
+            }
+            else if (currentTreeNode.Tag is Data Data)
+            {
+                Data.Pos[0] = (decimal)e.MapCoordinates.X;
+                Data.Pos[2] = (decimal)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    Data.Pos[1] = (decimal)(MapData.gethieght((float)Data.Pos[0], (float)Data.Pos[2]));
+                }
+                _mapControl.ClearDrawables();
+                ShowHandler(new ExpansionMissionEffectAreaControl(), typeof(ExpansionSafeZoneConfig), Data, new List<TreeNode>() { currentTreeNode });
+                DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
+            }
+        }
         #endregion mapstuff
 
         #region right click methods
@@ -4940,20 +5098,12 @@ namespace ExpansionPlugin
                 AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
                 AILoadouts.InventoryAttachments.Add(newIA);
                 currentTreeNode.Nodes.Add(newnode);
-                AILoadouts.isDirty = true;
             }
             else if (currentTreeNode.FindParentOfType<AILoadouts>() != null)
             {
                 AILoadouts AILoadouts = currentTreeNode.FindParentOfType<AILoadouts>();
                 AILoadouts.InventoryAttachments.Add(newIA);
                 currentTreeNode.Nodes.Add(newnode);
-
-
-                // If parent is inside a loot drops file, mark that file dirty
-                if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
-                    currentTreeNode.FindParentOfType<AILootDrops>().isDirty = true;
-                else if (currentTreeNode.FindLastParentOfType<AILoadouts>() != null)
-                    currentTreeNode.FindLastParentOfType<AILoadouts>().isDirty = true;
             }
         }
         private void RemoveAttachemtItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4965,7 +5115,6 @@ namespace ExpansionPlugin
                 AILoadouts.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
                 if (currentTreeNode != null)
                     currentTreeNode.Remove();
-                AILoadouts.isDirty = true;
             }
             else if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
             {
@@ -4975,7 +5124,6 @@ namespace ExpansionPlugin
                 if (parent != null && parent.Tag is AILoadouts parentLoadout)
                 {
                     parentLoadout.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
-                    currentTreeNode.FindParentOfType<AILootDrops>().isDirty = true;
                     currentTreeNode.Remove();
                 }
             }
@@ -5003,14 +5151,6 @@ namespace ExpansionPlugin
                 currentTreeNode.Nodes.Add(newNode);
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>();
                 AILoadouts AILoadouts3 = currentTreeNode.FindLastParentOfType<AILoadouts>();
-                if (owningLootFile != null)
-                {
-                    owningLootFile.isDirty = true;
-                }
-                else if (AILoadouts3 != null)
-                {
-                    AILoadouts3.isDirty = true;
-                }
             }
             else if (currentTreeNode.Tag is AILoadouts selectedAILoadouts)
             {
@@ -5027,14 +5167,6 @@ namespace ExpansionPlugin
                 // If this AILoadouts is inside a loot drops file, mark the loot drops file dirty
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>();
                 AILoadouts AILoadouts3 = currentTreeNode.FindLastParentOfType<AILoadouts>();
-                if (owningLootFile != null)
-                {
-                    owningLootFile.isDirty = true;
-                }
-                else if (AILoadouts3 != null)
-                {
-                    AILoadouts3.isDirty = true;
-                }
             }
             ExpansionTV.SelectedNode = newNode;
         }
@@ -5058,7 +5190,6 @@ namespace ExpansionPlugin
                 AILoadouts.Sets.Add(newSet);
                 TreeNode newNode = new TreeNode("New Set") { Tag = newSet };
                 currentTreeNode.Nodes.Add(newNode);
-                AILoadouts.isDirty = true;
             }
         }
         private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5083,7 +5214,6 @@ namespace ExpansionPlugin
             if (currentTreeNode != null && currentTreeNode.Tag is AILootDrops drops)
             {
                 drops.LootdropList.Add(newItem);
-                drops.isDirty = true;
             }
             else if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
             {
@@ -5091,15 +5221,12 @@ namespace ExpansionPlugin
                 // If adding under a loadouts file
                 if (currentTreeNode.Tag is Inventoryattachment Inventoryattachment)
                     Inventoryattachment.Items.Add(newItem);
-                AILoadouts.isDirty = true;
             }
             else if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
             {
                 AILootDrops AILootDrops = currentTreeNode.FindLastParentOfType<AILootDrops>();
                 if (currentTreeNode.Tag is Inventoryattachment Inventoryattachment)
                     Inventoryattachment.Items.Add(newItem);
-
-                AILootDrops.isDirty = true;
             }
         }
         private void removeItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5114,12 +5241,6 @@ namespace ExpansionPlugin
                 AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
                 ia.Items.Remove(item);
                 currentTreeNode.Remove();
-
-                if (owningLootFile != null)
-                    owningLootFile.isDirty = true;
-                else if (AILoadouts != null)
-                    AILoadouts.isDirty = true;
-
                 return;
             }
 
@@ -5131,7 +5252,6 @@ namespace ExpansionPlugin
                 {
                     parentLootFile.LootdropList.Remove(toRemove);
                     currentTreeNode.Remove();
-                    parentLootFile.isDirty = true;
                 }
                 return;
             }
@@ -5143,8 +5263,7 @@ namespace ExpansionPlugin
                     // remove node from tree
                     if (currentTreeNode != null && currentTreeNode.Parent != null)
                         currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                    AILootDrops.isDirty = true;
-                    AILootDrops.ToDelete = true;
+                    _expansionManager.ExpansionLootDropConfig.RemoveFile(AILootDrops);
                 }
             }
 
@@ -5160,13 +5279,6 @@ namespace ExpansionPlugin
                     if (fileRoot != null)
                     {
                         fileRoot.InventoryCargo.Remove(selectedLoadout);
-
-
-                        if (owningLootFile != null)
-                            owningLootFile.isDirty = true;
-                        else if (AILoadouts != null)
-                            AILoadouts.isDirty = true;
-
                         TreeNode parentonventory = currentTreeNode.Parent;
                         currentTreeNode.Remove();
                         if (fileRoot.InventoryCargo.Count == 0)
@@ -5182,12 +5294,6 @@ namespace ExpansionPlugin
                     if (fileRoot != null)
                     {
                         fileRoot.Sets.Remove(selectedLoadout);
-
-                        if (owningLootFile != null)
-                            owningLootFile.isDirty = true;
-                        else if (AILoadouts != null)
-                            AILoadouts.isDirty = true;
-
                         currentTreeNode.Remove();
                     }
                 }
@@ -5199,8 +5305,7 @@ namespace ExpansionPlugin
                         // remove node from tree
                         if (currentTreeNode != null && currentTreeNode.Parent != null)
                             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                        AILoadouts.isDirty = true;
-                        AILoadouts.ToDelete = true;
+                        ExpansionLoadoutConfig.RemoveFile(AILoadouts);
                     }
                 }
             }
@@ -5225,11 +5330,9 @@ namespace ExpansionPlugin
                     // default constructor already initializes lists
                     ClassName = "",
                     Chance = (decimal)1.0,
-                    Quantity = new Quantity(),
-                    isDirty = true
+                    Quantity = new Quantity()
                 };
                 newAILoadouts.SetPath(newPath);
-                newAILoadouts.isDirty = true;
                 bool added = _expansionManager.ExpansionLoadoutConfig.AddNewLoadoutFile(newAILoadouts);
                 if (added)
                 {
@@ -5273,11 +5376,9 @@ namespace ExpansionPlugin
                 string newPath = Path.Combine(newmodPath, typesfile);
                 AILootDrops newAILootDrops = new AILootDrops()
                 {
-                    LootdropList = new BindingList<AILoadouts>(),
-                    isDirty = true
+                    LootdropList = new BindingList<AILoadouts>()
                 };
                 newAILootDrops.SetPath(newPath);
-                newAILootDrops.isDirty = true;
                 bool added = _expansionManager.ExpansionLootDropConfig.AddNewLootDropFile(newAILootDrops);
                 if (added)
                 {
@@ -6463,6 +6564,103 @@ namespace ExpansionPlugin
             currentTreeNode.Remove();
             _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
         }
+        //MIssions
+        private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Airdrop File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Import to Expansion";
+            frm.HideCEStuff();
+            frm.moddir = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, "mpmissions", AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath, "expansion", "missions");
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string AirdropFilename = "Airdrop_Random_" + frm.typesname + ".json";
+                string newPath = Path.Combine(newmodPath, AirdropFilename);
+                ExpansionMissionEventAirdrop newmission = new ExpansionMissionEventAirdrop()
+                {
+                    Enabled = 1,
+                    Weight = 1.0m,
+                    MissionMaxTime = 1200,
+                    MissionName = "Random_" + frm.typesname,
+                    Difficulty = 0,
+                    Objective = 0,
+                    Reward = "",
+                    ShowNotification = 1,
+                    Height = 450m,
+                    DropZoneHeight = 450m,
+                    Speed = 25.0m,
+                    DropZoneSpeed = 25m,
+                    Container = "Random",
+                    FallSpeed = (decimal)4.5,
+                    DropLocation = new ExpansionAirdropLocation()
+                    {
+                        Name = frm.typesname,
+                        Radius = 100,
+                        x = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2,
+                        z = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2
+                    },
+                    Infected = new BindingList<string>(),
+                    ItemCount = -1,
+                    InfectedCount = -1,
+                    AirdropPlaneClassName = "",
+                    Loot = new BindingList<ExpansionLoot>()
+                };
+                newmission.SetPath(newPath);
+                _expansionManager.ExpansionMissionsConfig.AddNewMissionFile(newmission);
+                TreeNode missionNode = new TreeNode(newmission.FileName)
+                {
+                    Tag = newmission
+                };
+                if (newmission is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+                {
+                    missionNode.Nodes.Add(new TreeNode(ExpansionMissionEventAirdrop.MissionName)
+                    {
+                        Tag = "MissionAirdrop"
+                    });
+                    missionNode.Nodes.Add(new TreeNode($"Drop Location - {ExpansionMissionEventAirdrop.DropLocation.Name}")
+                    {
+                        Tag = ExpansionMissionEventAirdrop.DropLocation
+                    });
+                    TreeNode alcinodes = new TreeNode("Infected")
+                    {
+                        Tag = "AirdropContainersInfected"
+                    };
+                    missionNode.Nodes.Add(alcinodes);
+
+                    TreeNode alclnodes = new TreeNode("Loot")
+                    {
+                        Tag = "AirdropContainersLoot"
+                    };
+                    missionNode.Nodes.Add(alclnodes);
+                }
+                InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
+                ExpansionTV.SelectedNode = missionNode;
+            }
+        }
+        private void addNewContaminatedMissionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeMissionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Tag is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+            {
+                _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventAirdrop);
+            }
+            else if (currentTreeNode.Tag is ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea)
+            {
+                _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventContaminatedArea);
+            }
+            else if (currentTreeNode.Tag is ExpansionMissionEventHeliCrash ExpansionMissionEventHeliCrash)
+            {
+                _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHeliCrash);
+            }
+            currentTreeNode.Remove();
+        }
         //Notifications
         private void addNewNotificationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7190,7 +7388,7 @@ namespace ExpansionPlugin
         }
         private void AddNewVehicleLockTool(string Classname)
         {
-            switch(currentTreeNode.Tag.ToString())
+            switch (currentTreeNode.Tag.ToString())
             {
                 case "VehiclePickLockTools":
                     if (!_expansionManager.ExpansionVehiclesConfig.Data.PickLockTools.Contains(Classname))
@@ -7236,7 +7434,7 @@ namespace ExpansionPlugin
                 List<string> addedtypes = form.AddedTypes.ToList();
                 foreach (string l in addedtypes)
                 {
-                    if(!_expansionManager.ExpansionVehiclesConfig.Data.VehiclesConfig.Any(x => x.ClassName == l))
+                    if (!_expansionManager.ExpansionVehiclesConfig.Data.VehiclesConfig.Any(x => x.ClassName == l))
                     {
                         ExpansionVehiclesLockConfig newvc = new ExpansionVehiclesLockConfig()
                         {
@@ -7314,9 +7512,20 @@ namespace ExpansionPlugin
             ExpansionTV.SelectedNode = node;
             node.EnsureVisible();
         }
+
         #endregion search treeview
+        private void InsertNodeAlphabetically(TreeNodeCollection nodes, TreeNode newNode)
+        {
+            int index = 0;
 
+            while (index < nodes.Count &&
+                   string.Compare(nodes[index].Text, newNode.Text, StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                index++;
+            }
 
+            nodes.Insert(index, newNode);
+        }
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

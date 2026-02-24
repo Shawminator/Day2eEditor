@@ -42,7 +42,7 @@ namespace ExpansionPlugin
             );
 
             item.SetPath(filePath);
-
+            item.SetGuid(Guid.NewGuid());
             return item;
         }
         protected override void SaveItem(ExpansionMissionEventBase item)
@@ -62,6 +62,8 @@ namespace ExpansionPlugin
             => item.FileName;
         protected override bool ShouldDelete(ExpansionMissionEventBase item)
             => item.ToDelete;
+        protected override Guid GetID(ExpansionMissionEventBase item)
+            => item.Id;
         protected override void DeleteItemFile(ExpansionMissionEventBase item)
         {
             if (!string.IsNullOrWhiteSpace(item._path) && File.Exists(item._path))
@@ -69,23 +71,20 @@ namespace ExpansionPlugin
         }
         internal bool AddNewMissionFile(ExpansionMissionEventBase newExpansionMissionEventBase)
         {
-            bool exists = Items.Any(ld => ld.FileName.ToLower() == newExpansionMissionEventBase.FileName.ToLower());
-
-            if (exists)
-                return false;
-
             Items.Add(newExpansionMissionEventBase);
+            newExpansionMissionEventBase.Id = Guid.NewGuid();
             return true;
-
         }
         internal void RemoveFile(ExpansionMissionEventBase ExpansionMissionEventBase)
         {
-            Items.Remove(ExpansionMissionEventBase);
+            ExpansionMissionEventBase.ToDelete = true;
         }
         public bool needToSave()
         {
             return false;
         }
+
+
     }
     public class ExpansionMissionEventBase : IDeepCloneable<ExpansionMissionEventBase>, IEquatable<ExpansionMissionEventBase>
     {
@@ -94,11 +93,12 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public string FileName => Path.GetFileName(_path);
         [JsonIgnore]
-        public bool isDirty { get; set; }
-        [JsonIgnore]
         public bool ToDelete { get; set; }
+        [JsonIgnore]
+        public Guid Id { get; set; } 
 
         public void SetPath(string path) => _path = path;
+        internal void SetGuid(Guid guid) => Id = guid;
 
         [JsonPropertyOrder(0)]
         public int m_Version { get; set; }
@@ -121,27 +121,6 @@ namespace ExpansionPlugin
         {
 
         }
-        internal IEnumerable<string> Save()
-        {
-            if (ToDelete)
-            {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
-            }
-
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, this);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
-        }
         public bool Equals(ExpansionMissionEventBase other)
         {
             if (other is null) return false;
@@ -160,7 +139,8 @@ namespace ExpansionPlugin
                    MissionName == other.MissionName &&
                    Difficulty == other.Difficulty &&
                    Objective == other.Objective &&
-                   Reward == other.Reward;
+                   Reward == other.Reward &&
+                   Id == other.Id;
         }
         public override bool Equals(object? obj) => Equals(obj as ExpansionMissionEventBase);
         public virtual ExpansionMissionEventBase Clone()
@@ -174,12 +154,15 @@ namespace ExpansionPlugin
                 MissionName = MissionName,
                 Difficulty = Difficulty,
                 Objective = Objective,
-                Reward = Reward,
+                Reward = Reward
             };
 
             clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
+
+
     }
     public class ExpansionMissionEventAirdrop : ExpansionMissionEventBase
     {
@@ -212,6 +195,10 @@ namespace ExpansionPlugin
         [JsonPropertyOrder(112)]
         public BindingList<ExpansionLoot> Loot { get; set; }
 
+        public ExpansionMissionEventAirdrop()
+        {
+            m_Version = VERSION;
+        }
 
         protected override bool EqualsCore(ExpansionMissionEventBase otherBase)
         {
@@ -269,6 +256,7 @@ namespace ExpansionPlugin
             };
 
             clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
     }
@@ -303,10 +291,13 @@ namespace ExpansionPlugin
     };
     public class ExpansionMissionEventContaminatedArea : ExpansionMissionEventBase
     {
+        [JsonPropertyOrder(100)]
         public Data Data { get; set; }
+        [JsonPropertyOrder(102)]
         public PlayerData PlayerData { get; set; }
-
+        [JsonPropertyOrder(103)]
         public decimal? StartDecayLifetime { get; set; }
+        [JsonPropertyOrder(104)]
         public decimal? FinishDecayLifetime { get;set; }
 
         protected override bool EqualsCore(ExpansionMissionEventBase otherBase)
@@ -341,10 +332,10 @@ namespace ExpansionPlugin
             };
 
             clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
     }
-
     public class ExpansionMissionEventHeliCrash : ExpansionMissionEventBase
     {
         [JsonPropertyOrder(100)]
@@ -428,6 +419,7 @@ namespace ExpansionPlugin
             };
 
             clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
     }

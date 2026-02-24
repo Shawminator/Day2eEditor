@@ -28,6 +28,7 @@ namespace ExpansionPlugin
                 );
 
             item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
             return item;
         }
 
@@ -40,14 +41,13 @@ namespace ExpansionPlugin
 
         protected override bool ShouldDelete(AILoadouts item)
             => item.ToDelete;
-
+        protected override Guid GetID(AILoadouts item)
+            => item.Id;
         protected override void DeleteItemFile(AILoadouts item)
         {
             if (!string.IsNullOrWhiteSpace(item._path) && File.Exists(item._path))
                 File.Delete(item._path);
         }
-
-
         internal bool AddNewLoadoutFile(AILoadouts newAILoadouts)
         {
             bool exists = Items.Any(ld => ld.FileName.ToLower() == newAILoadouts.FileName.ToLower());
@@ -59,12 +59,10 @@ namespace ExpansionPlugin
             return true;
 
         }
-        internal void RemoveFile(AILoadouts aILoadouts)
+        internal void RemoveFile(AILoadouts AILoadouts)
         {
-            Items.Remove(aILoadouts);
-
+            AILoadouts.ToDelete = true;
         }
-
         public bool needToSave()
         {
             return false;
@@ -77,12 +75,12 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public string FileName => Path.GetFileName(_path);
         [JsonIgnore]
-        public bool isDirty { get; set; }
-        [JsonIgnore]
         public bool ToDelete { get; set; }
-        
-        public void SetPath(string path) => _path = path;
+        [JsonIgnore]
+        public Guid Id { get; set; }
 
+        public void SetPath(string path) => _path = path;
+        internal void SetGuid(Guid guid) => Id = guid;
         public string ClassName { get; set; }
         public string Include { get; set; }
         public decimal Chance { get; set; }
@@ -106,32 +104,6 @@ namespace ExpansionPlugin
             Sets = new BindingList<AILoadouts>();
         }
 
-        internal IEnumerable<string> Save()
-        {
-            if (ToDelete)
-            {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    //ShellHelper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
-            }
-
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, this);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
-        }
-
-
-
         public bool Equals(AILoadouts other)
         {
             if (other is null) return false;
@@ -145,7 +117,8 @@ namespace ExpansionPlugin
                    InventoryAttachments.SequenceEqual(other.InventoryAttachments) &&
                    InventoryCargo.SequenceEqual(other.InventoryCargo) &&
                    ConstructionPartsBuilt.SequenceEqual(other.ConstructionPartsBuilt) &&
-                   Sets.SequenceEqual(other.Sets);
+                   Sets.SequenceEqual(other.Sets) &&
+                   Id == other.Id;
         }
         public override bool Equals(object? obj) => Equals(obj as AILoadouts);
         public AILoadouts Clone()
@@ -161,7 +134,8 @@ namespace ExpansionPlugin
                 InventoryCargo = new BindingList<AILoadouts>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
                 ConstructionPartsBuilt = new BindingList<object>(this.ConstructionPartsBuilt.ToList()),
                 Sets = new BindingList<AILoadouts>(this.Sets.Select(x => x.Clone()).ToList()),
-                _path = this._path
+                _path = this._path,
+                Id = this.Id
             };
         }
 

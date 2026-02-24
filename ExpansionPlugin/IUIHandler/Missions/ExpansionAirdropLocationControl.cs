@@ -37,7 +37,14 @@ namespace ExpansionPlugin
             _parentType = parentType;
             _data = data as ExpansionAirdropLocation ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-
+            if(_nodes.Last().Parent.Tag is ExpansionMissionEventHeliCrash)
+            {
+                groupBox81.Text = "Crash Location";
+            }
+            else if(_nodes.Last().Parent.Tag is ExpansionMissionEventAirdrop)
+            {
+                groupBox81.Text = "Drop Location";
+            }
             _suppressEvents = true;
 
             MissionDropXNUD.Value = (decimal)_data.x;

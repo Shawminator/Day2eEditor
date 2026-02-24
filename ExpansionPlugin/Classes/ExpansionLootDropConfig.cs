@@ -29,6 +29,7 @@ namespace ExpansionPlugin
                 LootdropList = item
             };
             drops.SetPath(filePath);
+            drops.SetGuid(Guid.NewGuid());
             return drops;
         }
 
@@ -41,7 +42,8 @@ namespace ExpansionPlugin
 
         protected override bool ShouldDelete(AILootDrops item)
             => item.ToDelete;
-
+        protected override Guid GetID(AILootDrops item)
+            => item.Id;
         protected override void DeleteItemFile(AILootDrops item)
         {
             if (!string.IsNullOrWhiteSpace(item._path) && File.Exists(item._path))
@@ -58,6 +60,14 @@ namespace ExpansionPlugin
             Items.Add(newAILootDrops);
             return true;
         }
+        internal void RemoveFile(AILootDrops AILootDrops)
+        {
+            AILootDrops.ToDelete = true;
+        }
+        public bool needToSave()
+        {
+            return false;
+        }
     }
     public class AILootDrops : IDeepCloneable<AILootDrops>, IEquatable<AILootDrops>
     {
@@ -68,11 +78,11 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public string FilePath => _path;
         [JsonIgnore]
-        public bool isDirty { get; set; }
-        [JsonIgnore]
         public bool ToDelete { get; set; }
-
+        [JsonIgnore]
+        public Guid Id { get; set; }
         public void SetPath(string path) => _path = path;
+        internal void SetGuid(Guid guid) => Id = guid;
 
         public AILootDrops()
         {

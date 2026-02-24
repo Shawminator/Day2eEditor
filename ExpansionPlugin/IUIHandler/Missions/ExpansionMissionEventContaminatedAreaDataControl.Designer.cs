@@ -1,6 +1,6 @@
 ﻿namespace ExpansionPlugin
 {
-    partial class cfgeffectAreaDataControl
+    partial class ExpansionMissionEventContaminatedAreaDataControl
     {
         /// <summary> 
         /// Required designer variable.

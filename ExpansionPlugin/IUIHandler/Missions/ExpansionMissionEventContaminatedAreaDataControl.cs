@@ -10,14 +10,14 @@ namespace ExpansionPlugin
     /// Template for a UI Control implementing IUIHandler
     /// TODO: Replace 'ClassType' with your actual data type
     /// </summary>
-    public partial class cfgeffectAreaDataControl : UserControl, IUIHandler
+    public partial class ExpansionMissionEventContaminatedAreaDataControl : UserControl, IUIHandler
     {
         private Type _parentType;
         private Data _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public cfgeffectAreaDataControl()
+        public ExpansionMissionEventContaminatedAreaDataControl()
         {
             InitializeComponent();
         }
