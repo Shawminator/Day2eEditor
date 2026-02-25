@@ -15,6 +15,7 @@ namespace ExpansionPlugin
         public ExpansionLoadoutConfig ExpansionLoadoutConfig { get; set; }
         public ExpansionLootDropConfig ExpansionLootDropConfig { get; set; }
         public ExpansionMissionsConfig ExpansionMissionsConfig { get; set; }
+        public ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig { get; set; }  
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionAILocationConfig ExpansionAILocationConfig { get; set; }
@@ -58,6 +59,7 @@ namespace ExpansionPlugin
             _paths["ExpansionLoadouts"] = Path.Combine(profilePath, "ExpansionMod", "Loadouts");
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
             _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
+            _paths["ExpansionP2PTraders"] = Path.Combine(basePath, "expansion", "p2pmarket");
 
             //Settings files in profiles
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
@@ -109,6 +111,9 @@ namespace ExpansionPlugin
 
             ExpansionMissionsConfig = new ExpansionMissionsConfig(_paths["ExpansionMissions"]);
             LoadConfigWithErrorReport("ExpansionMissions", ExpansionMissionsConfig);
+
+            ExpansionP2pMarketTradersConfig = new ExpansionP2pMarketTradersConfig(_paths["ExpansionP2PTraders"]);
+            LoadConfigWithErrorReport("ExpansionP2PTraders", ExpansionP2pMarketTradersConfig);
 
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
@@ -221,7 +226,6 @@ namespace ExpansionPlugin
                 Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
             }
         }
-
         public IEnumerable<string> Save()
         {
             var configs = new object[]
@@ -229,6 +233,7 @@ namespace ExpansionPlugin
                 ExpansionLoadoutConfig,
                 ExpansionLootDropConfig,
                 ExpansionMissionsConfig,
+                ExpansionP2pMarketTradersConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -284,6 +289,7 @@ namespace ExpansionPlugin
                 ExpansionLoadoutConfig,
                 ExpansionLootDropConfig,
                 ExpansionMissionsConfig,
+                ExpansionP2pMarketTradersConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -326,7 +332,6 @@ namespace ExpansionPlugin
             }
             return needtosave;
         }
-
         internal void SetExternalFiles()
         {
             checkExpansionSlotNames();
@@ -654,8 +659,7 @@ namespace ExpansionPlugin
             "Expansion B/W"
         };
     }
-    
-    public static class ResourceHelper
+      public static class ResourceHelper
     {
         public static Stream? OpenEmbeddedStream(string resourceName)
         {
@@ -663,7 +667,6 @@ namespace ExpansionPlugin
             var asm = Assembly.GetExecutingAssembly();
             return asm.GetManifestResourceStream(resourceName);
         }
-
         public static string[] ListAllEmbeddedResourceNames()
         {
             var asm = Assembly.GetExecutingAssembly();
@@ -724,5 +727,4 @@ namespace ExpansionPlugin
             return (resultBitmap);
         }
     }
-
 }
