@@ -5064,6 +5064,7 @@ namespace ExpansionPlugin
             }
             else if (currentTreeNode.Tag is Data Data)
             {
+                ExpansionMissionEventContaminatedArea area = currentTreeNode.Parent.Tag as ExpansionMissionEventContaminatedArea;
                 Data.Pos[0] = (decimal)e.MapCoordinates.X;
                 Data.Pos[2] = (decimal)e.MapCoordinates.Y;
                 if (MapData.FileExists)
@@ -5071,7 +5072,7 @@ namespace ExpansionPlugin
                     Data.Pos[1] = (decimal)(MapData.gethieght((float)Data.Pos[0], (float)Data.Pos[2]));
                 }
                 _mapControl.ClearDrawables();
-                ShowHandler(new ExpansionMissionEffectAreaControl(), typeof(ExpansionSafeZoneConfig), Data, new List<TreeNode>() { currentTreeNode });
+                ShowHandler(new ExpansionMissionEffectAreaControl(), typeof(cfgeffectareaConfig), area, new List<TreeNode>() { currentTreeNode });
                 DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
             }
         }
@@ -6643,7 +6644,80 @@ namespace ExpansionPlugin
         }
         private void addNewContaminatedMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Contaminated File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Import to Expansion";
+            frm.HideCEStuff();
+            frm.moddir = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, "mpmissions", AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath, "expansion", "missions");
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string AirdropFilename = "ContaminatedArea_Settlement_" + frm.typesname + ".json";
+                string newPath = Path.Combine(newmodPath, AirdropFilename);
+                ExpansionMissionEventContaminatedArea newmission = new ExpansionMissionEventContaminatedArea()
+                {
+                    m_Version = 0,
+                    Enabled = 1,
+                    Weight = 0,
+                    MissionMaxTime = 0,
+                    MissionName = "Settlement_" + frm.typesname,
+                    Difficulty = 0,
+                    Objective = 0,
+                    Reward = "",
+                    Data = new Data()
+                    {
+                        Pos = new decimal[] { AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0, AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, },
+                        Radius = 100,
+                        PosHeight = 25,
+                        NegHeight = 20,
+                        InnerRingCount = 2,
+                        InnerPartDist = 50,
+                        OuterRingToggle = true,
+                        OuterPartDist = 40,
+                        OuterOffset = 0,
+                        VerticalLayers = 0,
+                        VerticalOffset = 0,
+                        ParticleName = "graphics/particles/contaminated_area_gas_bigass"
+                    },
+                    PlayerData = new PlayerData()
+                    {
+                        AroundPartName = "graphics/particles/contaminated_area_gas_around",
+                        TinyPartName = "graphics/particles/contaminated_area_gas_around_tiny",
+                        PPERequesterType = "PPERequester_ContaminatedAreaTint"
+                    },
+                    StartDecayLifetime = 600,
+                    FinishDecayLifetime = 300
+                };
+                newmission.SetPath(newPath);
+                _expansionManager.ExpansionMissionsConfig.AddNewMissionFile(newmission);
+                TreeNode missionNode = new TreeNode(newmission.FileName)
+                {
+                    Tag = newmission
+                };
+                if (newmission is ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea)
+                {
+                    missionNode.Nodes.Add(new TreeNode(ExpansionMissionEventContaminatedArea.MissionName)
+                    {
+                        Tag = ExpansionMissionEventContaminatedArea.Data
+                    });
+                    missionNode.Nodes.Add(new TreeNode("General")
+                    {
+                        Tag = "MissionContaminatedAreaGeneral"
+                    });
+                    if (ExpansionMissionEventContaminatedArea.Data != null)
+                        missionNode.Nodes.Add(new TreeNode("Data")
+                        {
+                            Tag = "MissionContaminatedAreaData"
+                        });
+                    if (ExpansionMissionEventContaminatedArea.PlayerData != null)
+                        missionNode.Nodes.Add(new TreeNode("PlayerData") { Tag = ExpansionMissionEventContaminatedArea.PlayerData });
+                }
+                InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
+                ExpansionTV.SelectedNode = missionNode;
+            }
         }
         private void removeMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {

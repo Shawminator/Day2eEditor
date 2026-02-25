@@ -52,7 +52,7 @@ namespace ExpansionPlugin
             if (item is ExpansionMissionEventAirdrop airdrop)
                 fs.SaveJson(airdrop._path, airdrop);
             else if (item is ExpansionMissionEventContaminatedArea contaminated)
-                fs.SaveJson(contaminated._path, contaminated);
+                fs.SaveJson(contaminated._path, contaminated, true);
             else if (item is ExpansionMissionEventHeliCrash helicrash)
                 fs.SaveJson(helicrash._path, helicrash);
             else
