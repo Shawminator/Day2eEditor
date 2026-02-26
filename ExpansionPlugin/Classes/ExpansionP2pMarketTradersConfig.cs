@@ -64,6 +64,10 @@ namespace ExpansionPlugin
         {
             return false;
         }
+        protected override IEnumerable<string> ValidateData(ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+        {
+            return ExpansionP2PMarketTraderConfig.FixMissingOrInvalidFields();
+        }
     }
     public class ExpansionP2PMarketTraderConfig : IDeepCloneable<ExpansionP2PMarketTraderConfig>, IEquatable<ExpansionP2PMarketTraderConfig>
     {
@@ -116,12 +120,12 @@ namespace ExpansionPlugin
             if (m_Version != other.m_Version ||
                 m_TraderID != other.m_TraderID ||
                 m_ClassName != other.m_ClassName ||
-                m_Position != other.m_Position ||
-                m_Orientation != other.m_Orientation ||
+                !m_Position.Equals(other.m_Position) ||
+                !m_Orientation.Equals(other.m_Orientation) ||
                 m_LoadoutFile != other.m_LoadoutFile ||
-                m_VehicleSpawnPosition != other.m_VehicleSpawnPosition ||
-                m_WatercraftSpawnPosition != other.m_WatercraftSpawnPosition ||
-                m_AircraftSpawnPosition != other.m_AircraftSpawnPosition ||
+                !m_VehicleSpawnPosition.Equals(other.m_VehicleSpawnPosition) ||
+                !m_WatercraftSpawnPosition.Equals(other.m_WatercraftSpawnPosition) ||
+                !m_AircraftSpawnPosition.Equals(other.m_AircraftSpawnPosition) ||
                 m_DisplayName != other.m_DisplayName ||
                 m_DisplayIcon != other.m_DisplayIcon ||
                 m_Faction != other.m_Faction ||
@@ -169,7 +173,7 @@ namespace ExpansionPlugin
         public override bool Equals(object? obj) => Equals(obj as ExpansionP2PMarketTraderConfig);
         public ExpansionP2PMarketTraderConfig Clone()
         {
-            return new ExpansionP2PMarketTraderConfig
+            ExpansionP2PMarketTraderConfig clone = new ExpansionP2PMarketTraderConfig
             {
                 m_Version = this.m_Version,
                 m_TraderID = this.m_TraderID,
@@ -208,7 +212,131 @@ namespace ExpansionPlugin
                 m_DisplayCurrencyValue = this.m_DisplayCurrencyValue,
                 m_DisplayCurrencyName = this.m_DisplayCurrencyName
             };
-        }
 
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
+        }
+        public List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+
+            if (m_Version != VERSION)
+            {
+                fixes.Add($"Updated version from {m_Version} to {VERSION}");
+                m_Version = VERSION;
+            }
+            if(m_ClassName == null)
+            {
+                fixes.Add($"Updated m_ClassName to ExpansionP2PTraderAIIrena");
+                m_ClassName = "ExpansionP2PTraderAIIrena";
+            }
+            if(m_Position == null)
+            {
+                m_Position = new Vec3("0, 0, 0");
+                fixes.Add("Set default m_Position to 0,0,0");
+            }
+            if (m_Orientation == null)
+            {
+                m_Orientation = new Vec3("0, 0, 0");
+                fixes.Add("Set default m_Orientation to 0,0,0");
+            }
+            if (m_LoadoutFile == null)
+            {
+                m_LoadoutFile = "YellowKingLoadout";
+                fixes.Add("Set default m_LoadoutFile to YellowKingLoadout");
+            }
+            if (m_VehicleSpawnPosition == null)
+            {
+                m_VehicleSpawnPosition = new Vec3("0, 0, 0");
+                fixes.Add("Set default m_VehicleSpawnPosition to 0,0,0");
+            }
+            if (m_WatercraftSpawnPosition == null)
+            {
+                m_WatercraftSpawnPosition = new Vec3("0, 0, 0");
+                fixes.Add("Set default m_WatercraftSpawnPosition to 0,0,0");
+            }
+            if (m_AircraftSpawnPosition == null)
+            {
+                m_AircraftSpawnPosition = new Vec3("0, 0, 0");
+                fixes.Add("Set default m_AircraftSpawnPosition to 0,0,0");
+            }
+            if (m_DisplayName == null)
+            {
+                fixes.Add($"Updated m_DisplayName to Unknown");
+                m_DisplayName = "Unknown";
+            }
+            if (m_DisplayIcon == null)
+            {
+                fixes.Add($"Updated m_DisplayIcon to Deliver");
+                m_DisplayIcon = "Deliver";
+            }
+            if (m_Faction == null)
+            {
+                fixes.Add($"Updated m_Faction to InvincibleObservers");
+                m_Faction = "InvincibleObservers";
+            }
+            if(m_Waypoints == null)
+            {
+                fixes.Add($"Initilized m_Waypoints");
+                m_Waypoints = new BindingList<Vec3>();
+            }
+            if (m_EmoteID == null)
+            {
+                fixes.Add($"Updated m_EmoteID to 46");
+                m_EmoteID = 46;
+            }
+            if (m_EmoteIsStatic == null)
+            {
+                fixes.Add($"Updated m_EmoteIsStatic to 0");
+                m_EmoteIsStatic = 0;
+            }
+            if (m_RequiredFaction == null)
+            {
+                fixes.Add($"Updated m_RequiredFaction to null");
+                m_RequiredFaction = "";
+            }
+            if (m_UseReputation == null)
+            {
+                fixes.Add($"Updated m_UseReputation to 0");
+                m_UseReputation = 0;
+            }
+            if (m_MinRequiredReputation == null)
+            {
+                fixes.Add($"Updated m_MinRequiredReputation to 0");
+                m_MinRequiredReputation = 0;
+            }
+            if (m_MaxRequiredReputation == null)
+            {
+                fixes.Add($"Updated m_MaxRequiredReputation to 2147483647");
+                m_MaxRequiredReputation = 2147483647;
+            }
+            if (m_RequiredCompletedQuestID == null)
+            {
+                fixes.Add($"Updated m_RequiredCompletedQuestID to -1");
+                m_RequiredCompletedQuestID = -1;
+            }
+            if (m_IsGlobalTrader == null)
+            {
+                fixes.Add($"Updated m_IsGlobalTrader to 0");
+                m_IsGlobalTrader = 0;
+            }
+            if(m_Currencies == null)
+            {
+                fixes.Add($"Initilized m_Waypoints");
+                m_Currencies = new BindingList<string>();
+            }
+            if(m_DisplayCurrencyValue == null)
+            {
+                fixes.Add($"Updated m_DisplayCurrencyValue to 1");
+                m_DisplayCurrencyValue = 1;
+            }
+            if (m_DisplayCurrencyName == null)
+            {
+                fixes.Add($"Updated m_DisplayCurrencyName to null");
+                m_DisplayCurrencyName = "";
+            }
+            return fixes;
+        }
     }
 }

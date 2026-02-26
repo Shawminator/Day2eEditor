@@ -42,7 +42,13 @@ namespace ExpansionPlugin
                     var item = LoadItem(file);
 
                     OnAfterItemLoad(item, file);
-
+                    var issues = ValidateData(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
                     Items.Add(item);
                     ClonedItems.Add(GetID(item), item.Clone());
                 }
@@ -115,5 +121,6 @@ namespace ExpansionPlugin
             Errors.Add($"Error in {Path.GetFileName(path)}: {ex.Message}");
             Console.WriteLine($"[ERROR] {Path.GetFileName(path)}: {ex.Message}");
         }
+        protected virtual IEnumerable<string> ValidateData(TItem item) => Enumerable.Empty<string>();
     }
 }

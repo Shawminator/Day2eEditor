@@ -83,7 +83,10 @@ namespace ExpansionPlugin
         {
             return false;
         }
-
+        protected override IEnumerable<string> ValidateData(ExpansionMissionEventBase ExpansionMissionEventBase)
+        {
+            return ExpansionMissionEventBase.FixMissingOrInvalidFields();
+        }
 
     }
     public class ExpansionMissionEventBase : IDeepCloneable<ExpansionMissionEventBase>, IEquatable<ExpansionMissionEventBase>
@@ -162,11 +165,16 @@ namespace ExpansionPlugin
             return clone;
         }
 
+        public virtual List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
 
+            return fixes;
+        }
     }
     public class ExpansionMissionEventAirdrop : ExpansionMissionEventBase
     {
-        const int VERSION = 3;
+        public const int VERSION = 3;
 
         [JsonPropertyOrder(100)]
         public int? ShowNotification { get; set; }
@@ -259,6 +267,97 @@ namespace ExpansionPlugin
             clone.SetGuid(Id);
             return clone;
         }
+        public override List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+
+            if (m_Version != VERSION)
+            {
+                fixes.Add($"Updated version from {m_Version} to {VERSION}");
+                m_Version = VERSION;
+            }
+            if (Enabled == null || (Enabled != 0 && Enabled != 1))
+            {
+                Enabled = 0;
+                fixes.Add("Corrected Enabled to 0");
+            }
+            if (Weight == null)
+            {
+                Weight = 5m;
+                fixes.Add("Set default Weight to 5.0");
+            }
+            if (MissionMaxTime == null)
+            {
+                MissionMaxTime = 1200;
+                fixes.Add("Set default MissionMaxTime to 1200");
+            }
+            if(MissionName == null)
+            {
+                MissionName = "Random";
+                fixes.Add("Set default MissionName to Random");
+            }
+            if (Difficulty == null)
+            {
+                Difficulty = 0;
+                fixes.Add("Set default Difficulty to 0");
+            }
+            if (Objective == null)
+            {
+                Objective = 0;
+                fixes.Add("Set default Objective to 0");
+            }
+            if (Reward != "")
+            {
+                Reward = "";
+                fixes.Add("Set default Reward to null ");
+            }
+            if (ShowNotification == null || (ShowNotification != 0 && ShowNotification != 1))
+            {
+                ShowNotification = 1;
+                fixes.Add("Corrected ShowNotification to 1");
+            }
+            if (Height == null)
+            {
+                Height = 450.0m;
+                fixes.Add("Set default Height to 450");
+            }
+            if (DropZoneHeight == null)
+            {
+                DropZoneHeight = 450.0m;
+                fixes.Add("Set default DropZoneHeight to 450");
+            }
+            if (Speed == null)
+            {
+                Speed = 25.0m;
+                fixes.Add("Set default Speed to 25");
+            }
+            if (DropZoneSpeed == null)
+            {
+                DropZoneSpeed = 25.0m;
+                fixes.Add("Set default DropZoneSpeed to 25");
+            }
+            if(Container == null)
+            {
+                Container = "Random";
+                fixes.Add("Set default Container to Random");
+            }
+            if (FallSpeed == null)
+            {
+                FallSpeed = 4.5m;
+                fixes.Add("Set default FallSpeed to 4.5");
+            }
+            if (ItemCount == null)
+            {
+                ItemCount = 0;
+                fixes.Add("Set default ItemCount to 0");
+            }
+            if (InfectedCount == null)
+            {
+                InfectedCount = 0;
+                fixes.Add("Set default InfectedCount to 0");
+            }
+            return fixes;
+        }
     }
     public class ExpansionAirdropLocation
     {
@@ -291,6 +390,8 @@ namespace ExpansionPlugin
     };
     public class ExpansionMissionEventContaminatedArea : ExpansionMissionEventBase
     {
+        public const int VERSION = 0;
+
         [JsonPropertyOrder(100)]
         public Data Data { get; set; }
         [JsonPropertyOrder(102)]
@@ -334,6 +435,51 @@ namespace ExpansionPlugin
             clone.SetPath(_path);
             clone.SetGuid(Id);
             return clone;
+        }
+        public override List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+
+            if (m_Version != VERSION)
+            {
+                fixes.Add($"Updated version from {m_Version} to {VERSION}");
+                m_Version = VERSION;
+            }
+            if (Enabled == null || (Enabled != 0 && Enabled != 1))
+            {
+                Enabled = 0;
+                fixes.Add("Corrected Enabled to 0");
+            }
+            if (Weight == null)
+            {
+                Weight = 5m;
+                fixes.Add("Set default Weight to 5.0");
+            }
+            if (MissionMaxTime == null)
+            {
+                MissionMaxTime = 600;
+                fixes.Add("Set default MissionMaxTime to 600");
+            }
+            if (Difficulty == null)
+            {
+                Difficulty = 0;
+                fixes.Add("Set default Difficulty to 0");
+            }
+            if (Objective == null)
+            {
+                Objective = 0;
+                fixes.Add("Set default Objective to 0");
+            }
+            if (Reward != "")
+            {
+                Reward = "";
+                fixes.Add("Set default Reward to null ");
+            }
+
+
+
+
+            return fixes;
         }
     }
     public class ExpansionMissionEventHeliCrash : ExpansionMissionEventBase

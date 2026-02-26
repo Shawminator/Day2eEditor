@@ -423,6 +423,22 @@ namespace ExpansionPlugin
                     ExpansionNotificationSchedule ExpansionNotificationSchedule = node.Tag as ExpansionNotificationSchedule;
                     ShowHandler(new ExpansionNotificationScheduleControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedule, selected);
                 },
+                //p2pMarket
+                [typeof(ExpasnionP2PMarketSettings)] = (node,selected) =>
+                {
+                    ExpasnionP2PMarketSettings ExpasnionP2PMarketSettings = node.Tag as ExpasnionP2PMarketSettings;
+                    ShowHandler(new ExpansionP2PMarketSettingsGeneralControl(), typeof(ExpansionP2PMarketConfig), ExpasnionP2PMarketSettings, selected);
+                },
+                [typeof(ExpansionP2PMarketMenuCategory)] = (node,selected)=>
+                {
+                    ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase = node.Tag as ExpansionP2PMarketMenuCategoryBase;
+                    ShowHandler(new ExpansionP2PMarketSettingsCatControl(), typeof(ExpansionP2PMarketConfig), ExpansionP2PMarketMenuCategoryBase, selected);
+                },
+                [typeof(ExpansionP2PMarketMenuSubCategory)] = (node, selected) =>
+                {
+                    ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase = node.Tag as ExpansionP2PMarketMenuCategoryBase;
+                    ShowHandler(new ExpansionP2PMarketSettingsCatControl(), typeof(ExpansionP2PMarketConfig), ExpansionP2PMarketMenuCategoryBase, selected);
+                },
                 //Party
                 [typeof(ExpansionPartySettings)] = (node, selected) =>
                 {
@@ -1719,6 +1735,7 @@ namespace ExpansionPlugin
                 Tag = "p2pmarketNode"
             };
             AddFileToTree(p2pmarketrootNode, "", "", _expansionManager.ExpansionP2PMarketConfig, CreateExpansionP2PMarketConfig);
+            AddFileToTree(p2pmarketrootNode, "", "", _expansionManager.ExpansionP2pMarketTradersConfig, CreateExpansionP2PMarketTradersConfig);
             rootNode.Nodes.Add(p2pmarketrootNode);
 
             TreeNode personalstoragerootNode = new TreeNode("Personal Storage")
@@ -2954,6 +2971,71 @@ namespace ExpansionPlugin
             }
             Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
             return Menucatnoderoot;
+        }
+
+        private TreeNode CreateExpansionP2PMarketTradersConfig(ExpansionP2pMarketTradersConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("P2P Traders")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionP2PMarketTraderConfig file in ef.Items)
+            {
+                CreateExpansionP2PMarketTraderNodes(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionP2PMarketTraderNodes(ExpansionP2PMarketTraderConfig ef, TreeNode EconomyRootNode)
+        {
+            TreeNode P2PTraderRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            P2PTraderRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = "P2PMarketTraderGeneral"
+            });
+            P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
+            {
+                Tag = "P2PMarketTraderPOSandOri"
+            });
+            P2PTraderRootNode.Nodes.Add(new TreeNode("Vehicle Spawn")
+            {
+                Tag = ef.m_VehicleSpawnPosition
+            });
+            P2PTraderRootNode.Nodes.Add(new TreeNode("Water Spawn")
+            {
+                Tag = ef.m_WatercraftSpawnPosition
+            });
+            P2PTraderRootNode.Nodes.Add(new TreeNode("Air Spawn")
+            {
+                Tag = ef.m_AircraftSpawnPosition
+            });
+            TreeNode WaypointNodes = new TreeNode("Roaming Waypoints")
+            {
+                Tag = "P2PMarketTraderRoamingWaypoints"
+            };
+            foreach(Vec3 v3 in ef.m_Waypoints)
+            {
+                WaypointNodes.Nodes.Add(new TreeNode(v3.ToString())
+                {
+                    Tag = v3
+                });
+            }
+            P2PTraderRootNode.Nodes.Add(WaypointNodes);
+            TreeNode CurrenciesNodes = new TreeNode("Currencies")
+            {
+                Tag = "P2PMarketTraderCurrencies"
+            };
+            foreach (string cur in ef.m_Currencies)
+            {
+                CurrenciesNodes.Nodes.Add(new TreeNode(cur)
+                {
+                    Tag = "P2PMarketTraderCurrency"
+                });
+            }
+            P2PTraderRootNode.Nodes.Add(CurrenciesNodes);
+            EconomyRootNode.Nodes.Add(P2PTraderRootNode);
         }
         //Personal Storage New
         private TreeNode CreateExpansionPersonalStorageNewConfig(ExpansionPersonalStorageNewConfig ef)

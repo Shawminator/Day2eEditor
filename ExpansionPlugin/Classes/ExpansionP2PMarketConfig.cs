@@ -605,9 +605,13 @@ namespace ExpansionPlugin
     }
     public class ExpansionP2PMarketMenuCategoryBase
     {
+        [JsonPropertyOrder(1)]
         public string? DisplayName { get; set; }
+        [JsonPropertyOrder(2)]
         public string? IconPath { get; set; }
+        [JsonPropertyOrder(3)]
         public BindingList<string> Included { get; set; }
+        [JsonPropertyOrder(5)]
         public BindingList<string> Excluded { get; set; }
 
         public ExpansionP2PMarketMenuCategoryBase()
@@ -636,7 +640,7 @@ namespace ExpansionPlugin
     }
     public class ExpansionP2PMarketMenuCategory : ExpansionP2PMarketMenuCategoryBase
     {
-        [JsonPropertyOrder(999)]
+        [JsonPropertyOrder(100)]
         public BindingList<ExpansionP2PMarketMenuSubCategory> SubCategories { get; set; }
         public ExpansionP2PMarketMenuCategory()
         {
