@@ -101,6 +101,9 @@
             removeBlacklistedWordToolStripMenuItem = new ToolStripMenuItem();
             addNewNotificationToolStripMenuItem = new ToolStripMenuItem();
             removeNotificationToolStripMenuItem = new ToolStripMenuItem();
+            addNewAirdropMissionToolStripMenuItem = new ToolStripMenuItem();
+            addNewContaminatedMissionToolStripMenuItem = new ToolStripMenuItem();
+            removeMissionToolStripMenuItem = new ToolStripMenuItem();
             GarageCM = new ContextMenuStrip(components);
             addNewEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
             removeEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
@@ -168,9 +171,14 @@
             removeStartingGearAttachmentToolStripMenuItem = new ToolStripMenuItem();
             addStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
             removeStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
-            addNewAirdropMissionToolStripMenuItem = new ToolStripMenuItem();
-            addNewContaminatedMissionToolStripMenuItem = new ToolStripMenuItem();
-            removeMissionToolStripMenuItem = new ToolStripMenuItem();
+            P2PCM = new ContextMenuStrip(components);
+            AddNewP2PMarketCategoryToolStripMenuItem = new ToolStripMenuItem();
+            RempoveP2PMarketCategoryToolStripMenuItem = new ToolStripMenuItem();
+            AddNewP2PMarketSubCategoryToolStripMenuItem = new ToolStripMenuItem();
+            RemoveP2PMarketSubCategoryToolStripMenuItem = new ToolStripMenuItem();
+            AddNewP2PMarketIncludedToolStripMenuItem = new ToolStripMenuItem();
+            RemoveP2PMarketIncludedToolStripMenuItem = new ToolStripMenuItem();
+            AddNewP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -185,6 +193,7 @@
             MarketSettingsCM.SuspendLayout();
             RaidSettingsCM.SuspendLayout();
             SafeZoneCM.SuspendLayout();
+            P2PCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -762,7 +771,7 @@
             ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(222, 180);
+            ChatCM.Size = new Size(222, 158);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -795,6 +804,30 @@
             removeNotificationToolStripMenuItem.Size = new Size(221, 22);
             removeNotificationToolStripMenuItem.Text = "Remove Notification";
             removeNotificationToolStripMenuItem.Click += removeNotificationToolStripMenuItem_Click;
+            // 
+            // addNewAirdropMissionToolStripMenuItem
+            // 
+            addNewAirdropMissionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewAirdropMissionToolStripMenuItem.Name = "addNewAirdropMissionToolStripMenuItem";
+            addNewAirdropMissionToolStripMenuItem.Size = new Size(221, 22);
+            addNewAirdropMissionToolStripMenuItem.Text = "Add New Airdrop Mission";
+            addNewAirdropMissionToolStripMenuItem.Click += addNewAirdropMissionToolStripMenuItem_Click;
+            // 
+            // addNewContaminatedMissionToolStripMenuItem
+            // 
+            addNewContaminatedMissionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewContaminatedMissionToolStripMenuItem.Name = "addNewContaminatedMissionToolStripMenuItem";
+            addNewContaminatedMissionToolStripMenuItem.Size = new Size(221, 22);
+            addNewContaminatedMissionToolStripMenuItem.Text = "Add New Contaminated Mission";
+            addNewContaminatedMissionToolStripMenuItem.Click += addNewContaminatedMissionToolStripMenuItem_Click;
+            // 
+            // removeMissionToolStripMenuItem
+            // 
+            removeMissionToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeMissionToolStripMenuItem.Name = "removeMissionToolStripMenuItem";
+            removeMissionToolStripMenuItem.Size = new Size(221, 22);
+            removeMissionToolStripMenuItem.Text = "Remove Mission";
+            removeMissionToolStripMenuItem.Click += removeMissionToolStripMenuItem_Click;
             // 
             // GarageCM
             // 
@@ -1332,29 +1365,68 @@
             removeStartingWeaponToolStripMenuItem.Text = "Remove Starting Weapon";
             removeStartingWeaponToolStripMenuItem.Click += removeStartingWeaponToolStripMenuItem_Click;
             // 
-            // addNewAirdropMissionToolStripMenuItem
+            // P2PCM
             // 
-            addNewAirdropMissionToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewAirdropMissionToolStripMenuItem.Name = "addNewAirdropMissionToolStripMenuItem";
-            addNewAirdropMissionToolStripMenuItem.Size = new Size(221, 22);
-            addNewAirdropMissionToolStripMenuItem.Text = "Add New Airdrop Mission";
-            addNewAirdropMissionToolStripMenuItem.Click += addNewAirdropMissionToolStripMenuItem_Click;
+            P2PCM.BackColor = Color.FromArgb(60, 63, 65);
+            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RempoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem });
+            P2PCM.Name = "ChatCM";
+            P2PCM.ShowImageMargin = false;
+            P2PCM.Size = new Size(173, 180);
             // 
-            // addNewContaminatedMissionToolStripMenuItem
+            // AddNewP2PMarketCategoryToolStripMenuItem
             // 
-            addNewContaminatedMissionToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewContaminatedMissionToolStripMenuItem.Name = "addNewContaminatedMissionToolStripMenuItem";
-            addNewContaminatedMissionToolStripMenuItem.Size = new Size(221, 22);
-            addNewContaminatedMissionToolStripMenuItem.Text = "Add New Contaminated Mission";
-            addNewContaminatedMissionToolStripMenuItem.Click += addNewContaminatedMissionToolStripMenuItem_Click;
+            AddNewP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewP2PMarketCategoryToolStripMenuItem.Name = "AddNewP2PMarketCategoryToolStripMenuItem";
+            AddNewP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketCategoryToolStripMenuItem.Text = "Add New Category";
+            AddNewP2PMarketCategoryToolStripMenuItem.Click += AddNewP2PMarketCategoryToolStripMenuItem_Click;
             // 
-            // removeMissionToolStripMenuItem
+            // RempoveP2PMarketCategoryToolStripMenuItem
             // 
-            removeMissionToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeMissionToolStripMenuItem.Name = "removeMissionToolStripMenuItem";
-            removeMissionToolStripMenuItem.Size = new Size(221, 22);
-            removeMissionToolStripMenuItem.Text = "Remove Mission";
-            removeMissionToolStripMenuItem.Click += removeMissionToolStripMenuItem_Click;
+            RempoveP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            RempoveP2PMarketCategoryToolStripMenuItem.Name = "RempoveP2PMarketCategoryToolStripMenuItem";
+            RempoveP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
+            RempoveP2PMarketCategoryToolStripMenuItem.Text = "Remove Category";
+            RempoveP2PMarketCategoryToolStripMenuItem.Click += RempoveP2PMarketCategoryToolStripMenuItem_Click;
+            // 
+            // AddNewP2PMarketSubCategoryToolStripMenuItem
+            // 
+            AddNewP2PMarketSubCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewP2PMarketSubCategoryToolStripMenuItem.Name = "AddNewP2PMarketSubCategoryToolStripMenuItem";
+            AddNewP2PMarketSubCategoryToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketSubCategoryToolStripMenuItem.Text = "Add New Sub Category";
+            AddNewP2PMarketSubCategoryToolStripMenuItem.Click += AddNewP2PMarketSubCategoryToolStripMenuItem_Click;
+            // 
+            // RemoveP2PMarketSubCategoryToolStripMenuItem
+            // 
+            RemoveP2PMarketSubCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveP2PMarketSubCategoryToolStripMenuItem.Name = "RemoveP2PMarketSubCategoryToolStripMenuItem";
+            RemoveP2PMarketSubCategoryToolStripMenuItem.Size = new Size(172, 22);
+            RemoveP2PMarketSubCategoryToolStripMenuItem.Text = "Remove Sub Category";
+            RemoveP2PMarketSubCategoryToolStripMenuItem.Click += RemoveP2PMarketSubCategoryToolStripMenuItem_Click;
+            // 
+            // AddNewP2PMarketIncludedToolStripMenuItem
+            // 
+            AddNewP2PMarketIncludedToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewP2PMarketIncludedToolStripMenuItem.Name = "AddNewP2PMarketIncludedToolStripMenuItem";
+            AddNewP2PMarketIncludedToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketIncludedToolStripMenuItem.Text = "Add New Included";
+            AddNewP2PMarketIncludedToolStripMenuItem.Click += AddNewP2PMarketIncludedToolStripMenuItem_Click;
+            // 
+            // RemoveP2PMarketIncludedToolStripMenuItem
+            // 
+            RemoveP2PMarketIncludedToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveP2PMarketIncludedToolStripMenuItem.Name = "RemoveP2PMarketIncludedToolStripMenuItem";
+            RemoveP2PMarketIncludedToolStripMenuItem.Size = new Size(172, 22);
+            RemoveP2PMarketIncludedToolStripMenuItem.Text = "Remove Included";
+            RemoveP2PMarketIncludedToolStripMenuItem.Click += RemoveP2PMarketIncludedToolStripMenuItem_Click;
+            // 
+            // AddNewP2PMarketExcludedToolStripMenuItem
+            // 
+            AddNewP2PMarketExcludedToolStripMenuItem.ForeColor = SystemColors.Control;
+            AddNewP2PMarketExcludedToolStripMenuItem.Name = "AddNewP2PMarketExcludedToolStripMenuItem";
+            AddNewP2PMarketExcludedToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketExcludedToolStripMenuItem.Text = "Add New Excluded";
             // 
             // ExpansionForm
             // 
@@ -1386,6 +1458,7 @@
             MarketSettingsCM.ResumeLayout(false);
             RaidSettingsCM.ResumeLayout(false);
             SafeZoneCM.ResumeLayout(false);
+            P2PCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1533,5 +1606,13 @@
         private ToolStripMenuItem addNewAirdropMissionToolStripMenuItem;
         private ToolStripMenuItem addNewContaminatedMissionToolStripMenuItem;
         private ToolStripMenuItem removeMissionToolStripMenuItem;
+        private ContextMenuStrip P2PCM;
+        private ToolStripMenuItem AddNewP2PMarketCategoryToolStripMenuItem;
+        private ToolStripMenuItem RempoveP2PMarketCategoryToolStripMenuItem;
+        private ToolStripMenuItem AddNewP2PMarketSubCategoryToolStripMenuItem;
+        private ToolStripMenuItem RemoveP2PMarketSubCategoryToolStripMenuItem;
+        private ToolStripMenuItem AddNewP2PMarketIncludedToolStripMenuItem;
+        private ToolStripMenuItem RemoveP2PMarketIncludedToolStripMenuItem;
+        private ToolStripMenuItem AddNewP2PMarketExcludedToolStripMenuItem;
     }
 }

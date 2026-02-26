@@ -424,12 +424,12 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionNotificationScheduleControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedule, selected);
                 },
                 //p2pMarket
-                [typeof(ExpasnionP2PMarketSettings)] = (node,selected) =>
+                [typeof(ExpasnionP2PMarketSettings)] = (node, selected) =>
                 {
                     ExpasnionP2PMarketSettings ExpasnionP2PMarketSettings = node.Tag as ExpasnionP2PMarketSettings;
                     ShowHandler(new ExpansionP2PMarketSettingsGeneralControl(), typeof(ExpansionP2PMarketConfig), ExpasnionP2PMarketSettings, selected);
                 },
-                [typeof(ExpansionP2PMarketMenuCategory)] = (node,selected)=>
+                [typeof(ExpansionP2PMarketMenuCategory)] = (node, selected) =>
                 {
                     ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase = node.Tag as ExpansionP2PMarketMenuCategoryBase;
                     ShowHandler(new ExpansionP2PMarketSettingsCatControl(), typeof(ExpansionP2PMarketConfig), ExpansionP2PMarketMenuCategoryBase, selected);
@@ -3015,7 +3015,7 @@ namespace ExpansionPlugin
             {
                 Tag = "P2PMarketTraderRoamingWaypoints"
             };
-            foreach(Vec3 v3 in ef.m_Waypoints)
+            foreach (Vec3 v3 in ef.m_Waypoints)
             {
                 WaypointNodes.Nodes.Add(new TreeNode(v3.ToString())
                 {
@@ -6803,7 +6803,7 @@ namespace ExpansionPlugin
         }
         private void removeMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Tag is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+            if (currentTreeNode.Tag is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
             {
                 _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventAirdrop);
             }
@@ -7681,6 +7681,36 @@ namespace ExpansionPlugin
             }
 
             nodes.Insert(index, newNode);
+        }
+
+        private void AddNewP2PMarketCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RempoveP2PMarketCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AddNewP2PMarketSubCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RemoveP2PMarketSubCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AddNewP2PMarketIncludedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RemoveP2PMarketIncludedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
