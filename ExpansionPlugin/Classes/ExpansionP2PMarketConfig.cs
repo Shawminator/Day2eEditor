@@ -573,18 +573,27 @@ namespace ExpansionPlugin
                    ListingOwnerDiscountPercent != other.ListingOwnerDiscountPercent ||
                    ListingPricePercent != other.ListingPricePercent ||
                    SalesDepositTime != other.SalesDepositTime ||
-                   DisallowUnpersisted != other.DisallowUnpersisted ||
-                   !ExcludedClassNames.SequenceEqual(other.ExcludedClassNames))
+                   DisallowUnpersisted != other.DisallowUnpersisted)
                 return false;
 
-            for (int i = 0; i < MenuCategories.Count; i++)
-            {
-                if (!MenuCategories[i].Equals(other.MenuCategories[i]))
-                    return false;
-            }
+
+            // Null-safe sequence comparisons
+            if (!SequenceEqualNullSafe(ExcludedClassNames, other.ExcludedClassNames))
+                return false;
+
+            if (!SequenceEqualNullSafe(MenuCategories, other.MenuCategories))
+                return false;
+
 
             return true;
         }
+        private static bool SequenceEqualNullSafe<T>(IEnumerable<T> left, IEnumerable<T> right)
+        {
+            if (ReferenceEquals(left, right)) return true;
+            if (left is null || right is null) return false;
+            return left.SequenceEqual(right);
+        }
+
         public override bool Equals(object? obj) => Equals(obj as ExpasnionP2PMarketSettings);
         public ExpasnionP2PMarketSettings Clone()
         {
@@ -661,13 +670,17 @@ namespace ExpansionPlugin
                    !Excluded.SequenceEqual(other.Excluded))
                 return false;
 
-            for (int i = 0; i < SubCategories.Count; i++)
-            {
-                if (!SubCategories[i].Equals(other.SubCategories[i]))
-                    return false;
-            }
+            if (!SequenceEqualNullSafe(SubCategories, other.SubCategories))
+                return false;
+
 
             return true;
+        }
+        private static bool SequenceEqualNullSafe<T>(IEnumerable<T> left, IEnumerable<T> right)
+        {
+            if (ReferenceEquals(left, right)) return true;
+            if (left is null || right is null) return false;
+            return left.SequenceEqual(right);
         }
         public ExpansionP2PMarketMenuCategory Clone()
         {

@@ -173,12 +173,13 @@
             removeStartingWeaponToolStripMenuItem = new ToolStripMenuItem();
             P2PCM = new ContextMenuStrip(components);
             AddNewP2PMarketCategoryToolStripMenuItem = new ToolStripMenuItem();
-            RempoveP2PMarketCategoryToolStripMenuItem = new ToolStripMenuItem();
+            RemoveP2PMarketCategoryToolStripMenuItem = new ToolStripMenuItem();
             AddNewP2PMarketSubCategoryToolStripMenuItem = new ToolStripMenuItem();
             RemoveP2PMarketSubCategoryToolStripMenuItem = new ToolStripMenuItem();
             AddNewP2PMarketIncludedToolStripMenuItem = new ToolStripMenuItem();
             RemoveP2PMarketIncludedToolStripMenuItem = new ToolStripMenuItem();
             AddNewP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
+            removeP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1368,10 +1369,10 @@
             // P2PCM
             // 
             P2PCM.BackColor = Color.FromArgb(60, 63, 65);
-            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RempoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem });
+            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem });
             P2PCM.Name = "ChatCM";
             P2PCM.ShowImageMargin = false;
-            P2PCM.Size = new Size(173, 180);
+            P2PCM.Size = new Size(173, 202);
             // 
             // AddNewP2PMarketCategoryToolStripMenuItem
             // 
@@ -1383,11 +1384,11 @@
             // 
             // RempoveP2PMarketCategoryToolStripMenuItem
             // 
-            RempoveP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
-            RempoveP2PMarketCategoryToolStripMenuItem.Name = "RempoveP2PMarketCategoryToolStripMenuItem";
-            RempoveP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
-            RempoveP2PMarketCategoryToolStripMenuItem.Text = "Remove Category";
-            RempoveP2PMarketCategoryToolStripMenuItem.Click += RempoveP2PMarketCategoryToolStripMenuItem_Click;
+            RemoveP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            RemoveP2PMarketCategoryToolStripMenuItem.Name = "RempoveP2PMarketCategoryToolStripMenuItem";
+            RemoveP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
+            RemoveP2PMarketCategoryToolStripMenuItem.Text = "Remove Category";
+            RemoveP2PMarketCategoryToolStripMenuItem.Click += RemoveP2PMarketCategoryToolStripMenuItem_Click;
             // 
             // AddNewP2PMarketSubCategoryToolStripMenuItem
             // 
@@ -1427,6 +1428,15 @@
             AddNewP2PMarketExcludedToolStripMenuItem.Name = "AddNewP2PMarketExcludedToolStripMenuItem";
             AddNewP2PMarketExcludedToolStripMenuItem.Size = new Size(172, 22);
             AddNewP2PMarketExcludedToolStripMenuItem.Text = "Add New Excluded";
+            AddNewP2PMarketExcludedToolStripMenuItem.Click += AddNewP2PMarketExcludedToolStripMenuItem_Click;
+            // 
+            // removeP2PMarketExcludedToolStripMenuItem
+            // 
+            removeP2PMarketExcludedToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeP2PMarketExcludedToolStripMenuItem.Name = "removeP2PMarketExcludedToolStripMenuItem";
+            removeP2PMarketExcludedToolStripMenuItem.Size = new Size(172, 22);
+            removeP2PMarketExcludedToolStripMenuItem.Text = "Remove Excluded";
+            removeP2PMarketExcludedToolStripMenuItem.Click += removeP2PMarketExcludedToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1608,11 +1618,12 @@
         private ToolStripMenuItem removeMissionToolStripMenuItem;
         private ContextMenuStrip P2PCM;
         private ToolStripMenuItem AddNewP2PMarketCategoryToolStripMenuItem;
-        private ToolStripMenuItem RempoveP2PMarketCategoryToolStripMenuItem;
+        private ToolStripMenuItem RemoveP2PMarketCategoryToolStripMenuItem;
         private ToolStripMenuItem AddNewP2PMarketSubCategoryToolStripMenuItem;
         private ToolStripMenuItem RemoveP2PMarketSubCategoryToolStripMenuItem;
         private ToolStripMenuItem AddNewP2PMarketIncludedToolStripMenuItem;
         private ToolStripMenuItem RemoveP2PMarketIncludedToolStripMenuItem;
         private ToolStripMenuItem AddNewP2PMarketExcludedToolStripMenuItem;
+        private ToolStripMenuItem removeP2PMarketExcludedToolStripMenuItem;
     }
 }
