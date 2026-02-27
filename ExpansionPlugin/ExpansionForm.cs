@@ -113,6 +113,17 @@ namespace ExpansionPlugin
                         SetupSpawnLocationMarkers(ExpansionSpawnLocation, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
+                    else if (node.Parent.Tag is ExpansionP2PMarketTraderConfig)
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            //DrawbaseSpawnLocationData(node.FindParentOfType<ExpansionSpawnConfig>());
+                        };
+                        ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), v3, selected);
+                    }
                 },
                 //Loadouts
                 [typeof(AILoadouts)] = (node, selected) =>
@@ -438,6 +449,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase = node.Tag as ExpansionP2PMarketMenuCategoryBase;
                     ShowHandler(new ExpansionP2PMarketSettingsCatControl(), typeof(ExpansionP2PMarketConfig), ExpansionP2PMarketMenuCategoryBase, selected);
+                },
+                //P2PMarket
+                [typeof(ExpansionP2PMarketTraderConfig)] = (node,selected) =>
+                {
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Tag as ExpansionP2PMarketTraderConfig;
+                    ShowHandler(new ExpansionP2PMarketTraderConfigGeneralControl(), typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, selected);
                 },
                 //Party
                 [typeof(ExpansionPartySettings)] = (node, selected) =>
@@ -3053,10 +3070,6 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            P2PTraderRootNode.Nodes.Add(new TreeNode("General")
-            {
-                Tag = "P2PMarketTraderGeneral"
-            });
             P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
             {
                 Tag = "P2PMarketTraderPOSandOri"

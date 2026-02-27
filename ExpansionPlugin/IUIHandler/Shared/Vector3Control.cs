@@ -54,7 +54,11 @@ namespace ExpansionPlugin
         /// </summary>
         private void UpdateTreeNodeText()
         {
-            if (_nodes?.Any() == true)
+
+            if (_parentType == typeof(ExpansionP2pMarketTradersConfig))
+                return;
+
+            if (_nodes?.Any() == true )
             {
                 string split = _nodes.Last().Text.Split(':')[0];
                 _nodes.Last().Text = _data.GetString();

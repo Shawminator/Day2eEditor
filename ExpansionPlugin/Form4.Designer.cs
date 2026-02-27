@@ -804,12 +804,13 @@
             groupBox1.Controls.Add(darkLabel2);
             groupBox1.Controls.Add(LandPositionYNUD);
             groupBox1.Controls.Add(LandPositionZNUD);
+            groupBox1.ForeColor = SystemColors.Control;
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(567, 615);
             groupBox1.TabIndex = 384;
             groupBox1.TabStop = false;
-            groupBox1.Text = "groupBox1";
+            groupBox1.Text = "General";
             // 
             // Form4
             // 
