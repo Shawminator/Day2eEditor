@@ -50,8 +50,6 @@ namespace ExpansionPlugin
         }
 
         #region Helper Methods
-
-
         /// <summary>
         /// Updates the TreeNode text based on current data
         /// </summary>
