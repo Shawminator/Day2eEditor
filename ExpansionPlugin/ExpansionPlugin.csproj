@@ -159,6 +159,9 @@
     <Compile Update="IUIHandler\Missions\ExpansionMissionEffectAreaControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="IUIHandler\P2PMarket\ExpasnionP2PMarksetTraderSpawnInfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="IUIHandler\SafeZone\ExpansionSafeZoneCylinderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

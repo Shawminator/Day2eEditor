@@ -120,9 +120,11 @@ namespace ExpansionPlugin
                         control.PositionChanged += (updatedPos) =>
                         {
                             _mapControl.ClearDrawables();
-                            //DrawbaseSpawnLocationData(node.FindParentOfType<ExpansionSpawnConfig>());
+                            DrawP2PTraderVehicleSpawnData(node.FindParentOfType<ExpansionP2pMarketTradersConfig>());
                         };
                         ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), v3, selected);
+                        SetupP2PTraderVehicleSpawnMarkers(v3, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                 },
                 //Loadouts
@@ -721,6 +723,24 @@ namespace ExpansionPlugin
                 ["MissionContaminatedAreaGeneral"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventContaminatedArea, selected);
+                },
+                ["P2PMarketTraderPOSandOri"] = (node,selected)=>
+                {
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Tag as ExpansionP2PMarketTraderConfig;
+                    var control = new ExpasnionP2PMarksetTraderSpawnInfoControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
+                    };
+                    control.OrientationChanged += (updatedOrientation) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, selected);
+                    SetupP2PTraderSpawnPositions(ExpansionP2PMarketTraderConfig, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionP2PMarketTraderConfig.m_Position.X, ExpansionP2PMarketTraderConfig.m_Position.Z));
                 },
                 //Raid
                 ["RaidExplosives"] = (node, selected) =>
@@ -3899,6 +3919,8 @@ namespace ExpansionPlugin
             _selectedSpawnLocation = null;
             _selectedAirdropLocation = null;
             _selectedExpansionMissionEventContaminatedArea = null;
+            _selectedData = null;
+            _selectedP2PTradervehiclespawn = null;
 
         }
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
@@ -3971,6 +3993,7 @@ namespace ExpansionPlugin
         private ExpansionAirdropLocation _selectedAirdropLocation;
         private ExpansionMissionEventContaminatedArea _selectedExpansionMissionEventContaminatedArea;
         private Data _selectedData;
+        private Vec3 _selectedP2PTradervehiclespawn;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -4137,6 +4160,19 @@ namespace ExpansionPlugin
                 var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
                 if (ExpansionMissionsConfig != null)
                     DrawbaseMissionMarkerData(ExpansionMissionsConfig);
+            });
+        }
+        private void SetupP2PTraderVehicleSpawnMarkers(Vec3 v3, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedP2PTradervehiclespawn = v3;
+                //_mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
+                //_mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
+
+                var ExpansionP2pMarketTradersConfig = node.FindParentOfType<ExpansionP2pMarketTradersConfig>();
+                if (ExpansionP2pMarketTradersConfig != null)
+                    DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig);
             });
         }
         //Draw Methods
@@ -4488,6 +4524,60 @@ namespace ExpansionPlugin
                     }
                     _mapControl.RegisterDrawable(marker);
                 }
+            }
+        }
+        private void DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig)
+        {
+            foreach (ExpansionP2PMarketTraderConfig mb in ExpansionP2pMarketTradersConfig.Items)
+            {
+                var marker = new TextMarkerDrawable(new PointF((float)mb.m_VehicleSpawnPosition.X, (float)mb.m_VehicleSpawnPosition.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = 10f,
+                    Scaleradius = false,
+                    Shade = true,
+                    Text = $"{mb.FileName}\nVehicle Spawn",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.BlueViolet
+                };
+                if (_selectedP2PTradervehiclespawn == mb.m_VehicleSpawnPosition)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
+                marker = new TextMarkerDrawable(new PointF((float)mb.m_AircraftSpawnPosition.X, (float)mb.m_AircraftSpawnPosition.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = 10f,
+                    Scaleradius = false,
+                    Shade = true,
+                    Text = $"{mb.FileName}\nAir Spawn",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.BlueViolet
+                };
+                if (_selectedP2PTradervehiclespawn == mb.m_AircraftSpawnPosition)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
+                marker = new TextMarkerDrawable(new PointF((float)mb.m_WatercraftSpawnPosition.X, (float)mb.m_WatercraftSpawnPosition.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = 10f,
+                    Scaleradius = false,
+                    Shade = true,
+                    Text = $"{mb.FileName}\nWater Spawn",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.BlueViolet
+                };
+                if (_selectedP2PTradervehiclespawn == mb.m_WatercraftSpawnPosition)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
             }
         }
         //map click methods
