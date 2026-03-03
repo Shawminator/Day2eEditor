@@ -731,12 +731,12 @@ namespace ExpansionPlugin
                     control.PositionChanged += (updatedPos) =>
                     {
                         _mapControl.ClearDrawables(); ;
-                        DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
+                        DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionP2pMarketTradersConfig>());
                     };
                     control.OrientationChanged += (updatedOrientation) =>
                     {
                         _mapControl.ClearDrawables(); ;
-                        DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
+                        DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionP2pMarketTradersConfig>());
                     };
                     ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, selected);
                     SetupP2PTraderSpawnPositions(ExpansionP2PMarketTraderConfig, node);
@@ -3905,6 +3905,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_SpawnLocationPositionDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_MissionLocationPositionSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_MissionLocationPositionDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_P2PTraderVehicleSpawnSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_P2PTraderVehicleSpawnDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -3923,6 +3925,9 @@ namespace ExpansionPlugin
             _selectedP2PTradervehiclespawn = null;
 
         }
+
+
+
         private void ExpansionTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
             BeginInvoke(new Action(() =>
@@ -3994,6 +3999,7 @@ namespace ExpansionPlugin
         private ExpansionMissionEventContaminatedArea _selectedExpansionMissionEventContaminatedArea;
         private Data _selectedData;
         private Vec3 _selectedP2PTradervehiclespawn;
+        private ExpansionP2PMarketTraderConfig _selectedP2PMarketTrader;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -4167,12 +4173,25 @@ namespace ExpansionPlugin
             SetupMap(() =>
             {
                 _selectedP2PTradervehiclespawn = v3;
+                _mapControl.MapsingleClicked += MapControl_P2PTraderVehicleSpawnSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_P2PTraderVehicleSpawnDoubleclicked;
+
+                var ExpansionP2pMarketTradersConfig = node.FindParentOfType<ExpansionP2pMarketTradersConfig>();
+                if (ExpansionP2pMarketTradersConfig != null)
+                    DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig);
+            });
+        }
+        private void SetupP2PTraderSpawnPositions(ExpansionP2PMarketTraderConfig expansionP2PMarketTraderConfig, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedP2PMarketTrader = expansionP2PMarketTraderConfig;
                 //_mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
                 //_mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
 
                 var ExpansionP2pMarketTradersConfig = node.FindParentOfType<ExpansionP2pMarketTradersConfig>();
                 if (ExpansionP2pMarketTradersConfig != null)
-                    DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig);
+                    DrawbaseP2PTraderSpawnPositions(ExpansionP2pMarketTradersConfig);
             });
         }
         //Draw Methods
@@ -4578,6 +4597,38 @@ namespace ExpansionPlugin
                     marker.Color = Color.LimeGreen;
                 }
                 _mapControl.RegisterDrawable(marker);
+            }
+        }
+        private void DrawbaseP2PTraderSpawnPositions(ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig)
+        {
+            TraderSpawnDrawable? selectedMarker = null;
+            foreach (ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig in ExpansionP2pMarketTradersConfig.Items)
+            {
+                var marker = new TraderSpawnDrawable(
+                        new PointF((float)ExpansionP2PMarketTraderConfig.m_Position.X, (float)ExpansionP2PMarketTraderConfig.m_Position.Z),
+                        _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Orientation = ExpansionP2PMarketTraderConfig.m_Orientation.getfloatarray(),
+                    Text = $"{ExpansionP2PMarketTraderConfig.FileName}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.BlueViolet
+                };
+                if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig)
+                {
+                    marker.Color = Color.LimeGreen;
+                    // Defer registering; draw this one last
+                    selectedMarker = marker;
+                }
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+            if (selectedMarker != null)
+            {
+                _mapControl.RegisterDrawable(selectedMarker);
             }
         }
         //map click methods
@@ -5323,6 +5374,75 @@ namespace ExpansionPlugin
                 DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
             }
         }
+        private void MapControl_P2PTraderVehicleSpawnSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                foreach (TreeNode child2 in child.Nodes)
+                {
+                    if (child2.Tag is Vec3 pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    foreach (TreeNode child2 in child.Nodes)
+                    {
+                        if (child2.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child2;
+                            break;
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_P2PTraderVehicleSpawnDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 v3)
+            {
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig = currentTreeNode.FindParentOfType<ExpansionP2pMarketTradersConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionP2pMarketTradersConfig), v3, new List<TreeNode>() { currentTreeNode });
+                DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig);
+            }
+
+        }
         #endregion mapstuff
 
         #region right click methods
@@ -5607,6 +5727,7 @@ namespace ExpansionPlugin
                 }
             }
         }
+
         private void addNewLootDropFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddEventFile frm = new AddEventFile();

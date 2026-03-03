@@ -158,6 +158,7 @@
             // m_TraderIDNUD
             // 
             m_TraderIDNUD.BackColor = Color.FromArgb(60, 63, 65);
+            m_TraderIDNUD.Enabled = false;
             m_TraderIDNUD.ForeColor = SystemColors.Control;
             m_TraderIDNUD.Location = new Point(190, 23);
             m_TraderIDNUD.Margin = new Padding(4, 3, 4, 3);
