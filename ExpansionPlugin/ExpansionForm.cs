@@ -3907,6 +3907,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_MissionLocationPositionDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_P2PTraderVehicleSpawnSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_P2PTraderVehicleSpawnDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_P2PTraderSpawnPositionsSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_P2PTraderSpawnPositionsDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -4186,8 +4188,8 @@ namespace ExpansionPlugin
             SetupMap(() =>
             {
                 _selectedP2PMarketTrader = expansionP2PMarketTraderConfig;
-                //_mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
-                //_mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_P2PTraderSpawnPositionsSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_P2PTraderSpawnPositionsDoubleclicked;
 
                 var ExpansionP2pMarketTradersConfig = node.FindParentOfType<ExpansionP2pMarketTradersConfig>();
                 if (ExpansionP2pMarketTradersConfig != null)
@@ -5442,6 +5444,14 @@ namespace ExpansionPlugin
                 DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig);
             }
 
+        }
+        private void MapControl_P2PTraderSpawnPositionsSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            
+        }
+        private void MapControl_P2PTraderSpawnPositionsDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            
         }
         #endregion mapstuff
 
