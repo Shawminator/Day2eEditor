@@ -30,7 +30,6 @@ namespace ExpansionPlugin
             UsedIDS.Add((int)P2PTrader.m_TraderID);
             return P2PTrader;
         }
-
         protected override void SaveItem(ExpansionP2PMarketTraderConfig P2PTrader)
         {
             
@@ -38,7 +37,6 @@ namespace ExpansionPlugin
         }
         protected override string GetItemFileName(ExpansionP2PMarketTraderConfig P2PTrader)
             => P2PTrader.FileName;
-
         protected override bool ShouldDelete(ExpansionP2PMarketTraderConfig P2PTrader)
             => P2PTrader.ToDelete;
         protected override Guid GetID(ExpansionP2PMarketTraderConfig P2PTrader)

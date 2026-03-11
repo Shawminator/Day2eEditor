@@ -87,7 +87,6 @@ namespace ExpansionPlugin
         {
             return ExpansionMissionEventBase.FixMissingOrInvalidFields();
         }
-
     }
     public class ExpansionMissionEventBase : IDeepCloneable<ExpansionMissionEventBase>, IEquatable<ExpansionMissionEventBase>
     {
