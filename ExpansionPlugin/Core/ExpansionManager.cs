@@ -60,6 +60,9 @@ namespace ExpansionPlugin
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
             _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
             _paths["ExpansionP2PTraders"] = Path.Combine(basePath, "expansion", "p2pmarket");
+            _paths["ExpansionMarketTraderMaps"] = Path.Combine(basePath, "expansion", "traders");
+            _paths["ExpansionMarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
+
 
             //Settings files in profiles
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
