@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -168,10 +169,13 @@ namespace ExpansionPlugin
             if (obj is not ExpansionPersonalStorageLevel other)
                 return false;
 
-            return ReputationRequirement != other.ReputationRequirement ||
+            if (ReputationRequirement != other.ReputationRequirement ||
                    QuestID != other.QuestID ||
-                   ExcludedSlots.SequenceEqual(other.ExcludedSlots) ||
-                   AllowAttachmentCargo != other.AllowAttachmentCargo;
+                   !ExcludedSlots.SequenceEqual(other.ExcludedSlots) ||
+                   AllowAttachmentCargo != other.AllowAttachmentCargo)
+                return false;
+
+            return true;
         }
         public ExpansionPersonalStorageLevel Clone()
         {

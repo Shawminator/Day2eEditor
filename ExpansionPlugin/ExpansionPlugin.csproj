@@ -162,6 +162,12 @@
     <Compile Update="IUIHandler\P2PMarket\ExpasnionP2PMarksetTraderSpawnInfoControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="IUIHandler\PersonalStorage\ExpansionPersonalStorageSettingsCatControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="IUIHandler\PersonalStorage\ExpansionPersonalStorageSettingsGeneralControl - Copy.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="IUIHandler\SafeZone\ExpansionSafeZoneCylinderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

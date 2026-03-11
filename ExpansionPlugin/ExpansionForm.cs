@@ -464,6 +464,33 @@ namespace ExpansionPlugin
                     ExpansionPartySettings ExpansionPartySettings = node.Tag as ExpansionPartySettings;
                     ShowHandler(new ExpansionPartySettingsControl(), typeof(ExpansionPartyConfig), ExpansionPartySettings, selected);
                 },
+                //personalStorage
+                [typeof(ExpansionPersonalStorageNewSettings)] = (node, selected) =>
+                {
+                    ExpansionPersonalStorageNewSettings ExpansionPersonalStorageNewSettings = node.Tag as ExpansionPersonalStorageNewSettings;
+                    ShowHandler(new ExpansionPersonalStorageNewSettingsGeneralControl(), typeof(ExpansionPersonalStorageNewConfig), ExpansionPersonalStorageNewSettings, selected);
+                },
+                [typeof(ExpansionPersonalStorageSettings)] = (node, selected) =>
+                {
+                    ExpansionPersonalStorageSettings ExpansionPersonalStorageSettings = node.Tag as ExpansionPersonalStorageSettings;
+                    ShowHandler(new ExpansionPersonalStorageSettingsGeneralControl(), typeof(ExpansionPersonalStorageConfig), ExpansionPersonalStorageSettings, selected);
+
+                },
+                [typeof(ExpansionPersonalStorageMenuCategory)] = (node, selected) =>
+                {
+                    ExpansionPersonalStorageMenuCategoryBase ExpansionPersonalStorageMenuCategoryBase = node.Tag as ExpansionPersonalStorageMenuCategoryBase;
+                    ShowHandler(new ExpansionPersonalStorageSettingsCatControl(), typeof(ExpansionPersonalStorageConfig), ExpansionPersonalStorageMenuCategoryBase, selected);
+                },
+                [typeof(ExpansionPersonalStorageMenuSubCategory)] = (node, selected) =>
+                {
+                    ExpansionPersonalStorageMenuSubCategory ExpansionPersonalStorageMenuSubCategory = node.Tag as ExpansionPersonalStorageMenuSubCategory;
+                    ShowHandler(new ExpansionPersonalStorageSettingsCatControl(), typeof(ExpansionPersonalStorageConfig), ExpansionPersonalStorageMenuSubCategory, selected);
+                },
+                [typeof(ExpansionPersonalStorageLevel)] = (node, selected) =>
+                {
+                    ExpansionPersonalStorageLevel ExpansionPersonalStorageLevel = node.Tag as ExpansionPersonalStorageLevel;
+                    ShowHandler(new ExpansionPersonalStorageLevelControl(), typeof(ExpansionPersonalStorageNewConfig), ExpansionPersonalStorageLevel, selected);
+                },
                 //PlayerList
                 [typeof(ExpansionPlayerListSettings)] = (node, selected) =>
                 {
@@ -1488,6 +1515,19 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeP2PMarketExcludedToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //personal Storage
+                ["StorageLevelExludedSlots"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewExcludedStorageSlotToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["StorageLevelExludedSlot"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeExcludedStorageSlotToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Raid
@@ -3113,7 +3153,6 @@ namespace ExpansionPlugin
             Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
             return Menucatnoderoot;
         }
-
         private TreeNode CreateExpansionP2PMarketTradersConfig(ExpansionP2pMarketTradersConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode("P2P Traders")
@@ -3208,10 +3247,23 @@ namespace ExpansionPlugin
             };
             foreach (KeyValuePair<int, ExpansionPersonalStorageLevel> lvs in ef.Data.StorageLevels)
             {
-                StorageLevelsNode.Nodes.Add(new TreeNode(lvs.Key.ToString())
+                TreeNode SLNode = new TreeNode("Storage Level - " + lvs.Key.ToString())
                 {
-                    Tag = lvs
-                });
+                    Tag = lvs.Value
+                };
+                TreeNode ExcludedNode = new TreeNode("Excluded Slots")
+                {
+                    Tag = "StorageLevelExludedSlots"
+                };
+                foreach (string s in lvs.Value.ExcludedSlots)
+                {
+                    ExcludedNode.Nodes.Add(new TreeNode(s)
+                    {
+                        Tag = "StorageLevelExludedSlot"
+                    });
+                }
+                SLNode.Nodes.Add(ExcludedNode);
+                StorageLevelsNode.Nodes.Add(SLNode);
             }
             EconomyRootNode.Nodes.Add(StorageLevelsNode);
         }
@@ -7562,11 +7614,40 @@ namespace ExpansionPlugin
         }
         private void removeP2PTraderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            if (currentTreeNode.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
             {
                 _expansionManager.ExpansionP2pMarketTradersConfig.RemoveFile(ExpansionP2PMarketTraderConfig);
                 currentTreeNode.Remove();
             }
+        }
+        private void addNewExcludedStorageSlotToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddFromList newform = new AddFromList();
+            newform.List = File.ReadAllLines("Data/ExpansionSlotnames.txt").ToList();
+            DialogResult result = newform.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                ExpansionPersonalStorageLevel ExpansionPersonalStorageLevel = currentTreeNode.Parent.Tag as ExpansionPersonalStorageLevel;
+                List<string> returnlist = newform.GetSelected;
+                foreach (string faction in returnlist)
+                {
+                    if (!ExpansionPersonalStorageLevel.ExcludedSlots.Contains(faction))
+                    {
+                        ExpansionPersonalStorageLevel.ExcludedSlots.Add(faction);
+                        currentTreeNode.Nodes.Add(new TreeNode(faction)
+                        {
+                            Tag = "StorageLevelExludedSlot"
+                        });
+                    }
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeExcludedStorageSlotToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionPersonalStorageLevel ExpansionPersonalStorageLevel = currentTreeNode.Parent.Parent.Tag as ExpansionPersonalStorageLevel;
+            ExpansionPersonalStorageLevel.ExcludedSlots.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
         }
         //Raid Settings
         private void AddNewExplosiveWhitelistItemToolStripMenuItem_Click(object sender, EventArgs e)
