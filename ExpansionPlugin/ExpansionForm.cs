@@ -453,7 +453,7 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionP2PMarketSettingsCatControl(), typeof(ExpansionP2PMarketConfig), ExpansionP2PMarketMenuCategoryBase, selected);
                 },
                 //P2PMarket
-                [typeof(ExpansionP2PMarketTraderConfig)] = (node,selected) =>
+                [typeof(ExpansionP2PMarketTraderConfig)] = (node, selected) =>
                 {
                     ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Tag as ExpansionP2PMarketTraderConfig;
                     ShowHandler(new ExpansionP2PMarketTraderConfigGeneralControl(), typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, selected);
@@ -724,7 +724,7 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventContaminatedArea, selected);
                 },
-                ["P2PMarketTraderPOSandOri"] = (node,selected)=>
+                ["P2PMarketTraderPOSandOri"] = (node, selected) =>
                 {
                     ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Tag as ExpansionP2PMarketTraderConfig;
                     var control = new ExpasnionP2PMarksetTraderSpawnInfoControl();
@@ -1012,6 +1012,24 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(RemoveP2PMarketSubCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionPersonalStorageMenuSubCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(RemoveP2PMarketSubCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionP2pMarketTradersConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewP2PTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionP2PMarketTraderConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeP2PTraderToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Raid
@@ -1406,7 +1424,31 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(AddNewP2PMarketExcludedToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                ["PersonalStorageExcludedClassNames"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewP2PMarketExcludedToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["PersonalStorageNewExludedItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(AddNewP2PMarketExcludedToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 ["P2PExcludedClassname"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeP2PMarketExcludedToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["PersonalStorageExcludedClassName"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeP2PMarketExcludedToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["PersonalStorageNewExludedItem"] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeP2PMarketExcludedToolStripMenuItem);
@@ -5447,11 +5489,11 @@ namespace ExpansionPlugin
         }
         private void MapControl_P2PTraderSpawnPositionsSingleclicked(object? sender, MapClickEventArgs e)
         {
-            
+
         }
         private void MapControl_P2PTraderSpawnPositionsDoubleclicked(object? sender, MapClickEventArgs e)
         {
-            
+
         }
         #endregion mapstuff
 
@@ -7238,6 +7280,47 @@ namespace ExpansionPlugin
                 InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
                 ExpansionTV.SelectedNode = Menucatnoderoot;
             }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
+            {
+                ExpansionPersonalStorageMenuSubCategory newsub = new ExpansionPersonalStorageMenuSubCategory()
+                {
+                    DisplayName = "New Sub Category",
+                    IconPath = "",
+                    Included = new BindingList<string>(),
+                    Excluded = new BindingList<string>()
+                };
+                ExpansionPersonalStorageMenuCategory.SubCategories.Add(newsub);
+                TreeNode Menucatnoderoot = new TreeNode(newsub.DisplayName)
+                {
+                    Tag = newsub
+                };
+                TreeNode IncludedclassnamesNode = new TreeNode("Included")
+                {
+                    Tag = "MenuCatsIncluded"
+                };
+                foreach (string s in newsub.Included)
+                {
+                    IncludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                    {
+                        Tag = "MenuCatIncluded"
+                    });
+                }
+                Menucatnoderoot.Nodes.Add(IncludedclassnamesNode);
+                TreeNode ExludedclassnamesNode = new TreeNode("Excluded")
+                {
+                    Tag = "MenuCatsExluded"
+                };
+                foreach (string s in newsub.Excluded)
+                {
+                    ExludedclassnamesNode.Nodes.Add(new TreeNode(s)
+                    {
+                        Tag = "MenuCatExluded"
+                    });
+                }
+                Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
+                InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
+                ExpansionTV.SelectedNode = Menucatnoderoot;
+            }
         }
         private void RemoveP2PMarketSubCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7246,10 +7329,15 @@ namespace ExpansionPlugin
                 ExpansionP2PMarketMenuCategory.SubCategories.Remove(currentTreeNode.Tag as ExpansionP2PMarketMenuSubCategory);
                 currentTreeNode.Remove();
             }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
+            {
+                ExpansionPersonalStorageMenuCategory.SubCategories.Remove(currentTreeNode.Tag as ExpansionPersonalStorageMenuSubCategory);
+                currentTreeNode.Remove();
+            }
         }
         private void AddNewP2PMarketIncludedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Parent.Tag is ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase)
+            if (currentTreeNode.Parent.Tag is ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase)
             {
                 AddItemfromTypes form = new AddItemfromTypes { };
                 DialogResult result = form.ShowDialog();
@@ -7267,6 +7355,42 @@ namespace ExpansionPlugin
                     currentTreeNode.ExpandAll();
                 }
             }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
+            {
+                AddItemfromTypes form = new AddItemfromTypes { };
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> addedtypes = form.AddedTypes.ToList();
+                    foreach (string newincluded in addedtypes)
+                    {
+                        ExpansionPersonalStorageMenuCategory.Included.Add(newincluded);
+                        currentTreeNode.Nodes.Add(new TreeNode(newincluded)
+                        {
+                            Tag = "MenuCatIncluded"
+                        });
+                    }
+                    currentTreeNode.ExpandAll();
+                }
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageMenuSubCategory ExpansionPersonalStorageMenuSubCategory)
+            {
+                AddItemfromTypes form = new AddItemfromTypes { };
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> addedtypes = form.AddedTypes.ToList();
+                    foreach (string newincluded in addedtypes)
+                    {
+                        ExpansionPersonalStorageMenuSubCategory.Included.Add(newincluded);
+                        currentTreeNode.Nodes.Add(new TreeNode(newincluded)
+                        {
+                            Tag = "MenuCatIncluded"
+                        });
+                    }
+                    currentTreeNode.ExpandAll();
+                }
+            }
         }
         private void RemoveP2PMarketIncludedToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7275,10 +7399,20 @@ namespace ExpansionPlugin
                 ExpansionP2PMarketMenuCategoryBase.Included.Remove(currentTreeNode.Text);
                 currentTreeNode.Remove();
             }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
+            {
+                ExpansionPersonalStorageMenuCategory.Included.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageMenuSubCategory ExpansionPersonalStorageMenuSubCategory)
+            {
+                ExpansionPersonalStorageMenuSubCategory.Included.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
         }
         private void AddNewP2PMarketExcludedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Parent.Tag is ExpansionP2PMarketConfig ExpansionP2PMarketConfig)
+            if (currentTreeNode.Parent.Tag is ExpansionP2PMarketConfig ExpansionP2PMarketConfig)
             {
                 AddItemfromTypes form = new AddItemfromTypes { };
                 DialogResult result = form.ShowDialog();
@@ -7314,6 +7448,78 @@ namespace ExpansionPlugin
                     currentTreeNode.ExpandAll();
                 }
             }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
+            {
+                AddItemfromTypes form = new AddItemfromTypes { };
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> addedtypes = form.AddedTypes.ToList();
+                    foreach (string newincluded in addedtypes)
+                    {
+                        ExpansionPersonalStorageMenuCategory.Excluded.Add(newincluded);
+                        currentTreeNode.Nodes.Add(new TreeNode(newincluded)
+                        {
+                            Tag = "MenuCatExluded"
+                        });
+                    }
+                    currentTreeNode.ExpandAll();
+                }
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageMenuSubCategory ExpansionPersonalStorageMenuSubCategory)
+            {
+                AddItemfromTypes form = new AddItemfromTypes { };
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> addedtypes = form.AddedTypes.ToList();
+                    foreach (string newincluded in addedtypes)
+                    {
+                        ExpansionPersonalStorageMenuSubCategory.Excluded.Add(newincluded);
+                        currentTreeNode.Nodes.Add(new TreeNode(newincluded)
+                        {
+                            Tag = "MenuCatExluded"
+                        });
+                    }
+                    currentTreeNode.ExpandAll();
+                }
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig)
+            {
+                AddItemfromTypes form = new AddItemfromTypes { };
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> addedtypes = form.AddedTypes.ToList();
+                    foreach (string newincluded in addedtypes)
+                    {
+                        ExpansionPersonalStorageNewConfig.Data.ExcludedItems.Add(newincluded);
+                        currentTreeNode.Nodes.Add(new TreeNode(newincluded)
+                        {
+                            Tag = "PersonalStorageNewExludedItem"
+                        });
+                    }
+                    currentTreeNode.ExpandAll();
+                }
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
+            {
+                AddItemfromTypes form = new AddItemfromTypes { };
+                DialogResult result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> addedtypes = form.AddedTypes.ToList();
+                    foreach (string newincluded in addedtypes)
+                    {
+                        ExpansionPersonalStorageConfig.Data.ExcludedClassNames.Add(newincluded);
+                        currentTreeNode.Nodes.Add(new TreeNode(newincluded)
+                        {
+                            Tag = "PersonalStorageExcludedClassName"
+                        });
+                    }
+                    currentTreeNode.ExpandAll();
+                }
+            }
         }
         private void removeP2PMarketExcludedToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7325,6 +7531,40 @@ namespace ExpansionPlugin
             else if (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketMenuCategoryBase ExpansionP2PMarketMenuCategoryBase)
             {
                 ExpansionP2PMarketMenuCategoryBase.Excluded.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
+            {
+                ExpansionPersonalStorageMenuCategory.Excluded.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageMenuSubCategory ExpansionPersonalStorageMenuSubCategory)
+            {
+                ExpansionPersonalStorageMenuSubCategory.Excluded.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig)
+            {
+                ExpansionPersonalStorageNewConfig.Data.ExcludedItems.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
+            {
+                ExpansionPersonalStorageConfig.Data.ExcludedClassNames.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+        }
+        private void addNewP2PTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int Newid = _expansionManager.ExpansionP2pMarketTradersConfig.GetNextID();
+            ExpansionP2PMarketTraderConfig P2PTrader = _expansionManager.ExpansionP2pMarketTradersConfig.AddNewP2PTraderFile(Newid);
+            CreateExpansionP2PMarketTraderNodes(P2PTrader, currentTreeNode);
+        }
+        private void removeP2PTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                _expansionManager.ExpansionP2pMarketTradersConfig.RemoveFile(ExpansionP2PMarketTraderConfig);
                 currentTreeNode.Remove();
             }
         }

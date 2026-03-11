@@ -180,6 +180,8 @@
             RemoveP2PMarketIncludedToolStripMenuItem = new ToolStripMenuItem();
             AddNewP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
             removeP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
+            addNewP2PTraderToolStripMenuItem = new ToolStripMenuItem();
+            removeP2PTraderToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1369,10 +1371,10 @@
             // P2PCM
             // 
             P2PCM.BackColor = Color.FromArgb(60, 63, 65);
-            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem });
+            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem });
             P2PCM.Name = "ChatCM";
             P2PCM.ShowImageMargin = false;
-            P2PCM.Size = new Size(173, 202);
+            P2PCM.Size = new Size(173, 246);
             // 
             // AddNewP2PMarketCategoryToolStripMenuItem
             // 
@@ -1382,10 +1384,10 @@
             AddNewP2PMarketCategoryToolStripMenuItem.Text = "Add New Category";
             AddNewP2PMarketCategoryToolStripMenuItem.Click += AddNewP2PMarketCategoryToolStripMenuItem_Click;
             // 
-            // RempoveP2PMarketCategoryToolStripMenuItem
+            // RemoveP2PMarketCategoryToolStripMenuItem
             // 
             RemoveP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
-            RemoveP2PMarketCategoryToolStripMenuItem.Name = "RempoveP2PMarketCategoryToolStripMenuItem";
+            RemoveP2PMarketCategoryToolStripMenuItem.Name = "RemoveP2PMarketCategoryToolStripMenuItem";
             RemoveP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
             RemoveP2PMarketCategoryToolStripMenuItem.Text = "Remove Category";
             RemoveP2PMarketCategoryToolStripMenuItem.Click += RemoveP2PMarketCategoryToolStripMenuItem_Click;
@@ -1437,6 +1439,22 @@
             removeP2PMarketExcludedToolStripMenuItem.Size = new Size(172, 22);
             removeP2PMarketExcludedToolStripMenuItem.Text = "Remove Excluded";
             removeP2PMarketExcludedToolStripMenuItem.Click += removeP2PMarketExcludedToolStripMenuItem_Click;
+            // 
+            // addNewP2PTraderToolStripMenuItem
+            // 
+            addNewP2PTraderToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewP2PTraderToolStripMenuItem.Name = "addNewP2PTraderToolStripMenuItem";
+            addNewP2PTraderToolStripMenuItem.Size = new Size(172, 22);
+            addNewP2PTraderToolStripMenuItem.Text = "Add New P2P Trader";
+            addNewP2PTraderToolStripMenuItem.Click += addNewP2PTraderToolStripMenuItem_Click;
+            // 
+            // removeP2PTraderToolStripMenuItem
+            // 
+            removeP2PTraderToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeP2PTraderToolStripMenuItem.Name = "removeP2PTraderToolStripMenuItem";
+            removeP2PTraderToolStripMenuItem.Size = new Size(172, 22);
+            removeP2PTraderToolStripMenuItem.Text = "Remove P2P Trader";
+            removeP2PTraderToolStripMenuItem.Click += removeP2PTraderToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1625,5 +1643,7 @@
         private ToolStripMenuItem RemoveP2PMarketIncludedToolStripMenuItem;
         private ToolStripMenuItem AddNewP2PMarketExcludedToolStripMenuItem;
         private ToolStripMenuItem removeP2PMarketExcludedToolStripMenuItem;
+        private ToolStripMenuItem addNewP2PTraderToolStripMenuItem;
+        private ToolStripMenuItem removeP2PTraderToolStripMenuItem;
     }
 }
