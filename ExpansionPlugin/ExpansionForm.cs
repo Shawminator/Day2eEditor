@@ -5647,6 +5647,15 @@ namespace ExpansionPlugin
         {
 
         }
+        private void MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked(object sender, EventArgs e)
+        {
+
+        }
         #endregion mapstuff
 
         #region right click methods
@@ -7749,16 +7758,7 @@ namespace ExpansionPlugin
             ExpansionPersonalStorageLevel.ExcludedSlots.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
         }
-        //Personal Storage
-        private void MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked(object sender, EventArgs e)
-        {
-            
-        }
 
-        private void MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked(object sender, EventArgs e)
-        {
-            
-        }
         //Raid Settings
         private void AddNewExplosiveWhitelistItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
