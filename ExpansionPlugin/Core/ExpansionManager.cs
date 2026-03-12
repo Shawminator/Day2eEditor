@@ -16,6 +16,7 @@ namespace ExpansionPlugin
         public ExpansionLootDropConfig ExpansionLootDropConfig { get; set; }
         public ExpansionMissionsConfig ExpansionMissionsConfig { get; set; }
         public ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig { get; set; }  
+        public ExpansionPersonalStorageContainersConfig ExpansionPersonalStorageContainersConfig { get; set; }
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionAILocationConfig ExpansionAILocationConfig { get; set; }
@@ -38,8 +39,8 @@ namespace ExpansionPlugin
         public ExpansionNotificationConfig ExpansionNotificationConfig { get; set; }
         public ExpansionPartyConfig ExpansionPartyConfig { get; set; }
         public ExpansionP2PMarketConfig ExpansionP2PMarketConfig { get; set; }
-        public ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig { get; set; }
-        public ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig { get; set; }
+        public ExpansionPersonalStorageNewSettingsConfig ExpansionPersonalStorageNewConfig { get; set; }
+        public ExpansionPersonalStorageSettingsConfig ExpansionPersonalStorageConfig { get; set; }
         public ExpansionPlayerListConfig ExpansionPlayerListConfig { get; set; }
         public ExpansionQuestConfig ExpansionQuestConfig { get; set; }
         public ExpansionRaidConfig ExpansionRaidConfig { get; set; }
@@ -60,6 +61,7 @@ namespace ExpansionPlugin
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
             _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
             _paths["ExpansionP2PTraders"] = Path.Combine(basePath, "expansion", "p2pmarket");
+            _paths["ExpansionPSContainers"] = Path.Combine(basePath, "expansion", "personalstorage");
             _paths["ExpansionMarketTraderMaps"] = Path.Combine(basePath, "expansion", "traders");
             _paths["ExpansionMarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
 
@@ -117,6 +119,9 @@ namespace ExpansionPlugin
 
             ExpansionP2pMarketTradersConfig = new ExpansionP2pMarketTradersConfig(_paths["ExpansionP2PTraders"]);
             LoadConfigWithErrorReport("ExpansionP2PTraders", ExpansionP2pMarketTradersConfig);
+
+            ExpansionPersonalStorageContainersConfig = new ExpansionPersonalStorageContainersConfig(_paths["ExpansionPSContainers"]);
+            LoadConfigWithErrorReport("ExpansionPSContainers", ExpansionPersonalStorageContainersConfig);
 
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
@@ -184,10 +189,10 @@ namespace ExpansionPlugin
             ExpansionP2PMarketConfig = new ExpansionP2PMarketConfig(_paths["P2PMarketSettings"]);
             LoadConfigWithErrorReport("P2PMarketSettings", ExpansionP2PMarketConfig);
 
-            ExpansionPersonalStorageNewConfig = new ExpansionPersonalStorageNewConfig(_paths["PersonalStorageNewSettings"]);
+            ExpansionPersonalStorageNewConfig = new ExpansionPersonalStorageNewSettingsConfig(_paths["PersonalStorageNewSettings"]);
             LoadConfigWithErrorReport("PersonalStorageNewSettings", ExpansionPersonalStorageNewConfig);
             
-            ExpansionPersonalStorageConfig = new ExpansionPersonalStorageConfig(_paths["PersonalStorageSettings"]);
+            ExpansionPersonalStorageConfig = new ExpansionPersonalStorageSettingsConfig(_paths["PersonalStorageSettings"]);
             LoadConfigWithErrorReport("PersonalStorageSettings", ExpansionPersonalStorageConfig);
 
             ExpansionPlayerListConfig = new ExpansionPlayerListConfig(_paths["PlayerListSettings"]);
@@ -237,6 +242,7 @@ namespace ExpansionPlugin
                 ExpansionLootDropConfig,
                 ExpansionMissionsConfig,
                 ExpansionP2pMarketTradersConfig,
+                ExpansionPersonalStorageContainersConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -293,6 +299,7 @@ namespace ExpansionPlugin
                 ExpansionLootDropConfig,
                 ExpansionMissionsConfig,
                 ExpansionP2pMarketTradersConfig,
+                ExpansionPersonalStorageContainersConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,

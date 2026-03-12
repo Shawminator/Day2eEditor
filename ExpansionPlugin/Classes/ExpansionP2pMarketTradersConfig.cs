@@ -32,7 +32,6 @@ namespace ExpansionPlugin
         }
         protected override void SaveItem(ExpansionP2PMarketTraderConfig P2PTrader)
         {
-            
             AppServices.GetRequired<FileService>().SaveJson(P2PTrader._path, P2PTrader, false, true);
         }
         protected override string GetItemFileName(ExpansionP2PMarketTraderConfig P2PTrader)

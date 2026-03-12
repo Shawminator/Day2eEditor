@@ -10,10 +10,10 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPersonalStorageConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageSettings>
+    public class ExpansionPersonalStorageSettingsConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageSettings>
     {
         public const int CurrentVersion = 1;
-        public ExpansionPersonalStorageConfig(string path) : base(path)
+        public ExpansionPersonalStorageSettingsConfig(string path) : base(path)
         {
         }
         protected override ExpansionPersonalStorageSettings CreateDefaultData()
@@ -574,10 +574,10 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version != ExpansionPersonalStorageConfig.CurrentVersion)
+            if (m_Version != ExpansionPersonalStorageSettingsConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionPersonalStorageConfig.CurrentVersion}");
-                m_Version = ExpansionPersonalStorageConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionPersonalStorageSettingsConfig.CurrentVersion}");
+                m_Version = ExpansionPersonalStorageSettingsConfig.CurrentVersion;
             }
             if (Enabled == null || (Enabled != 0 && Enabled != 1))
             {

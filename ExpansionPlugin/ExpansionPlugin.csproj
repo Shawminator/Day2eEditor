@@ -168,6 +168,9 @@
     <Compile Update="IUIHandler\PersonalStorage\ExpansionPersonalStorageSettingsGeneralControl - Copy.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="IUIHandler\PersonalStorage\ExpasnionPersonalStorageContainerSpawnInfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="IUIHandler\SafeZone\ExpansionSafeZoneCylinderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

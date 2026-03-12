@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPersonalStorageNewConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageNewSettings>
+    public class ExpansionPersonalStorageNewSettingsConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageNewSettings>
     {
         public const int CurrentVersion = 4;
-        public ExpansionPersonalStorageNewConfig(string path) : base(path)
+        public ExpansionPersonalStorageNewSettingsConfig(string path) : base(path)
         {
         }
         protected override ExpansionPersonalStorageNewSettings CreateDefaultData()
@@ -73,10 +73,10 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version != ExpansionPersonalStorageNewConfig.CurrentVersion)
+            if (m_Version != ExpansionPersonalStorageNewSettingsConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionPersonalStorageNewConfig.CurrentVersion}");
-                m_Version = ExpansionPersonalStorageNewConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionPersonalStorageNewSettingsConfig.CurrentVersion}");
+                m_Version = ExpansionPersonalStorageNewSettingsConfig.CurrentVersion;
             }
             if (UseCategoryMenu == null || (UseCategoryMenu != 0 && UseCategoryMenu != 1))
             {

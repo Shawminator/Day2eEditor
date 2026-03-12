@@ -468,28 +468,28 @@ namespace ExpansionPlugin
                 [typeof(ExpansionPersonalStorageNewSettings)] = (node, selected) =>
                 {
                     ExpansionPersonalStorageNewSettings ExpansionPersonalStorageNewSettings = node.Tag as ExpansionPersonalStorageNewSettings;
-                    ShowHandler(new ExpansionPersonalStorageNewSettingsGeneralControl(), typeof(ExpansionPersonalStorageNewConfig), ExpansionPersonalStorageNewSettings, selected);
+                    ShowHandler(new ExpansionPersonalStorageNewSettingsGeneralControl(), typeof(ExpansionPersonalStorageNewSettingsConfig), ExpansionPersonalStorageNewSettings, selected);
                 },
                 [typeof(ExpansionPersonalStorageSettings)] = (node, selected) =>
                 {
                     ExpansionPersonalStorageSettings ExpansionPersonalStorageSettings = node.Tag as ExpansionPersonalStorageSettings;
-                    ShowHandler(new ExpansionPersonalStorageSettingsGeneralControl(), typeof(ExpansionPersonalStorageConfig), ExpansionPersonalStorageSettings, selected);
+                    ShowHandler(new ExpansionPersonalStorageSettingsGeneralControl(), typeof(ExpansionPersonalStorageSettingsConfig), ExpansionPersonalStorageSettings, selected);
 
                 },
                 [typeof(ExpansionPersonalStorageMenuCategory)] = (node, selected) =>
                 {
                     ExpansionPersonalStorageMenuCategoryBase ExpansionPersonalStorageMenuCategoryBase = node.Tag as ExpansionPersonalStorageMenuCategoryBase;
-                    ShowHandler(new ExpansionPersonalStorageSettingsCatControl(), typeof(ExpansionPersonalStorageConfig), ExpansionPersonalStorageMenuCategoryBase, selected);
+                    ShowHandler(new ExpansionPersonalStorageSettingsCatControl(), typeof(ExpansionPersonalStorageSettingsConfig), ExpansionPersonalStorageMenuCategoryBase, selected);
                 },
                 [typeof(ExpansionPersonalStorageMenuSubCategory)] = (node, selected) =>
                 {
                     ExpansionPersonalStorageMenuSubCategory ExpansionPersonalStorageMenuSubCategory = node.Tag as ExpansionPersonalStorageMenuSubCategory;
-                    ShowHandler(new ExpansionPersonalStorageSettingsCatControl(), typeof(ExpansionPersonalStorageConfig), ExpansionPersonalStorageMenuSubCategory, selected);
+                    ShowHandler(new ExpansionPersonalStorageSettingsCatControl(), typeof(ExpansionPersonalStorageSettingsConfig), ExpansionPersonalStorageMenuSubCategory, selected);
                 },
                 [typeof(ExpansionPersonalStorageLevel)] = (node, selected) =>
                 {
                     ExpansionPersonalStorageLevel ExpansionPersonalStorageLevel = node.Tag as ExpansionPersonalStorageLevel;
-                    ShowHandler(new ExpansionPersonalStorageLevelControl(), typeof(ExpansionPersonalStorageNewConfig), ExpansionPersonalStorageLevel, selected);
+                    ShowHandler(new ExpansionPersonalStorageLevelControl(), typeof(ExpansionPersonalStorageNewSettingsConfig), ExpansionPersonalStorageLevel, selected);
                 },
                 //PlayerList
                 [typeof(ExpansionPlayerListSettings)] = (node, selected) =>
@@ -751,6 +751,7 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventContaminatedArea, selected);
                 },
+                //P2P Market
                 ["P2PMarketTraderPOSandOri"] = (node, selected) =>
                 {
                     ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Tag as ExpansionP2PMarketTraderConfig;
@@ -768,6 +769,25 @@ namespace ExpansionPlugin
                     ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, selected);
                     SetupP2PTraderSpawnPositions(ExpansionP2PMarketTraderConfig, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionP2PMarketTraderConfig.m_Position.X, ExpansionP2PMarketTraderConfig.m_Position.Z));
+                },
+                //Personal Storage
+                ["ExpansionPersonalStorageConfigPOSandOri"] = (node,selected) =>
+                {
+                    ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = node.Parent.Tag as ExpansionPersonalStorageConfig;
+                    var control = new ExpasnionPersonalStorageContainerSpawnInfoControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseExpansionPersonalStoragePositions(node.FindParentOfType<ExpansionPersonalStorageContainersConfig>());
+                    };
+                    control.OrientationChanged += (updatedOrientation) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseExpansionPersonalStoragePositions(node.FindParentOfType<ExpansionPersonalStorageContainersConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionPersonalStorageContainersConfig), ExpansionPersonalStorageConfig, selected);
+                    SetupExpansionPersonalStorageSpawnPositions(ExpansionPersonalStorageConfig, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionPersonalStorageConfig.Position.X, ExpansionPersonalStorageConfig.Position.Z));
                 },
                 //Raid
                 ["RaidExplosives"] = (node, selected) =>
@@ -823,6 +843,9 @@ namespace ExpansionPlugin
                 }
             };
         }
+
+
+
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -1925,6 +1948,7 @@ namespace ExpansionPlugin
             };
             AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageNewConfig, CreateExpansionPersonalStorageNewConfig);
             AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageConfig, CreateExpansionPersonalStorageConfig);
+            AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageContainersConfig, CreateExpansionPersonalStorageConfigs);
             rootNode.Nodes.Add(personalstoragerootNode);
 
 
@@ -3214,7 +3238,7 @@ namespace ExpansionPlugin
             EconomyRootNode.Nodes.Add(P2PTraderRootNode);
         }
         //Personal Storage New
-        private TreeNode CreateExpansionPersonalStorageNewConfig(ExpansionPersonalStorageNewConfig ef)
+        private TreeNode CreateExpansionPersonalStorageNewConfig(ExpansionPersonalStorageNewSettingsConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode(ef.FileName)
             {
@@ -3223,7 +3247,7 @@ namespace ExpansionPlugin
             CreateExpansionPersonalStorageNewConfigNodes(ef, EconomyRootNode);
             return EconomyRootNode;
         }
-        private void CreateExpansionPersonalStorageNewConfigNodes(ExpansionPersonalStorageNewConfig ef, TreeNode EconomyRootNode)
+        private void CreateExpansionPersonalStorageNewConfigNodes(ExpansionPersonalStorageNewSettingsConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
             {
@@ -3268,7 +3292,7 @@ namespace ExpansionPlugin
             EconomyRootNode.Nodes.Add(StorageLevelsNode);
         }
         //Personal Storage
-        private TreeNode CreateExpansionPersonalStorageConfig(ExpansionPersonalStorageConfig ef)
+        private TreeNode CreateExpansionPersonalStorageConfig(ExpansionPersonalStorageSettingsConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode(ef.FileName)
             {
@@ -3277,7 +3301,7 @@ namespace ExpansionPlugin
             CreateExpansionPersonalStorageConfigNodes(ef, EconomyRootNode);
             return EconomyRootNode;
         }
-        private void CreateExpansionPersonalStorageConfigNodes(ExpansionPersonalStorageConfig ef, TreeNode EconomyRootNode)
+        private void CreateExpansionPersonalStorageConfigNodes(ExpansionPersonalStorageSettingsConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
             {
@@ -3378,6 +3402,33 @@ namespace ExpansionPlugin
             }
             Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
             return Menucatnoderoot;
+        }
+        private TreeNode CreateExpansionPersonalStorageConfigs(ExpansionPersonalStorageContainersConfig ef)
+        {
+            TreeNode StorageConfigsNode = new TreeNode("Storage Configs")
+            {
+                Tag = ef
+            };
+
+            foreach (ExpansionPersonalStorageConfig file in ef.Items)
+            {
+                CreateExpansionPersonalStorageConfigsNodes(file, StorageConfigsNode);
+            }
+            return StorageConfigsNode;
+        }
+        private static void CreateExpansionPersonalStorageConfigsNodes(ExpansionPersonalStorageConfig ef, TreeNode EconomyRootNode)
+        {
+            TreeNode P2PTraderRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
+            {
+                Tag = "ExpansionPersonalStorageConfigPOSandOri"
+            });
+
+
+            EconomyRootNode.Nodes.Add(P2PTraderRootNode);
         }
         //Player List
         private TreeNode CreateExpansionPlayerListConfig(ExpansionPlayerListConfig ef)
@@ -4003,6 +4054,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_P2PTraderVehicleSpawnDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_P2PTraderSpawnPositionsSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_P2PTraderSpawnPositionsDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -4019,7 +4072,7 @@ namespace ExpansionPlugin
             _selectedExpansionMissionEventContaminatedArea = null;
             _selectedData = null;
             _selectedP2PTradervehiclespawn = null;
-
+            _selectedPersonalStorageContainer = null;
         }
 
 
@@ -4096,6 +4149,7 @@ namespace ExpansionPlugin
         private Data _selectedData;
         private Vec3 _selectedP2PTradervehiclespawn;
         private ExpansionP2PMarketTraderConfig _selectedP2PMarketTrader;
+        private ExpansionPersonalStorageConfig _selectedPersonalStorageContainer;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -4290,6 +4344,20 @@ namespace ExpansionPlugin
                     DrawbaseP2PTraderSpawnPositions(ExpansionP2pMarketTradersConfig);
             });
         }
+        private void SetupExpansionPersonalStorageSpawnPositions(ExpansionPersonalStorageConfig expansionPersonalStorageConfig, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedPersonalStorageContainer = expansionPersonalStorageConfig;
+                _mapControl.MapsingleClicked += MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked;
+
+                var ExpansionPersonalStorageContainersConfig = node.FindParentOfType<ExpansionPersonalStorageContainersConfig>();
+                if (ExpansionPersonalStorageContainersConfig != null)
+                    DrawbaseExpansionPersonalStoragePositions(ExpansionPersonalStorageContainersConfig);
+            });
+        }
+
         //Draw Methods
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
         {
@@ -4712,6 +4780,38 @@ namespace ExpansionPlugin
                     TextBackgroundColor = Color.BlueViolet
                 };
                 if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig)
+                {
+                    marker.Color = Color.LimeGreen;
+                    // Defer registering; draw this one last
+                    selectedMarker = marker;
+                }
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+            if (selectedMarker != null)
+            {
+                _mapControl.RegisterDrawable(selectedMarker);
+            }
+        }
+        private void DrawbaseExpansionPersonalStoragePositions(ExpansionPersonalStorageContainersConfig ExpansionPersonalStorageContainersConfig)
+        {
+            TraderSpawnDrawable? selectedMarker = null;
+            foreach (ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig in ExpansionPersonalStorageContainersConfig.Items)
+            {
+                var marker = new TraderSpawnDrawable(
+                        new PointF((float)ExpansionPersonalStorageConfig.Position.X, (float)ExpansionPersonalStorageConfig.Position.Z),
+                        _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Orientation = ExpansionPersonalStorageConfig.Orientation.getfloatarray(),
+                    Text = $"{ExpansionPersonalStorageConfig.FileName}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.BlueViolet
+                };
+                if (_selectedPersonalStorageContainer == ExpansionPersonalStorageConfig)
                 {
                     marker.Color = Color.LimeGreen;
                     // Defer registering; draw this one last
@@ -7536,7 +7636,7 @@ namespace ExpansionPlugin
                     currentTreeNode.ExpandAll();
                 }
             }
-            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig)
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageNewSettingsConfig ExpansionPersonalStorageNewConfig)
             {
                 AddItemfromTypes form = new AddItemfromTypes { };
                 DialogResult result = form.ShowDialog();
@@ -7554,7 +7654,7 @@ namespace ExpansionPlugin
                     currentTreeNode.ExpandAll();
                 }
             }
-            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
+            else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageSettingsConfig ExpansionPersonalStorageConfig)
             {
                 AddItemfromTypes form = new AddItemfromTypes { };
                 DialogResult result = form.ShowDialog();
@@ -7595,12 +7695,12 @@ namespace ExpansionPlugin
                 ExpansionPersonalStorageMenuSubCategory.Excluded.Remove(currentTreeNode.Text);
                 currentTreeNode.Remove();
             }
-            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig)
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageNewSettingsConfig ExpansionPersonalStorageNewConfig)
             {
                 ExpansionPersonalStorageNewConfig.Data.ExcludedItems.Remove(currentTreeNode.Text);
                 currentTreeNode.Remove();
             }
-            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionPersonalStorageSettingsConfig ExpansionPersonalStorageConfig)
             {
                 ExpansionPersonalStorageConfig.Data.ExcludedClassNames.Remove(currentTreeNode.Text);
                 currentTreeNode.Remove();
@@ -7648,6 +7748,16 @@ namespace ExpansionPlugin
             ExpansionPersonalStorageLevel ExpansionPersonalStorageLevel = currentTreeNode.Parent.Parent.Tag as ExpansionPersonalStorageLevel;
             ExpansionPersonalStorageLevel.ExcludedSlots.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
+        }
+        //Personal Storage
+        private void MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked(object sender, EventArgs e)
+        {
+            
         }
         //Raid Settings
         private void AddNewExplosiveWhitelistItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8425,6 +8535,7 @@ namespace ExpansionPlugin
         #region Search Treeview
         private List<TreeNode> _searchResults = new();
         private int _currentIndex = -1;
+
 
         private void button2_Click(object sender, EventArgs e)
         {

@@ -1,6 +1,6 @@
 ﻿namespace ExpansionPlugin
 {
-    partial class ExpasnionP2PMarksetTraderSpawnInfoControl
+    partial class ExpasnionPersonalStorageContainerSpawnInfoControl
     {
         /// <summary> 
         /// Required designer variable.
