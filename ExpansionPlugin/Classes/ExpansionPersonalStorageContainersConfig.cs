@@ -12,6 +12,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionPersonalStorageContainersConfig : MultiFileConfigLoader<ExpansionPersonalStorageConfig>
     {
+        public const int CurrentVersion = 2;
         public List<int> UsedIDS = new List<int>();
         public ExpansionPersonalStorageContainersConfig(string path) : base(path)
         {
@@ -64,7 +65,7 @@ namespace ExpansionPlugin
             string filename = "PersonalStorage_" + newid + ".json";
             ExpansionPersonalStorageConfig PSContainer = new ExpansionPersonalStorageConfig()
             {
-                ConfigVersion = ExpansionPersonalStorageConfig.VERSION,
+                ConfigVersion = CurrentVersion,
                 StorageID = newid,
                 ClassName = "ExpansionPersonalStorageChest",
                 DisplayName = "Personal Storage",
@@ -98,9 +99,6 @@ namespace ExpansionPlugin
     }
     public class ExpansionPersonalStorageConfig : IDeepCloneable<ExpansionPersonalStorageConfig>, IEquatable<ExpansionPersonalStorageConfig>
     {
-        [JsonIgnore]
-        public static int VERSION = 2;
-
         [JsonIgnore]
         public string _path { get; private set; }
         [JsonIgnore]
@@ -173,10 +171,10 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (ConfigVersion != VERSION)
+            if (ConfigVersion != ExpansionPersonalStorageContainersConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {ConfigVersion} to {VERSION}");
-                ConfigVersion = VERSION;
+                fixes.Add($"Updated version from {ConfigVersion} to {ExpansionPersonalStorageContainersConfig.CurrentVersion}");
+                ConfigVersion = ExpansionPersonalStorageContainersConfig.CurrentVersion;
             }
             if (StorageID == null)
             {

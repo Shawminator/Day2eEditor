@@ -316,9 +316,9 @@ namespace ExpansionPlugin
                     _mapControl.EnsureVisible(new PointF(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
                 },
                 //Market
-                [typeof(MarketSettings)] = (node, selected) =>
+                [typeof(ExpansionMarketSettings)] = (node, selected) =>
                 {
-                    MarketSettings MarketSettings = node.Tag as MarketSettings;
+                    ExpansionMarketSettings MarketSettings = node.Tag as ExpansionMarketSettings;
                     ShowHandler(new ExpansionMarketSettingsGeneralControl(), typeof(ExpansionMarketSettingsConfig), MarketSettings, selected);
                 },
                 [typeof(MarketMenuColours)] = (node, selected) =>
