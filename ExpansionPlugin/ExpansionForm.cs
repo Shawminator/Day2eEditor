@@ -771,7 +771,7 @@ namespace ExpansionPlugin
                     _mapControl.EnsureVisible(new PointF(ExpansionP2PMarketTraderConfig.m_Position.X, ExpansionP2PMarketTraderConfig.m_Position.Z));
                 },
                 //Personal Storage
-                ["ExpansionPersonalStorageConfigPOSandOri"] = (node,selected) =>
+                ["ExpansionPersonalStorageConfigPOSandOri"] = (node, selected) =>
                 {
                     ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = node.Parent.Tag as ExpansionPersonalStorageConfig;
                     var control = new ExpasnionPersonalStorageContainerSpawnInfoControl();
@@ -843,9 +843,6 @@ namespace ExpansionPlugin
                 }
             };
         }
-
-
-
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -1080,6 +1077,19 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeP2PTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Personal Storage
+                [typeof(ExpansionPersonalStorageContainersConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewPersonalStorageConfigToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionPersonalStorageConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removePersonalStorageConfigToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Raid
@@ -5651,7 +5661,6 @@ namespace ExpansionPlugin
         {
 
         }
-
         private void MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked(object sender, EventArgs e)
         {
 
@@ -7757,6 +7766,21 @@ namespace ExpansionPlugin
             ExpansionPersonalStorageLevel ExpansionPersonalStorageLevel = currentTreeNode.Parent.Parent.Tag as ExpansionPersonalStorageLevel;
             ExpansionPersonalStorageLevel.ExcludedSlots.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
+        }
+        //Personal Storage
+        private void addNewPersonalStorageConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int Newid = _expansionManager.ExpansionPersonalStorageContainersConfig.GetNextID();
+            ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = _expansionManager.ExpansionPersonalStorageContainersConfig.AddNewPersonalStorageFile(Newid);
+            CreateExpansionPersonalStorageConfigsNodes(ExpansionPersonalStorageConfig, currentTreeNode);
+        }
+        private void removePersonalStorageConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
+            {
+                _expansionManager.ExpansionPersonalStorageContainersConfig.RemoveFile(ExpansionPersonalStorageConfig);
+                currentTreeNode.Remove();
+            }
         }
 
         //Raid Settings

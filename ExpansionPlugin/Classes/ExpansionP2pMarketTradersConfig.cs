@@ -89,6 +89,8 @@ namespace ExpansionPlugin
                 m_DisplayCurrencyName = "",
             };
             P2PTrader.SetPath(Path.Combine(filepath, filename));
+            P2PTrader.SetGuid(Guid.NewGuid());
+            UsedIDS.Add((int)P2PTrader.m_TraderID);
             Items.Add(P2PTrader);
             return P2PTrader;
 

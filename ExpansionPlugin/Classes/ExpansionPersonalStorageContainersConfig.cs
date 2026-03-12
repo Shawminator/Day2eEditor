@@ -77,6 +77,8 @@ namespace ExpansionPlugin
                 IsGlobalStorage = 0,
             };
             PSContainer.SetPath(Path.Combine(filepath, filename));
+            PSContainer.SetGuid(Guid.NewGuid());
+            UsedIDS.Add((int)PSContainer.StorageID);
             Items.Add(PSContainer);
             return PSContainer;
 
