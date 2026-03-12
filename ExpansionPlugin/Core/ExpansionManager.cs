@@ -96,11 +96,17 @@ namespace ExpansionPlugin
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
             _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
             _paths["MapSettings"] = Path.Combine(basePath, "expansion", "settings", "MapSettings.json");
-            _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
             _paths["P2PMarketSettings"] = Path.Combine(basePath, "expansion", "settings", "P2PMarketSettings.json"); 
             _paths["PersonalStorageSettings"] = Path.Combine(basePath, "expansion", "settings", "PersonalStorageSettings.json"); 
             _paths["SafeZoneSettings"] = Path.Combine(basePath, "expansion", "settings", "SafeZoneSettings.json");
             _paths["SpawnSettings"] = Path.Combine(basePath, "expansion", "settings", "SpawnSettings.json");
+
+            //Market Files
+            _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
+            _paths["MarketCategories"] = Path.Combine(profilePath, "ExpansionMod", "Market");
+            _paths["MarketTraders"] = Path.Combine(profilePath, "ExpansionMod", "Traders");
+            _paths["MarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
+            _paths["MarketTraderNPCs"] = Path.Combine(basePath, "expansion", "traders");
 
             LoadFiles();
         }
@@ -165,9 +171,6 @@ namespace ExpansionPlugin
             ExpansionMapConfig = new ExpansionMapConfig(_paths["MapSettings"]);
             LoadConfigWithErrorReport("MapSettings", ExpansionMapConfig);
 
-            ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
-            LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
-
             ExpansionMissionConfig = new ExpansionMissionSettingsConfig(_paths["MissionSettings"]);
             LoadConfigWithErrorReport("MissionSettings", ExpansionMissionConfig);
 
@@ -218,6 +221,9 @@ namespace ExpansionPlugin
 
             ExpansionVehiclesConfig = new ExpansionVehiclesConfig(_paths["VehicleSettings"]);
             LoadConfigWithErrorReport("VehicleSettings", ExpansionVehiclesConfig);
+
+            ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
+            LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
 
             Save();
         }

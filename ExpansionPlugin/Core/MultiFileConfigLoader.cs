@@ -98,8 +98,6 @@ namespace ExpansionPlugin
             }
             return saved;
         }
-
-
         public bool needToSave()
         {
             return false;
