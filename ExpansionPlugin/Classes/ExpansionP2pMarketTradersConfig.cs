@@ -156,6 +156,7 @@ namespace ExpansionPlugin
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
             if (m_Version != other.m_Version ||
                 m_TraderID != other.m_TraderID ||

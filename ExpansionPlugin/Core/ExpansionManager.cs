@@ -32,6 +32,9 @@ namespace ExpansionPlugin
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         public ExpansionMapConfig ExpansionMapConfig { get; set; }
         public ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig { get; set; }
+        public ExpansionMarketTraderZoneConfig ExpansionMarketTraderZoneConfig { get; set; }    
+        public ExpansionMarketCategoryConfig ExpansionMarketCategoryConfig { get; set; }
+        public ExpansionMarketTraderConfig ExpansionMarketTraderConfig { get; set; }
         public ExpansionMissionSettingsConfig ExpansionMissionConfig { get; set; }
         public ExpansionMonitoringConfig ExpansionMonitoringConfig { get; set; }
         public ExpansionNameTagsConfig ExpansionNameTagsConfig { get; set; }
@@ -225,6 +228,15 @@ namespace ExpansionPlugin
             ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
             LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
 
+            ExpansionMarketTraderZoneConfig = new ExpansionMarketTraderZoneConfig(_paths["MarketTraderZones"]);
+            LoadConfigWithErrorReport("MarketTraderZones", ExpansionMarketTraderZoneConfig);
+
+            ExpansionMarketCategoryConfig = new ExpansionMarketCategoryConfig(_paths["MarketCategories"]);
+            LoadConfigWithErrorReport("MarketCategories", ExpansionMarketCategoryConfig);
+
+            ExpansionMarketTraderConfig = new ExpansionMarketTraderConfig(_paths["MarketTraders"]);
+            LoadConfigWithErrorReport("MarketTraders", ExpansionMarketTraderConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -264,6 +276,9 @@ namespace ExpansionPlugin
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
                 ExpansionMarketSettingsConfig,
+                ExpansionMarketTraderZoneConfig,
+                ExpansionMarketCategoryConfig,
+                ExpansionMarketTraderConfig,
                 ExpansionMissionConfig,
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,
@@ -321,6 +336,9 @@ namespace ExpansionPlugin
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
                 ExpansionMarketSettingsConfig,
+                ExpansionMarketTraderZoneConfig,
+                ExpansionMarketCategoryConfig,
+                ExpansionMarketTraderConfig,
                 ExpansionMissionConfig,
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,
