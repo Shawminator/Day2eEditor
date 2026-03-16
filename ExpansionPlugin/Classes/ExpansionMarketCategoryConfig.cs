@@ -11,6 +11,42 @@ namespace ExpansionPlugin
         public ExpansionMarketCategoryConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            HasErrors = false;
+            Errors.Clear();
+            Items.Clear();
+            ClonedItems.Clear();
+
+            var filePaths = Directory.GetFiles(BasePath, "*.json", SearchOption.AllDirectories);
+
+            foreach (var file in filePaths)
+            {
+                try
+                {
+                    var item = LoadItem(file);
+
+                    OnAfterItemLoad(item, file);
+                    ClonedItems.Add(GetID(item), item.Clone());
+                    var issues = ValidateData(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+                    Items.Add(item);
+
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
+                }
+            }
+
+            OnAfterLoadAll();
+        }
         protected override ExpansionMarketCategory LoadItem(string filePath)
         {
             var TraderZone = AppServices.GetRequired<FileService>().LoadOrCreateJson(
@@ -22,6 +58,7 @@ namespace ExpansionPlugin
                 );
 
             TraderZone.SetPath(filePath);
+            TraderZone.SetFoldeParts(BasePath);
             TraderZone.SetGuid(Guid.NewGuid());
             return TraderZone;
         }
@@ -79,6 +116,8 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public string _path { get; private set; }
         [JsonIgnore]
+        public List<string> FolderParts { get; private set; }
+        [JsonIgnore]
         public string FileName => Path.GetFileName(_path);
         [JsonIgnore]
         public bool ToDelete { get; set; }
@@ -87,6 +126,21 @@ namespace ExpansionPlugin
 
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;
+        public void SetFoldeParts(string basePath)
+        {
+            string dir = Path.GetDirectoryName(_path);
+            string normBase = Path.GetFullPath(basePath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string normDir = Path.GetFullPath(dir).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (string.Equals(normBase, normDir, StringComparison.OrdinalIgnoreCase))
+            {
+                FolderParts = new List<string>();
+                return;
+            }
+            var relative = Path.GetRelativePath(normBase, normDir);
+            var parts = relative.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            FolderParts = parts.ToList();
+
+        }
 
         public int m_Version { get; set; } //current version 9
         public string? DisplayName { get; set; }

@@ -1857,28 +1857,28 @@ namespace ExpansionPlugin
             MapData = new MapData(Path.Combine(appDirectory, "MapAddons", AppServices.GetRequired<ProjectManager>().CurrentProject.MapPath + ".xyz"), AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
             return true;
         }
-        private void AddFileToTree<TFile>(TreeNode parentNode, string relativePath, string rootPath, TFile file, Func<TFile, TreeNode> createFileNode, bool expand = false)
+
+        private void AddFileToTree<TFile>(
+            TreeNode parentNode,
+            List<string> relativePath,
+            TFile file,
+            Func<TFile, TreeNode> createFileNode,
+            bool expand = false)
         {
-            string[] parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (parentNode == null)
+                throw new ArgumentNullException(nameof(parentNode));
+            if (file == null)
+                throw new ArgumentNullException(nameof(relativePath));
+            if (createFileNode == null)
+                throw new ArgumentNullException(nameof(createFileNode));
+
             TreeNode currentNode = parentNode;
 
-            for (int i = 0; i < parts.Length; i++)
+            if (relativePath != null && relativePath.Count > 0)
             {
-                string part = parts[i];
-
-                if (i == parts.Length - 1)
+                for (int i = 0; i < relativePath.Count; i++)
                 {
-                    TreeNode fileNode = createFileNode(file);
-                    currentNode.Nodes.Add(fileNode);
-                    if (expand)
-                    {
-                        // Expand all parent folders
-                        fileNode.Expand();
-                        ExpansionTV.SelectedNode = fileNode;
-                    }
-                }
-                else
-                {
+                    string part = relativePath[i];
                     TreeNode folderNode = currentNode.Nodes
                         .Cast<TreeNode>()
                         .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase));
@@ -1887,24 +1887,27 @@ namespace ExpansionPlugin
                     {
                         folderNode = new TreeNode(part)
                         {
-                            Tag = Path.Combine(
-                                rootPath,
-                                string.Join(Path.DirectorySeparatorChar.ToString(), parts.Take(i + 1))
-                            )
+                            Tag = string.Join(Path.DirectorySeparatorChar.ToString(), relativePath.Take(i + 1))
                         };
-                        currentNode.Nodes.Add(folderNode);
+                        InsertNodeAlphabetically(currentNode.Nodes, folderNode);
                     }
 
                     currentNode = folderNode;
 
                     if (expand)
-                    {
-                        // Expand all parent folders
                         currentNode.Expand();
-                    }
                 }
             }
+            TreeNode fileNode = createFileNode(file);
+            currentNode.Nodes.Add(fileNode);
+
+            if (expand)
+            {
+                fileNode.Expand();
+                ExpansionTV.SelectedNode = fileNode;
+            }
         }
+
         private void BuildTreeview()
         {
             ExpansionTV.Nodes.Clear();
@@ -1918,11 +1921,11 @@ namespace ExpansionPlugin
             {
                 Tag = "AIrootNode"
             };
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLoadoutConfig, CreateExpansionLoadoutConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionLootDropConfig, CrateLootDropConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
-            AddFileToTree(AIrootNode, "", "", _expansionManager.ExpansionAILocationConfig, CreateExpansionAILocationConfigNodes);
+            AddFileToTree(AIrootNode, null, _expansionManager.ExpansionAIConfig, CreateExpansionAIConfigNodes);
+            AddFileToTree(AIrootNode, null, _expansionManager.ExpansionLoadoutConfig, CreateExpansionLoadoutConfigNodes);
+            AddFileToTree(AIrootNode, null, _expansionManager.ExpansionLootDropConfig, CrateLootDropConfigNodes);
+            AddFileToTree(AIrootNode, null, _expansionManager.ExpansionAIPatrolConfig, CreateExpansionAIPatrolConfigNodes);
+            AddFileToTree(AIrootNode, null, _expansionManager.ExpansionAILocationConfig, CreateExpansionAILocationConfigNodes);
             rootNode.Nodes.Add(AIrootNode);
 
             TreeNode MarketrootNode = new TreeNode("Market")
@@ -1930,7 +1933,8 @@ namespace ExpansionPlugin
                 Tag = "MarketrootNode"
             };
 
-            AddFileToTree(MarketrootNode, "", "", _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
+            AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
+            AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketCategoryConfig, CreateExpansionMarketCategoryConfig);
 
             rootNode.Nodes.Add(MarketrootNode);
 
@@ -1938,9 +1942,9 @@ namespace ExpansionPlugin
             {
                 Tag = "MissionsrootNode"
             };
-            AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
-            AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
-            AddFileToTree(MissionrootNode, "", "", _expansionManager.ExpansionMissionsConfig, CreateExpansionMissionsConfigNodes);
+            AddFileToTree(MissionrootNode, null, _expansionManager.ExpansionMissionConfig, CreateExpansionMissionConfig);
+            AddFileToTree(MissionrootNode, null, _expansionManager.ExpansionAirdropConfig, CreateExpansionAirdropConfigNodes);
+            AddFileToTree(MissionrootNode, null, _expansionManager.ExpansionMissionsConfig, CreateExpansionMissionsConfigNodes);
 
             rootNode.Nodes.Add(MissionrootNode);
 
@@ -1948,17 +1952,17 @@ namespace ExpansionPlugin
             {
                 Tag = "p2pmarketNode"
             };
-            AddFileToTree(p2pmarketrootNode, "", "", _expansionManager.ExpansionP2PMarketConfig, CreateExpansionP2PMarketConfig);
-            AddFileToTree(p2pmarketrootNode, "", "", _expansionManager.ExpansionP2pMarketTradersConfig, CreateExpansionP2PMarketTradersConfig);
+            AddFileToTree(p2pmarketrootNode, null, _expansionManager.ExpansionP2PMarketConfig, CreateExpansionP2PMarketConfig);
+            AddFileToTree(p2pmarketrootNode, null, _expansionManager.ExpansionP2pMarketTradersConfig, CreateExpansionP2PMarketTradersConfig);
             rootNode.Nodes.Add(p2pmarketrootNode);
 
             TreeNode personalstoragerootNode = new TreeNode("Personal Storage")
             {
                 Tag = "personalstoragerootNode"
             };
-            AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageNewConfig, CreateExpansionPersonalStorageNewConfig);
-            AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageConfig, CreateExpansionPersonalStorageConfig);
-            AddFileToTree(personalstoragerootNode, "", "", _expansionManager.ExpansionPersonalStorageContainersConfig, CreateExpansionPersonalStorageConfigs);
+            AddFileToTree(personalstoragerootNode, null, _expansionManager.ExpansionPersonalStorageNewConfig, CreateExpansionPersonalStorageNewConfig);
+            AddFileToTree(personalstoragerootNode, null, _expansionManager.ExpansionPersonalStorageConfig, CreateExpansionPersonalStorageConfig);
+            AddFileToTree(personalstoragerootNode, null, _expansionManager.ExpansionPersonalStorageContainersConfig, CreateExpansionPersonalStorageConfigs);
             rootNode.Nodes.Add(personalstoragerootNode);
 
 
@@ -1967,28 +1971,28 @@ namespace ExpansionPlugin
                 Tag = "SettingsNode",
             };
 
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionChatConfig, CreateExpansionChatConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionCoreConfig, CreateExpansionCoreConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionDamageSystemConfig, CreateExpansionDamageSystemConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionGarageConfig, CreateExpansionGarageConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionGeneralConfig, CreateExpansionGeneralConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMapConfig, CreateExpansionMapConfigNodes);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionMonitoringConfig, CreateExpansionMonitoringConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNameTagsConfig, CreateExpansionNameTagsConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPartyConfig, CreateExpansionPartyConfigConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionPlayerListConfig, CreateExpansionPlayerListConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionRaidConfig, CreateExpansionRaidConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSafeZoneConfig, CreateExpansionSafeZoneConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSocialMediaConfig, CreateExpansionSocialMediaConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionSpawnConfig, CreateExpansionSpawnConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionTerritoryConfig, CreateExpansionTerritoryConfig);
-            AddFileToTree(SettingsNode, "", "", _expansionManager.ExpansionVehiclesConfig, CreateExpansionVehiclesConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionBaseBuildingConfig, CreateExpansionBaseBuildingConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionBookConfig, CreateExpansionBookConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionChatConfig, CreateExpansionChatConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionCoreConfig, CreateExpansionCoreConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionDamageSystemConfig, CreateExpansionDamageSystemConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionGarageConfig, CreateExpansionGarageConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionGeneralConfig, CreateExpansionGeneralConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionLogsConfig, CreateExpansionLogsConfigConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionMapConfig, CreateExpansionMapConfigNodes);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionMonitoringConfig, CreateExpansionMonitoringConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionNameTagsConfig, CreateExpansionNameTagsConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionNotificationSchedulerConfig, CreateExpansionNotificationSchedulerConfigConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionNotificationConfig, CreateExpansionNotificationConfigConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionPartyConfig, CreateExpansionPartyConfigConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionPlayerListConfig, CreateExpansionPlayerListConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionRaidConfig, CreateExpansionRaidConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionSafeZoneConfig, CreateExpansionSafeZoneConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionSocialMediaConfig, CreateExpansionSocialMediaConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionSpawnConfig, CreateExpansionSpawnConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionTerritoryConfig, CreateExpansionTerritoryConfig);
+            AddFileToTree(SettingsNode, null, _expansionManager.ExpansionVehiclesConfig, CreateExpansionVehiclesConfig);
 
             rootNode.Nodes.Add(SettingsNode);
 
@@ -1996,7 +2000,7 @@ namespace ExpansionPlugin
             {
                 Tag = "QuestsrootNode"
             };
-            AddFileToTree(QuestsrootNode, "", "", _expansionManager.ExpansionQuestConfig, CreateExpansionQuestConfig);
+            AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestConfig, CreateExpansionQuestConfig);
             rootNode.Nodes.Add(QuestsrootNode);
 
             ExpansionTV.Nodes.Add(rootNode);
@@ -2764,6 +2768,53 @@ namespace ExpansionPlugin
             CreateMarketSettingsNodes(ef, EconomyRootNode);
             return EconomyRootNode;
         }
+        private TreeNode CreateExpansionMarketCategoryConfig(ExpansionMarketCategoryConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Market Categories")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionMarketCategory file in ef.Items)
+            {
+                CreateExpansionMarketCategoryNodes(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+
+        private static void CreateExpansionMarketCategoryNodes(ExpansionMarketCategory expansionMarketCategory,TreeNode economyRootNode)
+        {
+            TreeNode categoryNode = new TreeNode(expansionMarketCategory.FileName)
+            {
+                Tag = expansionMarketCategory
+            };
+            if (expansionMarketCategory.FolderParts.Count == 0)
+            {
+                economyRootNode.Nodes.Add(categoryNode);
+                return;
+            }
+            TreeNode currentNode = economyRootNode;
+            for (int i = 0; i < expansionMarketCategory.FolderParts.Count; i++)
+            {
+                string part = expansionMarketCategory.FolderParts[i];
+                TreeNode folderNode = currentNode.Nodes
+                    .Cast<TreeNode>()
+                    .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase));
+                if (folderNode == null)
+                {
+                    folderNode = new TreeNode(part)
+                    {
+                        Tag = string.Join(
+                            Path.DirectorySeparatorChar.ToString(),
+                            expansionMarketCategory.FolderParts.Take(i + 1))
+                    };
+
+                    currentNode.Nodes.Add(folderNode);
+                }
+                currentNode = folderNode;
+            }
+            currentNode.Nodes.Add(categoryNode);
+        }
+
         private static void CreateMarketSettingsNodes(ExpansionMarketSettingsConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
