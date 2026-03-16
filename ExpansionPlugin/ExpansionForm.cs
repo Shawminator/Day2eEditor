@@ -2780,7 +2780,7 @@ namespace ExpansionPlugin
             }
             return EconomyRootNode;
         }
-        private static void CreateExpansionMarketCategoryNodes(ExpansionMarketCategory expansionMarketCategory,TreeNode economyRootNode)
+        private static void CreateExpansionMarketCategoryNodes(ExpansionMarketCategory expansionMarketCategory, TreeNode economyRootNode)
         {
             TreeNode categoryNode = new TreeNode(expansionMarketCategory.FileName)
             {
@@ -7203,6 +7203,23 @@ namespace ExpansionPlugin
             currentTreeNode.Remove();
             _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
         }
+        //Market Categories
+        private void addNewMarketCategoryFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeMarketCategoryFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8661,6 +8678,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 

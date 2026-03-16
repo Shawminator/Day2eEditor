@@ -110,6 +110,11 @@ namespace ExpansionPlugin
         {
             return ExpansionMarketCategory.FixMissingOrInvalidFields();
         }
+
+        internal ExpansionMarketItem getitem(string key)
+        {
+            
+        }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>
     {
@@ -154,6 +159,7 @@ namespace ExpansionPlugin
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
             if (m_Version != other.m_Version ||
                 DisplayName != other.DisplayName ||
@@ -164,6 +170,9 @@ namespace ExpansionPlugin
                 return false;
 
             if (!ListEquals(Items, other.Items))
+                return false;
+
+            if (!ListEquals(FolderParts, other.FolderParts))
                 return false;
 
             return true;
@@ -201,13 +210,15 @@ namespace ExpansionPlugin
                 Items = this.Items != null
                     ? new BindingList<ExpansionMarketItem>(this.Items.Select(cat => cat.Clone()).ToList())
                     : null,
+                FolderParts = this.FolderParts != null
+                    ? new List<string>(this.FolderParts.Select(x => x).ToList())
+                    : null,
 
             };
             clone.SetPath(_path);
             clone.SetGuid(Id);
             return clone;
         }
-
         internal IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

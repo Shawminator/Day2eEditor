@@ -13,6 +13,17 @@ namespace ExpansionPlugin
         CanOnlySell,
         CanBuyAndSellAsAttachmentOnly  //! Item should not be shown in menu, but can be sold/purchased as attachment on another item. For internal use only
     }
+    public class ExpansionMarketTraderItem
+    {
+        public ExpansionMarketItem MarketItem { get; set; }
+        public ExpansionMarketTraderBuySell BuySell;
+
+        public ExpansionMarketTraderItem(ExpansionMarketItem marketItem, ExpansionMarketTraderBuySell buySell)
+        {
+            MarketItem = marketItem;
+            BuySell = buySell;
+        }
+    }
     public class ExpansionMarketTraderConfig : MultiFileConfigLoader<ExpansionMarketTrader>
     {
         public const int CurrentVersion = 13;
@@ -31,6 +42,8 @@ namespace ExpansionPlugin
 
             TraderZone.SetPath(filePath);
             TraderZone.SetGuid(Guid.NewGuid());
+            TraderZone.getCategories();
+            TraderZone.getSingleItems();
             return TraderZone;
         }
         protected override void SaveItem(ExpansionMarketTrader ExpansionMarketTrader)
@@ -62,7 +75,7 @@ namespace ExpansionPlugin
                 MaxRequiredReputation = 2147483647,
                 TraderIcon = "Trader",
                 Currencies = new BindingList<string>(),
-                Items = new Dictionary<string, int>(),
+                Items = new Dictionary<string, ExpansionMarketTraderBuySell>(),
                 Categories = new BindingList<string>(),
                 RequiredFaction = "",
                 RequiredCompletedQuestID = -1,
@@ -115,7 +128,13 @@ namespace ExpansionPlugin
         public string? DisplayCurrencyName { get; set; }
         public int? UseCategoryOrder { get; set; }
         public BindingList<string> Categories { get; set; }
-        public Dictionary<string, int> Items { get; set; }
+        public Dictionary<string, ExpansionMarketTraderBuySell> Items { get; set; }
+
+
+        [JsonIgnore]
+        public BindingList<ExpansionMarketCategory> ExpansionMarketCategories { get; set; }
+        [JsonIgnore]
+        public BindingList<ExpansionMarketTraderItem> ExpansionMarketItems { get; set; }  
 
         public bool Equals(ExpansionMarketTrader other)
         {
@@ -161,14 +180,14 @@ namespace ExpansionPlugin
 
             return true;
         }
-        public bool AreEqual(Dictionary<string, int> a, Dictionary<string, int> b)
+        public bool AreEqual(Dictionary<string, ExpansionMarketTraderBuySell> a, Dictionary<string, ExpansionMarketTraderBuySell> b)
         {
             if (a.Count != b.Count)
                 return false;
 
             foreach (var kvp in a)
             {
-                if (!b.TryGetValue(kvp.Key, out int value))
+                if (!b.TryGetValue(kvp.Key, out ExpansionMarketTraderBuySell value))
                     return false;
 
                 if (kvp.Value != value)
@@ -198,7 +217,7 @@ namespace ExpansionPlugin
                 Categories = this.Categories != null
                     ? new BindingList<string>(this.Categories.ToList())
                     : null,
-                Items = new Dictionary<string, int>(this.Items)
+                Items = new Dictionary<string, ExpansionMarketTraderBuySell>(this.Items)
             };
             clone.SetPath(_path);
             clone.SetGuid(Id);
@@ -242,11 +261,22 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated TraderIcon to null");
                 TraderIcon = "";
             }
-            if (Currencies == null)
+            if (Currencies.Count > 0)
             {
-                Currencies = new BindingList<string>();
-                fixes.Add("Items List Currencies");
+                for (int i = 0; i < Currencies.Count; i++)
+                {
+                    string original = Currencies[i];
+
+                    if (original.Any(char.IsUpper))
+                    {
+                        string lower = original.ToLowerInvariant();
+                        Currencies[i] = lower;
+
+                        fixes.Add($"\tMARKET CONFIGURATION ERROR: {original} changed to {lower}");
+                    }
+                }
             }
+
             if (DisplayCurrencyValue == null || DisplayCurrencyValue < 0 || DisplayCurrencyValue > 1)
             {
                 fixes.Add($"Updated SellPricePercent to 0");
@@ -269,10 +299,36 @@ namespace ExpansionPlugin
             }
             if (Items == null)
             {
-                Items = new Dictionary<string, int>();
+                Items = new Dictionary<string, ExpansionMarketTraderBuySell>();
                 fixes.Add("Items Items Currencies");
             }
+            if (Items.Count > 0)
+            {
+                var keysWithUpper = Items.Keys.Where(k => k.Any(char.IsUpper)).ToList();
+                foreach (var key in keysWithUpper)
+                {
+                    string lowerKey = key.ToLower();
+                    fixes.Add($"\tMARKET CONFIGURATION ERROR: {key} changed to {lowerKey}");
+                    var value = Items[key];
+                    Items.Remove(key);
+                    Items[lowerKey] = value;
+                }
+
+            }
             return fixes;
+        }
+
+        internal void getCategories()
+        {
+            
+        }
+
+        internal void getSingleItems()
+        {
+            foreach (KeyValuePair<string,ExpansionMarketTraderBuySell> item in Items)
+            {
+                ExpansionMarketItem Titem = AppServices.GetRequired<ExpansionMarketCategoryConfig>().getitem(item.Key);
+            }
         }
     }
 }

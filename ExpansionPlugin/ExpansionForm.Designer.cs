@@ -186,6 +186,11 @@
             removeExcludedStorageSlotToolStripMenuItem = new ToolStripMenuItem();
             addNewPersonalStorageConfigToolStripMenuItem = new ToolStripMenuItem();
             removePersonalStorageConfigToolStripMenuItem = new ToolStripMenuItem();
+            MarketCM = new ContextMenuStrip(components);
+            addNewMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
+            removeMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
+            addNewFolderToolStripMenuItem = new ToolStripMenuItem();
+            deleteFolderToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -201,6 +206,7 @@
             RaidSettingsCM.SuspendLayout();
             SafeZoneCM.SuspendLayout();
             P2PCM.SuspendLayout();
+            MarketCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -1378,7 +1384,7 @@
             P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem, addNewExcludedStorageSlotToolStripMenuItem, removeExcludedStorageSlotToolStripMenuItem, addNewPersonalStorageConfigToolStripMenuItem, removePersonalStorageConfigToolStripMenuItem });
             P2PCM.Name = "ChatCM";
             P2PCM.ShowImageMargin = false;
-            P2PCM.Size = new Size(229, 334);
+            P2PCM.Size = new Size(229, 312);
             // 
             // AddNewP2PMarketCategoryToolStripMenuItem
             // 
@@ -1492,6 +1498,46 @@
             removePersonalStorageConfigToolStripMenuItem.Text = "Remove Personal Storage Config";
             removePersonalStorageConfigToolStripMenuItem.Click += removePersonalStorageConfigToolStripMenuItem_Click;
             // 
+            // MarketCM
+            // 
+            MarketCM.BackColor = Color.FromArgb(60, 63, 65);
+            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem });
+            MarketCM.Name = "ChatCM";
+            MarketCM.ShowImageMargin = false;
+            MarketCM.Size = new Size(211, 114);
+            // 
+            // addNewMarketCategoryFileToolStripMenuItem
+            // 
+            addNewMarketCategoryFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewMarketCategoryFileToolStripMenuItem.Name = "addNewMarketCategoryFileToolStripMenuItem";
+            addNewMarketCategoryFileToolStripMenuItem.Size = new Size(210, 22);
+            addNewMarketCategoryFileToolStripMenuItem.Text = "Add New Market Category File";
+            addNewMarketCategoryFileToolStripMenuItem.Click += addNewMarketCategoryFileToolStripMenuItem_Click;
+            // 
+            // removeMarketCategoryFileToolStripMenuItem
+            // 
+            removeMarketCategoryFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeMarketCategoryFileToolStripMenuItem.Name = "removeMarketCategoryFileToolStripMenuItem";
+            removeMarketCategoryFileToolStripMenuItem.Size = new Size(210, 22);
+            removeMarketCategoryFileToolStripMenuItem.Text = "Remove Market Category File";
+            removeMarketCategoryFileToolStripMenuItem.Click += removeMarketCategoryFileToolStripMenuItem_Click;
+            // 
+            // addNewFolderToolStripMenuItem
+            // 
+            addNewFolderToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewFolderToolStripMenuItem.Name = "addNewFolderToolStripMenuItem";
+            addNewFolderToolStripMenuItem.Size = new Size(210, 22);
+            addNewFolderToolStripMenuItem.Text = "Add New Folder";
+            addNewFolderToolStripMenuItem.Click += addNewFolderToolStripMenuItem_Click;
+            // 
+            // deleteFolderToolStripMenuItem
+            // 
+            deleteFolderToolStripMenuItem.ForeColor = SystemColors.Control;
+            deleteFolderToolStripMenuItem.Name = "deleteFolderToolStripMenuItem";
+            deleteFolderToolStripMenuItem.Size = new Size(210, 22);
+            deleteFolderToolStripMenuItem.Text = "Delete Folder";
+            deleteFolderToolStripMenuItem.Click += deleteFolderToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1523,6 +1569,7 @@
             RaidSettingsCM.ResumeLayout(false);
             SafeZoneCM.ResumeLayout(false);
             P2PCM.ResumeLayout(false);
+            MarketCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1685,5 +1732,10 @@
         private ToolStripMenuItem removeExcludedStorageSlotToolStripMenuItem;
         private ToolStripMenuItem addNewPersonalStorageConfigToolStripMenuItem;
         private ToolStripMenuItem removePersonalStorageConfigToolStripMenuItem;
+        private ContextMenuStrip MarketCM;
+        private ToolStripMenuItem addNewMarketCategoryFileToolStripMenuItem;
+        private ToolStripMenuItem removeMarketCategoryFileToolStripMenuItem;
+        private ToolStripMenuItem addNewFolderToolStripMenuItem;
+        private ToolStripMenuItem deleteFolderToolStripMenuItem;
     }
 }
