@@ -1889,7 +1889,7 @@ namespace ExpansionPlugin
                         {
                             Tag = string.Join(Path.DirectorySeparatorChar.ToString(), relativePath.Take(i + 1))
                         };
-                        InsertNodeAlphabetically(currentNode.Nodes, folderNode);
+                        Helpers.InsertNodeAlphabetically(currentNode.Nodes, folderNode);
                     }
 
                     currentNode = folderNode;
@@ -2780,7 +2780,6 @@ namespace ExpansionPlugin
             }
             return EconomyRootNode;
         }
-
         private static void CreateExpansionMarketCategoryNodes(ExpansionMarketCategory expansionMarketCategory,TreeNode economyRootNode)
         {
             TreeNode categoryNode = new TreeNode(expansionMarketCategory.FileName)
@@ -2807,14 +2806,12 @@ namespace ExpansionPlugin
                             Path.DirectorySeparatorChar.ToString(),
                             expansionMarketCategory.FolderParts.Take(i + 1))
                     };
-
-                    currentNode.Nodes.Add(folderNode);
+                    Helpers.InsertNodeAlphabetically(currentNode.Nodes, folderNode);
                 }
                 currentNode = folderNode;
             }
-            currentNode.Nodes.Add(categoryNode);
+            Helpers.InsertNodeAlphabetically(currentNode.Nodes, categoryNode);
         }
-
         private static void CreateMarketSettingsNodes(ExpansionMarketSettingsConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
@@ -7279,7 +7276,7 @@ namespace ExpansionPlugin
                     };
                     missionNode.Nodes.Add(alclnodes);
                 }
-                InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
                 ExpansionTV.SelectedNode = missionNode;
             }
         }
@@ -7356,7 +7353,7 @@ namespace ExpansionPlugin
                     if (ExpansionMissionEventContaminatedArea.PlayerData != null)
                         missionNode.Nodes.Add(new TreeNode("PlayerData") { Tag = ExpansionMissionEventContaminatedArea.PlayerData });
                 }
-                InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
                 ExpansionTV.SelectedNode = missionNode;
             }
         }
@@ -7450,7 +7447,7 @@ namespace ExpansionPlugin
                 SubCatNodes.Nodes.Add(CreateSubCats(subcat));
             }
             Menucatnoderoot.Nodes.Add(SubCatNodes);
-            InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
+            Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
             ExpansionTV.SelectedNode = Menucatnoderoot;
         }
         private void RemoveP2PMarketCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7498,7 +7495,7 @@ namespace ExpansionPlugin
                     });
                 }
                 Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
-                InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
                 ExpansionTV.SelectedNode = Menucatnoderoot;
             }
             else if (currentTreeNode.Parent.Tag is ExpansionPersonalStorageMenuCategory ExpansionPersonalStorageMenuCategory)
@@ -7539,7 +7536,7 @@ namespace ExpansionPlugin
                     });
                 }
                 Menucatnoderoot.Nodes.Add(ExludedclassnamesNode);
-                InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, Menucatnoderoot);
                 ExpansionTV.SelectedNode = Menucatnoderoot;
             }
         }
@@ -8664,18 +8661,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
-        private void InsertNodeAlphabetically(TreeNodeCollection nodes, TreeNode newNode)
-        {
-            int index = 0;
 
-            while (index < nodes.Count &&
-                   string.Compare(nodes[index].Text, newNode.Text, StringComparison.OrdinalIgnoreCase) < 0)
-            {
-                index++;
-            }
-
-            nodes.Insert(index, newNode);
-        }
 
 
     }
