@@ -1021,6 +1021,23 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeNotificationToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //Market Categories
+                [typeof(ExpansionMarketCategoryConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewFolderToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewMarketCategoryFileToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMarketCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeMarketCategoryFileToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(moveCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 //Missions
                 [typeof(ExpansionMissionEventAirdrop)] = node =>
                 {
@@ -1475,6 +1492,17 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewNotificationToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Market Categories
+                ["MarketCategoryRelativePath"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewFolderToolStripMenuItem);
+                    if(node.Nodes.Count == 0)
+                        ExpansionSettingsCM.Items.Add(deleteFolderToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewMarketCategoryFileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //P2P Market
@@ -2786,6 +2814,44 @@ namespace ExpansionPlugin
             {
                 Tag = expansionMarketCategory
             };
+            TreeNode ItemsNode = new TreeNode("Items")
+            {
+                Tag = "MarketItems"
+            };
+            foreach (ExpansionMarketItem item in expansionMarketCategory.Items)
+            {
+                TreeNode itemNode = new TreeNode(item.ClassName)
+                {
+                    Tag = item
+                };
+                TreeNode VarientNode = new TreeNode("Varients")
+                {
+                    Tag = "MarketItemVarients"
+                };
+                foreach (string varient in item.Variants)
+                {
+                    VarientNode.Nodes.Add(new TreeNode(varient)
+                    {
+                        Tag = "MarketItemVarient"
+                    });
+                }
+                itemNode.Nodes.Add(VarientNode);
+
+                TreeNode AttchmentNode = new TreeNode("Spawn Attachments")
+                {
+                    Tag = "MarketItemSpawnAttachments"
+                };
+                foreach (string att in item.SpawnAttachments)
+                {
+                    AttchmentNode.Nodes.Add(new TreeNode(att)
+                    {
+                        Tag = "MarketItemSpawnAttachment"
+                    });
+                }
+                itemNode.Nodes.Add(AttchmentNode);
+                ItemsNode.Nodes.Add(itemNode);
+            }
+            categoryNode.Nodes.Add(ItemsNode);
             if (expansionMarketCategory.FolderParts.Count == 0)
             {
                 economyRootNode.Nodes.Add(categoryNode);
@@ -2802,8 +2868,8 @@ namespace ExpansionPlugin
                 {
                     folderNode = new TreeNode(part)
                     {
-                        Tag = string.Join(
-                            Path.DirectorySeparatorChar.ToString(),
+                        Tag = "MarketCategoryRelativePath:" + string.Join(
+                            Path.AltDirectorySeparatorChar.ToString(),
                             expansionMarketCategory.FolderParts.Take(i + 1))
                     };
                     Helpers.InsertNodeAlphabetically(currentNode.Nodes, folderNode);
@@ -4182,9 +4248,16 @@ namespace ExpansionPlugin
                 typeHandler.Invoke(e.Node);
             }
             // Try string-based
-            else if (e.Node.Tag is string s && _stringContextMenus.TryGetValue(s, out var stringHandler))
+            else if (e.Node.Tag is string s )
             {
-                stringHandler.Invoke(e.Node);
+                if (s.Contains(":"))
+                {
+                    s = s.Split(':')[0]; // or Split(new[]{':'},2)
+                }
+                if (_stringContextMenus.TryGetValue(s, out var stringHandler))
+                {
+                    stringHandler.Invoke(e.Node);
+                }
             }
         }
 
@@ -7214,10 +7287,110 @@ namespace ExpansionPlugin
         }
         private void addNewFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add New Market Category Folder";
+            frm.SetLaable2 = "Folder Name";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Add Folder";
+            frm.HideCEStuff();
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string folder = frm.typesname;
+                string[] FolderParts = GetMarketCategoryPathNodes(currentTreeNode, "MarketCategoryRelativePath:");
 
+                string NodeTag = (FolderParts.Length == 0)
+                        ? $"MarketCategoryRelativePath:{folder}"
+                        : $"MarketCategoryRelativePath:{FolderParts[0]}/{folder}";
+
+                TreeNode newfoldernode = new TreeNode(folder)
+                {
+                    Tag = NodeTag
+                };
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, newfoldernode);
+                ExpansionTV.SelectedNode = newfoldernode;
+                string basePath = _expansionManager.ExpansionMarketCategoryConfig.FilePath;
+                string relativePath = NodeTag.Replace("MarketCategoryRelativePath:", "").Replace('/', Path.DirectorySeparatorChar);
+                string fullPath = Path.Combine(basePath, relativePath);
+                Directory.CreateDirectory(fullPath);
+            }
+        }
+        private string[] GetMarketCategoryPathNodes(TreeNode node, string prefix)
+        {
+            var results = new List<string>();
+
+            TreeNode current = node;
+
+            while (current != null)
+            {
+                if (current.Tag is string tag && tag.StartsWith(prefix))
+                {
+                    string value = tag.Substring(prefix.Length);
+                    results.Add(value);
+                }
+                else
+                {
+                    break;
+                }
+                current = current.Parent;
+            }
+            return results.ToArray();
         }
         private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+            if (currentTreeNode == null)
+                return;
+
+            if (currentTreeNode.Tag is not string tag || !tag.StartsWith("MarketCategoryRelativePath:"))
+            {
+                MessageBox.Show("Cannot delete: this node does not represent a category folder.");
+                return;
+            }
+
+            if (MessageBox.Show($"Delete folder '{currentTreeNode.Text}'?",
+                                "Confirm Delete",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            string relativePath = tag.Replace("MarketCategoryRelativePath:", "").Replace('/', Path.DirectorySeparatorChar);
+
+            string basePath = _expansionManager.ExpansionMarketCategoryConfig.FilePath;
+            string fullPath = Path.Combine(basePath, relativePath);
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Directory.Delete(fullPath, recursive: true);
+                }
+                TreeNode parent = currentTreeNode.Parent;
+                currentTreeNode.Remove();
+                ExpansionTV.SelectedNode = parent;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting folder:\n{ex.Message}",
+                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+        private void moveCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            using (var picker = new SelectCategoryFolderForm(ExpansionTV))
+            {
+                if (picker.ShowDialog() != DialogResult.OK)
+                    return;
+
+                string newTag = picker.SelectedCategoryTag;
+
+                // now update the file, tag, tree, etc.
+            }
 
         }
         //MIssions
@@ -8678,6 +8851,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 

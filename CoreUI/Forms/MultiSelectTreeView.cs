@@ -662,6 +662,18 @@ namespace Day2eEditor
 
             return null;
         }
+        public static TreeNode FindParentNodeOfType<T>(this TreeNode node)
+        {
+            while (node != null)
+            {
+                if (node.Tag is T match)
+                    return node;
+
+                node = node.Parent;
+            }
+
+            return null;
+        }
         public static T FindLastParentOfType<T>(this TreeNode node) where T : class
         {
             T lastMatch = null;

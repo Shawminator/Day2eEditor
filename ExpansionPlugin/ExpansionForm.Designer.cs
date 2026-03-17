@@ -191,6 +191,7 @@
             removeMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
             addNewFolderToolStripMenuItem = new ToolStripMenuItem();
             deleteFolderToolStripMenuItem = new ToolStripMenuItem();
+            moveCategoryToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1501,10 +1502,10 @@
             // MarketCM
             // 
             MarketCM.BackColor = Color.FromArgb(60, 63, 65);
-            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem });
+            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem });
             MarketCM.Name = "ChatCM";
             MarketCM.ShowImageMargin = false;
-            MarketCM.Size = new Size(211, 114);
+            MarketCM.Size = new Size(211, 136);
             // 
             // addNewMarketCategoryFileToolStripMenuItem
             // 
@@ -1537,6 +1538,14 @@
             deleteFolderToolStripMenuItem.Size = new Size(210, 22);
             deleteFolderToolStripMenuItem.Text = "Delete Folder";
             deleteFolderToolStripMenuItem.Click += deleteFolderToolStripMenuItem_Click;
+            // 
+            // moveCategoryToolStripMenuItem
+            // 
+            moveCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveCategoryToolStripMenuItem.Name = "moveCategoryToolStripMenuItem";
+            moveCategoryToolStripMenuItem.Size = new Size(210, 22);
+            moveCategoryToolStripMenuItem.Text = "Move Category";
+            moveCategoryToolStripMenuItem.Click += moveCategoryToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1737,5 +1746,6 @@
         private ToolStripMenuItem removeMarketCategoryFileToolStripMenuItem;
         private ToolStripMenuItem addNewFolderToolStripMenuItem;
         private ToolStripMenuItem deleteFolderToolStripMenuItem;
+        private ToolStripMenuItem moveCategoryToolStripMenuItem;
     }
 }

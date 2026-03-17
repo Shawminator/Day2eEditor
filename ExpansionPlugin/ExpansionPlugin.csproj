@@ -144,6 +144,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Forms\SelectCategoryFolderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="IUIHandler\AI\AILightControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

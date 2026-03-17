@@ -13,17 +13,6 @@ namespace ExpansionPlugin
         CanOnlySell,
         CanBuyAndSellAsAttachmentOnly  //! Item should not be shown in menu, but can be sold/purchased as attachment on another item. For internal use only
     }
-    public class ExpansionMarketTraderItem
-    {
-        public ExpansionMarketItem MarketItem { get; set; }
-        public ExpansionMarketTraderBuySell BuySell;
-
-        public ExpansionMarketTraderItem(ExpansionMarketItem marketItem, ExpansionMarketTraderBuySell buySell)
-        {
-            MarketItem = marketItem;
-            BuySell = buySell;
-        }
-    }
     public class ExpansionMarketTraderConfig : MultiFileConfigLoader<ExpansionMarketTrader>
     {
         public const int CurrentVersion = 13;
@@ -42,8 +31,6 @@ namespace ExpansionPlugin
 
             TraderZone.SetPath(filePath);
             TraderZone.SetGuid(Guid.NewGuid());
-            TraderZone.getCategories();
-            TraderZone.getSingleItems();
             return TraderZone;
         }
         protected override void SaveItem(ExpansionMarketTrader ExpansionMarketTrader)
@@ -115,7 +102,6 @@ namespace ExpansionPlugin
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;
 
-
         public int m_Version { get; set; }
         public string DisplayName { get; set; }
         public int? MinRequiredReputation { get; set; }
@@ -130,12 +116,6 @@ namespace ExpansionPlugin
         public BindingList<string> Categories { get; set; }
         public Dictionary<string, ExpansionMarketTraderBuySell> Items { get; set; }
 
-
-        [JsonIgnore]
-        public BindingList<ExpansionMarketCategory> ExpansionMarketCategories { get; set; }
-        [JsonIgnore]
-        public BindingList<ExpansionMarketTraderItem> ExpansionMarketItems { get; set; }  
-
         public bool Equals(ExpansionMarketTrader other)
         {
             if (other is null) return false;
@@ -144,10 +124,10 @@ namespace ExpansionPlugin
             if (m_Version != other.m_Version ||
                  DisplayName != other.DisplayName ||
                  MinRequiredReputation != other.MinRequiredReputation ||
-                 MaxRequiredReputation != other.MinRequiredReputation ||
+                 MaxRequiredReputation != other.MaxRequiredReputation ||
                  RequiredFaction != other.RequiredFaction ||
                  RequiredCompletedQuestID != other.RequiredCompletedQuestID ||
-                 TraderIcon != TraderIcon ||
+                 TraderIcon != other.TraderIcon ||
                  DisplayCurrencyName != other.DisplayCurrencyName ||
                  DisplayCurrencyValue != other.DisplayCurrencyValue ||
                  UseCategoryOrder != other.UseCategoryOrder)
@@ -233,7 +213,7 @@ namespace ExpansionPlugin
             }
             if (DisplayName == null)
             {
-                fixes.Add($"Updated m_DisplayName to null");
+                fixes.Add($"Updated DisplayName to null");
                 DisplayName = "";
             }
             if (MinRequiredReputation == null || MinRequiredReputation < 0 || MaxRequiredReputation > int.MaxValue)
@@ -318,17 +298,5 @@ namespace ExpansionPlugin
             return fixes;
         }
 
-        internal void getCategories()
-        {
-            
-        }
-
-        internal void getSingleItems()
-        {
-            foreach (KeyValuePair<string,ExpansionMarketTraderBuySell> item in Items)
-            {
-                ExpansionMarketItem Titem = AppServices.GetRequired<ExpansionMarketCategoryConfig>().getitem(item.Key);
-            }
-        }
     }
 }

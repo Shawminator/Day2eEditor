@@ -29,6 +29,11 @@ namespace Day2eEditor
             set { label1.Text = value; }
         }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string SetLaable2
+        {
+            set { label2.Text = value; }
+        }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool Button4visable
         {
             set { button4.Visible = value; }

@@ -110,11 +110,6 @@ namespace ExpansionPlugin
         {
             return ExpansionMarketCategory.FixMissingOrInvalidFields();
         }
-
-        internal ExpansionMarketItem getitem(string key)
-        {
-            
-        }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>
     {
@@ -290,7 +285,7 @@ namespace ExpansionPlugin
                 MinPriceThreshold != other.MinPriceThreshold ||
                 SellPricePercent != other.SellPricePercent ||
                 MaxStockThreshold != other.MaxStockThreshold ||
-                MinStockThreshold != other.MinPriceThreshold ||
+                MinStockThreshold != other.MinStockThreshold ||
                 QuantityPercent != other.QuantityPercent)
                 return false;
 
