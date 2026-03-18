@@ -7638,7 +7638,23 @@ namespace ExpansionPlugin
         }
         private void removeMarketItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (currentTreeNode?.Tag is not ExpansionMarketItem item)
+                return;
 
+            TreeNode configNode = currentTreeNode.FindParentNodeOfType<ExpansionMarketCategoryConfig>();
+            if (configNode?.Tag is not ExpansionMarketCategoryConfig config)
+                return;
+
+            ExpansionMarketCategory category = currentTreeNode.Parent.Parent.Tag as ExpansionMarketCategory;
+            if (category == null)
+                return;
+
+            if (!config.RemoveMarketItem(category, item, out string error))
+            {
+                MessageBox.Show(error);
+                return;
+            }
+            currentTreeNode.Remove();
         }
         private void moveMarketItemToolStripMenuItem_Click(object sender, EventArgs e)
         {

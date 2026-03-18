@@ -290,8 +290,7 @@ namespace ExpansionPlugin
                 return false;
             }
 
-            ExpansionMarketItem existing = category.Items
-                .FirstOrDefault(x => ReferenceEquals(x, item));
+            ExpansionMarketItem existing = category.Items.FirstOrDefault(x => ReferenceEquals(x, item));
 
             if (existing == null)
             {
