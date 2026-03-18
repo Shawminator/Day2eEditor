@@ -8,29 +8,31 @@ namespace ExpansionPlugin
 {
     public partial class SelectCategoryFolderForm : Form
     {
-
         public string SelectedCategoryTag { get; private set; }
 
-        public SelectCategoryFolderForm(TreeView sourceTree)
+        public SelectCategoryFolderForm(TreeNode sourceRootNode)
         {
             InitializeComponent();
-            CloneTree(sourceTree);
+            CloneTree(sourceRootNode);
         }
 
-        private void CloneTree(TreeView source)
+        private void CloneTree(TreeNode sourceRootNode)
         {
             treeViewFolders.Nodes.Clear();
 
-            foreach (TreeNode node in source.Nodes)
+            TreeNode clonedRoot = CloneNode(sourceRootNode);
+            if (clonedRoot != null)
             {
-                treeViewFolders.Nodes.Add(CloneNode(node));
+                treeViewFolders.Nodes.Add(clonedRoot);
+                treeViewFolders.ExpandAll();
             }
-
-            treeViewFolders.ExpandAll();
         }
 
         private TreeNode CloneNode(TreeNode original)
         {
+            if (original.Tag is ExpansionMarketCategory)
+                return null;
+
             TreeNode cloned = new TreeNode(original.Text)
             {
                 Tag = original.Tag
@@ -38,7 +40,11 @@ namespace ExpansionPlugin
 
             foreach (TreeNode child in original.Nodes)
             {
-                cloned.Nodes.Add(CloneNode(child));
+                TreeNode clonedChild = CloneNode(child);
+                if (clonedChild != null)
+                {
+                    cloned.Nodes.Add(clonedChild);
+                }
             }
 
             return cloned;
@@ -61,7 +67,5 @@ namespace ExpansionPlugin
         {
             DialogResult = DialogResult.Cancel;
         }
-
-
     }
 }

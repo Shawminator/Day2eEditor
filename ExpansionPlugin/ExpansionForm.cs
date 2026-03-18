@@ -19,6 +19,7 @@ using System.Xml;
 using System.Xml.Linq;
 using static ExpansionPlugin.ExpansionPersonalStorageNewSettings;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ExpansionPlugin
 {
@@ -2814,56 +2815,71 @@ namespace ExpansionPlugin
             {
                 Tag = expansionMarketCategory
             };
-            TreeNode ItemsNode = new TreeNode("Items")
+
+            TreeNode itemsNode = new TreeNode("Items")
             {
                 Tag = "MarketItems"
             };
+
             foreach (ExpansionMarketItem item in expansionMarketCategory.Items)
             {
                 TreeNode itemNode = new TreeNode(item.ClassName)
                 {
                     Tag = item
                 };
-                TreeNode VarientNode = new TreeNode("Varients")
+
+                TreeNode variantNode = new TreeNode("Varients")
                 {
                     Tag = "MarketItemVarients"
                 };
+
                 foreach (string varient in item.Variants)
                 {
-                    VarientNode.Nodes.Add(new TreeNode(varient)
+                    variantNode.Nodes.Add(new TreeNode(varient)
                     {
                         Tag = "MarketItemVarient"
                     });
                 }
-                itemNode.Nodes.Add(VarientNode);
 
-                TreeNode AttchmentNode = new TreeNode("Spawn Attachments")
+                itemNode.Nodes.Add(variantNode);
+
+                TreeNode attachmentNode = new TreeNode("Spawn Attachments")
                 {
                     Tag = "MarketItemSpawnAttachments"
                 };
+
                 foreach (string att in item.SpawnAttachments)
                 {
-                    AttchmentNode.Nodes.Add(new TreeNode(att)
+                    attachmentNode.Nodes.Add(new TreeNode(att)
                     {
                         Tag = "MarketItemSpawnAttachment"
                     });
                 }
-                itemNode.Nodes.Add(AttchmentNode);
-                ItemsNode.Nodes.Add(itemNode);
+
+                itemNode.Nodes.Add(attachmentNode);
+                itemsNode.Nodes.Add(itemNode);
             }
-            categoryNode.Nodes.Add(ItemsNode);
+
+            categoryNode.Nodes.Add(itemsNode);
+
             if (expansionMarketCategory.FolderParts.Count == 0)
             {
-                economyRootNode.Nodes.Add(categoryNode);
+                Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, categoryNode);
                 return;
             }
+
             TreeNode currentNode = economyRootNode;
+
             for (int i = 0; i < expansionMarketCategory.FolderParts.Count; i++)
             {
                 string part = expansionMarketCategory.FolderParts[i];
+
                 TreeNode folderNode = currentNode.Nodes
                     .Cast<TreeNode>()
-                    .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase) &&
+                                         n.Tag is string tag &&
+                                         tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal));
+
                 if (folderNode == null)
                 {
                     folderNode = new TreeNode(part)
@@ -2872,11 +2888,53 @@ namespace ExpansionPlugin
                             Path.AltDirectorySeparatorChar.ToString(),
                             expansionMarketCategory.FolderParts.Take(i + 1))
                     };
-                    Helpers.InsertNodeAlphabetically(currentNode.Nodes, folderNode);
+
+                    InsertFolderNodeAtTop(currentNode.Nodes, folderNode);
                 }
+
                 currentNode = folderNode;
             }
+
             Helpers.InsertNodeAlphabetically(currentNode.Nodes, categoryNode);
+        }
+        private static void InsertFolderNodeAtTop(TreeNodeCollection nodes, TreeNode folderNode)
+        {
+            int insertIndex = 0;
+
+            while (insertIndex < nodes.Count &&
+                   nodes[insertIndex].Tag is string tag &&
+                   tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal))
+            {
+                if (string.Compare(nodes[insertIndex].Text, folderNode.Text, StringComparison.OrdinalIgnoreCase) > 0)
+                    break;
+
+                insertIndex++;
+            }
+
+            nodes.Insert(insertIndex, folderNode);
+        }
+        private static void InsertFileNodeAfterFolders(TreeNodeCollection nodes, TreeNode fileNode)
+        {
+            int insertIndex = 0;
+
+            // First: skip ALL folder nodes
+            while (insertIndex < nodes.Count &&
+                   nodes[insertIndex].Tag is string tag &&
+                   tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal))
+            {
+                insertIndex++;
+            }
+
+            // Second: insert in sorted position among file nodes
+            while (insertIndex < nodes.Count)
+            {
+                if (string.Compare(nodes[insertIndex].Text, fileNode.Text, StringComparison.OrdinalIgnoreCase) > 0)
+                    break;
+
+                insertIndex++;
+            }
+
+            nodes.Insert(insertIndex, fileNode);
         }
         private static void CreateMarketSettingsNodes(ExpansionMarketSettingsConfig ef, TreeNode EconomyRootNode)
         {
@@ -7296,11 +7354,42 @@ namespace ExpansionPlugin
         //Market Categories
         private void addNewMarketCategoryFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add New Market Category File";
+            frm.SetLaable2 = "File Name";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Add File";
+            frm.HideCEStuff();
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string File = frm.typesname;
+                string[] folderParts = GetMarketCategoryPathNodes(currentTreeNode, "MarketCategoryRelativePath:");
+                List<string> FolderParts = new List<string>();
+                if (folderParts.Length >0)
+                {
+                    FolderParts = folderParts[0].Split("/").ToList();
+                }
+                ExpansionMarketCategory newExpansionMarketCategory = _expansionManager.ExpansionMarketCategoryConfig.AddNewMarketCategory(File, FolderParts);
+                TreeNode categoryNode = new TreeNode(newExpansionMarketCategory.FileName)
+                {
+                    Tag = newExpansionMarketCategory
+                };
 
+                categoryNode.Nodes.Add(new TreeNode("Items")
+                {
+                    Tag = "MarketItems"
+                });
+                InsertFileNodeAfterFolders(currentTreeNode.Nodes, categoryNode);
+                ExpansionTV.SelectedNode = categoryNode;
+                categoryNode.Expand();
+            }
         }
         private void removeMarketCategoryFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            _expansionManager.ExpansionMarketCategoryConfig.RemoveFile(currentTreeNode.Tag as ExpansionMarketCategory);
+            currentTreeNode.Remove();
         }
         private void addNewFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7325,7 +7414,7 @@ namespace ExpansionPlugin
                 {
                     Tag = NodeTag
                 };
-                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, newfoldernode);
+                InsertFolderNodeAtTop(currentTreeNode.Nodes, newfoldernode);
                 ExpansionTV.SelectedNode = newfoldernode;
                 string basePath = _expansionManager.ExpansionMarketCategoryConfig.FilePath;
                 string relativePath = NodeTag.Replace("MarketCategoryRelativePath:", "").Replace('/', Path.DirectorySeparatorChar);
@@ -7398,17 +7487,78 @@ namespace ExpansionPlugin
         }
         private void moveCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            TreeNode parent = currentTreeNode.FindParentNodeOfType<ExpansionMarketCategoryConfig>();
+            if (parent == null)
+                return;
 
-            using (var picker = new SelectCategoryFolderForm(ExpansionTV))
+            using (var picker = new SelectCategoryFolderForm(parent))
             {
                 if (picker.ShowDialog() != DialogResult.OK)
                     return;
 
                 string newTag = picker.SelectedCategoryTag;
+                if (currentTreeNode?.Tag is not ExpansionMarketCategory category)
+                    return;
 
-                // now update the file, tag, tree, etc.
+                TreeNode destinationNode = TreeNodeExtensions.FindNodeByTag(parent, newTag);
+                if (destinationNode == null)
+                    return;
+
+                MoveCategoryNode(currentTreeNode, destinationNode, category);
             }
 
+        }
+        private void MoveCategoryNode(TreeNode categoryNode, TreeNode destinationFolderNode, ExpansionMarketCategory category)
+        {
+            if (categoryNode == null || destinationFolderNode == null || category == null)
+                return;
+
+            // Prevent moving into itself or one of its own children
+            TreeNode check = destinationFolderNode;
+            while (check != null)
+            {
+                if (check == categoryNode)
+                {
+                    MessageBox.Show("Cannot move a category into itself.");
+                    return;
+                }
+
+                check = check.Parent;
+            }
+
+            string oldFileName = Path.GetFileName(category._path);
+
+            string relativePath = GetRelativeFolderPathFromTag(destinationFolderNode.Tag as string);
+           
+
+            string rootPath = _expansionManager.ExpansionMarketCategoryConfig.FilePath;
+            category.SetFolderParts(string.IsNullOrWhiteSpace(relativePath)
+                ? new List<string>()
+                : relativePath
+                    .Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToList());
+
+            category.SetPath(Path.Combine(rootPath, Path.Combine(category.FolderParts.ToArray()), oldFileName));
+            TreeNode oldParent = categoryNode.Parent;
+            categoryNode.Remove();
+            Helpers.InsertNodeAlphabetically(destinationFolderNode.Nodes, categoryNode);
+
+            destinationFolderNode.Expand();
+
+            // Optional cleanup of old empty folders in the tree
+            //RemoveEmptyFolderNodes(oldParent);
+        }
+        private string GetRelativeFolderPathFromTag(string tag)
+        {
+            const string prefix = "MarketCategoryRelativePath:";
+
+            if (string.IsNullOrWhiteSpace(tag))
+                return string.Empty;
+
+            if (!tag.StartsWith(prefix, StringComparison.Ordinal))
+                return string.Empty;
+
+            return tag.Substring(prefix.Length);
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)

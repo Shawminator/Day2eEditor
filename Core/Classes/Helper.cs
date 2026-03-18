@@ -181,5 +181,6 @@ namespace Day2eEditor
         {
             return TimeSpan.FromSeconds(seconds).TotalMinutes;
         }
+
     }
 }

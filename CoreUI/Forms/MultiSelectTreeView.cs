@@ -688,5 +688,22 @@ namespace Day2eEditor
 
             return lastMatch;
         }
+        public static TreeNode FindNodeByTag(TreeNode root, string tag)
+        {
+            if (root == null)
+                return null;
+
+            if (root.Tag is string currentTag && string.Equals(currentTag, tag, StringComparison.Ordinal))
+                return root;
+
+            foreach (TreeNode child in root.Nodes)
+            {
+                TreeNode found = FindNodeByTag(child, tag);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
+        }
     }
 }
