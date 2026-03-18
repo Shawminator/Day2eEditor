@@ -14,7 +14,7 @@ namespace ExpansionPlugin
     public partial class ExpansionMarketSettingsGeneralControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private MarketSettings _data;
+        private ExpansionMarketSettings _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -34,7 +34,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as MarketSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionMarketSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

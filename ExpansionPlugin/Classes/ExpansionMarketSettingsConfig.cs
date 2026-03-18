@@ -6,27 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMarketSettingsConfig : ExpansionBaseIConfigLoader<MarketSettings>
+    public class ExpansionMarketSettingsConfig : ExpansionBaseIConfigLoader<ExpansionMarketSettings>
     {
         public const int CurrentVersion = 17;
   
         public ExpansionMarketSettingsConfig(string path) : base(path)
         {
         }
-        protected override MarketSettings CreateDefaultData()
+        protected override ExpansionMarketSettings CreateDefaultData()
         {
-            return new MarketSettings(CurrentVersion);
+            return new ExpansionMarketSettings(CurrentVersion);
         }
         protected override IEnumerable<string> ValidateData()
         {
             return Data.FixMissingOrInvalidFields();
         }
     }
-    public class MarketSettings : IEquatable<MarketSettings>, IDeepCloneable<MarketSettings>
+    public class ExpansionMarketSettings : IEquatable<ExpansionMarketSettings>, IDeepCloneable<ExpansionMarketSettings>
     {
         public int m_Version { get; set; }
         public int? MarketSystemEnabled { get; set; }
@@ -59,8 +58,8 @@ namespace ExpansionPlugin
         public int? DisallowUnpersisted { get; set; }
         public int? DisableClientSellTransactionDetails { get; set; }
 
-        public MarketSettings() { }
-        public MarketSettings(int CurrentVersion)
+        public ExpansionMarketSettings() { }
+        public ExpansionMarketSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
             MarketSystemEnabled = 1;
@@ -428,7 +427,7 @@ namespace ExpansionPlugin
             position.Orientation = new float[] { 0.0f, 0.0f, 0.0f };
             WaterSpawnPositions.Add(position);
         }
-        public bool Equals(MarketSettings other)
+        public bool Equals(ExpansionMarketSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -464,7 +463,7 @@ namespace ExpansionPlugin
                 SequenceEqual(TrainSpawnPositions, other.TrainSpawnPositions);
 
         }
-        public override bool Equals(object? obj) => Equals(obj as MarketSettings);
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMarketSettings);
         private bool SequenceEqual(BindingList<string> a, BindingList<string> b)
         {
             return a != null && b != null && a.SequenceEqual(b);
@@ -473,9 +472,9 @@ namespace ExpansionPlugin
         {
             return a != null && b != null && a.SequenceEqual(b);
         }
-        public MarketSettings Clone()
+        public ExpansionMarketSettings Clone()
         {
-            return new MarketSettings()
+            return new ExpansionMarketSettings()
             {
                 m_Version = this.m_Version,
                 MarketSystemEnabled = this.MarketSystemEnabled,

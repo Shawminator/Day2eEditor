@@ -16,6 +16,7 @@ namespace ExpansionPlugin
         public ExpansionLootDropConfig ExpansionLootDropConfig { get; set; }
         public ExpansionMissionsConfig ExpansionMissionsConfig { get; set; }
         public ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig { get; set; }  
+        public ExpansionPersonalStorageContainersConfig ExpansionPersonalStorageContainersConfig { get; set; }
         public ExpansionAirdropConfig ExpansionAirdropConfig { get; set; }
         public ExpansionAIConfig ExpansionAIConfig { get; set; }
         public ExpansionAILocationConfig ExpansionAILocationConfig { get; set; }
@@ -31,6 +32,9 @@ namespace ExpansionPlugin
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         public ExpansionMapConfig ExpansionMapConfig { get; set; }
         public ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig { get; set; }
+        public ExpansionMarketTraderZoneConfig ExpansionMarketTraderZoneConfig { get; set; }    
+        public ExpansionMarketCategoryConfig ExpansionMarketCategoryConfig { get; set; }
+        public ExpansionMarketTraderConfig ExpansionMarketTraderConfig { get; set; }
         public ExpansionMissionSettingsConfig ExpansionMissionConfig { get; set; }
         public ExpansionMonitoringConfig ExpansionMonitoringConfig { get; set; }
         public ExpansionNameTagsConfig ExpansionNameTagsConfig { get; set; }
@@ -38,8 +42,8 @@ namespace ExpansionPlugin
         public ExpansionNotificationConfig ExpansionNotificationConfig { get; set; }
         public ExpansionPartyConfig ExpansionPartyConfig { get; set; }
         public ExpansionP2PMarketConfig ExpansionP2PMarketConfig { get; set; }
-        public ExpansionPersonalStorageNewConfig ExpansionPersonalStorageNewConfig { get; set; }
-        public ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig { get; set; }
+        public ExpansionPersonalStorageNewSettingsConfig ExpansionPersonalStorageNewConfig { get; set; }
+        public ExpansionPersonalStorageSettingsConfig ExpansionPersonalStorageConfig { get; set; }
         public ExpansionPlayerListConfig ExpansionPlayerListConfig { get; set; }
         public ExpansionQuestConfig ExpansionQuestConfig { get; set; }
         public ExpansionRaidConfig ExpansionRaidConfig { get; set; }
@@ -60,6 +64,10 @@ namespace ExpansionPlugin
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
             _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
             _paths["ExpansionP2PTraders"] = Path.Combine(basePath, "expansion", "p2pmarket");
+            _paths["ExpansionPSContainers"] = Path.Combine(basePath, "expansion", "personalstorage");
+            _paths["ExpansionMarketTraderMaps"] = Path.Combine(basePath, "expansion", "traders");
+            _paths["ExpansionMarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
+
 
             //Settings files in profiles
             _paths["AirdropSettings"] = Path.Combine(profilePath, "ExpansionMod", "settings", "AirdropSettings.json");
@@ -91,11 +99,17 @@ namespace ExpansionPlugin
             _paths["BaseBuildingSettings"] = Path.Combine(basePath, "expansion", "settings", "BaseBuildingSettings.json");
             _paths["HardlineSettings"] = Path.Combine(basePath, "expansion", "settings", "HardlineSettings.json");
             _paths["MapSettings"] = Path.Combine(basePath, "expansion", "settings", "MapSettings.json");
-            _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
             _paths["P2PMarketSettings"] = Path.Combine(basePath, "expansion", "settings", "P2PMarketSettings.json"); 
             _paths["PersonalStorageSettings"] = Path.Combine(basePath, "expansion", "settings", "PersonalStorageSettings.json"); 
             _paths["SafeZoneSettings"] = Path.Combine(basePath, "expansion", "settings", "SafeZoneSettings.json");
             _paths["SpawnSettings"] = Path.Combine(basePath, "expansion", "settings", "SpawnSettings.json");
+
+            //Market Files
+            _paths["MarketSettings"] = Path.Combine(basePath, "expansion", "settings", "MarketSettings.json");
+            _paths["MarketCategories"] = Path.Combine(profilePath, "ExpansionMod", "Market");
+            _paths["MarketTraders"] = Path.Combine(profilePath, "ExpansionMod", "Traders");
+            _paths["MarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
+            _paths["MarketTraderNPCs"] = Path.Combine(basePath, "expansion", "traders");
 
             LoadFiles();
         }
@@ -114,6 +128,9 @@ namespace ExpansionPlugin
 
             ExpansionP2pMarketTradersConfig = new ExpansionP2pMarketTradersConfig(_paths["ExpansionP2PTraders"]);
             LoadConfigWithErrorReport("ExpansionP2PTraders", ExpansionP2pMarketTradersConfig);
+
+            ExpansionPersonalStorageContainersConfig = new ExpansionPersonalStorageContainersConfig(_paths["ExpansionPSContainers"]);
+            LoadConfigWithErrorReport("ExpansionPSContainers", ExpansionPersonalStorageContainersConfig);
 
             ExpansionAirdropConfig = new ExpansionAirdropConfig(_paths["AirdropSettings"]);
             LoadConfigWithErrorReport("AirdropSettings", ExpansionAirdropConfig);
@@ -157,9 +174,6 @@ namespace ExpansionPlugin
             ExpansionMapConfig = new ExpansionMapConfig(_paths["MapSettings"]);
             LoadConfigWithErrorReport("MapSettings", ExpansionMapConfig);
 
-            ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
-            LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
-
             ExpansionMissionConfig = new ExpansionMissionSettingsConfig(_paths["MissionSettings"]);
             LoadConfigWithErrorReport("MissionSettings", ExpansionMissionConfig);
 
@@ -181,10 +195,10 @@ namespace ExpansionPlugin
             ExpansionP2PMarketConfig = new ExpansionP2PMarketConfig(_paths["P2PMarketSettings"]);
             LoadConfigWithErrorReport("P2PMarketSettings", ExpansionP2PMarketConfig);
 
-            ExpansionPersonalStorageNewConfig = new ExpansionPersonalStorageNewConfig(_paths["PersonalStorageNewSettings"]);
+            ExpansionPersonalStorageNewConfig = new ExpansionPersonalStorageNewSettingsConfig(_paths["PersonalStorageNewSettings"]);
             LoadConfigWithErrorReport("PersonalStorageNewSettings", ExpansionPersonalStorageNewConfig);
             
-            ExpansionPersonalStorageConfig = new ExpansionPersonalStorageConfig(_paths["PersonalStorageSettings"]);
+            ExpansionPersonalStorageConfig = new ExpansionPersonalStorageSettingsConfig(_paths["PersonalStorageSettings"]);
             LoadConfigWithErrorReport("PersonalStorageSettings", ExpansionPersonalStorageConfig);
 
             ExpansionPlayerListConfig = new ExpansionPlayerListConfig(_paths["PlayerListSettings"]);
@@ -211,6 +225,18 @@ namespace ExpansionPlugin
             ExpansionVehiclesConfig = new ExpansionVehiclesConfig(_paths["VehicleSettings"]);
             LoadConfigWithErrorReport("VehicleSettings", ExpansionVehiclesConfig);
 
+            ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
+            LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
+
+            ExpansionMarketTraderZoneConfig = new ExpansionMarketTraderZoneConfig(_paths["MarketTraderZones"]);
+            LoadConfigWithErrorReport("MarketTraderZones", ExpansionMarketTraderZoneConfig);
+
+            ExpansionMarketCategoryConfig = new ExpansionMarketCategoryConfig(_paths["MarketCategories"]);
+            LoadConfigWithErrorReport("MarketCategories", ExpansionMarketCategoryConfig);
+
+            ExpansionMarketTraderConfig = new ExpansionMarketTraderConfig(_paths["MarketTraders"]);
+            LoadConfigWithErrorReport("MarketTraders", ExpansionMarketTraderConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -234,6 +260,7 @@ namespace ExpansionPlugin
                 ExpansionLootDropConfig,
                 ExpansionMissionsConfig,
                 ExpansionP2pMarketTradersConfig,
+                ExpansionPersonalStorageContainersConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -249,6 +276,9 @@ namespace ExpansionPlugin
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
                 ExpansionMarketSettingsConfig,
+                ExpansionMarketTraderZoneConfig,
+                ExpansionMarketCategoryConfig,
+                ExpansionMarketTraderConfig,
                 ExpansionMissionConfig,
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,
@@ -290,6 +320,7 @@ namespace ExpansionPlugin
                 ExpansionLootDropConfig,
                 ExpansionMissionsConfig,
                 ExpansionP2pMarketTradersConfig,
+                ExpansionPersonalStorageContainersConfig,
                 ExpansionAirdropConfig,
                 ExpansionAILocationConfig,
                 ExpansionAIConfig,
@@ -305,6 +336,9 @@ namespace ExpansionPlugin
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
                 ExpansionMarketSettingsConfig,
+                ExpansionMarketTraderZoneConfig,
+                ExpansionMarketCategoryConfig,
+                ExpansionMarketTraderConfig,
                 ExpansionMissionConfig,
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,

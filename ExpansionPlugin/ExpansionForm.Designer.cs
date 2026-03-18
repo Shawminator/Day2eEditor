@@ -180,6 +180,18 @@
             RemoveP2PMarketIncludedToolStripMenuItem = new ToolStripMenuItem();
             AddNewP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
             removeP2PMarketExcludedToolStripMenuItem = new ToolStripMenuItem();
+            addNewP2PTraderToolStripMenuItem = new ToolStripMenuItem();
+            removeP2PTraderToolStripMenuItem = new ToolStripMenuItem();
+            addNewExcludedStorageSlotToolStripMenuItem = new ToolStripMenuItem();
+            removeExcludedStorageSlotToolStripMenuItem = new ToolStripMenuItem();
+            addNewPersonalStorageConfigToolStripMenuItem = new ToolStripMenuItem();
+            removePersonalStorageConfigToolStripMenuItem = new ToolStripMenuItem();
+            MarketCM = new ContextMenuStrip(components);
+            addNewMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
+            removeMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
+            addNewFolderToolStripMenuItem = new ToolStripMenuItem();
+            deleteFolderToolStripMenuItem = new ToolStripMenuItem();
+            moveCategoryToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -195,6 +207,7 @@
             RaidSettingsCM.SuspendLayout();
             SafeZoneCM.SuspendLayout();
             P2PCM.SuspendLayout();
+            MarketCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -1369,24 +1382,24 @@
             // P2PCM
             // 
             P2PCM.BackColor = Color.FromArgb(60, 63, 65);
-            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem });
+            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem, addNewExcludedStorageSlotToolStripMenuItem, removeExcludedStorageSlotToolStripMenuItem, addNewPersonalStorageConfigToolStripMenuItem, removePersonalStorageConfigToolStripMenuItem });
             P2PCM.Name = "ChatCM";
             P2PCM.ShowImageMargin = false;
-            P2PCM.Size = new Size(173, 202);
+            P2PCM.Size = new Size(229, 312);
             // 
             // AddNewP2PMarketCategoryToolStripMenuItem
             // 
             AddNewP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewP2PMarketCategoryToolStripMenuItem.Name = "AddNewP2PMarketCategoryToolStripMenuItem";
-            AddNewP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketCategoryToolStripMenuItem.Size = new Size(228, 22);
             AddNewP2PMarketCategoryToolStripMenuItem.Text = "Add New Category";
             AddNewP2PMarketCategoryToolStripMenuItem.Click += AddNewP2PMarketCategoryToolStripMenuItem_Click;
             // 
-            // RempoveP2PMarketCategoryToolStripMenuItem
+            // RemoveP2PMarketCategoryToolStripMenuItem
             // 
             RemoveP2PMarketCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
-            RemoveP2PMarketCategoryToolStripMenuItem.Name = "RempoveP2PMarketCategoryToolStripMenuItem";
-            RemoveP2PMarketCategoryToolStripMenuItem.Size = new Size(172, 22);
+            RemoveP2PMarketCategoryToolStripMenuItem.Name = "RemoveP2PMarketCategoryToolStripMenuItem";
+            RemoveP2PMarketCategoryToolStripMenuItem.Size = new Size(228, 22);
             RemoveP2PMarketCategoryToolStripMenuItem.Text = "Remove Category";
             RemoveP2PMarketCategoryToolStripMenuItem.Click += RemoveP2PMarketCategoryToolStripMenuItem_Click;
             // 
@@ -1394,7 +1407,7 @@
             // 
             AddNewP2PMarketSubCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewP2PMarketSubCategoryToolStripMenuItem.Name = "AddNewP2PMarketSubCategoryToolStripMenuItem";
-            AddNewP2PMarketSubCategoryToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketSubCategoryToolStripMenuItem.Size = new Size(228, 22);
             AddNewP2PMarketSubCategoryToolStripMenuItem.Text = "Add New Sub Category";
             AddNewP2PMarketSubCategoryToolStripMenuItem.Click += AddNewP2PMarketSubCategoryToolStripMenuItem_Click;
             // 
@@ -1402,7 +1415,7 @@
             // 
             RemoveP2PMarketSubCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveP2PMarketSubCategoryToolStripMenuItem.Name = "RemoveP2PMarketSubCategoryToolStripMenuItem";
-            RemoveP2PMarketSubCategoryToolStripMenuItem.Size = new Size(172, 22);
+            RemoveP2PMarketSubCategoryToolStripMenuItem.Size = new Size(228, 22);
             RemoveP2PMarketSubCategoryToolStripMenuItem.Text = "Remove Sub Category";
             RemoveP2PMarketSubCategoryToolStripMenuItem.Click += RemoveP2PMarketSubCategoryToolStripMenuItem_Click;
             // 
@@ -1410,7 +1423,7 @@
             // 
             AddNewP2PMarketIncludedToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewP2PMarketIncludedToolStripMenuItem.Name = "AddNewP2PMarketIncludedToolStripMenuItem";
-            AddNewP2PMarketIncludedToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketIncludedToolStripMenuItem.Size = new Size(228, 22);
             AddNewP2PMarketIncludedToolStripMenuItem.Text = "Add New Included";
             AddNewP2PMarketIncludedToolStripMenuItem.Click += AddNewP2PMarketIncludedToolStripMenuItem_Click;
             // 
@@ -1418,7 +1431,7 @@
             // 
             RemoveP2PMarketIncludedToolStripMenuItem.ForeColor = SystemColors.Control;
             RemoveP2PMarketIncludedToolStripMenuItem.Name = "RemoveP2PMarketIncludedToolStripMenuItem";
-            RemoveP2PMarketIncludedToolStripMenuItem.Size = new Size(172, 22);
+            RemoveP2PMarketIncludedToolStripMenuItem.Size = new Size(228, 22);
             RemoveP2PMarketIncludedToolStripMenuItem.Text = "Remove Included";
             RemoveP2PMarketIncludedToolStripMenuItem.Click += RemoveP2PMarketIncludedToolStripMenuItem_Click;
             // 
@@ -1426,7 +1439,7 @@
             // 
             AddNewP2PMarketExcludedToolStripMenuItem.ForeColor = SystemColors.Control;
             AddNewP2PMarketExcludedToolStripMenuItem.Name = "AddNewP2PMarketExcludedToolStripMenuItem";
-            AddNewP2PMarketExcludedToolStripMenuItem.Size = new Size(172, 22);
+            AddNewP2PMarketExcludedToolStripMenuItem.Size = new Size(228, 22);
             AddNewP2PMarketExcludedToolStripMenuItem.Text = "Add New Excluded";
             AddNewP2PMarketExcludedToolStripMenuItem.Click += AddNewP2PMarketExcludedToolStripMenuItem_Click;
             // 
@@ -1434,9 +1447,105 @@
             // 
             removeP2PMarketExcludedToolStripMenuItem.ForeColor = SystemColors.Control;
             removeP2PMarketExcludedToolStripMenuItem.Name = "removeP2PMarketExcludedToolStripMenuItem";
-            removeP2PMarketExcludedToolStripMenuItem.Size = new Size(172, 22);
+            removeP2PMarketExcludedToolStripMenuItem.Size = new Size(228, 22);
             removeP2PMarketExcludedToolStripMenuItem.Text = "Remove Excluded";
             removeP2PMarketExcludedToolStripMenuItem.Click += removeP2PMarketExcludedToolStripMenuItem_Click;
+            // 
+            // addNewP2PTraderToolStripMenuItem
+            // 
+            addNewP2PTraderToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewP2PTraderToolStripMenuItem.Name = "addNewP2PTraderToolStripMenuItem";
+            addNewP2PTraderToolStripMenuItem.Size = new Size(228, 22);
+            addNewP2PTraderToolStripMenuItem.Text = "Add New P2P Trader";
+            addNewP2PTraderToolStripMenuItem.Click += addNewP2PTraderToolStripMenuItem_Click;
+            // 
+            // removeP2PTraderToolStripMenuItem
+            // 
+            removeP2PTraderToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeP2PTraderToolStripMenuItem.Name = "removeP2PTraderToolStripMenuItem";
+            removeP2PTraderToolStripMenuItem.Size = new Size(228, 22);
+            removeP2PTraderToolStripMenuItem.Text = "Remove P2P Trader";
+            removeP2PTraderToolStripMenuItem.Click += removeP2PTraderToolStripMenuItem_Click;
+            // 
+            // addNewExcludedStorageSlotToolStripMenuItem
+            // 
+            addNewExcludedStorageSlotToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewExcludedStorageSlotToolStripMenuItem.Name = "addNewExcludedStorageSlotToolStripMenuItem";
+            addNewExcludedStorageSlotToolStripMenuItem.Size = new Size(228, 22);
+            addNewExcludedStorageSlotToolStripMenuItem.Text = "Add New Excluded Storage Slot";
+            addNewExcludedStorageSlotToolStripMenuItem.Click += addNewExcludedStorageSlotToolStripMenuItem_Click;
+            // 
+            // removeExcludedStorageSlotToolStripMenuItem
+            // 
+            removeExcludedStorageSlotToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeExcludedStorageSlotToolStripMenuItem.Name = "removeExcludedStorageSlotToolStripMenuItem";
+            removeExcludedStorageSlotToolStripMenuItem.Size = new Size(228, 22);
+            removeExcludedStorageSlotToolStripMenuItem.Text = "Remove Excluded Storage Slot";
+            removeExcludedStorageSlotToolStripMenuItem.Click += removeExcludedStorageSlotToolStripMenuItem_Click;
+            // 
+            // addNewPersonalStorageConfigToolStripMenuItem
+            // 
+            addNewPersonalStorageConfigToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewPersonalStorageConfigToolStripMenuItem.Name = "addNewPersonalStorageConfigToolStripMenuItem";
+            addNewPersonalStorageConfigToolStripMenuItem.Size = new Size(228, 22);
+            addNewPersonalStorageConfigToolStripMenuItem.Text = "Add New Personal Storage Config";
+            addNewPersonalStorageConfigToolStripMenuItem.Click += addNewPersonalStorageConfigToolStripMenuItem_Click;
+            // 
+            // removePersonalStorageConfigToolStripMenuItem
+            // 
+            removePersonalStorageConfigToolStripMenuItem.ForeColor = SystemColors.Control;
+            removePersonalStorageConfigToolStripMenuItem.Name = "removePersonalStorageConfigToolStripMenuItem";
+            removePersonalStorageConfigToolStripMenuItem.Size = new Size(228, 22);
+            removePersonalStorageConfigToolStripMenuItem.Text = "Remove Personal Storage Config";
+            removePersonalStorageConfigToolStripMenuItem.Click += removePersonalStorageConfigToolStripMenuItem_Click;
+            // 
+            // MarketCM
+            // 
+            MarketCM.BackColor = Color.FromArgb(60, 63, 65);
+            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem });
+            MarketCM.Name = "ChatCM";
+            MarketCM.ShowImageMargin = false;
+            MarketCM.Size = new Size(211, 136);
+            // 
+            // addNewMarketCategoryFileToolStripMenuItem
+            // 
+            addNewMarketCategoryFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewMarketCategoryFileToolStripMenuItem.Name = "addNewMarketCategoryFileToolStripMenuItem";
+            addNewMarketCategoryFileToolStripMenuItem.Size = new Size(210, 22);
+            addNewMarketCategoryFileToolStripMenuItem.Text = "Add New Market Category File";
+            addNewMarketCategoryFileToolStripMenuItem.Click += addNewMarketCategoryFileToolStripMenuItem_Click;
+            // 
+            // removeMarketCategoryFileToolStripMenuItem
+            // 
+            removeMarketCategoryFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeMarketCategoryFileToolStripMenuItem.Name = "removeMarketCategoryFileToolStripMenuItem";
+            removeMarketCategoryFileToolStripMenuItem.Size = new Size(210, 22);
+            removeMarketCategoryFileToolStripMenuItem.Text = "Remove Market Category File";
+            removeMarketCategoryFileToolStripMenuItem.Click += removeMarketCategoryFileToolStripMenuItem_Click;
+            // 
+            // addNewFolderToolStripMenuItem
+            // 
+            addNewFolderToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewFolderToolStripMenuItem.Name = "addNewFolderToolStripMenuItem";
+            addNewFolderToolStripMenuItem.Size = new Size(210, 22);
+            addNewFolderToolStripMenuItem.Text = "Add New Folder";
+            addNewFolderToolStripMenuItem.Click += addNewFolderToolStripMenuItem_Click;
+            // 
+            // deleteFolderToolStripMenuItem
+            // 
+            deleteFolderToolStripMenuItem.ForeColor = SystemColors.Control;
+            deleteFolderToolStripMenuItem.Name = "deleteFolderToolStripMenuItem";
+            deleteFolderToolStripMenuItem.Size = new Size(210, 22);
+            deleteFolderToolStripMenuItem.Text = "Delete Folder";
+            deleteFolderToolStripMenuItem.Click += deleteFolderToolStripMenuItem_Click;
+            // 
+            // moveCategoryToolStripMenuItem
+            // 
+            moveCategoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveCategoryToolStripMenuItem.Name = "moveCategoryToolStripMenuItem";
+            moveCategoryToolStripMenuItem.Size = new Size(210, 22);
+            moveCategoryToolStripMenuItem.Text = "Move Category";
+            moveCategoryToolStripMenuItem.Click += moveCategoryToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1469,6 +1578,7 @@
             RaidSettingsCM.ResumeLayout(false);
             SafeZoneCM.ResumeLayout(false);
             P2PCM.ResumeLayout(false);
+            MarketCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1625,5 +1735,17 @@
         private ToolStripMenuItem RemoveP2PMarketIncludedToolStripMenuItem;
         private ToolStripMenuItem AddNewP2PMarketExcludedToolStripMenuItem;
         private ToolStripMenuItem removeP2PMarketExcludedToolStripMenuItem;
+        private ToolStripMenuItem addNewP2PTraderToolStripMenuItem;
+        private ToolStripMenuItem removeP2PTraderToolStripMenuItem;
+        private ToolStripMenuItem addNewExcludedStorageSlotToolStripMenuItem;
+        private ToolStripMenuItem removeExcludedStorageSlotToolStripMenuItem;
+        private ToolStripMenuItem addNewPersonalStorageConfigToolStripMenuItem;
+        private ToolStripMenuItem removePersonalStorageConfigToolStripMenuItem;
+        private ContextMenuStrip MarketCM;
+        private ToolStripMenuItem addNewMarketCategoryFileToolStripMenuItem;
+        private ToolStripMenuItem removeMarketCategoryFileToolStripMenuItem;
+        private ToolStripMenuItem addNewFolderToolStripMenuItem;
+        private ToolStripMenuItem deleteFolderToolStripMenuItem;
+        private ToolStripMenuItem moveCategoryToolStripMenuItem;
     }
 }

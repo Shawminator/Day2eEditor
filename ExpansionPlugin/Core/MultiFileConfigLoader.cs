@@ -42,6 +42,7 @@ namespace ExpansionPlugin
                     var item = LoadItem(file);
 
                     OnAfterItemLoad(item, file);
+                    ClonedItems.Add(GetID(item), item.Clone());
                     var issues = ValidateData(item);
                     if (issues?.Any() == true)
                     {
@@ -50,7 +51,7 @@ namespace ExpansionPlugin
                             Console.WriteLine("- " + msg);
                     }
                     Items.Add(item);
-                    ClonedItems.Add(GetID(item), item.Clone());
+                    
                 }
                 catch (Exception ex)
                 {
@@ -97,8 +98,6 @@ namespace ExpansionPlugin
             }
             return saved;
         }
-
-
         public bool needToSave()
         {
             return false;

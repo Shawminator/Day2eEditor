@@ -11,6 +11,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionP2pMarketTradersConfig : MultiFileConfigLoader<ExpansionP2PMarketTraderConfig>
     {
+        public List<int> UsedIDS = new List<int>();
         public ExpansionP2pMarketTradersConfig(string path) : base(path)
         {
         }
@@ -26,34 +27,72 @@ namespace ExpansionPlugin
 
             P2PTrader.SetPath(filePath);
             P2PTrader.SetGuid(Guid.NewGuid());
+            UsedIDS.Add((int)P2PTrader.m_TraderID);
             return P2PTrader;
         }
-
         protected override void SaveItem(ExpansionP2PMarketTraderConfig P2PTrader)
         {
             AppServices.GetRequired<FileService>().SaveJson(P2PTrader._path, P2PTrader, false, true);
         }
         protected override string GetItemFileName(ExpansionP2PMarketTraderConfig P2PTrader)
             => P2PTrader.FileName;
-
         protected override bool ShouldDelete(ExpansionP2PMarketTraderConfig P2PTrader)
             => P2PTrader.ToDelete;
         protected override Guid GetID(ExpansionP2PMarketTraderConfig P2PTrader)
             => P2PTrader.Id;
         protected override void DeleteItemFile(ExpansionP2PMarketTraderConfig P2PTrader)
         {
+            int id = (int)P2PTrader.m_TraderID;
             if (!string.IsNullOrWhiteSpace(P2PTrader._path) && File.Exists(P2PTrader._path))
+            {
                 File.Delete(P2PTrader._path);
+                UsedIDS.Remove(id);
+            }
         }
-        internal bool AddNewLoadoutFile(ExpansionP2PMarketTraderConfig P2PTrader)
+        public int GetNextID()
         {
-            bool exists = Items.Any(ld => ld.FileName.ToLower() == P2PTrader.FileName.ToLower());
-
-            if (exists)
-                return false; // File with same name already exists
-
+            if (UsedIDS.Count == 0)
+                return 1;
+            List<int> result = Enumerable.Range(1, UsedIDS.Max() + 1).Except(UsedIDS).ToList();
+            result.Sort();
+            return result[0];
+        }
+        internal ExpansionP2PMarketTraderConfig AddNewP2PTraderFile(int newid)
+        {
+            string filepath = Path.Combine(AppServices.GetRequired<ExpansionManager>().basePath, "expansion", "p2pmarket");
+            string filename = "P2PTrader_" + newid + ".json";
+            ExpansionP2PMarketTraderConfig P2PTrader = new ExpansionP2PMarketTraderConfig()
+            {
+                m_Version = ExpansionP2PMarketTraderConfig.VERSION,
+                m_TraderID = newid,
+                m_ClassName = "ExpansionP2PTraderMirek",
+                m_DisplayName = "Unknown",
+                m_DisplayIcon = "Deliver",
+                m_Position = new Vec3(new decimal[] { 0, 0, 0 }),
+                m_Orientation = new Vec3(new decimal[] { 0, 0, 0 }),
+                m_LoadoutFile = "YellowKingLoadout",
+                m_VehicleSpawnPosition = new Vec3(new decimal[] { 0, 0, 0 }),
+                m_WatercraftSpawnPosition = new Vec3( new decimal[] { 0, 0, 0 }),
+                m_AircraftSpawnPosition = new Vec3(new decimal[] { 0, 0, 0 }),
+                m_Faction = "InvincibleObservers",
+                m_Waypoints = new BindingList<Vec3>(),
+                m_EmoteID = 46,
+                m_EmoteIsStatic = 0,
+                m_RequiredFaction = "",
+                m_UseReputation = 0,
+                m_MinRequiredReputation = 0,
+                m_MaxRequiredReputation = 2147483647,
+                m_RequiredCompletedQuestID = -1,
+                m_IsGlobalTrader = 0,
+                m_Currencies = new BindingList<string>(),
+                m_DisplayCurrencyValue = 1,
+                m_DisplayCurrencyName = "",
+            };
+            P2PTrader.SetPath(Path.Combine(filepath, filename));
+            P2PTrader.SetGuid(Guid.NewGuid());
+            UsedIDS.Add((int)P2PTrader.m_TraderID);
             Items.Add(P2PTrader);
-            return true;
+            return P2PTrader;
 
         }
         internal void RemoveFile(ExpansionP2PMarketTraderConfig P2PTrader)
@@ -71,7 +110,8 @@ namespace ExpansionPlugin
     }
     public class ExpansionP2PMarketTraderConfig : IDeepCloneable<ExpansionP2PMarketTraderConfig>, IEquatable<ExpansionP2PMarketTraderConfig>
     {
-        const int VERSION = 8;
+        [JsonIgnore]
+        public static int VERSION = 8;
 
         [JsonIgnore]
         public string _path { get; private set; }
@@ -110,12 +150,13 @@ namespace ExpansionPlugin
         public BindingList<string> m_Currencies { get; set; }
         public int? m_DisplayCurrencyValue { get; set; }
         public string? m_DisplayCurrencyName { get; set; }
-
+        
 
         public bool Equals(ExpansionP2PMarketTraderConfig other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
             if (m_Version != other.m_Version ||
                 m_TraderID != other.m_TraderID ||

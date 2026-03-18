@@ -10,10 +10,10 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPersonalStorageConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageSettings>
+    public class ExpansionPersonalStorageSettingsConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageSettings>
     {
         public const int CurrentVersion = 1;
-        public ExpansionPersonalStorageConfig(string path) : base(path)
+        public ExpansionPersonalStorageSettingsConfig(string path) : base(path)
         {
         }
         protected override ExpansionPersonalStorageSettings CreateDefaultData()
@@ -574,10 +574,10 @@ namespace ExpansionPlugin
         {
             var fixes = new List<string>();
 
-            if (m_Version != ExpansionPersonalStorageConfig.CurrentVersion)
+            if (m_Version != ExpansionPersonalStorageSettingsConfig.CurrentVersion)
             {
-                fixes.Add($"Updated version from {m_Version} to {ExpansionPersonalStorageConfig.CurrentVersion}");
-                m_Version = ExpansionPersonalStorageConfig.CurrentVersion;
+                fixes.Add($"Updated version from {m_Version} to {ExpansionPersonalStorageSettingsConfig.CurrentVersion}");
+                m_Version = ExpansionPersonalStorageSettingsConfig.CurrentVersion;
             }
             if (Enabled == null || (Enabled != 0 && Enabled != 1))
             {
@@ -697,13 +697,16 @@ namespace ExpansionPlugin
                    !Excluded.SequenceEqual(other.Excluded))
                 return false;
 
-            for (int i = 0; i < SubCategories.Count; i++)
-            {
-                if (!SubCategories[i].Equals(other.SubCategories[i]))
-                    return false;
-            }
+            if (!SequenceEqualNullSafe(SubCategories, other.SubCategories))
+                return false;
 
             return true;
+        }
+        private static bool SequenceEqualNullSafe<T>(IEnumerable<T> left, IEnumerable<T> right)
+        {
+            if (ReferenceEquals(left, right)) return true;
+            if (left is null || right is null) return false;
+            return left.SequenceEqual(right);
         }
         public ExpansionPersonalStorageMenuCategory Clone()
         {
@@ -728,10 +731,13 @@ namespace ExpansionPlugin
             if (obj is not ExpansionPersonalStorageMenuSubCategory other)
                 return false;
 
-            return DisplayName == other.DisplayName ||
-                   IconPath == other.IconPath ||
-                   Included.SequenceEqual(other.Included) ||
-                   Excluded.SequenceEqual(other.Excluded);
+            if (DisplayName != other.DisplayName ||
+                   IconPath != other.IconPath ||
+                   !Included.SequenceEqual(other.Included) ||
+                   !Excluded.SequenceEqual(other.Excluded))
+                return false;
+
+            return true;
         }
         public ExpansionPersonalStorageMenuSubCategory Clone()
         {
