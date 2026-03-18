@@ -144,6 +144,35 @@ namespace ExpansionPlugin
                 File.Delete(ExpansionMarketCategory._path);
             }
         }
+        public bool needToSave()
+        {
+            return false;
+        }
+        protected override IEnumerable<string> ValidateData(ExpansionMarketCategory ExpansionMarketCategory)
+        {
+            return ExpansionMarketCategory.FixMissingOrInvalidFields();
+        }
+        protected override void OnAfterLoadAll()
+        {
+            var duplicateGroups = Items
+                .Where(category => category.Items != null)
+                .SelectMany(category => category.Items.Select(item => new
+                {
+                    Category = category,
+                    Item = item,
+                    ClassName = item.ClassName?.Trim()
+                }))
+                .Where(x => !string.IsNullOrWhiteSpace(x.ClassName))
+                .GroupBy(x => x.ClassName, StringComparer.OrdinalIgnoreCase)
+                .Where(g => g.Count() > 1)
+                .ToList();
+
+            foreach (var group in duplicateGroups)
+            {
+                string locations = string.Join(", ",group.Select(x => x.Category.FileName));
+                Console.WriteLine($"[ERROR] : Duplicate market item classname '{group.Key}' found in: {locations}");
+            }
+        }
         internal ExpansionMarketCategory AddNewMarketCategory(string fileName, List<string> folderParts)
         {
             string filepath = Path.Combine(FilePath, Path.Combine(folderParts.ToArray()));
@@ -169,13 +198,157 @@ namespace ExpansionPlugin
         {
             ExpansionMarketCategory.ToDelete = true;
         }
-        public bool needToSave()
+        internal bool MarketItemClassNameExists(string className)
         {
-            return false;
+            if (string.IsNullOrWhiteSpace(className))
+                return false;
+
+            return Items.Any(category =>
+                category.Items != null &&
+                category.Items.Any(item =>
+                    !string.IsNullOrWhiteSpace(item.ClassName) &&
+                    string.Equals(item.ClassName, className, StringComparison.OrdinalIgnoreCase)));
         }
-        protected override IEnumerable<string> ValidateData(ExpansionMarketCategory ExpansionMarketCategory)
+        internal ExpansionMarketItem FindMarketItemByClassName(string className)
         {
-            return ExpansionMarketCategory.FixMissingOrInvalidFields();
+            if (string.IsNullOrWhiteSpace(className))
+                return null;
+
+            return Items
+                .Where(category => category.Items != null)
+                .SelectMany(category => category.Items)
+                .FirstOrDefault(item =>
+                    !string.IsNullOrWhiteSpace(item.ClassName) &&
+                    string.Equals(item.ClassName, className, StringComparison.OrdinalIgnoreCase));
+        }
+        internal ExpansionMarketCategory FindCategoryContainingItem(ExpansionMarketItem item)
+        {
+            if (item == null)
+                return null;
+
+            return Items.FirstOrDefault(category =>
+                category.Items != null &&
+                category.Items.Any(x => ReferenceEquals(x, item)));
+        }
+        internal bool AddMarketItem(ExpansionMarketCategory category, ExpansionMarketItem item, out string error)
+        {
+            error = null;
+
+            if (category == null)
+            {
+                error = "Category was null.";
+                return false;
+            }
+
+            if (item == null)
+            {
+                error = "Item was null.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.ClassName))
+            {
+                error = "Item classname is required.";
+                return false;
+            }
+
+            if (category.Items == null)
+                category.Items = new BindingList<ExpansionMarketItem>();
+
+            ExpansionMarketItem existingItem = FindMarketItemByClassName(item.ClassName);
+
+            if (existingItem != null && !ReferenceEquals(existingItem, item))
+            {
+                error = $"An item with classname '{item.ClassName}' already exists.";
+                return false;
+            }
+
+            if (!category.Items.Any(x => ReferenceEquals(x, item)))
+                category.Items.Add(item);
+
+            return true;
+        }
+        internal bool RemoveMarketItem(ExpansionMarketCategory category, ExpansionMarketItem item, out string error)
+        {
+            error = null;
+
+            if (category == null)
+            {
+                error = "Category was null.";
+                return false;
+            }
+
+            if (item == null)
+            {
+                error = "Item was null.";
+                return false;
+            }
+
+            if (category.Items == null)
+            {
+                error = "Category has no items.";
+                return false;
+            }
+
+            ExpansionMarketItem existing = category.Items
+                .FirstOrDefault(x => ReferenceEquals(x, item));
+
+            if (existing == null)
+            {
+                error = "Item was not found in the selected category.";
+                return false;
+            }
+
+            category.Items.Remove(existing);
+            return true;
+        }
+        internal bool MoveMarketItem(ExpansionMarketItem item, ExpansionMarketCategory destinationCategory, out string error)
+        {
+            error = null;
+
+            if (item == null)
+            {
+                error = "Item was null.";
+                return false;
+            }
+
+            if (destinationCategory == null)
+            {
+                error = "Destination category was null.";
+                return false;
+            }
+
+            ExpansionMarketCategory sourceCategory = FindCategoryContainingItem(item);
+            if (sourceCategory == null)
+            {
+                error = "Could not find the source category.";
+                return false;
+            }
+
+            if (ReferenceEquals(sourceCategory, destinationCategory))
+            {
+                error = "The item is already in that category.";
+                return false;
+            }
+
+            if (!RemoveMarketItem(sourceCategory, item, out error))
+                return false;
+
+            if (!AddMarketItem(destinationCategory, item, out error))
+            {
+                AddMarketItem(sourceCategory, item, out _); // rollback
+                return false;
+            }
+
+            return true;
+        }
+        internal bool CanUseMarketItemClassName(ExpansionMarketItem item, string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+                return false;
+
+            ExpansionMarketItem existing = FindMarketItemByClassName(className);
+            return existing == null || ReferenceEquals(existing, item);
         }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>

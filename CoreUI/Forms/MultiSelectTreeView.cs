@@ -705,5 +705,19 @@ namespace Day2eEditor
 
             return null;
         }
+        public static TreeNode FindNodeByTag(TreeNodeCollection nodes, object tag)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (ReferenceEquals(node.Tag, tag))
+                    return node;
+
+                TreeNode found = FindNodeByTag(node.Nodes, tag);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
+        }
     }
 }

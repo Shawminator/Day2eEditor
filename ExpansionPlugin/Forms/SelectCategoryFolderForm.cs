@@ -8,11 +8,21 @@ namespace ExpansionPlugin
 {
     public partial class SelectCategoryFolderForm : Form
     {
-        public string SelectedCategoryTag { get; private set; }
+        public enum SelectionMode
+        {
+            Folder,
+            ExpansionMarketCategoryFile
+        }
 
-        public SelectCategoryFolderForm(TreeNode sourceRootNode)
+        public string SelectedCategoryTag { get; private set; }
+        public ExpansionMarketCategory SelectedExpansionMarketCategory { get; private set; }
+
+        private readonly SelectionMode _selectionMode;
+
+        public SelectCategoryFolderForm(TreeNode sourceRootNode, SelectionMode selectionMode)
         {
             InitializeComponent();
+            _selectionMode = selectionMode;
             CloneTree(sourceRootNode);
         }
 
@@ -24,25 +34,41 @@ namespace ExpansionPlugin
             if (clonedRoot != null)
             {
                 treeViewFolders.Nodes.Add(clonedRoot);
-                treeViewFolders.ExpandAll();
+                //treeViewFolders.ExpandAll();
             }
         }
 
         private TreeNode CloneNode(TreeNode original)
         {
-            if (original.Tag is ExpansionMarketCategory)
-                return null;
+            bool includeNode = ShouldIncludeNode(original);
 
-            TreeNode cloned = new TreeNode(original.Text)
+            TreeNode cloned = null;
+            if (includeNode)
             {
-                Tag = original.Tag
-            };
+                cloned = new TreeNode(original.Text)
+                {
+                    Tag = original.Tag
+                };
+            }
+
+            // 🚀 STOP here if this is a category file node
+            if (original.Tag is ExpansionMarketCategory)
+                return cloned;
 
             foreach (TreeNode child in original.Nodes)
             {
                 TreeNode clonedChild = CloneNode(child);
                 if (clonedChild != null)
                 {
+                    if (cloned == null)
+                    {
+                        // Create parent container if needed so matching descendants stay visible
+                        cloned = new TreeNode(original.Text)
+                        {
+                            Tag = original.Tag
+                        };
+                    }
+
                     cloned.Nodes.Add(clonedChild);
                 }
             }
@@ -50,22 +76,74 @@ namespace ExpansionPlugin
             return cloned;
         }
 
+        private bool ShouldIncludeNode(TreeNode node)
+        {
+            switch (_selectionMode)
+            {
+                case SelectionMode.Folder:
+                    // Exclude ExpansionMarketCategory file nodes
+                    return !(node.Tag is ExpansionMarketCategory);
+
+                case SelectionMode.ExpansionMarketCategoryFile:
+                    // Keep folder/path nodes so user can navigate,
+                    // and include ExpansionMarketCategory file nodes
+                    return node.Tag is string ||
+                           node.Tag is ExpansionMarketCategory;
+
+                default:
+                    return false;
+            }
+        }
+
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (treeViewFolders.SelectedNode?.Tag is string tag &&
-                tag.StartsWith("MarketCategoryRelativePath:"))
+            TreeNode selectedNode = treeViewFolders.SelectedNode;
+            if (selectedNode == null)
             {
-                SelectedCategoryTag = tag;
-                DialogResult = DialogResult.OK;
+                MessageBox.Show("Please select a valid item.");
                 return;
             }
 
-            MessageBox.Show("Please select a valid folder.");
+            switch (_selectionMode)
+            {
+                case SelectionMode.Folder:
+                    if (selectedNode.Tag is string tag &&
+                        tag.StartsWith("MarketCategoryRelativePath:"))
+                    {
+                        SelectedCategoryTag = tag;
+                        DialogResult = DialogResult.OK;
+                        return;
+                    }
+
+                    MessageBox.Show("Please select a valid folder.");
+                    break;
+
+                case SelectionMode.ExpansionMarketCategoryFile:
+                    if (selectedNode.Tag is ExpansionMarketCategory expansionMarketCategory)
+                    {
+                        SelectedExpansionMarketCategory = expansionMarketCategory;
+                        DialogResult = DialogResult.OK;
+                        return;
+                    }
+
+                    MessageBox.Show("Please select an ExpansionMarketCategory file.");
+                    break;
+            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+        private void treeViewFolders_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            buttonOK.Enabled =
+                (_selectionMode == SelectionMode.Folder &&
+                 e.Node.Tag is string tag &&
+                 tag.StartsWith("MarketCategoryRelativePath:"))
+                ||
+                (_selectionMode == SelectionMode.ExpansionMarketCategoryFile &&
+                 e.Node.Tag is ExpansionMarketCategory);
         }
     }
 }

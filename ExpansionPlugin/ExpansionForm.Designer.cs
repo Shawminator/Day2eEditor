@@ -192,6 +192,9 @@
             addNewFolderToolStripMenuItem = new ToolStripMenuItem();
             deleteFolderToolStripMenuItem = new ToolStripMenuItem();
             moveCategoryToolStripMenuItem = new ToolStripMenuItem();
+            addNewMarketItemToolStripMenuItem = new ToolStripMenuItem();
+            removeMarketItemToolStripMenuItem = new ToolStripMenuItem();
+            moveMarketItemToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1502,10 +1505,10 @@
             // MarketCM
             // 
             MarketCM.BackColor = Color.FromArgb(60, 63, 65);
-            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem });
+            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem });
             MarketCM.Name = "ChatCM";
             MarketCM.ShowImageMargin = false;
-            MarketCM.Size = new Size(211, 136);
+            MarketCM.Size = new Size(211, 202);
             // 
             // addNewMarketCategoryFileToolStripMenuItem
             // 
@@ -1546,6 +1549,30 @@
             moveCategoryToolStripMenuItem.Size = new Size(210, 22);
             moveCategoryToolStripMenuItem.Text = "Move Category";
             moveCategoryToolStripMenuItem.Click += moveCategoryToolStripMenuItem_Click;
+            // 
+            // addNewMarketItemToolStripMenuItem
+            // 
+            addNewMarketItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewMarketItemToolStripMenuItem.Name = "addNewMarketItemToolStripMenuItem";
+            addNewMarketItemToolStripMenuItem.Size = new Size(210, 22);
+            addNewMarketItemToolStripMenuItem.Text = "Add New Market Item";
+            addNewMarketItemToolStripMenuItem.Click += addNewMarketItemToolStripMenuItem_Click;
+            // 
+            // removeMarketItemToolStripMenuItem
+            // 
+            removeMarketItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeMarketItemToolStripMenuItem.Name = "removeMarketItemToolStripMenuItem";
+            removeMarketItemToolStripMenuItem.Size = new Size(210, 22);
+            removeMarketItemToolStripMenuItem.Text = "Remove Market Item";
+            removeMarketItemToolStripMenuItem.Click += removeMarketItemToolStripMenuItem_Click;
+            // 
+            // moveMarketItemToolStripMenuItem
+            // 
+            moveMarketItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveMarketItemToolStripMenuItem.Name = "moveMarketItemToolStripMenuItem";
+            moveMarketItemToolStripMenuItem.Size = new Size(210, 22);
+            moveMarketItemToolStripMenuItem.Text = "Move Market Item";
+            moveMarketItemToolStripMenuItem.Click += moveMarketItemToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1747,5 +1774,8 @@
         private ToolStripMenuItem addNewFolderToolStripMenuItem;
         private ToolStripMenuItem deleteFolderToolStripMenuItem;
         private ToolStripMenuItem moveCategoryToolStripMenuItem;
+        private ToolStripMenuItem addNewMarketItemToolStripMenuItem;
+        private ToolStripMenuItem removeMarketItemToolStripMenuItem;
+        private ToolStripMenuItem moveMarketItemToolStripMenuItem;
     }
 }

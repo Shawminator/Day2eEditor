@@ -93,6 +93,7 @@ namespace Day2eEditor
 
                 foreach (TypeEntry type in tf.Data.TypeList)
                 {
+                    if (UsedTypes != null && UsedTypes.ContainsKey(type.Name.ToLower()) && HideUsed == true) { continue; }
                     string catName = type.Category?.Name ?? "other";
 
                     if (!categoryNodes.TryGetValue(catName, out var catNode))
