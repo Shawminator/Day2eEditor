@@ -4549,6 +4549,7 @@ namespace ExpansionPlugin
         }
         private void DrawP2PTraderVehicleSpawnData(ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig)
         {
+            TextMarkerDrawable? selected_marker = null;
             foreach (ExpansionP2PMarketTraderConfig mb in ExpansionP2pMarketTradersConfig.Items)
             {
                 var marker = new TextMarkerDrawable(new PointF((float)mb.m_VehicleSpawnPosition.X, (float)mb.m_VehicleSpawnPosition.Z), _mapControl.MapSize)
@@ -4565,8 +4566,12 @@ namespace ExpansionPlugin
                 if (_selectedP2PTradervehiclespawn == mb.m_VehicleSpawnPosition)
                 {
                     marker.Color = Color.LimeGreen;
+                    selected_marker = marker;
                 }
-                _mapControl.RegisterDrawable(marker);
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
                 marker = new TextMarkerDrawable(new PointF((float)mb.m_AircraftSpawnPosition.X, (float)mb.m_AircraftSpawnPosition.Z), _mapControl.MapSize)
                 {
                     Color = Color.Red,
@@ -4581,8 +4586,12 @@ namespace ExpansionPlugin
                 if (_selectedP2PTradervehiclespawn == mb.m_AircraftSpawnPosition)
                 {
                     marker.Color = Color.LimeGreen;
+                    selected_marker = marker;
                 }
-                _mapControl.RegisterDrawable(marker);
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
                 marker = new TextMarkerDrawable(new PointF((float)mb.m_WatercraftSpawnPosition.X, (float)mb.m_WatercraftSpawnPosition.Z), _mapControl.MapSize)
                 {
                     Color = Color.Red,
@@ -4597,8 +4606,16 @@ namespace ExpansionPlugin
                 if (_selectedP2PTradervehiclespawn == mb.m_WatercraftSpawnPosition)
                 {
                     marker.Color = Color.LimeGreen;
+                    selected_marker = marker;
                 }
-                _mapControl.RegisterDrawable(marker);
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+            if (selected_marker != null)
+            {
+                _mapControl.RegisterDrawable(selected_marker);
             }
         }
         private void DrawbaseP2PTraderSpawnPositions(ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig)
