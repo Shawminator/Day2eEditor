@@ -107,6 +107,13 @@ namespace ExpansionPlugin
             switch (_selectionMode)
             {
                 case SelectionMode.Folder:
+                    if (selectedNode.Parent == null)
+                    {
+                        SelectedCategoryTag = "MarketCategoryRelativePath:";
+                        DialogResult = DialogResult.OK;
+                        return;
+                    }
+
                     if (selectedNode.Tag is string tag &&
                         tag.StartsWith("MarketCategoryRelativePath:"))
                     {
@@ -139,8 +146,11 @@ namespace ExpansionPlugin
         {
             buttonOK.Enabled =
                 (_selectionMode == SelectionMode.Folder &&
-                 e.Node.Tag is string tag &&
-                 tag.StartsWith("MarketCategoryRelativePath:"))
+                 (
+                     e.Node.Parent == null ||
+                     (e.Node.Tag is string tag &&
+                      tag.StartsWith("MarketCategoryRelativePath:"))
+                 ))
                 ||
                 (_selectionMode == SelectionMode.ExpansionMarketCategoryFile &&
                  e.Node.Tag is ExpansionMarketCategory);

@@ -333,17 +333,28 @@ namespace ExpansionPlugin
                     var control = new ExpasnionMarksetSettingsVehicleSpawnInfoControl();
                     control.PositionChanged += (updatedPos) =>
                     {
-                        _mapControl.ClearDrawables(); ;
+                        _mapControl.ClearDrawables();
                         DrawbaseVehicleSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
                     };
                     control.OrientationChanged += (updatedOrientation) =>
                     {
-                        _mapControl.ClearDrawables(); ;
+                        _mapControl.ClearDrawables();
                         DrawbaseVehicleSpawnPositions(node.FindParentOfType<ExpansionMarketSettingsConfig>());
                     };
                     ShowHandler(control, typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, selected);
                     SetupVehicleSpawnLocation(ExpansionMarketSpawnPosition, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
+                },
+                //MarketCategory
+                [typeof(ExpansionMarketCategory)] = (node,selected) =>
+                {
+                    ExpansionMarketCategory ExpansionMarketCategory = node.Tag as ExpansionMarketCategory;
+                    ShowHandler(new ExpansionMarketCategoryControl(), typeof(ExpansionMarketCategoryConfig), ExpansionMarketCategory, selected);
+                },
+                [typeof(ExpansionMarketItem)] = (node,selected) =>
+                {
+                    ExpansionMarketItem ExpansionMarketItem = node.Tag as ExpansionMarketItem;
+                    ShowHandler(new ExpansionMarketItemControl(), typeof(ExpansionMarketCategoryConfig), ExpansionMarketItem, selected);
                 },
                 //Missions
                 [typeof(ExpansionMissionSettings)] = (node, selected) =>
@@ -7521,6 +7532,8 @@ namespace ExpansionPlugin
                     return;
 
                 TreeNode destinationNode = TreeNodeExtensions.FindNodeByTag(parent, newTag);
+                if (newTag == "MarketCategoryRelativePath:")
+                    destinationNode = parent;
                 if (destinationNode == null)
                     return;
 
