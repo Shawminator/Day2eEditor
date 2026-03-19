@@ -195,6 +195,12 @@
             addNewMarketItemToolStripMenuItem = new ToolStripMenuItem();
             removeMarketItemToolStripMenuItem = new ToolStripMenuItem();
             moveMarketItemToolStripMenuItem = new ToolStripMenuItem();
+            addItemAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            removeItemAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            addItemVariantToolStripMenuItem = new ToolStripMenuItem();
+            removeItemVariantToolStripMenuItem = new ToolStripMenuItem();
+            addItemVariantAutoSearchToolStripMenuItem = new ToolStripMenuItem();
+            createItemFromItemVariantToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1505,10 +1511,10 @@
             // MarketCM
             // 
             MarketCM.BackColor = Color.FromArgb(60, 63, 65);
-            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem });
+            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem, addItemAttachmentToolStripMenuItem, removeItemAttachmentToolStripMenuItem, addItemVariantToolStripMenuItem, removeItemVariantToolStripMenuItem, addItemVariantAutoSearchToolStripMenuItem, createItemFromItemVariantToolStripMenuItem });
             MarketCM.Name = "ChatCM";
             MarketCM.ShowImageMargin = false;
-            MarketCM.Size = new Size(211, 202);
+            MarketCM.Size = new Size(211, 334);
             // 
             // addNewMarketCategoryFileToolStripMenuItem
             // 
@@ -1573,6 +1579,54 @@
             moveMarketItemToolStripMenuItem.Size = new Size(210, 22);
             moveMarketItemToolStripMenuItem.Text = "Move Market Item";
             moveMarketItemToolStripMenuItem.Click += moveMarketItemToolStripMenuItem_Click;
+            // 
+            // addItemAttachmentToolStripMenuItem
+            // 
+            addItemAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            addItemAttachmentToolStripMenuItem.Name = "addItemAttachmentToolStripMenuItem";
+            addItemAttachmentToolStripMenuItem.Size = new Size(210, 22);
+            addItemAttachmentToolStripMenuItem.Text = "Add Item Attachment";
+            addItemAttachmentToolStripMenuItem.Click += addItemAttachmentToolStripMenuItem_Click;
+            // 
+            // removeItemAttachmentToolStripMenuItem
+            // 
+            removeItemAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeItemAttachmentToolStripMenuItem.Name = "removeItemAttachmentToolStripMenuItem";
+            removeItemAttachmentToolStripMenuItem.Size = new Size(210, 22);
+            removeItemAttachmentToolStripMenuItem.Text = "Remove Item Attachment";
+            removeItemAttachmentToolStripMenuItem.Click += removeItemAttachmentToolStripMenuItem_Click;
+            // 
+            // addItemVariantToolStripMenuItem
+            // 
+            addItemVariantToolStripMenuItem.ForeColor = SystemColors.Control;
+            addItemVariantToolStripMenuItem.Name = "addItemVariantToolStripMenuItem";
+            addItemVariantToolStripMenuItem.Size = new Size(210, 22);
+            addItemVariantToolStripMenuItem.Text = "Add Item Variant";
+            addItemVariantToolStripMenuItem.Click += addItemVariantToolStripMenuItem_Click;
+            // 
+            // removeItemVariantToolStripMenuItem
+            // 
+            removeItemVariantToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeItemVariantToolStripMenuItem.Name = "removeItemVariantToolStripMenuItem";
+            removeItemVariantToolStripMenuItem.Size = new Size(210, 22);
+            removeItemVariantToolStripMenuItem.Text = "Remove Item Variant";
+            removeItemVariantToolStripMenuItem.Click += removeItemVariantToolStripMenuItem_Click;
+            // 
+            // addItemVariantAutoSearchToolStripMenuItem
+            // 
+            addItemVariantAutoSearchToolStripMenuItem.ForeColor = SystemColors.Control;
+            addItemVariantAutoSearchToolStripMenuItem.Name = "addItemVariantAutoSearchToolStripMenuItem";
+            addItemVariantAutoSearchToolStripMenuItem.Size = new Size(210, 22);
+            addItemVariantAutoSearchToolStripMenuItem.Text = "Add Item Variant Auto Search";
+            addItemVariantAutoSearchToolStripMenuItem.Click += addItemVariantAutoSearchToolStripMenuItem_Click;
+            // 
+            // createItemFromItemVariantToolStripMenuItem
+            // 
+            createItemFromItemVariantToolStripMenuItem.ForeColor = SystemColors.Control;
+            createItemFromItemVariantToolStripMenuItem.Name = "createItemFromItemVariantToolStripMenuItem";
+            createItemFromItemVariantToolStripMenuItem.Size = new Size(210, 22);
+            createItemFromItemVariantToolStripMenuItem.Text = "Create Item From Item Variant";
+            createItemFromItemVariantToolStripMenuItem.Click += createItemFromItemVariantToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1777,5 +1831,11 @@
         private ToolStripMenuItem addNewMarketItemToolStripMenuItem;
         private ToolStripMenuItem removeMarketItemToolStripMenuItem;
         private ToolStripMenuItem moveMarketItemToolStripMenuItem;
+        private ToolStripMenuItem addItemAttachmentToolStripMenuItem;
+        private ToolStripMenuItem removeItemAttachmentToolStripMenuItem;
+        private ToolStripMenuItem addItemVariantToolStripMenuItem;
+        private ToolStripMenuItem removeItemVariantToolStripMenuItem;
+        private ToolStripMenuItem addItemVariantAutoSearchToolStripMenuItem;
+        private ToolStripMenuItem createItemFromItemVariantToolStripMenuItem;
     }
 }

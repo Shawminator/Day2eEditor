@@ -486,6 +486,18 @@ namespace ExpansionPlugin
             ExpansionMarketItem existing = FindMarketItemByClassName(className);
             return existing == null || ReferenceEquals(existing, item);
         }
+
+        internal bool checkCategoryexists(string categoryPath)
+        {
+            if (string.IsNullOrWhiteSpace(categoryPath))
+                return false;
+
+            string filename = categoryPath + ".json";
+            string fullpath = Path.Join(FilePath, filename);
+
+            return Items.Any(category =>
+                string.Equals(category._path, fullpath, StringComparison.OrdinalIgnoreCase));
+        }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>
     {

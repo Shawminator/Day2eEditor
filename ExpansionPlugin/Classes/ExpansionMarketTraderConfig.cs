@@ -3,6 +3,7 @@ using Day2eEditor;
 using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -11,7 +12,40 @@ namespace ExpansionPlugin
         CanOnlyBuy = 0,
         CanBuyAndSell,
         CanOnlySell,
-        CanBuyAndSellAsAttachmentOnly  //! Item should not be shown in menu, but can be sold/purchased as attachment on another item. For internal use only
+        CanBuyAndSellAsAttachmentOnly
+    }
+    public class ExpansionMarketTraderItem : IDeepCloneable<ExpansionMarketTraderItem>, IEquatable<ExpansionMarketTraderItem>
+    {
+        public ExpansionMarketItem MarketItem { get; set; }
+        public ExpansionMarketTraderBuySell BuySell { get; set; }
+
+        public ExpansionMarketTraderItem() { }  
+        public ExpansionMarketTraderItem(ExpansionMarketItem marketItem, ExpansionMarketTraderBuySell buySell)
+        {
+            MarketItem = marketItem;
+            BuySell = buySell;
+        }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMarketTraderItem);
+        public bool Equals(ExpansionMarketTraderItem other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            if (MarketItem != other.MarketItem ||
+                 BuySell != other.BuySell)
+                return false;
+
+            return true;
+        }
+        public ExpansionMarketTraderItem Clone()
+        {
+            ExpansionMarketTraderItem clone = new ExpansionMarketTraderItem()
+            {
+                MarketItem = this.MarketItem.Clone(),
+                BuySell = this.BuySell
+            };
+            return clone;
+        }
     }
     public class ExpansionMarketTraderConfig : MultiFileConfigLoader<ExpansionMarketTrader>
     {
@@ -19,9 +53,48 @@ namespace ExpansionPlugin
         public ExpansionMarketTraderConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            HasErrors = false;
+            Errors.Clear();
+            Items.Clear();
+            ClonedItems.Clear();
+
+            var filePaths = Directory.GetFiles(BasePath, "*.json");
+
+            foreach (var file in filePaths)
+            {
+                try
+                {
+                    var item = LoadItem(file);
+
+                    OnAfterItemLoad(item, file);
+                    ClonedItems.Add(GetID(item), item.Clone());
+                    var issues = ValidateData(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+                    ClonedItems[item.Id].m_Items = item.m_Items != null
+                        ? new BindingList<ExpansionMarketTraderItem>(item.m_Items.Select(cat => cat.Clone()).ToList())
+                        : null;
+                    Items.Add(item);
+
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
+                }
+            }
+
+            OnAfterLoadAll();
+        }
         protected override ExpansionMarketTrader LoadItem(string filePath)
         {
-            var TraderZone = AppServices.GetRequired<FileService>().LoadOrCreateJson(
+            var ExpansionTrader = AppServices.GetRequired<FileService>().LoadOrCreateJson(
                     filePath,
                     createNew: () => new ExpansionMarketTrader(),
                     onError: ex => HandleItemError(filePath, ex),
@@ -29,9 +102,9 @@ namespace ExpansionPlugin
                     useVecConvertor: true
                 );
 
-            TraderZone.SetPath(filePath);
-            TraderZone.SetGuid(Guid.NewGuid());
-            return TraderZone;
+            ExpansionTrader.SetPath(filePath);
+            ExpansionTrader.SetGuid(Guid.NewGuid());  //Runtime Only
+            return ExpansionTrader;
         }
         protected override void SaveItem(ExpansionMarketTrader ExpansionMarketTrader)
         {
@@ -50,14 +123,13 @@ namespace ExpansionPlugin
                 File.Delete(ExpansionMarketTrader._path);
             }
         }
-        internal ExpansionMarketTrader AddNewMarketCategory(string ExpansionMarketTraderName)
+        internal ExpansionMarketTrader AddNewMarketTrader(string ExpansionMarketTraderName)
         {
-            string filepath = Path.Combine(AppServices.GetRequired<ExpansionManager>().basePath, "expansion", "p2pmarket");
             string filename = ExpansionMarketTraderName + ".json";
             ExpansionMarketTrader ExpansionMarketTrader = new ExpansionMarketTrader()
             {
                 m_Version = CurrentVersion,
-                DisplayName = filename,
+                DisplayName = ExpansionMarketTraderName,
                 MinRequiredReputation = 0,
                 MaxRequiredReputation = 2147483647,
                 TraderIcon = "Trader",
@@ -69,7 +141,7 @@ namespace ExpansionPlugin
                 DisplayCurrencyName = "",
                 DisplayCurrencyValue = 1
             };
-            ExpansionMarketTrader.SetPath(Path.Combine(filepath, filename));
+            ExpansionMarketTrader.SetPath(Path.Combine(FilePath, filename));
             ExpansionMarketTrader.SetGuid(Guid.NewGuid());
             Items.Add(ExpansionMarketTrader);
             return ExpansionMarketTrader;
@@ -78,10 +150,6 @@ namespace ExpansionPlugin
         internal void RemoveFile(ExpansionMarketTrader ExpansionMarketTrader)
         {
             ExpansionMarketTrader.ToDelete = true;
-        }
-        public bool needToSave()
-        {
-            return false;
         }
         protected override IEnumerable<string> ValidateData(ExpansionMarketTrader ExpansionMarketTrader)
         {
@@ -98,6 +166,8 @@ namespace ExpansionPlugin
         public bool ToDelete { get; set; }
         [JsonIgnore]
         public Guid Id { get; set; }
+        [JsonIgnore]
+        public BindingList<ExpansionMarketTraderItem> m_Items { get; set; }    
 
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;
@@ -133,10 +203,13 @@ namespace ExpansionPlugin
                  UseCategoryOrder != other.UseCategoryOrder)
                 return false;
 
+            if (!ListEquals(Currencies, other.Currencies))
+                return false;
+
             if (!ListEquals(Categories, other.Categories))
                 return false;
 
-            if (!AreEqual(Items, other.Items))
+            if (!ListEquals(m_Items, other.m_Items))
                 return false;
 
             return true;
@@ -160,7 +233,7 @@ namespace ExpansionPlugin
 
             return true;
         }
-        public bool AreEqual(Dictionary<string, ExpansionMarketTraderBuySell> a, Dictionary<string, ExpansionMarketTraderBuySell> b)
+        private static bool AreEqual(Dictionary<string, ExpansionMarketTraderBuySell> a, Dictionary<string, ExpansionMarketTraderBuySell> b)
         {
             if (a.Count != b.Count)
                 return false;
@@ -190,14 +263,16 @@ namespace ExpansionPlugin
                 TraderIcon = this.TraderIcon,
                 Currencies = this.Currencies != null
                     ? new BindingList<string>(this.Currencies.ToList())
-                    : null,
+                    : new BindingList<string>(),
                 DisplayCurrencyValue = this.DisplayCurrencyValue,
                 DisplayCurrencyName = this.DisplayCurrencyName,
                 UseCategoryOrder = this.UseCategoryOrder,
                 Categories = this.Categories != null
                     ? new BindingList<string>(this.Categories.ToList())
-                    : null,
-                Items = new Dictionary<string, ExpansionMarketTraderBuySell>(this.Items)
+                    : new BindingList<string>(),
+                Items = this.Items != null
+                    ? new Dictionary<string, ExpansionMarketTraderBuySell>(this.Items)
+                    : new Dictionary<string, ExpansionMarketTraderBuySell>()
             };
             clone.SetPath(_path);
             clone.SetGuid(Id);
@@ -213,22 +288,22 @@ namespace ExpansionPlugin
             }
             if (DisplayName == null)
             {
-                fixes.Add($"Updated DisplayName to null");
+                fixes.Add($"Updated DisplayName to empty string");
                 DisplayName = "";
             }
-            if (MinRequiredReputation == null || MinRequiredReputation < 0 || MaxRequiredReputation > int.MaxValue)
+            if (MinRequiredReputation == null || MinRequiredReputation < 0)
             {
-                fixes.Add($"Updated MinRequiredReputation to 0");
+                fixes.Add("Updated MinRequiredReputation to 0");
                 MinRequiredReputation = 0;
             }
-            if (MaxRequiredReputation == null || MinRequiredReputation < 0 || MaxRequiredReputation > int.MaxValue)
+            if (MaxRequiredReputation == null || MaxRequiredReputation < 0)
             {
                 fixes.Add($"Updated MaxRequiredReputation to {int.MaxValue}");
                 MaxRequiredReputation = int.MaxValue;
             }
             if (RequiredFaction == null)
             {
-                fixes.Add($"Updated RequiredFaction to null");
+                fixes.Add($"Updated RequiredFaction to empty string");
                 RequiredFaction = "";
             }
             if (RequiredCompletedQuestID == null)
@@ -238,8 +313,13 @@ namespace ExpansionPlugin
             }
             if (TraderIcon == null)
             {
-                fixes.Add($"Updated TraderIcon to null");
+                fixes.Add($"Updated TraderIcon to empty string");
                 TraderIcon = "";
+            }
+            if (Currencies == null)
+            {
+                Currencies = new BindingList<string>();
+                fixes.Add("Initialized Currencies");
             }
             if (Currencies.Count > 0)
             {
@@ -259,12 +339,12 @@ namespace ExpansionPlugin
 
             if (DisplayCurrencyValue == null || DisplayCurrencyValue < 0 || DisplayCurrencyValue > 1)
             {
-                fixes.Add($"Updated SellPricePercent to 0");
-                DisplayCurrencyValue = 0;
+                fixes.Add($"Updated DisplayCurrencyValue to 1");
+                DisplayCurrencyValue = 1;
             }
             if (DisplayCurrencyName == null)
             {
-                fixes.Add($"Updated DisplayCurrencyName to null");
+                fixes.Add($"Updated DisplayCurrencyName to empty string");
                 DisplayCurrencyName = "";
             }
             if (UseCategoryOrder == null || UseCategoryOrder < 0 || UseCategoryOrder > 1)
@@ -275,28 +355,122 @@ namespace ExpansionPlugin
             if (Categories == null)
             {
                 Categories = new BindingList<string>();
-                fixes.Add("Items Categories Currencies");
+                fixes.Add("Initialized Categories");
             }
+            else
+            {
+                for (int i = 0; i < Categories.Count; i++)
+                {
+                    string original = Categories[i];
+
+                    if (!TryParseCategoryEntry(original, out var categoryPath, out var buySell, out var error))
+                    {
+                        fixes.Add($"MARKET CONFIGURATION ERROR: {error}");
+                        continue;
+                    }
+
+                    string normalized = categoryPath;
+                    if (original.Contains(':'))
+                        normalized = $"{categoryPath}:{(int)buySell}";
+
+                    if (!string.Equals(original, normalized, StringComparison.Ordinal))
+                    {
+                        Categories[i] = normalized;
+                        fixes.Add($"Normalized category '{original}' to '{normalized}'");
+                    }
+
+                    if (!AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig.checkCategoryexists(categoryPath))
+                    {
+                        fixes.Add($"MARKET CONFIGURATION ERROR: Category '{categoryPath}' does not exist");
+                        MessageBox.Show($"MARKET CONFIGURATION ERROR: Category '{categoryPath}' does not exist.\nPlease manaully check {FileName} for this");
+                    }
+                }
+            }
+            m_Items = new BindingList<ExpansionMarketTraderItem>();
             if (Items == null)
             {
                 Items = new Dictionary<string, ExpansionMarketTraderBuySell>();
-                fixes.Add("Items Items Currencies");
+                
+                fixes.Add("Initialized Items");
             }
-            if (Items.Count > 0)
+            else if (Items.Count > 0)
             {
                 var keysWithUpper = Items.Keys.Where(k => k.Any(char.IsUpper)).ToList();
                 foreach (var key in keysWithUpper)
                 {
-                    string lowerKey = key.ToLower();
+                    string lowerKey = key.ToLowerInvariant();
                     fixes.Add($"\tMARKET CONFIGURATION ERROR: {key} changed to {lowerKey}");
                     var value = Items[key];
                     Items.Remove(key);
                     Items[lowerKey] = value;
-                }
 
+                    ExpansionMarketItem marketItem = AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig.FindMarketItemByClassName(lowerKey);
+                    ExpansionMarketTraderItem traderitem = new ExpansionMarketTraderItem(marketItem, value);
+                    if (m_Items.Any(x => x.MarketItem.ClassName == traderitem.MarketItem.ClassName))
+                    {
+                        fixes.Add($"Item {traderitem.MarketItem.ClassName} has already been added to trader {_path}");
+                        continue;
+                    }
+                    m_Items.Add(traderitem);
+                }
             }
             return fixes;
         }
+        private static bool TryParseCategoryEntry(
+            string input,
+            out string categoryPath,
+            out ExpansionMarketTraderBuySell buySell,
+            out string error)
+        {
+            categoryPath = string.Empty;
+            buySell = ExpansionMarketTraderBuySell.CanBuyAndSell;
+            error = string.Empty;
 
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                error = "Category entry is empty.";
+                return false;
+            }
+
+            string normalized = NormalizeCategoryReference(input);
+            int colonIndex = normalized.IndexOf(':');
+
+            if (colonIndex < 0)
+            {
+                categoryPath = normalized;
+                return true;
+            }
+
+            categoryPath = normalized[..colonIndex];
+            string suffix = normalized[(colonIndex + 1)..];
+
+            if (!int.TryParse(suffix, out int rawValue) ||
+                !Enum.IsDefined(typeof(ExpansionMarketTraderBuySell), rawValue))
+            {
+                error = $"Invalid buy/sell value '{suffix}' in category entry '{input}'.";
+                return false;
+            }
+
+            buySell = (ExpansionMarketTraderBuySell)rawValue;
+            return true;
+        }
+        private static string NormalizeCategoryReference(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            value = value.Trim();
+
+            int colonIndex = value.IndexOf(':');
+            string pathPart = colonIndex >= 0 ? value[..colonIndex] : value;
+            string suffixPart = colonIndex >= 0 ? value[colonIndex..] : string.Empty;
+
+            pathPart = pathPart.Replace('/', '\\').Trim('\\');
+
+            if (pathPart.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                pathPart = pathPart[..^5];
+
+            return pathPart + suffixPart;
+        }
     }
 }

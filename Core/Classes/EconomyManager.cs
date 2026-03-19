@@ -408,7 +408,6 @@ namespace Day2eEditor
             "shoulderR",
             "Vest",
         };
-
         static List<string> VanillaCharacterClassnames = new List<string>()
         {
             "SurvivorF_Baty",
@@ -443,8 +442,5 @@ namespace Day2eEditor
             "SurvivorM_Seth",
             "SurvivorM_Taiki"
         };
-
-
-
     }
 }

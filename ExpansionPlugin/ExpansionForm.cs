@@ -19,6 +19,7 @@ using System.Xml;
 using System.Xml.Linq;
 using static ExpansionPlugin.ExpansionPersonalStorageNewSettings;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ExpansionPlugin
@@ -54,9 +55,10 @@ namespace ExpansionPlugin
             InitializeComponent();
             _plugin = plugin;
             _expansionManager = new ExpansionManager();
+            AppServices.Register(_expansionManager);
             _expansionManager.SetExpansionStuff();
             _expansionManager.SetExternalFiles();
-            AppServices.Register(_expansionManager);
+            
 
         }
         private void initializeShowControlHandlers()
@@ -346,12 +348,12 @@ namespace ExpansionPlugin
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketSpawnPosition.Position[0], ExpansionMarketSpawnPosition.Position[2]));
                 },
                 //MarketCategory
-                [typeof(ExpansionMarketCategory)] = (node,selected) =>
+                [typeof(ExpansionMarketCategory)] = (node, selected) =>
                 {
                     ExpansionMarketCategory ExpansionMarketCategory = node.Tag as ExpansionMarketCategory;
                     ShowHandler(new ExpansionMarketCategoryControl(), typeof(ExpansionMarketCategoryConfig), ExpansionMarketCategory, selected);
                 },
-                [typeof(ExpansionMarketItem)] = (node,selected) =>
+                [typeof(ExpansionMarketItem)] = (node, selected) =>
                 {
                     ExpansionMarketItem ExpansionMarketItem = node.Tag as ExpansionMarketItem;
                     ShowHandler(new ExpansionMarketItemControl(), typeof(ExpansionMarketCategoryConfig), ExpansionMarketItem, selected);
@@ -1531,6 +1533,34 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewMarketItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                ["MarketItemSpawnAttachments"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addItemAttachmentToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["MarketItemSpawnAttachment"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeItemAttachmentToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["MarketItemVarients"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addItemVariantToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addItemVariantAutoSearchToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["MarketItemVarient"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeItemVariantToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(createItemFromItemVariantToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 //P2P Market
                 ["P2PExludedClassnames"] = node =>
                 {
@@ -1989,6 +2019,7 @@ namespace ExpansionPlugin
 
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketCategoryConfig, CreateExpansionMarketCategoryConfig);
+            AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketTraderConfig, CreateExpansionMarketTraderConfig);
 
             rootNode.Nodes.Add(MarketrootNode);
 
@@ -2822,151 +2853,6 @@ namespace ExpansionPlugin
             CreateMarketSettingsNodes(ef, EconomyRootNode);
             return EconomyRootNode;
         }
-        private TreeNode CreateExpansionMarketCategoryConfig(ExpansionMarketCategoryConfig ef)
-        {
-            TreeNode EconomyRootNode = new TreeNode("Market Categories")
-            {
-                Tag = ef
-            };
-            foreach (ExpansionMarketCategory file in ef.Items)
-            {
-                CreateExpansionMarketCategoryNodes(file, EconomyRootNode);
-            }
-            return EconomyRootNode;
-        }
-        private static void CreateExpansionMarketCategoryNodes(ExpansionMarketCategory expansionMarketCategory, TreeNode economyRootNode)
-        {
-            TreeNode categoryNode = new TreeNode(expansionMarketCategory.FileName)
-            {
-                Tag = expansionMarketCategory
-            };
-
-            TreeNode itemsNode = new TreeNode("Items")
-            {
-                Tag = "MarketItems"
-            };
-
-            foreach (ExpansionMarketItem item in expansionMarketCategory.Items)
-            {
-                CreateMarketItemNode(itemsNode, item);
-            }
-
-            categoryNode.Nodes.Add(itemsNode);
-
-            if (expansionMarketCategory.FolderParts.Count == 0)
-            {
-                Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, categoryNode);
-                return;
-            }
-
-            TreeNode currentNode = economyRootNode;
-
-            for (int i = 0; i < expansionMarketCategory.FolderParts.Count; i++)
-            {
-                string part = expansionMarketCategory.FolderParts[i];
-
-                TreeNode folderNode = currentNode.Nodes
-                    .Cast<TreeNode>()
-                    .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase) &&
-                                         n.Tag is string tag &&
-                                         tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal));
-
-                if (folderNode == null)
-                {
-                    folderNode = new TreeNode(part)
-                    {
-                        Tag = "MarketCategoryRelativePath:" + string.Join(
-                            Path.AltDirectorySeparatorChar.ToString(),
-                            expansionMarketCategory.FolderParts.Take(i + 1))
-                    };
-
-                    InsertFolderNodeAtTop(currentNode.Nodes, folderNode);
-                }
-
-                currentNode = folderNode;
-            }
-
-            Helpers.InsertNodeAlphabetically(currentNode.Nodes, categoryNode);
-        }
-
-        private static void CreateMarketItemNode(TreeNode itemsNode, ExpansionMarketItem item)
-        {
-            TreeNode itemNode = new TreeNode(item.ClassName)
-            {
-                Tag = item
-            };
-
-            TreeNode variantNode = new TreeNode("Varients")
-            {
-                Tag = "MarketItemVarients"
-            };
-
-            foreach (string varient in item.Variants)
-            {
-                variantNode.Nodes.Add(new TreeNode(varient)
-                {
-                    Tag = "MarketItemVarient"
-                });
-            }
-
-            itemNode.Nodes.Add(variantNode);
-
-            TreeNode attachmentNode = new TreeNode("Spawn Attachments")
-            {
-                Tag = "MarketItemSpawnAttachments"
-            };
-
-            foreach (string att in item.SpawnAttachments)
-            {
-                attachmentNode.Nodes.Add(new TreeNode(att)
-                {
-                    Tag = "MarketItemSpawnAttachment"
-                });
-            }
-
-            itemNode.Nodes.Add(attachmentNode);
-            itemsNode.Nodes.Add(itemNode);
-        }
-
-        private static void InsertFolderNodeAtTop(TreeNodeCollection nodes, TreeNode folderNode)
-        {
-            int insertIndex = 0;
-
-            while (insertIndex < nodes.Count &&
-                   nodes[insertIndex].Tag is string tag &&
-                   tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal))
-            {
-                if (string.Compare(nodes[insertIndex].Text, folderNode.Text, StringComparison.OrdinalIgnoreCase) > 0)
-                    break;
-
-                insertIndex++;
-            }
-
-            nodes.Insert(insertIndex, folderNode);
-        }
-        private static void InsertFileNodeAfterFolders(TreeNodeCollection nodes, TreeNode fileNode)
-        {
-            int insertIndex = 0;
-
-            // First: skip ALL folder nodes
-            while (insertIndex < nodes.Count &&
-                   nodes[insertIndex].Tag is string tag &&
-                   tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal))
-            {
-                insertIndex++;
-            }
-
-            // Second: insert in sorted position among file nodes
-            while (insertIndex < nodes.Count)
-            {
-                if (string.Compare(nodes[insertIndex].Text, fileNode.Text, StringComparison.OrdinalIgnoreCase) > 0)
-                    break;
-
-                insertIndex++;
-            }
-
-            nodes.Insert(insertIndex, fileNode);
-        }
         private static void CreateMarketSettingsNodes(ExpansionMarketSettingsConfig ef, TreeNode EconomyRootNode)
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
@@ -3069,6 +2955,170 @@ namespace ExpansionPlugin
             }
             spawnpointnodes.Nodes.Add(Trainspawnpointnodes);
             EconomyRootNode.Nodes.Add(spawnpointnodes);
+        }
+        private TreeNode CreateExpansionMarketCategoryConfig(ExpansionMarketCategoryConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Market Categories")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionMarketCategory file in ef.Items)
+            {
+                CreateExpansionMarketCategoryNodes(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMarketCategoryNodes(ExpansionMarketCategory expansionMarketCategory, TreeNode economyRootNode)
+        {
+            TreeNode categoryNode = new TreeNode(expansionMarketCategory.FileName)
+            {
+                Tag = expansionMarketCategory
+            };
+
+            TreeNode itemsNode = new TreeNode("Items")
+            {
+                Tag = "MarketItems"
+            };
+
+            foreach (ExpansionMarketItem item in expansionMarketCategory.Items)
+            {
+                CreateMarketItemNode(itemsNode, item);
+            }
+
+            categoryNode.Nodes.Add(itemsNode);
+
+            if (expansionMarketCategory.FolderParts.Count == 0)
+            {
+                Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, categoryNode);
+                return;
+            }
+
+            TreeNode currentNode = economyRootNode;
+
+            for (int i = 0; i < expansionMarketCategory.FolderParts.Count; i++)
+            {
+                string part = expansionMarketCategory.FolderParts[i];
+
+                TreeNode folderNode = currentNode.Nodes
+                    .Cast<TreeNode>()
+                    .FirstOrDefault(n => n.Text.Equals(part, StringComparison.OrdinalIgnoreCase) &&
+                                         n.Tag is string tag &&
+                                         tag.StartsWith("MarketCategoryRelativePath:", StringComparison.Ordinal));
+
+                if (folderNode == null)
+                {
+                    folderNode = new TreeNode(part)
+                    {
+                        Tag = "MarketCategoryRelativePath:" + string.Join(
+                            Path.AltDirectorySeparatorChar.ToString(),
+                            expansionMarketCategory.FolderParts.Take(i + 1))
+                    };
+
+                    Helpers.InsertFolderNodeAtTop(currentNode.Nodes, folderNode);
+                }
+
+                currentNode = folderNode;
+            }
+
+            Helpers.InsertNodeAlphabetically(currentNode.Nodes, categoryNode);
+        }
+        private static TreeNode CreateMarketItemNode(TreeNode itemsNode, ExpansionMarketItem item)
+        {
+            TreeNode itemNode = new TreeNode(item.ClassName)
+            {
+                Tag = item
+            };
+
+            TreeNode attachmentNode = new TreeNode("Spawn Attachments")
+            {
+                Tag = "MarketItemSpawnAttachments"
+            };
+
+            foreach (string att in item.SpawnAttachments)
+            {
+                attachmentNode.Nodes.Add(new TreeNode(att)
+                {
+                    Tag = "MarketItemSpawnAttachment"
+                });
+            }
+            itemNode.Nodes.Add(attachmentNode);
+
+            TreeNode variantNode = new TreeNode("Varients")
+            {
+                Tag = "MarketItemVarients"
+            };
+
+            foreach (string varient in item.Variants)
+            {
+                variantNode.Nodes.Add(new TreeNode(varient)
+                {
+                    Tag = "MarketItemVarient"
+                });
+            }
+            itemNode.Nodes.Add(variantNode);
+
+            Helpers.InsertNodeAlphabetically(itemsNode.Nodes, itemNode);
+            return itemNode;
+        }
+        private TreeNode CreateExpansionMarketTraderConfig(ExpansionMarketTraderConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Market Traders")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionMarketTrader file in ef.Items)
+            {
+                CreateExpansionMarketTraderNodes(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMarketTraderNodes(ExpansionMarketTrader ExpansionMarketTrader, TreeNode economyRootNode)
+        {
+            TreeNode traderNode = new TreeNode(ExpansionMarketTrader.FileName)
+            {
+                Tag = ExpansionMarketTrader
+            };
+
+            TreeNode CurrenciesNode = new TreeNode("Currencies")
+            {
+                Tag = "TraderCurrencies"
+            };
+            foreach (string currency in ExpansionMarketTrader.Currencies)
+            {
+                CurrenciesNode.Nodes.Add(new TreeNode(currency)
+                {
+                    Tag = "TraderCurrency"
+                });
+            }
+            traderNode.Nodes.Add(CurrenciesNode);
+
+            TreeNode CategoryNodes = new TreeNode("Categories")
+            {
+                Tag = "TraderCategories"
+            };
+            foreach (string Category in ExpansionMarketTrader.Categories)
+            {
+                CategoryNodes.Nodes.Add(new TreeNode(Category)
+                {
+                    Tag = "TraderCategory"
+                });
+            }
+            traderNode.Nodes.Add(CategoryNodes);
+
+            TreeNode itemsNode = new TreeNode("Items")
+            {
+                Tag = "TraderItems"
+            };
+            foreach(ExpansionMarketTraderItem TItem in ExpansionMarketTrader.m_Items)
+            {
+                itemsNode.Nodes.Add(new TreeNode(TItem.MarketItem.ClassName)
+                {
+                    Tag = TItem
+                });
+            }
+            traderNode.Nodes.Add(itemsNode);
+
+            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, traderNode);
         }
         //Mission
         private TreeNode CreateExpansionMissionConfig(ExpansionMissionSettingsConfig ef)
@@ -7213,7 +7263,6 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionMarketSettingsConfig.Data.Currencies.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
         }
         private void addNewVehicleKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7396,13 +7445,11 @@ namespace ExpansionPlugin
             if (dr == DialogResult.OK)
             {
                 string File = frm.typesname;
-                string[] folderParts = GetMarketCategoryPathNodes(currentTreeNode, "MarketCategoryRelativePath:");
-                List<string> FolderParts = new List<string>();
-                if (folderParts.Length > 0)
-                {
-                    FolderParts = folderParts[0].Split("/").ToList();
-                }
-                ExpansionMarketCategory newExpansionMarketCategory = _expansionManager.ExpansionMarketCategoryConfig.AddNewMarketCategory(File, FolderParts);
+                string relativePath = GetMarketCategoryPathNode(currentTreeNode, "MarketCategoryRelativePath:");
+                List<string> folderParts = string.IsNullOrWhiteSpace(relativePath)
+                    ? new List<string>()
+                    : relativePath.Split('/').ToList();
+                ExpansionMarketCategory newExpansionMarketCategory = _expansionManager.ExpansionMarketCategoryConfig.AddNewMarketCategory(File, folderParts);
                 TreeNode categoryNode = new TreeNode(newExpansionMarketCategory.FileName)
                 {
                     Tag = newExpansionMarketCategory
@@ -7412,7 +7459,7 @@ namespace ExpansionPlugin
                 {
                     Tag = "MarketItems"
                 });
-                InsertFileNodeAfterFolders(currentTreeNode.Nodes, categoryNode);
+                Helpers.InsertFileNodeAfterFolders(currentTreeNode.Nodes, categoryNode);
                 ExpansionTV.SelectedNode = categoryNode;
                 categoryNode.Expand();
             }
@@ -7431,48 +7478,46 @@ namespace ExpansionPlugin
             frm.StartPosition = FormStartPosition.CenterParent;
             frm.Button5text = "Add Folder";
             frm.HideCEStuff();
+
             DialogResult dr = frm.ShowDialog();
             if (dr == DialogResult.OK)
             {
                 string folder = frm.typesname;
-                string[] FolderParts = GetMarketCategoryPathNodes(currentTreeNode, "MarketCategoryRelativePath:");
-
-                string NodeTag = (FolderParts.Length == 0)
-                        ? $"MarketCategoryRelativePath:{folder}"
-                        : $"MarketCategoryRelativePath:{FolderParts[0]}/{folder}";
-
-                TreeNode newfoldernode = new TreeNode(folder)
+                if (!Helpers.TryValidateFolderName(folder, out string validationError))
                 {
-                    Tag = NodeTag
+                    MessageBox.Show(validationError, "Invalid Folder Name",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                string relativePath = GetMarketCategoryPathNode(currentTreeNode, "MarketCategoryRelativePath:");
+
+                string nodeTag = "MarketCategoryRelativePath:" +
+                    string.Join("/", new[] { relativePath, folder }
+                        .Where(x => !string.IsNullOrWhiteSpace(x)));
+
+                TreeNode newFolderNode = new TreeNode(folder)
+                {
+                    Tag = nodeTag
                 };
-                InsertFolderNodeAtTop(currentTreeNode.Nodes, newfoldernode);
-                ExpansionTV.SelectedNode = newfoldernode;
+
+                Helpers.InsertFolderNodeAtTop(currentTreeNode.Nodes, newFolderNode);
+                ExpansionTV.SelectedNode = newFolderNode;
+
                 string basePath = _expansionManager.ExpansionMarketCategoryConfig.FilePath;
-                string relativePath = NodeTag.Replace("MarketCategoryRelativePath:", "").Replace('/', Path.DirectorySeparatorChar);
-                string fullPath = Path.Combine(basePath, relativePath);
+                string diskRelativePath = nodeTag
+                    .Replace("MarketCategoryRelativePath:", "")
+                    .Replace('/', Path.DirectorySeparatorChar);
+
+                string fullPath = Path.Combine(basePath, diskRelativePath);
                 Directory.CreateDirectory(fullPath);
             }
         }
-        private string[] GetMarketCategoryPathNodes(TreeNode node, string prefix)
+        private string GetMarketCategoryPathNode(TreeNode node, string prefix)
         {
-            var results = new List<string>();
+            if (node?.Tag is string tag && tag.StartsWith(prefix, StringComparison.Ordinal))
+                return tag.Substring(prefix.Length);
 
-            TreeNode current = node;
-
-            while (current != null)
-            {
-                if (current.Tag is string tag && tag.StartsWith(prefix))
-                {
-                    string value = tag.Substring(prefix.Length);
-                    results.Add(value);
-                }
-                else
-                {
-                    break;
-                }
-                current = current.Parent;
-            }
-            return results.ToArray();
+            return string.Empty;
         }
         private void deleteFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7781,6 +7826,163 @@ namespace ExpansionPlugin
                 Helpers.InsertNodeAlphabetically(NewCatNode.Nodes[0].Nodes, currentitemnode);
                 ExpansionTV.SelectedNode = currentitemnode;
             }
+        }
+        private void addItemAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketItem ExpansionMarketItem = currentTreeNode.Parent.Tag as ExpansionMarketItem;
+            AddItemfromTypes form = new AddItemfromTypes()
+            {
+                LowerCase = true,
+                UseMultipleOfSameItem = true
+            };
+
+            DialogResult result = form.ShowDialog();
+            if (result != DialogResult.OK)
+                return;
+
+            List<string> addedtypes = form.AddedTypes.ToList();
+            ExpansionMarketItem.SpawnAttachments ??= new BindingList<string>();
+            foreach (var l in addedtypes)
+            {
+                ExpansionMarketItem.SpawnAttachments.Add(l);
+                currentTreeNode.Nodes.Add(new TreeNode(l)
+                {
+                    Tag = "MarketItemSpawnAttachment"
+                });
+            }
+        }
+        private void removeItemAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketItem ExpansionMarketItem = currentTreeNode.FindParentOfType<ExpansionMarketItem>();
+            ExpansionMarketItem.SpawnAttachments.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+        }
+        private void addItemVariantToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketItem ExpansionMarketItem = currentTreeNode.Parent.Tag as ExpansionMarketItem;
+            AddItemfromTypes form = new AddItemfromTypes()
+            {
+                LowerCase = true,
+                UseMultipleOfSameItem = false
+            };
+
+            DialogResult result = form.ShowDialog();
+            if (result != DialogResult.OK)
+                return;
+
+            List<string> addedtypes = form.AddedTypes.ToList();
+            ExpansionMarketItem.Variants ??= new BindingList<string>();
+            foreach (var l in addedtypes.Where(x => !ExpansionMarketItem.Variants.Contains(x)))
+            {
+                ExpansionMarketItem.Variants.Add(l);
+                currentTreeNode.Nodes.Add(new TreeNode(l)
+                {
+                    Tag = "MarketItemVarient"
+                });
+            }
+        }
+        private void removeItemVariantToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketItem ExpansionMarketItem = currentTreeNode.FindParentOfType<ExpansionMarketItem>();
+            ExpansionMarketItem.Variants.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+        }
+        private void addItemVariantAutoSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketItem ExpansionMarketItem = currentTreeNode.Parent.Tag as ExpansionMarketItem;
+
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Variant Auto Search";
+            frm.SetLaable2 = "search Term";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Search";
+            frm.HideCEStuff();
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string searchTerm = frm.typesname;
+
+                List<TypeEntry> vtypesvariaNTS = AppServices.GetRequired<EconomyManager>().TypesConfig.SerachTypes(searchTerm);
+                List<string> founditems = new List<string>();
+                foreach(TypeEntry te in vtypesvariaNTS)
+                {
+                    if (te.Name.ToLower() == ExpansionMarketItem.ClassName)
+                        continue;
+                    founditems.Add(te.Name.ToLower());
+                }
+
+                AddFromList newform = new AddFromList();
+                newform.List = founditems;
+                DialogResult result = newform.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    List<string> returnlist = newform.GetSelected;
+                    foreach (var l in returnlist.Where(x => !ExpansionMarketItem.Variants.Contains(x)))
+                    {
+                        ExpansionMarketItem.Variants.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "MarketItemVarient"
+                        });
+                    }
+                }
+            }
+        }
+        private void createItemFromItemVariantToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode?.Tag.ToString() != "MarketItemVarient")
+                return;
+
+            string variantClassName = currentTreeNode.Text;
+
+            if (currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag is not ExpansionMarketCategory category)
+                return;
+
+            TreeNode categoryNode = currentTreeNode.Parent.Parent.Parent;
+
+            TreeNode configNode = currentTreeNode.FindParentNodeOfType<ExpansionMarketCategoryConfig>();
+            if (configNode?.Tag is not ExpansionMarketCategoryConfig config)
+                return;
+
+            var matches = config.FindAllDuplicates(variantClassName);
+            if (matches.Count > 0)
+            {
+                var locations = string.Join(Environment.NewLine,
+                    matches.Select(x =>
+                    {
+                        string path = x.category.FolderParts != null && x.category.FolderParts.Any()
+                            ? Path.Combine(x.category.FolderParts.ToArray())
+                            : "";
+                        return $"- {Path.Combine(path, x.category.FileName)}";
+                    }));
+
+                MessageBox.Show(
+                    $"An item with classname '{variantClassName}' already exists in:{Environment.NewLine}{locations}");
+                return;
+            }
+
+            ExpansionMarketItem newItem = new ExpansionMarketItem
+            {
+                ClassName = variantClassName,
+                MinPriceThreshold = 0,
+                MaxPriceThreshold = 0,
+                SellPricePercent = -1,
+                MinStockThreshold = 0,
+                MaxStockThreshold = 0,
+                QuantityPercent = -1,
+                SpawnAttachments = new BindingList<string>(),
+                Variants = new BindingList<string>()
+            };
+
+            if (!config.AddMarketItem(category, newItem, out string error))
+            {
+                MessageBox.Show(error);
+                return;
+            }
+
+            TreeNode ItemNode = CreateMarketItemNode(categoryNode, newItem);
+            ExpansionTV.SelectedNode = ItemNode;
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -9240,6 +9442,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
