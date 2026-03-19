@@ -221,6 +221,52 @@ namespace ExpansionPlugin
                     !string.IsNullOrWhiteSpace(item.ClassName) &&
                     string.Equals(item.ClassName, className, StringComparison.OrdinalIgnoreCase));
         }
+        internal (ExpansionMarketItem item, ExpansionMarketCategory category) FindMarketItemWithCategory(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+                return (null, null);
+
+            foreach (var category in Items)
+            {
+                if (category.Items == null)
+                    continue;
+
+                var item = category.Items.FirstOrDefault(x =>
+                    !string.IsNullOrWhiteSpace(x.ClassName) &&
+                    string.Equals(x.ClassName, className, StringComparison.OrdinalIgnoreCase));
+
+                if (item != null)
+                    return (item, category);
+            }
+
+            return (null, null);
+        }
+        internal List<(ExpansionMarketItem item, ExpansionMarketCategory category)> FindAllDuplicates(string className)
+        {
+            var results = new List<(ExpansionMarketItem, ExpansionMarketCategory)>();
+
+            if (string.IsNullOrWhiteSpace(className))
+                return results;
+
+            foreach (var category in Items)
+            {
+                if (category.Items == null)
+                    continue;
+
+                foreach (var item in category.Items)
+                {
+                    if (string.IsNullOrWhiteSpace(item.ClassName))
+                        continue;
+
+                    if (string.Equals(item.ClassName, className, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add((item, category));
+                    }
+                }
+            }
+
+            return results;
+        }
         internal ExpansionMarketCategory FindCategoryContainingItem(ExpansionMarketItem item)
         {
             if (item == null)
@@ -229,6 +275,105 @@ namespace ExpansionPlugin
             return Items.FirstOrDefault(category =>
                 category.Items != null &&
                 category.Items.Any(x => ReferenceEquals(x, item)));
+        }
+        internal List<(ExpansionMarketItem ownerItem, ExpansionMarketCategory category, string variantClassName)> FindVariantReferences(string className)
+        {
+            var results = new List<(ExpansionMarketItem, ExpansionMarketCategory, string)>();
+
+            if (string.IsNullOrWhiteSpace(className))
+                return results;
+
+            foreach (var category in Items)
+            {
+                if (category.Items == null)
+                    continue;
+
+                foreach (var marketItem in category.Items)
+                {
+                    if (marketItem.Variants == null)
+                        continue;
+
+                    foreach (string variant in marketItem.Variants)
+                    {
+                        if (string.IsNullOrWhiteSpace(variant))
+                            continue;
+
+                        if (string.Equals(variant, className, StringComparison.OrdinalIgnoreCase))
+                        {
+                            results.Add((marketItem, category, variant));
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+        internal bool CanAddMarketItem(ExpansionMarketCategory category, ExpansionMarketItem item, out string error, out bool requiresVariantPromotionConfirmation)
+        {
+            error = null;
+            requiresVariantPromotionConfirmation = false;
+
+            if (category == null)
+            {
+                error = "Category was null.";
+                return false;
+            }
+
+            if (item == null)
+            {
+                error = "Item was null.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.ClassName))
+            {
+                error = "Item classname is required.";
+                return false;
+            }
+
+            var matches = FindAllDuplicates(item.ClassName);
+
+            if (matches.Count > 1 || (matches.Count == 1 && !ReferenceEquals(matches[0].item, item)))
+            {
+                var locations = string.Join(Environment.NewLine,
+                    matches.Select(x => $"- {x.category.FileName}"));
+
+                error = $"An item with classname '{item.ClassName}' already exists in:{Environment.NewLine}{locations}";
+                return false;
+            }
+
+            var variantRefs = FindVariantReferences(item.ClassName);
+
+            if (variantRefs.Count > 0)
+            {
+                var refsInOtherCategories = variantRefs
+                    .Where(x => !ReferenceEquals(x.category, category))
+                    .ToList();
+
+                if (refsInOtherCategories.Count > 0)
+                {
+                    var locations = string.Join(Environment.NewLine,
+                        refsInOtherCategories.Select(x =>
+                            $"- {x.category.FileName} (variant of '{x.ownerItem.ClassName}')"));
+
+                    error =
+                        $"Cannot add '{item.ClassName}' as a full market item because it already exists as a variant in other category files:{Environment.NewLine}" +
+                        locations;
+
+                    return false;
+                }
+
+                var refsInSameCategory = variantRefs
+                    .Where(x => ReferenceEquals(x.category, category))
+                    .ToList();
+
+                if (refsInSameCategory.Count > 0)
+                {
+                    requiresVariantPromotionConfirmation = true;
+                }
+            }
+
+            return true;
         }
         internal bool AddMarketItem(ExpansionMarketCategory category, ExpansionMarketItem item, out string error)
         {
@@ -254,14 +399,6 @@ namespace ExpansionPlugin
 
             if (category.Items == null)
                 category.Items = new BindingList<ExpansionMarketItem>();
-
-            ExpansionMarketItem existingItem = FindMarketItemByClassName(item.ClassName);
-
-            if (existingItem != null && !ReferenceEquals(existingItem, item))
-            {
-                error = $"An item with classname '{item.ClassName}' already exists.";
-                return false;
-            }
 
             if (!category.Items.Any(x => ReferenceEquals(x, item)))
                 category.Items.Add(item);

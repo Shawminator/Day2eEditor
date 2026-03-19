@@ -7582,21 +7582,25 @@ namespace ExpansionPlugin
         }
         private void addNewMarketItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (currentTreeNode.Parent.Tag is not ExpansionMarketCategory category)
+            if (currentTreeNode.Parent?.Tag is not ExpansionMarketCategory category)
                 return;
 
             Dictionary<string, bool> UsedTypes = new Dictionary<string, bool>();
             foreach (ExpansionMarketCategory mc in _expansionManager.ExpansionMarketCategoryConfig.Items)
             {
+                if (mc.Items == null)
+                    continue;
+
                 foreach (ExpansionMarketItem item in mc.Items)
                 {
-                    if (!UsedTypes.ContainsKey(item.ClassName))
+                    if (!string.IsNullOrWhiteSpace(item.ClassName) && !UsedTypes.ContainsKey(item.ClassName))
                         UsedTypes.Add(item.ClassName, true);
-                    if (item.Variants.Count > 0)
+
+                    if (item.Variants != null && item.Variants.Count > 0)
                     {
                         foreach (string v in item.Variants)
                         {
-                            if (!UsedTypes.ContainsKey(v))
+                            if (!string.IsNullOrWhiteSpace(v) && !UsedTypes.ContainsKey(v))
                                 UsedTypes.Add(v, true);
                         }
                     }
@@ -7609,31 +7613,95 @@ namespace ExpansionPlugin
                 UseMultipleOfSameItem = false,
                 UsedTypes = UsedTypes
             };
+
             DialogResult result = form.ShowDialog();
-            if (result == DialogResult.OK)
+            if (result != DialogResult.OK)
+                return;
+
+            List<string> addedtypes = form.AddedTypes.ToList();
+
+            foreach (string l in addedtypes)
             {
-                List<string> addedtypes = form.AddedTypes.ToList();
-                foreach (string l in addedtypes)
+                ExpansionMarketItem newItem = new ExpansionMarketItem
                 {
-                    ExpansionMarketItem newItem = new ExpansionMarketItem
-                    {
-                        ClassName = l,
-                        MinPriceThreshold = 0,
-                        MaxPriceThreshold = 0,
-                        SellPricePercent = -1,
-                        MinStockThreshold = 0,
-                        MaxStockThreshold = 0,
-                        QuantityPercent = -1,
-                        SpawnAttachments = new BindingList<string>(),
-                        Variants = new BindingList<string>()
-                    };
-                    if (!_expansionManager.ExpansionMarketCategoryConfig.AddMarketItem(category, newItem, out string error))
-                    {
-                        MessageBox.Show(error);
-                        return;
-                    }
-                    CreateMarketItemNode(currentTreeNode, newItem);
+                    ClassName = l,
+                    MinPriceThreshold = 0,
+                    MaxPriceThreshold = 0,
+                    SellPricePercent = -1,
+                    MinStockThreshold = 0,
+                    MaxStockThreshold = 0,
+                    QuantityPercent = -1,
+                    SpawnAttachments = new BindingList<string>(),
+                    Variants = new BindingList<string>()
+                };
+
+                var matches = _expansionManager.ExpansionMarketCategoryConfig.FindAllDuplicates(newItem.ClassName);
+                if (matches.Count > 0)
+                {
+                    var locations = string.Join(Environment.NewLine,
+                        matches.Select(x =>
+                        {
+                            string path = x.category.FolderParts != null && x.category.FolderParts.Any()
+                                ? Path.Combine(x.category.FolderParts.ToArray())
+                                : "";
+                            return $"- {Path.Combine(path, x.category.FileName)}";
+                        }));
+
+                    MessageBox.Show(
+                        $"An item with classname '{newItem.ClassName}' already exists in:{Environment.NewLine}{locations}");
+                    return;
                 }
+
+                var variantRefs = _expansionManager.ExpansionMarketCategoryConfig.FindVariantReferences(newItem.ClassName);
+
+                var refsInOtherCategories = variantRefs
+                    .Where(x => !ReferenceEquals(x.category, category))
+                    .ToList();
+
+                if (refsInOtherCategories.Count > 0)
+                {
+                    var locations = string.Join(Environment.NewLine,
+                        refsInOtherCategories.Select(x =>
+                        {
+                            string path = x.category.FolderParts != null && x.category.FolderParts.Any()
+                                ? Path.Combine(x.category.FolderParts.ToArray())
+                                : "";
+                            return $"- {Path.Combine(path, x.category.FileName)} (variant of '{x.ownerItem.ClassName}')";
+                        }));
+
+                    MessageBox.Show(
+                        $"Cannot add '{newItem.ClassName}' as a full market item because it already exists as a variant in other category files:{Environment.NewLine}{locations}");
+                    return;
+                }
+
+                var refsInSameCategory = variantRefs
+                    .Where(x => ReferenceEquals(x.category, category))
+                    .ToList();
+
+                if (refsInSameCategory.Count > 0)
+                {
+                    string owners = string.Join(Environment.NewLine,
+                        refsInSameCategory.Select(x => $"- Variant under '{x.ownerItem.ClassName}'"));
+
+                    DialogResult confirm = MessageBox.Show(
+                        $"'{newItem.ClassName}' already exists as a variant in this category:{Environment.NewLine}" +
+                        owners + Environment.NewLine + Environment.NewLine +
+                        "Do you want to also add it as a full market entry?",
+                        "Variant already exists",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (confirm != DialogResult.Yes)
+                        continue;
+                }
+
+                if (!_expansionManager.ExpansionMarketCategoryConfig.AddMarketItem(category, newItem, out string error))
+                {
+                    MessageBox.Show(error);
+                    return;
+                }
+
+                CreateMarketItemNode(currentTreeNode, newItem);
             }
         }
         private void removeMarketItemToolStripMenuItem_Click(object sender, EventArgs e)
