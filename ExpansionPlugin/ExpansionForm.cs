@@ -358,6 +358,17 @@ namespace ExpansionPlugin
                     ExpansionMarketItem ExpansionMarketItem = node.Tag as ExpansionMarketItem;
                     ShowHandler(new ExpansionMarketItemControl(), typeof(ExpansionMarketCategoryConfig), ExpansionMarketItem, selected);
                 },
+                //MarketTrader
+                [typeof(ExpansionMarketTrader)] = (node, selected) =>
+                {
+                    ExpansionMarketTrader ExpansionMarketTrader = node.Tag as ExpansionMarketTrader;
+                    ShowHandler(new ExpansionMarketTraderControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTrader, selected);
+                },
+                [typeof(ExpansionMarketTraderCategory)] = (node,selected)=>
+                {
+                    ExpansionMarketTraderCategory ExpansionMarketTraderCategory = node.Tag as ExpansionMarketTraderCategory;
+                    ShowHandler(new ExpansionMarketTraderCategoryControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTraderCategory, selected);
+                },
                 //Missions
                 [typeof(ExpansionMissionSettings)] = (node, selected) =>
                 {
@@ -3096,11 +3107,11 @@ namespace ExpansionPlugin
             {
                 Tag = "TraderCategories"
             };
-            foreach (string Category in ExpansionMarketTrader.Categories)
+            foreach (ExpansionMarketTraderCategory Category in ExpansionMarketTrader.m_Categories)
             {
-                CategoryNodes.Nodes.Add(new TreeNode(Category)
+                CategoryNodes.Nodes.Add(new TreeNode(Category.ToString())
                 {
-                    Tag = "TraderCategory"
+                    Tag = Category
                 });
             }
             traderNode.Nodes.Add(CategoryNodes);

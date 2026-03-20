@@ -2,6 +2,7 @@
 using Day2eEditor;
 using System;
 using System.ComponentModel;
+using System.Security.Policy;
 using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -13,6 +14,54 @@ namespace ExpansionPlugin
         CanBuyAndSell,
         CanOnlySell,
         CanBuyAndSellAsAttachmentOnly
+    }
+    public class ExpansionMarketTraderCategory : IDeepCloneable<ExpansionMarketTraderCategory>, IEquatable<ExpansionMarketTraderCategory>
+    {
+        public string CategoryPath { get; set; }
+        public ExpansionMarketCategory MarketCategory { get; set; }
+        public ExpansionMarketTraderBuySell BuySell { get; set; }
+
+        public ExpansionMarketTraderCategory() { }
+        public ExpansionMarketTraderCategory(string categoryPath, ExpansionMarketCategory marketCategory, ExpansionMarketTraderBuySell buySell)
+        {
+            CategoryPath = categoryPath;
+            MarketCategory = marketCategory;
+            BuySell = buySell;
+        }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMarketTraderCategory);
+        public bool Equals(ExpansionMarketTraderCategory other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            if (CategoryPath != other.CategoryPath ||
+                BuySell != other.BuySell)
+                return false;
+
+            if (MarketCategory == null && other.MarketCategory == null)
+                return true;
+
+            if (MarketCategory == null || other.MarketCategory == null)
+                return false;
+
+            return MarketCategory.Equals(other.MarketCategory);
+        }
+        public ExpansionMarketTraderCategory Clone()
+        {
+            return new ExpansionMarketTraderCategory()
+            {
+                CategoryPath = this.CategoryPath,
+                MarketCategory = this.MarketCategory != null ? this.MarketCategory.Clone() : null,
+                BuySell = this.BuySell
+            };
+        }
+        public override string ToString()
+        {
+            if (MarketCategory == null)
+                return CategoryPath;
+            else
+                return MarketCategory.FileName;
+        }
     }
     public class ExpansionMarketTraderItem : IDeepCloneable<ExpansionMarketTraderItem>, IEquatable<ExpansionMarketTraderItem>
     {
@@ -31,7 +80,7 @@ namespace ExpansionPlugin
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            if (MarketItem != other.MarketItem ||
+            if (!MarketItem.Equals(other.MarketItem) ||
                  BuySell != other.BuySell)
                 return false;
 
@@ -77,6 +126,9 @@ namespace ExpansionPlugin
                         foreach (var msg in issues)
                             Console.WriteLine("- " + msg);
                     }
+                    ClonedItems[item.Id].m_Categories = item.m_Categories != null
+                        ? new BindingList<ExpansionMarketTraderCategory>(item.m_Categories.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<ExpansionMarketTraderCategory>();
                     ClonedItems[item.Id].m_Items = item.m_Items != null
                         ? new BindingList<ExpansionMarketTraderItem>(item.m_Items.Select(cat => cat.Clone()).ToList())
                         : null;
@@ -105,6 +157,46 @@ namespace ExpansionPlugin
             ExpansionTrader.SetPath(filePath);
             ExpansionTrader.SetGuid(Guid.NewGuid());  //Runtime Only
             return ExpansionTrader;
+        }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = Items.Count - 1; i >= 0; i--)
+            {
+                var item = Items[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+                //delete file from disk
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    Items.RemoveAt(i);
+                    ClonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
+                }
+                //new file, needs to be written to disk and cloned
+                if (!ClonedItems.TryGetValue(id, out var baseline))
+                {
+                    item.CreateCategoryList();
+                    item.CreateDictionary();
+                    SaveItem(item);
+                    ClonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+                //edit to existing file, needs to be recloned
+                if (!item.Equals(baseline))
+                {
+                    item.CreateCategoryList();
+                    item.CreateDictionary();
+                    SaveItem(item);
+                    ClonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
+            }
+            return saved;
         }
         protected override void SaveItem(ExpansionMarketTrader ExpansionMarketTrader)
         {
@@ -167,6 +259,8 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public Guid Id { get; set; }
         [JsonIgnore]
+        public BindingList<ExpansionMarketTraderCategory> m_Categories { get; set; }
+        [JsonIgnore]
         public BindingList<ExpansionMarketTraderItem> m_Items { get; set; }    
 
         public void SetPath(string path) => _path = path;
@@ -206,7 +300,7 @@ namespace ExpansionPlugin
             if (!ListEquals(Currencies, other.Currencies))
                 return false;
 
-            if (!ListEquals(Categories, other.Categories))
+            if (!ListEquals(m_Categories, other.m_Categories))
                 return false;
 
             if (!ListEquals(m_Items, other.m_Items))
@@ -267,12 +361,12 @@ namespace ExpansionPlugin
                 DisplayCurrencyValue = this.DisplayCurrencyValue,
                 DisplayCurrencyName = this.DisplayCurrencyName,
                 UseCategoryOrder = this.UseCategoryOrder,
-                Categories = this.Categories != null
-                    ? new BindingList<string>(this.Categories.ToList())
-                    : new BindingList<string>(),
-                Items = this.Items != null
-                    ? new Dictionary<string, ExpansionMarketTraderBuySell>(this.Items)
-                    : new Dictionary<string, ExpansionMarketTraderBuySell>()
+                m_Categories = this.m_Categories != null
+                    ? new BindingList<ExpansionMarketTraderCategory>(this.m_Categories.Select(cat => cat.Clone()).ToList())
+                    : new BindingList<ExpansionMarketTraderCategory>(),
+                m_Items = this.m_Items != null
+                    ? new BindingList<ExpansionMarketTraderItem>(this.m_Items.Select(cat => cat.Clone()).ToList())
+                    : null
             };
             clone.SetPath(_path);
             clone.SetGuid(Id);
@@ -352,69 +446,112 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated UseCategoryOrder to 0");
                 UseCategoryOrder = 0;
             }
+            BuildCategoryRuntimeModel(fixes);
+            BuildItemRuntimeModel(fixes);
+            return fixes;
+        }
+        private void BuildCategoryRuntimeModel(List<string> fixes)
+        {
+            m_Categories = new BindingList<ExpansionMarketTraderCategory>();
+
             if (Categories == null)
             {
                 Categories = new BindingList<string>();
                 fixes.Add("Initialized Categories");
+                return;
             }
-            else
+            var seenPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < Categories.Count; i++)
             {
-                for (int i = 0; i < Categories.Count; i++)
+                string original = Categories[i];
+
+                if (!TryParseCategoryEntry(original, out var categoryPath, out var buySell, out var error))
                 {
-                    string original = Categories[i];
-
-                    if (!TryParseCategoryEntry(original, out var categoryPath, out var buySell, out var error))
-                    {
-                        fixes.Add($"MARKET CONFIGURATION ERROR: {error}");
-                        continue;
-                    }
-
-                    string normalized = categoryPath;
-                    if (original.Contains(':'))
-                        normalized = $"{categoryPath}:{(int)buySell}";
-
-                    if (!string.Equals(original, normalized, StringComparison.Ordinal))
-                    {
-                        Categories[i] = normalized;
-                        fixes.Add($"Normalized category '{original}' to '{normalized}'");
-                    }
-
-                    if (!AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig.checkCategoryexists(categoryPath))
-                    {
-                        fixes.Add($"MARKET CONFIGURATION ERROR: Category '{categoryPath}' does not exist");
-                        MessageBox.Show($"MARKET CONFIGURATION ERROR: Category '{categoryPath}' does not exist.\nPlease manaully check {FileName} for this");
-                    }
+                    fixes.Add($"MARKET CONFIGURATION ERROR: {error}");
+                    continue;
                 }
+
+                if (!seenPaths.Add(categoryPath))
+                {
+                    fixes.Add($"Category '{categoryPath}' has already been added to trader {_path}");
+                    continue;
+                }
+
+                ExpansionMarketCategory marketCategory = AppServices
+                    .GetRequired<ExpansionManager>()
+                    .ExpansionMarketCategoryConfig
+                    .GetCategoryByPath(categoryPath);
+
+                if (marketCategory == null)
+                {
+                    fixes.Add($"MARKET CONFIGURATION ERROR: Category '{categoryPath}' does not exist");
+                    MessageBox.Show($"MARKET CONFIGURATION ERROR: Category '{categoryPath}' does not exist.\nPlease manually check {FileName} for this");
+                }
+
+                var traderCategory = new ExpansionMarketTraderCategory(categoryPath, marketCategory, buySell);
+                m_Categories.Add(traderCategory);
             }
+        }
+        private void BuildItemRuntimeModel(List<string> fixes)
+        {
             m_Items = new BindingList<ExpansionMarketTraderItem>();
+
             if (Items == null)
             {
                 Items = new Dictionary<string, ExpansionMarketTraderBuySell>();
-                
                 fixes.Add("Initialized Items");
+                return;
             }
-            else if (Items.Count > 0)
-            {
-                var keysWithUpper = Items.Keys.Where(k => k.Any(char.IsUpper)).ToList();
-                foreach (var key in keysWithUpper)
-                {
-                    string lowerKey = key.ToLowerInvariant();
-                    fixes.Add($"\tMARKET CONFIGURATION ERROR: {key} changed to {lowerKey}");
-                    var value = Items[key];
-                    Items.Remove(key);
-                    Items[lowerKey] = value;
 
-                    ExpansionMarketItem marketItem = AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig.FindMarketItemByClassName(lowerKey);
-                    ExpansionMarketTraderItem traderitem = new ExpansionMarketTraderItem(marketItem, value);
-                    if (m_Items.Any(x => x.MarketItem.ClassName == traderitem.MarketItem.ClassName))
-                    {
-                        fixes.Add($"Item {traderitem.MarketItem.ClassName} has already been added to trader {_path}");
-                        continue;
-                    }
-                    m_Items.Add(traderitem);
+            if (Items.Count == 0)
+                return;
+
+            var keysWithUpper = Items.Keys.Where(k => k.Any(char.IsUpper)).ToList();
+
+            foreach (var key in keysWithUpper)
+            {
+                string lowerKey = key.ToLowerInvariant();
+                var value = Items[key];
+
+                if (Items.ContainsKey(lowerKey) && key != lowerKey)
+                {
+                    fixes.Add($"Duplicate key conflict: {key} conflicts with existing key {lowerKey}");
+                    continue;
                 }
+
+                fixes.Add($"\tMARKET CONFIGURATION ERROR: {key} changed to {lowerKey}");
+
+                Items.Remove(key);
+                Items[lowerKey] = value;
             }
-            return fixes;
+
+            foreach (var kvp in Items)
+            {
+                string key = kvp.Key;
+                var value = kvp.Value;
+
+                ExpansionMarketItem marketItem = AppServices
+                    .GetRequired<ExpansionManager>()
+                    .ExpansionMarketCategoryConfig
+                    .FindMarketItemByClassName(key);
+
+                if (marketItem == null)
+                {
+                    fixes.Add($"Item {key} not found in market config");
+                    continue;
+                }
+
+                var traderItem = new ExpansionMarketTraderItem(marketItem, value);
+
+                if (m_Items.Any(x => x.MarketItem.ClassName == traderItem.MarketItem.ClassName))
+                {
+                    fixes.Add($"Item {traderItem.MarketItem.ClassName} has already been added to trader {_path}");
+                    continue;
+                }
+
+                m_Items.Add(traderItem);
+            }
         }
         private static bool TryParseCategoryEntry(
             string input,
@@ -471,6 +608,44 @@ namespace ExpansionPlugin
                 pathPart = pathPart[..^5];
 
             return pathPart + suffixPart;
+        }
+
+
+        internal void CreateCategoryList()
+        {
+            Categories = new BindingList<string>();
+
+            if (m_Categories == null)
+                return;
+
+            foreach (ExpansionMarketTraderCategory category in m_Categories)
+            {
+                if (category?.MarketCategory == null)
+                    continue;
+
+                string categoryPath = NormalizeCategoryReference(category.CategoryPath);
+
+                if (string.IsNullOrWhiteSpace(categoryPath))
+                    continue;
+
+                Categories.Add($"{categoryPath}:{(int)category.BuySell}");
+            }
+        }
+        internal void CreateDictionary()
+        {
+            Items = new Dictionary<string, ExpansionMarketTraderBuySell>();
+
+            if (m_Items == null)
+                return;
+
+            foreach (ExpansionMarketTraderItem tItem in m_Items)
+            {
+                if (tItem?.MarketItem == null || string.IsNullOrWhiteSpace(tItem.MarketItem.ClassName))
+                    continue;
+
+                if (!Items.ContainsKey(tItem.MarketItem.ClassName))
+                    Items.Add(tItem.MarketItem.ClassName, tItem.BuySell);
+            }
         }
     }
 }

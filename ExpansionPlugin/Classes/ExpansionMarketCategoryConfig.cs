@@ -486,17 +486,26 @@ namespace ExpansionPlugin
             ExpansionMarketItem existing = FindMarketItemByClassName(className);
             return existing == null || ReferenceEquals(existing, item);
         }
-
-        internal bool checkCategoryexists(string categoryPath)
+        internal ExpansionMarketCategory GetCategoryByPath(string categoryPath)
         {
             if (string.IsNullOrWhiteSpace(categoryPath))
-                return false;
+                return null;
 
-            string filename = categoryPath + ".json";
-            string fullpath = Path.Join(FilePath, filename);
+            categoryPath = categoryPath.Trim()
+                                       .Replace('/', '\\')
+                                       .Trim('\\');
 
-            return Items.Any(category =>
-                string.Equals(category._path, fullpath, StringComparison.OrdinalIgnoreCase));
+            if (!categoryPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                categoryPath += ".json";
+
+            string fullPath = Path.GetFullPath(Path.Combine(FilePath, categoryPath));
+
+            return Items.FirstOrDefault(category =>
+                !string.IsNullOrWhiteSpace(category._path) &&
+                string.Equals(
+                    Path.GetFullPath(category._path),
+                    fullPath,
+                    StringComparison.OrdinalIgnoreCase));
         }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>
