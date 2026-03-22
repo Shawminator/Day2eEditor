@@ -32,6 +32,12 @@
             label12 = new Label();
             StaticPatrolCanSpawnInContaminatedAreaCB = new CheckBox();
             groupBox2 = new GroupBox();
+            StaticPatrolShoryukenDamageMultiplierGeneralCB = new CheckBox();
+            StaticPatrolShoryukenDamageMultiplierNID = new NumericUpDown();
+            label14 = new Label();
+            staticPatrolShoryukenChanceGeneralCB = new CheckBox();
+            StaticPatrolShoryukenChanceNUD = new NumericUpDown();
+            label13 = new Label();
             label10 = new Label();
             StaticPatrolDespawnTimeNUD = new NumericUpDown();
             darkLabel53 = new Label();
@@ -133,14 +139,10 @@
             darkLabel48 = new Label();
             StaticPatrolWaypointInterpolationCB = new ComboBox();
             StaticPatrolUseRandomWaypointAsStartPointCB = new CheckBox();
-            staticPatrolShoryukenChanceGeneralCB = new CheckBox();
-            StaticPatrolShoryukenChanceNUD = new NumericUpDown();
-            label13 = new Label();
-            StaticPatrolShoryukenDamageMultiplierGeneralCB = new CheckBox();
-            StaticPatrolShoryukenDamageMultiplierNID = new NumericUpDown();
-            label14 = new Label();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenDamageMultiplierNID).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenChanceNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolDespawnTimeNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolAccuracyMinNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolThreatDistanceLimitNUD).BeginInit();
@@ -165,8 +167,6 @@
             ((System.ComponentModel.ISupportInitialize)StaticPatrolMinSpreadRadiusNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolMaxSpreadRadiusNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolChanceCB).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenChanceNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenDamageMultiplierNID).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
@@ -321,6 +321,86 @@
             groupBox2.TabIndex = 407;
             groupBox2.TabStop = false;
             groupBox2.Text = "These can be set to use the AIPatrol General settings";
+            // 
+            // StaticPatrolShoryukenDamageMultiplierGeneralCB
+            // 
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.AutoSize = true;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.ForeColor = SystemColors.Control;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.Location = new Point(382, 448);
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.Name = "StaticPatrolShoryukenDamageMultiplierGeneralCB";
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.RightToLeft = RightToLeft.Yes;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.Size = new Size(15, 14);
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.TabIndex = 410;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.UseVisualStyleBackColor = true;
+            StaticPatrolShoryukenDamageMultiplierGeneralCB.CheckedChanged += StaticPatrolShoryukenDamageMultiplierGeneralCB_CheckedChanged;
+            // 
+            // StaticPatrolShoryukenDamageMultiplierNID
+            // 
+            StaticPatrolShoryukenDamageMultiplierNID.BackColor = Color.FromArgb(60, 63, 65);
+            StaticPatrolShoryukenDamageMultiplierNID.DecimalPlaces = 2;
+            StaticPatrolShoryukenDamageMultiplierNID.ForeColor = SystemColors.Control;
+            StaticPatrolShoryukenDamageMultiplierNID.Location = new Point(226, 446);
+            StaticPatrolShoryukenDamageMultiplierNID.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolShoryukenDamageMultiplierNID.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            StaticPatrolShoryukenDamageMultiplierNID.Name = "StaticPatrolShoryukenDamageMultiplierNID";
+            StaticPatrolShoryukenDamageMultiplierNID.Size = new Size(139, 23);
+            StaticPatrolShoryukenDamageMultiplierNID.TabIndex = 408;
+            StaticPatrolShoryukenDamageMultiplierNID.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolShoryukenDamageMultiplierNID.ValueChanged += StaticPatrolShoryukenDamageMultiplierNID_ValueChanged;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.ForeColor = Color.FromArgb(220, 220, 220);
+            label14.Location = new Point(20, 447);
+            label14.Margin = new Padding(4, 0, 4, 0);
+            label14.Name = "label14";
+            label14.Size = new Size(164, 15);
+            label14.TabIndex = 409;
+            label14.Text = "Shoryuken Damage Multiplier";
+            // 
+            // staticPatrolShoryukenChanceGeneralCB
+            // 
+            staticPatrolShoryukenChanceGeneralCB.AutoSize = true;
+            staticPatrolShoryukenChanceGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
+            staticPatrolShoryukenChanceGeneralCB.ForeColor = SystemColors.Control;
+            staticPatrolShoryukenChanceGeneralCB.Location = new Point(382, 419);
+            staticPatrolShoryukenChanceGeneralCB.Margin = new Padding(4, 3, 4, 3);
+            staticPatrolShoryukenChanceGeneralCB.Name = "staticPatrolShoryukenChanceGeneralCB";
+            staticPatrolShoryukenChanceGeneralCB.RightToLeft = RightToLeft.Yes;
+            staticPatrolShoryukenChanceGeneralCB.Size = new Size(15, 14);
+            staticPatrolShoryukenChanceGeneralCB.TabIndex = 407;
+            staticPatrolShoryukenChanceGeneralCB.TextAlign = ContentAlignment.TopCenter;
+            staticPatrolShoryukenChanceGeneralCB.UseVisualStyleBackColor = true;
+            staticPatrolShoryukenChanceGeneralCB.CheckedChanged += staticPatrolShoryukenChanceGeneralCB_CheckedChanged;
+            // 
+            // StaticPatrolShoryukenChanceNUD
+            // 
+            StaticPatrolShoryukenChanceNUD.BackColor = Color.FromArgb(60, 63, 65);
+            StaticPatrolShoryukenChanceNUD.DecimalPlaces = 2;
+            StaticPatrolShoryukenChanceNUD.ForeColor = SystemColors.Control;
+            StaticPatrolShoryukenChanceNUD.Location = new Point(226, 417);
+            StaticPatrolShoryukenChanceNUD.Margin = new Padding(4, 3, 4, 3);
+            StaticPatrolShoryukenChanceNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            StaticPatrolShoryukenChanceNUD.Name = "StaticPatrolShoryukenChanceNUD";
+            StaticPatrolShoryukenChanceNUD.Size = new Size(139, 23);
+            StaticPatrolShoryukenChanceNUD.TabIndex = 405;
+            StaticPatrolShoryukenChanceNUD.TextAlign = HorizontalAlignment.Center;
+            StaticPatrolShoryukenChanceNUD.ValueChanged += StaticPatrolShoryukenChanceNUD_ValueChanged;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.ForeColor = Color.FromArgb(220, 220, 220);
+            label13.Location = new Point(20, 418);
+            label13.Margin = new Padding(4, 0, 4, 0);
+            label13.Name = "label13";
+            label13.Size = new Size(106, 15);
+            label13.TabIndex = 406;
+            label13.Text = "Shoryuken Chance";
             // 
             // label10
             // 
@@ -1091,7 +1171,7 @@
             // 
             darkLabel204.AutoSize = true;
             darkLabel204.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel204.Location = new Point(25, 54);
+            darkLabel204.Location = new Point(25, 55);
             darkLabel204.Margin = new Padding(4, 0, 4, 0);
             darkLabel204.Name = "darkLabel204";
             darkLabel204.Size = new Size(41, 15);
@@ -1240,7 +1320,7 @@
             StaticPatrolPersistCB.AutoSize = true;
             StaticPatrolPersistCB.CheckAlign = ContentAlignment.MiddleRight;
             StaticPatrolPersistCB.ForeColor = SystemColors.Control;
-            StaticPatrolPersistCB.Location = new Point(255, 54);
+            StaticPatrolPersistCB.Location = new Point(256, 56);
             StaticPatrolPersistCB.Margin = new Padding(4, 3, 4, 3);
             StaticPatrolPersistCB.Name = "StaticPatrolPersistCB";
             StaticPatrolPersistCB.Size = new Size(15, 14);
@@ -1435,7 +1515,7 @@
             // 
             darkLabel29.AutoSize = true;
             darkLabel29.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel29.Location = new Point(25, 293);
+            darkLabel29.Location = new Point(25, 285);
             darkLabel29.Margin = new Padding(4, 0, 4, 0);
             darkLabel29.Name = "darkLabel29";
             darkLabel29.Size = new Size(39, 15);
@@ -1617,86 +1697,6 @@
             StaticPatrolUseRandomWaypointAsStartPointCB.UseVisualStyleBackColor = true;
             StaticPatrolUseRandomWaypointAsStartPointCB.CheckedChanged += StaticPatrolUseRandomWaypointAsStartPointCB_CheckedChanged;
             // 
-            // staticPatrolShoryukenChanceGeneralCB
-            // 
-            staticPatrolShoryukenChanceGeneralCB.AutoSize = true;
-            staticPatrolShoryukenChanceGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            staticPatrolShoryukenChanceGeneralCB.ForeColor = SystemColors.Control;
-            staticPatrolShoryukenChanceGeneralCB.Location = new Point(382, 419);
-            staticPatrolShoryukenChanceGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            staticPatrolShoryukenChanceGeneralCB.Name = "staticPatrolShoryukenChanceGeneralCB";
-            staticPatrolShoryukenChanceGeneralCB.RightToLeft = RightToLeft.Yes;
-            staticPatrolShoryukenChanceGeneralCB.Size = new Size(15, 14);
-            staticPatrolShoryukenChanceGeneralCB.TabIndex = 407;
-            staticPatrolShoryukenChanceGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            staticPatrolShoryukenChanceGeneralCB.UseVisualStyleBackColor = true;
-            staticPatrolShoryukenChanceGeneralCB.CheckedChanged += staticPatrolShoryukenChanceGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolShoryukenChanceNUD
-            // 
-            StaticPatrolShoryukenChanceNUD.BackColor = Color.FromArgb(60, 63, 65);
-            StaticPatrolShoryukenChanceNUD.DecimalPlaces = 2;
-            StaticPatrolShoryukenChanceNUD.ForeColor = SystemColors.Control;
-            StaticPatrolShoryukenChanceNUD.Location = new Point(226, 417);
-            StaticPatrolShoryukenChanceNUD.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolShoryukenChanceNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            StaticPatrolShoryukenChanceNUD.Name = "StaticPatrolShoryukenChanceNUD";
-            StaticPatrolShoryukenChanceNUD.Size = new Size(139, 23);
-            StaticPatrolShoryukenChanceNUD.TabIndex = 405;
-            StaticPatrolShoryukenChanceNUD.TextAlign = HorizontalAlignment.Center;
-            StaticPatrolShoryukenChanceNUD.ValueChanged += StaticPatrolShoryukenChanceNUD_ValueChanged;
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.ForeColor = Color.FromArgb(220, 220, 220);
-            label13.Location = new Point(20, 418);
-            label13.Margin = new Padding(4, 0, 4, 0);
-            label13.Name = "label13";
-            label13.Size = new Size(106, 15);
-            label13.TabIndex = 406;
-            label13.Text = "Shoryuken Chance";
-            // 
-            // StaticPatrolShoryukenDamageMultiplierGeneralCB
-            // 
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.AutoSize = true;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.CheckAlign = ContentAlignment.MiddleRight;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.ForeColor = SystemColors.Control;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.Location = new Point(382, 448);
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.Name = "StaticPatrolShoryukenDamageMultiplierGeneralCB";
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.RightToLeft = RightToLeft.Yes;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.Size = new Size(15, 14);
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.TabIndex = 410;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.TextAlign = ContentAlignment.TopCenter;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.UseVisualStyleBackColor = true;
-            StaticPatrolShoryukenDamageMultiplierGeneralCB.CheckedChanged += StaticPatrolShoryukenDamageMultiplierGeneralCB_CheckedChanged;
-            // 
-            // StaticPatrolShoryukenDamageMultiplierNID
-            // 
-            StaticPatrolShoryukenDamageMultiplierNID.BackColor = Color.FromArgb(60, 63, 65);
-            StaticPatrolShoryukenDamageMultiplierNID.DecimalPlaces = 2;
-            StaticPatrolShoryukenDamageMultiplierNID.ForeColor = SystemColors.Control;
-            StaticPatrolShoryukenDamageMultiplierNID.Location = new Point(226, 446);
-            StaticPatrolShoryukenDamageMultiplierNID.Margin = new Padding(4, 3, 4, 3);
-            StaticPatrolShoryukenDamageMultiplierNID.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            StaticPatrolShoryukenDamageMultiplierNID.Name = "StaticPatrolShoryukenDamageMultiplierNID";
-            StaticPatrolShoryukenDamageMultiplierNID.Size = new Size(139, 23);
-            StaticPatrolShoryukenDamageMultiplierNID.TabIndex = 408;
-            StaticPatrolShoryukenDamageMultiplierNID.TextAlign = HorizontalAlignment.Center;
-            StaticPatrolShoryukenDamageMultiplierNID.ValueChanged += StaticPatrolShoryukenDamageMultiplierNID_ValueChanged;
-            // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.ForeColor = Color.FromArgb(220, 220, 220);
-            label14.Location = new Point(20, 447);
-            label14.Margin = new Padding(4, 0, 4, 0);
-            label14.Name = "label14";
-            label14.Size = new Size(164, 15);
-            label14.TabIndex = 409;
-            label14.Text = "Shoryuken Damage Multiplier";
-            // 
             // AIPatrolControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1710,6 +1710,8 @@
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenDamageMultiplierNID).EndInit();
+            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenChanceNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolDespawnTimeNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolAccuracyMinNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolThreatDistanceLimitNUD).EndInit();
@@ -1735,8 +1737,6 @@
             ((System.ComponentModel.ISupportInitialize)StaticPatrolMinSpreadRadiusNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolMaxSpreadRadiusNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)StaticPatrolChanceCB).EndInit();
-            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenChanceNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)StaticPatrolShoryukenDamageMultiplierNID).EndInit();
             ResumeLayout(false);
         }
 

@@ -78,6 +78,7 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Market Category Info";
+            groupBox1.Enter += groupBox1_Enter;
             // 
             // label1
             // 
@@ -101,6 +102,7 @@
             UseCategoryOrderCB.Size = new Size(15, 14);
             UseCategoryOrderCB.TabIndex = 193;
             UseCategoryOrderCB.UseVisualStyleBackColor = true;
+            UseCategoryOrderCB.CheckedChanged += UseCategoryOrderCB_CheckedChanged;
             // 
             // darkLabel80
             // 
@@ -125,6 +127,7 @@
             RequiredCompletedQuestIDNUD.Size = new Size(256, 23);
             RequiredCompletedQuestIDNUD.TabIndex = 181;
             RequiredCompletedQuestIDNUD.TextAlign = HorizontalAlignment.Center;
+            RequiredCompletedQuestIDNUD.ValueChanged += RequiredCompletedQuestIDNUD_ValueChanged;
             // 
             // RequiredFactionLB
             // 
@@ -136,6 +139,7 @@
             RequiredFactionLB.Name = "RequiredFactionLB";
             RequiredFactionLB.Size = new Size(256, 23);
             RequiredFactionLB.TabIndex = 180;
+            RequiredFactionLB.SelectedIndexChanged += RequiredFactionLB_SelectedIndexChanged;
             // 
             // darkLabel141
             // 
@@ -171,6 +175,7 @@
             MaxRequiredHumanityNUD.Size = new Size(256, 23);
             MaxRequiredHumanityNUD.TabIndex = 179;
             MaxRequiredHumanityNUD.TextAlign = HorizontalAlignment.Center;
+            MaxRequiredHumanityNUD.ValueChanged += MaxRequiredHumanityNUD_ValueChanged;
             // 
             // darkLabel78
             // 
@@ -195,6 +200,7 @@
             MinRequiredHumanityNUD.Size = new Size(256, 23);
             MinRequiredHumanityNUD.TabIndex = 178;
             MinRequiredHumanityNUD.TextAlign = HorizontalAlignment.Center;
+            MinRequiredHumanityNUD.ValueChanged += MinRequiredHumanityNUD_ValueChanged;
             // 
             // darkLabel70
             // 
@@ -216,6 +222,7 @@
             TraderIconTB.Name = "TraderIconTB";
             TraderIconTB.Size = new Size(256, 23);
             TraderIconTB.TabIndex = 182;
+            TraderIconTB.TextChanged += TraderIconTB_TextChanged;
             // 
             // darkLabel57
             // 
@@ -260,6 +267,7 @@
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(256, 23);
             textBox5.TabIndex = 177;
+            textBox5.TextChanged += textBox5_TextChanged;
             // 
             // ExpansionMarketTraderControl
             // 
