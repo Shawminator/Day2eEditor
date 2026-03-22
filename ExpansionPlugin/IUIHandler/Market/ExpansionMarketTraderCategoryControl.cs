@@ -42,6 +42,15 @@ namespace ExpansionPlugin
             _suppressEvents = true;
 
             ExpansionMarketTraderBuySellCB.DataSource = Enum.GetValues(typeof(ExpansionMarketTraderBuySell));
+            SetisValisCatFile();
+            textBox2.Text = _data.CategoryPath;
+            ExpansionMarketTraderBuySellCB.SelectedItem = _data.BuySell;
+
+            _suppressEvents = false;
+        }
+
+        private void SetisValisCatFile()
+        {
             if (_data.MarketCategory == null)
             {
                 TradercheckPanel.BackgroundImage = imageList1.Images[1];
@@ -54,10 +63,6 @@ namespace ExpansionPlugin
                 TradercheckPanel.BackgroundImageLayout = ImageLayout.Stretch;
                 hasCategory = true;
             }
-            textBox2.Text = _data.CategoryPath;
-            ExpansionMarketTraderBuySellCB.SelectedItem = _data.BuySell;
-
-            _suppressEvents = false;
         }
 
         #region Helper Methods
@@ -68,7 +73,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.MarketCategory.FileName;
             }
         }
 
@@ -82,7 +87,20 @@ namespace ExpansionPlugin
 
         private void darkButton26_Click(object sender, EventArgs e)
         {
+            TreeNode parent = _nodes.Last().FindParentNodeOfType<ExpansionMarketTraderConfig>();
+            if (parent == null)
+                return;
+            parent = TreeNodeExtensions.FindNodeByTag(parent.Parent.Nodes, AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig);
+            using (var form = new SelectCategoryFolderForm(parent, SelectCategoryFolderForm.SelectionMode.ExpansionMarketCategoryFile))
+            {
+                if (form.ShowDialog() != DialogResult.OK)
+                    return;
 
+                _data.MarketCategory = form.SelectedExpansionMarketCategory;
+                textBox2.Text = _data.CategoryPath = _data.MarketCategory.GetTraderPath();
+                SetisValisCatFile();
+                UpdateTreeNodeText();
+            }
         }
     }
 }

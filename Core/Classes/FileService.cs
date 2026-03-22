@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml;
@@ -91,6 +92,7 @@ public class FileService
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
     private JsonSerializerOptions BuildOptions(bool useBool, bool useVec)
     {

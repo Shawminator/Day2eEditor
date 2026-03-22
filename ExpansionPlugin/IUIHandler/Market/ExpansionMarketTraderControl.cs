@@ -39,7 +39,7 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            textBox2.Text = _data._path;
+            textBox2.Text = _data.FileName;
             textBox5.Text = _data.DisplayName;
             MinRequiredHumanityNUD.Value = (int)_data.MinRequiredReputation;
             MaxRequiredHumanityNUD.Value = (int)_data.MaxRequiredReputation;
@@ -64,5 +64,10 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

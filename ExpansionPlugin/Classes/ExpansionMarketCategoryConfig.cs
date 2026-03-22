@@ -507,6 +507,10 @@ namespace ExpansionPlugin
                     fullPath,
                     StringComparison.OrdinalIgnoreCase));
         }
+        internal List<ExpansionMarketCategory> GetexchangeCats()
+        {
+            return Items.Where(x => x.IsExchange == 1).ToList();
+        }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>
     {
@@ -664,7 +668,19 @@ namespace ExpansionPlugin
             return fixes;
         }
 
-   }
+        internal string GetTraderPath()
+        {
+            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(_path);
+
+            var folderPath = FolderParts != null && FolderParts.Any()
+                ? Path.Combine(FolderParts.ToArray())
+                : string.Empty;
+
+            return string.IsNullOrEmpty(folderPath)
+                ? fileNameWithoutExt
+                : Path.Combine(folderPath, fileNameWithoutExt);
+        }
+    }
     public class ExpansionMarketItem : IDeepCloneable<ExpansionMarketItem>, IEquatable<ExpansionMarketItem>
     {
         public string? ClassName { get; set; }

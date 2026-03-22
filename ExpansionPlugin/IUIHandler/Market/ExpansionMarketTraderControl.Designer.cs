@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            label1 = new Label();
             UseCategoryOrderCB = new CheckBox();
             darkLabel80 = new Label();
             RequiredCompletedQuestIDNUD = new NumericUpDown();
@@ -44,7 +45,6 @@
             textBox2 = new TextBox();
             darkLabel50 = new Label();
             textBox5 = new TextBox();
-            label1 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).BeginInit();
@@ -78,6 +78,17 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Market Category Info";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = Color.FromArgb(220, 220, 220);
+            label1.Location = new Point(14, 235);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(110, 15);
+            label1.TabIndex = 194;
+            label1.Text = "Use Category Order";
             // 
             // UseCategoryOrderCB
             // 
@@ -227,6 +238,7 @@
             textBox2.ReadOnly = true;
             textBox2.Size = new Size(256, 23);
             textBox2.TabIndex = 176;
+            textBox2.TextChanged += textBox2_TextChanged;
             // 
             // darkLabel50
             // 
@@ -248,17 +260,6 @@
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(256, 23);
             textBox5.TabIndex = 177;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(14, 235);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(110, 15);
-            label1.TabIndex = 194;
-            label1.Text = "Use Category Order";
             // 
             // ExpansionMarketTraderControl
             // 

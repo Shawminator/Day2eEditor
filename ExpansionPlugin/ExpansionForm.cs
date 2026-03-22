@@ -3090,18 +3090,18 @@ namespace ExpansionPlugin
                 Tag = ExpansionMarketTrader
             };
 
-            TreeNode CurrenciesNode = new TreeNode("Currencies")
+            TreeNode Currenciesnodes = new TreeNode("Currencies")
             {
-                Tag = "TraderCurrencies"
+                Tag = "Currencies"
             };
-            foreach (string currency in ExpansionMarketTrader.Currencies)
+            foreach (string position in ExpansionMarketTrader.Currencies)
             {
-                CurrenciesNode.Nodes.Add(new TreeNode(currency)
+                Currenciesnodes.Nodes.Add(new TreeNode(position)
                 {
-                    Tag = "TraderCurrency"
+                    Tag = "Currency"
                 });
             }
-            traderNode.Nodes.Add(CurrenciesNode);
+            traderNode.Nodes.Add(Currenciesnodes);
 
             TreeNode CategoryNodes = new TreeNode("Categories")
             {
@@ -7268,11 +7268,73 @@ namespace ExpansionPlugin
         }
         private void addNewCurrencyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //to do once i add in the market categories with exchange flag
+            List<ExpansionMarketCategory> cats = _expansionManager.ExpansionMarketCategoryConfig.GetexchangeCats();
+
+            if (cats == null || cats.Count == 0)
+                return;
+
+            List<string> items = new List<string>();
+
+            foreach (ExpansionMarketCategory cat in cats)
+            {
+                foreach (ExpansionMarketItem item in cat.Items)
+                {
+                    foreach (string vitem in item.Variants)
+                    {
+                        if (!items.Contains(vitem))
+                            items.Add(vitem);
+                    }
+
+                    if (!items.Contains(item.ClassName))
+                        items.Add(item.ClassName);
+                }
+            }
+
+            items.Sort();
+
+            AddFromList newform = new AddFromList();
+            newform.List = items;
+
+            DialogResult result = newform.ShowDialog();
+
+            if (result != DialogResult.OK)
+                return;
+
+            List<string> returnlist = newform.GetSelected;
+
+            BindingList<string> currencies = new BindingList<string>();
+
+            if (currentTreeNode.Parent.Tag is ExpansionMarketTrader trader)
+            {
+                currencies = trader.Currencies;
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionMarketSettingsConfig settings)
+            {
+                currencies = settings.Data.Currencies;
+            }
+
+            if (currencies == null)
+                return;
+
+            foreach (var l in returnlist.Where(x => !currencies.Contains(x)))
+            {
+                currencies.Add(l);
+                currentTreeNode.Nodes.Add(new TreeNode(l)
+                {
+                    Tag = "Currency"
+                });
+            }
         }
         private void removeCurrencyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _expansionManager.ExpansionMarketSettingsConfig.Data.Currencies.Remove(currentTreeNode.Text);
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionMarketTrader ExpansionMarketTrader)
+            {
+                ExpansionMarketTrader.Currencies.Remove(currentTreeNode.Text);
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig)
+            {
+                ExpansionMarketSettingsConfig.Data.Currencies.Remove(currentTreeNode.Text);
+            }
             currentTreeNode.Remove();
         }
         private void addNewVehicleKeyToolStripMenuItem_Click(object sender, EventArgs e)
