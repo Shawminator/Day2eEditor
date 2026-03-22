@@ -11,18 +11,24 @@ namespace ExpansionPlugin
         public enum SelectionMode
         {
             Folder,
-            ExpansionMarketCategoryFile
+            ExpansionMarketCategoryFile,
+            ExpansionMarketItem
         }
 
         public string SelectedCategoryTag { get; private set; }
         public ExpansionMarketCategory SelectedExpansionMarketCategory { get; private set; }
+        public List<ExpansionMarketItem> SelectedExpansionMarketItems { get; private set; } = new List<ExpansionMarketItem>();
 
         private readonly SelectionMode _selectionMode;
+        private bool _suppressAfterCheck;
 
         public SelectCategoryFolderForm(TreeNode sourceRootNode, SelectionMode selectionMode)
         {
             InitializeComponent();
             _selectionMode = selectionMode;
+
+            treeViewFolders.CheckBoxes = _selectionMode == SelectionMode.ExpansionMarketItem;
+
             CloneTree(sourceRootNode);
         }
 
@@ -34,7 +40,7 @@ namespace ExpansionPlugin
             if (clonedRoot != null)
             {
                 treeViewFolders.Nodes.Add(clonedRoot);
-                //treeViewFolders.ExpandAll();
+                // treeViewFolders.ExpandAll();
             }
         }
 
@@ -51,9 +57,48 @@ namespace ExpansionPlugin
                 };
             }
 
-            // 🚀 STOP here if this is a category file node
-            if (original.Tag is ExpansionMarketCategory)
+            // If original is a category node and we are in item-selection mode,
+            // append its market items as child nodes.
+            if (_selectionMode == SelectionMode.ExpansionMarketItem &&
+                original.Tag is ExpansionMarketCategory category)
+            {
+                if (cloned == null)
+                {
+                    cloned = new TreeNode(original.Text)
+                    {
+                        Tag = original.Tag
+                    };
+                }
+
+                if (category.Items != null)
+                {
+                    foreach (var item in category.Items)
+                    {
+                        if (item == null)
+                            continue;
+
+                        string text = !string.IsNullOrWhiteSpace(item.ClassName)
+                            ? item.ClassName
+                            : "(unnamed item)";
+
+                        TreeNode itemNode = new TreeNode(text)
+                        {
+                            Tag = item
+                        };
+
+                        cloned.Nodes.Add(itemNode);
+                    }
+                }
+
                 return cloned;
+            }
+
+            // In category-file mode, stop at category files
+            if (_selectionMode == SelectionMode.ExpansionMarketCategoryFile &&
+                original.Tag is ExpansionMarketCategory)
+            {
+                return cloned;
+            }
 
             foreach (TreeNode child in original.Nodes)
             {
@@ -62,7 +107,6 @@ namespace ExpansionPlugin
                 {
                     if (cloned == null)
                     {
-                        // Create parent container if needed so matching descendants stay visible
                         cloned = new TreeNode(original.Text)
                         {
                             Tag = original.Tag
@@ -81,12 +125,18 @@ namespace ExpansionPlugin
             switch (_selectionMode)
             {
                 case SelectionMode.Folder:
-                    // Exclude ExpansionMarketCategory file nodes
-                    return !(node.Tag is ExpansionMarketCategory);
+                    // Exclude category files and market items
+                    return !(node.Tag is ExpansionMarketCategory) &&
+                           !(node.Tag is ExpansionMarketItem);
 
                 case SelectionMode.ExpansionMarketCategoryFile:
-                    // Keep folder/path nodes so user can navigate,
-                    // and include ExpansionMarketCategory file nodes
+                    // Include folder/path nodes and category files
+                    return node.Tag is string ||
+                           node.Tag is ExpansionMarketCategory;
+
+                case SelectionMode.ExpansionMarketItem:
+                    // Include folders and category files for navigation.
+                    // Market item nodes are added manually from the category.
                     return node.Tag is string ||
                            node.Tag is ExpansionMarketCategory;
 
@@ -98,15 +148,16 @@ namespace ExpansionPlugin
         private void buttonOK_Click(object sender, EventArgs e)
         {
             TreeNode selectedNode = treeViewFolders.SelectedNode;
-            if (selectedNode == null)
-            {
-                MessageBox.Show("Please select a valid item.");
-                return;
-            }
 
             switch (_selectionMode)
             {
                 case SelectionMode.Folder:
+                    if (selectedNode == null)
+                    {
+                        MessageBox.Show("Please select a valid folder.");
+                        return;
+                    }
+
                     if (selectedNode.Parent == null)
                     {
                         SelectedCategoryTag = "MarketCategoryRelativePath:";
@@ -114,19 +165,19 @@ namespace ExpansionPlugin
                         return;
                     }
 
-                    if (selectedNode.Tag is string tag &&
-                        tag.StartsWith("MarketCategoryRelativePath:"))
+                    if (selectedNode.Tag is string folderTag &&
+                        folderTag.StartsWith("MarketCategoryRelativePath:"))
                     {
-                        SelectedCategoryTag = tag;
+                        SelectedCategoryTag = folderTag;
                         DialogResult = DialogResult.OK;
                         return;
                     }
 
                     MessageBox.Show("Please select a valid folder.");
-                    break;
+                    return;
 
                 case SelectionMode.ExpansionMarketCategoryFile:
-                    if (selectedNode.Tag is ExpansionMarketCategory expansionMarketCategory)
+                    if (selectedNode?.Tag is ExpansionMarketCategory expansionMarketCategory)
                     {
                         SelectedExpansionMarketCategory = expansionMarketCategory;
                         DialogResult = DialogResult.OK;
@@ -134,7 +185,28 @@ namespace ExpansionPlugin
                     }
 
                     MessageBox.Show("Please select an ExpansionMarketCategory file.");
-                    break;
+                    return;
+
+                case SelectionMode.ExpansionMarketItem:
+                    var checkedItems = GetCheckedMarketItems();
+
+                    if (checkedItems.Count > 0)
+                    {
+                        SelectedExpansionMarketItems = checkedItems;
+                        DialogResult = DialogResult.OK;
+                        return;
+                    }
+
+                    // fallback: allow single selected item even if not checked
+                    if (selectedNode?.Tag is ExpansionMarketItem singleItem)
+                    {
+                        SelectedExpansionMarketItems = new List<ExpansionMarketItem> { singleItem };
+                        DialogResult = DialogResult.OK;
+                        return;
+                    }
+
+                    MessageBox.Show("Please select one or more ExpansionMarketItem entries.");
+                    return;
             }
         }
 
@@ -142,18 +214,80 @@ namespace ExpansionPlugin
         {
             DialogResult = DialogResult.Cancel;
         }
+
         private void treeViewFolders_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            buttonOK.Enabled =
-                (_selectionMode == SelectionMode.Folder &&
-                 (
-                     e.Node.Parent == null ||
-                     (e.Node.Tag is string tag &&
-                      tag.StartsWith("MarketCategoryRelativePath:"))
-                 ))
-                ||
-                (_selectionMode == SelectionMode.ExpansionMarketCategoryFile &&
-                 e.Node.Tag is ExpansionMarketCategory);
+            switch (_selectionMode)
+            {
+                case SelectionMode.Folder:
+                    buttonOK.Enabled =
+                        e.Node.Parent == null ||
+                        (e.Node.Tag is string folderTag &&
+                         folderTag.StartsWith("MarketCategoryRelativePath:"));
+                    break;
+
+                case SelectionMode.ExpansionMarketCategoryFile:
+                    buttonOK.Enabled = e.Node.Tag is ExpansionMarketCategory;
+                    break;
+
+                case SelectionMode.ExpansionMarketItem:
+                    buttonOK.Enabled =
+                        e.Node.Tag is ExpansionMarketItem ||
+                        GetCheckedMarketItems().Count > 0;
+                    break;
+            }
+        }
+
+        private void treeViewFolders_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (_selectionMode != SelectionMode.ExpansionMarketItem)
+                return;
+
+            if (_suppressAfterCheck)
+                return;
+
+            try
+            {
+                _suppressAfterCheck = true;
+
+                // Only allow checking market item nodes
+                if (!(e.Node.Tag is ExpansionMarketItem))
+                {
+                    e.Node.Checked = false;
+                }
+            }
+            finally
+            {
+                _suppressAfterCheck = false;
+            }
+
+            buttonOK.Enabled = GetCheckedMarketItems().Count > 0 ||
+                               treeViewFolders.SelectedNode?.Tag is ExpansionMarketItem;
+        }
+
+        private List<ExpansionMarketItem> GetCheckedMarketItems()
+        {
+            var results = new List<ExpansionMarketItem>();
+
+            foreach (TreeNode rootNode in treeViewFolders.Nodes)
+            {
+                CollectCheckedMarketItems(rootNode, results);
+            }
+
+            return results;
+        }
+
+        private void CollectCheckedMarketItems(TreeNode node, List<ExpansionMarketItem> results)
+        {
+            if (node.Checked && node.Tag is ExpansionMarketItem item)
+            {
+                results.Add(item);
+            }
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                CollectCheckedMarketItems(child, results);
+            }
         }
     }
 }

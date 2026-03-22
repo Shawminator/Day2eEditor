@@ -647,5 +647,71 @@ namespace ExpansionPlugin
                     Items.Add(tItem.MarketItem.ClassName, tItem.BuySell);
             }
         }
+
+        public List<ExpansionMarketItem> GetMissedMarketItems()
+        {
+            var missedItems = new List<ExpansionMarketItem>();
+
+            if (m_Categories == null || m_Categories.Count == 0)
+                return missedItems;
+
+            var categoryConfig = AppServices
+                .GetRequired<ExpansionManager>()
+                .ExpansionMarketCategoryConfig;
+
+            // Build a fast lookup of all classnames that exist in trader categories
+            var traderClassNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var traderCategory in m_Categories)
+            {
+                if (traderCategory?.MarketCategory?.Items == null)
+                    continue;
+
+                foreach (var item in traderCategory.MarketCategory.Items)
+                {
+                    if (!string.IsNullOrWhiteSpace(item.ClassName))
+                        traderClassNames.Add(item.ClassName);
+                }
+            }
+
+            // Now check attachments
+            foreach (var traderCategory in m_Categories)
+            {
+                if (traderCategory?.MarketCategory?.Items == null)
+                    continue;
+
+                foreach (var item in traderCategory.MarketCategory.Items)
+                {
+                    if (item.SpawnAttachments == null)
+                        continue;
+
+                    foreach (var attachmentClass in item.SpawnAttachments)
+                    {
+                        if (attachmentClass == "headlighth7")
+                        {
+                            string stop = "";
+                        }
+
+                        if (string.IsNullOrWhiteSpace(attachmentClass))
+                            continue;
+
+                        // If attachment NOT in trader categories
+                        if (!traderClassNames.Contains(attachmentClass))
+                        {
+                            var attachmentItem = categoryConfig.FindMarketItemByClassName(attachmentClass);
+
+                            if (attachmentItem != null &&
+                                !missedItems.Any(x =>
+                                    string.Equals(x.ClassName, attachmentItem.ClassName, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                missedItems.Add(attachmentItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return missedItems;
+        }
     }
 }

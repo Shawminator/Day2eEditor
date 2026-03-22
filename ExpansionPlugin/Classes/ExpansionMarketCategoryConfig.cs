@@ -511,6 +511,13 @@ namespace ExpansionPlugin
         {
             return Items.Where(x => x.IsExchange == 1).ToList();
         }
+        internal List<ExpansionMarketItem> Getallitems()
+        {
+            return Items
+               .Where(category => category.Items != null)
+               .SelectMany(category => category.Items)
+               .ToList();
+        }
     }
     public class ExpansionMarketCategory : IDeepCloneable<ExpansionMarketCategory>, IEquatable<ExpansionMarketCategory>
     {

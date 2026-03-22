@@ -58,7 +58,7 @@ namespace ExpansionPlugin
             AppServices.Register(_expansionManager);
             _expansionManager.SetExpansionStuff();
             _expansionManager.SetExternalFiles();
-            
+
 
         }
         private void initializeShowControlHandlers()
@@ -364,10 +364,15 @@ namespace ExpansionPlugin
                     ExpansionMarketTrader ExpansionMarketTrader = node.Tag as ExpansionMarketTrader;
                     ShowHandler(new ExpansionMarketTraderControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTrader, selected);
                 },
-                [typeof(ExpansionMarketTraderCategory)] = (node,selected)=>
+                [typeof(ExpansionMarketTraderCategory)] = (node, selected) =>
                 {
                     ExpansionMarketTraderCategory ExpansionMarketTraderCategory = node.Tag as ExpansionMarketTraderCategory;
                     ShowHandler(new ExpansionMarketTraderCategoryControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTraderCategory, selected);
+                },
+                [typeof(ExpansionMarketTraderItem)] = (node, selected) =>
+                {
+                    ExpansionMarketTraderItem ExpansionMarketTraderItem = node.Tag as ExpansionMarketTraderItem;
+                    ShowHandler(new ExpansionMarketTraderItemControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTraderItem, selected);
                 },
                 //Missions
                 [typeof(ExpansionMissionSettings)] = (node, selected) =>
@@ -1071,6 +1076,19 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(moveMarketItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //Market Traders
+                [typeof(ExpansionMarketTraderCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeCategoryFromTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMarketTraderItem)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeItemFromTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 //Missions
                 [typeof(ExpansionMissionEventAirdrop)] = node =>
                 {
@@ -1570,6 +1588,21 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeItemVariantToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(createItemFromItemVariantToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Market Traders
+                ["TraderCategories"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addCategoryToTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["TraderItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addItemToTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(checkForMissingTraderItemsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //P2P Market
@@ -3120,7 +3153,7 @@ namespace ExpansionPlugin
             {
                 Tag = "TraderItems"
             };
-            foreach(ExpansionMarketTraderItem TItem in ExpansionMarketTrader.m_Items)
+            foreach (ExpansionMarketTraderItem TItem in ExpansionMarketTrader.m_Items)
             {
                 itemsNode.Nodes.Add(new TreeNode(TItem.MarketItem.ClassName)
                 {
@@ -7978,7 +8011,7 @@ namespace ExpansionPlugin
 
                 List<TypeEntry> vtypesvariaNTS = AppServices.GetRequired<EconomyManager>().TypesConfig.SerachTypes(searchTerm);
                 List<string> founditems = new List<string>();
-                foreach(TypeEntry te in vtypesvariaNTS)
+                foreach (TypeEntry te in vtypesvariaNTS)
                 {
                     if (te.Name.ToLower() == ExpansionMarketItem.ClassName)
                         continue;
@@ -8056,6 +8089,178 @@ namespace ExpansionPlugin
 
             TreeNode ItemNode = CreateMarketItemNode(categoryNode, newItem);
             ExpansionTV.SelectedNode = ItemNode;
+        }
+        //Market Traders
+        private void addCategoryToTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode traderConfigNode = currentTreeNode.FindParentNodeOfType<ExpansionMarketTraderConfig>();
+            if (traderConfigNode?.Parent == null)
+                return;
+
+            TreeNode categoryRootNode = TreeNodeExtensions.FindNodeByTag(
+                traderConfigNode.Parent.Nodes,
+                AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig);
+
+            if (categoryRootNode == null)
+                return;
+
+            using (var form = new SelectCategoryFolderForm(
+                categoryRootNode,
+                SelectCategoryFolderForm.SelectionMode.ExpansionMarketCategoryFile))
+            {
+                if (form.ShowDialog() != DialogResult.OK || form.SelectedExpansionMarketCategory == null)
+                    return;
+
+                ExpansionMarketTrader trader = currentTreeNode.Parent?.Tag as ExpansionMarketTrader;
+                if (trader == null)
+                    return;
+
+                string traderPath = form.SelectedExpansionMarketCategory.GetTraderPath();
+
+                bool alreadyExists = trader.m_Categories.Any(c => string.Equals(c.CategoryPath, traderPath, StringComparison.OrdinalIgnoreCase));
+                if (alreadyExists)
+                {
+                    string message = $"The category \"{traderPath}\" is already added to this trader.";
+
+                    MessageBox.Show(
+                        message,
+                        "Duplicate Category",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    Console.WriteLine($"[INFO] Duplicate category prevented: {traderPath}");
+                    return;
+                }
+                ExpansionMarketTraderCategory newCategory =
+                    new ExpansionMarketTraderCategory(
+                        traderPath,
+                        form.SelectedExpansionMarketCategory,
+                        ExpansionMarketTraderBuySell.CanBuyAndSell);
+
+                trader.m_Categories.Add(newCategory);
+                TreeNode newCategoryNode = new TreeNode(newCategory.ToString())
+                {
+                    Tag = newCategory
+                };
+
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, newCategoryNode);
+                ExpansionTV.SelectedNode = newCategoryNode;
+            }
+        }
+        private void removeCategoryFromTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketTrader trader = currentTreeNode.Parent?.Parent?.Tag as ExpansionMarketTrader;
+            trader.m_Categories.Remove(currentTreeNode.Tag as ExpansionMarketTraderCategory);
+            currentTreeNode.Remove();
+        }
+        private void addItemToTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode traderConfigNode = currentTreeNode.FindParentNodeOfType<ExpansionMarketTraderConfig>();
+            if (traderConfigNode?.Parent == null)
+                return;
+
+            TreeNode categoryRootNode = TreeNodeExtensions.FindNodeByTag(
+                traderConfigNode.Parent.Nodes,
+                AppServices.GetRequired<ExpansionManager>().ExpansionMarketCategoryConfig);
+
+            if (categoryRootNode == null)
+                return;
+
+            using (var form = new SelectCategoryFolderForm(
+                categoryRootNode,
+                SelectCategoryFolderForm.SelectionMode.ExpansionMarketItem))
+            {
+                if (form.ShowDialog() != DialogResult.OK || form.SelectedExpansionMarketItems == null)
+                    return;
+
+                ExpansionMarketTrader trader = currentTreeNode.Parent?.Tag as ExpansionMarketTrader;
+                if (trader == null)
+                    return;
+
+                List<ExpansionMarketItem> items = form.SelectedExpansionMarketItems;
+                TreeNode NewItemnode = null;
+                foreach (ExpansionMarketItem item in items)
+                {
+                    ExpansionMarketTraderItem newitem = new ExpansionMarketTraderItem(item, ExpansionMarketTraderBuySell.CanBuyAndSell);
+                    bool alreadyExists = trader.m_Items.Any(c => string.Equals(c.MarketItem.ClassName, item.ClassName, StringComparison.OrdinalIgnoreCase));
+                    if (alreadyExists)
+                    {
+                        string message = $"The category \"{item.ClassName}\" is already added to this trader.";
+
+                        MessageBox.Show(
+                            message,
+                            "Duplicate Item",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        Console.WriteLine($"[INFO] Duplicate category prevented: {item.ClassName}");
+                        continue;
+                    }
+
+                    trader.m_Items.Add(newitem);
+                    NewItemnode = new TreeNode(newitem.MarketItem.ClassName)
+                    {
+                        Tag = newitem
+                    };
+                    Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, NewItemnode);
+                }
+                ExpansionTV.SelectedNode = NewItemnode;
+            }
+        }
+        private void removeItemFromTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketTrader trader = currentTreeNode.Parent?.Parent?.Tag as ExpansionMarketTrader;
+            trader.m_Items.Remove(currentTreeNode.Tag as ExpansionMarketTraderItem);
+            currentTreeNode.Remove();
+        }
+        private void checkForMissingTraderItemsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMarketTrader trader = currentTreeNode.Parent.Tag as ExpansionMarketTrader;
+
+            if (trader == null)
+                return;
+
+            var missingItems = trader.GetMissedMarketItems();
+
+            if (missingItems == null || missingItems.Count == 0)
+            {
+                MessageBox.Show("No missing attachment items found.");
+                return;
+            }
+
+            if (trader.m_Items == null)
+                trader.m_Items = new BindingList<ExpansionMarketTraderItem>();
+
+            int addedCount = 0;
+            TreeNode NewItemnode = null;
+            foreach (var marketItem in missingItems)
+            {
+                if (marketItem == null || string.IsNullOrWhiteSpace(marketItem.ClassName))
+                    continue;
+
+                bool exists = trader.m_Items.Any(x =>
+                    x?.MarketItem != null &&
+                    string.Equals(x.MarketItem.ClassName, marketItem.ClassName, StringComparison.OrdinalIgnoreCase));
+
+                if (!exists)
+                {
+                    ExpansionMarketTraderItem newitem = new ExpansionMarketTraderItem
+                    {
+                        MarketItem = marketItem,
+                        BuySell = ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly // default (change if needed)
+                    };
+                    trader.m_Items.Add(newitem);
+                    NewItemnode = new TreeNode(newitem.MarketItem.ClassName)
+                    {
+                        Tag = newitem
+                    };
+                    Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, NewItemnode);
+                    addedCount++;
+                }
+            }
+            ExpansionTV.SelectedNode = NewItemnode;
+
+            MessageBox.Show($"Added {addedCount} missing trader items.");
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -9515,13 +9720,6 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
-
-
-
-
-
-
-
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]
