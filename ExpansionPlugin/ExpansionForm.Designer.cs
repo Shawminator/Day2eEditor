@@ -206,6 +206,7 @@
             addItemToTraderToolStripMenuItem = new ToolStripMenuItem();
             removeItemFromTraderToolStripMenuItem = new ToolStripMenuItem();
             checkForMissingTraderItemsToolStripMenuItem = new ToolStripMenuItem();
+            previewTraderToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1516,10 +1517,10 @@
             // MarketCM
             // 
             MarketCM.BackColor = Color.FromArgb(60, 63, 65);
-            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem, addItemAttachmentToolStripMenuItem, removeItemAttachmentToolStripMenuItem, addItemVariantToolStripMenuItem, removeItemVariantToolStripMenuItem, addItemVariantAutoSearchToolStripMenuItem, createItemFromItemVariantToolStripMenuItem, addCategoryToTraderToolStripMenuItem, removeCategoryFromTraderToolStripMenuItem, addItemToTraderToolStripMenuItem, removeItemFromTraderToolStripMenuItem, checkForMissingTraderItemsToolStripMenuItem });
+            MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem, addItemAttachmentToolStripMenuItem, removeItemAttachmentToolStripMenuItem, addItemVariantToolStripMenuItem, removeItemVariantToolStripMenuItem, addItemVariantAutoSearchToolStripMenuItem, createItemFromItemVariantToolStripMenuItem, addCategoryToTraderToolStripMenuItem, removeCategoryFromTraderToolStripMenuItem, addItemToTraderToolStripMenuItem, removeItemFromTraderToolStripMenuItem, checkForMissingTraderItemsToolStripMenuItem, previewTraderToolStripMenuItem });
             MarketCM.Name = "ChatCM";
             MarketCM.ShowImageMargin = false;
-            MarketCM.Size = new Size(215, 444);
+            MarketCM.Size = new Size(215, 466);
             // 
             // addNewMarketCategoryFileToolStripMenuItem
             // 
@@ -1672,6 +1673,14 @@
             checkForMissingTraderItemsToolStripMenuItem.Size = new Size(214, 22);
             checkForMissingTraderItemsToolStripMenuItem.Text = "Check For Missing Trader Items";
             checkForMissingTraderItemsToolStripMenuItem.Click += checkForMissingTraderItemsToolStripMenuItem_Click;
+            // 
+            // previewTraderToolStripMenuItem
+            // 
+            previewTraderToolStripMenuItem.ForeColor = SystemColors.Control;
+            previewTraderToolStripMenuItem.Name = "previewTraderToolStripMenuItem";
+            previewTraderToolStripMenuItem.Size = new Size(214, 22);
+            previewTraderToolStripMenuItem.Text = "Preview Trader";
+            previewTraderToolStripMenuItem.Click += previewTraderToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -1887,5 +1896,6 @@
         private ToolStripMenuItem addItemToTraderToolStripMenuItem;
         private ToolStripMenuItem removeItemFromTraderToolStripMenuItem;
         private ToolStripMenuItem checkForMissingTraderItemsToolStripMenuItem;
+        private ToolStripMenuItem previewTraderToolStripMenuItem;
     }
 }

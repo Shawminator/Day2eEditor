@@ -276,6 +276,17 @@ namespace ExpansionPlugin
                 category.Items != null &&
                 category.Items.Any(x => ReferenceEquals(x, item)));
         }
+        internal ExpansionMarketCategory FindCategoryContainingClassName(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+                return null;
+
+            return Items.FirstOrDefault(category =>
+                category.Items != null &&
+                category.Items.Any(x =>
+                    !string.IsNullOrWhiteSpace(x.ClassName) &&
+                    string.Equals(x.ClassName, className, StringComparison.OrdinalIgnoreCase)));
+        }
         internal List<(ExpansionMarketItem ownerItem, ExpansionMarketCategory category, string variantClassName)> FindVariantReferences(string className)
         {
             var results = new List<(ExpansionMarketItem, ExpansionMarketCategory, string)>();

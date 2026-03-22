@@ -1077,6 +1077,12 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Market Traders
+                [typeof(ExpansionMarketTrader)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(previewTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 [typeof(ExpansionMarketTraderCategory)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
@@ -8262,6 +8268,16 @@ namespace ExpansionPlugin
 
             MessageBox.Show($"Added {addedCount} missing trader items.");
         }
+        private void previewTraderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode?.Tag is not ExpansionMarketTrader trader)
+                return;
+
+            using (TraderPreviewForm form = new TraderPreviewForm(trader))
+            {
+                form.ShowDialog(this);
+            }
+        }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -9720,6 +9736,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
     }
 
     [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]

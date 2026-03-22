@@ -121,7 +121,7 @@
             RequiredCompletedQuestIDNUD.ForeColor = SystemColors.Control;
             RequiredCompletedQuestIDNUD.Location = new Point(197, 173);
             RequiredCompletedQuestIDNUD.Margin = new Padding(4, 3, 4, 3);
-            RequiredCompletedQuestIDNUD.Maximum = new decimal(new int[] { 1410065407, 2, 0, 0 });
+            RequiredCompletedQuestIDNUD.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             RequiredCompletedQuestIDNUD.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             RequiredCompletedQuestIDNUD.Name = "RequiredCompletedQuestIDNUD";
             RequiredCompletedQuestIDNUD.Size = new Size(256, 23);
@@ -169,8 +169,8 @@
             MaxRequiredHumanityNUD.ForeColor = SystemColors.Control;
             MaxRequiredHumanityNUD.Location = new Point(197, 113);
             MaxRequiredHumanityNUD.Margin = new Padding(4, 3, 4, 3);
-            MaxRequiredHumanityNUD.Maximum = new decimal(new int[] { 1410065407, 2, 0, 0 });
-            MaxRequiredHumanityNUD.Minimum = new decimal(new int[] { 1410065407, 2, 0, int.MinValue });
+            MaxRequiredHumanityNUD.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            MaxRequiredHumanityNUD.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             MaxRequiredHumanityNUD.Name = "MaxRequiredHumanityNUD";
             MaxRequiredHumanityNUD.Size = new Size(256, 23);
             MaxRequiredHumanityNUD.TabIndex = 179;
@@ -194,8 +194,8 @@
             MinRequiredHumanityNUD.ForeColor = SystemColors.Control;
             MinRequiredHumanityNUD.Location = new Point(197, 83);
             MinRequiredHumanityNUD.Margin = new Padding(4, 3, 4, 3);
-            MinRequiredHumanityNUD.Maximum = new decimal(new int[] { 1410065407, 2, 0, 0 });
-            MinRequiredHumanityNUD.Minimum = new decimal(new int[] { 1410065407, 2, 0, int.MinValue });
+            MinRequiredHumanityNUD.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            MinRequiredHumanityNUD.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             MinRequiredHumanityNUD.Name = "MinRequiredHumanityNUD";
             MinRequiredHumanityNUD.Size = new Size(256, 23);
             MinRequiredHumanityNUD.TabIndex = 178;
