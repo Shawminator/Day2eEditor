@@ -2,6 +2,7 @@
 using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -39,10 +40,11 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
-
+            BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
+            IconCB.DataSource = Icons;
             textBox11.Text = Path.GetFileNameWithoutExtension(_data.FileName);
             textBox9.Text = _data.DisplayName;
-            IconTB.Text = _data.Icon;
+            IconCB.SelectedIndex = IconCB.FindStringExact(_data.Icon);
             InitStockPercentNUD.Value = (decimal)_data.InitStockPercent;
             IsExchangeCB.Checked = _data.IsExchange == 1 ? true : false;
             SetColor(_data.Color, ColorPB);
@@ -81,12 +83,6 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.DisplayName = textBox9.Text;
-        }
-
-        private void IconTB_TextChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.Icon = IconTB.Text;
         }
 
         private void CategorycolourPB_Click(object sender, EventArgs e)
@@ -128,6 +124,12 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.InitStockPercent = (decimal)InitStockPercentNUD.Value;
+        }
+
+        private void IconCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Icon = IconCB.SelectedItem.ToString();
         }
     }
 }

@@ -8273,10 +8273,8 @@ namespace ExpansionPlugin
             if (currentTreeNode?.Tag is not ExpansionMarketTrader trader)
                 return;
 
-            using (TraderPreviewForm form = new TraderPreviewForm(trader))
-            {
-                form.ShowDialog(this);
-            }
+            var preview = new TraderPreviewForm(trader);
+            preview.Show(this);
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)

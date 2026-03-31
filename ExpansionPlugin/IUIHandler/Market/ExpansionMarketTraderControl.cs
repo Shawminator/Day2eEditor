@@ -41,16 +41,17 @@ namespace ExpansionPlugin
             _suppressEvents = true;
 
             BindingList<string> Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
+            BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
             Factions.Insert(0, "");
             RequiredFactionLB.DataSource = Factions;
-
+            TraderIconCB.DataSource = Icons;
             textBox2.Text = _data.FileName;
             textBox5.Text = _data.DisplayName;
             MinRequiredHumanityNUD.Value = (int)_data.MinRequiredReputation;
             MaxRequiredHumanityNUD.Value = (int)_data.MaxRequiredReputation;
             RequiredFactionLB.SelectedIndex = RequiredFactionLB.FindStringExact(_data.RequiredFaction);
             RequiredCompletedQuestIDNUD.Value = (int)_data.RequiredCompletedQuestID;
-            TraderIconTB.Text = _data.TraderIcon;
+            TraderIconCB.SelectedIndex = TraderIconCB.FindStringExact(_data.TraderIcon);
             UseCategoryOrderCB.Checked = _data.UseCategoryOrder == 1 ? true : false;
 
             _suppressEvents = false;
@@ -79,7 +80,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.DisplayName = textBox5.Text;
-            
+
         }
 
         private void MinRequiredHumanityNUD_ValueChanged(object sender, EventArgs e)
@@ -106,12 +107,6 @@ namespace ExpansionPlugin
             _data.RequiredCompletedQuestID = (int)RequiredCompletedQuestIDNUD.Value;
         }
 
-        private void TraderIconTB_TextChanged(object sender, EventArgs e)
-        {
-            if (_suppressEvents) return;
-            _data.TraderIcon = TraderIconTB.Text;
-        }
-
         private void UseCategoryOrderCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -121,6 +116,12 @@ namespace ExpansionPlugin
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void TraderIconCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.TraderIcon = TraderIconCB.Text;
         }
     }
 }

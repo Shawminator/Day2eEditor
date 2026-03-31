@@ -37,10 +37,10 @@
             IsExchangeCB = new CheckBox();
             InitStockPercentNUD = new NumericUpDown();
             darkLabel76 = new Label();
-            IconTB = new TextBox();
             ColorPB = new PictureBox();
             IconLabel = new Label();
             darkLabel75 = new Label();
+            IconCB = new ComboBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)InitStockPercentNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorPB).BeginInit();
@@ -48,6 +48,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(IconCB);
             groupBox1.Controls.Add(textBox11);
             groupBox1.Controls.Add(textBox9);
             groupBox1.Controls.Add(darkLabel2);
@@ -56,7 +57,6 @@
             groupBox1.Controls.Add(IsExchangeCB);
             groupBox1.Controls.Add(InitStockPercentNUD);
             groupBox1.Controls.Add(darkLabel76);
-            groupBox1.Controls.Add(IconTB);
             groupBox1.Controls.Add(ColorPB);
             groupBox1.Controls.Add(IconLabel);
             groupBox1.Controls.Add(darkLabel75);
@@ -161,17 +161,6 @@
             darkLabel76.TabIndex = 118;
             darkLabel76.Text = "init stock Percent";
             // 
-            // IconTB
-            // 
-            IconTB.BackColor = Color.FromArgb(60, 63, 65);
-            IconTB.ForeColor = SystemColors.Control;
-            IconTB.Location = new Point(132, 95);
-            IconTB.Margin = new Padding(4, 3, 4, 3);
-            IconTB.Name = "IconTB";
-            IconTB.Size = new Size(428, 23);
-            IconTB.TabIndex = 109;
-            IconTB.TextChanged += IconTB_TextChanged;
-            // 
             // ColorPB
             // 
             ColorPB.Location = new Point(132, 133);
@@ -204,6 +193,18 @@
             darkLabel75.TabIndex = 116;
             darkLabel75.Text = "Colour";
             // 
+            // IconCB
+            // 
+            IconCB.BackColor = Color.FromArgb(60, 63, 65);
+            IconCB.ForeColor = SystemColors.Control;
+            IconCB.FormattingEnabled = true;
+            IconCB.Location = new Point(132, 95);
+            IconCB.Margin = new Padding(4, 3, 4, 3);
+            IconCB.Name = "IconCB";
+            IconCB.Size = new Size(427, 23);
+            IconCB.TabIndex = 6;
+            IconCB.SelectedIndexChanged += IconCB_SelectedIndexChanged;
+            // 
             // ExpansionMarketCategoryControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -235,5 +236,6 @@
         private PictureBox ColorPB;
         private Label IconLabel;
         private Label darkLabel75;
+        private ComboBox IconCB;
     }
 }

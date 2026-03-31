@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace ExpansionPlugin
 {
@@ -68,23 +71,54 @@ namespace ExpansionPlugin
                 BackColor = Color.FromArgb(28, 33, 38)
             };
 
+            var layout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 3,
+                RowCount = 2,
+                BackColor = Color.Transparent
+            };
+
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));   // icon
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));   // title/summary
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 340));  // search area
+
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+
+            PictureBox traderIconBox = new PictureBox
+            {
+                Size = new Size(40, 40),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BackColor = Color.Transparent,
+                Image = GetIcon(_trader.TraderIcon, Color.White, 32),
+                Dock = DockStyle.Fill
+            };
+
             _titleLabel = new Label
             {
-                AutoSize = false,
                 Text = _trader.DisplayName ?? _trader.FileName,
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(10, 8),
-                Size = new Size(500, 28)
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.BottomLeft
             };
 
             _summaryLabel = new Label
             {
-                AutoSize = false,
                 Font = new Font("Segoe UI", 9, FontStyle.Regular),
                 ForeColor = Color.Gainsboro,
-                Location = new Point(10, 38),
-                Size = new Size(900, 22)
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.TopLeft
+            };
+
+            var searchPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoSize = false,
+                Padding = new Padding(0, 8, 0, 0)
             };
 
             Label searchLabel = new Label
@@ -93,23 +127,28 @@ namespace ExpansionPlugin
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.Gainsboro,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(980, 12)
+                Margin = new Padding(0, 6, 8, 0)
             };
 
             _searchBox = new TextBox
             {
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(1040, 9),
-                Width = 320
+                Width = 250
             };
             _searchBox.TextChanged += (_, __) => ApplySearchFilter();
 
-            _topPanel.Controls.Add(_titleLabel);
-            _topPanel.Controls.Add(_summaryLabel);
-            _topPanel.Controls.Add(searchLabel);
-            _topPanel.Controls.Add(_searchBox);
+            searchPanel.Controls.Add(searchLabel);
+            searchPanel.Controls.Add(_searchBox);
 
+            layout.Controls.Add(traderIconBox, 0, 0);
+            layout.SetRowSpan(traderIconBox, 2);
+
+            layout.Controls.Add(_titleLabel, 1, 0);
+            layout.Controls.Add(_summaryLabel, 1, 1);
+
+            layout.Controls.Add(searchPanel, 2, 0);
+            layout.SetRowSpan(searchPanel, 2);
+
+            _topPanel.Controls.Add(layout);
             _root.Controls.Add(_topPanel, 0, 0);
         }
 
@@ -203,17 +242,16 @@ namespace ExpansionPlugin
 
             int categoryCount = groups.Count;
             int totalItems = groups.Sum(x =>
-    x.Items.Count(i => i.BuySell != ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly));
+                x.Items.Count(i => i.BuySell != ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly));
 
-            int overrideCount = groups.Sum(x =>
+            int hiddenCount = groups.Sum(x =>
                 x.Items.Count(i =>
-                    i.IsDirectOverride &&
-                    i.BuySell != ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly));
+                i.BuySell == ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly));
 
             _summaryLabel.Text =
                 $"Categories: {categoryCount}    " +
                 $"Visible Items: {totalItems}    " +
-                $"Direct Overrides: {overrideCount}";
+                $"Hidden Items: {hiddenCount}    ";
 
             _leftScrollPanel.ResumeLayout();
         }
@@ -243,7 +281,9 @@ namespace ExpansionPlugin
                     var group = new TraderPreviewCategoryGroup
                     {
                         Name = name,
-                        Path = normalizedPath
+                        Path = normalizedPath,
+                        ColorHex = traderCategory.MarketCategory.Color,
+                        IconName = traderCategory.MarketCategory.Icon
                     };
 
                     if (traderCategory.MarketCategory.Items != null)
@@ -292,9 +332,11 @@ namespace ExpansionPlugin
                             targetGroup = new TraderPreviewCategoryGroup
                             {
                                 Name = !string.IsNullOrWhiteSpace(owningCategory.DisplayName)
-                                    ? owningCategory.DisplayName
-                                    : owningCategory.FileName,
-                                Path = ownerPath
+                               ? owningCategory.DisplayName
+                               : owningCategory.FileName,
+                                Path = ownerPath,
+                                ColorHex = owningCategory.Color,
+                                IconName = owningCategory.Icon
                             };
 
                             result.Add(targetGroup);
@@ -362,10 +404,13 @@ namespace ExpansionPlugin
                 ? "Unknown Category"
                 : group.Name;
 
+            Color categoryColor = ParseCategoryColor(group.ColorHex);
+            Image categoryIcon = GetIcon(group.IconName, categoryColor, 16);
+
             var items = group.Items
-             .Where(x => x.BuySell != ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly)
-             .OrderBy(x => x.MarketItem?.ClassName, StringComparer.OrdinalIgnoreCase)
-             .ToList();
+                .Where(x => x.BuySell != ExpansionMarketTraderBuySell.CanBuyAndSellAsAttachmentOnly)
+                .OrderBy(x => x.MarketItem?.ClassName, StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
             FlowLayoutPanel section = new FlowLayoutPanel
             {
@@ -389,6 +434,25 @@ namespace ExpansionPlugin
                 Cursor = Cursors.Hand
             };
 
+            header.Paint += (s, e) =>
+            {
+                using Pen pen = new Pen(categoryColor, 2);
+                Rectangle rect = header.ClientRectangle;
+                rect.Width -= 1;
+                rect.Height -= 1;
+                e.Graphics.DrawRectangle(pen, rect);
+            };
+
+            PictureBox iconBox = new PictureBox
+            {
+                Dock = DockStyle.Left,
+                Width = 20,
+                SizeMode = PictureBoxSizeMode.CenterImage,
+                BackColor = Color.Transparent,
+                Cursor = Cursors.Hand,
+                Image = categoryIcon
+            };
+
             Label arrowLabel = new Label
             {
                 Text = "►",
@@ -396,17 +460,18 @@ namespace ExpansionPlugin
                 Width = 24,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.White,
+                ForeColor = categoryColor,
                 Cursor = Cursors.Hand
             };
 
             Label nameLabel = new Label
             {
-                Text = categoryName.ToUpperInvariant(),
+                Text = categoryName,
                 Dock = DockStyle.Left,
-                Width = 560,
+                Width = 540,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                ForeColor = Color.White,
+                ForeColor = categoryColor,
+                TextAlign = ContentAlignment.MiddleLeft,
                 Cursor = Cursors.Hand
             };
 
@@ -457,11 +522,13 @@ namespace ExpansionPlugin
 
             header.Click += ToggleSection;
             arrowLabel.Click += ToggleSection;
+            iconBox.Click += ToggleSection;
             nameLabel.Click += ToggleSection;
             countLabel.Click += ToggleSection;
 
             header.Controls.Add(countLabel);
             header.Controls.Add(nameLabel);
+            header.Controls.Add(iconBox);
             header.Controls.Add(arrowLabel);
 
             section.Controls.Add(header);
@@ -534,12 +601,108 @@ Variants:
                 card.Visible = visible;
             }
         }
+
+        private static Color ParseCategoryColor(string hex)
+        {
+            if (string.IsNullOrWhiteSpace(hex))
+                return Color.White;
+
+            hex = hex.Trim().TrimStart('#');
+
+            try
+            {
+                // Expected format: AARRGGBB
+                if (hex.Length == 8)
+                {
+                    byte a = Convert.ToByte(hex.Substring(6, 2), 16);
+                    byte r = Convert.ToByte(hex.Substring(0, 2), 16);
+                    byte g = Convert.ToByte(hex.Substring(2, 2), 16);
+                    byte b = Convert.ToByte(hex.Substring(4, 2), 16);
+                    return Color.FromArgb(a, r, g, b);
+                }
+            }
+            catch
+            {
+            }
+
+            return Color.White;
+        }
+        private Image GetIcon(string iconName, Color tintColor, int size = 16)
+        {
+            if (string.IsNullOrWhiteSpace(iconName))
+                return null;
+
+            try
+            {
+                string cleanName = iconName.Replace("/", "").Replace("\\", "").Trim();
+                string resourceName = $"ExpansionPlugin.Icons.{cleanName}.png";
+
+                using var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
+                if (stream == null)
+                    return null;
+
+                using var original = Image.FromStream(stream);
+                using var resized = new Bitmap(size, size);
+
+                using (Graphics g = Graphics.FromImage(resized))
+                {
+                    g.Clear(Color.Transparent);
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    g.DrawImage(original, new Rectangle(0, 0, size, size));
+                }
+
+                return TintImage(resized, tintColor);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        private static Bitmap TintImage(Image source, Color tintColor)
+        {
+            Bitmap tinted = new Bitmap(source.Width, source.Height);
+
+            using (Graphics g = Graphics.FromImage(tinted))
+            using (ImageAttributes attributes = new ImageAttributes())
+            {
+                float r = tintColor.R / 255f;
+                float gCol = tintColor.G / 255f;
+                float b = tintColor.B / 255f;
+                float a = tintColor.A / 255f;
+
+                ColorMatrix matrix = new ColorMatrix(new float[][]
+                {
+            new float[] { r, 0, 0, 0, 0 },
+            new float[] { 0, gCol, 0, 0, 0 },
+            new float[] { 0, 0, b, 0, 0 },
+            new float[] { 0, 0, 0, a, 0 },
+            new float[] { 0, 0, 0, 0, 1 }
+                });
+
+                attributes.SetColorMatrix(matrix);
+                g.DrawImage(
+                    source,
+                    new Rectangle(0, 0, source.Width, source.Height),
+                    0,
+                    0,
+                    source.Width,
+                    source.Height,
+                    GraphicsUnit.Pixel,
+                    attributes);
+            }
+
+            return tinted;
+        }
     }
 
     public class TraderPreviewCategoryGroup
     {
         public string Name { get; set; }
         public string Path { get; set; }
+        public string ColorHex { get; set; }
+        public string IconName { get; set; }
         public List<TraderPreviewEntry> Items { get; set; } = new();
     }
 
@@ -679,4 +842,5 @@ Variants:
                 : (_isDirectOverride ? Color.FromArgb(28, 22, 18) : Color.FromArgb(12, 14, 18));
         }
     }
+
 }

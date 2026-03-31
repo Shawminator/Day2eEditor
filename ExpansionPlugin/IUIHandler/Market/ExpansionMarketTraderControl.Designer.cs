@@ -40,11 +40,11 @@
             darkLabel78 = new Label();
             MinRequiredHumanityNUD = new NumericUpDown();
             darkLabel70 = new Label();
-            TraderIconTB = new TextBox();
             darkLabel57 = new Label();
             textBox2 = new TextBox();
             darkLabel50 = new Label();
             textBox5 = new TextBox();
+            TraderIconCB = new ComboBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).BeginInit();
@@ -53,6 +53,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(TraderIconCB);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(UseCategoryOrderCB);
             groupBox1.Controls.Add(darkLabel80);
@@ -64,7 +65,6 @@
             groupBox1.Controls.Add(darkLabel78);
             groupBox1.Controls.Add(MinRequiredHumanityNUD);
             groupBox1.Controls.Add(darkLabel70);
-            groupBox1.Controls.Add(TraderIconTB);
             groupBox1.Controls.Add(darkLabel57);
             groupBox1.Controls.Add(textBox2);
             groupBox1.Controls.Add(darkLabel50);
@@ -213,17 +213,6 @@
             darkLabel70.TabIndex = 188;
             darkLabel70.Text = "Trader Icon";
             // 
-            // TraderIconTB
-            // 
-            TraderIconTB.BackColor = Color.FromArgb(60, 63, 65);
-            TraderIconTB.ForeColor = SystemColors.Control;
-            TraderIconTB.Location = new Point(197, 202);
-            TraderIconTB.Margin = new Padding(4, 3, 4, 3);
-            TraderIconTB.Name = "TraderIconTB";
-            TraderIconTB.Size = new Size(256, 23);
-            TraderIconTB.TabIndex = 182;
-            TraderIconTB.TextChanged += TraderIconTB_TextChanged;
-            // 
             // darkLabel57
             // 
             darkLabel57.AutoSize = true;
@@ -269,6 +258,18 @@
             textBox5.TabIndex = 177;
             textBox5.TextChanged += textBox5_TextChanged;
             // 
+            // TraderIconCB
+            // 
+            TraderIconCB.BackColor = Color.FromArgb(60, 63, 65);
+            TraderIconCB.ForeColor = SystemColors.Control;
+            TraderIconCB.FormattingEnabled = true;
+            TraderIconCB.Location = new Point(197, 202);
+            TraderIconCB.Margin = new Padding(4, 3, 4, 3);
+            TraderIconCB.Name = "TraderIconCB";
+            TraderIconCB.Size = new Size(256, 23);
+            TraderIconCB.TabIndex = 6;
+            TraderIconCB.SelectedIndexChanged += TraderIconCB_SelectedIndexChanged;
+            // 
             // ExpansionMarketTraderControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -299,11 +300,11 @@
         private Label darkLabel78;
         private NumericUpDown MinRequiredHumanityNUD;
         private Label darkLabel70;
-        private TextBox TraderIconTB;
         private Label darkLabel57;
         private TextBox textBox2;
         private Label darkLabel50;
         private TextBox textBox5;
         private Label label1;
+        private ComboBox TraderIconCB;
     }
 }
