@@ -8273,7 +8273,7 @@ namespace ExpansionPlugin
             if (currentTreeNode?.Tag is not ExpansionMarketTrader trader)
                 return;
 
-            var preview = new TraderPreviewForm(trader);
+            var preview = new TraderPreviewForm(trader, _expansionManager.ExpansionMarketSettingsConfig.Data.MarketMenuColors);
             preview.Show(this);
         }
         //MIssions

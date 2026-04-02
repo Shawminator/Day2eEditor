@@ -81,6 +81,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Expansion.png" />
+    <EmbeddedResource Include="Images\market_background.png" />
     <EmbeddedResource Include="Icons\Airdrop.png" />
     <EmbeddedResource Include="Icons\Ambush.png" />
     <EmbeddedResource Include="Icons\Animal Skull.png" />
