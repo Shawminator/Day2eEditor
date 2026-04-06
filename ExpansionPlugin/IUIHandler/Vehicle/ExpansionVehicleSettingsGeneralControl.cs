@@ -56,6 +56,8 @@ namespace ExpansionPlugin
             VehicleDropsRuinedDoorsCB.Checked = _data.VehicleDropsRuinedDoors == 1 ? true : false;
             ExplodingVehicleDropsAttachmentsCB.Checked = _data.ExplodingVehicleDropsAttachments == 1 ? true : false;
             DesyncInvulnerabilityTimeoutSecondsNUD.Value = (decimal)_data.DesyncInvulnerabilityTimeoutSeconds;
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Value = (decimal)_data.PilotlessAutoHoverEngineStopDelaySeconds;
+            RoughLandingVerticalSpeedThresholdNUD.Value = (decimal)_data.RoughLandingVerticalSpeedThreshold;
             DamagedEngineStartupChancePercentNUD.Value = (decimal)_data.DamagedEngineStartupChancePercent;
             TowingCB.Checked = _data.Towing == 1 ? true : false;
             ShowVehicleOwnersCB.Checked = _data.ShowVehicleOwners == 1 ? true : false;
@@ -77,5 +79,112 @@ namespace ExpansionPlugin
         }
 
         #endregion
+        private void VehicleSyncComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            ExpansionVehicleNetworkMode cacl = (ExpansionVehicleNetworkMode)VehicleSyncComboBox.SelectedItem;
+            _data.VehicleSync = cacl;
+        }
+        private void EnableWindAerodynamicsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.EnableWindAerodynamics = EnableWindAerodynamicsCB.Checked ? 1 : 0;
+        }
+        private void EnableTailRotorDamageCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.EnableTailRotorDamage = EnableTailRotorDamageCB.Checked ? 1 : 0;
+        }
+        private void EnableHelicopterExplosionsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.EnableHelicopterExplosions = EnableHelicopterExplosionsCB.Checked ? 1 : 0;
+        }
+        private void DisableVehicleDamageCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.DisableVehicleDamage = DisableVehicleDamageCB.Checked ? 1 : 0;
+        }
+        private void VehicleCrewDamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.VehicleCrewDamageMultiplier = (decimal)VehicleCrewDamageMultiplierNUD.Value;
+        }
+        private void VehicleSpeedDamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.VehicleSpeedDamageMultiplier = (decimal)VehicleSpeedDamageMultiplierNUD.Value;
+        }
+        private void VehicleRoadKillDamageMultiplierNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.VehicleRoadKillDamageMultiplier = (decimal)VehicleRoadKillDamageMultiplierNUD.Value;
+        }
+        private void CollisionDamageIfEngineOffCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.CollisionDamageIfEngineOff = CollisionDamageIfEngineOffCB.Checked ? 1 : 0;
+        }
+        private void CollisionDamageMinSpeedKmhNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.CollisionDamageMinSpeedKmh = (decimal)CollisionDamageMinSpeedKmhNUD.Value;
+        }
+        private void PlacePlayerOnGroundOnReconnectInVehicleComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            ExpansionPPOGORIVMode cacl = (ExpansionPPOGORIVMode)PlacePlayerOnGroundOnReconnectInVehicleComboBox.SelectedItem;
+            _data.PlacePlayerOnGroundOnReconnectInVehicle = cacl;
+        }
+        private void RevvingOverMaxRPMRuinsEngineInstantlyCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.RevvingOverMaxRPMRuinsEngineInstantly = RevvingOverMaxRPMRuinsEngineInstantlyCB.Checked == true ? 1 : 0;
+        }
+        private void VehicleDropsRuinedDoorsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.VehicleDropsRuinedDoors = VehicleDropsRuinedDoorsCB.Checked == true ? 1 : 0;
+        }
+        private void ExplodingVehicleDropsAttachmentsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.ExplodingVehicleDropsAttachments = ExplodingVehicleDropsAttachmentsCB.Checked == true ? 1 : 0;
+        }
+        private void DesyncInvulnerabilityTimeoutSecondsNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.DesyncInvulnerabilityTimeoutSeconds = (decimal)DesyncInvulnerabilityTimeoutSecondsNUD.Value;
+        }
+        private void PilotlessAutoHoverEngineStopDelaySecondsNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.PilotlessAutoHoverEngineStopDelaySeconds = (decimal)PilotlessAutoHoverEngineStopDelaySecondsNUD.Value;
+        }
+        private void RoughLandingVerticalSpeedThresholdNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.RoughLandingVerticalSpeedThreshold = (decimal)RoughLandingVerticalSpeedThresholdNUD.Value;
+        }
+        private void DamagedEngineStartupChancePercentNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.DamagedEngineStartupChancePercent = (decimal)DamagedEngineStartupChancePercentNUD.Value;
+        }
+        private void TowingCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.Towing = TowingCB.Checked == true ? 1 : 0;
+        }
+        private void ShowVehicleOwnersCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.ShowVehicleOwners = ShowVehicleOwnersCB.Checked == true ? 1 : 0;
+        }
+        private void FuelConsumptionPercentNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.FuelConsumptionPercent = (decimal)FuelConsumptionPercentNUD.Value;
+        }
     }
 }

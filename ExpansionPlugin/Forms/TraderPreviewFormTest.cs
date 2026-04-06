@@ -97,20 +97,18 @@ namespace ExpansionPlugin
             _root = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 3,
+                RowCount = 2,
                 ColumnCount = 1,
                 BackColor = Color.Transparent
             };
 
             _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));   // market_header
             _root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));   // main content
-            _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));   // market_footer
 
             vignette.Controls.Add(_root);
 
             BuildMarketHeader();
             BuildMarketContent();
-            BuildMarketFooter();
 
             Resize += (_, __) => UpdateSplitDistance();
         }
@@ -245,12 +243,11 @@ namespace ExpansionPlugin
             var leftLayout = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 2,
+                RowCount = 1,
                 ColumnCount = 1,
                 BackColor = Color.Transparent
             };
             leftLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-            leftLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));
 
             market_categories_scroller = new AlphaPanel
             {
@@ -278,28 +275,7 @@ namespace ExpansionPlugin
 
             market_categories_scroller.Controls.Add(market_categories_container);
 
-            market_header_options = new AlphaPanel
-            {
-                Dock = DockStyle.Fill,
-                FillColor = UiHeadersFill,
-                BorderColor = Color.Transparent,
-                BorderThickness = 0,
-                Padding = new Padding(8, 4, 8, 4)
-            };
-
-            var optionsLabel = new Label
-            {
-                Dock = DockStyle.Fill,
-                Text = "market_header_options",
-                Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
-                ForeColor = UiText,
-                BackColor = Color.Transparent,
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-            market_header_options.Controls.Add(optionsLabel);
-
             leftLayout.Controls.Add(market_categories_scroller, 0, 0);
-            leftLayout.Controls.Add(market_header_options, 0, 1);
 
             market_content_panel.Controls.Add(leftLayout);
             market_menu_content_split.Panel1.Controls.Add(market_content_panel);
@@ -367,30 +343,6 @@ namespace ExpansionPlugin
             market_menu_content_split.Panel2.Controls.Add(rightLayout);
         }
 
-        private void BuildMarketFooter()
-        {
-            market_footer = new AlphaPanel
-            {
-                Dock = DockStyle.Fill,
-                FillColor = UiHeadersFill,
-                BorderColor = Color.Transparent,
-                BorderThickness = 0,
-                Padding = new Padding(8, 4, 8, 4)
-            };
-
-            var footerLabel = new Label
-            {
-                Dock = DockStyle.Fill,
-                Text = "market_footer",
-                Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
-                ForeColor = UiText,
-                BackColor = Color.Transparent,
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            market_footer.Controls.Add(footerLabel);
-            _root.Controls.Add(market_footer, 0, 2);
-        }
 
         private void UpdateSplitDistance()
         {

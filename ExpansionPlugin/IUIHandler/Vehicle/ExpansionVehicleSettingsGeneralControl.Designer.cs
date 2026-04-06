@@ -29,6 +29,16 @@
         private void InitializeComponent()
         {
             groupBox41 = new GroupBox();
+            PilotlessAutoHoverEngineStopDelaySecondsNUD = new NumericUpDown();
+            label12 = new Label();
+            RoughLandingVerticalSpeedThresholdNUD = new NumericUpDown();
+            label11 = new Label();
+            label10 = new Label();
+            label9 = new Label();
+            label8 = new Label();
+            label7 = new Label();
+            label6 = new Label();
+            label5 = new Label();
             label4 = new Label();
             label3 = new Label();
             label2 = new Label();
@@ -61,13 +71,9 @@
             VehicleCrewDamageMultiplierNUD = new NumericUpDown();
             VehicleSpeedDamageMultiplierNUD = new NumericUpDown();
             darkLabel123 = new Label();
-            label5 = new Label();
-            label6 = new Label();
-            label7 = new Label();
-            label8 = new Label();
-            label9 = new Label();
-            label10 = new Label();
             groupBox41.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)PilotlessAutoHoverEngineStopDelaySecondsNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)RoughLandingVerticalSpeedThresholdNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FuelConsumptionPercentNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CollisionDamageMinSpeedKmhNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DamagedEngineStartupChancePercentNUD).BeginInit();
@@ -79,6 +85,10 @@
             // 
             // groupBox41
             // 
+            groupBox41.Controls.Add(PilotlessAutoHoverEngineStopDelaySecondsNUD);
+            groupBox41.Controls.Add(label12);
+            groupBox41.Controls.Add(RoughLandingVerticalSpeedThresholdNUD);
+            groupBox41.Controls.Add(label11);
             groupBox41.Controls.Add(label10);
             groupBox41.Controls.Add(label9);
             groupBox41.Controls.Add(label8);
@@ -122,10 +132,128 @@
             groupBox41.Margin = new Padding(4, 3, 4, 3);
             groupBox41.Name = "groupBox41";
             groupBox41.Padding = new Padding(4, 3, 4, 3);
-            groupBox41.Size = new Size(626, 603);
+            groupBox41.Size = new Size(626, 674);
             groupBox41.TabIndex = 9;
             groupBox41.TabStop = false;
             groupBox41.Text = "General";
+            // 
+            // PilotlessAutoHoverEngineStopDelaySecondsNUD
+            // 
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.BackColor = Color.FromArgb(60, 63, 65);
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.DecimalPlaces = 1;
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.ForeColor = SystemColors.Control;
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Location = new Point(285, 472);
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Margin = new Padding(4, 3, 4, 3);
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Name = "PilotlessAutoHoverEngineStopDelaySecondsNUD";
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Size = new Size(148, 23);
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.TabIndex = 41;
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Tag = "VehicleSpeedDamageMultiplier";
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.TextAlign = HorizontalAlignment.Center;
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.ValueChanged += PilotlessAutoHoverEngineStopDelaySecondsNUD_ValueChanged;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.ForeColor = Color.FromArgb(220, 220, 220);
+            label12.Location = new Point(14, 475);
+            label12.Margin = new Padding(4, 0, 4, 0);
+            label12.Name = "label12";
+            label12.Size = new Size(262, 15);
+            label12.TabIndex = 40;
+            label12.Text = "Pilotless Auto Hover Engine Stop Delay Seconds ";
+            // 
+            // RoughLandingVerticalSpeedThresholdNUD
+            // 
+            RoughLandingVerticalSpeedThresholdNUD.BackColor = Color.FromArgb(60, 63, 65);
+            RoughLandingVerticalSpeedThresholdNUD.DecimalPlaces = 1;
+            RoughLandingVerticalSpeedThresholdNUD.ForeColor = SystemColors.Control;
+            RoughLandingVerticalSpeedThresholdNUD.Location = new Point(285, 503);
+            RoughLandingVerticalSpeedThresholdNUD.Margin = new Padding(4, 3, 4, 3);
+            RoughLandingVerticalSpeedThresholdNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            RoughLandingVerticalSpeedThresholdNUD.Name = "RoughLandingVerticalSpeedThresholdNUD";
+            RoughLandingVerticalSpeedThresholdNUD.Size = new Size(148, 23);
+            RoughLandingVerticalSpeedThresholdNUD.TabIndex = 39;
+            RoughLandingVerticalSpeedThresholdNUD.Tag = "VehicleSpeedDamageMultiplier";
+            RoughLandingVerticalSpeedThresholdNUD.TextAlign = HorizontalAlignment.Center;
+            RoughLandingVerticalSpeedThresholdNUD.ValueChanged += RoughLandingVerticalSpeedThresholdNUD_ValueChanged;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.ForeColor = Color.FromArgb(220, 220, 220);
+            label11.Location = new Point(14, 505);
+            label11.Margin = new Padding(4, 0, 4, 0);
+            label11.Name = "label11";
+            label11.Size = new Size(223, 15);
+            label11.TabIndex = 38;
+            label11.Text = "Rough Landing Vertical Speed Threshold ";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.ForeColor = Color.FromArgb(220, 220, 220);
+            label10.Location = new Point(14, 565);
+            label10.Margin = new Padding(4, 0, 4, 0);
+            label10.Name = "label10";
+            label10.Size = new Size(46, 15);
+            label10.TabIndex = 37;
+            label10.Text = "Towing";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.ForeColor = Color.FromArgb(220, 220, 220);
+            label9.Location = new Point(14, 595);
+            label9.Margin = new Padding(4, 0, 4, 0);
+            label9.Name = "label9";
+            label9.Size = new Size(119, 15);
+            label9.TabIndex = 36;
+            label9.Text = "Show Vehicle Owners";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.ForeColor = Color.FromArgb(220, 220, 220);
+            label8.Location = new Point(14, 355);
+            label8.Margin = new Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(246, 15);
+            label8.TabIndex = 35;
+            label8.Text = "Revving OverMax RPM Ruins Engine Instantly";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.ForeColor = Color.FromArgb(220, 220, 220);
+            label7.Location = new Point(14, 415);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(204, 15);
+            label7.TabIndex = 34;
+            label7.Text = "Exploding Vehicle Drops Attachments";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.FromArgb(220, 220, 220);
+            label6.Location = new Point(14, 385);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(152, 15);
+            label6.TabIndex = 33;
+            label6.Text = "Vehicle Drops Ruined Doors";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.ForeColor = Color.FromArgb(220, 220, 220);
+            label5.Location = new Point(14, 265);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(169, 15);
+            label5.TabIndex = 32;
+            label5.Text = "Collision Damage If Engine Off";
             // 
             // label4
             // 
@@ -156,7 +284,7 @@
             label2.Location = new Point(14, 85);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(141, 15);
+            label2.Size = new Size(142, 15);
             label2.TabIndex = 29;
             label2.Text = "Enable Tail Rotor Damage";
             // 
@@ -167,7 +295,7 @@
             label1.Location = new Point(14, 115);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(159, 15);
+            label1.Size = new Size(158, 15);
             label1.TabIndex = 28;
             label1.Text = "Enable Helicopter Explosions";
             // 
@@ -176,7 +304,7 @@
             FuelConsumptionPercentNUD.BackColor = Color.FromArgb(60, 63, 65);
             FuelConsumptionPercentNUD.DecimalPlaces = 1;
             FuelConsumptionPercentNUD.ForeColor = SystemColors.Control;
-            FuelConsumptionPercentNUD.Location = new Point(285, 563);
+            FuelConsumptionPercentNUD.Location = new Point(285, 623);
             FuelConsumptionPercentNUD.Margin = new Padding(4, 3, 4, 3);
             FuelConsumptionPercentNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             FuelConsumptionPercentNUD.Name = "FuelConsumptionPercentNUD";
@@ -184,12 +312,13 @@
             FuelConsumptionPercentNUD.TabIndex = 27;
             FuelConsumptionPercentNUD.Tag = "VehicleSpeedDamageMultiplier";
             FuelConsumptionPercentNUD.TextAlign = HorizontalAlignment.Center;
+            FuelConsumptionPercentNUD.ValueChanged += FuelConsumptionPercentNUD_ValueChanged;
             // 
             // darkLabel297
             // 
             darkLabel297.AutoSize = true;
             darkLabel297.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel297.Location = new Point(14, 565);
+            darkLabel297.Location = new Point(14, 625);
             darkLabel297.Margin = new Padding(4, 0, 4, 0);
             darkLabel297.Name = "darkLabel297";
             darkLabel297.Size = new Size(148, 15);
@@ -200,13 +329,14 @@
             // 
             ShowVehicleOwnersCB.AutoSize = true;
             ShowVehicleOwnersCB.ForeColor = SystemColors.Control;
-            ShowVehicleOwnersCB.Location = new Point(285, 534);
+            ShowVehicleOwnersCB.Location = new Point(285, 596);
             ShowVehicleOwnersCB.Margin = new Padding(4, 3, 4, 3);
             ShowVehicleOwnersCB.Name = "ShowVehicleOwnersCB";
             ShowVehicleOwnersCB.Size = new Size(15, 14);
             ShowVehicleOwnersCB.TabIndex = 25;
             ShowVehicleOwnersCB.Tag = "ShowVehicleOwners";
             ShowVehicleOwnersCB.UseVisualStyleBackColor = true;
+            ShowVehicleOwnersCB.CheckedChanged += ShowVehicleOwnersCB_CheckedChanged;
             // 
             // CollisionDamageIfEngineOffCB
             // 
@@ -219,6 +349,7 @@
             CollisionDamageIfEngineOffCB.TabIndex = 12;
             CollisionDamageIfEngineOffCB.Tag = "CollisionDamageIfEngineOff";
             CollisionDamageIfEngineOffCB.UseVisualStyleBackColor = true;
+            CollisionDamageIfEngineOffCB.CheckedChanged += CollisionDamageIfEngineOffCB_CheckedChanged;
             // 
             // CollisionDamageMinSpeedKmhNUD
             // 
@@ -233,6 +364,7 @@
             CollisionDamageMinSpeedKmhNUD.TabIndex = 14;
             CollisionDamageMinSpeedKmhNUD.Tag = "VehicleSpeedDamageMultiplier";
             CollisionDamageMinSpeedKmhNUD.TextAlign = HorizontalAlignment.Center;
+            CollisionDamageMinSpeedKmhNUD.ValueChanged += CollisionDamageMinSpeedKmhNUD_ValueChanged;
             // 
             // darkLabel253
             // 
@@ -250,7 +382,7 @@
             DamagedEngineStartupChancePercentNUD.BackColor = Color.FromArgb(60, 63, 65);
             DamagedEngineStartupChancePercentNUD.DecimalPlaces = 1;
             DamagedEngineStartupChancePercentNUD.ForeColor = SystemColors.Control;
-            DamagedEngineStartupChancePercentNUD.Location = new Point(285, 473);
+            DamagedEngineStartupChancePercentNUD.Location = new Point(285, 533);
             DamagedEngineStartupChancePercentNUD.Margin = new Padding(4, 3, 4, 3);
             DamagedEngineStartupChancePercentNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             DamagedEngineStartupChancePercentNUD.Name = "DamagedEngineStartupChancePercentNUD";
@@ -258,12 +390,13 @@
             DamagedEngineStartupChancePercentNUD.TabIndex = 23;
             DamagedEngineStartupChancePercentNUD.Tag = "VehicleSpeedDamageMultiplier";
             DamagedEngineStartupChancePercentNUD.TextAlign = HorizontalAlignment.Center;
+            DamagedEngineStartupChancePercentNUD.ValueChanged += DamagedEngineStartupChancePercentNUD_ValueChanged;
             // 
             // darkLabel223
             // 
             darkLabel223.AutoSize = true;
             darkLabel223.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel223.Location = new Point(14, 475);
+            darkLabel223.Location = new Point(14, 535);
             darkLabel223.Margin = new Padding(4, 0, 4, 0);
             darkLabel223.Name = "darkLabel223";
             darkLabel223.Size = new Size(224, 15);
@@ -283,6 +416,7 @@
             VehicleRoadKillDamageMultiplierNUD.TabIndex = 11;
             VehicleRoadKillDamageMultiplierNUD.Tag = "VehicleSpeedDamageMultiplier";
             VehicleRoadKillDamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            VehicleRoadKillDamageMultiplierNUD.ValueChanged += VehicleRoadKillDamageMultiplierNUD_ValueChanged;
             // 
             // darkLabel222
             // 
@@ -308,6 +442,7 @@
             DesyncInvulnerabilityTimeoutSecondsNUD.TabIndex = 21;
             DesyncInvulnerabilityTimeoutSecondsNUD.Tag = "VehicleSpeedDamageMultiplier";
             DesyncInvulnerabilityTimeoutSecondsNUD.TextAlign = HorizontalAlignment.Center;
+            DesyncInvulnerabilityTimeoutSecondsNUD.ValueChanged += DesyncInvulnerabilityTimeoutSecondsNUD_ValueChanged;
             // 
             // darkLabel99
             // 
@@ -316,7 +451,7 @@
             darkLabel99.Location = new Point(14, 445);
             darkLabel99.Margin = new Padding(4, 0, 4, 0);
             darkLabel99.Name = "darkLabel99";
-            darkLabel99.Size = new Size(217, 15);
+            darkLabel99.Size = new Size(218, 15);
             darkLabel99.TabIndex = 20;
             darkLabel99.Text = "Desync Invulnerability Timeout Seconds";
             // 
@@ -331,6 +466,7 @@
             ExplodingVehicleDropsAttachmentsCB.TabIndex = 19;
             ExplodingVehicleDropsAttachmentsCB.Tag = "RevvingOverMaxRPMRuinsEngineInstantly";
             ExplodingVehicleDropsAttachmentsCB.UseVisualStyleBackColor = true;
+            ExplodingVehicleDropsAttachmentsCB.CheckedChanged += ExplodingVehicleDropsAttachmentsCB_CheckedChanged;
             // 
             // VehicleDropsRuinedDoorsCB
             // 
@@ -343,6 +479,7 @@
             VehicleDropsRuinedDoorsCB.TabIndex = 18;
             VehicleDropsRuinedDoorsCB.Tag = "RevvingOverMaxRPMRuinsEngineInstantly";
             VehicleDropsRuinedDoorsCB.UseVisualStyleBackColor = true;
+            VehicleDropsRuinedDoorsCB.CheckedChanged += VehicleDropsRuinedDoorsCB_CheckedChanged;
             // 
             // VehicleSyncComboBox
             // 
@@ -352,6 +489,7 @@
             VehicleSyncComboBox.Name = "VehicleSyncComboBox";
             VehicleSyncComboBox.Size = new Size(326, 23);
             VehicleSyncComboBox.TabIndex = 1;
+            VehicleSyncComboBox.SelectedIndexChanged += VehicleSyncComboBox_SelectedIndexChanged;
             // 
             // darkLabel130
             // 
@@ -375,6 +513,7 @@
             EnableWindAerodynamicsCB.TabIndex = 2;
             EnableWindAerodynamicsCB.Tag = "EnableWindAerodynamics";
             EnableWindAerodynamicsCB.UseVisualStyleBackColor = true;
+            EnableWindAerodynamicsCB.CheckedChanged += EnableWindAerodynamicsCB_CheckedChanged;
             // 
             // EnableTailRotorDamageCB
             // 
@@ -387,18 +526,20 @@
             EnableTailRotorDamageCB.TabIndex = 3;
             EnableTailRotorDamageCB.Tag = "EnableTailRotorDamage";
             EnableTailRotorDamageCB.UseVisualStyleBackColor = true;
+            EnableTailRotorDamageCB.CheckedChanged += EnableTailRotorDamageCB_CheckedChanged;
             // 
             // TowingCB
             // 
             TowingCB.AutoSize = true;
             TowingCB.ForeColor = SystemColors.Control;
-            TowingCB.Location = new Point(285, 504);
+            TowingCB.Location = new Point(285, 565);
             TowingCB.Margin = new Padding(4, 3, 4, 3);
             TowingCB.Name = "TowingCB";
             TowingCB.Size = new Size(15, 14);
             TowingCB.TabIndex = 24;
             TowingCB.Tag = "Towing";
             TowingCB.UseVisualStyleBackColor = true;
+            TowingCB.CheckedChanged += TowingCB_CheckedChanged;
             // 
             // EnableHelicopterExplosionsCB
             // 
@@ -411,6 +552,7 @@
             EnableHelicopterExplosionsCB.TabIndex = 4;
             EnableHelicopterExplosionsCB.Tag = "EnableHelicopterExplosions";
             EnableHelicopterExplosionsCB.UseVisualStyleBackColor = true;
+            EnableHelicopterExplosionsCB.CheckedChanged += EnableHelicopterExplosionsCB_CheckedChanged;
             // 
             // DisableVehicleDamageCB
             // 
@@ -423,6 +565,7 @@
             DisableVehicleDamageCB.TabIndex = 5;
             DisableVehicleDamageCB.Tag = "DisableVehicleDamage";
             DisableVehicleDamageCB.UseVisualStyleBackColor = true;
+            DisableVehicleDamageCB.CheckedChanged += DisableVehicleDamageCB_CheckedChanged;
             // 
             // RevvingOverMaxRPMRuinsEngineInstantlyCB
             // 
@@ -435,6 +578,7 @@
             RevvingOverMaxRPMRuinsEngineInstantlyCB.TabIndex = 17;
             RevvingOverMaxRPMRuinsEngineInstantlyCB.Tag = "RevvingOverMaxRPMRuinsEngineInstantly";
             RevvingOverMaxRPMRuinsEngineInstantlyCB.UseVisualStyleBackColor = true;
+            RevvingOverMaxRPMRuinsEngineInstantlyCB.CheckedChanged += RevvingOverMaxRPMRuinsEngineInstantlyCB_CheckedChanged;
             // 
             // darkLabel122
             // 
@@ -466,6 +610,7 @@
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.Name = "PlacePlayerOnGroundOnReconnectInVehicleComboBox";
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.Size = new Size(326, 23);
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.TabIndex = 16;
+            PlacePlayerOnGroundOnReconnectInVehicleComboBox.SelectedIndexChanged += PlacePlayerOnGroundOnReconnectInVehicleComboBox_SelectedIndexChanged;
             // 
             // VehicleCrewDamageMultiplierNUD
             // 
@@ -480,6 +625,7 @@
             VehicleCrewDamageMultiplierNUD.TabIndex = 7;
             VehicleCrewDamageMultiplierNUD.Tag = "VehicleCrewDamageMultiplier";
             VehicleCrewDamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            VehicleCrewDamageMultiplierNUD.ValueChanged += VehicleCrewDamageMultiplierNUD_ValueChanged;
             // 
             // VehicleSpeedDamageMultiplierNUD
             // 
@@ -494,6 +640,7 @@
             VehicleSpeedDamageMultiplierNUD.TabIndex = 9;
             VehicleSpeedDamageMultiplierNUD.Tag = "VehicleSpeedDamageMultiplier";
             VehicleSpeedDamageMultiplierNUD.TextAlign = HorizontalAlignment.Center;
+            VehicleSpeedDamageMultiplierNUD.ValueChanged += VehicleSpeedDamageMultiplierNUD_ValueChanged;
             // 
             // darkLabel123
             // 
@@ -506,72 +653,6 @@
             darkLabel123.TabIndex = 8;
             darkLabel123.Text = "Vehicle Speed Damage Multiplier";
             // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(14, 265);
-            label5.Margin = new Padding(4, 0, 4, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(169, 15);
-            label5.TabIndex = 32;
-            label5.Text = "Collision Damage If Engine Off";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.ForeColor = Color.FromArgb(220, 220, 220);
-            label6.Location = new Point(14, 385);
-            label6.Margin = new Padding(4, 0, 4, 0);
-            label6.Name = "label6";
-            label6.Size = new Size(152, 15);
-            label6.TabIndex = 33;
-            label6.Text = "Vehicle Drops Ruined Doors";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.ForeColor = Color.FromArgb(220, 220, 220);
-            label7.Location = new Point(14, 415);
-            label7.Margin = new Padding(4, 0, 4, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(205, 15);
-            label7.TabIndex = 34;
-            label7.Text = "Exploding Vehicle Drops Attachments";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.ForeColor = Color.FromArgb(220, 220, 220);
-            label8.Location = new Point(14, 355);
-            label8.Margin = new Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.Size = new Size(247, 15);
-            label8.TabIndex = 35;
-            label8.Text = "Revving OverMax RPM Ruins Engine Instantly";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.ForeColor = Color.FromArgb(220, 220, 220);
-            label9.Location = new Point(14, 535);
-            label9.Margin = new Padding(4, 0, 4, 0);
-            label9.Name = "label9";
-            label9.Size = new Size(119, 15);
-            label9.TabIndex = 36;
-            label9.Text = "Show Vehicle Owners";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.ForeColor = Color.FromArgb(220, 220, 220);
-            label10.Location = new Point(14, 505);
-            label10.Margin = new Padding(4, 0, 4, 0);
-            label10.Name = "label10";
-            label10.Size = new Size(45, 15);
-            label10.TabIndex = 37;
-            label10.Text = "Towing";
-            // 
             // ExpansionVehicleSettingsGeneralControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -580,9 +661,11 @@
             Controls.Add(groupBox41);
             ForeColor = SystemColors.Control;
             Name = "ExpansionVehicleSettingsGeneralControl";
-            Size = new Size(626, 603);
+            Size = new Size(626, 677);
             groupBox41.ResumeLayout(false);
             groupBox41.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)PilotlessAutoHoverEngineStopDelaySecondsNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)RoughLandingVerticalSpeedThresholdNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)FuelConsumptionPercentNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)CollisionDamageMinSpeedKmhNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)DamagedEngineStartupChancePercentNUD).EndInit();
@@ -634,5 +717,9 @@
         private Label label5;
         private Label label10;
         private Label label9;
+        private NumericUpDown PilotlessAutoHoverEngineStopDelaySecondsNUD;
+        private Label label12;
+        private NumericUpDown RoughLandingVerticalSpeedThresholdNUD;
+        private Label label11;
     }
 }

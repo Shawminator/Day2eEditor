@@ -11,7 +11,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionVehiclesConfig: ExpansionBaseIConfigLoader<ExpansionVehicleSettings>
     {
-        public const int CurrentVersion = 21;
+        public const int CurrentVersion = 23;
 
         public ExpansionVehiclesConfig(string path) : base(path)
         {
@@ -33,7 +33,7 @@ namespace ExpansionPlugin
         public int? VehicleRequireAllDoors { get; set; }                           //! If enabled, you will need all the doors to lock/unlock the car
         public int? VehicleLockedAllowInventoryAccess { get; set; }               //! If enabled, will be able to see the vehicle inventory regardless of the car have all his doors
         public int? VehicleLockedAllowInventoryAccessWithoutDoors { get; set; }   //! If enabled, will be able to see the vehicle inventory only if at least one car door is missing
-        public ExpansionMasterKeyPairingMode? MasterKeyPairingMode { get; set; }                              //! -1 = infinite | 0 = disabled | 1 = limited (will use MasterKeyUses) | 2 = renewable with a electronicrepairkit and KeyGrinder (use MasterKeyUses) | 3 = renewable only with a KeyGrinder (use MasterKeyUses)
+        public ExpansionMasterKeyPairingMode? MasterKeyPairingMode { get; set; }      //! -1 = infinite | 0 = disabled | 1 = limited (will use MasterKeyUses) | 2 = renewable with a electronicrepairkit and KeyGrinder (use MasterKeyUses) | 3 = renewable only with a KeyGrinder (use MasterKeyUses)
         public int? MasterKeyUses { get; set; }                                     //! Amount of times the masterkey can pair unpaired keys
         public int? CanPickLock { get; set; }
         public BindingList<string> PickLockTools { get; set; }
@@ -58,7 +58,10 @@ namespace ExpansionPlugin
         public int? RevvingOverMaxRPMRuinsEngineInstantly { get; set; }
         public int? VehicleDropsRuinedDoors { get; set; }
         public int? ExplodingVehicleDropsAttachments { get; set; }
+        //public float? ForcePilotSyncIntervalSeconds { get; set; } 
         public decimal? DesyncInvulnerabilityTimeoutSeconds { get; set; }  //! Timeout for temporary vehicle godmode during desync. Set to 0 to disable.
+        public decimal? PilotlessAutoHoverEngineStopDelaySeconds { get; set; }
+        public decimal? RoughLandingVerticalSpeedThreshold { get; set;  }
         public decimal? DamagedEngineStartupChancePercent { get; set; }
         public decimal? FuelConsumptionPercent { get; set; }
         public int? EnableVehicleCovers { get; set; }
@@ -122,6 +125,9 @@ namespace ExpansionPlugin
 
             //ForcePilotSyncIntervalSeconds = 1.0;
             DesyncInvulnerabilityTimeoutSeconds = 3.0m;
+
+            PilotlessAutoHoverEngineStopDelaySeconds = 300m;
+            RoughLandingVerticalSpeedThreshold = 3.7m;
 
             DamagedEngineStartupChancePercent = 100.0m;
 
@@ -324,6 +330,16 @@ namespace ExpansionPlugin
                 DesyncInvulnerabilityTimeoutSeconds = 3.0m;
                 fixes.Add($"Corrected DesyncInvulnerabilityTimeoutSeconds to 3.");
             }
+            if (PilotlessAutoHoverEngineStopDelaySeconds == null)
+            {
+                PilotlessAutoHoverEngineStopDelaySeconds = 300m;
+                fixes.Add($"Corrected PilotlessAutoHoverEngineStopDelaySeconds to 300.");
+            }
+            if (RoughLandingVerticalSpeedThreshold == null)
+            {
+                RoughLandingVerticalSpeedThreshold = 3.7m;
+                fixes.Add($"Corrected RoughLandingVerticalSpeedThreshold  to 3.7");
+            }
             if (DamagedEngineStartupChancePercent == null)
             {
                 DamagedEngineStartupChancePercent = 100;
@@ -431,6 +447,8 @@ namespace ExpansionPlugin
                 VehicleDropsRuinedDoors != other.VehicleDropsRuinedDoors ||
                 ExplodingVehicleDropsAttachments != other.ExplodingVehicleDropsAttachments ||
                 DesyncInvulnerabilityTimeoutSeconds != other.DesyncInvulnerabilityTimeoutSeconds ||
+                PilotlessAutoHoverEngineStopDelaySeconds != other.PilotlessAutoHoverEngineStopDelaySeconds ||
+                RoughLandingVerticalSpeedThreshold != other.RoughLandingVerticalSpeedThreshold ||
                 DamagedEngineStartupChancePercent != other.DamagedEngineStartupChancePercent ||
                 FuelConsumptionPercent != other.FuelConsumptionPercent ||
                 EnableVehicleCovers != other.EnableVehicleCovers ||
@@ -524,6 +542,8 @@ namespace ExpansionPlugin
                 ExplodingVehicleDropsAttachments = this.ExplodingVehicleDropsAttachments,
 
                 DesyncInvulnerabilityTimeoutSeconds = this.DesyncInvulnerabilityTimeoutSeconds,
+                PilotlessAutoHoverEngineStopDelaySeconds = this.PilotlessAutoHoverEngineStopDelaySeconds,
+                RoughLandingVerticalSpeedThreshold = this.RoughLandingVerticalSpeedThreshold,
                 DamagedEngineStartupChancePercent = this.DamagedEngineStartupChancePercent,
                 FuelConsumptionPercent = this.FuelConsumptionPercent,
 
