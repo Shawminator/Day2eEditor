@@ -82,8 +82,7 @@ namespace ExpansionPlugin
         private void VehicleSyncComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) { return; }
-            ExpansionVehicleNetworkMode cacl = (ExpansionVehicleNetworkMode)VehicleSyncComboBox.SelectedItem;
-            _data.VehicleSync = cacl;
+            _data.VehicleSync = (ExpansionVehicleNetworkMode)VehicleSyncComboBox.SelectedItem;
         }
         private void EnableWindAerodynamicsCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -133,8 +132,7 @@ namespace ExpansionPlugin
         private void PlacePlayerOnGroundOnReconnectInVehicleComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) { return; }
-            ExpansionPPOGORIVMode cacl = (ExpansionPPOGORIVMode)PlacePlayerOnGroundOnReconnectInVehicleComboBox.SelectedItem;
-            _data.PlacePlayerOnGroundOnReconnectInVehicle = cacl;
+            _data.PlacePlayerOnGroundOnReconnectInVehicle = (ExpansionPPOGORIVMode)PlacePlayerOnGroundOnReconnectInVehicleComboBox.SelectedItem;
         }
         private void RevvingOverMaxRPMRuinsEngineInstantlyCB_CheckedChanged(object sender, EventArgs e)
         {
