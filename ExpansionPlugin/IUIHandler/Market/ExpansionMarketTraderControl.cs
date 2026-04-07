@@ -45,7 +45,7 @@ namespace ExpansionPlugin
             Factions.Insert(0, "");
             RequiredFactionLB.DataSource = Factions;
             TraderIconCB.DataSource = Icons;
-            textBox2.Text = _data.FileName;
+            textBox2.Text = Path.GetFileNameWithoutExtension(_data.FileName);
             textBox5.Text = _data.DisplayName;
             MinRequiredHumanityNUD.Value = (int)_data.MinRequiredReputation;
             MaxRequiredHumanityNUD.Value = (int)_data.MaxRequiredReputation;
@@ -65,7 +65,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.FileName;
             }
         }
 
@@ -74,6 +74,10 @@ namespace ExpansionPlugin
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            string dirName = Path.GetDirectoryName(_data._path);
+            string newFilename = textBox2.Text + ".JSON";
+            _data.SetPath(Path.Combine(dirName, newFilename));
+            UpdateTreeNodeText();
         }
 
         private void textBox5_TextChanged(object sender, EventArgs e)

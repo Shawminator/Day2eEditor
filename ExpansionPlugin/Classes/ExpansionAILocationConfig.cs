@@ -12,7 +12,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionAILocationConfig : ExpansionBaseIConfigLoader<ExpansionAILocationSettings>
     {
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 4;
 
         public ExpansionAILocationConfig(string path) : base(path)
         {

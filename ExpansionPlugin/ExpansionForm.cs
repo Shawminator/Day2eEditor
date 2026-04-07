@@ -374,6 +374,12 @@ namespace ExpansionPlugin
                     ExpansionMarketTraderItem ExpansionMarketTraderItem = node.Tag as ExpansionMarketTraderItem;
                     ShowHandler(new ExpansionMarketTraderItemControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTraderItem, selected);
                 },
+                //MarketZone
+                [typeof(ExpansionMarketTraderZone)] = (node, selected)=>
+                {
+                    ExpansionMarketTraderZone ExpansionMarketTraderZone = node.Tag as ExpansionMarketTraderZone;
+                    ShowHandler(new ExpansionMarketTraderZoneControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
+                },
                 //Missions
                 [typeof(ExpansionMissionSettings)] = (node, selected) =>
                 {
@@ -766,6 +772,25 @@ namespace ExpansionPlugin
                 ["ServerMarkersSettings"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionMapServerMarkerControl(), typeof(ExpansionMapConfig), _expansionManager.ExpansionMapConfig.Data, selected);
+                },
+                //MArket Zone
+                ["TraderZoneArea"] = (node, selected) =>
+                {
+                    ExpansionMarketTraderZone ExpansionMarketTraderZone = node.Parent.Tag as ExpansionMarketTraderZone;
+                    var control = new ExpansionMarkettraderZonePositionsControl();
+                    control.PositionChanged += (updatedPos) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseTraderZonePositions(node.FindParentOfType<ExpansionMarketTraderZoneConfig>());
+                    };
+                    control.RadiusChanged += (updatedOrientation) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawbaseTraderZonePositions(node.FindParentOfType<ExpansionMarketTraderZoneConfig>());
+                    };
+                    ShowHandler(control, typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
+                    SetupTraderZonePositions(ExpansionMarketTraderZone, node);
+                    _mapControl.EnsureVisible(new PointF(ExpansionMarketTraderZone.Position.X, ExpansionMarketTraderZone.Position.Z));
                 },
                 //Missions
                 ["MissionAirdrop"] = (node, selected) =>
@@ -2070,6 +2095,7 @@ namespace ExpansionPlugin
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketSettingsConfig, CreateExpansionMarketSettingsConfig);
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketCategoryConfig, CreateExpansionMarketCategoryConfig);
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketTraderConfig, CreateExpansionMarketTraderConfig);
+            AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketTraderZoneConfig, CreateExpansionMarketTraderZoneConfig);
 
             rootNode.Nodes.Add(MarketrootNode);
 
@@ -3169,6 +3195,36 @@ namespace ExpansionPlugin
             traderNode.Nodes.Add(itemsNode);
 
             Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, traderNode);
+        }
+        private TreeNode CreateExpansionMarketTraderZoneConfig(ExpansionMarketTraderZoneConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Market Zones")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionMarketTraderZone file in ef.Items)
+            {
+                CreateExpansionMarketTraderZoneNodes(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMarketTraderZoneNodes(ExpansionMarketTraderZone ExpansionMarketTraderZone, TreeNode economyRootNode)
+        {
+            TreeNode zoneNode = new TreeNode(ExpansionMarketTraderZone.FileName)
+            {
+                Tag = ExpansionMarketTraderZone
+            };
+            TreeNode PositionNode = new TreeNode("Zone Area")
+            {
+                Tag = "TraderZoneArea"
+            };
+            zoneNode.Nodes.Add(PositionNode);
+            TreeNode ZoneStockNode = new TreeNode("Zone Stock")
+            { 
+                Tag = "TarderZoneStock"
+            };
+            zoneNode.Nodes.Add(ZoneStockNode);
+            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, zoneNode);
         }
         //Mission
         private TreeNode CreateExpansionMissionConfig(ExpansionMissionSettingsConfig ef)
@@ -4369,6 +4425,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_P2PTraderSpawnPositionsDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_ExpansionTraderZonesPositionSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_ExpansionTraderZonePositionsDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -4386,6 +4444,7 @@ namespace ExpansionPlugin
             _selectedData = null;
             _selectedP2PTradervehiclespawn = null;
             _selectedPersonalStorageContainer = null;
+            _selectedtraderZone = null;
         }
 
 
@@ -4470,6 +4529,7 @@ namespace ExpansionPlugin
         private Vec3 _selectedP2PTradervehiclespawn;
         private ExpansionP2PMarketTraderConfig _selectedP2PMarketTrader;
         private ExpansionPersonalStorageConfig _selectedPersonalStorageContainer;
+        private ExpansionMarketTraderZone _selectedtraderZone;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -4675,6 +4735,19 @@ namespace ExpansionPlugin
                 var ExpansionPersonalStorageContainersConfig = node.FindParentOfType<ExpansionPersonalStorageContainersConfig>();
                 if (ExpansionPersonalStorageContainersConfig != null)
                     DrawbaseExpansionPersonalStoragePositions(ExpansionPersonalStorageContainersConfig);
+            });
+        }
+        private void SetupTraderZonePositions(ExpansionMarketTraderZone ExpansionMarketTraderZone, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedtraderZone = ExpansionMarketTraderZone;
+                _mapControl.MapsingleClicked += MapControl_ExpansionTraderZonesPositionSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ExpansionTraderZonePositionsDoubleclicked;
+
+                var ExpansionMarketTraderZoneConfig = node.FindParentOfType<ExpansionMarketTraderZoneConfig>();
+                if (ExpansionMarketTraderZoneConfig != null)
+                    DrawbaseTraderZonePositions(ExpansionMarketTraderZoneConfig);
             });
         }
 
@@ -5152,6 +5225,37 @@ namespace ExpansionPlugin
                 {
                     marker.Color = Color.LimeGreen;
                     // Defer registering; draw this one last
+                    selectedMarker = marker;
+                }
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+            if (selectedMarker != null)
+            {
+                _mapControl.RegisterDrawable(selectedMarker);
+            }
+        }
+        private void DrawbaseTraderZonePositions(ExpansionMarketTraderZoneConfig ExpansionMarketTraderZoneConfig)
+        {
+            TextMarkerDrawable? selectedMarker = null;
+            foreach (ExpansionMarketTraderZone ExpansionMarketTraderZone in ExpansionMarketTraderZoneConfig.Items)
+            {
+                var marker = new TextMarkerDrawable(new PointF((float)ExpansionMarketTraderZone.Position.X, (float)ExpansionMarketTraderZone.Position.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)ExpansionMarketTraderZone.Radius,
+                    Scaleradius = true,
+                    Shade = true,
+                    Text = $"TraderZone - {ExpansionMarketTraderZone.m_DisplayName}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.Blue
+                };
+                if (_selectedtraderZone == ExpansionMarketTraderZone)
+                {
+                    marker.Color = Color.LimeGreen;
                     selectedMarker = marker;
                 }
                 else
@@ -5978,19 +6082,204 @@ namespace ExpansionPlugin
         }
         private void MapControl_P2PTraderSpawnPositionsSingleclicked(object? sender, MapClickEventArgs e)
         {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
 
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = child.Tag as ExpansionP2PMarketTraderConfig;
+                Vec3 pos = ExpansionP2PMarketTraderConfig.m_Position;
+
+                // Node position in screen space
+                PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                double dx = clickScreen.X - posScreen.X;
+                double dy = clickScreen.Y - posScreen.Y;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPos = pos;
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = child.Tag as ExpansionP2PMarketTraderConfig;
+                    Vec3 pos = ExpansionP2PMarketTraderConfig.m_Position;
+
+                    if (pos == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child.Nodes[0];
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
         }
         private void MapControl_P2PTraderSpawnPositionsDoubleclicked(object? sender, MapClickEventArgs e)
         {
+            if (currentTreeNode.Tag.ToString() == "P2PMarketTraderPOSandOri")
+            {
+                Vec3 v3 = (currentTreeNode.Parent.Tag as ExpansionP2PMarketTraderConfig).m_Position;
 
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = currentTreeNode.FindParentOfType<ExpansionP2PMarketTraderConfig>();
+                ShowHandler(new ExpasnionP2PMarksetTraderSpawnInfoControl(), typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, new List<TreeNode>() { currentTreeNode });
+                DrawbaseP2PTraderSpawnPositions(currentTreeNode.FindParentOfType<ExpansionP2pMarketTradersConfig>());
+            }
         }
-        private void MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked(object sender, EventArgs e)
+        private void MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked(object sender, MapClickEventArgs e)
         {
+            if (currentTreeNode.Tag.ToString() == "ExpansionPersonalStorageConfigPOSandOri")
+            {
+                Vec3 v3 = (currentTreeNode.Parent.Tag as ExpansionPersonalStorageConfig).Position;
 
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = currentTreeNode.FindParentOfType<ExpansionPersonalStorageConfig>();
+                ShowHandler(new ExpasnionPersonalStorageContainerSpawnInfoControl(), typeof(ExpansionPersonalStorageContainersConfig), ExpansionPersonalStorageConfig, new List<TreeNode>() { currentTreeNode });
+                DrawbaseExpansionPersonalStoragePositions(currentTreeNode.FindParentOfType<ExpansionPersonalStorageContainersConfig>());
+            }
         }
-        private void MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked(object sender, EventArgs e)
+        private void MapControl_ExpansionPersonalStorageSpawnPositionsSingleclicked(object sender, MapClickEventArgs e)
         {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
 
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig  = child.Tag as ExpansionPersonalStorageConfig;
+                Vec3 pos = ExpansionPersonalStorageConfig.Position;
+
+                // Node position in screen space
+                PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                double dx = clickScreen.X - posScreen.X;
+                double dy = clickScreen.Y - posScreen.Y;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPos = pos;
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = child.Tag as ExpansionPersonalStorageConfig;
+                    Vec3 pos = ExpansionPersonalStorageConfig.Position;
+
+                    if (pos == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child.Nodes[0];
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_ExpansionTraderZonesPositionSingleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                ExpansionMarketTraderZone ExpansionMarketTraderZone = child.Tag as ExpansionMarketTraderZone;
+                Vec3 pos = ExpansionMarketTraderZone.Position;
+
+                // Node position in screen space
+                PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                double dx = clickScreen.X - posScreen.X;
+                double dy = clickScreen.Y - posScreen.Y;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPos = pos;
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    ExpansionMarketTraderZone ExpansionMarketTraderZone = child.Tag as ExpansionMarketTraderZone;
+                    Vec3 pos = ExpansionMarketTraderZone.Position;
+
+                    if (pos == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child.Nodes[0];
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_ExpansionTraderZonePositionsDoubleclicked(object sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag.ToString() == "TraderZoneArea")
+            {
+                Vec3 v3 = (currentTreeNode.Parent.Tag as ExpansionMarketTraderZone).Position;
+
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionMarketTraderZone ExpansionMarketTraderZone = currentTreeNode.FindParentOfType<ExpansionMarketTraderZone>();
+                ShowHandler(new ExpansionMarkettraderZonePositionsControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, new List<TreeNode>() { currentTreeNode });
+                DrawbaseTraderZonePositions(currentTreeNode.FindParentOfType<ExpansionMarketTraderZoneConfig>());
+            }
         }
         #endregion mapstuff
 

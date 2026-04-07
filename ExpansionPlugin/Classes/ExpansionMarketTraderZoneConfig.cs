@@ -29,6 +29,71 @@ namespace ExpansionPlugin
             TraderZone.SetGuid(Guid.NewGuid());
             return TraderZone;
         }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = Items.Count - 1; i >= 0; i--)
+            {
+                var item = Items[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+                //delete file from disk
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    Items.RemoveAt(i);
+                    ClonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
+                }
+                //new file, needs to be written to disk and cloned
+                if (!ClonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    ClonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+                //edit to existing file, needs to be recloned
+                if (!item.Equals(baseline))
+                {
+                    SaveItem(item);
+                    if (ClonedItems[id]._path != item._path)
+                    {
+                        if (File.Exists(ClonedItems[id]._path))
+                            File.Delete(ClonedItems[id]._path);
+                    }
+                    ClonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
+            }
+            saved.AddRange(DeleteEmptyDirectoriesFromPath(FilePath));
+            return saved;
+        }
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        {
+            List<string> removedFolders = new List<string>();
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c => c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    string relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
         protected override void SaveItem(ExpansionMarketTraderZone TraderZone)
         {
             AppServices.GetRequired<FileService>().SaveJson(TraderZone._path, TraderZone, false, true);
@@ -108,7 +173,8 @@ namespace ExpansionPlugin
             if (ReferenceEquals(this, other)) return true;
             if (Id != other.Id) return false;
             
-            if (m_Version != other.m_Version ||
+            if (_path != other._path ||
+                m_Version != other.m_Version ||
                 m_DisplayName != other.m_DisplayName ||
                 !Position.Equals(other.Position) ||
                 Radius != other.Radius ||

@@ -228,14 +228,14 @@ namespace ExpansionPlugin
             ExpansionMarketSettingsConfig = new ExpansionMarketSettingsConfig(_paths["MarketSettings"]);
             LoadConfigWithErrorReport("MarketSettings", ExpansionMarketSettingsConfig);
 
-            ExpansionMarketTraderZoneConfig = new ExpansionMarketTraderZoneConfig(_paths["MarketTraderZones"]);
-            LoadConfigWithErrorReport("MarketTraderZones", ExpansionMarketTraderZoneConfig);
-
             ExpansionMarketCategoryConfig = new ExpansionMarketCategoryConfig(_paths["MarketCategories"]);
             LoadConfigWithErrorReport("MarketCategories", ExpansionMarketCategoryConfig);
 
             ExpansionMarketTraderConfig = new ExpansionMarketTraderConfig(_paths["MarketTraders"]);
             LoadConfigWithErrorReport("MarketTraders", ExpansionMarketTraderConfig);
+
+            ExpansionMarketTraderZoneConfig = new ExpansionMarketTraderZoneConfig(_paths["MarketTraderZones"]);
+            LoadConfigWithErrorReport("MarketTraderZones", ExpansionMarketTraderZoneConfig);
 
             Save();
         }
