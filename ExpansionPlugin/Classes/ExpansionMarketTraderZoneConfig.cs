@@ -15,6 +15,45 @@ namespace ExpansionPlugin
         public ExpansionMarketTraderZoneConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            HasErrors = false;
+            Errors.Clear();
+            Items.Clear();
+            ClonedItems.Clear();
+
+            var filePaths = Directory.GetFiles(BasePath, "*.json");
+
+            foreach (var file in filePaths)
+            {
+                try
+                {
+                    var item = LoadItem(file);
+
+                    OnAfterItemLoad(item, file);
+                    ClonedItems.Add(GetID(item), item.Clone());
+                    var issues = ValidateData(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+                    ClonedItems[item.Id].m_Categories = item.m_Categories != null
+                        ? new BindingList<ExpansionMarketTraderCategory>(item.m_Categories.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<ExpansionMarketTraderCategory>();
+                    Items.Add(item);
+
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
+                }
+            }
+
+            OnAfterLoadAll();
+        }
         protected override ExpansionMarketTraderZone LoadItem(string filePath)
         {
             var TraderZone = AppServices.GetRequired<FileService>().LoadOrCreateJson(
@@ -50,6 +89,7 @@ namespace ExpansionPlugin
                 //new file, needs to be written to disk and cloned
                 if (!ClonedItems.TryGetValue(id, out var baseline))
                 {
+                    item.SaveStock();
                     SaveItem(item);
                     ClonedItems[id] = item.Clone();
                     saved.Add(fileName);
@@ -58,6 +98,7 @@ namespace ExpansionPlugin
                 //edit to existing file, needs to be recloned
                 if (!item.Equals(baseline))
                 {
+                    item.SaveStock();
                     SaveItem(item);
                     if (ClonedItems[id]._path != item._path)
                     {
@@ -111,10 +152,9 @@ namespace ExpansionPlugin
                 File.Delete(TraderZone._path);
             }
         }
-        internal ExpansionMarketTraderZone AddNewP2PTraderFile(string Zonename)
+        internal ExpansionMarketTraderZone AddNewTraderZone(string Zonename)
         {
-            string filepath = Path.Combine(AppServices.GetRequired<ExpansionManager>().basePath, "expansion", "p2pmarket");
-            string filename = Zonename + ".json";
+            string filename = Helpers.SanitizePath(Zonename) + ".json";
             int mapsize = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize;
             ExpansionMarketTraderZone TraderZone = new ExpansionMarketTraderZone()
             {
@@ -126,7 +166,8 @@ namespace ExpansionPlugin
                 SellPricePercent = -1, //! -1 = Use global sell price percentage
                 Stock = new Dictionary<string, int>()
             };
-            TraderZone.SetPath(Path.Combine(filepath, filename));
+            TraderZone.SetPath(Path.Combine(FilePath, filename));
+            TraderZone.LoadStock();
             TraderZone.SetGuid(Guid.NewGuid());
             Items.Add(TraderZone);
             return TraderZone;
@@ -166,6 +207,9 @@ namespace ExpansionPlugin
         public decimal? BuyPricePercent { get; set; }
         public decimal? SellPricePercent { get; set; }
         public Dictionary<string, int> Stock { get; set; }
+        public BindingList<ExpansionMarketTraderStockItem> stockList { get; set; }
+
+
 
         public bool Equals(ExpansionMarketTraderZone other)
         {
@@ -182,22 +226,25 @@ namespace ExpansionPlugin
                 SellPricePercent != other.SellPricePercent) 
                 return false;
             
-            if (!AreEqual(Stock, other.Stock))
+            if (!ListEquals(stockList, other.stockList))
                 return false;
             
             return true;
         }
-        public bool AreEqual(Dictionary<string, int> a, Dictionary<string, int> b)
+        private static bool ListEquals<T>(IList<T> a, IList<T> b)
         {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
             if (a.Count != b.Count)
                 return false;
 
-            foreach (var kvp in a)
+            for (int i = 0; i < a.Count; i++)
             {
-                if (!b.TryGetValue(kvp.Key, out int value))
-                    return false;
-
-                if (kvp.Value != value)
+                if (!Equals(a[i], b[i]))
                     return false;
             }
 
@@ -214,13 +261,28 @@ namespace ExpansionPlugin
                 Radius = this.Radius,
                 BuyPricePercent = this.BuyPricePercent,
                 SellPricePercent = this.SellPricePercent,
-                Stock = new Dictionary<string, int>(this .Stock)
+                stockList = this.stockList != null
+                    ? new BindingList<ExpansionMarketTraderStockItem>(this.stockList.Select(StockItem => StockItem.Clone()).ToList())
+                    : new BindingList<ExpansionMarketTraderStockItem>(),
             };
             clone.SetPath(_path);
             clone.SetGuid(Id);
             return clone;
         }
-
+        public void LoadStock()
+        {
+            stockList = new BindingList<ExpansionMarketTraderStockItem>(
+                Stock.Select(kvp => new ExpansionMarketTraderStockItem
+                {
+                    Name = kvp.Key,
+                    Quantity = kvp.Value
+                }).ToList()
+            );
+        }
+        public void SaveStock()
+        {
+            Stock = stockList.ToDictionary(x => x.Name, x => x.Quantity);
+        }
         internal IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -256,6 +318,33 @@ namespace ExpansionPlugin
                 Radius = -1;
             }
             return fixes;
+        }
+    }
+    public class ExpansionMarketTraderStockItem : IDeepCloneable<ExpansionMarketTraderStockItem>, IEquatable<ExpansionMarketTraderStockItem>
+    {
+        public string Name { get; set; }
+        public int Quantity { get; set; }
+        public ExpansionMarketTraderStockItem() { }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMarketTraderStockItem);
+        public bool Equals(ExpansionMarketTraderStockItem other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            if (!Name.Equals(other.Name) ||
+                 Quantity != other.Quantity)
+                return false;
+
+            return true;
+        }
+        public ExpansionMarketTraderStockItem Clone()
+        {
+            ExpansionMarketTraderStockItem clone = new ExpansionMarketTraderStockItem()
+            {
+                Name = this.Name,
+                Quantity = this.Quantity
+            };
+            return clone;
         }
     }
 }

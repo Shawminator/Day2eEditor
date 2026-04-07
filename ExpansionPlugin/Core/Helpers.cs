@@ -101,5 +101,20 @@ namespace ExpansionPlugin
 
             return true;
         }
+        public static string SanitizePath(string input)
+        {
+            // Replace spaces with underscores
+            string result = input.Replace(" ", "_");
+
+            // Get invalid filename characters
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+
+            // Remove invalid characters
+            result = new string(result
+                .Where(c => !invalidChars.Contains(c))
+                .ToArray());
+
+            return result;
+        }
     }
 }

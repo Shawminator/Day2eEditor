@@ -176,7 +176,7 @@ namespace ExpansionPlugin
         internal ExpansionMarketCategory AddNewMarketCategory(string fileName, List<string> folderParts)
         {
             string filepath = Path.Combine(FilePath, Path.Combine(folderParts.ToArray()));
-            string filename = fileName + ".json";
+            string filename = Helpers.SanitizePath(fileName) + ".json";
             ExpansionMarketCategory ExpansionMarketCategory = new ExpansionMarketCategory()
             {
                 m_Version = CurrentVersion,

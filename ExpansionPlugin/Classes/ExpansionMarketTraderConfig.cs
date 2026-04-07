@@ -217,7 +217,7 @@ namespace ExpansionPlugin
         }
         internal ExpansionMarketTrader AddNewMarketTrader(string ExpansionMarketTraderName)
         {
-            string filename = ExpansionMarketTraderName + ".json";
+            string filename = Helpers.SanitizePath(ExpansionMarketTraderName) + ".json";
             ExpansionMarketTrader ExpansionMarketTrader = new ExpansionMarketTrader()
             {
                 m_Version = CurrentVersion,
@@ -227,7 +227,9 @@ namespace ExpansionPlugin
                 TraderIcon = "Trader",
                 Currencies = new BindingList<string>(),
                 Items = new Dictionary<string, ExpansionMarketTraderBuySell>(),
+                m_Items = new BindingList<ExpansionMarketTraderItem>(),
                 Categories = new BindingList<string>(),
+                m_Categories = new BindingList<ExpansionMarketTraderCategory>(),
                 RequiredFaction = "",
                 RequiredCompletedQuestID = -1,
                 DisplayCurrencyName = "",
@@ -551,6 +553,7 @@ namespace ExpansionPlugin
                 }
 
                 m_Items.Add(traderItem);
+
             }
         }
         private static bool TryParseCategoryEntry(

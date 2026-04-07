@@ -375,7 +375,7 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionMarketTraderItemControl(), typeof(ExpansionMarketTraderConfig), ExpansionMarketTraderItem, selected);
                 },
                 //MarketZone
-                [typeof(ExpansionMarketTraderZone)] = (node, selected)=>
+                [typeof(ExpansionMarketTraderZone)] = (node, selected) =>
                 {
                     ExpansionMarketTraderZone ExpansionMarketTraderZone = node.Tag as ExpansionMarketTraderZone;
                     ShowHandler(new ExpansionMarketTraderZoneControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
@@ -1102,10 +1102,18 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Market Traders
+                [typeof(ExpansionMarketTraderConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewTraderFileToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 [typeof(ExpansionMarketTrader)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(previewTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(removeTraderFileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 [typeof(ExpansionMarketTraderCategory)] = node =>
@@ -1118,6 +1126,19 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeItemFromTraderToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Market Zones
+                [typeof(ExpansionMarketTraderZoneConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewTraderZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMarketTraderZone)] = noe =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderZoneToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Missions
@@ -3154,7 +3175,12 @@ namespace ExpansionPlugin
             {
                 Tag = ExpansionMarketTrader
             };
+            CreateTraderNodes(ExpansionMarketTrader, traderNode);
 
+            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, traderNode);
+        }
+        private static void CreateTraderNodes(ExpansionMarketTrader ExpansionMarketTrader, TreeNode traderNode)
+        {
             TreeNode Currenciesnodes = new TreeNode("Currencies")
             {
                 Tag = "Currencies"
@@ -3193,8 +3219,6 @@ namespace ExpansionPlugin
                 });
             }
             traderNode.Nodes.Add(itemsNode);
-
-            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, traderNode);
         }
         private TreeNode CreateExpansionMarketTraderZoneConfig(ExpansionMarketTraderZoneConfig ef)
         {
@@ -3214,18 +3238,24 @@ namespace ExpansionPlugin
             {
                 Tag = ExpansionMarketTraderZone
             };
+            createtraderzonenodes(zoneNode);
+            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, zoneNode);
+        }
+
+        private static void createtraderzonenodes(TreeNode zoneNode)
+        {
             TreeNode PositionNode = new TreeNode("Zone Area")
             {
                 Tag = "TraderZoneArea"
             };
             zoneNode.Nodes.Add(PositionNode);
             TreeNode ZoneStockNode = new TreeNode("Zone Stock")
-            { 
+            {
                 Tag = "TarderZoneStock"
             };
             zoneNode.Nodes.Add(ZoneStockNode);
-            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, zoneNode);
         }
+
         //Mission
         private TreeNode CreateExpansionMissionConfig(ExpansionMissionSettingsConfig ef)
         {
@@ -6178,7 +6208,7 @@ namespace ExpansionPlugin
 
             foreach (TreeNode child in parentNode.Nodes)
             {
-                ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig  = child.Tag as ExpansionPersonalStorageConfig;
+                ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = child.Tag as ExpansionPersonalStorageConfig;
                 Vec3 pos = ExpansionPersonalStorageConfig.Position;
 
                 // Node position in screen space
@@ -8386,6 +8416,36 @@ namespace ExpansionPlugin
             ExpansionTV.SelectedNode = ItemNode;
         }
         //Market Traders
+        private void addNewTraderFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add New Market Trader File";
+            frm.SetLaable2 = "File Name";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Add File";
+            frm.HideCEStuff();
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string File = frm.typesname;
+                ExpansionMarketTrader newExpansionMarketTrader = _expansionManager.ExpansionMarketTraderConfig.AddNewMarketTrader(File);
+                TreeNode traderNode = new TreeNode(newExpansionMarketTrader.FileName)
+                {
+                    Tag = newExpansionMarketTrader
+                };
+
+                CreateTraderNodes(newExpansionMarketTrader, traderNode);
+                Helpers.InsertFileNodeAfterFolders(currentTreeNode.Nodes, traderNode);
+                ExpansionTV.SelectedNode = traderNode;
+                traderNode.Expand();
+            }
+        }
+        private void removeTraderFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionMarketTraderConfig.RemoveFile(currentTreeNode.Tag as ExpansionMarketTrader);
+            currentTreeNode.Remove();
+        }
         private void addCategoryToTraderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode traderConfigNode = currentTreeNode.FindParentNodeOfType<ExpansionMarketTraderConfig>();
@@ -8564,6 +8624,40 @@ namespace ExpansionPlugin
 
             var preview = new TraderPreviewForm(trader, _expansionManager.ExpansionMarketSettingsConfig.Data.MarketMenuColors);
             preview.Show(this);
+        }
+        //Market Zones
+        private void addNewTraderZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add New Market Trader Zone";
+            frm.SetLaable2 = "File Name";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Add File";
+            frm.HideCEStuff();
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string File = frm.typesname;
+                ExpansionMarketTraderZone newExpansionMarketTraderZone = _expansionManager.ExpansionMarketTraderZoneConfig.AddNewTraderZone(File);
+                if (MapData.FileExists)
+                {
+                    newExpansionMarketTraderZone.Position.Y = (MapData.gethieght(newExpansionMarketTraderZone.Position.X, newExpansionMarketTraderZone.Position.Z));
+                }
+                TreeNode zoneNode = new TreeNode(newExpansionMarketTraderZone.FileName)
+                {
+                    Tag = newExpansionMarketTraderZone
+                };
+                createtraderzonenodes(zoneNode);
+                Helpers.InsertFileNodeAfterFolders(currentTreeNode.Nodes, zoneNode);
+                ExpansionTV.SelectedNode = zoneNode;
+
+            }
+        }
+        private void removeTraderZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionMarketTraderZoneConfig.RemoveFile(currentTreeNode.Tag as ExpansionMarketTraderZone);
+            currentTreeNode.Remove();
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -10023,6 +10117,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
 
 
     }
