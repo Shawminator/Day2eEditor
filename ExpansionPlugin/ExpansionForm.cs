@@ -792,7 +792,7 @@ namespace ExpansionPlugin
                     SetupTraderZonePositions(ExpansionMarketTraderZone, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketTraderZone.Position.X, ExpansionMarketTraderZone.Position.Z));
                 },
-                ["TarderZoneStock"] = (node,selected)=>
+                ["TarderZoneStock"] = (node, selected) =>
                 {
                     ExpansionMarketTraderZone ExpansionMarketTraderZone = node.Parent.Tag as ExpansionMarketTraderZone;
                     ShowHandler<IUIHandler>(new ExpansionMarketTraderZoneStockControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
@@ -1660,6 +1660,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addItemToTraderToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(checkForMissingTraderItemsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //market Zones
+                ["TarderZoneStock"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(clearStockToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //P2P Market
@@ -8662,6 +8669,17 @@ namespace ExpansionPlugin
             _expansionManager.ExpansionMarketTraderZoneConfig.RemoveFile(currentTreeNode.Tag as ExpansionMarketTraderZone);
             currentTreeNode.Remove();
         }
+        private void clearStockToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Parent.Tag is ExpansionMarketTraderZone ExpansionMarketTraderZone)
+            {
+                ExpansionMarketTraderZone.stockList = new BindingList<ExpansionMarketTraderStockItem>();
+            }
+            TreeNode stocknode = currentTreeNode;
+            TreeNode parent = currentTreeNode.Parent;
+            ExpansionTV.SelectedNode = parent;
+            ExpansionTV.SelectedNode = stocknode;
+        }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -10120,6 +10138,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
