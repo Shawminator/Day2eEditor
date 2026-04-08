@@ -39,9 +39,9 @@ namespace ExpansionPlugin
                         foreach (var msg in issues)
                             Console.WriteLine("- " + msg);
                     }
-                    ClonedItems[item.Id].m_Categories = item.m_Categories != null
-                        ? new BindingList<ExpansionMarketTraderCategory>(item.m_Categories.Select(cat => cat.Clone()).ToList())
-                        : new BindingList<ExpansionMarketTraderCategory>();
+                    ClonedItems[item.Id].stockList = item.stockList != null
+                        ? new BindingList<ExpansionMarketTraderStockItem>(item.stockList.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<ExpansionMarketTraderStockItem>();
                     Items.Add(item);
 
                 }
@@ -89,7 +89,7 @@ namespace ExpansionPlugin
                 //new file, needs to be written to disk and cloned
                 if (!ClonedItems.TryGetValue(id, out var baseline))
                 {
-                    item.SaveStock();
+                    item.CreatestockDictionary();
                     SaveItem(item);
                     ClonedItems[id] = item.Clone();
                     saved.Add(fileName);
@@ -98,7 +98,7 @@ namespace ExpansionPlugin
                 //edit to existing file, needs to be recloned
                 if (!item.Equals(baseline))
                 {
-                    item.SaveStock();
+                    item.CreatestockDictionary();
                     SaveItem(item);
                     if (ClonedItems[id]._path != item._path)
                     {
@@ -164,10 +164,10 @@ namespace ExpansionPlugin
                 Radius = mapsize,
                 BuyPricePercent = 100,
                 SellPricePercent = -1, //! -1 = Use global sell price percentage
-                Stock = new Dictionary<string, int>()
+                Stock = new Dictionary<string, int>(),
+                stockList = new BindingList<ExpansionMarketTraderStockItem>()
             };
             TraderZone.SetPath(Path.Combine(FilePath, filename));
-            TraderZone.LoadStock();
             TraderZone.SetGuid(Guid.NewGuid());
             Items.Add(TraderZone);
             return TraderZone;
@@ -269,17 +269,19 @@ namespace ExpansionPlugin
             clone.SetGuid(Id);
             return clone;
         }
-        public void LoadStock()
+        public void BuildStocklistruntime()
         {
             stockList = new BindingList<ExpansionMarketTraderStockItem>(
                 Stock.Select(kvp => new ExpansionMarketTraderStockItem
                 {
                     Name = kvp.Key,
                     Quantity = kvp.Value
-                }).ToList()
+                })
+                .OrderBy(x => x.Name)
+                .ToList()
             );
         }
-        public void SaveStock()
+        public void CreatestockDictionary()
         {
             Stock = stockList.ToDictionary(x => x.Name, x => x.Quantity);
         }
@@ -317,6 +319,7 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated SellPricePercent to -1");
                 Radius = -1;
             }
+            BuildStocklistruntime();
             return fixes;
         }
     }

@@ -792,6 +792,11 @@ namespace ExpansionPlugin
                     SetupTraderZonePositions(ExpansionMarketTraderZone, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionMarketTraderZone.Position.X, ExpansionMarketTraderZone.Position.Z));
                 },
+                ["TarderZoneStock"] = (node,selected)=>
+                {
+                    ExpansionMarketTraderZone ExpansionMarketTraderZone = node.Parent.Tag as ExpansionMarketTraderZone;
+                    ShowHandler<IUIHandler>(new ExpansionMarketTraderZoneStockControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
+                },
                 //Missions
                 ["MissionAirdrop"] = (node, selected) =>
                 {
@@ -3241,7 +3246,6 @@ namespace ExpansionPlugin
             createtraderzonenodes(zoneNode);
             Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, zoneNode);
         }
-
         private static void createtraderzonenodes(TreeNode zoneNode)
         {
             TreeNode PositionNode = new TreeNode("Zone Area")
@@ -3255,7 +3259,6 @@ namespace ExpansionPlugin
             };
             zoneNode.Nodes.Add(ZoneStockNode);
         }
-
         //Mission
         private TreeNode CreateExpansionMissionConfig(ExpansionMissionSettingsConfig ef)
         {

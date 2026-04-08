@@ -36,9 +36,40 @@ namespace ExpansionPlugin
             _data = data as ExpansionMarketTraderZone ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
+            dataGridView1.RowHeadersVisible = false;
+
+            dataGridView1.BackgroundColor = Color.FromArgb(60, 63, 65);
+
+            dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(60, 63, 65);
+            dataGridView1.DefaultCellStyle.ForeColor = SystemColors.Control;
+
+            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(75, 110, 175); 
+            dataGridView1.DefaultCellStyle.SelectionForeColor = SystemColors.Control;
+
+            dataGridView1.EnableHeadersVisualStyles = false;
+
+            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = SystemColors.Control;
+
+            dataGridView1.GridColor = SystemColors.Control;
+
+            dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(65, 68, 70);
+
+            dataGridView1.EnableHeadersVisualStyles = false;
+
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            dataGridView1.DataSource = _data.stockList;
+            dataGridView1.Columns["Name"].ReadOnly = true;
+
+            dataGridView1.BorderStyle = BorderStyle.None;
+            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+
+            dataGridView1.Columns["Name"].Width = dataGridView1.Width - SystemInformation.VerticalScrollBarWidth - 105;
+            dataGridView1.Columns["Quantity"].Width = 100;
+
+            dataGridView1.Columns["Quantity"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns["Quantity"].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
             _suppressEvents = false;
         }
@@ -56,5 +87,16 @@ namespace ExpansionPlugin
         }
 
         #endregion
+        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "Quantity")
+            {
+                if (!int.TryParse(e.FormattedValue.ToString(), out int value) || value < 0)
+                {
+                    e.Cancel = true;
+                    MessageBox.Show("Please enter a valid non-negative number.");
+                }
+            }
+        }
     }
 }

@@ -29,17 +29,36 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            dataGridView1 = new DataGridView();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(dataGridView1);
             groupBox1.ForeColor = SystemColors.Control;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(568, 468);
+            groupBox1.Size = new Size(446, 594);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Zone Stock";
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AllowUserToResizeColumns = false;
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridView1.BackgroundColor = Color.FromArgb(60, 63, 65);
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.GridColor = SystemColors.Control;
+            dataGridView1.Location = new Point(13, 22);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new Size(421, 563);
+            dataGridView1.TabIndex = 0;
+            dataGridView1.CellValidating += dataGridView1_CellValidating;
             // 
             // ExpansionMarketTraderZoneStockControl
             // 
@@ -49,12 +68,15 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "ExpansionMarketTraderZoneStockControl";
-            Size = new Size(647, 572);
+            Size = new Size(446, 594);
+            groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private GroupBox groupBox1;
+        private DataGridView dataGridView1;
     }
 }
