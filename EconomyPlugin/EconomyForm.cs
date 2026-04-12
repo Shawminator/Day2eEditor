@@ -506,6 +506,9 @@ namespace EconomyPlugin
                     TypesCM.Items.Clear();
                     TypesCM.Items.Add(addNewTypesToolStripMenuItem);
                     TypesCM.Items.Add(removeSelectedToolStripMenuItem);
+                    TypesCM.Items.Add(new ToolStripSeparator());
+                    TypesCM.Items.Add(updateTypesFromXMLToolStripMenuItem);
+
                     TypesCM.Show(Cursor.Position);
                 },
                 [typeof(TypeEntry)] = node =>
@@ -3970,6 +3973,56 @@ namespace EconomyPlugin
                 _typefile.isDirty = true;
             }
         }
+        private void updateTypesFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is TypesFile typefile)
+            {
+                AddTypes frm = new AddTypes();
+                frm.StartPosition = FormStartPosition.CenterParent;
+                frm.typesname = typefile.FileName;
+                frm.moddir = typefile.ModFolder;
+                DialogResult dr = frm.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    List<string> added = new List<string>();
+
+                    foreach (TypeEntry te in frm._entries)
+                    {
+                        if (typefile.Data.TypeList.Any(x => x.Name == te.Name))
+                            continue;
+                        typefile.Data.TypeList.Add(te);
+                        typefile.isDirty = true;
+                        added.Add(te.Name);
+                        Console.WriteLine($"\t{te.Name} added to file....");
+                    }
+                    
+
+                    string relativePath = Path.GetRelativePath(_economyManager.basePath, typefile.FilePath);
+                    EconomyTV.Nodes.Remove(currentTreeNode);
+                    AddFileToTree(EconomyTV.Nodes[0], relativePath, typefile, CreateTypesfileNodes);
+                    savefiles();
+
+                    if (added.Count > 0)
+                    {
+                        MessageBox.Show(
+                            "Added entries:\n\n" + string.Join("\n", added),
+                            "Import Complete",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "No new entries were added (all items already existed).",
+                            "Import Complete",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Event Right Click Methods
@@ -4316,45 +4369,17 @@ namespace EconomyPlugin
         /// </summary>
         private void addNewRandomPresetFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string newmodPath = "CustomMods\\Customdb";
-            string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_cfgrandompresets.xml");
-            if (File.Exists(newPath))
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Random Preset File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
             {
-                var result = MessageBox.Show(
-                                $"Custom cfgrandomPreset allready exists.\nDo you wish to add another one?",
-                                "File Exists",
-                                MessageBoxButtons.YesNo,
-                                MessageBoxIcon.Question
-                            );
-                if (result == DialogResult.No) { return; }
-                AddEventFile frm = new AddEventFile();
-                frm.SetTitle = "Add new Random Preset File";
-                frm.Button4visable = false;
-                frm.StartPosition = FormStartPosition.CenterParent;
-                DialogResult dr = frm.ShowDialog();
-                if (dr == DialogResult.OK)
-                {
-                    newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname + ".xml";
-                    newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + "_cfgrandompresets.xml";
+                string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
-                    cfgrandompresetsFile newpresetfile = new cfgrandompresetsFile(newPath)
-                    {
-                        FileType = "randompresets",
-                        IsModded = true,
-                        ModFolder = newmodPath
-                    };
-                    newpresetfile.CreateNew();
-                    newpresetfile.isDirty = true;
-                    _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "randompresets");
-                    _economyManager.cfgrandompresetsConfig.AllData.Add(newpresetfile);
-                    string relativePath = Path.GetRelativePath(_economyManager.basePath, newpresetfile.FilePath);
-                    AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateRandomPresetsFileNodes);
-                    savefiles();
-                }
-            }
-            else
-            {
                 cfgrandompresetsFile newpresetfile = new cfgrandompresetsFile(newPath)
                 {
                     FileType = "randompresets",
@@ -4571,17 +4596,6 @@ namespace EconomyPlugin
         /// </summary>
         private void addNewSpawnableTypesFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string newmodPath = "CustomMods\\Customdb";
-            string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_cfgspawnabletypes.xml");
-            if (File.Exists(newPath))
-            {
-                var result = MessageBox.Show(
-                                $"Custom cfgspawnabletypes allready exists.\nDo you wish to add another one?",
-                                "File Exists",
-                                MessageBoxButtons.YesNo,
-                                MessageBoxIcon.Question
-                            );
-                if (result == DialogResult.No) { return; }
                 AddEventFile frm = new AddEventFile();
                 frm.SetTitle = "Add new Spawnable Types";
                 frm.Button4visable = false;
@@ -4589,9 +4603,9 @@ namespace EconomyPlugin
                 DialogResult dr = frm.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
-                    newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname + ".xml";
-                    newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+                    string newmodPath = frm.moddir.Replace("/", "\\");
+                    string typesfile = frm.typesname + "cfgspawnabletypes.xml";
+                    string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
                     cfgspawnabletypesFile newpresetfile = new cfgspawnabletypesFile(newPath)
                     {
@@ -4607,23 +4621,6 @@ namespace EconomyPlugin
                     AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateSpawnableTypesfileNodes);
                     savefiles();
                 }
-            }
-            else
-            {
-                cfgspawnabletypesFile newpresetfile = new cfgspawnabletypesFile(newPath)
-                {
-                    FileType = "spawnabletypes",
-                    IsModded = true,
-                    ModFolder = newmodPath
-                };
-                newpresetfile.CreateNew();
-                newpresetfile.isDirty = true;
-                _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "spawnabletypes");
-                _economyManager.cfgspawnabletypesConfig.AllData.Add(newpresetfile);
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, newpresetfile.FilePath);
-                AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateSpawnableTypesfileNodes, true);
-                savefiles();
-            }
         }
         private void addNewSpawnableTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5603,6 +5600,7 @@ namespace EconomyPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
 
     }
 

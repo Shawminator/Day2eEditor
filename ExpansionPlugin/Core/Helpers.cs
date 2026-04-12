@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Day2eEditor;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -115,6 +119,109 @@ namespace ExpansionPlugin
                 .ToArray());
 
             return result;
+        }
+        public static bool GetTraderFromMissionFile(
+            string line,
+            out string npcClassName,
+            out string traderName,
+            out BindingList<Vec3> positions,
+            out Vec3 rotation,
+            out List<TraderNPCItem> items,
+            out TraderNPCSpecialProperties special)
+        {
+            npcClassName = string.Empty;
+            traderName = string.Empty;
+            positions = new BindingList<Vec3>();
+            rotation = new Vec3();
+            items = new List<TraderNPCItem>();
+            special = new TraderNPCSpecialProperties();
+
+            if (string.IsNullOrWhiteSpace(line))
+                return false;
+
+            string[] tokens = line.Split('|');
+            if (tokens.Length < 4)
+                return false;
+
+            // --- Name split ---
+            int dotIndex = tokens[0].IndexOf('.');
+            if (dotIndex > 0)
+            {
+                npcClassName = tokens[0].Substring(0, dotIndex).Trim();
+                traderName = tokens[0].Substring(dotIndex + 1).Trim();
+            }
+            else
+            {
+                npcClassName = tokens[0].Trim();
+            }
+
+            // --- Positions ---
+            string[] positionTokens = tokens[1].Split(',');
+            foreach (string positionToken in positionTokens)
+            {
+                string trimmed = positionToken.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                {
+                    positions.Add(new Vec3(trimmed));
+                }
+            }
+
+            // --- Rotation ---
+            rotation = new Vec3(tokens[2].Trim());
+
+            // --- Gear / Items / Special Props ---
+            string[] gearTokens = tokens[3].Split(',');
+
+            foreach (string token in gearTokens)
+            {
+                string trimmed = token.Trim();
+                if (string.IsNullOrEmpty(trimmed))
+                    continue;
+
+                // 🔹 Special properties (key:value)
+                if (trimmed.Contains(":"))
+                {
+                    var parts = trimmed.Split(':', 2);
+                    string key = parts[0].ToLower();
+                    string value = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+
+                    switch (key)
+                    {
+                        case "name":
+                            special.Name = value;
+                            break;
+                        case "loadout":
+                            special.Loadout = value;
+                            break;
+                        case "faction":
+                            special.Faction = value;
+                            break;
+                    }
+
+                    continue;
+                }
+
+                // 🔹 Item + attachments
+                var itemParts = trimmed.Split('+');
+
+                var item = new TraderNPCItem
+                {
+                    ClassName = itemParts[0].Trim()
+                };
+
+                for (int i = 1; i < itemParts.Length; i++)
+                {
+                    string attachment = itemParts[i].Trim();
+                    if (!string.IsNullOrEmpty(attachment))
+                    {
+                        item.Attachments.Add(attachment);
+                    }
+                }
+
+                items.Add(item);
+            }
+
+            return true;
         }
     }
 }

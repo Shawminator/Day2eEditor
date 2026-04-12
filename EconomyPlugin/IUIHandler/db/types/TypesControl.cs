@@ -72,6 +72,7 @@ namespace EconomyPlugin
         }
         private BindingList<TypeEntry> CloneData(BindingList<TypeEntry> data)
         {
+            if (data == null) return new BindingList<TypeEntry>();
             return new BindingList<TypeEntry>(data.Select(d => d.Clone()).ToList());
         }
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)

@@ -35,6 +35,7 @@ namespace ExpansionPlugin
         public ExpansionMarketTraderZoneConfig ExpansionMarketTraderZoneConfig { get; set; }    
         public ExpansionMarketCategoryConfig ExpansionMarketCategoryConfig { get; set; }
         public ExpansionMarketTraderConfig ExpansionMarketTraderConfig { get; set; }
+        public ExpansionMarketTraderMapsConfig ExpansionMarketTraderMapsConfig { get; set; }
         public ExpansionMissionSettingsConfig ExpansionMissionConfig { get; set; }
         public ExpansionMonitoringConfig ExpansionMonitoringConfig { get; set; }
         public ExpansionNameTagsConfig ExpansionNameTagsConfig { get; set; }
@@ -65,8 +66,6 @@ namespace ExpansionPlugin
             _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
             _paths["ExpansionP2PTraders"] = Path.Combine(basePath, "expansion", "p2pmarket");
             _paths["ExpansionPSContainers"] = Path.Combine(basePath, "expansion", "personalstorage");
-            _paths["ExpansionMarketTraderMaps"] = Path.Combine(basePath, "expansion", "traders");
-            _paths["ExpansionMarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
 
 
             //Settings files in profiles
@@ -237,6 +236,9 @@ namespace ExpansionPlugin
             ExpansionMarketTraderZoneConfig = new ExpansionMarketTraderZoneConfig(_paths["MarketTraderZones"]);
             LoadConfigWithErrorReport("MarketTraderZones", ExpansionMarketTraderZoneConfig);
 
+            ExpansionMarketTraderMapsConfig = new ExpansionMarketTraderMapsConfig(_paths["MarketTraderNPCs"]);
+            LoadConfigWithErrorReport("MarketTraderNPCs", ExpansionMarketTraderMapsConfig);
+
             Save();
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
@@ -279,6 +281,7 @@ namespace ExpansionPlugin
                 ExpansionMarketTraderZoneConfig,
                 ExpansionMarketCategoryConfig,
                 ExpansionMarketTraderConfig,
+                ExpansionMarketTraderMapsConfig,
                 ExpansionMissionConfig,
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,
@@ -339,6 +342,7 @@ namespace ExpansionPlugin
                 ExpansionMarketTraderZoneConfig,
                 ExpansionMarketCategoryConfig,
                 ExpansionMarketTraderConfig,
+                ExpansionMarketTraderMapsConfig,
                 ExpansionMissionConfig,
                 ExpansionMonitoringConfig,
                 ExpansionNameTagsConfig,

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
@@ -2129,6 +2130,7 @@ namespace ExpansionPlugin
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketCategoryConfig, CreateExpansionMarketCategoryConfig);
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketTraderConfig, CreateExpansionMarketTraderConfig);
             AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketTraderZoneConfig, CreateExpansionMarketTraderZoneConfig);
+            AddFileToTree(MarketrootNode, null, _expansionManager.ExpansionMarketTraderMapsConfig, CreateExpansionMarketTraderMapsConfig);
 
             rootNode.Nodes.Add(MarketrootNode);
 
@@ -3265,6 +3267,83 @@ namespace ExpansionPlugin
                 Tag = "TarderZoneStock"
             };
             zoneNode.Nodes.Add(ZoneStockNode);
+        }
+        private TreeNode CreateExpansionMarketTraderMapsConfig(ExpansionMarketTraderMapsConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Market NPCS")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionMarketTraderNpcs file in ef.Items)
+            {
+                CreateExpansionMarketTraderMaps(file, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        private static void CreateExpansionMarketTraderMaps(ExpansionMarketTraderNpcs ExpansionMarketTraderNpcs, TreeNode economyRootNode)
+        {
+            TreeNode NpcNode = new TreeNode(ExpansionMarketTraderNpcs.FileName)
+            {
+                Tag = ExpansionMarketTraderNpcs
+            };
+            CreateNPCNodes(NpcNode, ExpansionMarketTraderNpcs);
+            Helpers.InsertNodeAlphabetically(economyRootNode.Nodes, NpcNode);
+        }
+        private static void CreateNPCNodes(TreeNode node, ExpansionMarketTraderNpcs traderFile)
+        {
+            foreach (ExpansionTraderMaps map in traderFile.Tradersmaps)
+            {
+                string typeLabel = map.IsAI ? "[Roaming AI]" : "[Static]";
+                TreeNode classNameNode = new TreeNode($"{map.NpcClassName} ({map.TraderName}) {typeLabel}")
+                {
+                    Tag = map
+                };
+
+                // --- Rotation ---
+                TreeNode rotationNode = new TreeNode("Rotation: " + map.Rotation.ToString())
+                {
+                    Tag = map.Rotation
+                };
+                classNameNode.Nodes.Add(rotationNode);
+
+                // --- Positions / Waypoints ---
+                string posLabel = map.Positions.Count == 1 ? "Position" : "Waypoints";
+                TreeNode positionsNode = new TreeNode(posLabel)
+                {
+                    Tag = "expansionMarketTraderMapWaypoints"
+                };
+                foreach (Vec3 v3 in map.Positions)
+                {
+                    positionsNode.Nodes.Add(new TreeNode(v3.ToString()) { Tag = v3 });
+                }
+                classNameNode.Nodes.Add(positionsNode);
+
+                // --- Items & Attachments ---
+                TreeNode itemsNode = new TreeNode("Items") { Tag = "expansionMarketTraderMapItems" };
+                foreach (TraderNPCItem item in map.Items)
+                {
+                    TreeNode itemNode = new TreeNode(item.ClassName) { Tag = item };
+                    foreach (var att in item.Attachments)
+                    {
+                        itemNode.Nodes.Add(new TreeNode(att) { Tag = att });
+                    }
+                    itemsNode.Nodes.Add(itemNode);
+                }
+                classNameNode.Nodes.Add(itemsNode);
+
+                // --- Special Properties ---
+                TreeNode propertiesNode = new TreeNode("Properties") { Tag = "expansionMarketTraderMapProperties" };
+                if (!string.IsNullOrEmpty(map.Special.Name))
+                    propertiesNode.Nodes.Add(new TreeNode("Name: " + map.Special.Name) { Tag = map.Special.Name });
+                if (!string.IsNullOrEmpty(map.Special.Loadout))
+                    propertiesNode.Nodes.Add(new TreeNode("Loadout: " + map.Special.Loadout) { Tag = map.Special.Loadout });
+                if (!string.IsNullOrEmpty(map.Special.Faction))
+                    propertiesNode.Nodes.Add(new TreeNode("Faction: " + map.Special.Faction) { Tag = map.Special.Faction });
+
+                classNameNode.Nodes.Add(propertiesNode);
+
+                Helpers.InsertNodeAlphabetically(node.Nodes, classNameNode);
+            }
         }
         //Mission
         private TreeNode CreateExpansionMissionConfig(ExpansionMissionSettingsConfig ef)
