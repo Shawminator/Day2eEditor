@@ -4543,7 +4543,7 @@ namespace EconomyPlugin
                 }
                 _randompresetsfile.Data.Items.Remove(randompresetsAttachments);
                 var parent = currentTreeNode.Parent;
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                currentTreeNode.Remove();
                 _randompresetsfile.isDirty = true;
             }
             else if (currentTreeNode.Tag is randompresetsCargo randompresetsCargo)
@@ -4561,7 +4561,7 @@ namespace EconomyPlugin
                 }
                 _randompresetsfile.Data.Items.Remove(randompresetsCargo);
                 var parent = currentTreeNode.Parent;
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                currentTreeNode.Remove();
                 _randompresetsfile.isDirty = true;
             }
             else if (currentTreeNode.Tag is randompresetsItem randompresetsItem)

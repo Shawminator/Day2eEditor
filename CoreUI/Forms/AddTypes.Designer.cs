@@ -195,7 +195,7 @@
             // 
             quantmax.HeaderText = "quantmax";
             quantmax.Name = "quantmax";
-            quantmax.Width = 86;
+            quantmax.Width = 85;
             // 
             // cost
             // 
@@ -223,7 +223,7 @@
             // 
             Tags.HeaderText = "Tags";
             Tags.Name = "Tags";
-            Tags.Width = 55;
+            Tags.Width = 56;
             // 
             // Usages
             // 

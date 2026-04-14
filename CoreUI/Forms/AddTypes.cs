@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
@@ -10,15 +11,15 @@ namespace Day2eEditor
         private readonly BindingSource _binding = new();
         public BindingList<TypeEntry> _entries = new BindingList<TypeEntry>();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string moddir 
-        { 
+        public string moddir
+        {
             get { return textBox2.Text; }
             set { textBox2.Text = value; }
         }
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string typesname 
+        public string typesname
         {
-            get { return textBox1.Text; } 
+            get { return textBox1.Text; }
             set { textBox1.Text = value; }
         }
 
@@ -358,35 +359,107 @@ namespace Day2eEditor
         private void button3_Click(object sender, EventArgs e)
         {
             _entries.Clear();
-            string clipboardText = Clipboard.GetText();
-            string[] lines = clipboardText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string line in lines)
+            string clipboardText = Clipboard.GetText()?.Trim();
+
+            if (string.IsNullOrWhiteSpace(clipboardText))
+                return;
+
+            try
             {
-                _entries.Add(new TypeEntry()
+                if (LooksLikeXml(clipboardText))
                 {
-                    Name = line,
-                    NameSpecified = true,
-                    Nominal = 10,
-                    NominalSpecified = true,
-                    Lifetime = 28800,
-                    LifetimeSpecified = true,
-                    Restock = 0,
-                    RestockSpecified = true,
-                    Min = 5,
-                    MinSpecified = true,
-                    QuantMin = -1,
-                    QuantMinSpecified = true,
-                    QuantMax = -1,
-                    QuantMaxSpecified = true,
-                    Cost = 100,
-                    CostSpecified = true,
-                    Flags = new Flags()
-                });
+                    LoadFromXmlOrFragment(clipboardText);
+                }
+                else
+                {
+                    LoadFromPlainList(clipboardText);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to import clipboard data.\r\n\r\n{ex.Message}");
             }
 
         }
+        private bool LooksLikeXml(string text)
+        {
+            text = text.TrimStart();
+            return text.StartsWith("<?xml") ||
+                   text.StartsWith("<types") ||
+                   text.StartsWith("<type");
+        }
+        private void LoadFromPlainList(string text)
+        {
+            string[] lines = text.Split(
+                new[] { "\r\n", "\n" },
+                StringSplitOptions.RemoveEmptyEntries);
 
+            foreach (string line in lines)
+            {
+                _entries.Add(new TypeEntry
+                {
+                    Name = line.Trim(),
+                    NameSpecified = true,
+
+                    Nominal = 10,
+                    NominalSpecified = true,
+
+                    Lifetime = 28800,
+                    LifetimeSpecified = true,
+
+                    Restock = 0,
+                    RestockSpecified = true,
+
+                    Min = 5,
+                    MinSpecified = true,
+
+                    QuantMin = -1,
+                    QuantMinSpecified = true,
+
+                    QuantMax = -1,
+                    QuantMaxSpecified = true,
+
+                    Cost = 100,
+                    CostSpecified = true,
+
+                    Flags = new Flags()
+                });
+            }
+        }
+        private void LoadFromXmlOrFragment(string xmlText)
+        {
+            Types imported;
+
+            // Full document already has <types> root
+            if (xmlText.Contains("<types"))
+            {
+                imported = DeserializeTypes(xmlText);
+            }
+            else
+            {
+                // Fragment of one or more <type> nodes only
+                string wrapped = $"<types>{xmlText}</types>";
+                imported = DeserializeTypes(wrapped);
+            }
+
+            if (imported?.TypeList == null)
+                return;
+
+            foreach (var entry in imported.TypeList)
+            {
+                //FixSpecifiedFlags(entry);
+                _entries.Add(entry);
+            }
+        }
+
+        private Types DeserializeTypes(string xml)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Types));
+
+            using StringReader reader = new StringReader(xml);
+            return (Types)serializer.Deserialize(reader);
+        }
         private List<List<object>> _copiedCells;
         private void _grid_KeyDown(object sender, KeyEventArgs e)
         {
@@ -484,6 +557,7 @@ namespace Day2eEditor
         {
             typesname = textBox1.Text;
         }
+
     }
 
 }
