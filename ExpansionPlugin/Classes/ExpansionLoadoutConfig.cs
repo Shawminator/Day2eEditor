@@ -12,7 +12,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLoadoutConfig : MultiFileConfigLoader<AILoadouts>
+    public class ExpansionLoadoutConfig : MultiFileConfigLoaderBase<AILoadouts>
     {
         public ExpansionLoadoutConfig(string path) : base(path)
         {
@@ -55,7 +55,7 @@ namespace ExpansionPlugin
             if (exists)
                 return false; // File with same name already exists
 
-            Items.Add(newAILoadouts);
+            MutableItems.Add(newAILoadouts);
             return true;
 
         }

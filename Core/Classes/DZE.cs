@@ -100,9 +100,9 @@ namespace Day2eEditor
             }
         }
 
-        public ObjectSpawnerArr convertToObjectSpawner()
+        public ObjectSpawnerArrData convertToObjectSpawner()
         {
-            ObjectSpawnerArr newobjectspawner = new ObjectSpawnerArr();
+            ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
             newobjectspawner.Objects = new BindingList<SpawnObjects>();
             foreach (Editorobject obj in EditorObjects)
             {

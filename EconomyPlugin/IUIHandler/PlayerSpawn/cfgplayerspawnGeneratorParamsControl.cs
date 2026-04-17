@@ -1,5 +1,4 @@
 ﻿using Day2eEditor;
-using DayZeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +77,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
+                parent.IsDirty = !_data.Equals(_originalData);
             }
         }
 

@@ -11,7 +11,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAirdropConfig : ExpansionBaseIConfigLoader<ExpansionAirdropSettings>
+    public class ExpansionAirdropConfig : SingleFileConfigLoaderBase<ExpansionAirdropSettings>
     {
         public const int CurrentVersion = 8;
         public ExpansionAirdropConfig(string path) : base(path)

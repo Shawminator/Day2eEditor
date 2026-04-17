@@ -58,6 +58,7 @@ namespace EconomyPlugin
             TypesCM = new ContextMenuStrip(components);
             addNewTypesToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedToolStripMenuItem = new ToolStripMenuItem();
+            updateTypesFromXMLToolStripMenuItem = new ToolStripMenuItem();
             EventsCM = new ContextMenuStrip(components);
             AddNewEventsToolstripMenuItem = new ToolStripMenuItem();
             RemoveEventsToolStripMenuItem = new ToolStripMenuItem();
@@ -109,7 +110,6 @@ namespace EconomyPlugin
             addClassnameToolStripMenuItem = new ToolStripMenuItem();
             MapGroupPosCM = new ContextMenuStrip(components);
             removeSelectedPositionsToolStripMenuItem = new ToolStripMenuItem();
-            updateTypesFromXMLToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -294,6 +294,7 @@ namespace EconomyPlugin
             addNewEventSpawnToolStripMenuItem.Name = "addNewEventSpawnToolStripMenuItem";
             addNewEventSpawnToolStripMenuItem.Size = new Size(253, 22);
             addNewEventSpawnToolStripMenuItem.Text = "Add new event spawn";
+            addNewEventSpawnToolStripMenuItem.Click += addNewEventSpawnToolStripMenuItem_Click;
             // 
             // deleteSelectedEventSpawnToolStripMenuItem
             // 
@@ -303,6 +304,7 @@ namespace EconomyPlugin
             deleteSelectedEventSpawnToolStripMenuItem.Name = "deleteSelectedEventSpawnToolStripMenuItem";
             deleteSelectedEventSpawnToolStripMenuItem.Size = new Size(253, 22);
             deleteSelectedEventSpawnToolStripMenuItem.Text = "Delete selected event spawn";
+            deleteSelectedEventSpawnToolStripMenuItem.Click += deleteSelectedEventSpawnToolStripMenuItem_Click;
             // 
             // importPositionFromdzeToolStripMenuItem
             // 
@@ -322,6 +324,7 @@ namespace EconomyPlugin
             exportPositionTodzeToolStripMenuItem.Name = "exportPositionTodzeToolStripMenuItem";
             exportPositionTodzeToolStripMenuItem.Size = new Size(253, 22);
             exportPositionTodzeToolStripMenuItem.Text = "Export Position";
+            exportPositionTodzeToolStripMenuItem.Click += exportPositionTodzeToolStripMenuItem_Click;
             // 
             // addNewPosirtionToolStripMenuItem
             // 
@@ -331,6 +334,7 @@ namespace EconomyPlugin
             addNewPosirtionToolStripMenuItem.Name = "addNewPosirtionToolStripMenuItem";
             addNewPosirtionToolStripMenuItem.Size = new Size(253, 22);
             addNewPosirtionToolStripMenuItem.Text = "Add new position";
+            addNewPosirtionToolStripMenuItem.Click += addNewPosirtionToolStripMenuItem_Click;
             // 
             // removeSelectedPositionToolStripMenuItem
             // 
@@ -340,6 +344,7 @@ namespace EconomyPlugin
             removeSelectedPositionToolStripMenuItem.Name = "removeSelectedPositionToolStripMenuItem";
             removeSelectedPositionToolStripMenuItem.Size = new Size(253, 22);
             removeSelectedPositionToolStripMenuItem.Text = "Remove selected position";
+            removeSelectedPositionToolStripMenuItem.Click += removeSelectedPositionToolStripMenuItem_Click;
             // 
             // removeAllPositionToolStripMenuItem
             // 
@@ -349,6 +354,7 @@ namespace EconomyPlugin
             removeAllPositionToolStripMenuItem.Name = "removeAllPositionToolStripMenuItem";
             removeAllPositionToolStripMenuItem.Size = new Size(253, 22);
             removeAllPositionToolStripMenuItem.Text = "Remove all position";
+            removeAllPositionToolStripMenuItem.Click += removeAllPositionToolStripMenuItem_Click;
             // 
             // exportGroupSpawnTodzeToolStripMenuItem
             // 
@@ -358,6 +364,7 @@ namespace EconomyPlugin
             exportGroupSpawnTodzeToolStripMenuItem.Name = "exportGroupSpawnTodzeToolStripMenuItem";
             exportGroupSpawnTodzeToolStripMenuItem.Size = new Size(253, 22);
             exportGroupSpawnTodzeToolStripMenuItem.Text = "Export Group Spawn";
+            exportGroupSpawnTodzeToolStripMenuItem.Click += exportGroupSpawnTodzeToolStripMenuItem_Click;
             // 
             // importPositionAndCreateEventgroupFormdzeToolStripMenuItem
             // 
@@ -367,6 +374,7 @@ namespace EconomyPlugin
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Name = "importPositionAndCreateEventgroupFormdzeToolStripMenuItem";
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Size = new Size(253, 22);
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Text = "Import Position and create Eventgroup";
+            importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Click += importPositionAndCreateEventgroupFormdzeToolStripMenuItem_Click;
             // 
             // TypesCM
             // 
@@ -374,7 +382,7 @@ namespace EconomyPlugin
             TypesCM.Items.AddRange(new ToolStripItem[] { addNewTypesToolStripMenuItem, removeSelectedToolStripMenuItem, updateTypesFromXMLToolStripMenuItem });
             TypesCM.Name = "TypesCM";
             TypesCM.ShowImageMargin = false;
-            TypesCM.Size = new Size(179, 92);
+            TypesCM.Size = new Size(179, 70);
             // 
             // addNewTypesToolStripMenuItem
             // 
@@ -391,6 +399,14 @@ namespace EconomyPlugin
             removeSelectedToolStripMenuItem.Size = new Size(178, 22);
             removeSelectedToolStripMenuItem.Text = "Remove Selected";
             removeSelectedToolStripMenuItem.Click += removeSelectedToolStripMenuItem_Click;
+            // 
+            // updateTypesFromXMLToolStripMenuItem
+            // 
+            updateTypesFromXMLToolStripMenuItem.ForeColor = SystemColors.Control;
+            updateTypesFromXMLToolStripMenuItem.Name = "updateTypesFromXMLToolStripMenuItem";
+            updateTypesFromXMLToolStripMenuItem.Size = new Size(178, 22);
+            updateTypesFromXMLToolStripMenuItem.Text = "Update Types From XML";
+            updateTypesFromXMLToolStripMenuItem.Click += updateTypesFromXMLToolStripMenuItem_Click;
             // 
             // EventsCM
             // 
@@ -799,14 +815,6 @@ namespace EconomyPlugin
             removeSelectedPositionsToolStripMenuItem.Size = new Size(189, 22);
             removeSelectedPositionsToolStripMenuItem.Text = "Remove selected Positions";
             removeSelectedPositionsToolStripMenuItem.Click += removeSelectedPositionsToolStripMenuItem_Click;
-            // 
-            // updateTypesFromXMLToolStripMenuItem
-            // 
-            updateTypesFromXMLToolStripMenuItem.ForeColor = SystemColors.Control;
-            updateTypesFromXMLToolStripMenuItem.Name = "updateTypesFromXMLToolStripMenuItem";
-            updateTypesFromXMLToolStripMenuItem.Size = new Size(178, 22);
-            updateTypesFromXMLToolStripMenuItem.Text = "Update Types From XML";
-            updateTypesFromXMLToolStripMenuItem.Click += updateTypesFromXMLToolStripMenuItem_Click;
             // 
             // EconomyForm
             // 

@@ -1,135 +1,143 @@
-﻿using Day2eEditor;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
-namespace DayZeLib
+namespace Day2eEditor
 {
-    public class cfgignorelistConfig : IConfigLoader
+    public class cfgignorelistConfig : SingleFileConfigLoaderBase<ignore>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public ignore Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
+        public cfgignorelistConfig(string path) : base(path)
+        {
+        }
+        public override void Load()
+        {
+            HasErrors = false;
+            _errors.Clear();
 
-        public cfgignorelistConfig(string path)
-        {
-            _path = path;
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<ignore>(
+                        _path,
+                        createNew: () => new ignore(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfgignorelist"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
         }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<ignore>(
-               _path,
-               createNew: () => new ignore(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfgignorelist"
-           );
-        }
+
         public IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
-
-        public bool needToSave()
+        protected override ignore CreateDefaultData()
         {
-            return isDirty;
+            return new ignore();
+        }
+        protected override void OnAfterLoad(ignore data)
+        {
+            // Optional post-load logic
+        }
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            for (int i = 0; i < Data.type.Count; i++)
+            {
+                var entry = Data.type[i];
+
+                if (string.IsNullOrWhiteSpace(entry.name))
+                {
+                    yield return $"type[{i}] has a missing or empty name.";
+                    continue;
+                }
+
+                if (!seen.Add(entry.name))
+                    yield return $"Duplicate ignore type name '{entry.name}' found.";
+            }
         }
     }
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class ignore
+
+    [XmlRoot("ignore")]
+    public class ignore : IEquatable<ignore>, IDeepCloneable<ignore>
     {
+        private BindingList<ignoreType>? _type;
 
-        private BindingList<ignoreType> typeField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("type")]
+        [XmlElement("type")]
         public BindingList<ignoreType> type
         {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
+            get => _type ??= new BindingList<ignoreType>();
+            set => _type = value;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(ignore? other)
         {
-            if (obj is not ignore other) return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-            if (type == null && other.type == null) return true;
-            if (type == null || other.type == null) return false;
-
-            if (type.Count != other.type.Count) return false;
-
-            // Compare each ignoreType in order
-            for (int i = 0; i < type.Count; i++)
+            return type.SequenceEqual(other.type);
+        }
+        public override bool Equals(object? obj) => Equals(obj as ignore);
+        public ignore Clone()
+        {
+            return new ignore
             {
-                if (!type[i].Equals(other.type[i]))
-                    return false;
-            }
-
-            return true;
+                type = new BindingList<ignoreType>(type.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class ignoreType
+
+    public class ignoreType : IEquatable<ignoreType>, IDeepCloneable<ignoreType>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(ignoreType? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not ignoreType other) return false;
+            if (other is null) return false;
             return string.Equals(name, other.name, StringComparison.Ordinal);
         }
-
+        public override bool Equals(object? obj) => Equals(obj as ignoreType);
+        public ignoreType Clone()
+        {
+            return new ignoreType
+            {
+                name = name
+            };
+        }
     }
-
-
 }

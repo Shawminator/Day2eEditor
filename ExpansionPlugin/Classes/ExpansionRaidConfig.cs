@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionRaidConfig : ExpansionBaseIConfigLoader<ExpansionRaidSettings>
+    public class ExpansionRaidConfig : SingleFileConfigLoaderBase<ExpansionRaidSettings>
     {
         public const int CurrentVersion = 5;
 

@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPersonalStorageSettingsConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageSettings>
+    public class ExpansionPersonalStorageSettingsConfig : SingleFileConfigLoaderBase<ExpansionPersonalStorageSettings>
     {
         public const int CurrentVersion = 1;
         public ExpansionPersonalStorageSettingsConfig(string path) : base(path)

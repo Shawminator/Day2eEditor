@@ -8,111 +8,162 @@ using System.Threading.Tasks;
 
 namespace Day2eEditor
 {
-    public class ObjectSpawnerArrConfig
+    public class ObjectSpawnerArrConfig : MultiFileConfigLoaderBase<ObjectSpawnerArrFile>
     {
-        public string _basepath { get; set; }
-        public List<ObjectSpawnerArr> AllData { get; private set; } = new List<ObjectSpawnerArr>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public void Load(string basePath, BindingList<string> PresetPaths)
+        public ObjectSpawnerArrConfig(string basePath) : base(basePath)
         {
-            _basepath = basePath;
-            HasErrors = false;
-            Errors.Clear();
-
-            foreach (string filename in PresetPaths)
-            {
-                var fullPath = Path.Combine(_basepath, filename.Replace('/', Path.DirectorySeparatorChar));
-                var relativepath = Path.GetRelativePath(_basepath, fullPath).Replace(Path.DirectorySeparatorChar, '/');
-
-                var preset = AppServices.GetRequired<FileService>().LoadOrCreateJson<ObjectSpawnerArr>(
-                     fullPath,
-                     createNew: () => new ObjectSpawnerArr(),
-                     configName: "ObjectSpawnerArr",
-                     useBoolConvertor: false
-                 );
-                preset.setpath(fullPath);
-                preset.ModFolder = Path.GetRelativePath(_basepath, Path.GetDirectoryName(fullPath));
-                AllData.Add(preset);
-            }
         }
-        public IEnumerable<string> Save()
+
+        public void Load(string basePath, BindingList<string> presetPaths)
         {
-            var savedFiles = new List<string>();
+            BasePath = basePath;
+            ResetState();
 
-            foreach (var data in AllData.ToList())
+            foreach (var relativePath in presetPaths ?? new BindingList<string>())
             {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+                var fullPath = Path.Combine(BasePath, relativePath.Replace('/', Path.DirectorySeparatorChar));
 
-                if (data.ToDelete)
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(fullPath);
+
+                    OnAfterItemLoad(item, fullPath);
+                    _clonedItems[GetID(item)] = item.Clone();
+
+                    MutableItems.Add(item);
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(fullPath, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
+        }
+
+        protected override ObjectSpawnerArrFile LoadItem(string filePath)
+        {
+            var data = AppServices.GetRequired<FileService>().LoadOrCreateJson<ObjectSpawnerArrData>(
+                filePath,
+                createNew: () => new ObjectSpawnerArrData(),
+                configName: "ObjectSpawnerArr",
+                useBoolConvertor: false
+            );
+
+            return new ObjectSpawnerArrFile(filePath)
+            {
+                Data = data,
+                ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(filePath) ?? BasePath)
+            };
+        }
+
+        protected override void SaveItem(ObjectSpawnerArrFile item)
+        {
+            AppServices.GetRequired<FileService>().SaveJson(item.FilePath, item.Data);
+            item.IsDirty = false;
+        }
+
+        protected override string GetItemFileName(ObjectSpawnerArrFile item) => item.FileName;
+
+        protected override Guid GetID(ObjectSpawnerArrFile item) => item.Id;
+
+        protected override bool ShouldDelete(ObjectSpawnerArrFile item) => item.ToDelete;
+
+        protected override void DeleteItemFile(ObjectSpawnerArrFile item)
+        {
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            {
+                File.Delete(item.FilePath);
+                Helper.DeleteEmptyFoldersUpToBase(
+                    Path.GetDirectoryName(item.FilePath),
+                    AppServices.GetRequired<EconomyManager>().basePath);
+            }
         }
     }
-    public class ObjectSpawnerArr
+    public class ObjectSpawnerArrFile : IDeepCloneable<ObjectSpawnerArrFile>, IEquatable<ObjectSpawnerArrFile>
     {
-        [JsonIgnore]
         private string _path;
-        [JsonIgnore]
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        [JsonIgnore]
+
+        public string FileName => Path.GetFileName(_path);
         public string FilePath => _path;
-        [JsonIgnore]
-        public bool isDirty { get; set; }
-        [JsonIgnore]
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public bool IsDirty { get; set; }
         public bool ToDelete { get; set; }
-        [JsonIgnore]
-        public string ModFolder { get; set; }
-        public BindingList<SpawnObjects> Objects { get; set; }
-        
-        public void setpath(string path)
+        public string ModFolder { get; set; } = string.Empty;
+
+        public ObjectSpawnerArrData Data { get; set; } = new();
+
+        public ObjectSpawnerArrFile(string path)
         {
             _path = path;
         }
-        internal IEnumerable<string> Save()
+
+        public void SetPath(string path) => _path = path;
+
+        public ObjectSpawnerArrFile Clone()
         {
-            if (ToDelete)
+            return new ObjectSpawnerArrFile(_path)
             {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
-            }
-
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveJson(_path, this);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
+                Id = Id,
+                IsDirty = IsDirty,
+                ToDelete = ToDelete,
+                ModFolder = ModFolder,
+                Data = Data.Clone()
+            };
         }
 
+        public bool Equals(ObjectSpawnerArrFile? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return
+                Id == other.Id &&
+                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
+                ToDelete == other.ToDelete &&
+                Equals(Data, other.Data);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as ObjectSpawnerArrFile);
+    }
+    public class ObjectSpawnerArrData : IDeepCloneable<ObjectSpawnerArrData>, IEquatable<ObjectSpawnerArrData>
+    {
+        public BindingList<SpawnObjects> Objects { get; set; } = new();
+
+        public ObjectSpawnerArrData Clone()
+        {
+            return new ObjectSpawnerArrData
+            {
+                Objects = new BindingList<SpawnObjects>(Objects.Select(x => x.Clone()).ToList())
+            };
+        }
+
+        public bool Equals(ObjectSpawnerArrData? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Objects.SequenceEqual(other.Objects);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as ObjectSpawnerArrData);
     }
 
-    public class SpawnObjects
+    public class SpawnObjects : IDeepCloneable<SpawnObjects>, IEquatable<SpawnObjects>
     {
-        public string name { get; set; }
-        public float[] pos { get; set; }
-        public float[] ypr { get; set; }
+        public string name { get; set; } = string.Empty;
+        public float[] pos { get; set; } = Array.Empty<float>();
+        public float[] ypr { get; set; } = Array.Empty<float>();
         public float scale { get; set; }
         public bool enableCEPersistency { get; set; }
 
         public SpawnObjects()
         {
-
         }
+
         public SpawnObjects(SpawnObjects other)
         {
             name = other.name;
@@ -121,5 +172,25 @@ namespace Day2eEditor
             scale = other.scale;
             enableCEPersistency = other.enableCEPersistency;
         }
+
+        public SpawnObjects Clone()
+        {
+            return new SpawnObjects(this);
+        }
+
+        public bool Equals(SpawnObjects? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return
+                name == other.name &&
+                pos.SequenceEqual(other.pos) &&
+                ypr.SequenceEqual(other.ypr) &&
+                scale == other.scale &&
+                enableCEPersistency == other.enableCEPersistency;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as SpawnObjects);
     }
 }

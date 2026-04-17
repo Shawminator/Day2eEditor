@@ -15,7 +15,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMissionsConfig : MultiFileConfigLoader<ExpansionMissionEventBase>
+    public class ExpansionMissionsConfig : MultiFileConfigLoaderBase<ExpansionMissionEventBase>
     {
         public ExpansionMissionsConfig(string path) : base(path)
         {
@@ -71,7 +71,7 @@ namespace ExpansionPlugin
         }
         internal bool AddNewMissionFile(ExpansionMissionEventBase newExpansionMissionEventBase)
         {
-            Items.Add(newExpansionMissionEventBase);
+            MutableItems.Add(newExpansionMissionEventBase);
             newExpansionMissionEventBase.Id = Guid.NewGuid();
             return true;
         }
@@ -83,7 +83,7 @@ namespace ExpansionPlugin
         {
             return false;
         }
-        protected override IEnumerable<string> ValidateData(ExpansionMissionEventBase ExpansionMissionEventBase)
+        protected override IEnumerable<string> ValidateItem(ExpansionMissionEventBase ExpansionMissionEventBase)
         {
             return ExpansionMissionEventBase.FixMissingOrInvalidFields();
         }

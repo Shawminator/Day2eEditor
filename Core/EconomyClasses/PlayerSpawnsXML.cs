@@ -2,778 +2,576 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace DayZeLib
+namespace Day2eEditor
 {
-    public class cfgplayerspawnpointsConfig : IConfigLoader
+    public class cfgplayerspawnpointsConfig : SingleFileConfigLoaderBase<playerspawnpoints>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public playerspawnpoints Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
+        public cfgplayerspawnpointsConfig(string path) : base(path)
+        {
+        }
 
-        public cfgplayerspawnpointsConfig(string path)
+        public override void Load()
         {
-            _path = path;
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<playerspawnpoints>(
-               _path,
-               createNew: () => new playerspawnpoints(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfgplayerspawnpoints"
-           );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<playerspawnpoints>(
+                        _path,
+                        createNew: () => new playerspawnpoints(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfgplayerspawnpoints"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override playerspawnpoints CreateDefaultData()
         {
-            return isDirty;
+            return new playerspawnpoints();
+        }
+
+        protected override void OnAfterLoad(playerspawnpoints data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            foreach (var issue in ValidateSection(Data.fresh, "fresh"))
+                yield return issue;
+
+            foreach (var issue in ValidateSection(Data.hop, "hop"))
+                yield return issue;
+
+            foreach (var issue in ValidateSection(Data.travel, "travel"))
+                yield return issue;
+        }
+
+        private static IEnumerable<string> ValidateSection(playerspawnpointssection section, string sectionName)
+        {
+            if (section is null)
+            {
+                yield return $"Section '{sectionName}' is missing.";
+                yield break;
+            }
+
+            if (section.spawn_params is null)
+                yield return $"Section '{sectionName}' is missing spawn_params.";
+
+            if (section.generator_params is null)
+                yield return $"Section '{sectionName}' is missing generator_params.";
+
+            if (section.group_params is null)
+                yield return $"Section '{sectionName}' is missing group_params.";
+
+            var groupNames = new HashSet<string>(StringComparer.Ordinal);
+            int index = 0;
+
+            foreach (var item in section.generator_posbubbles)
+            {
+                switch (item)
+                {
+                    case playerspawnpointsGroup g:
+                        if (string.IsNullOrWhiteSpace(g.name))
+                            yield return $"{sectionName}.generator_posbubbles[{index}] group has a missing or empty name.";
+                        else if (!groupNames.Add(g.name))
+                            yield return $"{sectionName}.generator_posbubbles[{index}] duplicate group name '{g.name}' found.";
+
+                        for (int i = 0; i < g.pos.Count; i++)
+                        {
+                            // no required validation beyond presence; coordinates are value types
+                            _ = g.pos[i];
+                        }
+                        break;
+
+                    case playerspawnpointsGroupPos p:
+                        _ = p;
+                        break;
+
+                    case null:
+                        yield return $"{sectionName}.generator_posbubbles[{index}] contains a null item.";
+                        break;
+
+                    default:
+                        yield return $"{sectionName}.generator_posbubbles[{index}] contains unsupported type '{item.GetType().Name}'.";
+                        break;
+                }
+
+                index++;
+            }
         }
     }
 
-
-
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class playerspawnpoints
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class playerspawnpoints : IEquatable<playerspawnpoints>, IDeepCloneable<playerspawnpoints>
     {
-        private playerspawnpointssection freshField;
-        private playerspawnpointssection hopField;
-        private playerspawnpointssection travelField;
+        private playerspawnpointssection? _fresh;
+        private playerspawnpointssection? _hop;
+        private playerspawnpointssection? _travel;
 
-        /// <remarks/>
         public playerspawnpointssection fresh
         {
-            get
-            {
-                return this.freshField;
-            }
-            set
-            {
-                this.freshField = value;
-            }
+            get => _fresh ??= new playerspawnpointssection();
+            set => _fresh = value;
         }
 
-        /// <remarks/>
         public playerspawnpointssection hop
         {
-            get
-            {
-                return this.hopField;
-            }
-            set
-            {
-                this.hopField = value;
-            }
+            get => _hop ??= new playerspawnpointssection();
+            set => _hop = value;
         }
 
-        /// <remarks/>
         public playerspawnpointssection travel
         {
-            get
-            {
-                return this.travelField;
-            }
-            set
-            {
-                this.travelField = value;
-            }
+            get => _travel ??= new playerspawnpointssection();
+            set => _travel = value;
         }
 
-        public playerspawnpoints()
+        public bool Equals(playerspawnpoints? other)
         {
-            fresh = new playerspawnpointssection();
-            hop = new playerspawnpointssection();
-            travel = new playerspawnpointssection();
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(fresh, other.fresh) &&
+                   Equals(hop, other.hop) &&
+                   Equals(travel, other.travel);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpoints);
+
+        public playerspawnpoints Clone()
+        {
+            return new playerspawnpoints
+            {
+                fresh = fresh.Clone(),
+                hop = hop.Clone(),
+                travel = travel.Clone()
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class playerspawnpointssection
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class playerspawnpointssection : IEquatable<playerspawnpointssection>, IDeepCloneable<playerspawnpointssection>
     {
-        private playerspawnpointsSpawn_params spawn_paramsField;
-        private playerspawnpointsGenerator_params generator_paramsField;
-        private playerspawnpointsGroup_params group_paramsField;
-        private BindingList<object> generator_posbubblesField;
+        private playerspawnpointsSpawn_params? _spawn_params;
+        private playerspawnpointsGenerator_params? _generator_params;
+        private playerspawnpointsGroup_params? _group_params;
+        private BindingList<object>? _generator_posbubbles;
 
         public playerspawnpointsSpawn_params spawn_params
         {
-            get => spawn_paramsField;
-            set => spawn_paramsField = value;
+            get => _spawn_params ??= new playerspawnpointsSpawn_params();
+            set => _spawn_params = value;
         }
+
         public playerspawnpointsGenerator_params generator_params
         {
-            get => generator_paramsField;
-            set => generator_paramsField = value;
+            get => _generator_params ??= new playerspawnpointsGenerator_params();
+            set => _generator_params = value;
         }
+
         public playerspawnpointsGroup_params group_params
         {
-            get => group_paramsField;
-            set => group_paramsField = value;
+            get => _group_params ??= new playerspawnpointsGroup_params();
+            set => _group_params = value;
         }
+
         [XmlArray("generator_posbubbles")]
         [XmlArrayItem("group", typeof(playerspawnpointsGroup))]
         [XmlArrayItem("pos", typeof(playerspawnpointsGroupPos))]
-        public BindingList<object> generator_posbubbles { get; set; }
+        public BindingList<object> generator_posbubbles
+        {
+            get => _generator_posbubbles ??= new BindingList<object>();
+            set => _generator_posbubbles = value;
+        }
 
-        /// <summary>
-        /// Strongly typed helper for groups
-        /// </summary>
-        [System.Xml.Serialization.XmlIgnore]
+        [XmlIgnore]
         public IEnumerable<playerspawnpointsGroup> Groups =>
-            generator_posbubbles?.OfType<playerspawnpointsGroup>() ?? Enumerable.Empty<playerspawnpointsGroup>();
+            generator_posbubbles.OfType<playerspawnpointsGroup>();
 
-        /// <summary>
-        /// Strongly typed helper for positions
-        /// </summary>
-        [System.Xml.Serialization.XmlIgnore]
+        [XmlIgnore]
         public IEnumerable<playerspawnpointsGroupPos> Positions =>
-            generator_posbubbles?.OfType<playerspawnpointsGroupPos>() ?? Enumerable.Empty<playerspawnpointsGroupPos>();
+            generator_posbubbles.OfType<playerspawnpointsGroupPos>();
 
-        public playerspawnpointssection()
+        public bool Equals(playerspawnpointssection? other)
         {
-            spawn_params = new playerspawnpointsSpawn_params();
-            generator_params = new playerspawnpointsGenerator_params();
-            group_params = new playerspawnpointsGroup_params();
-            generator_posbubbles = new BindingList<object>();
-        }
-    }
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class playerspawnpointsSpawn_params
-    {
-        private decimal min_dist_infectedField;
-        private decimal max_dist_infectedField;
-        private decimal min_dist_playerField;
-        private decimal max_dist_playerField;
-        private decimal min_dist_staticField;
-        private decimal max_dist_staticField;
-        private bool min_dist_triggerFieldSpecified;
-        private decimal min_dist_triggerField;
-        private bool max_dist_triggerFieldSpecified;
-        private decimal max_dist_triggerField;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-        /// <remarks/>
-        public decimal min_dist_infected
-        {
-            get
-            {
-                return this.min_dist_infectedField;
-            }
-            set
-            {
-                this.min_dist_infectedField = value;
-            }
+            return Equals(spawn_params, other.spawn_params) &&
+                   Equals(generator_params, other.generator_params) &&
+                   Equals(group_params, other.group_params) &&
+                   GeneratorPosBubblesEqual(generator_posbubbles, other.generator_posbubbles);
         }
 
-        /// <remarks/>
-        public decimal max_dist_infected
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpointssection);
+
+        public playerspawnpointssection Clone()
         {
-            get
+            return new playerspawnpointssection
             {
-                return this.max_dist_infectedField;
-            }
-            set
-            {
-                this.max_dist_infectedField = value;
-            }
+                spawn_params = spawn_params.Clone(),
+                generator_params = generator_params.Clone(),
+                group_params = group_params.Clone(),
+                generator_posbubbles = new BindingList<object>(
+                    generator_posbubbles.Select(CloneBubble).ToList()
+                )
+            };
         }
 
-        /// <remarks/>
-        public decimal min_dist_player
+        private static bool GeneratorPosBubblesEqual(IEnumerable<object>? a, IEnumerable<object>? b)
         {
-            get
-            {
-                return this.min_dist_playerField;
-            }
-            set
-            {
-                this.min_dist_playerField = value;
-            }
+            if (ReferenceEquals(a, b)) return true;
+            if (a is null || b is null) return false;
+
+            return a.SequenceEqual(b, new GeneratorPosBubbleComparer());
         }
 
-        /// <remarks/>
-        public decimal max_dist_player
+        private static object CloneBubble(object item)
         {
-            get
+            return item switch
             {
-                return this.max_dist_playerField;
-            }
-            set
-            {
-                this.max_dist_playerField = value;
-            }
+                playerspawnpointsGroup g => g.Clone(),
+                playerspawnpointsGroupPos p => p.Clone(),
+                _ => throw new InvalidOperationException($"Unsupported generator_posbubbles item type: {item.GetType().FullName}")
+            };
         }
 
-        /// <remarks/>
-        public decimal min_dist_static
+        private sealed class GeneratorPosBubbleComparer : IEqualityComparer<object>
         {
-            get
+            public new bool Equals(object? x, object? y)
             {
-                return this.min_dist_staticField;
-            }
-            set
-            {
-                this.min_dist_staticField = value;
-            }
-        }
+                if (ReferenceEquals(x, y)) return true;
+                if (x is null || y is null) return false;
+                if (x.GetType() != y.GetType()) return false;
 
-        /// <remarks/>
-        public decimal max_dist_static
-        {
-            get
-            {
-                return this.max_dist_staticField;
+                return x switch
+                {
+                    playerspawnpointsGroup gx when y is playerspawnpointsGroup gy => gx.Equals(gy),
+                    playerspawnpointsGroupPos px when y is playerspawnpointsGroupPos py => px.Equals(py),
+                    _ => false
+                };
             }
-            set
-            {
-                this.max_dist_staticField = value;
-            }
-        }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool min_dist_triggerSpecified
-        {
-            get
+            public int GetHashCode(object obj)
             {
-                return this.min_dist_triggerFieldSpecified;
+                throw new NotSupportedException();
             }
-            set
-            {
-                this.min_dist_triggerFieldSpecified = value;
-            }
-        }
-        /// <remarks/>
-        public decimal min_dist_trigger
-        {
-            get
-            {
-                return this.min_dist_triggerField;
-            }
-            set
-            {
-                this.min_dist_triggerField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool max_dist_triggerSpecified
-        {
-            get
-            {
-                return this.max_dist_triggerFieldSpecified;
-            }
-            set
-            {
-                this.max_dist_triggerFieldSpecified = value;
-            }
-        }
-        /// <remarks/>
-        public decimal max_dist_trigger
-        {
-            get
-            {
-                return this.max_dist_triggerField;
-            }
-            set
-            {
-                this.max_dist_triggerField = value;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not playerspawnpointsSpawn_params other)
-                return false;
-
-            return this.min_dist_infected == other.min_dist_infected
-                && this.max_dist_infected == other.max_dist_infected
-                && this.min_dist_player == other.min_dist_player
-                && this.max_dist_player == other.max_dist_player
-                && this.min_dist_static == other.min_dist_static
-                && this.max_dist_static == other.max_dist_static
-                && this.min_dist_triggerSpecified == other.min_dist_triggerSpecified
-                && this.min_dist_trigger == other.min_dist_trigger
-                && this.max_dist_triggerSpecified == other.max_dist_triggerSpecified
-                && this.max_dist_trigger == other.max_dist_trigger;
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class playerspawnpointsGenerator_params
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class playerspawnpointsSpawn_params : IEquatable<playerspawnpointsSpawn_params>, IDeepCloneable<playerspawnpointsSpawn_params>
     {
-        private decimal grid_densityField;
-        private decimal grid_widthField;
-        private decimal grid_heightField;
-        private decimal min_dist_staticField;
-        private decimal max_dist_staticField;
-        private decimal min_steepnessField;
-        private decimal max_steepnessField;
-        private bool allow_in_waterfield;
+        public decimal min_dist_infected { get; set; }
+        public decimal max_dist_infected { get; set; }
+        public decimal min_dist_player { get; set; }
+        public decimal max_dist_player { get; set; }
+        public decimal min_dist_static { get; set; }
+        public decimal max_dist_static { get; set; }
 
-        /// <remarks/>
-        public decimal grid_density
+        [XmlIgnore]
+        public bool min_dist_triggerSpecified { get; set; }
+
+        public decimal min_dist_trigger { get; set; }
+
+        [XmlIgnore]
+        public bool max_dist_triggerSpecified { get; set; }
+
+        public decimal max_dist_trigger { get; set; }
+
+        public bool Equals(playerspawnpointsSpawn_params? other)
         {
-            get
-            {
-                return this.grid_densityField;
-            }
-            set
-            {
-                this.grid_densityField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return min_dist_infected == other.min_dist_infected
+                && max_dist_infected == other.max_dist_infected
+                && min_dist_player == other.min_dist_player
+                && max_dist_player == other.max_dist_player
+                && min_dist_static == other.min_dist_static
+                && max_dist_static == other.max_dist_static
+                && min_dist_triggerSpecified == other.min_dist_triggerSpecified
+                && min_dist_trigger == other.min_dist_trigger
+                && max_dist_triggerSpecified == other.max_dist_triggerSpecified
+                && max_dist_trigger == other.max_dist_trigger;
         }
 
-        /// <remarks/>
-        public decimal grid_width
-        {
-            get
-            {
-                return this.grid_widthField;
-            }
-            set
-            {
-                this.grid_widthField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpointsSpawn_params);
 
-        /// <remarks/>
-        public decimal grid_height
+        public playerspawnpointsSpawn_params Clone()
         {
-            get
+            return new playerspawnpointsSpawn_params
             {
-                return this.grid_heightField;
-            }
-            set
-            {
-                this.grid_heightField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal min_dist_static
-        {
-            get
-            {
-                return this.min_dist_staticField;
-            }
-            set
-            {
-                this.min_dist_staticField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_dist_static
-        {
-            get
-            {
-                return this.max_dist_staticField;
-            }
-            set
-            {
-                this.max_dist_staticField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal min_steepness
-        {
-            get
-            {
-                return this.min_steepnessField;
-            }
-            set
-            {
-                this.min_steepnessField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_steepness
-        {
-            get
-            {
-                return this.max_steepnessField;
-            }
-            set
-            {
-                this.max_steepnessField = value;
-            }
-        }
-
-        /// <remarks/>
-        public bool allow_in_water
-        {
-            get
-            {
-                return this.allow_in_waterfield;
-            }
-            set
-            {
-                this.allow_in_waterfield = value;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not playerspawnpointsGenerator_params other)
-                return false;
-
-            return this.grid_density == other.grid_density
-                && this.grid_width == other.grid_width
-                && this.grid_height == other.grid_height
-                && this.min_dist_static == other.min_dist_static
-                && this.max_dist_static == other.max_dist_static
-                && this.min_steepness == other.min_steepness
-                && this.allow_in_water == other.allow_in_water;
+                min_dist_infected = min_dist_infected,
+                max_dist_infected = max_dist_infected,
+                min_dist_player = min_dist_player,
+                max_dist_player = max_dist_player,
+                min_dist_static = min_dist_static,
+                max_dist_static = max_dist_static,
+                min_dist_triggerSpecified = min_dist_triggerSpecified,
+                min_dist_trigger = min_dist_trigger,
+                max_dist_triggerSpecified = max_dist_triggerSpecified,
+                max_dist_trigger = max_dist_trigger
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class playerspawnpointsGroup_params
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class playerspawnpointsGenerator_params : IEquatable<playerspawnpointsGenerator_params>, IDeepCloneable<playerspawnpointsGenerator_params>
     {
-        private bool enablegroupsField;
-        private bool groups_as_regularField;
-        private int lifetimeField;
-        private int counterField;
+        public decimal grid_density { get; set; }
+        public decimal grid_width { get; set; }
+        public decimal grid_height { get; set; }
+        public decimal min_dist_static { get; set; }
+        public decimal max_dist_static { get; set; }
+        public decimal min_steepness { get; set; }
+        public decimal max_steepness { get; set; }
+        public bool allow_in_water { get; set; }
 
-        /// <remarks/>
-        public bool enablegroups
+        public bool Equals(playerspawnpointsGenerator_params? other)
         {
-            get
-            {
-                return this.enablegroupsField;
-            }
-            set
-            {
-                this.enablegroupsField = value;
-            }
-        }
-        /// <remarks/>
-        public bool groups_as_regular
-        {
-            get
-            {
-                return this.groups_as_regularField;
-            }
-            set
-            {
-                this.groups_as_regularField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return grid_density == other.grid_density
+                && grid_width == other.grid_width
+                && grid_height == other.grid_height
+                && min_dist_static == other.min_dist_static
+                && max_dist_static == other.max_dist_static
+                && min_steepness == other.min_steepness
+                && max_steepness == other.max_steepness
+                && allow_in_water == other.allow_in_water;
         }
 
-        /// <remarks/>
-        public int lifetime
-        {
-            get
-            {
-                return this.lifetimeField;
-            }
-            set
-            {
-                this.lifetimeField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpointsGenerator_params);
 
-        /// <remarks/>
-        public int counter
+        public playerspawnpointsGenerator_params Clone()
         {
-            get
+            return new playerspawnpointsGenerator_params
             {
-                return this.counterField;
-            }
-            set
-            {
-                this.counterField = value;
-            }
-        }
-
-        public playerspawnpointsGroup_params()
-        {
-            groups_as_regular = true;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not playerspawnpointsGroup_params other)
-                return false;
-
-            return this.enablegroups == other.enablegroups
-                && this.groups_as_regular == other.groups_as_regular
-                && this.lifetime == other.lifetime
-                && this.counter == other.counter;
+                grid_density = grid_density,
+                grid_width = grid_width,
+                grid_height = grid_height,
+                min_dist_static = min_dist_static,
+                max_dist_static = max_dist_static,
+                min_steepness = min_steepness,
+                max_steepness = max_steepness,
+                allow_in_water = allow_in_water
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class playerspawnpointsGroup
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class playerspawnpointsGroup_params : IEquatable<playerspawnpointsGroup_params>, IDeepCloneable<playerspawnpointsGroup_params>
     {
-        private BindingList<playerspawnpointsGroupPos> posField;
-        private string nameField;
-        private int lifetimeField;
-        private bool lifetimeFieldSpecified;
-        private int counterField;
-        private bool counterFieldSpecified;
+        public bool enablegroups { get; set; }
+        public bool groups_as_regular { get; set; } = true;
+        public int lifetime { get; set; }
+        public int counter { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("pos")]
+        public bool Equals(playerspawnpointsGroup_params? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return enablegroups == other.enablegroups
+                && groups_as_regular == other.groups_as_regular
+                && lifetime == other.lifetime
+                && counter == other.counter;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpointsGroup_params);
+
+        public playerspawnpointsGroup_params Clone()
+        {
+            return new playerspawnpointsGroup_params
+            {
+                enablegroups = enablegroups,
+                groups_as_regular = groups_as_regular,
+                lifetime = lifetime,
+                counter = counter
+            };
+        }
+    }
+
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class playerspawnpointsGroup : IEquatable<playerspawnpointsGroup>, IDeepCloneable<playerspawnpointsGroup>
+    {
+        private BindingList<playerspawnpointsGroupPos>? _pos;
+
+        [XmlElement("pos")]
         public BindingList<playerspawnpointsGroupPos> pos
         {
-            get
-            {
-                return this.posField;
-            }
-            set
-            {
-                this.posField = value;
-            }
+            get => _pos ??= new BindingList<playerspawnpointsGroupPos>();
+            set => _pos = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [XmlAttribute]
+        public string? name { get; set; }
+
+        [XmlAttribute]
+        public int lifetime { get; set; }
+
+        [XmlIgnore]
+        public bool lifetimeSpecified { get; set; }
+
+        [XmlAttribute]
+        public int counter { get; set; }
+
+        [XmlIgnore]
+        public bool counterSpecified { get; set; }
+
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(playerspawnpointsGroup? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.OrdinalIgnoreCase)
+                && lifetime == other.lifetime
+                && lifetimeSpecified == other.lifetimeSpecified
+                && counter == other.counter
+                && counterSpecified == other.counterSpecified
+                && pos.SequenceEqual(other.pos);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int lifetime
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpointsGroup);
+
+        public playerspawnpointsGroup Clone()
         {
-            get
+            return new playerspawnpointsGroup
             {
-                return this.lifetimeField;
-            }
-            set
-            {
-                this.lifetimeField = value;
-            }
+                name = name,
+                lifetime = lifetime,
+                lifetimeSpecified = lifetimeSpecified,
+                counter = counter,
+                counterSpecified = counterSpecified,
+                pos = new BindingList<playerspawnpointsGroupPos>(pos.Select(x => x.Clone()).ToList())
+            };
         }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lifetimeSpecified
-        {
-            get
-            {
-                return this.lifetimeFieldSpecified;
-            }
-            set
-            {
-                this.lifetimeFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int counter
-        {
-            get
-            {
-                return this.counterField;
-            }
-            set
-            {
-                this.counterField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool counterSpecified
-        {
-            get
-            {
-                return this.counterFieldSpecified;
-            }
-            set
-            {
-                this.counterFieldSpecified = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not playerspawnpointsGroup other)
-                return false;
-
-            return string.Equals(this.name, other.name, StringComparison.OrdinalIgnoreCase)
-                && this.lifetime == other.lifetime
-                && this.lifetimeFieldSpecified == other.lifetimeFieldSpecified
-                && this.counter == other.counter
-                && this.counterSpecified == other.counterSpecified;
-        }
-
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class playerspawnpointsGroupPos
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class playerspawnpointsGroupPos : IEquatable<playerspawnpointsGroupPos>, IDeepCloneable<playerspawnpointsGroupPos>
     {
+        [XmlAttribute]
+        public decimal x { get; set; }
 
-        private decimal xField;
-        private decimal zField;
+        [XmlAttribute]
+        public decimal z { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal x
+        public override string ToString() => $"X:{x} , Z:{z}";
+
+        public bool Equals(playerspawnpointsGroupPos? other)
         {
-            get
-            {
-                return this.xField;
-            }
-            set
-            {
-                this.xField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return x == other.x && z == other.z;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal z
-        {
-            get
-            {
-                return this.zField;
-            }
-            set
-            {
-                this.zField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as playerspawnpointsGroupPos);
 
-        public override string ToString()
+        public playerspawnpointsGroupPos Clone()
         {
-            return "X:" + xField.ToString() + " , Z:" + zField.ToString();
+            return new playerspawnpointsGroupPos
+            {
+                x = x,
+                z = z
+            };
         }
-
     }
 
-
-
-
-
-
-
-
-    //Old Format of playerspanfile, we will use this to convert to new format....
-
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(ElementName = "playerspawnpoints", Namespace = "", IsNullable = false)]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(ElementName = "playerspawnpoints", Namespace = "", IsNullable = false)]
     public partial class playerspawnpoints_old
     {
-        private playerspawnpointsFresh_old freshField;
-        private playerspawnpointsHop_old hopField;
-        private playerspawnpointsTravel_old travelField;
+        private playerspawnpointsFresh_old? _fresh;
+        private playerspawnpointsHop_old? _hop;
+        private playerspawnpointsTravel_old? _travel;
 
-        /// <remarks/>
         public playerspawnpointsFresh_old fresh
         {
-            get
-            {
-                return this.freshField;
-            }
-            set
-            {
-                this.freshField = value;
-            }
+            get => _fresh ??= new playerspawnpointsFresh_old();
+            set => _fresh = value;
         }
 
-        /// <remarks/>
         public playerspawnpointsHop_old hop
         {
-            get
-            {
-                return this.hopField;
-            }
-            set
-            {
-                this.hopField = value;
-            }
+            get => _hop ??= new playerspawnpointsHop_old();
+            set => _hop = value;
         }
 
-        /// <remarks/>
         public playerspawnpointsTravel_old travel
         {
-            get
-            {
-                return this.travelField;
-            }
-            set
-            {
-                this.travelField = value;
-            }
+            get => _travel ??= new playerspawnpointsTravel_old();
+            set => _travel = value;
         }
 
         public playerspawnpoints convertToNewFormat()
         {
             playerspawnpoints newsp = new playerspawnpoints();
+
             newsp.fresh.generator_params.grid_density = fresh.generator_params.grid_density;
             newsp.fresh.generator_params.grid_width = fresh.generator_params.grid_width;
             newsp.fresh.generator_params.grid_height = fresh.generator_params.grid_height;
@@ -781,8 +579,9 @@ namespace DayZeLib
             newsp.fresh.generator_params.max_dist_static = fresh.generator_params.max_dist_static;
             newsp.fresh.generator_params.min_steepness = fresh.generator_params.min_steepness;
             newsp.fresh.generator_params.max_dist_static = fresh.generator_params.max_dist_static;
-            newsp.hop.generator_params = newsp.fresh.generator_params;
-            newsp.travel.generator_params = newsp.fresh.generator_params;
+
+            newsp.hop.generator_params = newsp.fresh.generator_params.Clone();
+            newsp.travel.generator_params = newsp.fresh.generator_params.Clone();
 
             newsp.fresh.spawn_params.min_dist_infected = fresh.spawn_params.min_dist_infected;
             newsp.fresh.spawn_params.max_dist_infected = fresh.spawn_params.max_dist_infected;
@@ -790,33 +589,35 @@ namespace DayZeLib
             newsp.fresh.spawn_params.max_dist_player = fresh.spawn_params.max_dist_player;
             newsp.fresh.spawn_params.min_dist_static = fresh.spawn_params.min_dist_static;
             newsp.fresh.spawn_params.max_dist_static = fresh.spawn_params.max_dist_static;
-            newsp.hop.spawn_params = newsp.fresh.spawn_params;
-            newsp.travel.spawn_params = newsp.fresh.spawn_params;
+
+            newsp.hop.spawn_params = newsp.fresh.spawn_params.Clone();
+            newsp.travel.spawn_params = newsp.fresh.spawn_params.Clone();
 
             newsp.fresh.group_params.counter = -1;
             newsp.fresh.group_params.lifetime = 360;
             newsp.fresh.group_params.enablegroups = true;
-            newsp.hop.group_params = newsp.fresh.group_params;
-            newsp.travel.group_params = newsp.fresh.group_params;
+
+            newsp.hop.group_params = newsp.fresh.group_params.Clone();
+            newsp.travel.group_params = newsp.fresh.group_params.Clone();
 
             if (fresh.generator_posbubbles.Count > 0)
             {
                 newsp.fresh.generator_posbubbles = new BindingList<object>(
-                    fresh.generator_posbubbles.Cast<object>().ToList()
+                    fresh.generator_posbubbles.Select(x => (object)x.Clone()).ToList()
                 );
             }
 
             if (travel != null && travel.generator_posbubbles.Count > 0)
             {
                 newsp.travel.generator_posbubbles = new BindingList<object>(
-                    travel.generator_posbubbles.Cast<object>().ToList()
+                    travel.generator_posbubbles.Select(x => (object)x.Clone()).ToList()
                 );
             }
 
             if (hop != null && hop.generator_posbubbles.Count > 0)
             {
                 newsp.hop.generator_posbubbles = new BindingList<object>(
-                    hop.generator_posbubbles.Cast<object>().ToList()
+                    hop.generator_posbubbles.Select(x => (object)x.Clone()).ToList()
                 );
             }
 
@@ -824,318 +625,89 @@ namespace DayZeLib
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
     public partial class playerspawnpointsFresh_old
     {
+        private playerspawnpointsFreshSpawn_params_old? _spawn_params;
+        private playerspawnpointsFreshGenerator_params_old? _generator_params;
+        private BindingList<playerspawnpointsGroupPos>? _generator_posbubbles;
 
-        private playerspawnpointsFreshSpawn_params_old spawn_paramsField;
-
-        private playerspawnpointsFreshGenerator_params_old generator_paramsField;
-
-        private BindingList<playerspawnpointsGroupPos> generator_posbubblesField;
-
-        /// <remarks/>
         public playerspawnpointsFreshSpawn_params_old spawn_params
         {
-            get
-            {
-                return this.spawn_paramsField;
-            }
-            set
-            {
-                this.spawn_paramsField = value;
-            }
+            get => _spawn_params ??= new playerspawnpointsFreshSpawn_params_old();
+            set => _spawn_params = value;
         }
 
-        /// <remarks/>
         public playerspawnpointsFreshGenerator_params_old generator_params
         {
-            get
-            {
-                return this.generator_paramsField;
-            }
-            set
-            {
-                this.generator_paramsField = value;
-            }
+            get => _generator_params ??= new playerspawnpointsFreshGenerator_params_old();
+            set => _generator_params = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("pos", IsNullable = false)]
+        [XmlArrayItem("pos", IsNullable = false)]
         public BindingList<playerspawnpointsGroupPos> generator_posbubbles
         {
-            get
-            {
-                return this.generator_posbubblesField;
-            }
-            set
-            {
-                this.generator_posbubblesField = value;
-            }
+            get => _generator_posbubbles ??= new BindingList<playerspawnpointsGroupPos>();
+            set => _generator_posbubbles = value;
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
     public partial class playerspawnpointsFreshSpawn_params_old
     {
-
-        private decimal min_dist_infectedField;
-
-        private decimal max_dist_infectedField;
-
-        private decimal min_dist_playerField;
-
-        private decimal max_dist_playerField;
-
-        private decimal min_dist_staticField;
-
-        private decimal max_dist_staticField;
-
-        /// <remarks/>
-        public decimal min_dist_infected
-        {
-            get
-            {
-                return this.min_dist_infectedField;
-            }
-            set
-            {
-                this.min_dist_infectedField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_dist_infected
-        {
-            get
-            {
-                return this.max_dist_infectedField;
-            }
-            set
-            {
-                this.max_dist_infectedField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal min_dist_player
-        {
-            get
-            {
-                return this.min_dist_playerField;
-            }
-            set
-            {
-                this.min_dist_playerField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_dist_player
-        {
-            get
-            {
-                return this.max_dist_playerField;
-            }
-            set
-            {
-                this.max_dist_playerField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal min_dist_static
-        {
-            get
-            {
-                return this.min_dist_staticField;
-            }
-            set
-            {
-                this.min_dist_staticField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_dist_static
-        {
-            get
-            {
-                return this.max_dist_staticField;
-            }
-            set
-            {
-                this.max_dist_staticField = value;
-            }
-        }
+        public decimal min_dist_infected { get; set; }
+        public decimal max_dist_infected { get; set; }
+        public decimal min_dist_player { get; set; }
+        public decimal max_dist_player { get; set; }
+        public decimal min_dist_static { get; set; }
+        public decimal max_dist_static { get; set; }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
     public partial class playerspawnpointsFreshGenerator_params_old
     {
-
-        private decimal grid_densityField;
-
-        private decimal grid_widthField;
-
-        private decimal grid_heightField;
-
-        private decimal min_dist_staticField;
-
-        private decimal max_dist_staticField;
-
-        private decimal min_steepnessField;
-
-        private decimal max_steepnessField;
-
-        /// <remarks/>
-        public decimal grid_density
-        {
-            get
-            {
-                return this.grid_densityField;
-            }
-            set
-            {
-                this.grid_densityField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal grid_width
-        {
-            get
-            {
-                return this.grid_widthField;
-            }
-            set
-            {
-                this.grid_widthField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal grid_height
-        {
-            get
-            {
-                return this.grid_heightField;
-            }
-            set
-            {
-                this.grid_heightField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal min_dist_static
-        {
-            get
-            {
-                return this.min_dist_staticField;
-            }
-            set
-            {
-                this.min_dist_staticField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_dist_static
-        {
-            get
-            {
-                return this.max_dist_staticField;
-            }
-            set
-            {
-                this.max_dist_staticField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal min_steepness
-        {
-            get
-            {
-                return this.min_steepnessField;
-            }
-            set
-            {
-                this.min_steepnessField = value;
-            }
-        }
-
-        /// <remarks/>
-        public decimal max_steepness
-        {
-            get
-            {
-                return this.max_steepnessField;
-            }
-            set
-            {
-                this.max_steepnessField = value;
-            }
-        }
+        public decimal grid_density { get; set; }
+        public decimal grid_width { get; set; }
+        public decimal grid_height { get; set; }
+        public decimal min_dist_static { get; set; }
+        public decimal max_dist_static { get; set; }
+        public decimal min_steepness { get; set; }
+        public decimal max_steepness { get; set; }
     }
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
     public partial class playerspawnpointsHop_old
     {
+        private BindingList<playerspawnpointsGroupPos>? _generator_posbubbles;
 
-        private BindingList<playerspawnpointsGroupPos> generator_posbubblesField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("pos", IsNullable = false)]
+        [XmlArrayItem("pos", IsNullable = false)]
         public BindingList<playerspawnpointsGroupPos> generator_posbubbles
         {
-            get
-            {
-                return this.generator_posbubblesField;
-            }
-            set
-            {
-                this.generator_posbubblesField = value;
-            }
+            get => _generator_posbubbles ??= new BindingList<playerspawnpointsGroupPos>();
+            set => _generator_posbubbles = value;
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
     public partial class playerspawnpointsTravel_old
     {
+        private BindingList<playerspawnpointsGroupPos>? _generator_posbubbles;
 
-        private BindingList<playerspawnpointsGroupPos> generator_posbubblesField;
-
-        /// <remarks/>
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("pos", IsNullable = false)]
+        [XmlArrayItem("pos", IsNullable = false)]
         public BindingList<playerspawnpointsGroupPos> generator_posbubbles
         {
-            get
-            {
-                return this.generator_posbubblesField;
-            }
-            set
-            {
-                this.generator_posbubblesField = value;
-            }
+            get => _generator_posbubbles ??= new BindingList<playerspawnpointsGroupPos>();
+            set => _generator_posbubbles = value;
         }
     }
-
-
 }

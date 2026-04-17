@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionBaseBuildingConfig : ExpansionBaseIConfigLoader<ExpansionBaseBuildingSettings>
+    public class ExpansionBaseBuildingConfig : SingleFileConfigLoaderBase<ExpansionBaseBuildingSettings>
     {
         public const int CurrentVersion = 5;
 

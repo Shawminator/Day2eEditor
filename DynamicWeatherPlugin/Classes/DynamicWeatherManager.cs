@@ -75,7 +75,7 @@ namespace DynamicWeatherPlugin
             {
                 if (obj is not IConfigLoader config)
                     continue;
-                if (config.needToSave())
+                if (config.NeedToSave())
                     needtosave = true;
             }
             return needtosave;

@@ -86,7 +86,7 @@ namespace Day2eEditor
         {
             treeViewMS1.Nodes.Clear();
 
-            foreach (TypesFile tf in _economyManager.TypesConfig.AllData)
+            foreach (TypesFile tf in _economyManager.TypesConfig.MutableItems)
             {
                 var rootNode = new TreeNode(tf.FileName) { Tag = tf };
                 var categoryNodes = new Dictionary<string, TreeNode>();

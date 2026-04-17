@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLootDropConfig : MultiFileConfigLoader<AILootDrops>
+    public class ExpansionLootDropConfig : MultiFileConfigLoaderBase<AILootDrops>
     {
         public ExpansionLootDropConfig(string path) : base(path)
         {
@@ -57,7 +57,7 @@ namespace ExpansionPlugin
             if (exists)
                 return false; // File with same name already exists
 
-            Items.Add(newAILootDrops);
+            MutableItems.Add(newAILootDrops);
             return true;
         }
         internal void RemoveFile(AILootDrops AILootDrops)

@@ -14,7 +14,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private spawnableTypeItem _data;
-        private spawnableTypeItem _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -22,7 +21,7 @@ namespace EconomyPlugin
         {
             InitializeComponent();
             List<string> presets = new List<string>();
-            foreach (cfgspawnabletypesFile ctc in AppServices.GetRequired<EconomyManager>().cfgspawnabletypesConfig.AllData)
+            foreach (CfgSpawnableTypesFile ctc in AppServices.GetRequired<EconomyManager>().cfgspawnabletypesConfig.MutableItems)
             {
                 foreach (SpawnableType SP in ctc.Data.type)
                 {
@@ -48,7 +47,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as spawnableTypeItem ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -65,55 +63,8 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private spawnableTypeItem CloneData(spawnableTypeItem data)
-        {
-            return new spawnableTypeItem
-            {
-                name = data.name,
-                equip = data.equip,
-                equipSpecified = data.equipSpecified,
-                chance = data.chance,
-                chanceSpecified = data.chanceSpecified,
-                quantmin = data.quantmin,
-                quantminSpecified = data.quantminSpecified,
-                quantmax = data.quantmax,
-                quantmaxSpecified = data.quantmaxSpecified
-            };
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -155,7 +106,6 @@ namespace EconomyPlugin
                 {
                     ItemNameTB.Text = _data.name = l;
                     UpdateTreeNodeText();
-                    HasChanges();
                 }
             }
             else if (result == DialogResult.Cancel)
@@ -169,7 +119,6 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             ItemChanceNUD.Visible = _data.chanceSpecified = UseItemchanceCB.Checked;
             UpdateTreeNodeText();
-            HasChanges();
         }
 
         private void ItemChanceNUD_ValueChanged(object sender, EventArgs e)
@@ -177,7 +126,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.chance = ItemChanceNUD.Value;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void checkBox49_CheckedChanged(object sender, EventArgs e)
@@ -187,7 +136,7 @@ namespace EconomyPlugin
             numericUpDown4.Value = _data.quantmin;
             numericUpDown3.Value = _data.quantmax;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void numericUpDown4_ValueChanged(object sender, EventArgs e)
@@ -195,7 +144,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.quantmin = (int)numericUpDown4.Value;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
@@ -203,7 +152,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.quantmax = (int)numericUpDown3.Value;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void isItemEquipCB_CheckedChanged(object sender, EventArgs e)
@@ -218,7 +167,7 @@ namespace EconomyPlugin
 
             }
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void darkButton26_Click(object sender, EventArgs e)
@@ -226,7 +175,7 @@ namespace EconomyPlugin
             string newitem = ItemPresetCB.GetItemText(ItemPresetCB.SelectedItem);
             _data.name = ItemNameTB.Text = newitem;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
     }
 }

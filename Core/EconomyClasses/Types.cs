@@ -1,286 +1,480 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class TypesConfig : IAdvancedConfigLoader
+    public class TypesConfig : ParameterizedMultiFileConfigLoaderBase<TypesFile>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        public string _basepath { get; set; }
-        public List<TypesFile> AllData { get; private set; } = new List<TypesFile>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
+        public TypesConfig(string path) : base(path)
         {
-            _basepath = basePath;
-            HasErrors = false;
-            Errors.Clear();
-            // Load vanilla file
-            var vanilla = new TypesFile(vanillaPath)
-            {
-                IsModded = false,
-                FileType = "types"
-            };
+        }
 
-            vanilla.Load();
-            AllData.Add(vanilla);
+        protected override void LoadCore()
+        {
+            ResetState();
 
-            if (vanilla.HasErrors)
+            if (string.IsNullOrWhiteSpace(VanillaPath))
             {
                 HasErrors = true;
-                var fileName = Path.GetFileName(vanilla.FilePath);
-                Errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
+                _errors.Add("Vanilla path is missing.");
+                return;
             }
 
-            // Load mod files
-            foreach (var modPath in modPaths)
+            try
             {
-                var modFile = new TypesFile(modPath)
+                var vanilla = LoadItem(VanillaPath);
+                vanilla.IsModded = false;
+                vanilla.FileType = "types";
+
+                OnAfterItemLoad(vanilla, VanillaPath);
+                _clonedItems.Add(GetID(vanilla), vanilla.Clone());
+
+                var vanillaIssues = ValidateItem(vanilla);
+                if (vanillaIssues?.Any() == true)
                 {
-                    IsModded = true,
-                    FileType = "types",
-                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
-                };
+                    Console.WriteLine("Validation issues in " + vanilla.FileName + ":");
+                    foreach (var msg in vanillaIssues)
+                        Console.WriteLine("- " + msg);
+                }
 
-                modFile.Load();
-                AllData.Add(modFile);
+                MutableItems.Add(vanilla);
 
-                if (modFile.HasErrors)
+                if (vanilla.HasErrors)
                 {
                     HasErrors = true;
-                    var modName = Path.GetFileName(modFile.ModFolder);
-                    var fileName = Path.GetFileName(modFile.FilePath);
-                    Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    var fileName = Path.GetFileName(vanilla.FilePath);
+                    _errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
                 }
             }
-        }
-        public IEnumerable<string> Save()
-        {
-            var savedFiles = new List<string>();
-
-            foreach (var data in AllData.ToList())
+            catch (Exception ex)
             {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+                HasErrors = true;
+                HandleItemError(VanillaPath, ex);
+            }
 
-                if (data.ToDelete)
+            foreach (var file in ModPaths)
+            {
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(file);
+                    item.IsModded = true;
+                    item.FileType = "types";
+                    item.ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(file) ?? BasePath);
+
+                    OnAfterItemLoad(item, file);
+                    _clonedItems.Add(GetID(item), item.Clone());
+
+                    var issues = ValidateItem(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + item.FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+
+                    MutableItems.Add(item);
+
+                    if (item.HasErrors)
+                    {
+                        HasErrors = true;
+                        var modName = Path.GetFileName(item.ModFolder);
+                        var fileName = Path.GetFileName(item.FilePath);
+                        _errors.AddRange(item.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
         }
-        public bool needToSave()
+        protected override TypesFile LoadItem(string filePath)
         {
-            foreach(var Data in AllData)
+            var item = new TypesFile(filePath);
+            var loadFailed = false;
+
+            item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
+                filePath,
+                createNew: () => new Types
+                {
+                    TypeList = new BindingList<TypeEntry>()
+                },
+                onError: ex =>
+                {
+                    loadFailed = true;
+                    item.HasErrors = true;
+
+                    var message =
+                        $"Error in {Path.GetFileName(filePath)}\n{ex.Message}\n{ex.InnerException?.Message}";
+
+                    Console.WriteLine(message + "\n");
+                    item.Errors.Add(message);
+                },
+                configName: "Types"
+            );
+
+            item.Data.TypeList ??= new BindingList<TypeEntry>();
+            item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
+
+            if (!loadFailed)
             {
-                if (Data.needToSave())
+                ValidateLoadedTypes(item, item.Data);
+            }
+
+            return item;
+        }
+        protected override IEnumerable<string> ValidateItem(TypesFile item)
+        {
+            return item.Errors;
+        }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
+            {
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
+                }
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+
+                if (!item.Equals(baseline))
+                {
+                    var oldPath = baseline.FilePath;
+
+                    SaveItem(item);
+
+                    if (!string.Equals(oldPath, item.FilePath, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(oldPath) &&
+                        File.Exists(oldPath))
+                    {
+                        File.Delete(oldPath);
+                    }
+
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
+            }
+
+            return saved;
+        }
+
+        public override bool NeedToSave()
+        {
+            foreach (var item in Items)
+            {
+                var id = GetID(item);
+
+                if (ShouldDelete(item))
+                    return true;
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                    return true;
+
+                if (!item.Equals(baseline))
                     return true;
             }
+
             return false;
         }
 
-        public TypeEntry Gettypebyname(string name)
+        protected override void SaveItem(TypesFile item)
         {
-            return AllData
-                    .SelectMany(tf => tf.Data.TypeList)
-                    .Where(te => te.Name == name)
-                    .LastOrDefault();
-
+            AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
+            item.IsDirty = false;
         }
-        public List<TypeEntry> SerachTypes(string Searchterm, bool exact = false)
+        protected override string GetItemFileName(TypesFile item)
+                    => item.FileName;
+        protected override Guid GetID(TypesFile item)
+            => item.Id;
+        protected override bool ShouldDelete(TypesFile item)
+            => item.ToDelete;
+        protected override void DeleteItemFile(TypesFile item)
         {
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            {
+                File.Delete(item.FilePath);
+            }
+        }
+        protected override void HandleItemError(string path, Exception ex)
+        {
+            var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
+            _errors.Add(msg);
+            Console.WriteLine(msg);
+        }
+        public TypeEntry? GetTypeByName(string name)
+        {
+            return Items
+                .SelectMany(tf => tf.Data.TypeList)
+                .LastOrDefault(te => te.Name == name);
+        }
+        public List<TypeEntry> SearchTypes(string searchTerm, bool exact = false)
+        {
+            var query = Items.SelectMany(tf => tf.Data.TypeList);
+
             if (exact)
-                return AllData
-                    .SelectMany(tf => tf.Data.TypeList)
-                    .Where(te => te.Name == Searchterm)
-                    .ToList();
-            else
-                return AllData
-                    .SelectMany(tf => tf.Data.TypeList)
-                    .Where(te => te.Name.ToLower().Contains(Searchterm.ToLower()))
-                    .ToList();
-        }
-    }
-    public class TypesFile : IConfigLoader
-    {
-        private readonly string _path;
-
-        public Types Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-        public bool ToDelete { get; set; }
-
-        // Metadata for file type and source
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;                  // Full file path
-        public string FileType { get; set; }               // "types"
-        public bool IsModded { get; set; }                 // true if modded, false if vanilla
-        public string ModFolder { get; set; }              // Only set for modded types
-
-        public TypesFile(string path)
-        {
-            _path = path;
-        }
-        public void CreateNew()
-        {
-            Data = new Types()
             {
-                TypeList = new BindingList<TypeEntry>()
-            };
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<Types>(
-               _path,
-               createNew: () => new Types(),
-               onAfterLoad: cfg => 
-               {
-                   CheckValuesAfterLoad(cfg);
-                   if (HasErrors)
-                   {
-                       throw new Exception("Validation failed.");
-                   }
-               },
-               onError: ex =>
-               {
-                   HasErrors = true;
-
-                   if (ex.Message == "Validation failed.")
-                   {
-                       Console.WriteLine("Validation errors found:\n" + string.Join("\n", Errors));
-                   }
-                   else
-                   {
-                       var message = "Error in " + Path.GetFileName(_path) + "\n" +
-                                     ex.Message + "\n" +
-                                     ex.InnerException?.Message;
-
-                       Console.WriteLine(message + "\n");
-                       Errors.Add(message);
-                   }
-               },
-               configName: "Types"
-            );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (ToDelete)
-            {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
+                return query
+                    .Where(te => string.Equals(te.Name, searchTerm, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
 
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
+            return query
+                .Where(te => !string.IsNullOrWhiteSpace(te.Name) &&
+                             te.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
-        public bool needToSave()
-        {
-            return isDirty;
-        }
-        private void CheckValuesAfterLoad(Types cfg)
+        private void ValidateLoadedTypes(TypesFile item, Types cfg)
         {
             foreach (var type in cfg.TypeList)
             {
-                // Recursively check each property in the type
-                CheckPropertiesRecursively(type, (type as TypeEntry)?.Name ?? "UnknownEntry");
+                CheckPropertiesRecursively(item, type, type?.Name ?? "UnknownEntry");
             }
         }
-        private void CheckPropertiesRecursively(object obj, string topTypeName)
+        private void CheckPropertiesRecursively(TypesFile owner, object obj, string topTypeName)
         {
             if (obj == null)
                 return;
 
-            Type objType = obj.GetType();
+            var objType = obj.GetType();
 
             foreach (var property in objType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                object propertyValue = property.GetValue(obj);
+                var propertyValue = property.GetValue(obj);
 
-                // Skip nulls
                 if (propertyValue == null)
                     continue;
 
-                // Handle collections like BindingList<T>, List<T>, etc.
                 if (typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType)
                     && property.PropertyType != typeof(string))
                 {
                     foreach (var item in (System.Collections.IEnumerable)propertyValue)
                     {
-                        CheckPropertiesRecursively(item, topTypeName); // Recursively check each item
+                        if (item != null)
+                            CheckPropertiesRecursively(owner, item, topTypeName);
                     }
-                    continue; // skip rest of logic for collections
-                }
 
-                // Handle nested complex types (but not strings or value types)
-                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                {
-                    CheckPropertiesRecursively(propertyValue, topTypeName); // Recursive for objects
                     continue;
                 }
 
-                // Handle Specified logic
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                {
+                    CheckPropertiesRecursively(owner, propertyValue, topTypeName);
+                    continue;
+                }
+
                 var specifiedProperty = objType.GetProperty(property.Name + "Specified");
                 if (specifiedProperty != null && specifiedProperty.PropertyType == typeof(bool))
                 {
-                    bool isSpecified = (bool)specifiedProperty.GetValue(obj);
+                    var isSpecified = (bool)specifiedProperty.GetValue(obj)!;
 
                     if (isSpecified)
                     {
                         if (propertyValue == null)
                         {
-                            HasErrors = true;
-                            Errors.Add($"[{topTypeName}] → '{objType.Name}.{property.Name}' is null but marked as specified.");
+                            owner.HasErrors = true;
+                            owner.Errors.Add(
+                                $"[{topTypeName}] → '{objType.Name}.{property.Name}' is null but marked as specified.");
                         }
                         else if (propertyValue is string str && string.IsNullOrWhiteSpace(str))
                         {
-                            HasErrors = true;
-                            Errors.Add($"[{topTypeName}] → '{objType.Name}.{property.Name}' is an empty string but marked as specified.");
+                            owner.HasErrors = true;
+                            owner.Errors.Add(
+                                $"[{topTypeName}] → '{objType.Name}.{property.Name}' is an empty string but marked as specified.");
                         }
                     }
                 }
             }
         }
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        {
+            var removedFolders = new List<string>();
 
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c =>
+                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    var relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
+    }
+    public class TypesFile : IDeepCloneable<TypesFile>, IEquatable<TypesFile>
+    {
+        private string _path;
+
+        public string FilePath => _path;
+        public string FileName => Path.GetFileName(_path);
+
+        public bool ToDelete { get; set; }
+        public bool IsDirty { get; set; }
+        public bool HasErrors { get; set; }
+
+        public List<string> Errors { get; } = new();
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string FileType { get; set; } = string.Empty;
+        public bool IsModded { get; set; }
+        public string ModFolder { get; set; } = string.Empty;
+
+        public Types Data { get; set; } = new()
+        {
+            TypeList = new BindingList<TypeEntry>()
+        };
+
+        public TypesFile(string path)
+        {
+            _path = path;
+        }
+        public void SetPath(string path) => _path = path;
+
+        internal void SetGuid(Guid guid) => Id = guid;
+
+        public TypesFile Clone()
+        {
+            var clone = new TypesFile(_path)
+            {
+                ToDelete = ToDelete,
+                IsDirty = IsDirty,
+                HasErrors = HasErrors,
+                Id = Id,
+                FileType = FileType,
+                IsModded = IsModded,
+                ModFolder = ModFolder,
+                Data = Data?.Clone() ?? new Types
+                {
+                    TypeList = new BindingList<TypeEntry>()
+                }
+            };
+
+            clone.Errors.AddRange(Errors);
+            return clone;
+        }
+
+        public bool Equals(TypesFile? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Id == other.Id &&
+                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(FileType, other.FileType, StringComparison.Ordinal) &&
+                IsModded == other.IsModded &&
+                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
+                ToDelete == other.ToDelete &&
+                Equals(Data, other.Data);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as TypesFile);
+        }
     }
 
 
     [XmlRoot("types")]
-    public class Types
+    public class Types : IDeepCloneable<Types>, IEquatable<Types>
     {
         public Types() { }
-        private BindingList<TypeEntry> _typeList = new();
+
+        private BindingList<TypeEntry>? _typeList = new();
 
         [XmlElement("type")]
-        public BindingList<TypeEntry> TypeList
+        public BindingList<TypeEntry>? TypeList
         {
             get => _typeList;
             set => _typeList = value;
         }
+
+        public bool Equals(Types? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return ListsEqual(TypeList, other.TypeList);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Types);
+        }
+
+        public Types Clone()
+        {
+            return new Types
+            {
+                TypeList = new BindingList<TypeEntry>(
+                    TypeList?.Select(x => x.Clone()).ToList() ?? new List<TypeEntry>())
+            };
+        }
+
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
+        }
     }
 
-    public class TypeEntry
+    public class TypeEntry : IDeepCloneable<TypeEntry>, IEquatable<TypeEntry>
     {
-        private string _name;
+        private string? _name;
         private bool _nameSpecified;
 
         private int _nominal;
@@ -304,15 +498,15 @@ namespace Day2eEditor
         private int _cost;
         private bool _costSpecified;
 
-        private Flags _flags;
-        private Category _category;
+        private Flags? _flags;
+        private Category? _category;
 
-        private BindingList<Usage> _usages = new();
-        private BindingList<Tag> _tags = new();
-        private BindingList<Value> _values = new();
+        private BindingList<Usage>? _usages = new();
+        private BindingList<Tag>? _tags = new();
+        private BindingList<Value>? _values = new();
 
         [XmlAttribute("name")]
-        public string Name
+        public string? Name
         {
             get => _name;
             set => _name = value;
@@ -424,35 +618,35 @@ namespace Day2eEditor
         }
 
         [XmlElement("flags")]
-        public Flags Flags
+        public Flags? Flags
         {
             get => _flags;
             set => _flags = value;
         }
 
         [XmlElement("category")]
-        public Category Category
+        public Category? Category
         {
             get => _category;
             set => _category = value;
         }
 
         [XmlElement("usage")]
-        public BindingList<Usage> Usages
+        public BindingList<Usage>? Usages
         {
             get => _usages;
             set => _usages = value;
         }
 
         [XmlElement("tag")]
-        public BindingList<Tag> Tags
+        public BindingList<Tag>? Tags
         {
             get => _tags;
             set => _tags = value;
         }
 
         [XmlElement("value")]
-        public BindingList<Value> Values
+        public BindingList<Value>? Values
         {
             get => _values;
             set => _values = value;
@@ -460,13 +654,16 @@ namespace Day2eEditor
 
         public override string ToString()
         {
-            return Name;
+            return Name ?? string.Empty;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(TypeEntry? other)
         {
-            if (obj is not TypeEntry other)
+            if (other is null)
                 return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
                 Name == other.Name &&
@@ -499,26 +696,41 @@ namespace Day2eEditor
                 ListsEqual(Tags, other.Tags) &&
                 ListsEqual(Values, other.Values);
         }
-        private static bool ListsEqual<T>(IList<T> a, IList<T> b)
+
+        public override bool Equals(object? obj)
         {
-            if (a == b) return true;
-            if (a == null || b == null) return false;
-            if (a.Count != b.Count) return false;
+            return Equals(obj as TypeEntry);
+        }
+
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
 
             for (int i = 0; i < a.Count; i++)
             {
                 if (!Equals(a[i], b[i]))
                     return false;
             }
+
             return true;
         }
+
         public void AddTier(string tier)
         {
-            if (Values == null)
-                Values = new BindingList<Value>();
-            Value newtier = (new Value() { Name = tier, NameSpecified = true });
-            if (!Values.Any(x => x.Name == newtier.Name))
-                Values.Add(newtier);
+            Values ??= new BindingList<Value>();
+
+            var newTier = new Value { Name = tier, NameSpecified = true };
+
+            if (!Values.Any(x => x.Name == newTier.Name))
+                Values.Add(newTier);
+
             for (int i = 0; i < Values.Count; i++)
             {
                 if (Values[i].Name == null)
@@ -528,21 +740,29 @@ namespace Day2eEditor
                 }
             }
         }
-        public void removetier(string tier)
+
+        public void RemoveTier(string tier)
         {
-            if (Values == null) return;
-            if (Values.Any(x => x.Name == tier))
-                Values.Remove(Values.First(X => X.Name == tier));
+            if (Values == null)
+                return;
+
+            var existing = Values.FirstOrDefault(x => x.Name == tier);
+            if (existing != null)
+                Values.Remove(existing);
+
             if (Values.Count == 0)
                 Values = null;
         }
-        public void AdduserTier(string tier)
+
+        public void AddUserTier(string tier)
         {
-            if (Values == null)
-                Values = new BindingList<Value>();
-            Value newusertier = new Value() { User = tier, UserSpecified = true};
-            if (!Values.Any(x => x.User == newusertier.User))
-                Values.Add(newusertier);
+            Values ??= new BindingList<Value>();
+
+            var newUserTier = new Value { User = tier, UserSpecified = true };
+
+            if (!Values.Any(x => x.User == newUserTier.User))
+                Values.Add(newUserTier);
+
             for (int i = 0; i < Values.Count; i++)
             {
                 if (Values[i].User == null)
@@ -552,76 +772,106 @@ namespace Day2eEditor
                 }
             }
         }
-        public void removeusertier(string tier)
+
+        public void RemoveUserTier(string tier)
         {
-            if (Values == null) return;
-            if (Values.Any(x => x.User == tier))
-                Values.Remove(Values.First(X => X.User == tier));
+            if (Values == null)
+                return;
+
+            var existing = Values.FirstOrDefault(x => x.User == tier);
+            if (existing != null)
+                Values.Remove(existing);
+
             if (Values.Count == 0)
-            {
                 Values = null;
-            }
         }
-        public void removetiers()
+
+        public void RemoveTiers()
         {
             if (Values != null)
                 Values = null;
         }
-        public void AddnewUsage(listsUsage u)
+
+        public void AddNewUsage(listsUsage u)
         {
-            if (Usages == null)
-                Usages = new BindingList<Usage>();
+            Usages ??= new BindingList<Usage>();
+
             if (!Usages.Any(x => x.Name == u.name))
             {
-                Usages.Add(new Usage() { Name = u.name, NameSpecified = true });
+                Usages.Add(new Usage
+                {
+                    Name = u.name,
+                    NameSpecified = true
+                });
             }
         }
-        public void AddnewUserUsage(user_listsUser uu)
+
+        public void AddNewUserUsage(user_listsUser uu)
         {
-            if (Usages == null)
-                Usages = new BindingList<Usage>();
+            Usages ??= new BindingList<Usage>();
+
             if (!Usages.Any(x => x.User == uu.name))
             {
-                Usages.Add(new Usage() { User = uu.name, UserSpecified = true });
+                Usages.Add(new Usage
+                {
+                    User = uu.name,
+                    UserSpecified = true
+                });
             }
         }
-        public void removeusage(Usage u)
+
+        public void RemoveUsage(Usage u)
         {
-            if (Usages == null) return;
-            Usage usagetoremove = Usages.FirstOrDefault(x => x.Name == u.Name);
-            if (usagetoremove != null)
-                Usages.Remove(usagetoremove);
+            if (Usages == null)
+                return;
+
+            var usageToRemove = Usages.FirstOrDefault(x => x.Name == u.Name);
+            if (usageToRemove != null)
+                Usages.Remove(usageToRemove);
         }
-        public void Addnewtag(listsTag t)
+
+        public void AddNewTag(listsTag t)
         {
-            if (Tags == null)
-                Tags = new BindingList<Tag>();
+            Tags ??= new BindingList<Tag>();
+
             if (!Tags.Any(x => x.Name == t.name))
             {
-                Tags.Add(new Tag() { Name = t.name, NameSpecified = true});
+                Tags.Add(new Tag
+                {
+                    Name = t.name,
+                    NameSpecified = true
+                });
             }
         }
-        public void removetag(Tag t)
+
+        public void RemoveTag(Tag t)
         {
-            if (Tags == null) return;
-            Tag tagtoremove = Tags.FirstOrDefault(x => x.Name == t.Name);
-            if (tagtoremove != null)
-                Tags.Remove(tagtoremove);
+            if (Tags == null)
+                return;
+
+            var tagToRemove = Tags.FirstOrDefault(x => x.Name == t.Name);
+            if (tagToRemove != null)
+                Tags.Remove(tagToRemove);
         }
-        public void changecategory(listsCategory c)
+
+        public void ChangeCategory(listsCategory c)
         {
-            Category cat = new Category()
+            var cat = new Category
             {
                 Name = c.name
             };
+
             if (cat.Name == "other")
+            {
                 Category = null;
+            }
             else
             {
+                cat.NameSpecified = true;
                 Category = cat;
-                Category.NameSpecified = true;
             }
         }
+
         public TypeEntry Clone()
         {
             return new TypeEntry
@@ -653,7 +903,7 @@ namespace Day2eEditor
         }
     }
 
-    public class Flags
+    public class Flags : IDeepCloneable<Flags>, IEquatable<Flags>
     {
         private int _countInCargo;
         private int _countInHoarder;
@@ -704,10 +954,13 @@ namespace Day2eEditor
             set => _deloot = value;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Flags? other)
         {
-            if (obj is not Flags other)
+            if (other is null)
                 return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
                 count_in_cargo == other.count_in_cargo &&
@@ -718,6 +971,11 @@ namespace Day2eEditor
                 deloot == other.deloot;
         }
 
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Flags);
+        }
+
         public override string ToString() => DisplayString;
 
         [XmlIgnore]
@@ -725,16 +983,19 @@ namespace Day2eEditor
         {
             get
             {
-                List<string> flags = new();
+                var flags = new List<string>();
+
                 if (count_in_cargo == 1) flags.Add("count_in_cargo");
                 if (count_in_hoarder == 1) flags.Add("count_in_hoarder");
                 if (count_in_map == 1) flags.Add("count_in_map");
                 if (count_in_player == 1) flags.Add("count_in_player");
                 if (crafted == 1) flags.Add("crafted");
                 if (deloot == 1) flags.Add("deloot");
+
                 return string.Join(", ", flags);
             }
         }
+
         public Flags Clone() => new Flags
         {
             count_in_cargo = count_in_cargo,
@@ -746,13 +1007,13 @@ namespace Day2eEditor
         };
     }
 
-    public class Category
+    public class Category : IDeepCloneable<Category>, IEquatable<Category>
     {
-        private string _name;
+        private string? _name;
         private bool _nameSpecified;
 
         [XmlAttribute("name")]
-        public string Name
+        public string? Name
         {
             get => _name;
             set => _name = value;
@@ -765,19 +1026,29 @@ namespace Day2eEditor
             set => _nameSpecified = value;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Category? other)
         {
-            if (obj is not Category other)
+            if (other is null)
                 return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
                 Name == other.Name &&
                 NameSpecified == other.NameSpecified;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Category);
+        }
+
         public override string ToString()
         {
-            return Name;
+            return Name ?? string.Empty;
         }
+
         public Category Clone() => new Category
         {
             Name = Name,
@@ -785,15 +1056,15 @@ namespace Day2eEditor
         };
     }
 
-    public class Usage
+    public class Usage : IDeepCloneable<Usage>, IEquatable<Usage>
     {
-        private string _name;
-        private string _user;
+        private string? _name;
+        private string? _user;
         private bool _nameSpecified;
         private bool _userSpecified;
 
         [XmlAttribute("name")]
-        public string Name
+        public string? Name
         {
             get => _name;
             set => _name = value;
@@ -807,7 +1078,7 @@ namespace Day2eEditor
         }
 
         [XmlAttribute("user")]
-        public string User
+        public string? User
         {
             get => _user;
             set => _user = value;
@@ -822,18 +1093,22 @@ namespace Day2eEditor
 
         public override string ToString()
         {
-            string r = "";
-            if (Name != null && User == null)
-                r = Name;
-            else if (Name == null && User != null)
-                r = User;
-            return r;
+            if (!string.IsNullOrWhiteSpace(Name) && string.IsNullOrWhiteSpace(User))
+                return Name;
+
+            if (string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(User))
+                return User;
+
+            return string.Empty;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Usage? other)
         {
-            if (obj is not Usage other)
+            if (other is null)
                 return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
                 Name == other.Name &&
@@ -841,6 +1116,12 @@ namespace Day2eEditor
                 User == other.User &&
                 UserSpecified == other.UserSpecified;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Usage);
+        }
+
         public Usage Clone() => new Usage
         {
             Name = Name,
@@ -850,13 +1131,13 @@ namespace Day2eEditor
         };
     }
 
-    public class Tag
+    public class Tag : IDeepCloneable<Tag>, IEquatable<Tag>
     {
-        private string _name;
+        private string? _name;
         private bool _nameSpecified;
 
         [XmlAttribute("name")]
-        public string Name
+        public string? Name
         {
             get => _name;
             set => _name = value;
@@ -871,18 +1152,27 @@ namespace Day2eEditor
 
         public override string ToString()
         {
-            return Name;
+            return Name ?? string.Empty;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Tag? other)
         {
-            if (obj is not Tag other)
+            if (other is null)
                 return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
                 Name == other.Name &&
                 NameSpecified == other.NameSpecified;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Tag);
+        }
+
         public Tag Clone() => new Tag
         {
             Name = Name,
@@ -890,16 +1180,16 @@ namespace Day2eEditor
         };
     }
 
-    public class Value
+    public class Value : IDeepCloneable<Value>, IEquatable<Value>
     {
-        private string _name;
+        private string? _name;
         private bool _nameSpecified;
-        
-        private string _user;
+
+        private string? _user;
         private bool _userSpecified;
 
         [XmlAttribute("name")]
-        public string Name
+        public string? Name
         {
             get => _name;
             set => _name = value;
@@ -913,7 +1203,7 @@ namespace Day2eEditor
         }
 
         [XmlAttribute("user")]
-        public string User
+        public string? User
         {
             get => _user;
             set => _user = value;
@@ -925,20 +1215,25 @@ namespace Day2eEditor
             get => _userSpecified;
             set => _userSpecified = value;
         }
+
         public override string ToString()
         {
-            string r = "";
-            if (Name != null && User == null)
-                r = Name;
-            else if (Name == null && User != null)
-                r = User;
-            return r;
+            if (!string.IsNullOrWhiteSpace(Name) && string.IsNullOrWhiteSpace(User))
+                return Name;
+
+            if (string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(User))
+                return User;
+
+            return string.Empty;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Value? other)
         {
-            if (obj is not Value other)
+            if (other is null)
                 return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
                 Name == other.Name &&
@@ -946,6 +1241,12 @@ namespace Day2eEditor
                 User == other.User &&
                 UserSpecified == other.UserSpecified;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Value);
+        }
+
         public Value Clone() => new Value
         {
             Name = Name,

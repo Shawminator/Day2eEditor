@@ -15,7 +15,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private Attachmentslotitemset _data;
-        private Attachmentslotitemset _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -38,7 +37,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as Attachmentslotitemset ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
             ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\VanillaSlotNames.txt").ToList();
@@ -47,48 +45,9 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
 
         #region Helper Methods
 
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Attachmentslotitemset CloneData(Attachmentslotitemset data)
-        {
-            return new Attachmentslotitemset
-            {
-                slotName = data.slotName
-            };
-
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -106,14 +65,13 @@ namespace EconomyPlugin
         private void ItemAttachmentSlotNameCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            var SpawnGearPresetFiles = _nodes.Last().FindParentOfType<SpawnGearPresetFiles>();
+            var SpawnGearPresetFiles = _nodes.Last().FindParentOfType<SpawnGearPresetFile>();
             if (_nodes.Last().Parent.Tag.ToString() == "SpawnGearAttachmentSlotItemSetsParent")
             {
                 string Slotname = ItemAttachmentSlotNameCB.GetItemText(ItemAttachmentSlotNameCB.SelectedItem);
-                if (!SpawnGearPresetFiles.attachmentSlotItemSets.Any(x => x.slotName == Slotname))
+                if (!SpawnGearPresetFiles.Data.attachmentSlotItemSets.Any(x => x.slotName == Slotname))
                 {
                     _data.slotName = Slotname;
-                    HasChanges();
                     UpdateTreeNodeText();
                 }
                 else

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPersonalStorageContainersConfig : MultiFileConfigLoader<ExpansionPersonalStorageConfig>
+    public class ExpansionPersonalStorageContainersConfig : MultiFileConfigLoaderBase<ExpansionPersonalStorageConfig>
     {
         public const int CurrentVersion = 2;
         public List<int> UsedIDS = new List<int>();
@@ -80,7 +80,7 @@ namespace ExpansionPlugin
             PSContainer.SetPath(Path.Combine(filepath, filename));
             PSContainer.SetGuid(Guid.NewGuid());
             UsedIDS.Add((int)PSContainer.StorageID);
-            Items.Add(PSContainer);
+            MutableItems.Add(PSContainer);
             return PSContainer;
 
         }
@@ -92,7 +92,7 @@ namespace ExpansionPlugin
         {
             return false;
         }
-        protected override IEnumerable<string> ValidateData(ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
+        protected override IEnumerable<string> ValidateItem(ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig)
         {
             return ExpansionPersonalStorageConfig.FixMissingOrInvalidFields();
         }

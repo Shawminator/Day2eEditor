@@ -8,6 +8,19 @@ namespace EconomyPlugin
     public partial class TypesControl : UserControl, IUIHandler
     {
         private Type _parentType;
+        private TypesFile typesFile;
+        private TypeEntry _currentdata;
+        private BindingList<TypeEntry> _entries;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+
+        public TypesControl()
+        {
+            InitializeComponent();
+            PopulateDefs();
+            setNumberofTiers();
+        }
+
         public Control GetControl() => this;
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
@@ -16,7 +29,6 @@ namespace EconomyPlugin
             _nodes = selectedNodes;
             typesFile = _nodes.Last().FindParentOfType<TypesFile>();
             LoadNodesTotypeslist(_nodes);
-            _originalData = CloneData(_entries); // Store original data for reset
             _suppressEvents = true;
 
             textBox1.Text = _currentdata.Name;
@@ -31,37 +43,7 @@ namespace EconomyPlugin
             PopulateTags();
             _suppressEvents = false;
         }
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_entries);
-        }
-        public void Reset()
-        {
-        }
-        public void HasChanges()
-        {
-            typesFile.isDirty = IsDirty();
-        }
-        public bool IsDirty()
-        {
-            if (_entries.Count != _originalData.Count)
-                return true;
 
-            return !_entries.SequenceEqual(_originalData);
-        }
-        private TypesFile typesFile;
-        private TypeEntry _currentdata;
-        private BindingList<TypeEntry> _entries;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private BindingList<TypeEntry> _originalData;
-
-        public TypesControl()
-        {
-            InitializeComponent();
-            PopulateDefs();
-            setNumberofTiers();
-        }
         private void LoadNodesTotypeslist(List<TreeNode> selectedNodes)
         {
             _entries = new BindingList<TypeEntry>();
@@ -273,7 +255,7 @@ namespace EconomyPlugin
                 typeNomCountNUD.Value = 0;
                 typeentry.Nominal = (int)typeNomCountNUD.Value;
             }
-            HasChanges();
+            
         }
         private void typeNomCountNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -285,7 +267,7 @@ namespace EconomyPlugin
                     typeentry.Nominal = (int)typeNomCountNUD.Value;
                 }
             }
-            HasChanges();
+            
         }
         private void MinCountCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -297,7 +279,7 @@ namespace EconomyPlugin
                 typeMinCountNUD.Value = 0;
                 typeentry.Min = (int)typeMinCountNUD.Value;
             }
-            HasChanges();
+            
         }
         private void typeMinCountNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -309,7 +291,7 @@ namespace EconomyPlugin
                     typeentry.Min = (int)typeMinCountNUD.Value;
                 }
             }
-            HasChanges();
+            
         }
         private void typeLifetimeNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -319,7 +301,7 @@ namespace EconomyPlugin
 
                 typeentry.Lifetime = (int)typeLifetimeNUD.Value;
             }
-            HasChanges();
+            
         }
         private void RestockCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -331,7 +313,7 @@ namespace EconomyPlugin
                 typeRestockNUD.Value = 0;
                 typeentry.Min = (int)typeRestockNUD.Value;
             }
-            HasChanges();
+            
         }
         private void typeRestockNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -344,7 +326,7 @@ namespace EconomyPlugin
                     typeentry.Restock = (int)typeRestockNUD.Value;
                 }
             }
-            HasChanges();
+            
         }
         private void QuanMinCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -356,7 +338,7 @@ namespace EconomyPlugin
                 typeQuantMINNUD.Value = 0;
                 typeentry.QuantMin = (int)typeQuantMINNUD.Value;
             }
-            HasChanges();
+            
         }
         private void typeQuantMINNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -369,7 +351,7 @@ namespace EconomyPlugin
                     typeentry.QuantMin = (int)typeQuantMINNUD.Value;
                 }
             }
-            HasChanges();
+            
         }
         private void QuanMaxCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -381,7 +363,7 @@ namespace EconomyPlugin
                 typeQuantMAXNUD.Value = 0;
                 typeentry.QuantMax = (int)typeQuantMAXNUD.Value;
             }
-            HasChanges();
+            
         }
         private void typeQuantMAXNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -394,7 +376,7 @@ namespace EconomyPlugin
                     typeentry.QuantMax = (int)typeQuantMAXNUD.Value;
                 }
             }
-            HasChanges();
+            
         }
         private void costCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -406,7 +388,7 @@ namespace EconomyPlugin
                 typeCostNUD.Value = 0;
                 typeentry.Cost = (int)typeCostNUD.Value;
             }
-            HasChanges();
+            
         }
         private void typeCostNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -419,7 +401,7 @@ namespace EconomyPlugin
                     typeentry.Cost = (int)typeCostNUD.Value;
                 }
             }
-            HasChanges();
+            
         }
         private void TierCheckBoxchanged(object sender, EventArgs e)
         {
@@ -434,12 +416,12 @@ namespace EconomyPlugin
                     typeentry.AddTier(tier);
                 }
                 else
-                    typeentry.removetier(tier);
+                    typeentry.RemoveTier(tier);
             }
             _suppressEvents = true;
             PopulateTiers();
             _suppressEvents = false;
-            HasChanges();
+            
         }
         private void UserdefiniedTiersChanged(object sender, EventArgs e)
         {
@@ -453,29 +435,29 @@ namespace EconomyPlugin
                 {
                     if (typeentry.Values != null)
                     {
-                        typeentry.removetiers();
+                        typeentry.RemoveTiers();
                     }
-                    typeentry.AdduserTier(tier);
+                    typeentry.AddUserTier(tier);
                 }
                 else
-                    typeentry.removeusertier(tier);
+                    typeentry.RemoveUserTier(tier);
             }
             _suppressEvents = true;
             PopulateTiers();
             _suppressEvents = false;
-            HasChanges();
+            
         }
         private void Button28_Click(object sender, EventArgs e)
         {
             foreach (TypeEntry typeentry in _entries)
             {
 
-                typeentry.removetiers();
+                typeentry.RemoveTiers();
             }
             _suppressEvents = true;
             PopulateTiers();
             _suppressEvents = false;
-            HasChanges();
+            
         }
         private void checkBox117_CheckedChanged(object sender, EventArgs e)
         {
@@ -508,7 +490,7 @@ namespace EconomyPlugin
                 foreach (TypeEntry typeentry in _entries)
                 {
     
-                    typeentry.AddnewUsage(u);
+                    typeentry.AddNewUsage(u);
                 }
             }
             if (comboBox2.SelectedItem is user_listsUser uu)
@@ -516,11 +498,11 @@ namespace EconomyPlugin
                 foreach (TypeEntry typeentry in _entries)
                 {
     
-                    typeentry.AddnewUserUsage(uu);
+                    typeentry.AddNewUserUsage(uu);
 
                 }
             }
-            HasChanges();
+            
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -528,9 +510,9 @@ namespace EconomyPlugin
             foreach (TypeEntry typeentry in _entries)
             {
 
-                typeentry.removeusage(u);
+                typeentry.RemoveUsage(u);
             }
-            HasChanges();
+            
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -538,9 +520,9 @@ namespace EconomyPlugin
             foreach (TypeEntry typeentry in _entries)
             {
 
-                typeentry.Addnewtag(t);
+                typeentry.AddNewTag(t);
             }
-            HasChanges();
+            
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -548,9 +530,9 @@ namespace EconomyPlugin
             foreach (TypeEntry typeentry in _entries)
             {
 
-                typeentry.removetag(t);
+                typeentry.RemoveTag(t);
             }
-            HasChanges();
+            
         }
         private void flags_CheckedChanged(object sender, EventArgs e)
         {
@@ -581,7 +563,7 @@ namespace EconomyPlugin
                         break;
                 }
             }
-            HasChanges();
+            
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -595,7 +577,7 @@ namespace EconomyPlugin
             {
                 _lastNode = tn;
                 TypeEntry typeentry = tn.Tag as TypeEntry;
-                typeentry.changecategory(c);
+                typeentry.ChangeCategory(c);
 
                 // Save expanded state for the moving node
                 bool wasExpanded = tn.IsExpanded;
@@ -636,7 +618,7 @@ namespace EconomyPlugin
                 }
                 categoryNode.Nodes.Insert(insertIndex, tn);
             }
-            HasChanges();
+            
             if (_lastNode != null && _lastNode.TreeView != null)
             {
                 _lastNode.TreeView.SelectedNode = _lastNode;

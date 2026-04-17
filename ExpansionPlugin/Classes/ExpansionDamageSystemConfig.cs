@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionDamageSystemConfig : ExpansionBaseIConfigLoader<ExpansionDamageSystemSettings>
+    public class ExpansionDamageSystemConfig : SingleFileConfigLoaderBase<ExpansionDamageSystemSettings>
     {
         public const int CurrentVersion = 1;
 

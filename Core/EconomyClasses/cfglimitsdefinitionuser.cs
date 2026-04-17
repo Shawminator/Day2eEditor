@@ -1,267 +1,316 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfglimitsdefinitionuserConfig : IConfigLoader
+    public class cfglimitsdefinitionuserConfig : SingleFileConfigLoaderBase<cfglimitsdefinitionuser>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public cfglimitsdefinitionuser Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        public cfglimitsdefinitionuserConfig() { }
-        public cfglimitsdefinitionuserConfig(string path)
+        public cfglimitsdefinitionuserConfig(string path) : base(path)
         {
-            _path = path;
         }
 
-        public void Load()
+        public override void Load()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<cfglimitsdefinitionuser>(
-               _path,
-               createNew: () => new cfglimitsdefinitionuser(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfglimitsdefinitionuser"
-            );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<cfglimitsdefinitionuser>(
+                        _path,
+                        createNew: () => new cfglimitsdefinitionuser(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfglimitsdefinitionuser"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override cfglimitsdefinitionuser CreateDefaultData()
         {
-            return isDirty;
+            return new cfglimitsdefinitionuser();
+        }
+
+        protected override void OnAfterLoad(cfglimitsdefinitionuser data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            var usageUsers = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < Data.usageflags.Count; i++)
+            {
+                var user = Data.usageflags[i];
+
+                if (string.IsNullOrWhiteSpace(user.name))
+                {
+                    yield return $"usageflags[{i}] has a missing or empty user name.";
+                }
+                else if (!usageUsers.Add(user.name))
+                {
+                    yield return $"Duplicate usage user '{user.name}' found.";
+                }
+
+                var usageNames = new HashSet<string>(StringComparer.Ordinal);
+                for (int j = 0; j < user.usage.Count; j++)
+                {
+                    var usage = user.usage[j];
+
+                    if (string.IsNullOrWhiteSpace(usage.name))
+                    {
+                        yield return $"usageflags[{i}].usage[{j}] has a missing or empty name.";
+                        continue;
+                    }
+
+                    if (!usageNames.Add(usage.name))
+                        yield return $"Duplicate usage '{usage.name}' found for usage user '{user.name}'.";
+                }
+            }
+
+            var valueUsers = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < Data.valueflags.Count; i++)
+            {
+                var user = Data.valueflags[i];
+
+                if (string.IsNullOrWhiteSpace(user.name))
+                {
+                    yield return $"valueflags[{i}] has a missing or empty user name.";
+                }
+                else if (!valueUsers.Add(user.name))
+                {
+                    yield return $"Duplicate value user '{user.name}' found.";
+                }
+
+                var valueNames = new HashSet<string>(StringComparer.Ordinal);
+                for (int j = 0; j < user.value.Count; j++)
+                {
+                    var value = user.value[j];
+
+                    if (string.IsNullOrWhiteSpace(value.name))
+                    {
+                        yield return $"valueflags[{i}].value[{j}] has a missing or empty name.";
+                        continue;
+                    }
+
+                    if (!valueNames.Add(value.name))
+                        yield return $"Duplicate value '{value.name}' found for value user '{user.name}'.";
+                }
+            }
         }
     }
-
 
     [XmlRoot("user_lists")]
-    public partial class cfglimitsdefinitionuser
+    public partial class cfglimitsdefinitionuser : IEquatable<cfglimitsdefinitionuser>, IDeepCloneable<cfglimitsdefinitionuser>
     {
+        private BindingList<user_listsUser>? _usageflags;
+        private BindingList<user_listsUser1>? _valueflags;
 
-        private BindingList<user_listsUser> usageflagsField;
-
-        private BindingList<user_listsUser1> valueflagsField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("user", IsNullable = false)]
+        [XmlArrayItem("user", IsNullable = false)]
         public BindingList<user_listsUser> usageflags
         {
-            get => usageflagsField;
-            set => usageflagsField = value;
+            get => _usageflags ??= new BindingList<user_listsUser>();
+            set => _usageflags = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("user", IsNullable = false)]
+        [XmlArrayItem("user", IsNullable = false)]
         public BindingList<user_listsUser1> valueflags
         {
-            get => valueflagsField;
-            set => valueflagsField = value;
+            get => _valueflags ??= new BindingList<user_listsUser1>();
+            set => _valueflags = value;
         }
 
-        public override bool Equals(object obj) => Equals(obj as cfglimitsdefinitionuser);
-
-        public bool Equals(cfglimitsdefinitionuser other)
+        public bool Equals(cfglimitsdefinitionuser? other)
         {
             if (other is null) return false;
-            return Enumerable.SequenceEqual(usageflags ?? new BindingList<user_listsUser>(), other.usageflags ?? new BindingList<user_listsUser>())
-                && Enumerable.SequenceEqual(valueflags ?? new BindingList<user_listsUser1>(), other.valueflags ?? new BindingList<user_listsUser1>());
+            if (ReferenceEquals(this, other)) return true;
+
+            return usageflags.SequenceEqual(other.usageflags)
+                && valueflags.SequenceEqual(other.valueflags);
         }
-        public override int GetHashCode()
+
+        public override bool Equals(object? obj) => Equals(obj as cfglimitsdefinitionuser);
+
+        public cfglimitsdefinitionuser Clone()
         {
-            unchecked
+            return new cfglimitsdefinitionuser
             {
-                int hash = 17;
-                if (usageflags != null)
-                    foreach (var u in usageflags) hash = hash * 23 + (u?.GetHashCode() ?? 0);
-                if (valueflags != null)
-                    foreach (var v in valueflags) hash = hash * 23 + (v?.GetHashCode() ?? 0);
-                return hash;
-            }
+                usageflags = new BindingList<user_listsUser>(usageflags.Select(x => x.Clone()).ToList()),
+                valueflags = new BindingList<user_listsUser1>(valueflags.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class user_listsUser
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class user_listsUser : IEquatable<user_listsUser>, IDeepCloneable<user_listsUser>
     {
+        private BindingList<user_listsUserUsage>? _usage;
 
-        private BindingList<user_listsUserUsage> usageField;
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("usage")]
+        [XmlElement("usage")]
         public BindingList<user_listsUserUsage> usage
         {
-            get => usageField;
-            set => usageField = value;
+            get => _usage ??= new BindingList<user_listsUserUsage>();
+            set => _usage = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get => nameField;
-            set => nameField = value;
-        }
-        public override string ToString() => name;
-        public override bool Equals(object obj) => Equals(obj as user_listsUser);
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        public bool Equals(user_listsUser other)
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(user_listsUser? other)
         {
             if (other is null) return false;
-            return string.Equals(name, other.name)
-                && Enumerable.SequenceEqual(usage ?? new BindingList<user_listsUserUsage>(), other.usage ?? new BindingList<user_listsUserUsage>());
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal)
+                && usage.SequenceEqual(other.usage);
         }
 
-        public override int GetHashCode()
+        public override bool Equals(object? obj) => Equals(obj as user_listsUser);
+
+        public user_listsUser Clone()
         {
-            unchecked
+            return new user_listsUser
             {
-                int hash = name?.GetHashCode() ?? 0;
-                if (usage != null)
-                    foreach (var u in usage) hash = hash * 23 + (u?.GetHashCode() ?? 0);
-                return hash;
-            }
+                name = name,
+                usage = new BindingList<user_listsUserUsage>(usage.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class user_listsUserUsage
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class user_listsUserUsage : IEquatable<user_listsUserUsage>, IDeepCloneable<user_listsUserUsage>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get => nameField;
-            set => nameField = value;
-        }
-
-        public override string ToString() => name;
-
-        public override bool Equals(object obj) => Equals(obj as user_listsUserUsage);
-
-        public bool Equals(user_listsUserUsage other)
+        public bool Equals(user_listsUserUsage? other)
         {
             if (other is null) return false;
-            return string.Equals(name, other.name);
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
 
-        public override int GetHashCode() => name?.GetHashCode() ?? 0;
+        public override bool Equals(object? obj) => Equals(obj as user_listsUserUsage);
+
+        public user_listsUserUsage Clone()
+        {
+            return new user_listsUserUsage
+            {
+                name = name
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class user_listsUser1
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class user_listsUser1 : IEquatable<user_listsUser1>, IDeepCloneable<user_listsUser1>
     {
+        private BindingList<user_listsUserValue>? _value;
 
-        private BindingList<user_listsUserValue> valueField;
-
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("value")]
+        [XmlElement("value")]
         public BindingList<user_listsUserValue> value
         {
-            get => valueField;
-            set => valueField = value;
+            get => _value ??= new BindingList<user_listsUserValue>();
+            set => _value = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get => nameField;
-            set => nameField = value;
-        }
-        public override string ToString() => name;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        public override bool Equals(object obj) => Equals(obj as user_listsUser1);
+        public override string ToString() => name ?? string.Empty;
 
-        public bool Equals(user_listsUser1 other)
+        public bool Equals(user_listsUser1? other)
         {
             if (other is null) return false;
-            return string.Equals(name, other.name)
-                && Enumerable.SequenceEqual(value ?? new BindingList<user_listsUserValue>(), other.value ?? new BindingList<user_listsUserValue>());
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal)
+                && value.SequenceEqual(other.value);
         }
 
-        public override int GetHashCode()
+        public override bool Equals(object? obj) => Equals(obj as user_listsUser1);
+
+        public user_listsUser1 Clone()
         {
-            unchecked
+            return new user_listsUser1
             {
-                int hash = name?.GetHashCode() ?? 0;
-                if (value != null)
-                    foreach (var v in value) hash = hash * 23 + (v?.GetHashCode() ?? 0);
-                return hash;
-            }
+                name = name,
+                value = new BindingList<user_listsUserValue>(value.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class user_listsUserValue
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class user_listsUserValue : IEquatable<user_listsUserValue>, IDeepCloneable<user_listsUserValue>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get => nameField;
-            set => nameField = value;
-        }
-        public override string ToString() => name;
-
-        public override bool Equals(object obj) => Equals(obj as user_listsUserValue);
-
-        public bool Equals(user_listsUserValue other)
+        public bool Equals(user_listsUserValue? other)
         {
             if (other is null) return false;
-            return string.Equals(name, other.name);
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
 
-        public override int GetHashCode() => name?.GetHashCode() ?? 0;
+        public override bool Equals(object? obj) => Equals(obj as user_listsUserValue);
+
+        public user_listsUserValue Clone()
+        {
+            return new user_listsUserValue
+            {
+                name = name
+            };
+        }
     }
 }

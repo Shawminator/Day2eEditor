@@ -3,254 +3,287 @@ using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfglimitsdefinitionConfig : IConfigLoader
+    public class cfglimitsdefinitionConfig : SingleFileConfigLoaderBase<cfglimitsdefinition>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public cfglimitsdefinition Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
+        public cfglimitsdefinitionConfig(string path) : base(path)
+        {
+        }
 
-        public cfglimitsdefinitionConfig(string path)
+        public override void Load()
         {
-            _path = path;
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<cfglimitsdefinition>(
-               _path,
-               createNew: () => new cfglimitsdefinition(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfglimitsdefinition"
-           );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<cfglimitsdefinition>(
+                        _path,
+                        createNew: () => new cfglimitsdefinition(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfglimitsdefinition"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override cfglimitsdefinition CreateDefaultData()
         {
-            return isDirty;
+            return new cfglimitsdefinition();
+        }
+
+        protected override void OnAfterLoad(cfglimitsdefinition data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            foreach (var issue in ValidateUniqueNames(Data.categories, "categories"))
+                yield return issue;
+
+            foreach (var issue in ValidateUniqueNames(Data.tags, "tags"))
+                yield return issue;
+
+            foreach (var issue in ValidateUniqueNames(Data.usageflags, "usageflags"))
+                yield return issue;
+
+            foreach (var issue in ValidateUniqueNames(Data.valueflags, "valueflags"))
+                yield return issue;
+        }
+
+        private static IEnumerable<string> ValidateUniqueNames<T>(IEnumerable<T> items, string section)
+            where T : INamedEntry
+        {
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            int index = 0;
+
+            foreach (var item in items)
+            {
+                if (string.IsNullOrWhiteSpace(item.name))
+                {
+                    yield return $"{section}[{index}] has a missing or empty name.";
+                    index++;
+                    continue;
+                }
+
+                if (!seen.Add(item.name))
+                    yield return $"Duplicate name '{item.name}' found in {section}.";
+
+                index++;
+            }
         }
     }
-
 
     [XmlRoot("lists")]
-    public partial class cfglimitsdefinition
+    public partial class cfglimitsdefinition : IEquatable<cfglimitsdefinition>, IDeepCloneable<cfglimitsdefinition>
     {
-        private BindingList<listsCategory> categoriesField;
-        private BindingList<listsTag> tagsField;
-        private BindingList<listsUsage> usageflagsField;
-        private BindingList<listsValue> valueflagsField;
+        private BindingList<listsCategory>? _categories;
+        private BindingList<listsTag>? _tags;
+        private BindingList<listsUsage>? _usageflags;
+        private BindingList<listsValue>? _valueflags;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("category", IsNullable = false)]
+        [XmlArrayItem("category", IsNullable = false)]
         public BindingList<listsCategory> categories
         {
-            get
-            {
-                return this.categoriesField;
-            }
-            set
-            {
-                this.categoriesField = value;
-            }
+            get => _categories ??= new BindingList<listsCategory>();
+            set => _categories = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("tag", IsNullable = false)]
+        [XmlArrayItem("tag", IsNullable = false)]
         public BindingList<listsTag> tags
         {
-            get
-            {
-                return this.tagsField;
-            }
-            set
-            {
-                this.tagsField = value;
-            }
+            get => _tags ??= new BindingList<listsTag>();
+            set => _tags = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("usage", IsNullable = false)]
+        [XmlArrayItem("usage", IsNullable = false)]
         public BindingList<listsUsage> usageflags
         {
-            get
-            {
-                return this.usageflagsField;
-            }
-            set
-            {
-                this.usageflagsField = value;
-            }
+            get => _usageflags ??= new BindingList<listsUsage>();
+            set => _usageflags = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("value", IsNullable = false)]
+        [XmlArrayItem("value", IsNullable = false)]
         public BindingList<listsValue> valueflags
         {
-            get
-            {
-                return this.valueflagsField;
-            }
-            set
-            {
-                this.valueflagsField = value;
-            }
+            get => _valueflags ??= new BindingList<listsValue>();
+            set => _valueflags = value;
         }
 
-        public bool Equals(cfglimitsdefinition other)
+        public bool Equals(cfglimitsdefinition? other)
         {
             if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-            return Enumerable.SequenceEqual(categories ?? new BindingList<listsCategory>(), other.categories ?? new BindingList<listsCategory>()) &&
-                   Enumerable.SequenceEqual(tags ?? new BindingList<listsTag>(), other.tags ?? new BindingList<listsTag>()) &&
-                   Enumerable.SequenceEqual(usageflags ?? new BindingList<listsUsage>(), other.usageflags ?? new BindingList<listsUsage>()) &&
-                   Enumerable.SequenceEqual(valueflags ?? new BindingList<listsValue>(), other.valueflags ?? new BindingList<listsValue>());
+            return categories.SequenceEqual(other.categories) &&
+                   tags.SequenceEqual(other.tags) &&
+                   usageflags.SequenceEqual(other.usageflags) &&
+                   valueflags.SequenceEqual(other.valueflags);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as cfglimitsdefinition);
+
+        public cfglimitsdefinition Clone()
+        {
+            return new cfglimitsdefinition
+            {
+                categories = new BindingList<listsCategory>(categories.Select(x => x.Clone()).ToList()),
+                tags = new BindingList<listsTag>(tags.Select(x => x.Clone()).ToList()),
+                usageflags = new BindingList<listsUsage>(usageflags.Select(x => x.Clone()).ToList()),
+                valueflags = new BindingList<listsValue>(valueflags.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class listsCategory
+    public interface INamedEntry
     {
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return name;
-        }
-        public override bool Equals(object obj) =>
-            obj is listsCategory other && string.Equals(name, other.name, StringComparison.Ordinal);
+        string? name { get; set; }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class listsTag
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class listsCategory : IEquatable<listsCategory>, IDeepCloneable<listsCategory>, INamedEntry
     {
-        private string nameField;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(listsCategory? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
 
-        public override string ToString()
+        public override bool Equals(object? obj) => Equals(obj as listsCategory);
+
+        public listsCategory Clone()
         {
-            return name;
+            return new listsCategory
+            {
+                name = name
+            };
         }
-        public override bool Equals(object obj) =>
-            obj is listsTag other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class listsUsage
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class listsTag : IEquatable<listsTag>, IDeepCloneable<listsTag>, INamedEntry
     {
-        private string nameField;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(listsTag? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
-        public override string ToString()
+
+        public override bool Equals(object? obj) => Equals(obj as listsTag);
+
+        public listsTag Clone()
         {
-            return name;
+            return new listsTag
+            {
+                name = name
+            };
         }
-        public override bool Equals(object obj) =>
-            obj is listsUsage other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class listsValue
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class listsUsage : IEquatable<listsUsage>, IDeepCloneable<listsUsage>, INamedEntry
     {
-        private string nameField;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(listsUsage? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            return string.Equals(name, other.name, StringComparison.Ordinal);
         }
 
-        public override string ToString()
+        public override bool Equals(object? obj) => Equals(obj as listsUsage);
+
+        public listsUsage Clone()
         {
-            return name;
+            return new listsUsage
+            {
+                name = name
+            };
         }
-        public override bool Equals(object obj) =>
-            obj is listsValue other && string.Equals(name, other.name, StringComparison.Ordinal);
     }
 
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class listsValue : IEquatable<listsValue>, IDeepCloneable<listsValue>, INamedEntry
+    {
+        [XmlAttribute]
+        public string? name { get; set; }
 
+        public override string ToString() => name ?? string.Empty;
 
+        public bool Equals(listsValue? other)
+        {
+            if (other is null) return false;
+            return string.Equals(name, other.name, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as listsValue);
+
+        public listsValue Clone()
+        {
+            return new listsValue
+            {
+                name = name
+            };
+        }
+    }
 }

@@ -4,395 +4,212 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Day2eEditor
 {
-    public class cfgeventgroupsConfig : IConfigLoader
+    public class cfgeventgroupsConfig : SingleFileConfigLoaderBase<eventgroupdef>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public eventgroupdef Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
+        public cfgeventgroupsConfig(string path) : base(path)
+        {
+        }
 
-        public cfgeventgroupsConfig(string path)
+        public override void Load()
         {
-            _path = path;
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<eventgroupdef>(
-               _path,
-               createNew: () => new eventgroupdef(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfgeventgroups"
-           );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<eventgroupdef>(
+                        _path,
+                        createNew: () => new eventgroupdef(),
+                        onError: ex => HandleLoadError(ex),
+                        configName: "eventgroupdef"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        protected override eventgroupdef CreateDefaultData()
+        {
+            return new eventgroupdef();
+        }
+
+        protected override void OnAfterLoad(eventgroupdef data)
+        {
+            // optional
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        public eventgroupdefGroup? getassociatedgroup(string name)
         {
-            return isDirty;
-        }
-        public eventgroupdefGroup getassociatedgroup(string name)
-        {
-            foreach (eventgroupdefGroup eventgroupdefGroup in Data.group)
-            {
-                if (eventgroupdefGroup.name == name)
-                    return eventgroupdefGroup;
-            }
-            return null;
+            return Data?.group?.FirstOrDefault(x => x.name == name);
         }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class eventgroupdef
+    [XmlRoot("eventgroupdef")]
+    public partial class eventgroupdef : IEquatable<eventgroupdef>, IDeepCloneable<eventgroupdef>
     {
-        private BindingList<eventgroupdefGroup> groupField;
+        [XmlElement("group")]
+        public BindingList<eventgroupdefGroup> group { get; set; } = new();
 
-        [System.Xml.Serialization.XmlElementAttribute("group")]
-        public BindingList<eventgroupdefGroup> group
+        public bool Equals(eventgroupdef? other)
         {
-            get
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return group.SequenceEqual(other.group);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as eventgroupdef);
+
+        public eventgroupdef Clone()
+        {
+            return new eventgroupdef
             {
-                return this.groupField;
-            }
-            set
-            {
-                this.groupField = value;
-            }
+                group = new BindingList<eventgroupdefGroup>(
+                    group.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventgroupdefGroup
+    public partial class eventgroupdefGroup : IEquatable<eventgroupdefGroup>, IDeepCloneable<eventgroupdefGroup>
     {
+        [XmlElement("child")]
+        public BindingList<eventgroupdefGroupChild> child { get; set; } = new();
 
-        private BindingList<eventgroupdefGroupChild> childField;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("child")]
-        public BindingList<eventgroupdefGroupChild> child
+        public bool Equals(eventgroupdefGroup? other)
         {
-            get
-            {
-                return this.childField;
-            }
-            set
-            {
-                this.childField = value;
-            }
+            if (other is null) return false;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   child.SequenceEqual(other.child);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as eventgroupdefGroup);
 
-
-        public override string ToString()
+        public eventgroupdefGroup Clone()
         {
-            return name;
+            return new eventgroupdefGroup
+            {
+                name = name,
+                child = new BindingList<eventgroupdefGroupChild>(
+                    child.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventgroupdefGroupChild
+    public partial class eventgroupdefGroupChild : IEquatable<eventgroupdefGroupChild>, IDeepCloneable<eventgroupdefGroupChild>
     {
+        [XmlAttribute] public string? type { get; set; }
 
-        private string typeField;
+        [XmlAttribute] public bool spawnsecondary { get; set; }
+        [XmlIgnore] public bool spawnsecondarySpecified { get; set; }
 
-        private bool spawnsecondaryField;
+        [XmlAttribute] public int deloot { get; set; }
+        [XmlIgnore] public bool delootSpecified { get; set; }
 
-        private bool spawnsecondaryFieldSpecified;
+        [XmlAttribute] public int lootmax { get; set; }
+        [XmlIgnore] public bool lootmaxSpecified { get; set; }
 
-        private int delootField;
+        [XmlAttribute] public int lootmin { get; set; }
+        [XmlIgnore] public bool lootminSpecified { get; set; }
 
-        private bool delootFieldSpecified;
+        [XmlAttribute] public decimal x { get; set; }
+        [XmlAttribute] public decimal z { get; set; }
+        [XmlAttribute] public decimal a { get; set; }
 
-        private int lootmaxField;
+        [XmlAttribute] public decimal y { get; set; }
+        [XmlIgnore] public bool ySpecified { get; set; }
 
-        private bool lootmaxFieldSpecified;
+        public override string ToString() => type ?? string.Empty;
 
-        private int lootminField;
-
-        private bool lootminFieldSpecified;
-
-        private decimal xField;
-
-        private decimal zField;
-
-        private decimal aField;
-
-        private bool yFieldSpecified;
-
-        private decimal yField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type
+        public bool Equals(eventgroupdefGroupChild? other)
         {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
+            if (other is null) return false;
+
+            return
+                type == other.type &&
+                spawnsecondary == other.spawnsecondary &&
+                spawnsecondarySpecified == other.spawnsecondarySpecified &&
+                deloot == other.deloot &&
+                delootSpecified == other.delootSpecified &&
+                lootmax == other.lootmax &&
+                lootmaxSpecified == other.lootmaxSpecified &&
+                lootmin == other.lootmin &&
+                lootminSpecified == other.lootminSpecified &&
+                x == other.x &&
+                y == other.y &&
+                ySpecified == other.ySpecified &&
+                z == other.z &&
+                a == other.a;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public bool spawnsecondary
-        {
-            get
-            {
-                return this.spawnsecondaryField;
-            }
-            set
-            {
-                this.spawnsecondaryField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as eventgroupdefGroupChild);
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool spawnsecondarySpecified
+        public eventgroupdefGroupChild Clone()
         {
-            get
+            return new eventgroupdefGroupChild
             {
-                return this.spawnsecondaryFieldSpecified;
-            }
-            set
-            {
-                this.spawnsecondaryFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int deloot
-        {
-            get
-            {
-                return this.delootField;
-            }
-            set
-            {
-                this.delootField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool delootSpecified
-        {
-            get
-            {
-                return this.delootFieldSpecified;
-            }
-            set
-            {
-                this.delootFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int lootmax
-        {
-            get
-            {
-                return this.lootmaxField;
-            }
-            set
-            {
-                this.lootmaxField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lootmaxSpecified
-        {
-            get
-            {
-                return this.lootmaxFieldSpecified;
-            }
-            set
-            {
-                this.lootmaxFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int lootmin
-        {
-            get
-            {
-                return this.lootminField;
-            }
-            set
-            {
-                this.lootminField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lootminSpecified
-        {
-            get
-            {
-                return this.lootminFieldSpecified;
-            }
-            set
-            {
-                this.lootminFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal x
-        {
-            get
-            {
-                return this.xField;
-            }
-            set
-            {
-                this.xField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal z
-        {
-            get
-            {
-                return this.zField;
-            }
-            set
-            {
-                this.zField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal a
-        {
-            get
-            {
-                return this.aField;
-            }
-            set
-            {
-                this.aField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ySpecified
-        {
-            get
-            {
-                return this.yFieldSpecified;
-            }
-            set
-            {
-                this.yFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal y
-        {
-            get
-            {
-                return this.yField;
-            }
-            set
-            {
-                this.yField = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return type;
-        }
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (obj is not eventgroupdefGroupChild other)
-                return false;
-
-            return this.type == other.type
-                   && this.spawnsecondary == other.spawnsecondary
-                   && this.spawnsecondarySpecified == other.spawnsecondarySpecified
-                   && this.deloot == other.deloot
-                   && this.delootSpecified == other.delootSpecified
-                   && this.lootmax == other.lootmax
-                   && this.lootmaxSpecified == other.lootmaxSpecified
-                   && this.lootmin == other.lootmin
-                   && this.lootminSpecified == other.lootminSpecified
-                   && this.x == other.x
-                   && this.y == other.y
-                   && this.yFieldSpecified == other.yFieldSpecified
-                   && this.z == other.z
-                   && this.a == other.a;
+                type = type,
+                spawnsecondary = spawnsecondary,
+                spawnsecondarySpecified = spawnsecondarySpecified,
+                deloot = deloot,
+                delootSpecified = delootSpecified,
+                lootmax = lootmax,
+                lootmaxSpecified = lootmaxSpecified,
+                lootmin = lootmin,
+                lootminSpecified = lootminSpecified,
+                x = x,
+                y = y,
+                ySpecified = ySpecified,
+                z = z,
+                a = a
+            };
         }
     }
 }

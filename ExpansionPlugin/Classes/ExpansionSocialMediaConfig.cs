@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionSocialMediaConfig : ExpansionBaseIConfigLoader<ExpansionSocialMediaSettings>
+    public class ExpansionSocialMediaConfig : SingleFileConfigLoaderBase<ExpansionSocialMediaSettings>
     {
         public const int CurrentVersion = 2;
 
@@ -35,7 +35,7 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public string Filename { get; set; }
         [JsonIgnore]
-        public bool isDirty { get; set; }
+        public bool IsDirty { get; set; }
 
         public ExpansionSocialMediaSettings()
         {

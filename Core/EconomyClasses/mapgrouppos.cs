@@ -1,160 +1,176 @@
-﻿using Day2eEditor;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class mapgroupposConfig : IConfigLoader
+    public class mapgroupposConfig : SingleFileConfigLoaderBase<map>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public map Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        public mapgroupposConfig(string path)
+        public mapgroupposConfig(string path) : base(path)
         {
-            _path = path;
         }
 
-        public void Load()
+        public override void Load()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<map>(
-                _path,
-                createNew: () => new map(),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "mapgrouppos"
-            );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<map>(
+                        _path,
+                        createNew: () => new map(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "mapgrouppos"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override map CreateDefaultData()
         {
-            return isDirty;
+            return new map();
+        }
+
+        protected override void OnAfterLoad(map data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            var seenNames = new HashSet<string>(StringComparer.Ordinal);
+
+            for (int i = 0; i < Data.group.Count; i++)
+            {
+                var entry = Data.group[i];
+
+                if (string.IsNullOrWhiteSpace(entry.name))
+                {
+                    yield return $"group[{i}] has a missing or empty name.";
+                }
+                if (string.IsNullOrWhiteSpace(entry.pos))
+                    yield return $"group[{i}] has a missing or empty pos.";
+
+                if (string.IsNullOrWhiteSpace(entry.rpy))
+                    yield return $"group[{i}] has a missing or empty rpy.";
+            }
         }
     }
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class map
-    {
-        private BindingList<mapGroup> groupField;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("group")]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class map : IEquatable<map>, IDeepCloneable<map>
+    {
+        private BindingList<mapGroup>? _group;
+
+        [XmlElement("group")]
         public BindingList<mapGroup> group
         {
-            get
+            get => _group ??= new BindingList<mapGroup>();
+            set => _group = value;
+        }
+
+        public bool Equals(map? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return group.SequenceEqual(other.group);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as map);
+
+        public map Clone()
+        {
+            return new map
             {
-                return this.groupField;
-            }
-            set
-            {
-                this.groupField = value;
-            }
+                group = new BindingList<mapGroup>(group.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class mapGroup
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class mapGroup : IEquatable<mapGroup>, IDeepCloneable<mapGroup>
     {
-        private string nameField;
-        private string posField;
-        private string rpyField;
-        private float aField;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [XmlAttribute]
+        public string? pos { get; set; }
+
+        [XmlAttribute]
+        public string? rpy { get; set; }
+
+        [XmlAttribute]
+        public float a { get; set; }
+
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(mapGroup? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   string.Equals(pos, other.pos, StringComparison.Ordinal) &&
+                   string.Equals(rpy, other.rpy, StringComparison.Ordinal) &&
+                   a == other.a;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string pos
-        {
-            get
-            {
-                return this.posField;
-            }
-            set
-            {
-                this.posField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as mapGroup);
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string rpy
+        public mapGroup Clone()
         {
-            get
+            return new mapGroup
             {
-                return this.rpyField;
-            }
-            set
-            {
-                this.rpyField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public float a
-        {
-            get
-            {
-                return this.aField;
-            }
-            set
-            {
-                this.aField = value;
-            }
-        }
-        public override string ToString()
-        {
-            return name;
+                name = name,
+                pos = pos,
+                rpy = rpy,
+                a = a
+            };
         }
     }
 }

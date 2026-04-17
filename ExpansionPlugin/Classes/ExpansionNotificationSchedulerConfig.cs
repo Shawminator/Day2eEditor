@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionNotificationSchedulerConfig : ExpansionBaseIConfigLoader<ExpansionNotificationSchedulerSettings>
+    public class ExpansionNotificationSchedulerConfig : SingleFileConfigLoaderBase<ExpansionNotificationSchedulerSettings>
     {
         public const int CurrentVersion = 2;
         public ExpansionNotificationSchedulerConfig(string path) : base(path)

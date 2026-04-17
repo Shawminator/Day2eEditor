@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPlayerListConfig: ExpansionBaseIConfigLoader<ExpansionPlayerListSettings>
+    public class ExpansionPlayerListConfig: SingleFileConfigLoaderBase<ExpansionPlayerListSettings>
     {
         public const int CurrentVersion = 0;
         public ExpansionPlayerListConfig(string path) : base(path)

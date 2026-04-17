@@ -89,7 +89,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
+                parent.IsDirty = !_data.Equals(_originalData);
             }
         }
 
@@ -159,6 +159,7 @@ namespace EconomyPlugin
                 _data.ySpecified = false;
             }
             HasChanges();
+            UpdateTreeNodeText();
         }
 
         private void EventSpawnPosYNUD_ValueChanged(object sender, EventArgs e)
@@ -184,6 +185,7 @@ namespace EconomyPlugin
                 _data.aSpecified = false;
             }
             HasChanges();
+            UpdateTreeNodeText();
         }
 
         private void EventSpawnPosANUD_ValueChanged(object sender, EventArgs e)
@@ -208,6 +210,12 @@ namespace EconomyPlugin
             _suppressEvents = false;
             _data.a = EventSpawnPosANUD.Value;
             HasChanges();
+            UpdateTreeNodeText();
+        }
+
+        private void label116_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

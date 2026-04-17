@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMarketSettingsConfig : ExpansionBaseIConfigLoader<ExpansionMarketSettings>
+    public class ExpansionMarketSettingsConfig : SingleFileConfigLoaderBase<ExpansionMarketSettings>
     {
         public const int CurrentVersion = 17;
   

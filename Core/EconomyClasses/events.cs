@@ -1,241 +1,401 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class eventsConfig : IAdvancedConfigLoader
+    public class EventsConfig : ParameterizedMultiFileConfigLoaderBase<EventsFile>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        public string _basepath { get; set; }
-        public List<EventsFile> AllData { get; private set; } = new List<EventsFile>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
+        public EventsConfig(string path) : base(path)
         {
-            _basepath = basePath;
-            HasErrors = false;
-            Errors.Clear();
-            // Load vanilla file
-            var vanilla = new EventsFile(vanillaPath)
-            {
-                IsModded = false,
-                FileType = "events"
-            };
+        }
 
-            vanilla.Load();
-            AllData.Add(vanilla);
+        protected override void LoadCore()
+        {
+            ResetState();
 
-            if (vanilla.HasErrors)
+            if (string.IsNullOrWhiteSpace(VanillaPath))
             {
                 HasErrors = true;
-                var fileName = Path.GetFileName(vanilla.FilePath);
-                Errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
+                _errors.Add("Vanilla path is missing.");
+                return;
             }
 
-            // Load mod files
-            foreach (var modPath in modPaths)
+            try
             {
-                var modFile = new EventsFile(modPath)
+                var vanilla = LoadItem(VanillaPath);
+                vanilla.IsModded = false;
+                vanilla.FileType = "events";
+
+                OnAfterItemLoad(vanilla, VanillaPath);
+                _clonedItems[GetID(vanilla)] = vanilla.Clone();
+
+                var vanillaIssues = ValidateItem(vanilla);
+                if (vanillaIssues?.Any() == true)
                 {
-                    IsModded = true,
-                    FileType = "events",
-                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
-                };
+                    Console.WriteLine("Validation issues in " + vanilla.FileName + ":");
+                    foreach (var msg in vanillaIssues)
+                        Console.WriteLine("- " + msg);
+                }
 
-                modFile.Load();
-                AllData.Add(modFile);
+                MutableItems.Add(vanilla);
 
-                if (modFile.HasErrors)
+                if (vanilla.HasErrors)
                 {
                     HasErrors = true;
-                    var modName = Path.GetFileName(modFile.ModFolder);
-                    var fileName = Path.GetFileName(modFile.FilePath);
-                    Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    var fileName = Path.GetFileName(vanilla.FilePath);
+                    _errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
                 }
             }
-        }
-        public IEnumerable<string> Save()
-        {
-            var savedFiles = new List<string>();
-
-            foreach (var data in AllData.ToList())
+            catch (Exception ex)
             {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+                HasErrors = true;
+                HandleItemError(VanillaPath, ex);
+            }
 
-                if (data.ToDelete)
+            foreach (var file in ModPaths)
+            {
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(file);
+                    item.IsModded = true;
+                    item.FileType = "events";
+                    item.ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(file) ?? BasePath);
+
+                    OnAfterItemLoad(item, file);
+                    _clonedItems[GetID(item)] = item.Clone();
+
+                    var issues = ValidateItem(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + item.FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+
+                    MutableItems.Add(item);
+
+                    if (item.HasErrors)
+                    {
+                        HasErrors = true;
+                        var modName = Path.GetFileName(item.ModFolder);
+                        var fileName = Path.GetFileName(item.FilePath);
+                        _errors.AddRange(item.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
         }
-        public bool needToSave()
+
+        protected override EventsFile LoadItem(string filePath)
         {
-            foreach (var Data in AllData)
+            var item = new EventsFile(filePath);
+            var loadFailed = false;
+
+            item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
+                filePath,
+                createNew: () => new events
+                {
+                    @event = new BindingList<eventsEvent>()
+                },
+                onError: ex =>
+                {
+                    loadFailed = true;
+                    item.HasErrors = true;
+
+                    var message =
+                        $"Error in {Path.GetFileName(filePath)}\n{ex.Message}\n{ex.InnerException?.Message}";
+
+                    Console.WriteLine(message + "\n");
+                    item.Errors.Add(message);
+                },
+                configName: "Events"
+            );
+
+            item.Data.@event ??= new BindingList<eventsEvent>();
+            item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
+
+            if (!loadFailed)
             {
-                if (Data.needToSave())
+                ValidateLoadedEvents(item, item.Data);
+            }
+
+            return item;
+        }
+
+        protected override IEnumerable<string> ValidateItem(EventsFile item)
+        {
+            return item.Errors;
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
+            {
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
+                }
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+
+                if (!item.Equals(baseline))
+                {
+                    var oldPath = baseline.FilePath;
+
+                    SaveItem(item);
+
+                    if (!string.Equals(oldPath, item.FilePath, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(oldPath) &&
+                        File.Exists(oldPath))
+                    {
+                        File.Delete(oldPath);
+                    }
+
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
+            }
+            return saved;
+        }
+
+        public override bool NeedToSave()
+        {
+            foreach (var item in Items)
+            {
+                var id = GetID(item);
+
+                if (ShouldDelete(item))
+                    return true;
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                    return true;
+
+                if (!item.Equals(baseline))
                     return true;
             }
+
             return false;
         }
-    }
-    public class EventsFile : IConfigLoader
-    {
-        private readonly string _path;
 
-        public events Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        // Metadata for file type and source
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;                  // Full file path
-        public string FileType { get; set; }               // "types"
-        public bool IsModded { get; set; }                 // true if modded, false if vanilla
-        public string ModFolder { get; set; }
-        public bool ToDelete { get; set; }
-
-        public EventsFile(string path)
+        protected override void SaveItem(EventsFile item)
         {
-            _path = path;
+            AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
+            item.IsDirty = false;
         }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<events>(
-               _path,
-               createNew: () => new events(),
-               onAfterLoad: cfg =>
-               {
-                   CheckValuesAfterLoad(cfg);
-                   if (HasErrors)
-                   {
-                       throw new Exception("Validation failed.");
-                   }
-               },
-               onError: ex =>
-               {
-                   HasErrors = true;
 
-                   if (ex.Message == "Validation failed.")
-                   {
-                       Console.WriteLine("Validation errors found:\n" + string.Join("\n", Errors));
-                   }
-                   else
-                   {
-                       var message = "Error in " + Path.GetFileName(_path) + "\n" +
-                                     ex.Message + "\n" +
-                                     ex.InnerException?.Message;
+        protected override string GetItemFileName(EventsFile item)
+            => item.FileName;
 
-                       Console.WriteLine(message + "\n");
-                       Errors.Add(message);
-                   }
-               },
-               configName: "Events"
-            );
-        }
-        public IEnumerable<string> Save()
+        protected override Guid GetID(EventsFile item)
+            => item.Id;
+
+        protected override bool ShouldDelete(EventsFile item)
+            => item.ToDelete;
+
+        protected override void DeleteItemFile(EventsFile item)
         {
-            if (ToDelete)
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
             {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
-            }
-
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
-        }
-        public bool needToSave()
-        {
-            return isDirty;
-        }
-        private void CheckValuesAfterLoad(events cfg)
-        {
-            foreach (var type in cfg.@event)
-            {
-                // Recursively check each property in the type
-                CheckPropertiesRecursively(type, (type as eventsEvent)?.name ?? "UnknownEntry");
+                File.Delete(item.FilePath);
             }
         }
-        private void CheckPropertiesRecursively(object obj, string topTypeName)
+
+        protected override void HandleItemError(string path, Exception ex)
+        {
+            var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
+            _errors.Add(msg);
+            Console.WriteLine(msg);
+        }
+
+        private void ValidateLoadedEvents(EventsFile owner, events cfg)
+        {
+            cfg.@event ??= new BindingList<eventsEvent>();
+
+            foreach (var ev in cfg.@event)
+            {
+                CheckPropertiesRecursively(owner, ev, ev?.name ?? "UnknownEntry");
+            }
+        }
+
+        private void CheckPropertiesRecursively(EventsFile owner, object obj, string topTypeName)
         {
             if (obj == null)
                 return;
 
-            Type objType = obj.GetType();
+            var objType = obj.GetType();
 
             foreach (var property in objType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                object propertyValue = property.GetValue(obj);
+                var propertyValue = property.GetValue(obj);
 
-                // Skip nulls
                 if (propertyValue == null)
                     continue;
 
-                // Handle collections like BindingList<T>, List<T>, etc.
                 if (typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType)
                     && property.PropertyType != typeof(string))
                 {
                     foreach (var item in (System.Collections.IEnumerable)propertyValue)
                     {
-                        CheckPropertiesRecursively(item, topTypeName); // Recursively check each item
+                        if (item != null)
+                            CheckPropertiesRecursively(owner, item, topTypeName);
                     }
-                    continue; // skip rest of logic for collections
-                }
-
-                // Handle nested complex types (but not strings or value types)
-                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                {
-                    CheckPropertiesRecursively(propertyValue, topTypeName); // Recursive for objects
                     continue;
                 }
 
-                // Handle Specified logic
+                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                {
+                    CheckPropertiesRecursively(owner, propertyValue, topTypeName);
+                    continue;
+                }
+
                 var specifiedProperty = objType.GetProperty(property.Name + "Specified");
                 if (specifiedProperty != null && specifiedProperty.PropertyType == typeof(bool))
                 {
-                    bool isSpecified = (bool)specifiedProperty.GetValue(obj);
+                    var isSpecified = (bool)specifiedProperty.GetValue(obj)!;
 
                     if (isSpecified)
                     {
                         if (propertyValue == null)
                         {
-                            HasErrors = true;
-                            Errors.Add($"[{topTypeName}] → '{objType.Name}.{property.Name}' is null but marked as specified.");
+                            owner.HasErrors = true;
+                            owner.Errors.Add(
+                                $"[{topTypeName}] → '{objType.Name}.{property.Name}' is null but marked as specified.");
                         }
                         else if (propertyValue is string str && string.IsNullOrWhiteSpace(str))
                         {
-                            HasErrors = true;
-                            Errors.Add($"[{topTypeName}] → '{objType.Name}.{property.Name}' is an empty string but marked as specified.");
+                            owner.HasErrors = true;
+                            owner.Errors.Add(
+                                $"[{topTypeName}] → '{objType.Name}.{property.Name}' is an empty string but marked as specified.");
                         }
                     }
                 }
             }
         }
 
-        public void CreateNew()
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
         {
-            Data = new events()
+            var removedFolders = new List<string>();
+
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c =>
+                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
             {
-                @event = new BindingList<eventsEvent>()
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    var relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
+    }
+    public class EventsFile : IDeepCloneable<EventsFile>, IEquatable<EventsFile>
+    {
+        private string _path;
+
+        public string FilePath => _path;
+        public string FileName => Path.GetFileName(_path);
+
+        public bool ToDelete { get; set; }
+        public bool IsDirty { get; set; }
+        public bool HasErrors { get; set; }
+
+        public List<string> Errors { get; } = new();
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string FileType { get; set; } = string.Empty;
+        public bool IsModded { get; set; }
+        public string ModFolder { get; set; } = string.Empty;
+
+        public events Data { get; set; } = new()
+        {
+            @event = new BindingList<eventsEvent>()
+        };
+
+        public EventsFile(string path)
+        {
+            _path = path;
+        }
+
+        public void SetPath(string path) => _path = path;
+
+        internal void SetGuid(Guid guid) => Id = guid;
+
+        public EventsFile Clone()
+        {
+            var clone = new EventsFile(_path)
+            {
+                ToDelete = ToDelete,
+                IsDirty = IsDirty,
+                HasErrors = HasErrors,
+                Id = Id,
+                FileType = FileType,
+                IsModded = IsModded,
+                ModFolder = ModFolder,
+                Data = Data?.Clone() ?? new events
+                {
+                    @event = new BindingList<eventsEvent>()
+                }
             };
+
+            clone.Errors.AddRange(Errors);
+            return clone;
+        }
+
+        public bool Equals(EventsFile? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Id == other.Id &&
+                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(FileType, other.FileType, StringComparison.Ordinal) &&
+                IsModded == other.IsModded &&
+                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
+                ToDelete == other.ToDelete &&
+                Equals(Data, other.Data);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as EventsFile);
         }
     }
     #region Events
@@ -261,48 +421,84 @@ namespace Day2eEditor
     };
 
 
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class events
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class events : IDeepCloneable<events>, IEquatable<events>
     {
+        private BindingList<eventsEvent>? eventField = new();
 
-        private BindingList<eventsEvent> eventField;
+        [XmlElement("event")]
+        public BindingList<eventsEvent>? @event
+        {
+            get => eventField;
+            set => eventField = value;
+        }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("event")]
-        public BindingList<eventsEvent> @event
+        public void AddNewEvent(eventsEvent newEvent)
         {
-            get
-            {
-                return this.eventField;
-            }
-            set
-            {
-                this.eventField = value;
-            }
+            @event ??= new BindingList<eventsEvent>();
+            @event.Add(newEvent);
         }
-        public void AddnewEvent(eventsEvent neweventEvent)
-        {
-            @event.Add(neweventEvent);
-        }
+
         public void RemoveEvent(eventsEvent currentEvent)
         {
-            @event.Remove(currentEvent);
+            @event?.Remove(currentEvent);
         }
+
+        public bool Equals(events? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return ListsEqual(@event, other.@event);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as events);
+        }
+
+        public events Clone()
+        {
+            return new events
+            {
+                @event = new BindingList<eventsEvent>(
+                    @event?.Select(x => x.Clone()).ToList() ?? new List<eventsEvent>())
+            };
+        }
+
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventsEvent : IEquatable<eventsEvent>
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class eventsEvent : IDeepCloneable<eventsEvent>, IEquatable<eventsEvent>
     {
-        public override bool Equals(object obj) => Equals(obj as eventsEvent);
-
         private int nominalField;
         private int minField;
         private int maxField;
@@ -311,220 +507,133 @@ namespace Day2eEditor
         private int saferadiusField;
         private int distanceradiusField;
         private int cleanupradiusField;
-        private string secondaryField;
-        private eventsEventFlags flagsField;
+        private string? secondaryField;
+        private eventsEventFlags? flagsField;
         private position positionField;
         private limit limitField;
         private int activeField;
-        private BindingList<eventsEventChild> childrenField;
-        private string nameField;
+        private BindingList<eventsEventChild>? childrenField = new();
+        private string? nameField;
 
-        /// <remarks/>
         public int nominal
         {
-            get
-            {
-                return this.nominalField;
-            }
-            set
-            {
-                this.nominalField = value;
-            }
-        }
-        /// <remarks/>
-        public int min
-        {
-            get
-            {
-                return this.minField;
-            }
-            set
-            {
-                this.minField = value;
-            }
-        }
-        /// <remarks/>
-        public int max
-        {
-            get
-            {
-                return this.maxField;
-            }
-            set
-            {
-                this.maxField = value;
-            }
-        }
-        /// <remarks/>
-        public int lifetime
-        {
-            get
-            {
-                return this.lifetimeField;
-            }
-            set
-            {
-                this.lifetimeField = value;
-            }
-        }
-        /// <remarks/>
-        public int restock
-        {
-            get
-            {
-                return this.restockField;
-            }
-            set
-            {
-                this.restockField = value;
-            }
-        }
-        /// <remarks/>
-        public int saferadius
-        {
-            get
-            {
-                return this.saferadiusField;
-            }
-            set
-            {
-                this.saferadiusField = value;
-            }
-        }
-        /// <remarks/>
-        public int distanceradius
-        {
-            get
-            {
-                return this.distanceradiusField;
-            }
-            set
-            {
-                this.distanceradiusField = value;
-            }
-        }
-        /// <remarks/>
-        public int cleanupradius
-        {
-            get
-            {
-                return this.cleanupradiusField;
-            }
-            set
-            {
-                this.cleanupradiusField = value;
-            }
-        }
-        /// <remarks/>
-        public string secondary
-        {
-            get
-            {
-                return this.secondaryField;
-            }
-            set
-            {
-                this.secondaryField = value;
-            }
-        }
-        /// <remarks/>
-        public eventsEventFlags flags
-        {
-            get
-            {
-                return this.flagsField;
-            }
-            set
-            {
-                this.flagsField = value;
-            }
-        }
-        /// <remarks/>
-        public position position
-        {
-            get
-            {
-                return this.positionField;
-            }
-            set
-            {
-                this.positionField = value;
-            }
-        }
-        /// <remarks/>
-        public limit limit
-        {
-            get
-            {
-                return this.limitField;
-            }
-            set
-            {
-                this.limitField = value;
-            }
-        }
-        /// <remarks/>
-        public int active
-        {
-            get
-            {
-                return this.activeField;
-            }
-            set
-            {
-                this.activeField = value;
-            }
-        }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("child", IsNullable = false)]
-        public BindingList<eventsEventChild> children
-        {
-            get
-            {
-                return this.childrenField;
-            }
-            set
-            {
-                this.childrenField = value;
-            }
+            get => nominalField;
+            set => nominalField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public int min
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get => minField;
+            set => minField = value;
         }
+
+        public int max
+        {
+            get => maxField;
+            set => maxField = value;
+        }
+
+        public int lifetime
+        {
+            get => lifetimeField;
+            set => lifetimeField = value;
+        }
+
+        public int restock
+        {
+            get => restockField;
+            set => restockField = value;
+        }
+
+        public int saferadius
+        {
+            get => saferadiusField;
+            set => saferadiusField = value;
+        }
+
+        public int distanceradius
+        {
+            get => distanceradiusField;
+            set => distanceradiusField = value;
+        }
+
+        public int cleanupradius
+        {
+            get => cleanupradiusField;
+            set => cleanupradiusField = value;
+        }
+
+        public string? secondary
+        {
+            get => secondaryField;
+            set => secondaryField = value;
+        }
+
+        public eventsEventFlags? flags
+        {
+            get => flagsField;
+            set => flagsField = value;
+        }
+
+        public position position
+        {
+            get => positionField;
+            set => positionField = value;
+        }
+
+        public limit limit
+        {
+            get => limitField;
+            set => limitField = value;
+        }
+
+        public int active
+        {
+            get => activeField;
+            set => activeField = value;
+        }
+
+        [XmlArrayItem("child", IsNullable = false)]
+        public BindingList<eventsEventChild>? children
+        {
+            get => childrenField;
+            set => childrenField = value;
+        }
+
+        [XmlAttribute]
+        public string? name
+        {
+            get => nameField;
+            set => nameField = value;
+        }
+
         public void SetIntValue(string mytype, int myvalue)
         {
-            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+            GetType().GetProperty(mytype)?.SetValue(this, myvalue, null);
         }
+
         public override string ToString()
         {
-            return name;
+            return name ?? string.Empty;
         }
-        public void Addnechild(eventsEventChild neweventeventschild)
+
+        public void AddNewChild(eventsEventChild newChild)
         {
-            children.Add(neweventeventschild);
+            children ??= new BindingList<eventsEventChild>();
+            children.Add(newChild);
         }
-        public void Removechild(eventsEventChild currentChild)
+
+        public void RemoveChild(eventsEventChild currentChild)
         {
-            children.Remove(currentChild);
+            children?.Remove(currentChild);
         }
-        public bool Equals(eventsEvent other)
+
+        public bool Equals(eventsEvent? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            // Compare simple fields
-            bool basicEqual =
+            return
                 nominal == other.nominal &&
                 min == other.min &&
                 max == other.max &&
@@ -533,125 +642,95 @@ namespace Day2eEditor
                 saferadius == other.saferadius &&
                 distanceradius == other.distanceradius &&
                 cleanupradius == other.cleanupradius &&
-                secondary == other.secondary &&
-                active == other.active &&
-                name == other.name &&
+                string.Equals(secondary, other.secondary, StringComparison.Ordinal) &&
+                Equals(flags, other.flags) &&
                 position == other.position &&
-                limit == other.limit;
+                limit == other.limit &&
+                active == other.active &&
+                ListsEqual(children, other.children) &&
+                string.Equals(name, other.name, StringComparison.Ordinal);
+        }
 
-            if (!basicEqual) return false;
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as eventsEvent);
+        }
 
-            // Compare flags
-            if ((flags is null) != (other.flags is null)) return false;
-            if (flags != null)
+        public eventsEvent Clone()
+        {
+            return new eventsEvent
             {
-                if (flags.deletable != other.flags.deletable ||
-                    flags.init_random != other.flags.init_random ||
-                    flags.remove_damaged != other.flags.remove_damaged)
+                nominal = nominal,
+                min = min,
+                max = max,
+                lifetime = lifetime,
+                restock = restock,
+                saferadius = saferadius,
+                distanceradius = distanceradius,
+                cleanupradius = cleanupradius,
+                secondary = secondary,
+                flags = flags?.Clone(),
+                position = position,
+                limit = limit,
+                active = active,
+                children = new BindingList<eventsEventChild>(
+                    children?.Select(x => x.Clone()).ToList() ?? new List<eventsEventChild>()),
+                name = name
+            };
+        }
+
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
                     return false;
-            }
-
-            // Compare children
-            if ((children is null) != (other.children is null)) return false;
-            if (children != null)
-            {
-                if (children.Count != other.children.Count) return false;
-                for (int i = 0; i < children.Count; i++)
-                {
-                    if (!children[i].Equals(other.children[i]))
-                        return false;
-                }
             }
 
             return true;
         }
-        public override int GetHashCode()
-        {
-            var hash = new HashCode();
-            hash.Add(nominal);
-            hash.Add(min);
-            hash.Add(max);
-            hash.Add(lifetime);
-            hash.Add(restock);
-            hash.Add(saferadius);
-            hash.Add(distanceradius);
-            hash.Add(cleanupradius);
-            hash.Add(secondary);
-            hash.Add(active);
-            hash.Add(name);
-            hash.Add(position);
-            hash.Add(limit);
-
-            if (flags != null)
-            {
-                hash.Add(flags.deletable);
-                hash.Add(flags.init_random);
-                hash.Add(flags.remove_damaged);
-            }
-
-            if (children != null)
-            {
-                foreach (var child in children)
-                    hash.Add(child);
-            }
-
-            return hash.ToHashCode();
-        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventsEventFlags : IEquatable<eventsEventFlags>
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class eventsEventFlags : IDeepCloneable<eventsEventFlags>, IEquatable<eventsEventFlags>
     {
-        public override bool Equals(object obj) => Equals(obj as eventsEventFlags);
-
         private int deletableField;
         private int init_randomField;
         private int remove_damagedField;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int deletable
         {
-            get
-            {
-                return this.deletableField;
-            }
-            set
-            {
-                this.deletableField = value;
-            }
-        }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int init_random
-        {
-            get
-            {
-                return this.init_randomField;
-            }
-            set
-            {
-                this.init_randomField = value;
-            }
-        }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int remove_damaged
-        {
-            get
-            {
-                return this.remove_damagedField;
-            }
-            set
-            {
-                this.remove_damagedField = value;
-            }
+            get => deletableField;
+            set => deletableField = value;
         }
 
-        public bool Equals(eventsEventFlags other)
+        [XmlAttribute]
+        public int init_random
+        {
+            get => init_randomField;
+            set => init_randomField = value;
+        }
+
+        [XmlAttribute]
+        public int remove_damaged
+        {
+            get => remove_damagedField;
+            set => remove_damagedField = value;
+        }
+
+        public bool Equals(eventsEventFlags? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -661,104 +740,80 @@ namespace Day2eEditor
                    remove_damaged == other.remove_damaged;
         }
 
-        public override int GetHashCode()
+        public override bool Equals(object? obj)
         {
-            var hash = new HashCode();
-            hash.Add(deletable);
-            hash.Add(init_random);
-            hash.Add(remove_damaged);
-            return hash.ToHashCode();
+            return Equals(obj as eventsEventFlags);
+        }
+
+        public eventsEventFlags Clone()
+        {
+            return new eventsEventFlags
+            {
+                deletable = deletable,
+                init_random = init_random,
+                remove_damaged = remove_damaged
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventsEventChild : IEquatable<eventsEventChild>
-    {
-        public override bool Equals(object obj) => Equals(obj as eventsEventChild);
 
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class eventsEventChild : IDeepCloneable<eventsEventChild>, IEquatable<eventsEventChild>
+    {
         private int lootmaxField;
         private int lootminField;
         private int maxField;
         private int minField;
-        private string typeField;
+        private string? typeField;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int lootmax
         {
-            get
-            {
-                return this.lootmaxField;
-            }
-            set
-            {
-                this.lootmaxField = value;
-            }
+            get => lootmaxField;
+            set => lootmaxField = value;
         }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+
+        [XmlAttribute]
         public int lootmin
         {
-            get
-            {
-                return this.lootminField;
-            }
-            set
-            {
-                this.lootminField = value;
-            }
+            get => lootminField;
+            set => lootminField = value;
         }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+
+        [XmlAttribute]
         public int max
         {
-            get
-            {
-                return this.maxField;
-            }
-            set
-            {
-                this.maxField = value;
-            }
+            get => maxField;
+            set => maxField = value;
         }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+
+        [XmlAttribute]
         public int min
         {
-            get
-            {
-                return this.minField;
-            }
-            set
-            {
-                this.minField = value;
-            }
+            get => minField;
+            set => minField = value;
         }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type
+
+        [XmlAttribute]
+        public string? type
         {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
+            get => typeField;
+            set => typeField = value;
         }
+
         public void SetIntValue(string mytype, int myvalue)
         {
-            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+            GetType().GetProperty(mytype)?.SetValue(this, myvalue, null);
         }
+
         public override string ToString()
         {
-            return type;
+            return type ?? string.Empty;
         }
-        public bool Equals(eventsEventChild other)
+
+        public bool Equals(eventsEventChild? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -767,17 +822,24 @@ namespace Day2eEditor
                    lootmin == other.lootmin &&
                    max == other.max &&
                    min == other.min &&
-                   type == other.type;
+                   string.Equals(type, other.type, StringComparison.Ordinal);
         }
-        public override int GetHashCode()
+
+        public override bool Equals(object? obj)
         {
-            var hash = new HashCode();
-            hash.Add(lootmax);
-            hash.Add(lootmin);
-            hash.Add(max);
-            hash.Add(min);
-            hash.Add(type);
-            return hash.ToHashCode();
+            return Equals(obj as eventsEventChild);
+        }
+
+        public eventsEventChild Clone()
+        {
+            return new eventsEventChild
+            {
+                lootmax = lootmax,
+                lootmin = lootmin,
+                max = max,
+                min = min,
+                type = type
+            };
         }
     }
     #endregion events

@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionP2PMarketConfig : ExpansionBaseIConfigLoader<ExpasnionP2PMarketSettings>
+    public class ExpansionP2PMarketConfig : SingleFileConfigLoaderBase<ExpasnionP2PMarketSettings>
     {
         public const int CurrentVersion = 3;
         public ExpansionP2PMarketConfig(string path) : base(path)

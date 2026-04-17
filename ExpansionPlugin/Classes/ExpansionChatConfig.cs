@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionChatConfig : ExpansionBaseIConfigLoader<ExpansionChatSettings>
+    public class ExpansionChatConfig : SingleFileConfigLoaderBase<ExpansionChatSettings>
     {
         public const int CurrentVersion = 4;
 

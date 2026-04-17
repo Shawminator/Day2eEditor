@@ -3,47 +3,36 @@ using System.Text.Json.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfgeffectareaConfig : IConfigLoader
+    public class CfgeffectareaConfig : SingleFileConfigLoaderBase<Cfgeffectarea>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public cfgeffectarea Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-        public cfgeffectareaConfig(string path)
+        public CfgeffectareaConfig(string path) : base(path)
         {
-            _path = path ?? throw new ArgumentNullException(nameof(path));
         }
-        public void Load()
+        protected override Cfgeffectarea CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateJson<cfgeffectarea>(
-                _path,
-                createNew: () => new cfgeffectarea(),
-                onError: ex => LogError("cfgeffectarea", ex),
-                configName: "cfgeffectarea",
-                useBoolConvertor: true
-            );
-            convertpositionstolist();
+            return new Cfgeffectarea();
         }
-        public IEnumerable<string> Save()
+        public override IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                convertlisttopositions();
+                ClearDirty();
+                ConvertListToPositions();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
-        public bool needToSave()
+        protected override IEnumerable<string> ValidateData()
         {
-            return isDirty;
+            return Data?.FixMissingOrInvalidFields() ?? Enumerable.Empty<string>();
         }
-        public void convertpositionstolist()
+        public void ConvertPositionsToList()
         {
             if (Data.SafePositions != null)
             {
@@ -61,7 +50,7 @@ namespace Day2eEditor
                 Data.SafePositions = null;
             }
         }
-        public void convertlisttopositions()
+        public void ConvertListToPositions()
         {
             if (Data._positions != null)
             {
@@ -76,58 +65,243 @@ namespace Day2eEditor
                 Data.SafePositions = null;
             }
         }
-        private void LogError(string context, Exception ex)
+        protected override void OnAfterLoad(Cfgeffectarea data)
         {
-            HasErrors = true;
-            string message = $"Error in {context}\n{ex.Message}";
-            if (ex.InnerException != null)
-                message += $"\n{ex.InnerException.Message}";
-
-            Console.WriteLine(message);
-            Errors.Add(message);
+            ConvertPositionsToList();
         }
     }
-    public class cfgeffectarea
+    public class Cfgeffectarea : IEquatable<Cfgeffectarea>, IDeepCloneable<Cfgeffectarea>
     {
-        public BindingList<Areas> Areas { get; set; }
-        public BindingList<decimal[]> SafePositions { get; set; }
+        public BindingList<Areas> Areas { get; set; } = new();
+        public BindingList<decimal[]> SafePositions { get; set; } = new();
+
         [JsonIgnore]
-        public BindingList<cfgeffectareaSafePosition> _positions { get; set; }
-    }
-    public class cfgeffectareaSafePosition
-    {
-        public decimal X { get; set; }
-        public decimal Z { get; set; }
-        public string Name { get; set; }
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-    public class Areas
-    {
-        public string AreaName { get; set; }
-        public string Type { get; set; }
-        public string TriggerType { get; set; }
-        public Data Data { get; set; }
-        public PlayerData PlayerData { get; set; }
+        public BindingList<cfgeffectareaSafePosition> _positions { get; set; } = new();
 
-        public override string ToString()
+        internal IEnumerable<string> FixMissingOrInvalidFields()
         {
-            return AreaName;
+            var issues = new List<string>();
+
+            Areas ??= new BindingList<Areas>();
+            SafePositions ??= new BindingList<decimal[]>();
+            _positions ??= new BindingList<cfgeffectareaSafePosition>();
+
+            for (int i = 0; i < Areas.Count; i++)
+            {
+                var area = Areas[i];
+                if (area == null)
+                {
+                    issues.Add($"Areas[{i}] was null and could not be repaired.");
+                    continue;
+                }
+
+                area.Data ??= new Data();
+                area.PlayerData ??= new PlayerData();
+
+                if (string.IsNullOrWhiteSpace(area.AreaName))
+                    issues.Add($"Areas[{i}] is missing AreaName.");
+
+                if (area.Data.Pos == null || area.Data.Pos.Length != 3)
+                {
+                    area.Data.Pos = new decimal[] { 0m, 0m, 0m };
+                    issues.Add($"Areas[{i}] had missing/invalid Pos and was reset to [0,0,0].");
+                }
+            }
+
+            for (int i = SafePositions.Count - 1; i >= 0; i--)
+            {
+                var pos = SafePositions[i];
+                if (pos == null || pos.Length < 2)
+                {
+                    SafePositions.RemoveAt(i);
+                    issues.Add($"SafePositions[{i}] was invalid and was removed.");
+                }
+            }
+
+            return issues;
+        }
+
+        public bool Equals(Cfgeffectarea? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                AreasEqual(Areas, other.Areas) &&
+                PositionsEqual(_positions, other._positions);
         }
 
         public override bool Equals(object? obj)
         {
-            if (obj is not Areas other)
+            return Equals(obj as Cfgeffectarea);
+        }
+
+        public Cfgeffectarea Clone()
+        {
+            return new Cfgeffectarea
+            {
+                Areas = new BindingList<Areas>(Areas?.Select(x => x.Clone()).ToList() ?? new List<Areas>()),
+                SafePositions = new BindingList<decimal[]>(SafePositions?.Select(x => x?.ToArray() ?? Array.Empty<decimal>()).ToList()?? new List<decimal[]>()),
+                _positions = new BindingList<cfgeffectareaSafePosition>(_positions?.Select(x => x.Clone()).ToList() ?? new List<cfgeffectareaSafePosition>())
+            };
+        }
+
+        private static bool AreasEqual(IList<Areas>? a, IList<Areas>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (a is null || b is null)
+                return false;
+            if (a.Count != b.Count)
                 return false;
 
-            return AreaName == other.AreaName && Type == other.Type && TriggerType == other.TriggerType;
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool SafePositionsEqual(IList<decimal[]>? a, IList<decimal[]>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (a is null || b is null)
+                return false;
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                var left = a[i];
+                var right = b[i];
+
+                if (ReferenceEquals(left, right))
+                    continue;
+                if (left is null || right is null)
+                    return false;
+                if (!left.SequenceEqual(right))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool PositionsEqual(IList<cfgeffectareaSafePosition>? a, IList<cfgeffectareaSafePosition>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (a is null || b is null)
+                return false;
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
         }
     }
-    public class Data
+
+    public class cfgeffectareaSafePosition : IEquatable<cfgeffectareaSafePosition>, IDeepCloneable<cfgeffectareaSafePosition>
     {
-        public decimal[] Pos { get; set; }
+        public decimal X { get; set; }
+        public decimal Z { get; set; }
+        public string? Name { get; set; }
+
+        public override string ToString()
+        {
+            return Name ?? string.Empty;
+        }
+
+        public bool Equals(cfgeffectareaSafePosition? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                X == other.X &&
+                Z == other.Z &&
+                string.Equals(Name, other.Name, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as cfgeffectareaSafePosition);
+        }
+
+        public cfgeffectareaSafePosition Clone()
+        {
+            return new cfgeffectareaSafePosition
+            {
+                X = X,
+                Z = Z,
+                Name = Name
+            };
+        }
+    }
+
+    public class Areas : IEquatable<Areas>, IDeepCloneable<Areas>
+    {
+        public string? AreaName { get; set; }
+        public string? Type { get; set; }
+        public string? TriggerType { get; set; }
+        public Data? Data { get; set; }
+        public PlayerData? PlayerData { get; set; }
+
+        public override string ToString()
+        {
+            return AreaName ?? string.Empty;
+        }
+
+        public bool Equals(Areas? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                string.Equals(AreaName, other.AreaName, StringComparison.Ordinal) &&
+                string.Equals(Type, other.Type, StringComparison.Ordinal) &&
+                string.Equals(TriggerType, other.TriggerType, StringComparison.Ordinal) &&
+                Equals(Data, other.Data) &&
+                Equals(PlayerData, other.PlayerData);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Areas);
+        }
+
+        public Areas Clone()
+        {
+            return new Areas
+            {
+                AreaName = AreaName,
+                Type = Type,
+                TriggerType = TriggerType,
+                Data = Data?.Clone(),
+                PlayerData = PlayerData?.Clone()
+            };
+        }
+    }
+
+    public class Data : IEquatable<Data>, IDeepCloneable<Data>
+    {
+        public decimal[]? Pos { get; set; }
         public decimal Radius { get; set; }
         public decimal PosHeight { get; set; }
         public decimal NegHeight { get; set; }
@@ -138,25 +312,31 @@ namespace Day2eEditor
         public int? OuterOffset { get; set; }
         public int? VerticalLayers { get; set; }
         public int? VerticalOffset { get; set; }
-        public string ParticleName { get; set; }
+        public string? ParticleName { get; set; }
         public int? EffectInterval { get; set; }
         public int? EffectDuration { get; set; }
         public bool? EffectModifier { get; set; }
 
         public void SetIntValue(string mytype, int myvalue)
         {
-            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+            GetType().GetProperty(mytype)?.SetValue(this, myvalue, null);
         }
-        public void SetdecimalValue(string mytype, decimal myvalue)
+
+        public void SetDecimalValue(string mytype, decimal myvalue)
         {
-            GetType().GetProperty(mytype).SetValue(this, myvalue, null);
+            GetType().GetProperty(mytype)?.SetValue(this, myvalue, null);
         }
-        public override bool Equals(object obj)
+
+        public bool Equals(Data? other)
         {
-            if (obj is not Data other) return false;
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
 
             return
-                (Pos?.SequenceEqual(other.Pos) ?? other.Pos == null) &&
+                ((Pos?.SequenceEqual(other.Pos ?? Array.Empty<decimal>()) ?? other.Pos == null)) &&
                 Radius == other.Radius &&
                 PosHeight == other.PosHeight &&
                 NegHeight == other.NegHeight &&
@@ -167,11 +347,17 @@ namespace Day2eEditor
                 OuterOffset == other.OuterOffset &&
                 VerticalLayers == other.VerticalLayers &&
                 VerticalOffset == other.VerticalOffset &&
-                ParticleName == other.ParticleName &&
+                string.Equals(ParticleName, other.ParticleName, StringComparison.Ordinal) &&
                 EffectInterval == other.EffectInterval &&
                 EffectDuration == other.EffectDuration &&
                 EffectModifier == other.EffectModifier;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Data);
+        }
+
         public Data Clone()
         {
             return new Data
@@ -194,19 +380,32 @@ namespace Day2eEditor
             };
         }
     }
-    public class PlayerData
+
+    public class PlayerData : IEquatable<PlayerData>, IDeepCloneable<PlayerData>
     {
-        public string AroundPartName { get; set; }
-        public string TinyPartName { get; set; }
-        public string PPERequesterType { get; set; }
+        public string? AroundPartName { get; set; }
+        public string? TinyPartName { get; set; }
+        public string? PPERequesterType { get; set; }
+
+        public bool Equals(PlayerData? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                string.Equals(AroundPartName, other.AroundPartName, StringComparison.Ordinal) &&
+                string.Equals(TinyPartName, other.TinyPartName, StringComparison.Ordinal) &&
+                string.Equals(PPERequesterType, other.PPERequesterType, StringComparison.Ordinal);
+        }
 
         public override bool Equals(object? obj)
         {
-            if (obj is not PlayerData other)
-                return false;
-
-            return AroundPartName == other.AroundPartName && TinyPartName == other.TinyPartName && PPERequesterType == other.PPERequesterType;
+            return Equals(obj as PlayerData);
         }
+
         public PlayerData Clone()
         {
             return new PlayerData
@@ -218,3 +417,4 @@ namespace Day2eEditor
         }
     }
 }
+

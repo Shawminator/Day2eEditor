@@ -14,7 +14,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as eventsEvent ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data);
             _suppressEvents = true;
 
             ClearChildren();
@@ -45,28 +44,10 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-        public void Reset()
-        {
-
-        }
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
 
         private eventsEvent _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
-        private eventsEvent _originalData;
         private Category Cat;
         private bool isCat = false;
         private eventsEventChild CurrentChild;
@@ -79,7 +60,7 @@ namespace EconomyPlugin
             positionComboBox.DataSource = Enum.GetValues(typeof(position));
             limitComboBox.DataSource = Enum.GetValues(typeof(limit));
             AllEvents = new BindingList<string>();
-            foreach (EventsFile eventfile in AppServices.GetRequired<EconomyManager>().eventsConfig.AllData)
+            foreach (EventsFile eventfile in AppServices.GetRequired<EconomyManager>().eventsConfig.MutableItems)
             {
                 foreach (eventsEvent cevents in eventfile.Data.@event)
                 {
@@ -206,7 +187,7 @@ namespace EconomyPlugin
             _data.name = nameTB.Text;
             _nodes[0].Text = _data.name;
 
-            HasChanges();
+
         }
         private void nameTB_Validated(object sender, EventArgs e)
         {
@@ -234,7 +215,6 @@ namespace EconomyPlugin
                 {
                     points.name = nameTB.Text;
                     _nodes[0].Nodes[0].Text = $"Event Spawn: {nameTB.Text}";
-                    AppServices.GetRequired<EconomyManager>().cfgeventspawnsConfig.isDirty = true;
                 }
             }
 
@@ -246,53 +226,53 @@ namespace EconomyPlugin
             NumericUpDown nud = sender as NumericUpDown;
             if (nud == null) return;
             _data.SetIntValue(nud.Name.Substring(0, nud.Name.Length - 3), (int)nud.Value);
-            HasChanges();
+
         }
         private void EventsChildNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             NumericUpDown nud = sender as NumericUpDown;
             CurrentChild.SetIntValue(nud.Name.Substring(1, nud.Name.Length - 4), (int)nud.Value);
-            HasChanges();
+
         }
         private void activeCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.active = activeCB.Checked == true ? 1 : 0;
-            HasChanges();
+
         }
         private void deletableCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.flags.deletable = deletableCB.Checked == true ? 1 : 0;
-            HasChanges();
+
         }
         private void init_randomCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.flags.init_random = init_randomCB.Checked == true ? 1 : 0;
-            HasChanges();
+
 
         }
         private void remove_damagedCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.flags.remove_damaged = remove_damagedCB.Checked == true ? 1 : 0;
-            HasChanges();
+
         }
         private void positionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             position pos = (position)positionComboBox.SelectedItem;
             _data.position = pos;
-            HasChanges();
+
         }
         private void limitComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             limit lim = (limit)limitComboBox.SelectedItem;
             _data.limit = lim;
-            HasChanges();
+
         }
         private void SecondaryCB_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -301,12 +281,12 @@ namespace EconomyPlugin
                 _data.secondary = null;
             else
                 _data.secondary = SecondaryCB.GetItemText(SecondaryCB.SelectedItem);
-            HasChanges();
+
         }
         private void darkButton60_Click(object sender, EventArgs e)
         {
             AllEvents = new BindingList<string>();
-            foreach (EventsFile eventsconfig in AppServices.GetRequired<EconomyManager>().eventsConfig.AllData)
+            foreach (EventsFile eventsconfig in AppServices.GetRequired<EconomyManager>().eventsConfig.MutableItems)
             {
                 foreach (eventsEvent cevents in eventsconfig.Data.@event)
                 {
@@ -329,20 +309,19 @@ namespace EconomyPlugin
                 max = 0,
                 min = 0
             };
-            _data.Addnechild(newventeventschild);
-            HasChanges();
+            _data.AddNewChild(newventeventschild);
+
         }
         private void darkButton18_Click(object sender, EventArgs e)
         {
-            _data.Removechild(CurrentChild);
-            HasChanges();
+            _data.RemoveChild(CurrentChild);
+
         }
         private void CtypeTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             CurrentChild.type = CtypeTB.Text;
             ChildrenLB.Invalidate();
-            HasChanges();
         }
 
 

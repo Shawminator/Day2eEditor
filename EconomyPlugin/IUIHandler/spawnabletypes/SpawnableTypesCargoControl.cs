@@ -16,7 +16,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private spawnableTypeCargo _data;
-        private spawnableTypeCargo _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -25,7 +24,7 @@ namespace EconomyPlugin
         public SpawnableTypesCargoControl()
         {
             InitializeComponent();
-            foreach (cfgrandompresetsFile rpf in AppServices.GetRequired<EconomyManager>().cfgrandompresetsConfig.AllData)
+            foreach (CfgrandompresetsFile rpf in AppServices.GetRequired<EconomyManager>().cfgrandompresetsConfig.MutableItems)
             {
                 foreach (var item in rpf.Data.Items)
                 {
@@ -51,7 +50,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as spawnableTypeCargo ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -65,52 +63,7 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
-            }
-        }
-
         #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private spawnableTypeCargo CloneData(spawnableTypeCargo data)
-        {
-            // TODO: Implement actual cloning logic
-            return new spawnableTypeCargo
-            {
-                chance = data.chance,
-                chanceSpecified = data.chanceSpecified,
-                preset = data.preset,
-                damage = null,
-                item = null
-            };
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -139,7 +92,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             CarcgoChanceNUD.Visible = _data.chanceSpecified = UseCargoChanceCB.Checked;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void CarcgoChanceNUD_ValueChanged(object sender, EventArgs e)
@@ -147,7 +100,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.chance = CarcgoChanceNUD.Value;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void IsCargoPresetCB_CheckedChanged(object sender, EventArgs e)
@@ -162,7 +115,7 @@ namespace EconomyPlugin
                 _data.preset = null;
             }
             UpdateTreeNodeText();
-            HasChanges();
+
         }
 
         private void darkButton36_Click(object sender, EventArgs e)
@@ -170,7 +123,7 @@ namespace EconomyPlugin
             randompresetsCargo newcargopreset = CargoPresetComboBox.SelectedItem as randompresetsCargo;
             CargoPresetTB.Text = _data.preset = newcargopreset.name;
             UpdateTreeNodeText();
-            HasChanges();
+
         }
     }
 }

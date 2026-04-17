@@ -298,7 +298,7 @@ namespace ExpansionPlugin
             Random rnd = new Random();
             foreach (ExpansionLoot el in _data)
             {
-                TypeEntry type = AppServices.GetRequired<EconomyManager>().TypesConfig.Gettypebyname(el.Name);
+                TypeEntry type = AppServices.GetRequired<EconomyManager>().TypesConfig.GetTypeByName(el.Name);
                 if (type == null) continue;
                 int chancemax;
                 int chancemin;

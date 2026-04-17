@@ -74,7 +74,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = _data.color != _originalData.color;
+                parent.IsDirty = _data.color != _originalData.color;
             }
         }
 

@@ -1,5 +1,4 @@
 using Day2eEditor;
-using DayZeLib;
 using EconomyPlugin;
 using System;
 using System.Collections;
@@ -18,10 +17,6 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml;
 using System.Xml.Linq;
-using static ExpansionPlugin.ExpansionPersonalStorageNewSettings;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ExpansionPlugin
 {
@@ -435,7 +430,7 @@ namespace ExpansionPlugin
                         _mapControl.ClearDrawables();
                         DrawbaseMissionMarkerData(node.FindParentOfType<ExpansionMissionsConfig>());
                     };
-                    ShowHandler(control, typeof(cfgeffectareaConfig), area, selected);
+                    ShowHandler(control, typeof(CfgeffectareaConfig), area, selected);
                     SetupEffectAreaMap(area, node);
                     _mapControl.EnsureVisible(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]));
                 },
@@ -5446,7 +5441,7 @@ namespace ExpansionPlugin
             {
                 _selectedNoBuildZonePos.Center[1] = (MapData.gethieght(_selectedNoBuildZonePos.Center[0], _selectedNoBuildZonePos.Center[2]));
             }
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
 
             _mapControl.ClearDrawables();
 
@@ -5633,12 +5628,8 @@ namespace ExpansionPlugin
                 {
                     ExpansionAINoGoArea.Position.Y = (MapData.gethieght(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z));
                 }
-                _expansionManager.ExpansionAILocationConfig.isDirty = true;
-
                 _mapControl.ClearDrawables();
-
                 ExpansionAILocationConfig ExpansionAILocationConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
-                ExpansionAILocationConfig.isDirty = true;
                 ShowHandler(new ExpansionAINoGoAreaControl(), typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, new List<TreeNode>() { currentTreeNode });
                 DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig);
             }
@@ -5701,12 +5692,8 @@ namespace ExpansionPlugin
                 {
                     ExpansionServerMarkerData.m_Position[1] = (MapData.gethieght(ExpansionServerMarkerData.m_Position[0], ExpansionServerMarkerData.m_Position[2]));
                 }
-                _expansionManager.ExpansionMapConfig.isDirty = true;
-
                 _mapControl.ClearDrawables();
-
                 ExpansionMapConfig ExpansionMapConfig = currentTreeNode.FindParentOfType<ExpansionMapConfig>();
-                ExpansionMapConfig.isDirty = true;
                 ShowHandler(new ExpansionMapServerMarkerInfoControl(), typeof(ExpansionMapConfig), ExpansionServerMarkerData, new List<TreeNode>() { currentTreeNode });
                 DrawbaseServerMarkerData(ExpansionMapConfig);
             }
@@ -5781,7 +5768,7 @@ namespace ExpansionPlugin
                     }
                 }
                 _mapControl.ClearDrawables();
-                _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+               
                 ShowHandler(new ExpasnionMarksetSettingsVehicleSpawnInfoControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, new List<TreeNode>() { currentTreeNode });
                 DrawbaseVehicleSpawnPositions(_expansionManager.ExpansionMarketSettingsConfig);
                 currentTreeNode.Text = ExpansionMarketSpawnPosition.ToString();
@@ -6126,7 +6113,7 @@ namespace ExpansionPlugin
                     Data.Pos[1] = (decimal)(MapData.gethieght((float)Data.Pos[0], (float)Data.Pos[2]));
                 }
                 _mapControl.ClearDrawables();
-                ShowHandler(new ExpansionMissionEffectAreaControl(), typeof(cfgeffectareaConfig), area, new List<TreeNode>() { currentTreeNode });
+                ShowHandler(new ExpansionMissionEffectAreaControl(), typeof(CfgeffectareaConfig), area, new List<TreeNode>() { currentTreeNode });
                 DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
             }
         }
@@ -6740,7 +6727,7 @@ namespace ExpansionPlugin
         {
             ExpansionLootContainer NewContainer = new ExpansionLootContainer();
             _expansionManager.ExpansionAirdropConfig.Data.Containers.Add(NewContainer);
-            _expansionManager.ExpansionAirdropConfig.isDirty = true;
+           
             TreeNode alcnodes = new TreeNode(NewContainer.Container)
             {
                 Tag = NewContainer
@@ -6762,7 +6749,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionAirdropConfig.Data.Containers.Remove(currentTreeNode.Tag as ExpansionLootContainer);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionAirdropConfig.isDirty = true;
+           
         }
         //AI Settings
         private void addAIAdminToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6781,7 +6768,7 @@ namespace ExpansionPlugin
                         Tag = "AISettingsAdminString"
                     });
                 }
-                _expansionManager.ExpansionAIConfig.isDirty = true;
+                
             }
         }
         private void addAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6800,7 +6787,7 @@ namespace ExpansionPlugin
                         Tag = "AISettingsPreventClimbString"
                     });
                 }
-                _expansionManager.ExpansionAIConfig.isDirty = true;
+                
             }
         }
         private void addAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6820,7 +6807,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "AISettingsPlayerFactionsString"
                         });
-                        _expansionManager.ExpansionAIConfig.isDirty = true;
+                        
                     }
                 }
             }
@@ -6829,19 +6816,19 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionAIConfig.Data.Admins.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionAIConfig.isDirty = true;
+            
         }
         private void removeAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.PreventClimb.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionAIConfig.isDirty = true;
+            
         }
         private void removeAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.PlayerFactions.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionAIConfig.isDirty = true;
+            
         }
         //AI Patrol Settings
         private void addNewPatrolToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6903,14 +6890,14 @@ namespace ExpansionPlugin
             };
             CreatePatrolNodes(newpatrol, PatrolRoot);
             currentTreeNode.Nodes.Add(PatrolRoot);
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void removePatrolToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrolConfig.Data.Patrols.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
             currentTreeNode.Remove();
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void addWaypointToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -6950,7 +6937,7 @@ namespace ExpansionPlugin
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
             ExpansionAIPatrol.Waypoints.Remove(currentTreeNode.Tag as Vec3);
-            ExpansionAIPatrolConfig.isDirty = true;
+           
             currentTreeNode.Remove();
 
         }
@@ -6983,8 +6970,8 @@ namespace ExpansionPlugin
                         }
                         break;
                     case 2:
-                        ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
-                        foreach (SpawnObjects so in newobjectspawner.Objects)
+                        ObjectSpawnerArrFile newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrFile>(File.ReadAllText(filePath));
+                        foreach (SpawnObjects so in newobjectspawner.Data.Objects)
                         {
                             ExpansionAIPatrol.Waypoints.Add(new Vec3(so.pos));
                         }
@@ -7004,7 +6991,7 @@ namespace ExpansionPlugin
                         Tag = v3
                     });
                 }
-                ExpansionAIPatrolConfig.isDirty = true;
+               
             }
         }
         private void exportWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7027,7 +7014,7 @@ namespace ExpansionPlugin
                         File.WriteAllText(save.FileName, SB.ToString());
                         break;
                     case 2:
-                        ObjectSpawnerArr newobjectspawner = new ObjectSpawnerArr();
+                        ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
                         newobjectspawner.Objects = new BindingList<SpawnObjects>();
                         foreach (Vec3 array in ExpansionAIPatrol.Waypoints)
                         {
@@ -7070,7 +7057,7 @@ namespace ExpansionPlugin
                 siblings.Insert(index - 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void moveWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7096,7 +7083,7 @@ namespace ExpansionPlugin
                 siblings.Insert(index + 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void addUnitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7157,7 +7144,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                ExpansionAIPatrolConfig.isDirty = true;
+               
                 currentTreeNode.Expand();
             }
         }
@@ -7167,7 +7154,7 @@ namespace ExpansionPlugin
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
             ExpansionAIPatrol.Units.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void addNewLoadBalancingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7184,7 +7171,7 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(newtreenode);
             ExpansionTV.SelectedNode = newtreenode;
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void removeCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7192,7 +7179,7 @@ namespace ExpansionPlugin
             Loadbalancingcategorie Loadbalancingcategorie = currentTreeNode.Tag as Loadbalancingcategorie;
             ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Remove(Loadbalancingcategorie);
             currentTreeNode.Remove();
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void addNewLoadBalancingCountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7210,12 +7197,12 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(Newtreenode);
             ExpansionTV.SelectedNode = Newtreenode;
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void removeCountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (currentTreeNode.Parent.Tag as Loadbalancingcategorie).Categorieslist.Remove(currentTreeNode.Tag as Loadbalancingcategories);
-            currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>().isDirty = true;
+            
             currentTreeNode.Remove();
         }
         private void addAiNoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7239,14 +7226,14 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(newtreenode);
             ExpansionTV.SelectedNode = newtreenode;
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void removeAINoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
             ExpansionAIPatrolConfig.Data.NoGoAreas.Remove(currentTreeNode.Tag as ExpansionAINoGoArea);
             currentTreeNode.Remove();
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         private void addAIExcludedBuildingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7268,7 +7255,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                ExpansionAIPatrolConfig.isDirty = true;
+               
             }
         }
         private void removeAIExlusdedBuildingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7276,7 +7263,7 @@ namespace ExpansionPlugin
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
             ExpansionAIPatrolConfig.Data.ExcludedRoamingBuildings.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            ExpansionAIPatrolConfig.isDirty = true;
+           
         }
         //BaseBuilding Settings
         private void addNewDeployableOutsideTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7295,7 +7282,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingDeployableOutsideATerritoryItem"
                         });
-                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                        
                     }
                 }
             }
@@ -7304,7 +7291,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableOutsideATerritory.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
         }
         private void addNewDeployableInsideEnemyTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7322,7 +7309,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingDeployableInsideAEnemyTerritoryItem"
                         });
-                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                        
                     }
                 }
             }
@@ -7331,7 +7318,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableInsideAEnemyTerritory.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
         }
         private void addNewVirtualStorageExcludedContainerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7349,7 +7336,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingVirtualStorageExcludedContainersItem"
                         });
-                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                        
                     }
                 }
             }
@@ -7358,7 +7345,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.VirtualStorageExcludedContainers.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
         }
         private void addNewNoBuildZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7390,14 +7377,14 @@ namespace ExpansionPlugin
             }
             nbznode.Nodes.Add(nbzinodes);
             currentTreeNode.Nodes.Add(nbznode);
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void RemoveNoBuildZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Remove(currentTreeNode.Tag as ExpansionBuildNoBuildZone);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
         }
         private void addBuildZoneItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7416,7 +7403,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingNoBuldZoneItem"
                         });
-                        _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+                        
                     }
                 }
             }
@@ -7426,7 +7413,7 @@ namespace ExpansionPlugin
             ExpansionBuildNoBuildZone currentbuildzone = currentTreeNode.Parent.Parent.Tag as ExpansionBuildNoBuildZone;
             currentbuildzone.Items.Remove(currentTreeNode.Text.Substring(6));
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionBaseBuildingConfig.isDirty = true;
+            
         }
         //Book settings
         private void addNewDescriptionCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7437,7 +7424,7 @@ namespace ExpansionPlugin
                 Descriptions = new BindingList<ExpansionBookDescription>()
             };
             _expansionManager.ExpansionBookConfig.Data.Descriptions.Add(newdescrioptcat);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newdescrioptcat.CategoryName}")
             {
                 Tag = newdescrioptcat
@@ -7446,7 +7433,7 @@ namespace ExpansionPlugin
         private void removeDescriptionCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.Descriptions.Remove(currentTreeNode.Tag as ExpansionBookDescriptionCategory);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewRuleCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7457,7 +7444,7 @@ namespace ExpansionPlugin
                 Rules = new BindingList<ExpansionBookRule>()
             };
             _expansionManager.ExpansionBookConfig.Data.RuleCategories.Add(newExpansionBookRuleCategory);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newExpansionBookRuleCategory.CategoryName}")
             {
                 Tag = newExpansionBookRuleCategory
@@ -7466,7 +7453,7 @@ namespace ExpansionPlugin
         private void removeRuleCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.RuleCategories.Remove(currentTreeNode.Tag as ExpansionBookRuleCategory);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewRuleParagraphToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7478,7 +7465,7 @@ namespace ExpansionPlugin
                 RuleText = "NewText"
             };
             ExpansionBookRuleCategory.Rules.Add(newExpansionBookRule);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Nodes.Add(new TreeNode($"Rule Paragraph: {newExpansionBookRule.RuleParagraph}")
             {
                 Tag = newExpansionBookRule
@@ -7488,7 +7475,7 @@ namespace ExpansionPlugin
         {
             ExpansionBookRuleCategory ExpansionBookRuleCategory = currentTreeNode.Parent.Tag as ExpansionBookRuleCategory;
             ExpansionBookRuleCategory.Rules.Remove(currentTreeNode.Tag as ExpansionBookRule);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewLinkToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7501,7 +7488,7 @@ namespace ExpansionPlugin
                 IconName = "Homepage"
             };
             _expansionManager.ExpansionBookConfig.Data.Links.Add(newExpansionBookLink);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Nodes.Add(new TreeNode($"Links: {newExpansionBookLink.Name}")
             {
                 Tag = newExpansionBookLink
@@ -7510,7 +7497,7 @@ namespace ExpansionPlugin
         private void removeLinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.Links.Remove(currentTreeNode.Tag as ExpansionBookLink);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewCraftingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7521,7 +7508,7 @@ namespace ExpansionPlugin
                 Results = new BindingList<string>()
             };
             _expansionManager.ExpansionBookConfig.Data.CraftingCategories.Add(newExpansionBookCraftingCategory);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Nodes.Add(new TreeNode($"Category: {newExpansionBookCraftingCategory.CategoryName}")
             {
                 Tag = newExpansionBookCraftingCategory
@@ -7530,7 +7517,7 @@ namespace ExpansionPlugin
         private void removeCraftingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.CraftingCategories.Remove(currentTreeNode.Tag as ExpansionBookCraftingCategory);
-            _expansionManager.ExpansionBookConfig.isDirty = true;
+           
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         //Chat
@@ -7553,14 +7540,14 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                _expansionManager.ExpansionChatConfig.isDirty = true;
+                
             }
         }
         private void removeBlacklistedWordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionChatConfig.Data.BlacklistedWords.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            _expansionManager.ExpansionChatConfig.isDirty = true;
+            
         }
         //Damage
         private void addNewExplosionTargetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7582,14 +7569,14 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+               
             }
         }
         private void removeExplosionTargetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionDamageSystemConfig.Data.ExplosionTargets.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+           
         }
         private void addNewExplosiveProjectileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7601,7 +7588,7 @@ namespace ExpansionPlugin
             if (!_expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Any(x => x.explosion == newEP.explosion))
             {
                 _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Add(newEP);
-                _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+               
                 currentTreeNode.Nodes.Add(new TreeNode($"{newEP.explosion}:{newEP.ammo}")
                 {
                     Tag = newEP
@@ -7618,7 +7605,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Remove(currentTreeNode.Tag as ExplosiveProjectiles);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _expansionManager.ExpansionDamageSystemConfig.isDirty = true;
+           
         }
         //Garage
         private void addNewEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7639,7 +7626,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                _expansionManager.ExpansionGarageConfig.isDirty = true;
+                
             }
 
         }
@@ -7647,7 +7634,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionGarageConfig.Data.EntityWhitelist.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            _expansionManager.ExpansionGarageConfig.isDirty = true;
+            
         }
         //Map
         private void addNewServerMarkerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7704,14 +7691,14 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+               
             }
         }
         private void removeLargeVehicleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionMarketSettingsConfig.Data.LargeVehicles.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+           
         }
         private void addNewCurrencyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7802,14 +7789,13 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+               
             }
         }
         private void removeVehicleKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionMarketSettingsConfig.Data.VehicleKeys.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
         }
         private void addNewLandSpawnToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7838,7 +7824,6 @@ namespace ExpansionPlugin
             {
                 Tag = newspawn
             });
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewAirSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7869,7 +7854,7 @@ namespace ExpansionPlugin
             {
                 Tag = newspawn
             });
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+           
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewWaterSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7896,7 +7881,7 @@ namespace ExpansionPlugin
             {
                 Tag = newspawn
             });
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
+           
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewTrainSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7927,7 +7912,6 @@ namespace ExpansionPlugin
             {
                 Tag = newspawn
             });
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void removeVehicleSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7949,7 +7933,6 @@ namespace ExpansionPlugin
                     break;
             }
             currentTreeNode.Remove();
-            _expansionManager.ExpansionMarketSettingsConfig.isDirty = true;
         }
         //Market Categories
         private void addNewMarketCategoryFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8423,7 +8406,7 @@ namespace ExpansionPlugin
             {
                 string searchTerm = frm.typesname;
 
-                List<TypeEntry> vtypesvariaNTS = AppServices.GetRequired<EconomyManager>().TypesConfig.SerachTypes(searchTerm);
+                List<TypeEntry> vtypesvariaNTS = AppServices.GetRequired<EconomyManager>().TypesConfig.SearchTypes(searchTerm);
                 List<string> founditems = new List<string>();
                 foreach (TypeEntry te in vtypesvariaNTS)
                 {

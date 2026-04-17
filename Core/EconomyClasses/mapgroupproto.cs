@@ -1,257 +1,241 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class mapgroupprotoConfig : IConfigLoader
+    public class mapgroupprotoConfig : SingleFileConfigLoaderBase<prototype>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public prototype Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        public mapgroupprotoConfig(string path)
+        public mapgroupprotoConfig(string path) : base(path)
         {
-            _path = path;
         }
 
-        public void Load()
+        public override void Load()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<prototype>(
-                _path,
-                createNew: () => new prototype(),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "prototype"
-            );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<prototype>(
+                        _path,
+                        createNew: () => new prototype(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "prototype"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override prototype CreateDefaultData()
         {
-            return isDirty;
+            return new prototype();
+        }
+
+        protected override void OnAfterLoad(prototype data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            var defaultNames = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < Data.defaults.Count; i++)
+            {
+                var item = Data.defaults[i];
+
+                if (string.IsNullOrWhiteSpace(item.name))
+                    yield return $"defaults[{i}] has a missing or empty name.";
+                else if (!defaultNames.Add(item.name))
+                    yield return $"Duplicate default name '{item.name}' found.";
+            }
+
+            var groupNames = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < Data.group.Count; i++)
+            {
+                var g = Data.group[i];
+
+                if (string.IsNullOrWhiteSpace(g.name))
+                    yield return $"group[{i}] has a missing or empty name.";
+                else if (!groupNames.Add(g.name))
+                    yield return $"Duplicate group name '{g.name}' found.";
+
+                for (int j = 0; j < g.value.Count; j++)
+                {
+                    var value = g.value[j];
+                    if (string.IsNullOrWhiteSpace(value.name) && string.IsNullOrWhiteSpace(value.user))
+                        yield return $"group[{i}].value[{j}] must have either a name or a user.";
+                }
+
+                for (int j = 0; j < g.usage.Count; j++)
+                {
+                    var usage = g.usage[j];
+                    if (string.IsNullOrWhiteSpace(usage.name))
+                        yield return $"group[{i}].usage[{j}] has a missing or empty name.";
+                }
+
+                for (int j = 0; j < g.container.Count; j++)
+                {
+                    var container = g.container[j];
+
+                    if (string.IsNullOrWhiteSpace(container.name))
+                        yield return $"group[{i}].container[{j}] has a missing or empty name.";
+
+                    for (int k = 0; k < container.category.Count; k++)
+                    {
+                        if (string.IsNullOrWhiteSpace(container.category[k].name))
+                            yield return $"group[{i}].container[{j}].category[{k}] has a missing or empty name.";
+                    }
+
+                    for (int k = 0; k < container.tag.Count; k++)
+                    {
+                        if (string.IsNullOrWhiteSpace(container.tag[k].name))
+                            yield return $"group[{i}].container[{j}].tag[{k}] has a missing or empty name.";
+                    }
+
+                    for (int k = 0; k < container.point.Count; k++)
+                    {
+                        if (string.IsNullOrWhiteSpace(container.point[k].pos))
+                            yield return $"group[{i}].container[{j}].point[{k}] has a missing or empty pos.";
+                    }
+                }
+
+                for (int j = 0; j < g.dispatch.Count; j++)
+                {
+                    var proxy = g.dispatch[j];
+
+                    if (string.IsNullOrWhiteSpace(proxy.type))
+                        yield return $"group[{i}].dispatch[{j}] has a missing or empty type.";
+                    if (string.IsNullOrWhiteSpace(proxy.pos))
+                        yield return $"group[{i}].dispatch[{j}] has a missing or empty pos.";
+                    if (string.IsNullOrWhiteSpace(proxy.rpy))
+                        yield return $"group[{i}].dispatch[{j}] has a missing or empty rpy.";
+                }
+            }
         }
     }
 
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class prototype
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class prototype : IEquatable<prototype>, IDeepCloneable<prototype>
     {
+        private BindingList<prototypeDefault>? _defaults;
+        private BindingList<prototypeGroup>? _group;
 
-        private BindingList<prototypeDefault> defaultsField;
-
-        private BindingList<prototypeGroup> groupField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("default", IsNullable = false)]
+        [XmlArrayItem("default", IsNullable = false)]
         public BindingList<prototypeDefault> defaults
         {
-            get
-            {
-                return this.defaultsField;
-            }
-            set
-            {
-                this.defaultsField = value;
-            }
+            get => _defaults ??= new BindingList<prototypeDefault>();
+            set => _defaults = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("group")]
+        [XmlElement("group")]
         public BindingList<prototypeGroup> group
         {
-            get
+            get => _group ??= new BindingList<prototypeGroup>();
+            set => _group = value;
+        }
+
+        public bool Equals(prototype? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return defaults.SequenceEqual(other.defaults) &&
+                   group.SequenceEqual(other.group);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as prototype);
+
+        public prototype Clone()
+        {
+            return new prototype
             {
-                return this.groupField;
-            }
-            set
-            {
-                this.groupField = value;
-            }
+                defaults = new BindingList<prototypeDefault>(defaults.Select(x => x.Clone()).ToList()),
+                group = new BindingList<prototypeGroup>(group.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeDefault
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeDefault : IEquatable<prototypeDefault>, IDeepCloneable<prototypeDefault>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
-        private int lootmaxField;
-        private bool lootmaxFieldSpecified;
-        private string enabledField;
-        private string deField;
-        private int widthField;
-        private bool widthFieldSpecified;
-        private int heightField;
-        private bool heightFieldSpecified;
+        [XmlAttribute]
+        public int lootmax { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
+        [XmlIgnore]
+        public bool lootmaxSpecified { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int lootmax
-        {
-            get
-            {
-                return this.lootmaxField;
-            }
-            set
-            {
-                this.lootmaxField = value;
-            }
-        }
+        [XmlAttribute]
+        public string? enabled { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lootmaxSpecified
-        {
-            get
-            {
-                return this.lootmaxFieldSpecified;
-            }
-            set
-            {
-                this.lootmaxFieldSpecified = value;
-            }
-        }
+        [XmlAttribute]
+        public string? de { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string enabled
-        {
-            get
-            {
-                return this.enabledField;
-            }
-            set
-            {
-                this.enabledField = value;
-            }
-        }
+        [XmlAttribute]
+        public int width { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string de
-        {
-            get
-            {
-                return this.deField;
-            }
-            set
-            {
-                this.deField = value;
-            }
-        }
+        [XmlIgnore]
+        public bool widthSpecified { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int width
-        {
-            get
-            {
-                return this.widthField;
-            }
-            set
-            {
-                this.widthField = value;
-            }
-        }
+        [XmlAttribute]
+        public int height { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool widthSpecified
-        {
-            get
-            {
-                return this.widthFieldSpecified;
-            }
-            set
-            {
-                this.widthFieldSpecified = value;
-            }
-        }
+        [XmlIgnore]
+        public bool heightSpecified { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int height
-        {
-            get
-            {
-                return this.heightField;
-            }
-            set
-            {
-                this.heightField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool heightSpecified
-        {
-            get
-            {
-                return this.heightFieldSpecified;
-            }
-            set
-            {
-                this.heightFieldSpecified = value;
-            }
-        }
         public override string ToString()
         {
             string toname = "";
             toname += $"name : {name}";
             if (de != null)
                 toname += $", de : {de}";
-            if(lootmaxSpecified)
+            if (lootmaxSpecified)
                 toname += $", lootmax : {lootmax}";
             if (enabled != null)
                 toname += $", enabled : {enabled}";
@@ -262,154 +246,96 @@ namespace Day2eEditor
 
             return toname;
         }
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeDefault other)
-                return false;
 
-            return string.Equals(this.name, other.name, StringComparison.Ordinal) &&
-                   this.lootmax == other.lootmax &&
-                   this.lootmaxSpecified == other.lootmaxSpecified &&
-                   string.Equals(this.enabled, other.enabled, StringComparison.Ordinal) &&
-                   string.Equals(this.de, other.de, StringComparison.Ordinal) &&
-                   this.width == other.width &&
-                   this.widthSpecified == other.widthSpecified &&
-                   this.height == other.height &&
-                   this.heightSpecified == other.heightSpecified;
+        public bool Equals(prototypeDefault? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   lootmax == other.lootmax &&
+                   lootmaxSpecified == other.lootmaxSpecified &&
+                   string.Equals(enabled, other.enabled, StringComparison.Ordinal) &&
+                   string.Equals(de, other.de, StringComparison.Ordinal) &&
+                   width == other.width &&
+                   widthSpecified == other.widthSpecified &&
+                   height == other.height &&
+                   heightSpecified == other.heightSpecified;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeDefault);
+
+        public prototypeDefault Clone()
+        {
+            return new prototypeDefault
+            {
+                name = name,
+                lootmax = lootmax,
+                lootmaxSpecified = lootmaxSpecified,
+                enabled = enabled,
+                de = de,
+                width = width,
+                widthSpecified = widthSpecified,
+                height = height,
+                heightSpecified = heightSpecified
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroup
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroup : IEquatable<prototypeGroup>, IDeepCloneable<prototypeGroup>
     {
+        private BindingList<prototypeGroupValue>? _value;
+        private BindingList<prototypeGroupUsage>? _usage;
+        private BindingList<prototypeGroupContainer>? _container;
+        private BindingList<prototypeGroupProxy>? _dispatch;
 
-        private BindingList<prototypeGroupValue> valueField;
-
-        private BindingList<prototypeGroupUsage> usageField;
-
-        private BindingList<prototypeGroupContainer> containerField;
-
-        private BindingList<prototypeGroupProxy> dispatchField;
-
-        private string nameField;
-
-        private int lootmaxField;
-
-        private bool lootmaxFieldSpecified;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("value")]
+        [XmlElement("value")]
         public BindingList<prototypeGroupValue> value
         {
-            get
-            {
-                return this.valueField;
-            }
-            set
-            {
-                this.valueField = value;
-            }
+            get => _value ??= new BindingList<prototypeGroupValue>();
+            set => _value = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("usage")]
+        [XmlElement("usage")]
         public BindingList<prototypeGroupUsage> usage
         {
-            get
-            {
-                return this.usageField;
-            }
-            set
-            {
-                this.usageField = value;
-            }
+            get => _usage ??= new BindingList<prototypeGroupUsage>();
+            set => _usage = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("container")]
+        [XmlElement("container")]
         public BindingList<prototypeGroupContainer> container
         {
-            get
-            {
-                return this.containerField;
-            }
-            set
-            {
-                this.containerField = value;
-            }
+            get => _container ??= new BindingList<prototypeGroupContainer>();
+            set => _container = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("proxy", IsNullable = true)]
+        [XmlArrayItem("proxy", IsNullable = true)]
         public BindingList<prototypeGroupProxy> dispatch
         {
-            get
-            {
-                return this.dispatchField;
-            }
-            set
-            {
-                this.dispatchField = value;
-            }
+            get => _dispatch ??= new BindingList<prototypeGroupProxy>();
+            set => _dispatch = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int lootmax
-        {
-            get
-            {
-                return this.lootmaxField;
-            }
-            set
-            {
-                this.lootmaxField = value;
-            }
-        }
+        [XmlAttribute]
+        public int lootmax { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lootmaxSpecified
-        {
-            get
-            {
-                return this.lootmaxFieldSpecified;
-            }
-            set
-            {
-                this.lootmaxFieldSpecified = value;
-            }
-        }
+        [XmlIgnore]
+        public bool lootmaxSpecified { get; set; }
 
-        public override string ToString()
-        {
-            return name;
-        }
+        public override string ToString() => name ?? string.Empty;
 
         public void AddTier(string tier)
         {
-            if (value == null)
-                value = new BindingList<prototypeGroupValue>();
-            prototypeGroupValue newtier = (new prototypeGroupValue() { name = tier });
-            if (!value.Any(x => x.name == newtier.name))
-                value.Add(newtier);
+            if (!value.Any(x => x.name == tier))
+                value.Add(new prototypeGroupValue { name = tier });
+
             for (int i = 0; i < value.Count; i++)
             {
                 if (value[i].name == null)
@@ -419,21 +345,18 @@ namespace Day2eEditor
                 }
             }
         }
+
         public void removetier(string tier)
         {
-            if (value == null) return;
             if (value.Any(x => x.name == tier))
-                value.Remove(value.First(X => X.name == tier));
-            //if (value.Count == 0)
-            //    value = null;
+                value.Remove(value.First(x => x.name == tier));
         }
+
         public void AdduserTier(string tier)
         {
-            if (value == null)
-                value = new BindingList<prototypeGroupValue>();
-            prototypeGroupValue newusertier = new prototypeGroupValue() { user = tier };
-            if (!value.Any(x => x.user == newusertier.user))
-                value.Add(newusertier);
+            if (!value.Any(x => x.user == tier))
+                value.Add(new prototypeGroupValue { user = tier });
+
             for (int i = 0; i < value.Count; i++)
             {
                 if (value[i].user == null)
@@ -443,479 +366,300 @@ namespace Day2eEditor
                 }
             }
         }
+
         public void removeusertier(string tier)
         {
-            if (value == null) return;
             if (value.Any(x => x.user == tier))
-                value.Remove(value.First(X => X.user == tier));
-            //if (value.Count == 0)
-            //{
-            //    value = null;
-            //}
+                value.Remove(value.First(x => x.user == tier));
         }
+
         public void removetiers()
         {
-            if (value != null)
-                value = null;
+            _value = null;
         }
+
         public void AddnewUsage(listsUsage u)
         {
-            if (usage == null)
-                usage = new BindingList<prototypeGroupUsage>();
             if (!usage.Any(x => x.name == u.name))
-            {
-                usage.Add(new prototypeGroupUsage() { name = u.name });
-            }
+                usage.Add(new prototypeGroupUsage { name = u.name });
         }
+
         public void removeusage(prototypeGroupUsage u)
         {
-            if (usage == null) return;
-            prototypeGroupUsage usagetoremove = usage.FirstOrDefault(x => x.name == u.name);
+            var usagetoremove = usage.FirstOrDefault(x => x.name == u.name);
             if (usagetoremove != null)
                 usage.Remove(usagetoremove);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(prototypeGroup? other)
         {
-            if (obj is not prototypeGroup other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return string.Equals(name, other.name, StringComparison.Ordinal) &&
                    lootmax == other.lootmax &&
                    lootmaxSpecified == other.lootmaxSpecified &&
-                   SequenceEqual(value, other.value) &&
-                   SequenceEqual(usage, other.usage) &&
-                   SequenceEqual(container, other.container) &&
-                   SequenceEqual(dispatch, other.dispatch);
+                   value.SequenceEqual(other.value) &&
+                   usage.SequenceEqual(other.usage) &&
+                   container.SequenceEqual(other.container) &&
+                   dispatch.SequenceEqual(other.dispatch);
         }
-        private static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
-        {
-            if (ReferenceEquals(a, b)) return true;
-            if (a is null || b is null) return false;
-            return a.SequenceEqual(b);
-        }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroup);
+
         public bool ShouldSerializedispatch()
         {
-            return dispatch != null && dispatch.Count > 0;
+            return dispatch.Count > 0;
         }
 
+        public prototypeGroup Clone()
+        {
+            return new prototypeGroup
+            {
+                name = name,
+                lootmax = lootmax,
+                lootmaxSpecified = lootmaxSpecified,
+                value = new BindingList<prototypeGroupValue>(value.Select(x => x.Clone()).ToList()),
+                usage = new BindingList<prototypeGroupUsage>(usage.Select(x => x.Clone()).ToList()),
+                container = new BindingList<prototypeGroupContainer>(container.Select(x => x.Clone()).ToList()),
+                dispatch = new BindingList<prototypeGroupProxy>(dispatch.Select(x => x.Clone()).ToList())
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupValue
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupValue : IEquatable<prototypeGroupValue>, IDeepCloneable<prototypeGroupValue>
     {
+        [XmlAttribute]
+        public string? user { get; set; }
 
-        private string userField;
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string user
+        public bool Equals(prototypeGroupValue? other)
         {
-            get
-            {
-                return this.userField;
-            }
-            set
-            {
-                this.userField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeGroupValue other)
-                return false;
-
+            if (other is null) return false;
             return string.Equals(user, other.user, StringComparison.Ordinal) &&
                    string.Equals(name, other.name, StringComparison.Ordinal);
         }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupValue);
+
+        public prototypeGroupValue Clone()
+        {
+            return new prototypeGroupValue
+            {
+                user = user,
+                name = name
+            };
+        }
     }
 
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupUsage
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupUsage : IEquatable<prototypeGroupUsage>, IDeepCloneable<prototypeGroupUsage>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(prototypeGroupUsage? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-        public override string ToString()
-        {
-            return name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeGroupUsage other)
-                return false;
-
+            if (other is null) return false;
             return string.Equals(name, other.name, StringComparison.Ordinal);
         }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupUsage);
+
+        public prototypeGroupUsage Clone()
+        {
+            return new prototypeGroupUsage
+            {
+                name = name
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupContainer
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupContainer : IEquatable<prototypeGroupContainer>, IDeepCloneable<prototypeGroupContainer>
     {
+        private BindingList<prototypeGroupContainerCategory>? _category;
+        private BindingList<prototypeGroupContainerTag>? _tag;
+        private BindingList<prototypeGroupContainerPoint>? _point;
 
-        private BindingList<prototypeGroupContainerCategory> categoryField;
-
-        private BindingList<prototypeGroupContainerTag> tagField;
-
-        private BindingList<prototypeGroupContainerPoint> pointField;
-
-        private string nameField;
-
-        private int lootmaxField;
-
-        private bool lootmaxFieldSpecified;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("category")]
+        [XmlElement("category")]
         public BindingList<prototypeGroupContainerCategory> category
         {
-            get
-            {
-                return this.categoryField;
-            }
-            set
-            {
-                this.categoryField = value;
-            }
+            get => _category ??= new BindingList<prototypeGroupContainerCategory>();
+            set => _category = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("tag")]
+        [XmlElement("tag")]
         public BindingList<prototypeGroupContainerTag> tag
         {
-            get
-            {
-                return this.tagField;
-            }
-            set
-            {
-                this.tagField = value;
-            }
+            get => _tag ??= new BindingList<prototypeGroupContainerTag>();
+            set => _tag = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("point")]
+        [XmlElement("point")]
         public BindingList<prototypeGroupContainerPoint> point
         {
-            get
-            {
-                return this.pointField;
-            }
-            set
-            {
-                this.pointField = value;
-            }
+            get => _point ??= new BindingList<prototypeGroupContainerPoint>();
+            set => _point = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int lootmax
-        {
-            get
-            {
-                return this.lootmaxField;
-            }
-            set
-            {
-                this.lootmaxField = value;
-            }
-        }
+        [XmlAttribute]
+        public int lootmax { get; set; }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool lootmaxSpecified
-        {
-            get
-            {
-                return this.lootmaxFieldSpecified;
-            }
-            set
-            {
-                this.lootmaxFieldSpecified = value;
-            }
-        }
-        public override string ToString()
-        {
-            return name;
-        }
+        [XmlIgnore]
+        public bool lootmaxSpecified { get; set; }
+
+        public override string ToString() => name ?? string.Empty;
 
         public void AddnewCategory(listsCategory c)
         {
-            if (category == null)
-                category = new BindingList<prototypeGroupContainerCategory>();
             if (!category.Any(x => x.name == c.name))
-            {
-                category.Add(new prototypeGroupContainerCategory() { name = c.name });
-            }
+                category.Add(new prototypeGroupContainerCategory { name = c.name });
         }
+
         public void removecategory(prototypeGroupContainerCategory c)
         {
-            if (category == null) return;
-            prototypeGroupContainerCategory cattoremove = category.FirstOrDefault(x => x.name == c.name);
+            var cattoremove = category.FirstOrDefault(x => x.name == c.name);
             if (cattoremove != null)
                 category.Remove(cattoremove);
         }
+
         public void Addnewtag(listsTag t)
         {
-            if (tag == null)
-                tag = new BindingList<prototypeGroupContainerTag>();
             if (!tag.Any(x => x.name == t.name))
-            {
-                tag.Add(new prototypeGroupContainerTag() { name = t.name });
-            }
+                tag.Add(new prototypeGroupContainerTag { name = t.name });
         }
+
         public void removetag(prototypeGroupContainerTag t)
         {
-            if (tag == null) return;
-            prototypeGroupContainerTag tagtoremove = tag.FirstOrDefault(x => x.name == t.name);
+            var tagtoremove = tag.FirstOrDefault(x => x.name == t.name);
             if (tagtoremove != null)
                 tag.Remove(tagtoremove);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(prototypeGroupContainer? other)
         {
-            if (obj is not prototypeGroupContainer other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return string.Equals(name, other.name, StringComparison.Ordinal) &&
                    lootmax == other.lootmax &&
                    lootmaxSpecified == other.lootmaxSpecified &&
-                   SequenceEqual(category, other.category) &&
-                   SequenceEqual(tag, other.tag) &&
-                   SequenceEqual(point, other.point);
+                   category.SequenceEqual(other.category) &&
+                   tag.SequenceEqual(other.tag) &&
+                   point.SequenceEqual(other.point);
         }
-        private static bool SequenceEqual<T>(IEnumerable<T> a, IEnumerable<T> b)
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupContainer);
+
+        public prototypeGroupContainer Clone()
         {
-            if (ReferenceEquals(a, b)) return true;
-            if (a is null || b is null) return false;
-            return a.SequenceEqual(b);
+            return new prototypeGroupContainer
+            {
+                name = name,
+                lootmax = lootmax,
+                lootmaxSpecified = lootmaxSpecified,
+                category = new BindingList<prototypeGroupContainerCategory>(category.Select(x => x.Clone()).ToList()),
+                tag = new BindingList<prototypeGroupContainerTag>(tag.Select(x => x.Clone()).ToList()),
+                point = new BindingList<prototypeGroupContainerPoint>(point.Select(x => x.Clone()).ToList())
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupContainerCategory
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupContainerCategory : IEquatable<prototypeGroupContainerCategory>, IDeepCloneable<prototypeGroupContainerCategory>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(prototypeGroupContainerCategory? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-        public override string ToString()
-        {
-            return name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeGroupContainerCategory other)
-                return false;
-
+            if (other is null) return false;
             return string.Equals(name, other.name, StringComparison.Ordinal);
         }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupContainerCategory);
+
+        public prototypeGroupContainerCategory Clone()
+        {
+            return new prototypeGroupContainerCategory
+            {
+                name = name
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupContainerTag
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupContainerTag : IEquatable<prototypeGroupContainerTag>, IDeepCloneable<prototypeGroupContainerTag>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        public override string ToString() => name ?? string.Empty;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(prototypeGroupContainerTag? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeGroupContainerTag other)
-                return false;
-
+            if (other is null) return false;
             return string.Equals(name, other.name, StringComparison.Ordinal);
         }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupContainerTag);
+
+        public prototypeGroupContainerTag Clone()
+        {
+            return new prototypeGroupContainerTag
+            {
+                name = name
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupContainerPoint
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupContainerPoint : IEquatable<prototypeGroupContainerPoint>, IDeepCloneable<prototypeGroupContainerPoint>
     {
+        [XmlAttribute]
+        public string? pos { get; set; }
 
-        private string posField;
+        [XmlAttribute]
+        public decimal range { get; set; }
 
-        private decimal rangeField;
+        [XmlAttribute]
+        public decimal height { get; set; }
 
-        private decimal heightField;
+        [XmlAttribute]
+        public int flags { get; set; }
 
-        private int flagsField;
+        [XmlIgnore]
+        public bool flagsSpecified { get; set; }
 
-        private bool flagsFieldSpecified;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string pos
+        public bool Equals(prototypeGroupContainerPoint? other)
         {
-            get
-            {
-                return this.posField;
-            }
-            set
-            {
-                this.posField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal range
-        {
-            get
-            {
-                return this.rangeField;
-            }
-            set
-            {
-                this.rangeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal height
-        {
-            get
-            {
-                return this.heightField;
-            }
-            set
-            {
-                this.heightField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int flags
-        {
-            get
-            {
-                return this.flagsField;
-            }
-            set
-            {
-                this.flagsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool flagsSpecified
-        {
-            get
-            {
-                return this.flagsFieldSpecified;
-            }
-            set
-            {
-                this.flagsFieldSpecified = value;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeGroupContainerPoint other)
-                return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
             return string.Equals(pos, other.pos, StringComparison.Ordinal) &&
                    range == other.range &&
@@ -923,71 +667,54 @@ namespace Day2eEditor
                    flags == other.flags &&
                    flagsSpecified == other.flagsSpecified;
         }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupContainerPoint);
+
+        public prototypeGroupContainerPoint Clone()
+        {
+            return new prototypeGroupContainerPoint
+            {
+                pos = pos,
+                range = range,
+                height = height,
+                flags = flags,
+                flagsSpecified = flagsSpecified
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class prototypeGroupProxy
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class prototypeGroupProxy : IEquatable<prototypeGroupProxy>, IDeepCloneable<prototypeGroupProxy>
     {
+        [XmlAttribute]
+        public string? type { get; set; }
 
-        private string typeField;
+        [XmlAttribute]
+        public string? pos { get; set; }
 
-        private string posField;
+        [XmlAttribute]
+        public string? rpy { get; set; }
 
-        private string rpyField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type
+        public bool Equals(prototypeGroupProxy? other)
         {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string pos
-        {
-            get
-            {
-                return this.posField;
-            }
-            set
-            {
-                this.posField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string rpy
-        {
-            get
-            {
-                return this.rpyField;
-            }
-            set
-            {
-                this.rpyField = value;
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is not prototypeGroupProxy other)
-                return false;
-
+            if (other is null) return false;
             return string.Equals(type, other.type, StringComparison.Ordinal) &&
                    string.Equals(pos, other.pos, StringComparison.Ordinal) &&
                    string.Equals(rpy, other.rpy, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as prototypeGroupProxy);
+
+        public prototypeGroupProxy Clone()
+        {
+            return new prototypeGroupProxy
+            {
+                type = type,
+                pos = pos,
+                rpy = rpy
+            };
         }
     }
 }

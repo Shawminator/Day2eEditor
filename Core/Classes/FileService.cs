@@ -221,7 +221,6 @@ public class FileService
     public T LoadOrCreateXml<T>(
         string path,
         Func<T> createNew,
-        Action<T>? onAfterLoad = null,
         Action<Exception>? onError = null,
         string configName = "Configuration"
     )
@@ -234,8 +233,6 @@ public class FileService
                 using var stream = File.OpenRead(path);
                 var serializer = new XmlSerializer(typeof(T));
                 var data = (T)serializer.Deserialize(stream)!;
-
-                onAfterLoad?.Invoke(data);
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("OK");

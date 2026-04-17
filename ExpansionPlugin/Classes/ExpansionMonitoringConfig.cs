@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMonitoringConfig : ExpansionBaseIConfigLoader<MonitoringSettings>
+    public class ExpansionMonitoringConfig : SingleFileConfigLoaderBase<MonitoringSettings>
     {
         public const int CurrentVersion = 1;
         public ExpansionMonitoringConfig(string path) : base(path)

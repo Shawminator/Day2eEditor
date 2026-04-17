@@ -99,7 +99,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
+                parent.IsDirty = !_data.Equals(_originalData);
             }
         }
 
@@ -267,7 +267,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             NumericUpDown nud = sender as NumericUpDown;
             if (nud.DecimalPlaces > 0)
-               _data.SetdecimalValue(nud.Name.Substring(0, nud.Name.Length - 3), (decimal)nud.Value);
+               _data.SetDecimalValue(nud.Name.Substring(0, nud.Name.Length - 3), (decimal)nud.Value);
             else
                 _data.SetIntValue(nud.Name.Substring(0, nud.Name.Length - 3), (int)nud.Value);
             HasChanges();

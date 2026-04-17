@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionNameTagsConfig : ExpansionBaseIConfigLoader<NameTagsSettings>
+    public class ExpansionNameTagsConfig : SingleFileConfigLoaderBase<NameTagsSettings>
     {
         public const int CurrentVersion = 4;
         public ExpansionNameTagsConfig(string path) : base(path)

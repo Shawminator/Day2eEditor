@@ -15,6 +15,17 @@ namespace EconomyPlugin
     public partial class TypesCollectionControl : UserControl, IUIHandler
     {
         private Type _parentType;
+        private TypesFile _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+        private TypeEntry _originalData;
+        private Category Cat;
+        private bool isCat = false;
+
+        public TypesCollectionControl()
+        {
+            InitializeComponent();
+        }
         public Control GetControl() => this;
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
@@ -27,38 +38,13 @@ namespace EconomyPlugin
                 isCat = true;
                 CollectionNameTB.Text = Cat.Name;
                 label1.Text = "Category:-";
-                UpdateTypesFileButton.Visible = false;
             }
             else
             {
                 CollectionNameTB.Text = _data.FileName;
                 label1.Text = "Filename:-";
-                UpdateTypesFileButton.Visible = true;
             }
 
-        }
-        public void ApplyChanges()
-        {
-
-        }
-        public void Reset()
-        {
-
-        }
-        public void HasChanges()
-        {
-        }
-
-        private TypesFile _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private TypeEntry _originalData;
-        private Category Cat;
-        private bool isCat = false;
-
-        public TypesCollectionControl()
-        {
-            InitializeComponent();
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -85,26 +71,7 @@ namespace EconomyPlugin
                 }
             }
             Console.WriteLine($"[INFO] Zeroing Complete for all entires in {title}");
-            _data.isDirty = true;
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                TypesFile newfile = new TypesFile(openFileDialog.FileName);
-                newfile.Load();
-
-                foreach (var newEntry in newfile.Data.TypeList)
-                {
-                    if (!_data.Data.TypeList.Any(e => e.Name == newEntry.Name))
-                    {
-                        Console.WriteLine($"[INFO] {newEntry.Name} added to {_data.FileName}");
-                        _data.Data.TypeList.Add(newEntry);
-                    }
-                }
-
-            }
+            
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -130,7 +97,7 @@ namespace EconomyPlugin
                 }
             }
             Console.WriteLine($"[INFO] Syncing Minimum to Nominal for all Entries in {title}");
-            _data.isDirty = true;
+            
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -156,7 +123,7 @@ namespace EconomyPlugin
                 }
             }
             Console.WriteLine($"[INFO] Syncing Nominal to Minimum for all Entries in {title}");
-            _data.isDirty = true;
+            
         }
         private void button5_Click(object sender, EventArgs e)
         {
@@ -188,7 +155,7 @@ namespace EconomyPlugin
             if (ChangeMinCB.Checked)
                 Console.WriteLine($"[INFO] All Entries Minimum Value Set to {CollectionCustomNUD.Value} in {title}");
 
-            _data.isDirty = true;
+            
         }
         private void button6_Click(object sender, EventArgs e)
         {
@@ -216,7 +183,7 @@ namespace EconomyPlugin
             if (ChangeMinCheckBox.Checked)
                 Console.WriteLine($"[INFO] All Entries Minimum Value Set to {MultiplierCB.GetItemText(MultiplierCB.SelectedItem)} in {title}");
 
-            _data.isDirty = true;
+            
         }
         private void Domultiplier(TypeEntry item)
         {

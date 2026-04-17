@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAILocationConfig : ExpansionBaseIConfigLoader<ExpansionAILocationSettings>
+    public class ExpansionAILocationConfig : SingleFileConfigLoaderBase<ExpansionAILocationSettings>
     {
         public const int CurrentVersion = 4;
 
@@ -25,10 +25,7 @@ namespace ExpansionPlugin
                     .LoadOrCreateJson(
                         _path,
                         createNew: () => CreateDefaultData(),
-                        onError: ex =>
-                        {
-                            HandleLoadError(ex);
-                        },
+                        onError: ex => HandleLoadError(ex),
                         configName: FileName,
                         useVecConvertor: true
                     );
@@ -39,7 +36,7 @@ namespace ExpansionPlugin
                     foreach (var msg in issues)
                         Console.WriteLine("- " + msg);
 
-                    isDirty = true;
+                    MarkDirty();    
                 }
                 OnAfterLoad(Data);
                 ClonedData = CloneData(Data);
@@ -55,9 +52,9 @@ namespace ExpansionPlugin
             if (Data is null)
                 return Array.Empty<string>();
 
-            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                isDirty = false;
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data,false, true);
                 ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };

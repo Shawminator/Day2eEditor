@@ -70,7 +70,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = _data.SpawnWeight != _originalData.SpawnWeight;
+                parent.IsDirty = _data.SpawnWeight != _originalData.SpawnWeight;
             }
         }
 

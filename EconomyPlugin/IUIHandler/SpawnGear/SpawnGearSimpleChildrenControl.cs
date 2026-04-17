@@ -71,7 +71,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.SimpleChildrenTypes.SequenceEqual(_originalData.SimpleChildrenTypes);
+                parent.IsDirty = !_data.SimpleChildrenTypes.SequenceEqual(_originalData.SimpleChildrenTypes);
             }
         }
 

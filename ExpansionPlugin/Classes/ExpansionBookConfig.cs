@@ -6,11 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionBookConfig : ExpansionBaseIConfigLoader<ExpansionBookSettings>
+    public class ExpansionBookConfig : SingleFileConfigLoaderBase<ExpansionBookSettings>
     {
         public const int CurrentVersion = 5;
 

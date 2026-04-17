@@ -20,7 +20,7 @@ namespace ExpansionPlugin
         [Description("Visible on the Map and World")]
         Visible_on_the_Map_and_on_the_World = 6        // (If \"m_Is3D\" is set to 1, you should probably put \"m_Visibility\" to 2)."
     };
-    public class ExpansionMapConfig : ExpansionBaseIConfigLoader<ExpansionMapSettings>
+    public class ExpansionMapConfig : SingleFileConfigLoaderBase<ExpansionMapSettings>
     {
         public const int CurrentVersion = 5;
  

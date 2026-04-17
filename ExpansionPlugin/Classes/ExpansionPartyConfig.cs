@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPartyConfig : ExpansionBaseIConfigLoader<ExpansionPartySettings>
+    public class ExpansionPartyConfig : SingleFileConfigLoaderBase<ExpansionPartySettings>
     {
         public const int CurrentVersion = 8;
         public ExpansionPartyConfig(string path) : base(path)

@@ -38,7 +38,6 @@
             CollectionCustomNUD = new NumericUpDown();
             SyncMIntoNomButton = new Button();
             SyncNomtoMinButton = new Button();
-            UpdateTypesFileButton = new Button();
             ZeroiseButton = new Button();
             CollectionNameTB = new TextBox();
             label1 = new Label();
@@ -57,7 +56,6 @@
             TypesCollectionGB.Controls.Add(CollectionCustomNUD);
             TypesCollectionGB.Controls.Add(SyncMIntoNomButton);
             TypesCollectionGB.Controls.Add(SyncNomtoMinButton);
-            TypesCollectionGB.Controls.Add(UpdateTypesFileButton);
             TypesCollectionGB.Controls.Add(ZeroiseButton);
             TypesCollectionGB.Controls.Add(CollectionNameTB);
             TypesCollectionGB.Controls.Add(label1);
@@ -65,7 +63,7 @@
             TypesCollectionGB.ForeColor = SystemColors.Control;
             TypesCollectionGB.Location = new Point(0, 0);
             TypesCollectionGB.Name = "TypesCollectionGB";
-            TypesCollectionGB.Size = new Size(645, 231);
+            TypesCollectionGB.Size = new Size(645, 197);
             TypesCollectionGB.TabIndex = 0;
             TypesCollectionGB.TabStop = false;
             TypesCollectionGB.Text = "Types Collection";
@@ -173,18 +171,6 @@
             SyncNomtoMinButton.UseVisualStyleBackColor = false;
             SyncNomtoMinButton.Click += button2_Click;
             // 
-            // UpdateTypesFileButton
-            // 
-            UpdateTypesFileButton.BackColor = Color.FromArgb(60, 63, 65);
-            UpdateTypesFileButton.FlatStyle = FlatStyle.Flat;
-            UpdateTypesFileButton.Location = new Point(15, 192);
-            UpdateTypesFileButton.Name = "UpdateTypesFileButton";
-            UpdateTypesFileButton.Size = new Size(159, 23);
-            UpdateTypesFileButton.TabIndex = 26;
-            UpdateTypesFileButton.Text = "Update Types file";
-            UpdateTypesFileButton.UseVisualStyleBackColor = false;
-            UpdateTypesFileButton.Click += button1_Click;
-            // 
             // ZeroiseButton
             // 
             ZeroiseButton.BackColor = Color.FromArgb(60, 63, 65);
@@ -228,7 +214,7 @@
             Controls.Add(TypesCollectionGB);
             ForeColor = SystemColors.Control;
             Name = "TypesCollectionControl";
-            Size = new Size(645, 231);
+            Size = new Size(645, 197);
             TypesCollectionGB.ResumeLayout(false);
             TypesCollectionGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)CollectionCustomNUD).EndInit();
@@ -241,7 +227,6 @@
         private TextBox CollectionNameTB;
         private Label label1;
         private Button ZeroiseButton;
-        private Button UpdateTypesFileButton;
         private Button SyncMIntoNomButton;
         private Button SyncNomtoMinButton;
         private Button SetCustomButton;

@@ -44,9 +44,9 @@ namespace ExpansionPlugin
         {
             lb.Items.Clear();
 
-            lb.Items.AddRange(AppServices.GetRequired<EconomyManager>().TypesConfig.SerachTypes("zmbm_").ToArray());
-            lb.Items.AddRange(AppServices.GetRequired<EconomyManager>().TypesConfig.SerachTypes("zmbf_").ToArray());
-            lb.Items.AddRange(AppServices.GetRequired<EconomyManager>().TypesConfig.SerachTypes("animal_").ToArray());
+            lb.Items.AddRange(AppServices.GetRequired<EconomyManager>().TypesConfig.SearchTypes("zmbm_").ToArray());
+            lb.Items.AddRange(AppServices.GetRequired<EconomyManager>().TypesConfig.SearchTypes("zmbf_").ToArray());
+            lb.Items.AddRange(AppServices.GetRequired<EconomyManager>().TypesConfig.SearchTypes("animal_").ToArray());
 
         }
         /// <summary>

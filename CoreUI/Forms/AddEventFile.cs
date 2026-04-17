@@ -88,7 +88,6 @@ namespace Day2eEditor
             if (openfile.ShowDialog() == DialogResult.OK)
             {
                 EventsFile newevents = new EventsFile(openfile.FileName);
-                newevents.Load();
                 _entries = newevents.Data.@event;
                 textBox1.Text = Path.GetFileNameWithoutExtension(openfile.FileName);
                 MessageBox.Show($"{newevents.Data.@event.Count} evenmts loaded,\nplease import once you have set filename and directory");

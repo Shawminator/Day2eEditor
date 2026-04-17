@@ -1,61 +1,71 @@
 ﻿using System.ComponentModel;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Day2eEditor
 {
-    public class economyCoreConfig : IConfigLoader
+    public class economyCoreConfig : SingleFileConfigLoaderBase<economycore>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        public economycore Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        public economyCoreConfig(string path)
+        public economyCoreConfig(string path) : base(path)
         {
-            _path = path;
         }
 
-        public void Load()
+        protected override economycore CreateDefaultData()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<economycore>(
-                _path,
-                createNew: () => new economycore(),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                    );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                },
-                configName: "cfgeconomycore"
-            );
-            CheckCE();
+            return new economycore();
         }
-        public IEnumerable<string> Save()
+
+        public override void Load()
         {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<economycore>(
+                        _path,
+                        createNew: () => new economycore(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfgeconomycore"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
-        {
-            return isDirty;
-        }
         public void AddCe(string path, string filename, string type)
         {
             economycoreCEFile newfile = new economycoreCEFile();
@@ -93,9 +103,10 @@ namespace Day2eEditor
                 default:
                     break;
             }
+
             if (Data.ce.Any(x => x.folder == _path))
             {
-                Data.ce.FirstOrDefault(x => x.folder == _path).file.Add(newfile);
+                Data.ce.FirstOrDefault(x => x.folder == _path)?.file.Add(newfile);
             }
             else
             {
@@ -105,33 +116,37 @@ namespace Day2eEditor
                     file = new BindingList<economycoreCEFile>()
                 };
                 newce.file.Add(newfile);
+
                 if (Data.ce == null)
                 {
                     Data.ce = new BindingList<economycoreCE>();
                 }
+
                 Data.ce.Add(newce);
             }
-            isDirty = true;
         }
-        public economycoreCE getfolder(string path)
+
+        public economycoreCE? getfolder(string path)
         {
             return Data.ce.FirstOrDefault(x => x.folder == path);
         }
+
         public void RemoveCe(string modname, out string Folderpath, out string filename, out bool deletedirectory)
         {
-            economycoreCE ce = Data.findFile(modname);
+            economycoreCE ce = Data.findFile(modname)!;
             Folderpath = ce.folder;
-            economycoreCEFile file = ce.getfile(modname);
+            economycoreCEFile file = ce.getfile(modname)!;
             filename = file.name;
             ce.removefile(file);
             deletedirectory = false;
+
             if (ce.file.Count == 0)
             {
                 Data.ce.Remove(ce);
                 deletedirectory = true;
             }
-            isDirty = true;
         }
+
         public List<string> GetModdedPaths(string type)
         {
             var result = new List<string>();
@@ -156,11 +171,16 @@ namespace Day2eEditor
             }
 
             return result;
-
         }
 
-        public void CheckCE()
+        protected override IEnumerable<string> ValidateData()
         {
+            return CheckCE();
+        }
+
+        public List<string> CheckCE()
+        {
+            var fixes = new List<string>();
             bool needToSave = false;
             List<economycoreCE> ceToRemove = new List<economycoreCE>();
 
@@ -180,9 +200,11 @@ namespace Day2eEditor
                     {
                         filesToRemove.Add(ceFile);
                         Console.WriteLine($"\tNon-existing file found, removing {ceFile.name} from {ce.folder}");
+                        fixes.Add($"\tNon-existing file found, removing {ceFile.name} from {ce.folder}");
                         needToSave = true;
                     }
                 }
+
                 foreach (economycoreCEFile f in filesToRemove)
                 {
                     ce.removefile(f);
@@ -191,6 +213,7 @@ namespace Day2eEditor
                 if (ce.file == null || ce.file.Count == 0)
                 {
                     Console.WriteLine($"\tEmpty CE entry found in economy core, removing {ce.folder}");
+                    fixes.Add($"\tEmpty CE entry found in economy core, removing {ce.folder}");
                     ceToRemove.Add(ce);
                     needToSave = true;
                 }
@@ -203,233 +226,214 @@ namespace Day2eEditor
 
             if (needToSave)
             {
-                isDirty = true;
+                MarkDirty();
                 Save();
             }
-        }
 
+            return fixes;
+        }
     }
 
-
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class economycore
+    [Serializable]
+    [DesignerCategory("code")]
+    [System.Xml.Serialization.XmlType(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class economycore : IEquatable<economycore>, IDeepCloneable<economycore>
     {
+        private BindingList<economycoreRootclass>? classesField;
+        private BindingList<economycoreDefault>? defaultsField;
+        private BindingList<economycoreCE>? ceField;
 
-        private BindingList<economycoreRootclass> classesField;
-
-        private BindingList<economycoreDefault> defaultsField;
-
-        private BindingList<economycoreCE> ceField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("rootclass", IsNullable = false)]
+        [System.Xml.Serialization.XmlArrayItem("rootclass", IsNullable = false)]
         public BindingList<economycoreRootclass> classes
         {
-            get
-            {
-                return this.classesField;
-            }
-            set
-            {
-                this.classesField = value;
-            }
+            get => classesField ??= new BindingList<economycoreRootclass>();
+            set => classesField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("default", IsNullable = false)]
+        [System.Xml.Serialization.XmlArrayItem("default", IsNullable = false)]
         public BindingList<economycoreDefault> defaults
         {
-            get
-            {
-                return this.defaultsField;
-            }
-            set
-            {
-                this.defaultsField = value;
-            }
+            get => defaultsField ??= new BindingList<economycoreDefault>();
+            set => defaultsField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ce")]
+        [System.Xml.Serialization.XmlElement("ce")]
         public BindingList<economycoreCE> ce
         {
-            get
-            {
-                return this.ceField;
-            }
-            set
-            {
-                this.ceField = value;
-            }
+            get => ceField ??= new BindingList<economycoreCE>();
+            set => ceField = value;
         }
-        public economycoreCE findFile(string modname)
+
+        public economycoreCE? findFile(string modname)
         {
-            foreach (economycoreCE ce in ce)
+            foreach (economycoreCE ceEntry in ce)
             {
-                if (ce.file.Any(x => x.name == modname))
+                if (ceEntry.file.Any(x => x.name == modname))
                 {
-                    return ce;
+                    return ceEntry;
                 }
             }
             return null;
         }
+
+        public bool Equals(economycore? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return classes.SequenceEqual(other.classes) &&
+                   defaults.SequenceEqual(other.defaults) &&
+                   ce.SequenceEqual(other.ce);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as economycore);
+
+        public economycore Clone()
+        {
+            return new economycore
+            {
+                classes = new BindingList<economycoreRootclass>(classes.Select(x => x.Clone()).ToList()),
+                defaults = new BindingList<economycoreDefault>(defaults.Select(x => x.Clone()).ToList()),
+                ce = new BindingList<economycoreCE>(ce.Select(x => x.Clone()).ToList())
+            };
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class economycoreRootclass
+    [Serializable]
+    [DesignerCategory("code")]
+    [System.Xml.Serialization.XmlType(AnonymousType = true)]
+    public partial class economycoreRootclass : IEquatable<economycoreRootclass>, IDeepCloneable<economycoreRootclass>
     {
+        private string? nameField;
+        private string? reportMemoryLODField;
+        private string? actField;
 
-        private string nameField;
-
-        private string reportMemoryLODField;
-
-        private string actField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [System.Xml.Serialization.XmlAttribute]
+        public string? name
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get => nameField;
+            set => nameField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string reportMemoryLOD
+        [System.Xml.Serialization.XmlAttribute]
+        public string? reportMemoryLOD
         {
-            get
-            {
-                return this.reportMemoryLODField;
-            }
-            set
-            {
-                this.reportMemoryLODField = value;
-            }
+            get => reportMemoryLODField;
+            set => reportMemoryLODField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string act
+        [System.Xml.Serialization.XmlAttribute]
+        public string? act
         {
-            get
-            {
-                return this.actField;
-            }
-            set
-            {
-                this.actField = value;
-            }
+            get => actField;
+            set => actField = value;
         }
 
         public override string ToString()
         {
-            return name;
+            return name ?? string.Empty;
+        }
+
+        public bool Equals(economycoreRootclass? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   string.Equals(reportMemoryLOD, other.reportMemoryLOD, StringComparison.Ordinal) &&
+                   string.Equals(act, other.act, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as economycoreRootclass);
+
+        public economycoreRootclass Clone()
+        {
+            return new economycoreRootclass
+            {
+                name = name,
+                reportMemoryLOD = reportMemoryLOD,
+                act = act
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class economycoreDefault
+    [Serializable]
+    [DesignerCategory("code")]
+    [System.Xml.Serialization.XmlType(AnonymousType = true)]
+    public partial class economycoreDefault : IEquatable<economycoreDefault>, IDeepCloneable<economycoreDefault>
     {
+        private string? nameField;
+        private string? valueField;
 
-        private string nameField;
-
-        private string valueField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [System.Xml.Serialization.XmlAttribute]
+        public string? name
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get => nameField;
+            set => nameField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string value
+        [System.Xml.Serialization.XmlAttribute]
+        public string? value
         {
-            get
-            {
-                return this.valueField;
-            }
-            set
-            {
-                this.valueField = value;
-            }
+            get => valueField;
+            set => valueField = value;
         }
 
         public override string ToString()
         {
-            return name;
+            return name ?? string.Empty;
+        }
+
+        public bool Equals(economycoreDefault? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   string.Equals(value, other.value, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as economycoreDefault);
+
+        public economycoreDefault Clone()
+        {
+            return new economycoreDefault
+            {
+                name = name,
+                value = value
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class economycoreCE
+    [Serializable]
+    [DesignerCategory("code")]
+    [System.Xml.Serialization.XmlType(AnonymousType = true)]
+    public partial class economycoreCE : IEquatable<economycoreCE>, IDeepCloneable<economycoreCE>
     {
+        private BindingList<economycoreCEFile>? fileField;
+        private string? folderField;
 
-        private BindingList<economycoreCEFile> fileField;
-
-        private string folderField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("file")]
+        [System.Xml.Serialization.XmlElement("file")]
         public BindingList<economycoreCEFile> file
         {
-            get
-            {
-                return this.fileField;
-            }
-            set
-            {
-                this.fileField = value;
-            }
+            get => fileField ??= new BindingList<economycoreCEFile>();
+            set => fileField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlAttribute]
         public string folder
         {
-            get
-            {
-                return this.folderField;
-            }
-            set
-            {
-                this.folderField = value;
-            }
+            get => folderField ?? string.Empty;
+            set => folderField = value;
         }
 
         public override string ToString()
         {
             return folder;
         }
-        public economycoreCEFile getfile(string modname)
+
+        public economycoreCEFile? getfile(string modname)
         {
             foreach (economycoreCEFile _file in file)
             {
@@ -440,53 +444,78 @@ namespace Day2eEditor
             }
             return null;
         }
+
         public void removefile(economycoreCEFile _file)
         {
             file.Remove(_file);
         }
-    }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class economycoreCEFile
-    {
-        private string nameField;
-        private string typeField;  //available types = types, spawnabletypes, globals, economy, events, messages, randompresets
-
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(economycoreCE? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(folder, other.folder, StringComparison.Ordinal) &&
+                   file.SequenceEqual(other.file);
         }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public override bool Equals(object? obj) => Equals(obj as economycoreCE);
+
+        public economycoreCE Clone()
+        {
+            return new economycoreCE
+            {
+                folder = folder,
+                file = new BindingList<economycoreCEFile>(file.Select(x => x.Clone()).ToList())
+            };
+        }
+    }
+
+    [Serializable]
+    [DesignerCategory("code")]
+    [System.Xml.Serialization.XmlType(AnonymousType = true)]
+    public partial class economycoreCEFile : IEquatable<economycoreCEFile>, IDeepCloneable<economycoreCEFile>
+    {
+        private string? nameField;
+        private string? typeField;
+
+        [System.Xml.Serialization.XmlAttribute]
+        public string name
+        {
+            get => nameField ?? string.Empty;
+            set => nameField = value;
+        }
+
+        [System.Xml.Serialization.XmlAttribute]
         public string type
         {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
+            get => typeField ?? string.Empty;
+            set => typeField = value;
         }
 
         public override string ToString()
         {
             return name;
         }
+
+        public bool Equals(economycoreCEFile? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   string.Equals(type, other.type, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as economycoreCEFile);
+
+        public economycoreCEFile Clone()
+        {
+            return new economycoreCEFile
+            {
+                name = name,
+                type = type
+            };
+        }
     }
-
-
-
-
 }

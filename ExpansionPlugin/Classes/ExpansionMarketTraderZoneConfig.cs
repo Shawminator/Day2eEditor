@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMarketTraderZoneConfig : MultiFileConfigLoader<ExpansionMarketTraderZone>
+    public class ExpansionMarketTraderZoneConfig : MultiFileConfigLoaderBase<ExpansionMarketTraderZone>
     {
         public const int CurrentVersion = 6;
         public ExpansionMarketTraderZoneConfig(string path) : base(path)
@@ -17,10 +17,7 @@ namespace ExpansionPlugin
         }
         public override void Load()
         {
-            HasErrors = false;
-            Errors.Clear();
-            Items.Clear();
-            ClonedItems.Clear();
+            ResetState();
 
             var filePaths = Directory.GetFiles(BasePath, "*.json");
 
@@ -31,18 +28,18 @@ namespace ExpansionPlugin
                     var item = LoadItem(file);
 
                     OnAfterItemLoad(item, file);
-                    ClonedItems.Add(GetID(item), item.Clone());
-                    var issues = ValidateData(item);
+                    _clonedItems.Add(GetID(item), item.Clone());
+                    var issues = ValidateItem(item);
                     if (issues?.Any() == true)
                     {
                         Console.WriteLine("Validation issues in " + FileName + ":");
                         foreach (var msg in issues)
                             Console.WriteLine("- " + msg);
                     }
-                    ClonedItems[item.Id].stockList = item.stockList != null
+                    _clonedItems[item.Id].stockList = item.stockList != null
                         ? new BindingList<ExpansionMarketTraderStockItem>(item.stockList.Select(cat => cat.Clone()).ToList())
                         : new BindingList<ExpansionMarketTraderStockItem>();
-                    Items.Add(item);
+                    MutableItems.Add(item);
 
                 }
                 catch (Exception ex)
@@ -81,17 +78,17 @@ namespace ExpansionPlugin
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
-                    Items.RemoveAt(i);
-                    ClonedItems.Remove(id);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
                     saved.Add("File Remove " + fileName);
                     continue;
                 }
                 //new file, needs to be written to disk and cloned
-                if (!ClonedItems.TryGetValue(id, out var baseline))
+                if (!_clonedItems.TryGetValue(id, out var baseline))
                 {
                     item.CreatestockDictionary();
                     SaveItem(item);
-                    ClonedItems[id] = item.Clone();
+                    _clonedItems[id] = item.Clone();
                     saved.Add(fileName);
                     continue;
                 }
@@ -100,12 +97,12 @@ namespace ExpansionPlugin
                 {
                     item.CreatestockDictionary();
                     SaveItem(item);
-                    if (ClonedItems[id]._path != item._path)
+                    if (_clonedItems[id]._path != item._path)
                     {
-                        if (File.Exists(ClonedItems[id]._path))
-                            File.Delete(ClonedItems[id]._path);
+                        if (File.Exists(_clonedItems[id]._path))
+                            File.Delete(_clonedItems[id]._path);
                     }
-                    ClonedItems[id] = item.Clone();
+                    _clonedItems[id] = item.Clone();
                     saved.Add(fileName);
                 }
             }
@@ -169,7 +166,7 @@ namespace ExpansionPlugin
             };
             TraderZone.SetPath(Path.Combine(FilePath, filename));
             TraderZone.SetGuid(Guid.NewGuid());
-            Items.Add(TraderZone);
+            MutableItems.Add(TraderZone);
             return TraderZone;
 
         }
@@ -181,7 +178,7 @@ namespace ExpansionPlugin
         {
             return false;
         }
-        protected override IEnumerable<string> ValidateData(ExpansionMarketTraderZone TraderZone)
+        protected override IEnumerable<string> ValidateItem(ExpansionMarketTraderZone TraderZone)
         {
             return TraderZone.FixMissingOrInvalidFields();
         }

@@ -8,764 +8,992 @@ using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfgspawnabletypesConfig : IAdvancedConfigLoader
+    public class CfgSpawnableTypesConfig : ParameterizedMultiFileConfigLoaderBase<CfgSpawnableTypesFile>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        public string _basepath { get; set; }
-        public List<cfgspawnabletypesFile> AllData { get; private set; } = new List<cfgspawnabletypesFile>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
+        public CfgSpawnableTypesConfig(string path) : base(path)
         {
-            _basepath = basePath;
-            HasErrors = false;
-            Errors.Clear();
-            // Load vanilla file
-            var vanilla = new cfgspawnabletypesFile(vanillaPath)
-            {
-                IsModded = false,
-                FileType = "cfgspawnabletypes"
-            };
+        }
 
-            vanilla.Load();
-            AllData.Add(vanilla);
+        protected override void LoadCore()
+        {
+            ResetState();
 
-            if (vanilla.HasErrors)
+            if (string.IsNullOrWhiteSpace(VanillaPath))
             {
                 HasErrors = true;
-                var fileName = Path.GetFileName(vanilla.FilePath);
-                Errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
+                _errors.Add("Vanilla path is missing.");
+                return;
             }
 
-            // Load mod files
-            foreach (var modPath in modPaths)
+            try
             {
-                var modFile = new cfgspawnabletypesFile(modPath)
+                var vanilla = LoadItem(VanillaPath);
+                vanilla.IsModded = false;
+                vanilla.FileType = "cfgspawnabletypes";
+
+                OnAfterItemLoad(vanilla, VanillaPath);
+                _clonedItems[GetID(vanilla)] = vanilla.Clone();
+
+                var vanillaIssues = ValidateItem(vanilla);
+                if (vanillaIssues?.Any() == true)
                 {
-                    IsModded = true,
-                    FileType = "cfgspawnabletypes",
-                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
-                };
+                    Console.WriteLine("Validation issues in " + vanilla.FileName + ":");
+                    foreach (var msg in vanillaIssues)
+                        Console.WriteLine("- " + msg);
+                }
 
-                modFile.Load();
-                AllData.Add(modFile);
+                MutableItems.Add(vanilla);
 
-                if (modFile.HasErrors)
+                if (vanilla.HasErrors)
                 {
                     HasErrors = true;
-                    var modName = Path.GetFileName(modFile.ModFolder);
-                    var fileName = Path.GetFileName(modFile.FilePath);
-                    Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    var fileName = Path.GetFileName(vanilla.FilePath);
+                    _errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
                 }
             }
-        }
-        public IEnumerable<string> Save()
-        {
-            var savedFiles = new List<string>();
-
-            foreach (var data in AllData.ToList())
+            catch (Exception ex)
             {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+                HasErrors = true;
+                HandleItemError(VanillaPath, ex);
+            }
 
-                if (data.ToDelete)
+            foreach (var file in ModPaths)
+            {
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(file);
+                    item.IsModded = true;
+                    item.FileType = "cfgspawnabletypes";
+                    item.ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(file) ?? BasePath);
+
+                    OnAfterItemLoad(item, file);
+                    _clonedItems[GetID(item)] = item.Clone();
+
+                    var issues = ValidateItem(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + item.FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+
+                    MutableItems.Add(item);
+
+                    if (item.HasErrors)
+                    {
+                        HasErrors = true;
+                        var modName = Path.GetFileName(item.ModFolder);
+                        var fileName = Path.GetFileName(item.FilePath);
+                        _errors.AddRange(item.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
         }
-
-        public bool needToSave()
+        protected override CfgSpawnableTypesFile LoadItem(string filePath)
         {
-            foreach (var Data in AllData)
-            {
-                if (Data.needToSave())
-                    return true;
-            }
-            return false;
-        }
+            var item = new CfgSpawnableTypesFile(filePath);
 
-    }
-    public class cfgspawnabletypesFile : IConfigLoader
-    {
-        private readonly string _path;
-
-        public SpawnableTypes Data { get; private set; } = new SpawnableTypes();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        // Metadata for file type and source
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;                  // Full file path
-        public string FileType { get; set; }               // "types"
-        public bool IsModded { get; set; }                 // true if modded, false if vanilla
-        public string ModFolder { get; set; }
-        public bool ToDelete { get; set; }
-
-        public cfgspawnabletypesFile(string path)
-        {
-            _path = path ?? throw new ArgumentNullException(nameof(path));
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<SpawnableTypes>(
-                _path,
-                createNew: () => new SpawnableTypes(),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
+            item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
+                filePath,
+                createNew: () => new SpawnableTypes
+                {
+                    type = new BindingList<SpawnableType>()
+                },
                 onError: ex =>
                 {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                        );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
+                    item.HasErrors = true;
+
+                    var message =
+                        $"Error in {Path.GetFileName(filePath)}\n{ex.Message}\n{ex.InnerException?.Message}";
+
+                    Console.WriteLine(message + "\n");
+                    item.Errors.Add(message);
                 },
                 configName: "cfgspawnabletypes"
             );
+
+            item.Data.type ??= new BindingList<SpawnableType>();
+            item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
+
+            return item;
         }
-        public IEnumerable<string> Save()
+        protected override IEnumerable<string> ValidateItem(CfgSpawnableTypesFile item)
         {
-            if (ToDelete)
+            return item.Errors;
+        }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
             {
-                if (File.Exists(_path))
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+
+                if (ShouldDelete(item))
                 {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
                 }
-                return Array.Empty<string>();
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+
+                if (!item.Equals(baseline))
+                {
+                    var oldPath = baseline.FilePath;
+
+                    SaveItem(item);
+
+                    if (!string.Equals(oldPath, item.FilePath, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(oldPath) &&
+                        File.Exists(oldPath))
+                    {
+                        File.Delete(oldPath);
+                    }
+
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
             }
 
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
+            return saved;
         }
-
-        public bool needToSave()
-        {
-            return isDirty;
-        }
-
-        public void CreateNew()
-        {
-            Data = new SpawnableTypes()
-            {
-                type = new BindingList<SpawnableType>()
-            }; ;
-        }
-    }
-    [XmlRoot("spawnabletypes")]
-    public partial class SpawnableTypes
-    {
-        private spawnableTypeDamage damageField;
-        private BindingList<SpawnableType> typeField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("damage")]
-        public spawnableTypeDamage damage
-        {
-            get
-            {
-                return this.damageField;
-            }
-            set
-            {
-                this.damageField = value;
-            }
-        }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("type")]
-        public BindingList<SpawnableType> type
-        {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
-    }
-    // <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class SpawnableType
-    {
-        private BindingList<object> itemsField;
-
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("attachments", typeof(spawnableTypeAttachment))]
-        [System.Xml.Serialization.XmlElementAttribute("cargo", typeof(spawnableTypeCargo))]
-        [System.Xml.Serialization.XmlElementAttribute("damage", typeof(spawnableTypeDamage))]
-        [System.Xml.Serialization.XmlElementAttribute("hoarder", typeof(spawnableTypesHoarder))]
-        [System.Xml.Serialization.XmlElementAttribute("tag", typeof(spawnableTypeTag))]
-        public BindingList<object> Items
-        {
-            get
-            {
-                return this.itemsField;
-            }
-            set
-            {
-                this.itemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-        public override string ToString()
-        {
-            return name;
-        }
-        public bool ContainsAttchorcargo()
+        public override bool NeedToSave()
         {
             foreach (var item in Items)
             {
-                if (item is spawnableTypeAttachment || item is spawnableTypeCargo)
-                {
-                    if (item is spawnableTypeAttachment)
-                    {
-                        spawnableTypeAttachment att = item as spawnableTypeAttachment;
-                        if (att.item.Count() > 0 && att.preset == null)
-                        {
-                            return true;
-                        }
+                var id = GetID(item);
 
-                    }
-                    if (item is spawnableTypeCargo)
-                    {
-                        spawnableTypeCargo cargo = item as spawnableTypeCargo;
-                        if (cargo.item.Count > 0 && cargo.preset == null)
-                            return true;
-                    }
-                }
+                if (ShouldDelete(item))
+                    return true;
 
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                    return true;
+
+                if (!item.Equals(baseline))
+                    return true;
             }
+
             return false;
+        }
+        protected override void SaveItem(CfgSpawnableTypesFile item)
+        {
+            AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
+            item.IsDirty = false;
+        }
+        protected override string GetItemFileName(CfgSpawnableTypesFile item)
+            => item.FileName;
+        protected override Guid GetID(CfgSpawnableTypesFile item)
+            => item.Id;
+        protected override bool ShouldDelete(CfgSpawnableTypesFile item)
+            => item.ToDelete;
+        protected override void DeleteItemFile(CfgSpawnableTypesFile item)
+        {
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            {
+                File.Delete(item.FilePath);
+            }
+        }
+        protected override void HandleItemError(string path, Exception ex)
+        {
+            var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
+            _errors.Add(msg);
+            Console.WriteLine(msg);
+        }
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        {
+            var removedFolders = new List<string>();
+
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c =>
+                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    var relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
+    }
+    public class CfgSpawnableTypesFile : IDeepCloneable<CfgSpawnableTypesFile>, IEquatable<CfgSpawnableTypesFile>
+    {
+        private string _path;
+
+        public string FilePath => _path;
+        public string FileName => Path.GetFileName(_path);
+
+        public bool ToDelete { get; set; }
+        public bool IsDirty { get; set; }
+        public bool HasErrors { get; set; }
+
+        public List<string> Errors { get; } = new();
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string FileType { get; set; } = string.Empty;
+        public bool IsModded { get; set; }
+        public string ModFolder { get; set; } = string.Empty;
+
+        public SpawnableTypes Data { get; set; } = new()
+        {
+            type = new BindingList<SpawnableType>()
+        };
+
+        public CfgSpawnableTypesFile(string path)
+        {
+            _path = path;
+        }
+
+        public void SetPath(string path) => _path = path;
+
+        internal void SetGuid(Guid guid) => Id = guid;
+
+        public CfgSpawnableTypesFile Clone()
+        {
+            var clone = new CfgSpawnableTypesFile(_path)
+            {
+                ToDelete = ToDelete,
+                IsDirty = IsDirty,
+                HasErrors = HasErrors,
+                Id = Id,
+                FileType = FileType,
+                IsModded = IsModded,
+                ModFolder = ModFolder,
+                Data = Data?.Clone() ?? new SpawnableTypes
+                {
+                    type = new BindingList<SpawnableType>()
+                }
+            };
+
+            clone.Errors.AddRange(Errors);
+            return clone;
+        }
+
+        public bool Equals(CfgSpawnableTypesFile? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Id == other.Id &&
+                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(FileType, other.FileType, StringComparison.Ordinal) &&
+                IsModded == other.IsModded &&
+                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
+                ToDelete == other.ToDelete &&
+                Equals(Data, other.Data);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as CfgSpawnableTypesFile);
         }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class spawnableTypeTag
+    [XmlRoot("spawnabletypes")]
+    public partial class SpawnableTypes : IDeepCloneable<SpawnableTypes>, IEquatable<SpawnableTypes>
     {
+        private spawnableTypeDamage? damageField;
+        private BindingList<SpawnableType>? typeField = new();
 
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [XmlElement("damage")]
+        public spawnableTypeDamage? damage
         {
-            get
+            get => damageField;
+            set => damageField = value;
+        }
+
+        [XmlElement("type")]
+        public BindingList<SpawnableType>? type
+        {
+            get => typeField;
+            set => typeField = value;
+        }
+        public bool Equals(SpawnableTypes? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Equals(damage, other.damage) &&
+                ListsEqual(type, other.type);
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as SpawnableTypes);
+        }
+        public SpawnableTypes Clone()
+        {
+            return new SpawnableTypes
             {
-                return this.nameField;
-            }
-            set
+                damage = damage?.Clone(),
+                type = new BindingList<SpawnableType>(
+                    type?.Select(x => x.Clone()).ToList() ?? new List<SpawnableType>())
+            };
+        }
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
             {
-                this.nameField = value;
+                if (!Equals(a[i], b[i]))
+                    return false;
             }
+
+            return true;
+        }
+    }
+
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class SpawnableType : IDeepCloneable<SpawnableType>, IEquatable<SpawnableType>
+    {
+        private BindingList<object>? itemsField = new();
+        private string? nameField;
+
+        [XmlElement("attachments", typeof(spawnableTypeAttachment))]
+        [XmlElement("cargo", typeof(spawnableTypeCargo))]
+        [XmlElement("damage", typeof(spawnableTypeDamage))]
+        [XmlElement("hoarder", typeof(spawnableTypesHoarder))]
+        [XmlElement("tag", typeof(spawnableTypeTag))]
+        public BindingList<object>? Items
+        {
+            get => itemsField;
+            set => itemsField = value;
+        }
+
+        [XmlAttribute]
+        public string? name
+        {
+            get => nameField;
+            set => nameField = value;
+        }
+        public override string ToString()
+        {
+            return name ?? string.Empty;
+        }
+        public bool ContainsAttchorcargo()
+        {
+            if (Items == null)
+                return false;
+
+            foreach (var item in Items)
+            {
+                if (item is spawnableTypeAttachment att)
+                {
+                    if ((att.item?.Count ?? 0) > 0 && att.preset == null)
+                        return true;
+                }
+
+                if (item is spawnableTypeCargo cargo)
+                {
+                    if ((cargo.item?.Count ?? 0) > 0 && cargo.preset == null)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+        public bool Equals(SpawnableType? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                string.Equals(name, other.name, StringComparison.Ordinal) &&
+                ListsEqual(Items, other.Items);
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as SpawnableType);
+        }
+        public SpawnableType Clone()
+        {
+            var clonedItems = new BindingList<object>();
+
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    switch (item)
+                    {
+                        case spawnableTypeAttachment attachment:
+                            clonedItems.Add(attachment.Clone());
+                            break;
+                        case spawnableTypeCargo cargo:
+                            clonedItems.Add(cargo.Clone());
+                            break;
+                        case spawnableTypeDamage damage:
+                            clonedItems.Add(damage.Clone());
+                            break;
+                        case spawnableTypesHoarder hoarder:
+                            clonedItems.Add(hoarder.Clone());
+                            break;
+                        case spawnableTypeTag tag:
+                            clonedItems.Add(tag.Clone());
+                            break;
+                    }
+                }
+            }
+
+            return new SpawnableType
+            {
+                name = name,
+                Items = clonedItems
+            };
+        }
+        private static bool ListsEqual(IList<object>? a, IList<object>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
+        }
+    }
+
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class spawnableTypeTag : IDeepCloneable<spawnableTypeTag>, IEquatable<spawnableTypeTag>
+    {
+        private string? nameField;
+
+        [XmlAttribute]
+        public string? name
+        {
+            get => nameField;
+            set => nameField = value;
         }
 
         public override string ToString()
         {
             return "Tag";
         }
+        public bool Equals(spawnableTypeTag? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal);
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as spawnableTypeTag);
+        }
+        public spawnableTypeTag Clone()
+        {
+            return new spawnableTypeTag
+            {
+                name = name
+            };
+        }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class spawnableTypeDamage
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class spawnableTypeDamage : IDeepCloneable<spawnableTypeDamage>, IEquatable<spawnableTypeDamage>
     {
-
         private decimal minField;
-
         private decimal maxField;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public decimal min
         {
-            get
-            {
-                return this.minField;
-            }
-            set
-            {
-                this.minField = value;
-            }
+            get => minField;
+            set => minField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public decimal max
         {
-            get
-            {
-                return this.maxField;
-            }
-            set
-            {
-                this.maxField = value;
-            }
+            get => maxField;
+            set => maxField = value;
         }
 
         public override string ToString()
         {
             return "Damage";
         }
+        public bool Equals(spawnableTypeDamage? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return min == other.min && max == other.max;
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as spawnableTypeDamage);
+        }
+        public spawnableTypeDamage Clone()
+        {
+            return new spawnableTypeDamage
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class spawnableTypesHoarder
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class spawnableTypesHoarder : IDeepCloneable<spawnableTypesHoarder>, IEquatable<spawnableTypesHoarder>
     {
-
         public override string ToString()
         {
             return "Hoarder";
         }
+        public bool Equals(spawnableTypesHoarder? other)
+        {
+            return other is not null;
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as spawnableTypesHoarder);
+        }
+        public spawnableTypesHoarder Clone()
+        {
+            return new spawnableTypesHoarder();
+        }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class spawnableTypeAttachment
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class spawnableTypeAttachment : IDeepCloneable<spawnableTypeAttachment>, IEquatable<spawnableTypeAttachment>
     {
-        private spawnableTypeDamage damageField;
-
-        private BindingList<spawnableTypeItem> itemField;
-
+        private spawnableTypeDamage? damageField;
+        private BindingList<spawnableTypeItem>? itemField = new();
         private decimal chanceField;
-
         private bool chanceFieldSpecified;
+        private string? presetField;
 
-        private string presetField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("damage")]
-        public spawnableTypeDamage damage
+        [XmlElement("damage")]
+        public spawnableTypeDamage? damage
         {
-            get
-            {
-                return this.damageField;
-            }
-            set
-            {
-                this.damageField = value;
-            }
+            get => damageField;
+            set => damageField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("item")]
-        public BindingList<spawnableTypeItem> item
+        [XmlElement("item")]
+        public BindingList<spawnableTypeItem>? item
         {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
+            get => itemField;
+            set => itemField = value;
         }
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+
+        [XmlAttribute]
         public decimal chance
         {
-            get
-            {
-                return this.chanceField;
-            }
-            set
-            {
-                this.chanceField = value;
-            }
+            get => chanceField;
+            set => chanceField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool chanceSpecified
         {
-            get
-            {
-                return this.chanceFieldSpecified;
-            }
-            set
-            {
-                this.chanceFieldSpecified = value;
-            }
+            get => chanceFieldSpecified;
+            set => chanceFieldSpecified = value;
         }
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string preset
+
+        [XmlAttribute]
+        public string? preset
         {
-            get
-            {
-                return this.presetField;
-            }
-            set
-            {
-                this.presetField = value;
-            }
+            get => presetField;
+            set => presetField = value;
         }
 
         public override string ToString()
         {
             return "Attachments";
         }
-        public override bool Equals(object obj)
+
+        public bool Equals(spawnableTypeAttachment? other)
         {
-            if (obj is not spawnableTypeAttachment other)
+            if (other is null)
                 return false;
 
-            return chance == other.chance
-                && chanceSpecified == other.chanceSpecified
-                && string.Equals(preset, other.preset, StringComparison.Ordinal);
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Equals(damage, other.damage) &&
+                ListsEqual(item, other.item) &&
+                chance == other.chance &&
+                chanceSpecified == other.chanceSpecified &&
+                string.Equals(preset, other.preset, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as spawnableTypeAttachment);
+        }
+
+        public spawnableTypeAttachment Clone()
+        {
+            return new spawnableTypeAttachment
+            {
+                damage = damage?.Clone(),
+                item = new BindingList<spawnableTypeItem>(
+                    item?.Select(x => x.Clone()).ToList() ?? new List<spawnableTypeItem>()),
+                chance = chance,
+                chanceSpecified = chanceSpecified,
+                preset = preset
+            };
+        }
+
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
         }
     }
 
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class spawnableTypeCargo
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class spawnableTypeCargo : IDeepCloneable<spawnableTypeCargo>, IEquatable<spawnableTypeCargo>
     {
-        private spawnableTypeDamage damageField;
-
-        private BindingList<spawnableTypeItem> itemField;
-
-        private string presetField;
-
+        private spawnableTypeDamage? damageField;
+        private BindingList<spawnableTypeItem>? itemField = new();
+        private string? presetField;
         private decimal chanceField;
-
         private bool chanceFieldSpecified;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("damage")]
-        public spawnableTypeDamage damage
+        [XmlElement("damage")]
+        public spawnableTypeDamage? damage
         {
-            get
-            {
-                return this.damageField;
-            }
-            set
-            {
-                this.damageField = value;
-            }
+            get => damageField;
+            set => damageField = value;
         }
 
-        [System.Xml.Serialization.XmlElementAttribute("item")]
-        public BindingList<spawnableTypeItem> item
+        [XmlElement("item")]
+        public BindingList<spawnableTypeItem>? item
         {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
+            get => itemField;
+            set => itemField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string preset
+        [XmlAttribute]
+        public string? preset
         {
-            get
-            {
-                return this.presetField;
-            }
-            set
-            {
-                this.presetField = value;
-            }
+            get => presetField;
+            set => presetField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public decimal chance
         {
-            get
-            {
-                return this.chanceField;
-            }
-            set
-            {
-                this.chanceField = value;
-            }
+            get => chanceField;
+            set => chanceField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool chanceSpecified
         {
-            get
-            {
-                return this.chanceFieldSpecified;
-            }
-            set
-            {
-                this.chanceFieldSpecified = value;
-            }
+            get => chanceFieldSpecified;
+            set => chanceFieldSpecified = value;
         }
 
         public override string ToString()
         {
             return "Cargo";
         }
-        public override bool Equals(object obj)
+        public bool Equals(spawnableTypeCargo? other)
         {
-            if (obj is not spawnableTypeCargo other)
+            if (other is null)
                 return false;
 
-            return chance == other.chance
-                && chanceSpecified == other.chanceSpecified
-                && string.Equals(preset, other.preset, StringComparison.Ordinal);
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Equals(damage, other.damage) &&
+                ListsEqual(item, other.item) &&
+                string.Equals(preset, other.preset, StringComparison.Ordinal) &&
+                chance == other.chance &&
+                chanceSpecified == other.chanceSpecified;
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as spawnableTypeCargo);
+        }
+        public spawnableTypeCargo Clone()
+        {
+            return new spawnableTypeCargo
+            {
+                damage = damage?.Clone(),
+                item = new BindingList<spawnableTypeItem>(
+                    item?.Select(x => x.Clone()).ToList() ?? new List<spawnableTypeItem>()),
+                preset = preset,
+                chance = chance,
+                chanceSpecified = chanceSpecified
+            };
+        }
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
         }
     }
 
-    public partial class spawnableTypeItem
+    public partial class spawnableTypeItem : IDeepCloneable<spawnableTypeItem>, IEquatable<spawnableTypeItem>
     {
-        private spawnableTypeDamage damageField;
-
-        private BindingList<spawnableTypeAttachment> attachmentsField;
-
-        private BindingList<spawnableTypeCargo> cargoField;
-
-        private string nameField;
-
+        private spawnableTypeDamage? damageField;
+        private BindingList<spawnableTypeAttachment>? attachmentsField = new();
+        private BindingList<spawnableTypeCargo>? cargoField = new();
+        private string? nameField;
         private bool equipField;
-
         private bool equipFieldSpecified;
-
         private decimal chanceField;
-
         private bool chanceFieldSpecified;
-
         private int quantminField;
-
         private bool quantminFieldSpecified;
-
         private int quantmaxField;
-
         private bool quantmaxFieldSpecified;
 
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("damage")]
-        public spawnableTypeDamage damage
+        [XmlElement("damage")]
+        public spawnableTypeDamage? damage
         {
-            get
-            {
-                return this.damageField;
-            }
-            set
-            {
-                this.damageField = value;
-            }
+            get => damageField;
+            set => damageField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("attachments")]
-        public BindingList<spawnableTypeAttachment> attachments
+        [XmlElement("attachments")]
+        public BindingList<spawnableTypeAttachment>? attachments
         {
-            get
-            {
-                return this.attachmentsField;
-            }
-            set
-            {
-                this.attachmentsField = value;
-            }
+            get => attachmentsField;
+            set => attachmentsField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("cargo")]
-        public BindingList<spawnableTypeCargo> cargo
+        [XmlElement("cargo")]
+        public BindingList<spawnableTypeCargo>? cargo
         {
-            get
-            {
-                return this.cargoField;
-            }
-            set
-            {
-                this.cargoField = value;
-            }
+            get => cargoField;
+            set => cargoField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [XmlAttribute]
+        public string? name
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get => nameField;
+            set => nameField = value;
         }
 
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public bool equip
         {
-            get
-            {
-                return this.equipField;
-            }
-            set
-            {
-                this.equipField = value;
-            }
+            get => equipField;
+            set => equipField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool equipSpecified
         {
-            get
-            {
-                return this.equipFieldSpecified;
-            }
-            set
-            {
-                this.equipFieldSpecified = value;
-            }
+            get => equipFieldSpecified;
+            set => equipFieldSpecified = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public decimal chance
         {
-            get
-            {
-                return this.chanceField;
-            }
-            set
-            {
-                this.chanceField = value;
-            }
+            get => chanceField;
+            set => chanceField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool chanceSpecified
         {
-            get
-            {
-                return this.chanceFieldSpecified;
-            }
-            set
-            {
-                this.chanceFieldSpecified = value;
-            }
+            get => chanceFieldSpecified;
+            set => chanceFieldSpecified = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int quantmin
         {
-            get
-            {
-                return this.quantminField;
-            }
-            set
-            {
-                this.quantminField = value;
-            }
+            get => quantminField;
+            set => quantminField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool quantminSpecified
         {
-            get
-            {
-                return this.quantminFieldSpecified;
-            }
-            set
-            {
-                this.quantminFieldSpecified = value;
-            }
+            get => quantminFieldSpecified;
+            set => quantminFieldSpecified = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int quantmax
         {
-            get
-            {
-                return this.quantmaxField;
-            }
-            set
-            {
-                this.quantmaxField = value;
-            }
+            get => quantmaxField;
+            set => quantmaxField = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        [XmlIgnore]
         public bool quantmaxSpecified
         {
-            get
-            {
-                return this.quantmaxFieldSpecified;
-            }
-            set
-            {
-                this.quantmaxFieldSpecified = value;
-            }
+            get => quantmaxFieldSpecified;
+            set => quantmaxFieldSpecified = value;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(spawnableTypeItem? other)
         {
-            if (obj is not spawnableTypeItem other)
+            if (other is null)
                 return false;
 
-            return string.Equals(name, other.name, StringComparison.Ordinal)
-                && equip == other.equip
-                && equipSpecified == other.equipSpecified
-                && chance == other.chance
-                && chanceSpecified == other.chanceSpecified
-                && quantmin == other.quantmin
-                && quantminSpecified == other.quantminSpecified
-                && quantmax == other.quantmax
-                && quantmaxSpecified == other.quantmaxSpecified;
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Equals(damage, other.damage) &&
+                ListsEqual(attachments, other.attachments) &&
+                ListsEqual(cargo, other.cargo) &&
+                string.Equals(name, other.name, StringComparison.Ordinal) &&
+                equip == other.equip &&
+                equipSpecified == other.equipSpecified &&
+                chance == other.chance &&
+                chanceSpecified == other.chanceSpecified &&
+                quantmin == other.quantmin &&
+                quantminSpecified == other.quantminSpecified &&
+                quantmax == other.quantmax &&
+                quantmaxSpecified == other.quantmaxSpecified;
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as spawnableTypeItem);
+        }
+        public spawnableTypeItem Clone()
+        {
+            return new spawnableTypeItem
+            {
+                damage = damage?.Clone(),
+                attachments = new BindingList<spawnableTypeAttachment>(
+                    attachments?.Select(x => x.Clone()).ToList() ?? new List<spawnableTypeAttachment>()),
+                cargo = new BindingList<spawnableTypeCargo>(
+                    cargo?.Select(x => x.Clone()).ToList() ?? new List<spawnableTypeCargo>()),
+                name = name,
+                equip = equip,
+                equipSpecified = equipSpecified,
+                chance = chance,
+                chanceSpecified = chanceSpecified,
+                quantmin = quantmin,
+                quantminSpecified = quantminSpecified,
+                quantmax = quantmax,
+                quantmaxSpecified = quantmaxSpecified
+            };
+        }
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
         }
     }
 }

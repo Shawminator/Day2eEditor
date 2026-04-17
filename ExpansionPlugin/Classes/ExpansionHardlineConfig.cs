@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionHardlineConfig : ExpansionBaseIConfigLoader<ExpansionHardlineSettings>
+    public class ExpansionHardlineConfig : SingleFileConfigLoaderBase<ExpansionHardlineSettings>
     {
         public const int CurrentVersion = 11;
 
@@ -18,12 +18,12 @@ namespace ExpansionPlugin
         }
         public IEnumerable<string> Save()
         {
-            if (isDirty)
+            if (IsDirty)
             {
                 convertliststoDict();
                 convertreplisttodict();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
-                isDirty = false;
+                IsDirty = false;
                 return new[] { Path.GetFileName(_path) };
             }
 
@@ -55,7 +55,7 @@ namespace ExpansionPlugin
             foreach (var item in Data.ItemRarity)
             {
                 string useItem = item.Key.ToLower();
-                if (item.Key != useItem) isDirty = true;
+                if (item.Key != useItem) IsDirty = true;
 
                 ExpansionHardlineItemRarity rarity = (ExpansionHardlineItemRarity)item.Value;
                 if (rarityBuckets.ContainsKey(rarity))
@@ -64,7 +64,7 @@ namespace ExpansionPlugin
                 }
             }
 
-            foreach (TypesFile ft in AppServices.GetRequired<EconomyManager>().TypesConfig.AllData)
+            foreach (TypesFile ft in AppServices.GetRequired<EconomyManager>().TypesConfig.MutableItems)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
                 {

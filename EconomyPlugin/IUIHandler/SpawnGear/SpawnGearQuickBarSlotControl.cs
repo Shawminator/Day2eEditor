@@ -71,7 +71,7 @@ namespace EconomyPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = _data.QuickBarSlot != _originalData.QuickBarSlot;
+                parent.IsDirty = _data.QuickBarSlot != _originalData.QuickBarSlot;
             }
         }
 

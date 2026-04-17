@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionPersonalStorageNewSettingsConfig : ExpansionBaseIConfigLoader<ExpansionPersonalStorageNewSettings>
+    public class ExpansionPersonalStorageNewSettingsConfig : SingleFileConfigLoaderBase<ExpansionPersonalStorageNewSettings>
     {
         public const int CurrentVersion = 4;
         public ExpansionPersonalStorageNewSettingsConfig(string path) : base(path)

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMarketCategoryConfig : MultiFileConfigLoader<ExpansionMarketCategory>
+    public class ExpansionMarketCategoryConfig : MultiFileConfigLoaderBase<ExpansionMarketCategory>
     {
         public const int CurrentVersion = 12;
         public ExpansionMarketCategoryConfig(string path) : base(path)
@@ -13,10 +13,7 @@ namespace ExpansionPlugin
         }
         public override void Load()
         {
-            HasErrors = false;
-            Errors.Clear();
-            Items.Clear();
-            ClonedItems.Clear();
+            ResetState();
 
             var filePaths = Directory.GetFiles(BasePath, "*.json", SearchOption.AllDirectories);
 
@@ -27,15 +24,15 @@ namespace ExpansionPlugin
                     var item = LoadItem(file);
 
                     OnAfterItemLoad(item, file);
-                    ClonedItems.Add(GetID(item), item.Clone());
-                    var issues = ValidateData(item);
+                    _clonedItems.Add(GetID(item), item.Clone());
+                    var issues = ValidateItem(item);
                     if (issues?.Any() == true)
                     {
                         Console.WriteLine("Validation issues in " + FileName + ":");
                         foreach (var msg in issues)
                             Console.WriteLine("- " + msg);
                     }
-                    Items.Add(item);
+                    MutableItems.Add(item);
 
                 }
                 catch (Exception ex)
@@ -75,16 +72,16 @@ namespace ExpansionPlugin
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
-                    Items.RemoveAt(i);
-                    ClonedItems.Remove(id);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
                     saved.Add("File Remove " + fileName);
                     continue;
                 }
                 //new file, needs to be written to disk and cloned
-                if (!ClonedItems.TryGetValue(id, out var baseline))
+                if (!_clonedItems.TryGetValue(id, out var baseline))
                 {
                     SaveItem(item);
-                    ClonedItems[id] = item.Clone();
+                    _clonedItems[id] = item.Clone();
                     saved.Add(fileName);
                     continue;
                 }
@@ -92,12 +89,12 @@ namespace ExpansionPlugin
                 if (!item.Equals(baseline))
                 {
                     SaveItem(item);
-                    if (ClonedItems[id]._path != item._path)
+                    if (_clonedItems[id]._path != item._path)
                     {
-                        if(File.Exists(ClonedItems[id]._path))
-                            File.Delete(ClonedItems[id]._path);
+                        if(File.Exists(_clonedItems[id]._path))
+                            File.Delete(_clonedItems[id]._path);
                     }
-                    ClonedItems[id] = item.Clone();
+                    _clonedItems[id] = item.Clone();
                     saved.Add(fileName);
                 }
             }
@@ -148,7 +145,7 @@ namespace ExpansionPlugin
         {
             return false;
         }
-        protected override IEnumerable<string> ValidateData(ExpansionMarketCategory ExpansionMarketCategory)
+        protected override IEnumerable<string> ValidateItem(ExpansionMarketCategory ExpansionMarketCategory)
         {
             return ExpansionMarketCategory.FixMissingOrInvalidFields();
         }
@@ -190,7 +187,7 @@ namespace ExpansionPlugin
             ExpansionMarketCategory.SetPath(Path.Combine(filepath, filename));
             ExpansionMarketCategory.SetGuid(Guid.NewGuid());
             ExpansionMarketCategory.SetFolderParts(folderParts);
-            Items.Add(ExpansionMarketCategory);
+            MutableItems.Add(ExpansionMarketCategory);
             return ExpansionMarketCategory;
 
         }

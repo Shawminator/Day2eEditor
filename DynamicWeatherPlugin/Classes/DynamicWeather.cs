@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DynamicWeatherPlugin
 {
-    public class DynamicWeatherConfig : DynamicWeatherBaseIConfigLoader<DynamicWeatherSettings>
+    public class DynamicWeatherConfig : SingleFileConfigLoaderBase<DynamicWeatherSettings>
     {
         public DynamicWeatherConfig(string path) : base(path)
         { 
@@ -44,9 +44,9 @@ namespace DynamicWeatherPlugin
             if (Data is null)
                 return Array.Empty<string>();
 
-            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                isDirty = false;
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data.m_Dynamics);
                 ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };

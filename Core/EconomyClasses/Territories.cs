@@ -1,368 +1,260 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class TerritoriesConfig: IConfigLoader
+    public class TerritoriesConfig : MultiFileConfigLoaderBase<territorytype>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        public string _basepath { get; set; }
-        public BindingList<territorytype> AllData { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public TerritoriesConfig(string basepath)
+        public TerritoriesConfig(string basePath) : base(basePath)
         {
-            _basepath = basepath;
         }
-        public void Load()
+        public override void Load()
         {
-            HasErrors = false;
-            Errors.Clear();
-            AllData = new BindingList<territorytype>();
-            foreach (envTerritoriesFile envtf in AppServices.GetRequired<EconomyManager>().cfgenvironmentConfig.Data.territories.file)
-            {
-                string fullPath = Path.Combine(_basepath, envtf.path);
-                var tf = AppServices.GetRequired<FileService>().LoadOrCreateXml<territorytype>(
-                    fullPath,
-                    createNew: () => new territorytype(),
-                    onAfterLoad: cfg => { /* optional: do something after load */ },
-                    onError: ex =>
-                    {
-                        HasErrors = true;
-                        Console.WriteLine(
-                            "Error in " + Path.GetFileName(fullPath) + "\n" +
-                            ex.Message + "\n" +
-                            ex.InnerException?.Message + "\n"
-                        );
-                        Errors.Add("Error in " + Path.GetFileName(fullPath) + "\n" +
-                            ex.Message + "\n" +
-                            ex.InnerException?.Message);
-                    },
-                    configName: "territorytype"
-                );
-                tf.setpath(fullPath);
-                AllData.Add(tf);
-            }
-        }
-        public IEnumerable<string> Save()
-        {
-            var savedFiles = new List<string>();
+            ResetState();
 
-            foreach (var data in AllData.ToList())
-            {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+            var files = AppServices.GetRequired<EconomyManager>()
+                .cfgenvironmentConfig.Data.territories.file;
 
-                if (data.ToDelete)
+            foreach (var envFile in files ?? new BindingList<envTerritoriesFile>())
+            {
+                var fullPath = Path.Combine(BasePath, envFile.path ?? string.Empty);
+
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(fullPath);
+                    OnAfterItemLoad(item, fullPath);
+                    _clonedItems[GetID(item)] = item.Clone();
+                    MutableItems.Add(item);
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(fullPath, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
         }
-        public bool needToSave()
+
+        protected override territorytype LoadItem(string filePath)
         {
-            return false;
+            var data = AppServices.GetRequired<FileService>().LoadOrCreateXml<territorytype>(
+                filePath,
+                createNew: () => new territorytype(),
+                onError: ex =>
+                {
+                    throw ex;
+                },
+                configName: "territorytype"
+            );
+
+            data.SetPath(filePath);
+            return data;
+        }
+
+        protected override void SaveItem(territorytype item)
+        {
+            AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item);
+            item.IsDirty = false;
+        }
+
+        protected override string GetItemFileName(territorytype item) => item.FileName;
+
+        protected override Guid GetID(territorytype item) => item.Id;
+
+        protected override bool ShouldDelete(territorytype item) => item.ToDelete;
+
+        protected override void DeleteItemFile(territorytype item)
+        {
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            {
+                File.Delete(item.FilePath);
+                Helper.DeleteEmptyFoldersUpToBase(
+                    Path.GetDirectoryName(item.FilePath),
+                    AppServices.GetRequired<EconomyManager>().basePath);
+            }
         }
     }
 
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute("territory-type", Namespace = "", IsNullable = false)]
-    public partial class territorytype
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot("territory-type", Namespace = "", IsNullable = false)]
+    public partial class territorytype : IDeepCloneable<territorytype>, IEquatable<territorytype>
     {
         [XmlIgnore]
-        private string _path;
+        private string _path = string.Empty;
+
         [XmlIgnore]
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
+        public string FileName => Path.GetFileName(_path);
+
         [XmlIgnore]
         public string FilePath => _path;
+
         [XmlIgnore]
-        public bool isDirty { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [XmlIgnore]
+        public bool IsDirty { get; set; }
+
         [XmlIgnore]
         public bool ToDelete { get; set; }
 
+        private BindingList<territorytypeTerritory>? _territory;
 
-        public territorytype()
-        {
-            territory = new BindingList<territorytypeTerritory>();
-        }
-
-        private BindingList<territorytypeTerritory> territoryField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("territory")]
+        [XmlElement("territory")]
         public BindingList<territorytypeTerritory> territory
         {
-            get
-            {
-                return this.territoryField;
-            }
-            set
-            {
-                this.territoryField = value;
-            }
+            get => _territory ??= new BindingList<territorytypeTerritory>();
+            set => _territory = value;
         }
 
-        public void setpath(string path)
+        public void SetPath(string path)
         {
             _path = path;
         }
-        internal IEnumerable<string> Save()
+
+        public territorytype Clone()
         {
-            if (ToDelete)
+            var clone = new territorytype
             {
-                if (File.Exists(_path))
-                {
-                    File.Delete(_path);
-                    // Delete empty directories if needed
-                    Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                    return new[] { FileName + " (deleted)" };
-                }
-                return Array.Empty<string>();
-            }
+                Id = Id,
+                IsDirty = IsDirty,
+                ToDelete = ToDelete,
+                territory = new BindingList<territorytypeTerritory>(
+                    territory.Select(x => x.Clone()).ToList())
+            };
 
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveXml(_path, this);
-                isDirty = false;
-                return new[] { FileName };
-            }
-
-            return Array.Empty<string>();
+            clone.SetPath(_path);
+            return clone;
         }
+
+        public bool Equals(territorytype? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Id == other.Id &&
+                   string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                   ToDelete == other.ToDelete &&
+                   territory.SequenceEqual(other.territory);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as territorytype);
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class territorytypeTerritory
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class territorytypeTerritory : IDeepCloneable<territorytypeTerritory>, IEquatable<territorytypeTerritory>
     {
+        private BindingList<territorytypeTerritoryZone>? _zone;
 
-        private BindingList<territorytypeTerritoryZone> zoneField;
-
-        private long colorField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("zone")]
+        [XmlElement("zone")]
         public BindingList<territorytypeTerritoryZone> zone
         {
-            get
-            {
-                return this.zoneField;
-            }
-            set
-            {
-                this.zoneField = value;
-            }
+            get => _zone ??= new BindingList<territorytypeTerritoryZone>();
+            set => _zone = value;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public long color
+        [XmlAttribute]
+        public long color { get; set; }
+
+        public territorytypeTerritory Clone()
         {
-            get
+            return new territorytypeTerritory
             {
-                return this.colorField;
-            }
-            set
-            {
-                this.colorField = value;
-            }
+                color = color,
+                zone = new BindingList<territorytypeTerritoryZone>(zone.Select(x => x.Clone()).ToList())
+            };
         }
+
+        public bool Equals(territorytypeTerritory? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return color == other.color &&
+                   zone.SequenceEqual(other.zone);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as territorytypeTerritory);
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class territorytypeTerritoryZone
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class territorytypeTerritoryZone : IDeepCloneable<territorytypeTerritoryZone>, IEquatable<territorytypeTerritoryZone>
     {
+        [XmlAttribute]
+        public string? name { get; set; }
 
-        private string nameField;
+        [XmlAttribute]
+        public int smin { get; set; }
 
-        private int sminField;
+        [XmlAttribute]
+        public int smax { get; set; }
 
-        private int smaxField;
+        [XmlAttribute]
+        public int dmin { get; set; }
 
-        private int dminField;
+        [XmlAttribute]
+        public int dmax { get; set; }
 
-        private int dmaxField;
+        [XmlAttribute]
+        public decimal x { get; set; }
 
-        private decimal xField;
+        [XmlAttribute]
+        public decimal y { get; set; }
 
-        private decimal yField;
+        [XmlIgnore]
+        public bool ySpecified { get; set; }
 
-        private bool yFieldSpecified;
+        [XmlAttribute]
+        public decimal z { get; set; }
 
-        private decimal zField;
+        [XmlAttribute]
+        public decimal r { get; set; }
 
-        private decimal rField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int smin
-        {
-            get
-            {
-                return this.sminField;
-            }
-            set
-            {
-                this.sminField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int smax
-        {
-            get
-            {
-                return this.smaxField;
-            }
-            set
-            {
-                this.smaxField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int dmin
-        {
-            get
-            {
-                return this.dminField;
-            }
-            set
-            {
-                this.dminField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int dmax
-        {
-            get
-            {
-                return this.dmaxField;
-            }
-            set
-            {
-                this.dmaxField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal x
-        {
-            get
-            {
-                return this.xField;
-            }
-            set
-            {
-                this.xField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal y
-        {
-            get
-            {
-                return this.yField;
-            }
-            set
-            {
-                this.yField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ySpecified
-        {
-            get
-            {
-                return this.yFieldSpecified;
-            }
-            set
-            {
-                this.yFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal z
-        {
-            get
-            {
-                return this.zField;
-            }
-            set
-            {
-                this.zField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal r
-        {
-            get
-            {
-                return this.rField;
-            }
-            set
-            {
-                this.rField = value;
-            }
-        }
         public override string ToString()
         {
-            return $"Name:{name}, X:{x.ToString()}, Z:{z.ToString()}";
+            return $"Name:{name}, X:{x}, Z:{z}";
         }
-        public bool Equals(territorytypeTerritoryZone p)
-        {
-            if ((object)p == null)
-                return false;
 
-            return (name == p.name) && (smin == p.smin) && (smax == p.smax) && (dmin == p.dmin) && (dmax == p.dmax) && (x == p.x) && (z == p.z) && (r == p.r) && (ySpecified == p.yFieldSpecified) && (y ==p.y);
+        public territorytypeTerritoryZone Clone()
+        {
+            return new territorytypeTerritoryZone
+            {
+                name = name,
+                smin = smin,
+                smax = smax,
+                dmin = dmin,
+                dmax = dmax,
+                x = x,
+                y = y,
+                ySpecified = ySpecified,
+                z = z,
+                r = r
+            };
         }
+
+        public bool Equals(territorytypeTerritoryZone? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+                   smin == other.smin &&
+                   smax == other.smax &&
+                   dmin == other.dmin &&
+                   dmax == other.dmax &&
+                   x == other.x &&
+                   y == other.y &&
+                   ySpecified == other.ySpecified &&
+                   z == other.z &&
+                   r == other.r;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as territorytypeTerritoryZone);
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionTerritoryConfig : ExpansionBaseIConfigLoader<ExpansionTerritorySettings>
+    public class ExpansionTerritoryConfig : SingleFileConfigLoaderBase<ExpansionTerritorySettings>
     {
         public const int CurrentVersion = 6;
 

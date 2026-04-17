@@ -1,675 +1,1307 @@
-﻿using DayZeLib;
-using System;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfgweatherConfig : IConfigLoader
+    public class cfgweatherConfig : SingleFileConfigLoaderBase<weather>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public weather Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
+        public cfgweatherConfig(string path) : base(path)
+        {
+        }
 
-        public cfgweatherConfig(string path)
+        public override void Load()
         {
-            _path = path;
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<weather>(
-               _path,
-               createNew: () => new weather(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfgweather"
-           );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<weather>(
+                        _path,
+                        createNew: () => new weather(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfgweather"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override  IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override weather CreateDefaultData()
         {
-            return isDirty;
+            return new weather();
+        }
+
+        protected override void OnAfterLoad(weather data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            if (Data is null)
+                yield break;
+
+            if (Data.overcast is null) yield return "Missing overcast section.";
+            if (Data.fog is null) yield return "Missing fog section.";
+            if (Data.rain is null) yield return "Missing rain section.";
+            if (Data.windMagnitude is null) yield return "Missing windMagnitude section.";
+            if (Data.windDirection is null) yield return "Missing windDirection section.";
+            if (Data.snowfall is null) yield return "Missing snowfall section.";
+            if (Data.storm is null) yield return "Missing storm section.";
         }
     }
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRoot(Namespace = "", IsNullable = false)]
-    public partial class weather
+
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class weather : IEquatable<weather>, IDeepCloneable<weather>
     {
-        private weatherOvercast overcastField;
-        private weatherFog fogField;
-        private weatherRain rainField;
-        private weatherWindMagnitude windMagnitudeField;
-        private weatherWindDirection windDirectionField;
-        private weatherSnowfall snowfallField;
-        private weatherStorm stormField;
-        private int resetField;
-        private int enableField;
+        private weatherOvercast? _overcast;
+        private weatherFog? _fog;
+        private weatherRain? _rain;
+        private weatherWindMagnitude? _windMagnitude;
+        private weatherWindDirection? _windDirection;
+        private weatherSnowfall? _snowfall;
+        private weatherStorm? _storm;
 
-        public weatherOvercast overcast { get => overcastField; set => overcastField = value; }
-        public weatherFog fog { get => fogField; set => fogField = value; }
-        public weatherRain rain { get => rainField; set => rainField = value; }
-        public weatherWindMagnitude windMagnitude { get => windMagnitudeField; set => windMagnitudeField = value; }
-        public weatherWindDirection windDirection { get => windDirectionField; set => windDirectionField = value; }
-        public weatherSnowfall snowfall { get => snowfallField; set => snowfallField = value; }
-        public weatherStorm storm { get => stormField; set => stormField = value; }
+        public weatherOvercast overcast
+        {
+            get => _overcast ??= new weatherOvercast();
+            set => _overcast = value;
+        }
 
-        [System.Xml.Serialization.XmlAttribute] public int reset { get => resetField; set => resetField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int enable { get => enableField; set => enableField = value; }
+        public weatherFog fog
+        {
+            get => _fog ??= new weatherFog();
+            set => _fog = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weather w &&
-            reset == w.reset &&
-            enable == w.enable;
+        public weatherRain rain
+        {
+            get => _rain ??= new weatherRain();
+            set => _rain = value;
+        }
 
+        public weatherWindMagnitude windMagnitude
+        {
+            get => _windMagnitude ??= new weatherWindMagnitude();
+            set => _windMagnitude = value;
+        }
+
+        public weatherWindDirection windDirection
+        {
+            get => _windDirection ??= new weatherWindDirection();
+            set => _windDirection = value;
+        }
+
+        public weatherSnowfall snowfall
+        {
+            get => _snowfall ??= new weatherSnowfall();
+            set => _snowfall = value;
+        }
+
+        public weatherStorm storm
+        {
+            get => _storm ??= new weatherStorm();
+            set => _storm = value;
+        }
+
+        [XmlAttribute]
+        public int reset { get; set; }
+
+        [XmlAttribute]
+        public int enable { get; set; }
+
+        public bool Equals(weather? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(overcast, other.overcast) &&
+                   Equals(fog, other.fog) &&
+                   Equals(rain, other.rain) &&
+                   Equals(windMagnitude, other.windMagnitude) &&
+                   Equals(windDirection, other.windDirection) &&
+                   Equals(snowfall, other.snowfall) &&
+                   Equals(storm, other.storm) &&
+                   reset == other.reset &&
+                   enable == other.enable;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weather);
+
+        public weather Clone()
+        {
+            return new weather
+            {
+                overcast = overcast.Clone(),
+                fog = fog.Clone(),
+                rain = rain.Clone(),
+                windMagnitude = windMagnitude.Clone(),
+                windDirection = windDirection.Clone(),
+                snowfall = snowfall.Clone(),
+                storm = storm.Clone(),
+                reset = reset,
+                enable = enable
+            };
+        }
     }
 
     #region Overcast
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherOvercast
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherOvercast : IEquatable<weatherOvercast>, IDeepCloneable<weatherOvercast>
     {
-        private weatherOvercastCurrent currentField;
-        private weatherOvercastLimits limitsField;
-        private weatherOvercastTimelimits timelimitsField;
-        private weatherOvercastChangelimits changelimitsField;
+        private weatherOvercastCurrent? _current;
+        private weatherOvercastLimits? _limits;
+        private weatherOvercastTimelimits? _timelimits;
+        private weatherOvercastChangelimits? _changelimits;
 
-        public weatherOvercastCurrent current { get => currentField; set => currentField = value; }
-        public weatherOvercastLimits limits { get => limitsField; set => limitsField = value; }
-        public weatherOvercastTimelimits timelimits { get => timelimitsField; set => timelimitsField = value; }
-        public weatherOvercastChangelimits changelimits { get => changelimitsField; set => changelimitsField = value; }
+        public weatherOvercastCurrent current
+        {
+            get => _current ??= new weatherOvercastCurrent();
+            set => _current = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherOvercast o &&
-            Equals(current, o.current) &&
-            Equals(limits, o.limits) &&
-            Equals(timelimits, o.timelimits) &&
-            Equals(changelimits, o.changelimits);
+        public weatherOvercastLimits limits
+        {
+            get => _limits ??= new weatherOvercastLimits();
+            set => _limits = value;
+        }
 
-        public override int GetHashCode() => HashCode.Combine(current, limits, timelimits, changelimits);
+        public weatherOvercastTimelimits timelimits
+        {
+            get => _timelimits ??= new weatherOvercastTimelimits();
+            set => _timelimits = value;
+        }
+
+        public weatherOvercastChangelimits changelimits
+        {
+            get => _changelimits ??= new weatherOvercastChangelimits();
+            set => _changelimits = value;
+        }
+
+        public bool Equals(weatherOvercast? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(current, other.current) &&
+                   Equals(limits, other.limits) &&
+                   Equals(timelimits, other.timelimits) &&
+                   Equals(changelimits, other.changelimits);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weatherOvercast);
+
+        public weatherOvercast Clone()
+        {
+            return new weatherOvercast
+            {
+                current = current.Clone(),
+                limits = limits.Clone(),
+                timelimits = timelimits.Clone(),
+                changelimits = changelimits.Clone()
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherOvercastCurrent
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherOvercastCurrent : IEquatable<weatherOvercastCurrent>, IDeepCloneable<weatherOvercastCurrent>
     {
-        private decimal actualField;
-        private int timeField;
-        private int durationField;
+        [XmlAttribute] public decimal actual { get; set; }
+        [XmlAttribute] public int time { get; set; }
+        [XmlAttribute] public int duration { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal actual { get => actualField; set => actualField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int time { get => timeField; set => timeField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int duration { get => durationField; set => durationField = value; }
+        public bool Equals(weatherOvercastCurrent? other)
+        {
+            if (other is null) return false;
+            return actual == other.actual && time == other.time && duration == other.duration;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherOvercastCurrent o && actual == o.actual && time == o.time && duration == o.duration;
+        public override bool Equals(object? obj) => Equals(obj as weatherOvercastCurrent);
 
-        public override int GetHashCode() => HashCode.Combine(actual, time, duration);
+        public weatherOvercastCurrent Clone()
+        {
+            return new weatherOvercastCurrent
+            {
+                actual = actual,
+                time = time,
+                duration = duration
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherOvercastLimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherOvercastLimits : IEquatable<weatherOvercastLimits>, IDeepCloneable<weatherOvercastLimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherOvercastLimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherOvercastLimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherOvercastLimits);
+
+        public weatherOvercastLimits Clone()
+        {
+            return new weatherOvercastLimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherOvercastTimelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherOvercastTimelimits : IEquatable<weatherOvercastTimelimits>, IDeepCloneable<weatherOvercastTimelimits>
     {
-        private int minField;
-        private int maxField;
+        [XmlAttribute] public int min { get; set; }
+        [XmlAttribute] public int max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public int min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherOvercastTimelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherOvercastTimelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherOvercastTimelimits);
+
+        public weatherOvercastTimelimits Clone()
+        {
+            return new weatherOvercastTimelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherOvercastChangelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherOvercastChangelimits : IEquatable<weatherOvercastChangelimits>, IDeepCloneable<weatherOvercastChangelimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherOvercastChangelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherOvercastChangelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherOvercastChangelimits);
+
+        public weatherOvercastChangelimits Clone()
+        {
+            return new weatherOvercastChangelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
     #endregion
 
     #region Fog
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherFog
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherFog : IEquatable<weatherFog>, IDeepCloneable<weatherFog>
     {
-        private weatherFogCurrent currentField;
-        private weatherFogLimits limitsField;
-        private weatherFogTimelimits timelimitsField;
-        private weatherFogChangelimits changelimitsField;
+        private weatherFogCurrent? _current;
+        private weatherFogLimits? _limits;
+        private weatherFogTimelimits? _timelimits;
+        private weatherFogChangelimits? _changelimits;
 
-        public weatherFogCurrent current { get => currentField; set => currentField = value; }
-        public weatherFogLimits limits { get => limitsField; set => limitsField = value; }
-        public weatherFogTimelimits timelimits { get => timelimitsField; set => timelimitsField = value; }
-        public weatherFogChangelimits changelimits { get => changelimitsField; set => changelimitsField = value; }
+        public weatherFogCurrent current
+        {
+            get => _current ??= new weatherFogCurrent();
+            set => _current = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherFog o &&
-            Equals(current, o.current) &&
-            Equals(limits, o.limits) &&
-            Equals(timelimits, o.timelimits) &&
-            Equals(changelimits, o.changelimits);
+        public weatherFogLimits limits
+        {
+            get => _limits ??= new weatherFogLimits();
+            set => _limits = value;
+        }
 
-        public override int GetHashCode() => HashCode.Combine(current, limits, timelimits, changelimits);
+        public weatherFogTimelimits timelimits
+        {
+            get => _timelimits ??= new weatherFogTimelimits();
+            set => _timelimits = value;
+        }
+
+        public weatherFogChangelimits changelimits
+        {
+            get => _changelimits ??= new weatherFogChangelimits();
+            set => _changelimits = value;
+        }
+
+        public bool Equals(weatherFog? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(current, other.current) &&
+                   Equals(limits, other.limits) &&
+                   Equals(timelimits, other.timelimits) &&
+                   Equals(changelimits, other.changelimits);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weatherFog);
+
+        public weatherFog Clone()
+        {
+            return new weatherFog
+            {
+                current = current.Clone(),
+                limits = limits.Clone(),
+                timelimits = timelimits.Clone(),
+                changelimits = changelimits.Clone()
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherFogCurrent
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherFogCurrent : IEquatable<weatherFogCurrent>, IDeepCloneable<weatherFogCurrent>
     {
-        private decimal actualField;
-        private int timeField;
-        private int durationField;
+        [XmlAttribute] public decimal actual { get; set; }
+        [XmlAttribute] public int time { get; set; }
+        [XmlAttribute] public int duration { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal actual { get => actualField; set => actualField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int time { get => timeField; set => timeField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int duration { get => durationField; set => durationField = value; }
+        public bool Equals(weatherFogCurrent? other)
+        {
+            if (other is null) return false;
+            return actual == other.actual && time == other.time && duration == other.duration;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherFogCurrent o && actual == o.actual && time == o.time && duration == o.duration;
+        public override bool Equals(object? obj) => Equals(obj as weatherFogCurrent);
 
-        public override int GetHashCode() => HashCode.Combine(actual, time, duration);
+        public weatherFogCurrent Clone()
+        {
+            return new weatherFogCurrent
+            {
+                actual = actual,
+                time = time,
+                duration = duration
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherFogLimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherFogLimits : IEquatable<weatherFogLimits>, IDeepCloneable<weatherFogLimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherFogLimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherFogLimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherFogLimits);
+
+        public weatherFogLimits Clone()
+        {
+            return new weatherFogLimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherFogTimelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherFogTimelimits : IEquatable<weatherFogTimelimits>, IDeepCloneable<weatherFogTimelimits>
     {
-        private int minField;
-        private int maxField;
+        [XmlAttribute] public int min { get; set; }
+        [XmlAttribute] public int max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public int min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherFogTimelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherFogTimelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherFogTimelimits);
+
+        public weatherFogTimelimits Clone()
+        {
+            return new weatherFogTimelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherFogChangelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherFogChangelimits : IEquatable<weatherFogChangelimits>, IDeepCloneable<weatherFogChangelimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherFogChangelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherFogChangelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherFogChangelimits);
+
+        public weatherFogChangelimits Clone()
+        {
+            return new weatherFogChangelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
     #endregion
 
     #region Rain
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherRain
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherRain : IEquatable<weatherRain>, IDeepCloneable<weatherRain>
     {
-        private weatherRainCurrent currentField;
-        private weatherRainLimits limitsField;
-        private weatherRainTimelimits timelimitsField;
-        private weatherRainChangelimits changelimitsField;
-        private weatherRainThresholds thresholdsField;
+        private weatherRainCurrent? _current;
+        private weatherRainLimits? _limits;
+        private weatherRainTimelimits? _timelimits;
+        private weatherRainChangelimits? _changelimits;
+        private weatherRainThresholds? _thresholds;
 
-        public weatherRainCurrent current { get => currentField; set => currentField = value; }
-        public weatherRainLimits limits { get => limitsField; set => limitsField = value; }
-        public weatherRainTimelimits timelimits { get => timelimitsField; set => timelimitsField = value; }
-        public weatherRainChangelimits changelimits { get => changelimitsField; set => changelimitsField = value; }
-        public weatherRainThresholds thresholds { get => thresholdsField; set => thresholdsField = value; }
+        public weatherRainCurrent current
+        {
+            get => _current ??= new weatherRainCurrent();
+            set => _current = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherRain o &&
-            Equals(current, o.current) &&
-            Equals(limits, o.limits) &&
-            Equals(timelimits, o.timelimits) &&
-            Equals(changelimits, o.changelimits) &&
-            Equals(thresholds, o.thresholds);
+        public weatherRainLimits limits
+        {
+            get => _limits ??= new weatherRainLimits();
+            set => _limits = value;
+        }
 
-        public override int GetHashCode() => HashCode.Combine(current, limits, timelimits, changelimits, thresholds);
+        public weatherRainTimelimits timelimits
+        {
+            get => _timelimits ??= new weatherRainTimelimits();
+            set => _timelimits = value;
+        }
+
+        public weatherRainChangelimits changelimits
+        {
+            get => _changelimits ??= new weatherRainChangelimits();
+            set => _changelimits = value;
+        }
+
+        public weatherRainThresholds thresholds
+        {
+            get => _thresholds ??= new weatherRainThresholds();
+            set => _thresholds = value;
+        }
+
+        public bool Equals(weatherRain? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(current, other.current) &&
+                   Equals(limits, other.limits) &&
+                   Equals(timelimits, other.timelimits) &&
+                   Equals(changelimits, other.changelimits) &&
+                   Equals(thresholds, other.thresholds);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weatherRain);
+
+        public weatherRain Clone()
+        {
+            return new weatherRain
+            {
+                current = current.Clone(),
+                limits = limits.Clone(),
+                timelimits = timelimits.Clone(),
+                changelimits = changelimits.Clone(),
+                thresholds = thresholds.Clone()
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherRainCurrent
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherRainCurrent : IEquatable<weatherRainCurrent>, IDeepCloneable<weatherRainCurrent>
     {
-        private decimal actualField;
-        private int timeField;
-        private int durationField;
+        [XmlAttribute] public decimal actual { get; set; }
+        [XmlAttribute] public int time { get; set; }
+        [XmlAttribute] public int duration { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal actual { get => actualField; set => actualField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int time { get => timeField; set => timeField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int duration { get => durationField; set => durationField = value; }
+        public bool Equals(weatherRainCurrent? other)
+        {
+            if (other is null) return false;
+            return actual == other.actual && time == other.time && duration == other.duration;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherRainCurrent o && actual == o.actual && time == o.time && duration == o.duration;
+        public override bool Equals(object? obj) => Equals(obj as weatherRainCurrent);
 
-        public override int GetHashCode() => HashCode.Combine(actual, time, duration);
+        public weatherRainCurrent Clone()
+        {
+            return new weatherRainCurrent
+            {
+                actual = actual,
+                time = time,
+                duration = duration
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherRainLimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherRainLimits : IEquatable<weatherRainLimits>, IDeepCloneable<weatherRainLimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherRainLimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherRainLimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherRainLimits);
+
+        public weatherRainLimits Clone()
+        {
+            return new weatherRainLimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherRainTimelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherRainTimelimits : IEquatable<weatherRainTimelimits>, IDeepCloneable<weatherRainTimelimits>
     {
-        private int minField;
-        private int maxField;
+        [XmlAttribute] public int min { get; set; }
+        [XmlAttribute] public int max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public int min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherRainTimelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherRainTimelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherRainTimelimits);
+
+        public weatherRainTimelimits Clone()
+        {
+            return new weatherRainTimelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherRainChangelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherRainChangelimits : IEquatable<weatherRainChangelimits>, IDeepCloneable<weatherRainChangelimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherRainChangelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherRainChangelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherRainChangelimits);
+
+        public weatherRainChangelimits Clone()
+        {
+            return new weatherRainChangelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherRainThresholds
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherRainThresholds : IEquatable<weatherRainThresholds>, IDeepCloneable<weatherRainThresholds>
     {
-        private decimal minField;
-        private decimal maxField;
-        private int endField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
+        [XmlAttribute] public int end { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int end { get => endField; set => endField = value; }
+        public bool Equals(weatherRainThresholds? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max && end == other.end;
+        }
 
-        public override bool Equals(object obj) => obj is weatherRainThresholds o && min == o.min && max == o.max && end == o.end;
-        public override int GetHashCode() => HashCode.Combine(min, max, end);
+        public override bool Equals(object? obj) => Equals(obj as weatherRainThresholds);
+
+        public weatherRainThresholds Clone()
+        {
+            return new weatherRainThresholds
+            {
+                min = min,
+                max = max,
+                end = end
+            };
+        }
     }
 
     #endregion
 
     #region WindMagnitude
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindMagnitude
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindMagnitude : IEquatable<weatherWindMagnitude>, IDeepCloneable<weatherWindMagnitude>
     {
-        private weatherWindMagnitudeCurrent currentField;
-        private weatherWindMagnitudeLimits limitsField;
-        private weatherWindMagnitudeTimelimits timelimitsField;
-        private weatherWindMagnitudeChangelimits changelimitsField;
+        private weatherWindMagnitudeCurrent? _current;
+        private weatherWindMagnitudeLimits? _limits;
+        private weatherWindMagnitudeTimelimits? _timelimits;
+        private weatherWindMagnitudeChangelimits? _changelimits;
 
-        public weatherWindMagnitudeCurrent current { get => currentField; set => currentField = value; }
-        public weatherWindMagnitudeLimits limits { get => limitsField; set => limitsField = value; }
-        public weatherWindMagnitudeTimelimits timelimits { get => timelimitsField; set => timelimitsField = value; }
-        public weatherWindMagnitudeChangelimits changelimits { get => changelimitsField; set => changelimitsField = value; }
+        public weatherWindMagnitudeCurrent current
+        {
+            get => _current ??= new weatherWindMagnitudeCurrent();
+            set => _current = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherWindMagnitude o &&
-            Equals(current, o.current) &&
-            Equals(limits, o.limits) &&
-            Equals(timelimits, o.timelimits) &&
-            Equals(changelimits, o.changelimits);
+        public weatherWindMagnitudeLimits limits
+        {
+            get => _limits ??= new weatherWindMagnitudeLimits();
+            set => _limits = value;
+        }
 
-        public override int GetHashCode() => HashCode.Combine(current, limits, timelimits, changelimits);
+        public weatherWindMagnitudeTimelimits timelimits
+        {
+            get => _timelimits ??= new weatherWindMagnitudeTimelimits();
+            set => _timelimits = value;
+        }
+
+        public weatherWindMagnitudeChangelimits changelimits
+        {
+            get => _changelimits ??= new weatherWindMagnitudeChangelimits();
+            set => _changelimits = value;
+        }
+
+        public bool Equals(weatherWindMagnitude? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(current, other.current) &&
+                   Equals(limits, other.limits) &&
+                   Equals(timelimits, other.timelimits) &&
+                   Equals(changelimits, other.changelimits);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weatherWindMagnitude);
+
+        public weatherWindMagnitude Clone()
+        {
+            return new weatherWindMagnitude
+            {
+                current = current.Clone(),
+                limits = limits.Clone(),
+                timelimits = timelimits.Clone(),
+                changelimits = changelimits.Clone()
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindMagnitudeCurrent
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindMagnitudeCurrent : IEquatable<weatherWindMagnitudeCurrent>, IDeepCloneable<weatherWindMagnitudeCurrent>
     {
-        private decimal actualField;
-        private int timeField;
-        private int durationField;
+        [XmlAttribute] public decimal actual { get; set; }
+        [XmlAttribute] public int time { get; set; }
+        [XmlAttribute] public int duration { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal actual { get => actualField; set => actualField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int time { get => timeField; set => timeField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int duration { get => durationField; set => durationField = value; }
+        public bool Equals(weatherWindMagnitudeCurrent? other)
+        {
+            if (other is null) return false;
+            return actual == other.actual && time == other.time && duration == other.duration;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherWindMagnitudeCurrent o && actual == o.actual && time == o.time && duration == o.duration;
+        public override bool Equals(object? obj) => Equals(obj as weatherWindMagnitudeCurrent);
 
-        public override int GetHashCode() => HashCode.Combine(actual, time, duration);
+        public weatherWindMagnitudeCurrent Clone()
+        {
+            return new weatherWindMagnitudeCurrent
+            {
+                actual = actual,
+                time = time,
+                duration = duration
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindMagnitudeLimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindMagnitudeLimits : IEquatable<weatherWindMagnitudeLimits>, IDeepCloneable<weatherWindMagnitudeLimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherWindMagnitudeLimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherWindMagnitudeLimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherWindMagnitudeLimits);
+
+        public weatherWindMagnitudeLimits Clone()
+        {
+            return new weatherWindMagnitudeLimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindMagnitudeTimelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindMagnitudeTimelimits : IEquatable<weatherWindMagnitudeTimelimits>, IDeepCloneable<weatherWindMagnitudeTimelimits>
     {
-        private int minField;
-        private int maxField;
+        [XmlAttribute] public int min { get; set; }
+        [XmlAttribute] public int max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public int min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherWindMagnitudeTimelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherWindMagnitudeTimelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherWindMagnitudeTimelimits);
+
+        public weatherWindMagnitudeTimelimits Clone()
+        {
+            return new weatherWindMagnitudeTimelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindMagnitudeChangelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindMagnitudeChangelimits : IEquatable<weatherWindMagnitudeChangelimits>, IDeepCloneable<weatherWindMagnitudeChangelimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherWindMagnitudeChangelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherWindMagnitudeChangelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherWindMagnitudeChangelimits);
+
+        public weatherWindMagnitudeChangelimits Clone()
+        {
+            return new weatherWindMagnitudeChangelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
     #endregion
 
     #region WindDirection
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindDirection
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindDirection : IEquatable<weatherWindDirection>, IDeepCloneable<weatherWindDirection>
     {
-        private weatherWindDirectionCurrent currentField;
-        private weatherWindDirectionLimits limitsField;
-        private weatherWindDirectionTimelimits timelimitsField;
-        private weatherWindDirectionChangelimits changelimitsField;
+        private weatherWindDirectionCurrent? _current;
+        private weatherWindDirectionLimits? _limits;
+        private weatherWindDirectionTimelimits? _timelimits;
+        private weatherWindDirectionChangelimits? _changelimits;
 
-        public weatherWindDirectionCurrent current { get => currentField; set => currentField = value; }
-        public weatherWindDirectionLimits limits { get => limitsField; set => limitsField = value; }
-        public weatherWindDirectionTimelimits timelimits { get => timelimitsField; set => timelimitsField = value; }
-        public weatherWindDirectionChangelimits changelimits { get => changelimitsField; set => changelimitsField = value; }
+        public weatherWindDirectionCurrent current
+        {
+            get => _current ??= new weatherWindDirectionCurrent();
+            set => _current = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherWindDirection o &&
-            Equals(current, o.current) &&
-            Equals(limits, o.limits) &&
-            Equals(timelimits, o.timelimits) &&
-            Equals(changelimits, o.changelimits);
+        public weatherWindDirectionLimits limits
+        {
+            get => _limits ??= new weatherWindDirectionLimits();
+            set => _limits = value;
+        }
 
-        public override int GetHashCode() => HashCode.Combine(current, limits, timelimits, changelimits);
+        public weatherWindDirectionTimelimits timelimits
+        {
+            get => _timelimits ??= new weatherWindDirectionTimelimits();
+            set => _timelimits = value;
+        }
+
+        public weatherWindDirectionChangelimits changelimits
+        {
+            get => _changelimits ??= new weatherWindDirectionChangelimits();
+            set => _changelimits = value;
+        }
+
+        public bool Equals(weatherWindDirection? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(current, other.current) &&
+                   Equals(limits, other.limits) &&
+                   Equals(timelimits, other.timelimits) &&
+                   Equals(changelimits, other.changelimits);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weatherWindDirection);
+
+        public weatherWindDirection Clone()
+        {
+            return new weatherWindDirection
+            {
+                current = current.Clone(),
+                limits = limits.Clone(),
+                timelimits = timelimits.Clone(),
+                changelimits = changelimits.Clone()
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindDirectionCurrent
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindDirectionCurrent : IEquatable<weatherWindDirectionCurrent>, IDeepCloneable<weatherWindDirectionCurrent>
     {
-        private decimal actualField;
-        private int timeField;
-        private int durationField;
+        [XmlAttribute] public decimal actual { get; set; }
+        [XmlAttribute] public int time { get; set; }
+        [XmlAttribute] public int duration { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal actual { get => actualField; set => actualField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int time { get => timeField; set => timeField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int duration { get => durationField; set => durationField = value; }
+        public bool Equals(weatherWindDirectionCurrent? other)
+        {
+            if (other is null) return false;
+            return actual == other.actual && time == other.time && duration == other.duration;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherWindDirectionCurrent o && actual == o.actual && time == o.time && duration == o.duration;
+        public override bool Equals(object? obj) => Equals(obj as weatherWindDirectionCurrent);
 
-        public override int GetHashCode() => HashCode.Combine(actual, time, duration);
+        public weatherWindDirectionCurrent Clone()
+        {
+            return new weatherWindDirectionCurrent
+            {
+                actual = actual,
+                time = time,
+                duration = duration
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindDirectionLimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindDirectionLimits : IEquatable<weatherWindDirectionLimits>, IDeepCloneable<weatherWindDirectionLimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherWindDirectionLimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherWindDirectionLimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherWindDirectionLimits);
+
+        public weatherWindDirectionLimits Clone()
+        {
+            return new weatherWindDirectionLimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindDirectionTimelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindDirectionTimelimits : IEquatable<weatherWindDirectionTimelimits>, IDeepCloneable<weatherWindDirectionTimelimits>
     {
-        private int minField;
-        private int maxField;
+        [XmlAttribute] public int min { get; set; }
+        [XmlAttribute] public int max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public int min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherWindDirectionTimelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherWindDirectionTimelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherWindDirectionTimelimits);
+
+        public weatherWindDirectionTimelimits Clone()
+        {
+            return new weatherWindDirectionTimelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherWindDirectionChangelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherWindDirectionChangelimits : IEquatable<weatherWindDirectionChangelimits>, IDeepCloneable<weatherWindDirectionChangelimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherWindDirectionChangelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherWindDirectionChangelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherWindDirectionChangelimits);
+
+        public weatherWindDirectionChangelimits Clone()
+        {
+            return new weatherWindDirectionChangelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
     #endregion
 
     #region Snowfall
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherSnowfall
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherSnowfall : IEquatable<weatherSnowfall>, IDeepCloneable<weatherSnowfall>
     {
-        private weatherSnowfallCurrent currentField;
-        private weatherSnowfallLimits limitsField;
-        private weatherSnowfallTimelimits timelimitsField;
-        private weatherSnowfallChangelimits changelimitsField;
-        private weatherSnowfallThresholds thresholdsField;
+        private weatherSnowfallCurrent? _current;
+        private weatherSnowfallLimits? _limits;
+        private weatherSnowfallTimelimits? _timelimits;
+        private weatherSnowfallChangelimits? _changelimits;
+        private weatherSnowfallThresholds? _thresholds;
 
-        public weatherSnowfallCurrent current { get => currentField; set => currentField = value; }
-        public weatherSnowfallLimits limits { get => limitsField; set => limitsField = value; }
-        public weatherSnowfallTimelimits timelimits { get => timelimitsField; set => timelimitsField = value; }
-        public weatherSnowfallChangelimits changelimits { get => changelimitsField; set => changelimitsField = value; }
-        public weatherSnowfallThresholds thresholds { get => thresholdsField; set => thresholdsField = value; }
+        public weatherSnowfallCurrent current
+        {
+            get => _current ??= new weatherSnowfallCurrent();
+            set => _current = value;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherSnowfall o &&
-            Equals(current, o.current) &&
-            Equals(limits, o.limits) &&
-            Equals(timelimits, o.timelimits) &&
-            Equals(changelimits, o.changelimits) &&
-            Equals(thresholds, o.thresholds);
+        public weatherSnowfallLimits limits
+        {
+            get => _limits ??= new weatherSnowfallLimits();
+            set => _limits = value;
+        }
 
-        public override int GetHashCode() => HashCode.Combine(current, limits, timelimits, changelimits, thresholds);
+        public weatherSnowfallTimelimits timelimits
+        {
+            get => _timelimits ??= new weatherSnowfallTimelimits();
+            set => _timelimits = value;
+        }
+
+        public weatherSnowfallChangelimits changelimits
+        {
+            get => _changelimits ??= new weatherSnowfallChangelimits();
+            set => _changelimits = value;
+        }
+
+        public weatherSnowfallThresholds thresholds
+        {
+            get => _thresholds ??= new weatherSnowfallThresholds();
+            set => _thresholds = value;
+        }
+
+        public bool Equals(weatherSnowfall? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(current, other.current) &&
+                   Equals(limits, other.limits) &&
+                   Equals(timelimits, other.timelimits) &&
+                   Equals(changelimits, other.changelimits) &&
+                   Equals(thresholds, other.thresholds);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as weatherSnowfall);
+
+        public weatherSnowfall Clone()
+        {
+            return new weatherSnowfall
+            {
+                current = current.Clone(),
+                limits = limits.Clone(),
+                timelimits = timelimits.Clone(),
+                changelimits = changelimits.Clone(),
+                thresholds = thresholds.Clone()
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherSnowfallCurrent
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherSnowfallCurrent : IEquatable<weatherSnowfallCurrent>, IDeepCloneable<weatherSnowfallCurrent>
     {
-        private decimal actualField;
-        private int timeField;
-        private int durationField;
+        [XmlAttribute] public decimal actual { get; set; }
+        [XmlAttribute] public int time { get; set; }
+        [XmlAttribute] public int duration { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal actual { get => actualField; set => actualField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int time { get => timeField; set => timeField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int duration { get => durationField; set => durationField = value; }
+        public bool Equals(weatherSnowfallCurrent? other)
+        {
+            if (other is null) return false;
+            return actual == other.actual && time == other.time && duration == other.duration;
+        }
 
-        public override bool Equals(object obj) =>
-            obj is weatherSnowfallCurrent o && actual == o.actual && time == o.time && duration == o.duration;
+        public override bool Equals(object? obj) => Equals(obj as weatherSnowfallCurrent);
 
-        public override int GetHashCode() => HashCode.Combine(actual, time, duration);
+        public weatherSnowfallCurrent Clone()
+        {
+            return new weatherSnowfallCurrent
+            {
+                actual = actual,
+                time = time,
+                duration = duration
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherSnowfallLimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherSnowfallLimits : IEquatable<weatherSnowfallLimits>, IDeepCloneable<weatherSnowfallLimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherSnowfallLimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherSnowfallLimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherSnowfallLimits);
+
+        public weatherSnowfallLimits Clone()
+        {
+            return new weatherSnowfallLimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherSnowfallTimelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherSnowfallTimelimits : IEquatable<weatherSnowfallTimelimits>, IDeepCloneable<weatherSnowfallTimelimits>
     {
-        private int minField;
-        private int maxField;
+        [XmlAttribute] public int min { get; set; }
+        [XmlAttribute] public int max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public int min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherSnowfallTimelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherSnowfallTimelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherSnowfallTimelimits);
+
+        public weatherSnowfallTimelimits Clone()
+        {
+            return new weatherSnowfallTimelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherSnowfallChangelimits
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherSnowfallChangelimits : IEquatable<weatherSnowfallChangelimits>, IDeepCloneable<weatherSnowfallChangelimits>
     {
-        private decimal minField;
-        private decimal maxField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
+        public bool Equals(weatherSnowfallChangelimits? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max;
+        }
 
-        public override bool Equals(object obj) => obj is weatherSnowfallChangelimits o && min == o.min && max == o.max;
-        public override int GetHashCode() => HashCode.Combine(min, max);
+        public override bool Equals(object? obj) => Equals(obj as weatherSnowfallChangelimits);
+
+        public weatherSnowfallChangelimits Clone()
+        {
+            return new weatherSnowfallChangelimits
+            {
+                min = min,
+                max = max
+            };
+        }
     }
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherSnowfallThresholds
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherSnowfallThresholds : IEquatable<weatherSnowfallThresholds>, IDeepCloneable<weatherSnowfallThresholds>
     {
-        private decimal minField;
-        private decimal maxField;
-        private int endField;
+        [XmlAttribute] public decimal min { get; set; }
+        [XmlAttribute] public decimal max { get; set; }
+        [XmlAttribute] public int end { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal min { get => minField; set => minField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal max { get => maxField; set => maxField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int end { get => endField; set => endField = value; }
+        public bool Equals(weatherSnowfallThresholds? other)
+        {
+            if (other is null) return false;
+            return min == other.min && max == other.max && end == other.end;
+        }
 
-        public override bool Equals(object obj) => obj is weatherSnowfallThresholds o && min == o.min && max == o.max && end == o.end;
-        public override int GetHashCode() => HashCode.Combine(min, max, end);
+        public override bool Equals(object? obj) => Equals(obj as weatherSnowfallThresholds);
+
+        public weatherSnowfallThresholds Clone()
+        {
+            return new weatherSnowfallThresholds
+            {
+                min = min,
+                max = max,
+                end = end
+            };
+        }
     }
 
     #endregion
 
     #region Storm
 
-    [Serializable, System.ComponentModel.DesignerCategory("code")]
-    [System.Xml.Serialization.XmlType(AnonymousType = true)]
-    public partial class weatherStorm
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class weatherStorm : IEquatable<weatherStorm>, IDeepCloneable<weatherStorm>
     {
-        private decimal densityField;
-        private decimal thresholdField;
-        private int timeoutField;
+        [XmlAttribute] public decimal density { get; set; }
+        [XmlAttribute] public decimal threshold { get; set; }
+        [XmlAttribute] public int timeout { get; set; }
 
-        [System.Xml.Serialization.XmlAttribute] public decimal density { get => densityField; set => densityField = value; }
-        [System.Xml.Serialization.XmlAttribute] public decimal threshold { get => thresholdField; set => thresholdField = value; }
-        [System.Xml.Serialization.XmlAttribute] public int timeout { get => timeoutField; set => timeoutField = value; }
+        public bool Equals(weatherStorm? other)
+        {
+            if (other is null) return false;
+            return density == other.density &&
+                   threshold == other.threshold &&
+                   timeout == other.timeout;
+        }
 
-        public override bool Equals(object obj) => obj is weatherStorm o && density == o.density && threshold == o.threshold && timeout == o.timeout;
-        public override int GetHashCode() => HashCode.Combine(density, threshold, timeout);
+        public override bool Equals(object? obj) => Equals(obj as weatherStorm);
+
+        public weatherStorm Clone()
+        {
+            return new weatherStorm
+            {
+                density = density,
+                threshold = threshold,
+                timeout = timeout
+            };
+        }
     }
 
     #endregion

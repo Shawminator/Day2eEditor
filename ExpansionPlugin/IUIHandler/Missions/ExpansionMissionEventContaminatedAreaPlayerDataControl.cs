@@ -72,7 +72,7 @@ namespace ExpansionPlugin
             if (parentObj != null)
             {
                 dynamic parent = parentObj;
-                parent.isDirty = !_data.Equals(_originalData);
+                parent.IsDirty = !_data.Equals(_originalData);
             }
         }
 

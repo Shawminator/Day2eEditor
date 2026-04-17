@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAIConfig : ExpansionBaseIConfigLoader<ExpansionAISettings>
+    public class ExpansionAIConfig : SingleFileConfigLoaderBase<ExpansionAISettings>
     {
         public const int CurrentVersion = 20;
  
@@ -16,9 +16,9 @@ namespace ExpansionPlugin
             if (Data is null)
                 return Array.Empty<string>();
 
-            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                isDirty = false;
+                ClearDirty();
                 Data.CreateDictionary();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 ClonedData = CloneData(Data);

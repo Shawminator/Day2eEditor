@@ -3,231 +3,420 @@ using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class globalsConfig : IAdvancedConfigLoader
+    public class GlobalsConfig : ParameterizedMultiFileConfigLoaderBase<GlobalsFile>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        public string _basepath { get; set; }
-        public List<globalsFile> AllData { get; private set; } = new List<globalsFile>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
+        public GlobalsConfig(string path) : base(path)
         {
-            _basepath = basePath;
-            HasErrors = false;
-            Errors.Clear();
-            // Load vanilla file
-            var vanilla = new globalsFile(vanillaPath)
-            {
-                IsModded = false,
-                FileType = "globals"
-            };
-            vanilla.Load();
-            AllData.Add(vanilla);
+        }
 
-            if (vanilla.HasErrors)
+        protected override void LoadCore()
+        {
+            ResetState();
+
+            if (string.IsNullOrWhiteSpace(VanillaPath))
             {
                 HasErrors = true;
-                var fileName = Path.GetFileName(vanilla.FilePath);
-                Errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
+                _errors.Add("Vanilla path is missing.");
+                return;
             }
 
-            // Load mod files
-            foreach (var modPath in modPaths)
+            try
             {
-                var modFile = new globalsFile(modPath)
+                var vanilla = LoadItem(VanillaPath);
+                vanilla.IsModded = false;
+                vanilla.FileType = "globals";
+
+                OnAfterItemLoad(vanilla, VanillaPath);
+                _clonedItems[GetID(vanilla)] = vanilla.Clone();
+
+                var vanillaIssues = ValidateItem(vanilla);
+                if (vanillaIssues?.Any() == true)
                 {
-                    IsModded = true,
-                    FileType = "globals",
-                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
-                };
+                    Console.WriteLine("Validation issues in " + vanilla.FileName + ":");
+                    foreach (var msg in vanillaIssues)
+                        Console.WriteLine("- " + msg);
+                }
 
-                modFile.Load();
-                AllData.Add(modFile);
+                MutableItems.Add(vanilla);
 
-                if (modFile.HasErrors)
+                if (vanilla.HasErrors)
                 {
                     HasErrors = true;
-                    var modName = Path.GetFileName(modFile.ModFolder);
-                    var fileName = Path.GetFileName(modFile.FilePath);
-                    Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    var fileName = Path.GetFileName(vanilla.FilePath);
+                    _errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
                 }
             }
-        }
-        public IEnumerable<string> Save()
-        {
-            var savedFiles = new List<string>();
-
-            foreach (var data in AllData.ToList())
+            catch (Exception ex)
             {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+                HasErrors = true;
+                HandleItemError(VanillaPath, ex);
+            }
 
-                if (data.toDelete)
+            foreach (var file in ModPaths)
+            {
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(file);
+                    item.IsModded = true;
+                    item.FileType = "globals";
+                    item.ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(file) ?? BasePath);
+
+                    OnAfterItemLoad(item, file);
+                    _clonedItems[GetID(item)] = item.Clone();
+
+                    var issues = ValidateItem(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + item.FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+
+                    MutableItems.Add(item);
+
+                    if (item.HasErrors)
+                    {
+                        HasErrors = true;
+                        var modName = Path.GetFileName(item.ModFolder);
+                        var fileName = Path.GetFileName(item.FilePath);
+                        _errors.AddRange(item.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
         }
-        public bool needToSave()
-        {
-            foreach (var Data in AllData)
-            {
-                if (Data.needToSave())
-                    return true;
-            }
-            return false;
-        }
-    }
-    public class globalsFile : IConfigLoader
-    {
-        private readonly string _path;
 
-        public variables Data { get; set; } = new variables();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-        public bool toDelete { get; set; }
-
-        // Metadata for file type and source
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;                  // Full file path
-        public string FileType { get; set; }               // "types"
-        public bool IsModded { get; set; }                 // true if modded, false if vanilla
-        public string ModFolder { get; set; }
-
-        public globalsFile(string path)
+        protected override GlobalsFile LoadItem(string filePath)
         {
-            _path = path ?? throw new ArgumentNullException(nameof(path));
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<variables>(
-                _path,
-                createNew: () => new variables(),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
+            var item = new GlobalsFile(filePath);
+
+            item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
+                filePath,
+                createNew: () => new variables
+                {
+                    var = new BindingList<variablesVar>()
+                },
                 onError: ex =>
                 {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                        );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
+                    item.HasErrors = true;
+
+                    var message =
+                        $"Error in {Path.GetFileName(filePath)}\n{ex.Message}\n{ex.InnerException?.Message}";
+
+                    Console.WriteLine(message + "\n");
+                    item.Errors.Add(message);
                 },
                 configName: "globals"
             );
+
+            item.Data.var ??= new BindingList<variablesVar>();
+            item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
+
+            return item;
         }
-        public IEnumerable<string> Save()
+
+        protected override IEnumerable<string> ValidateItem(GlobalsFile item)
         {
-            if(toDelete)
+            return item.Errors;
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
             {
-                if (File.Exists(_path))
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+
+                if (ShouldDelete(item))
                 {
-                    File.Delete(_path);
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
                 }
-                // Delete empty directories if needed
-                Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-            }
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
-                return new[] { FileName };
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+
+                if (!item.Equals(baseline))
+                {
+                    var oldPath = baseline.FilePath;
+
+                    SaveItem(item);
+
+                    if (!string.Equals(oldPath, item.FilePath, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(oldPath) &&
+                        File.Exists(oldPath))
+                    {
+                        File.Delete(oldPath);
+                    }
+
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
             }
 
-            return Array.Empty<string>();
+            return saved;
         }
-        public bool needToSave()
+
+        public override bool NeedToSave()
         {
-            return isDirty;
+            foreach (var item in Items)
+            {
+                var id = GetID(item);
+
+                if (ShouldDelete(item))
+                    return true;
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                    return true;
+
+                if (!item.Equals(baseline))
+                    return true;
+            }
+
+            return false;
+        }
+
+        protected override void SaveItem(GlobalsFile item)
+        {
+            AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
+            item.IsDirty = false;
+        }
+
+        protected override string GetItemFileName(GlobalsFile item)
+            => item.FileName;
+
+        protected override Guid GetID(GlobalsFile item)
+            => item.Id;
+
+        protected override bool ShouldDelete(GlobalsFile item)
+            => item.ToDelete;
+
+        protected override void DeleteItemFile(GlobalsFile item)
+        {
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            {
+                File.Delete(item.FilePath);
+            }
+        }
+
+        protected override void HandleItemError(string path, Exception ex)
+        {
+            var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
+            _errors.Add(msg);
+            Console.WriteLine(msg);
+        }
+
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        {
+            var removedFolders = new List<string>();
+
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c =>
+                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    var relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
+    }
+    public class GlobalsFile : IDeepCloneable<GlobalsFile>, IEquatable<GlobalsFile>
+    {
+        private string _path;
+
+        public string FilePath => _path;
+        public string FileName => Path.GetFileName(_path);
+
+        public bool ToDelete { get; set; }
+        public bool IsDirty { get; set; }
+        public bool HasErrors { get; set; }
+
+        public List<string> Errors { get; } = new();
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string FileType { get; set; } = string.Empty;
+        public bool IsModded { get; set; }
+        public string ModFolder { get; set; } = string.Empty;
+
+        public variables Data { get; set; } = new()
+        {
+            var = new BindingList<variablesVar>()
+        };
+
+        public GlobalsFile(string path)
+        {
+            _path = path;
+        }
+
+        public void SetPath(string path) => _path = path;
+
+        internal void SetGuid(Guid guid) => Id = guid;
+
+        public GlobalsFile Clone()
+        {
+            var clone = new GlobalsFile(_path)
+            {
+                ToDelete = ToDelete,
+                IsDirty = IsDirty,
+                HasErrors = HasErrors,
+                Id = Id,
+                FileType = FileType,
+                IsModded = IsModded,
+                ModFolder = ModFolder,
+                Data = Data?.Clone() ?? new variables
+                {
+                    var = new BindingList<variablesVar>()
+                }
+            };
+
+            clone.Errors.AddRange(Errors);
+            return clone;
+        }
+
+        public bool Equals(GlobalsFile? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Id == other.Id &&
+                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(FileType, other.FileType, StringComparison.Ordinal) &&
+                IsModded == other.IsModded &&
+                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
+                ToDelete == other.ToDelete &&
+                Equals(Data, other.Data);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as GlobalsFile);
         }
     }
 
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class variables
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class variables : IDeepCloneable<variables>, IEquatable<variables>
     {
-        private BindingList<variablesVar> varField;
+        private BindingList<variablesVar>? varField = new();
 
-        [System.Xml.Serialization.XmlElementAttribute("var")]
-        public BindingList<variablesVar> var
+        [XmlElement("var")]
+        public BindingList<variablesVar>? var
         {
-            get
-            {
-                return this.varField;
-            }
-            set
-            {
-                this.varField = value;
-            }
+            get => varField;
+            set => varField = value;
         }
 
-        public variables() { }
+        public variables()
+        {
+        }
+        public bool Equals(variables? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return ListsEqual(var, other.var);
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as variables);
+        }
+        public variables Clone()
+        {
+            return new variables
+            {
+                var = new BindingList<variablesVar>(
+                    var?.Select(x => x.Clone()).ToList() ?? new List<variablesVar>())
+            };
+        }
+        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
+
+            return true;
+        }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class variablesVar
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class variablesVar : IDeepCloneable<variablesVar>, IEquatable<variablesVar>
     {
-        private string nameField;
+        private string? nameField;
         private int typeField;
-        private string valueField;
+        private string? valueField;
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        [XmlAttribute]
+        public string? name
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            get => nameField;
+            set => nameField = value;
         }
-
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int type
         {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
+            get => typeField;
+            set => typeField = value;
         }
-
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string value
+        [XmlAttribute]
+        public string? value
         {
-            get
-            {
-                return this.valueField;
-            }
-            set
-            {
-                this.valueField = value;
-            }
+            get => valueField;
+            set => valueField = value;
         }
-
         [XmlIgnore]
-        public object TypedValue
+        public object? TypedValue
         {
             get
             {
@@ -255,30 +444,31 @@ namespace Day2eEditor
             }
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(variablesVar? other)
         {
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj is null || obj.GetType() != typeof(variablesVar)) return false;
+            if (other is null)
+                return false;
 
-            var other = (variablesVar)obj;
+            if (ReferenceEquals(this, other))
+                return true;
 
-            return this.name == other.name &&
-                   this.type == other.type &&
-                   this.value == other.value;
+            return
+                string.Equals(name, other.name, StringComparison.Ordinal) &&
+                type == other.type &&
+                string.Equals(value, other.value, StringComparison.Ordinal);
         }
-
-        public override int GetHashCode()
+        public override bool Equals(object? obj)
         {
-            unchecked // allow overflow
+            return Equals(obj as variablesVar);
+        }
+        public variablesVar Clone()
+        {
+            return new variablesVar
             {
-                int hash = 17;
-                hash = hash * 23 + (name?.GetHashCode() ?? 0);
-                hash = hash * 23 + type.GetHashCode();
-                hash = hash * 23 + (value?.GetHashCode() ?? 0);
-                return hash;
-            }
+                name = name,
+                type = type,
+                value = value
+            };
         }
     }
-
-
 }

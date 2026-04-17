@@ -8,11 +8,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionAIPatrolConfig : ExpansionBaseIConfigLoader<ExpansionAIPatrolSettings>
+    public class ExpansionAIPatrolConfig : SingleFileConfigLoaderBase<ExpansionAIPatrolSettings>
     {
         public const int CurrentVersion = 32;
 
@@ -41,7 +40,7 @@ namespace ExpansionPlugin
                     foreach (var msg in issues)
                         Console.WriteLine("- " + msg);
 
-                    isDirty = true;
+                    MarkDirty();
                 }
                 OnAfterLoad(Data);
                 ClonedData = CloneData(Data);
@@ -57,9 +56,9 @@ namespace ExpansionPlugin
             if (Data is null)
                 return Array.Empty<string>();
 
-            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                isDirty = false;
+                ClearDirty();
                 SetLoadBalancingCategoriestoDictionary();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
                 ClonedData = CloneData(Data);

@@ -1,4 +1,4 @@
-﻿namespace ExpansionPlugin
+﻿namespace Day2eEditor
 {
     public interface IDeepCloneable<T>
     {

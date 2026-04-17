@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionQuestConfig : ExpansionBaseIConfigLoader<ExpansionQuestSettings>
+    public class ExpansionQuestConfig : SingleFileConfigLoaderBase<ExpansionQuestSettings>
     {
         public const int CurrentVersion = 10;
         public ExpansionQuestConfig(string path) : base(path)

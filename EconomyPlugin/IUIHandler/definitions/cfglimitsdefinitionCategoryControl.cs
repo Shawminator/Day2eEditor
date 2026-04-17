@@ -16,7 +16,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private cfglimitsdefinitionConfig _data;
-        private cfglimitsdefinition _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -55,8 +54,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as cfglimitsdefinitionConfig ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
-
             _suppressEvents = true;
 
             listBox9.DataSource = _data.Data.categories;
@@ -64,61 +61,9 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.isDirty = !_data.Data.Equals(_originalData);
-            }
-        }
 
         #region Helper Methods
 
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private cfglimitsdefinition CloneData(cfglimitsdefinitionConfig data)
-        {
-            if (data == null) return null;
-
-            var clone = new cfglimitsdefinition
-            {
-                categories = data.Data.categories == null ? null : new BindingList<listsCategory>(
-                    data.Data.categories.Select(c => c == null ? null : new listsCategory { name = c.name }).ToList()
-                ),
-                tags = data.Data.tags == null ? null : new BindingList<listsTag>(
-                    data.Data.tags.Select(t => t == null ? null : new listsTag { name = t.name }).ToList()
-                ),
-                usageflags = data.Data.usageflags == null ? null : new BindingList<listsUsage>(
-                    data.Data.usageflags.Select(u => u == null ? null : new listsUsage { name = u.name }).ToList()
-                ),
-                valueflags = data.Data.valueflags == null ? null : new BindingList<listsValue>(
-                    data.Data.valueflags.Select(v => v == null ? null : new listsValue { name = v.name }).ToList()
-                )
-            };
-            return clone;
-        }
 
         /// <summary>
         /// Updates the TreeNode text based on current data
@@ -138,7 +83,6 @@ namespace EconomyPlugin
             listsCategory newusage = new listsCategory();
             newusage.name = "Change Me";
             _data.Data.categories.Add(newusage);
-            HasChanges();
         }
 
         private void darkButton76_Click(object sender, EventArgs e)
@@ -147,7 +91,6 @@ namespace EconomyPlugin
             listsCategory uu = listBox9.SelectedItem as listsCategory;
             string uuname = uu.name;
             _data.Data.categories.Remove(uu);
-            HasChanges();
         }
 
         private void darkButton83_Click(object sender, EventArgs e)
@@ -156,7 +99,6 @@ namespace EconomyPlugin
             listsCategory uu = listBox9.SelectedItem as listsCategory;
             string uuname = uu.name;
             uu.name = textBox3.Text;
-            HasChanges();
             darkButton83.Visible = false;
         }
 

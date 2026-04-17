@@ -1,357 +1,483 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Xml.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Day2eEditor
 {
-    public class economyConfig : IAdvancedConfigLoader
+    public class EconomyConfig : ParameterizedMultiFileConfigLoaderBase<EconomyFile>
     {
-        public string FileName => Path.GetFileName(_basepath); // e.g., "types.xml"
-        public string FilePath => _basepath;
-        public string _basepath { get; set; }
-        public List<economyFile> AllData { get; private set; } = new List<economyFile>();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-
-        public void Load() => throw new InvalidOperationException("Use LoadWithParameters for this config.");
-        public void LoadWithParameters(string basePath, string vanillaPath, List<string> modPaths)
+        public EconomyConfig(string path) : base(path)
         {
-            _basepath = basePath;
-            HasErrors = false;
-            Errors.Clear();
-            // Load vanilla file
-            var vanilla = new economyFile(vanillaPath)
-            {
-                IsModded = false,
-                FileType = "economy"
-            };
+        }
 
-            vanilla.Load();
-            AllData.Add(vanilla);
+        protected override void LoadCore()
+        {
+            ResetState();
 
-            if (vanilla.HasErrors)
+            if (string.IsNullOrWhiteSpace(VanillaPath))
             {
                 HasErrors = true;
-                var fileName = Path.GetFileName(vanilla.FilePath);
-                Errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
+                _errors.Add("Vanilla path is missing.");
+                return;
             }
 
-            // Load mod files
-            foreach (var modPath in modPaths)
+            try
             {
-                var modFile = new economyFile(modPath)
+                var vanilla = LoadItem(VanillaPath);
+                vanilla.IsModded = false;
+                vanilla.FileType = "economy";
+
+                OnAfterItemLoad(vanilla, VanillaPath);
+                _clonedItems[GetID(vanilla)] = vanilla.Clone();
+
+                var vanillaIssues = ValidateItem(vanilla);
+                if (vanillaIssues?.Any() == true)
                 {
-                    IsModded = true,
-                    FileType = "economy",
-                    ModFolder = Path.GetRelativePath(basePath, Path.GetDirectoryName(modPath))
-                };
+                    Console.WriteLine("Validation issues in " + vanilla.FileName + ":");
+                    foreach (var msg in vanillaIssues)
+                        Console.WriteLine("- " + msg);
+                }
 
-                modFile.Load();
-                AllData.Add(modFile);
+                MutableItems.Add(vanilla);
 
-                if (modFile.HasErrors)
+                if (vanilla.HasErrors)
                 {
                     HasErrors = true;
-                    var modName = Path.GetFileName(modFile.ModFolder);
-                    var fileName = Path.GetFileName(modFile.FilePath);
-                    Errors.AddRange(modFile.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    var fileName = Path.GetFileName(vanilla.FilePath);
+                    _errors.AddRange(vanilla.Errors.Select(e => $"[Vanilla] [{fileName}] {e}"));
                 }
             }
-        }
-        public IEnumerable<string> Save()
-        {
-            var savedFiles = new List<string>();
-
-            foreach (var data in AllData.ToList())
+            catch (Exception ex)
             {
-                var result = data.Save();
-                savedFiles.AddRange(result);
+                HasErrors = true;
+                HandleItemError(VanillaPath, ex);
+            }
 
-                if (data.toDelete)
+            foreach (var file in ModPaths)
+            {
+                try
                 {
-                    AllData.Remove(data); // cleanup after deleting
+                    var item = LoadItem(file);
+                    item.IsModded = true;
+                    item.FileType = "economy";
+                    item.ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(file) ?? BasePath);
+
+                    OnAfterItemLoad(item, file);
+                    _clonedItems[GetID(item)] = item.Clone();
+
+                    var issues = ValidateItem(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + item.FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+
+                    MutableItems.Add(item);
+
+                    if (item.HasErrors)
+                    {
+                        HasErrors = true;
+                        var modName = Path.GetFileName(item.ModFolder);
+                        var fileName = Path.GetFileName(item.FilePath);
+                        _errors.AddRange(item.Errors.Select(e => $"[{modName}] [{fileName}] {e}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
                 }
             }
 
-            return savedFiles;
+            OnAfterLoadAll();
         }
 
-        public bool needToSave()
+        protected override EconomyFile LoadItem(string filePath)
         {
-            foreach (var Data in AllData)
-            {
-                if (Data.needToSave())
-                    return true;
-            }
-            return false;
-        }
-    }
-    public class economyFile : IConfigLoader
-    {
-        private readonly string _path;
+            var item = new EconomyFile(filePath);
 
-        public economy Data { get; set; } = new economy();
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-        public bool toDelete { get; set; }
-
-        // Metadata for file type and source
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;                  // Full file path
-        public string FileType { get; set; }               // "types"
-        public bool IsModded { get; set; }                 // true if modded, false if vanilla
-        public string ModFolder { get; set; }
-
-        public economyFile(string path)
-        {
-            _path = path ?? throw new ArgumentNullException(nameof(path));
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<economy>(
-                _path,
+            item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
+                filePath,
                 createNew: () => new economy(),
-                onAfterLoad: cfg => { /* optional: do something after load */ },
                 onError: ex =>
                 {
-                    HasErrors = true;
-                    Console.WriteLine(
-                        "Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message + "\n"
-                        );
-                    Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                        ex.Message + "\n" +
-                        ex.InnerException?.Message);
-                    },
+                    item.HasErrors = true;
+
+                    var message =
+                        $"Error in {Path.GetFileName(filePath)}\n{ex.Message}\n{ex.InnerException?.Message}";
+
+                    Console.WriteLine(message + "\n");
+                    item.Errors.Add(message);
+                },
                 configName: "economy"
             );
+
+            item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
+
+            return item;
         }
-        public IEnumerable<string> Save()
+
+        protected override IEnumerable<string> ValidateItem(EconomyFile item)
         {
-            if (toDelete)
+            return item.Errors;
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
             {
-                if (File.Exists(_path))
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+
+                if (ShouldDelete(item))
                 {
-                    File.Delete(_path);
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fileName);
+                    continue;
                 }
 
-                // Delete empty directories if needed
-                Helper.DeleteEmptyFoldersUpToBase(Path.GetDirectoryName(_path), AppServices.GetRequired<EconomyManager>().basePath);
-                
-            }
-            else if (isDirty)
-            {
-                AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
-                return new[] { FileName };
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                    continue;
+                }
+
+                if (!item.Equals(baseline))
+                {
+                    var oldPath = baseline.FilePath;
+
+                    SaveItem(item);
+
+                    if (!string.Equals(oldPath, item.FilePath, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(oldPath) &&
+                        File.Exists(oldPath))
+                    {
+                        File.Delete(oldPath);
+                    }
+
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fileName);
+                }
             }
 
-            return Array.Empty<string>();
+            return saved;
         }
-        public bool needToSave()
+
+        public override bool NeedToSave()
         {
-            return isDirty;
+            foreach (var item in Items)
+            {
+                var id = GetID(item);
+
+                if (ShouldDelete(item))
+                    return true;
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                    return true;
+
+                if (!item.Equals(baseline))
+                    return true;
+            }
+
+            return false;
+        }
+
+        protected override void SaveItem(EconomyFile item)
+        {
+            AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
+            item.IsDirty = false;
+        }
+
+        protected override string GetItemFileName(EconomyFile item)
+            => item.FileName;
+
+        protected override Guid GetID(EconomyFile item)
+            => item.Id;
+
+        protected override bool ShouldDelete(EconomyFile item)
+            => item.ToDelete;
+
+        protected override void DeleteItemFile(EconomyFile item)
+        {
+            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            {
+                File.Delete(item.FilePath);
+            }
+        }
+
+        protected override void HandleItemError(string path, Exception ex)
+        {
+            var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
+            _errors.Add(msg);
+            Console.WriteLine(msg);
+        }
+
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        {
+            var removedFolders = new List<string>();
+
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c =>
+                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    var relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
+    }
+    public class EconomyFile : IDeepCloneable<EconomyFile>, IEquatable<EconomyFile>
+    {
+        private string _path;
+
+        public string FilePath => _path;
+        public string FileName => Path.GetFileName(_path);
+
+        public bool ToDelete { get; set; }
+        public bool IsDirty { get; set; }
+        public bool HasErrors { get; set; }
+
+        public List<string> Errors { get; } = new();
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string FileType { get; set; } = string.Empty;
+        public bool IsModded { get; set; }
+        public string ModFolder { get; set; } = string.Empty;
+
+        public economy Data { get; set; } = new();
+
+        public EconomyFile(string path)
+        {
+            _path = path;
+        }
+        public void SetPath(string path) => _path = path;
+        internal void SetGuid(Guid guid) => Id = guid;
+        public EconomyFile Clone()
+        {
+            var clone = new EconomyFile(_path)
+            {
+                ToDelete = ToDelete,
+                IsDirty = IsDirty,
+                HasErrors = HasErrors,
+                Id = Id,
+                FileType = FileType,
+                IsModded = IsModded,
+                ModFolder = ModFolder,
+                Data = Data?.Clone() ?? new economy()
+            };
+
+            clone.Errors.AddRange(Errors);
+            return clone;
+        }
+        public bool Equals(EconomyFile? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Id == other.Id &&
+                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(FileType, other.FileType, StringComparison.Ordinal) &&
+                IsModded == other.IsModded &&
+                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
+                ToDelete == other.ToDelete &&
+                Equals(Data, other.Data);
+        }
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as EconomyFile);
         }
     }
 
 
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class economy
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public partial class economy : IDeepCloneable<economy>, IEquatable<economy>
     {
-        private EconomySection dynamicField;
-        private EconomySection animalsField;
-        private EconomySection zombiesField;
-        private EconomySection vehiclesField;
-        private EconomySection randomsField;
-        private EconomySection customField;
-        private EconomySection buildingField;
-        private EconomySection playerField;
+        private EconomySection? dynamicField;
+        private EconomySection? animalsField;
+        private EconomySection? zombiesField;
+        private EconomySection? vehiclesField;
+        private EconomySection? randomsField;
+        private EconomySection? customField;
+        private EconomySection? buildingField;
+        private EconomySection? playerField;
 
-        public EconomySection dynamic
+        public EconomySection? dynamic
         {
-            get
-            {
-                return this.dynamicField;
-            }
-            set
-            {
-                this.dynamicField = value;
-            }
+            get => dynamicField;
+            set => dynamicField = value;
         }
-        public EconomySection animals
+        public EconomySection? animals
         {
-            get
-            {
-                return this.animalsField;
-            }
-            set
-            {
-                this.animalsField = value;
-            }
+            get => animalsField;
+            set => animalsField = value;
         }
-        public EconomySection zombies
+        public EconomySection? zombies
         {
-            get
-            {
-                return this.zombiesField;
-            }
-            set
-            {
-                this.zombiesField = value;
-            }
+            get => zombiesField;
+            set => zombiesField = value;
         }
-        public EconomySection vehicles
+        public EconomySection? vehicles
         {
-            get
-            {
-                return this.vehiclesField;
-            }
-            set
-            {
-                this.vehiclesField = value;
-            }
+            get => vehiclesField;
+            set => vehiclesField = value;
         }
-        public EconomySection randoms
+        public EconomySection? randoms
         {
-            get
-            {
-                return this.randomsField;
-            }
-            set
-            {
-                this.randomsField = value;
-            }
+            get => randomsField;
+            set => randomsField = value;
         }
-        public EconomySection custom
+        public EconomySection? custom
         {
-            get
-            {
-                return this.customField;
-            }
-            set
-            {
-                this.customField = value;
-            }
+            get => customField;
+            set => customField = value;
         }
-        public EconomySection building
+        public EconomySection? building
         {
-            get
-            {
-                return this.buildingField;
-            }
-            set
-            {
-                this.buildingField = value;
-            }
+            get => buildingField;
+            set => buildingField = value;
         }
-        public EconomySection player
+        public EconomySection? player
         {
-            get
-            {
-                return this.playerField;
-            }
-            set
-            {
-                this.playerField = value;
-            }
+            get => playerField;
+            set => playerField = value;
         }
 
         public economy()
         {
+        }
 
+        public bool Equals(economy? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Equals(dynamic, other.dynamic) &&
+                Equals(animals, other.animals) &&
+                Equals(zombies, other.zombies) &&
+                Equals(vehicles, other.vehicles) &&
+                Equals(randoms, other.randoms) &&
+                Equals(custom, other.custom) &&
+                Equals(building, other.building) &&
+                Equals(player, other.player);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as economy);
+        }
+
+        public economy Clone()
+        {
+            return new economy
+            {
+                dynamic = dynamic?.Clone(),
+                animals = animals?.Clone(),
+                zombies = zombies?.Clone(),
+                vehicles = vehicles?.Clone(),
+                randoms = randoms?.Clone(),
+                custom = custom?.Clone(),
+                building = building?.Clone(),
+                player = player?.Clone()
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class EconomySection
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public partial class EconomySection : IDeepCloneable<EconomySection>, IEquatable<EconomySection>
     {
         private int initField;
         private int loadField;
         private int respawnField;
         private int saveField;
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int init
         {
-            get
-            {
-                return this.initField;
-            }
-            set
-            {
-                this.initField = value;
-            }
+            get => initField;
+            set => initField = value;
         }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int load
         {
-            get
-            {
-                return this.loadField;
-            }
-            set
-            {
-                this.loadField = value;
-            }
+            get => loadField;
+            set => loadField = value;
         }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int respawn
         {
-            get
-            {
-                return this.respawnField;
-            }
-            set
-            {
-                this.respawnField = value;
-            }
+            get => respawnField;
+            set => respawnField = value;
         }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttribute]
         public int save
         {
-            get
-            {
-                return this.saveField;
-            }
-            set
-            {
-                this.saveField = value;
-            }
+            get => saveField;
+            set => saveField = value;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(EconomySection? other)
         {
-            if (obj is EconomySection other)
-            {
-                return init == other.init &&
-                       load == other.load &&
-                       respawn == other.respawn &&
-                       save == other.save;
-            }
-            return false;
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                init == other.init &&
+                load == other.load &&
+                respawn == other.respawn &&
+                save == other.save;
         }
-        public override int GetHashCode()
+        public override bool Equals(object? obj)
         {
-            unchecked
+            return Equals(obj as EconomySection);
+        }
+        public EconomySection Clone()
+        {
+            return new EconomySection
             {
-                int hash = 17;
-                hash = hash * 23 + init.GetHashCode();
-                hash = hash * 23 + load.GetHashCode();
-                hash = hash * 23 + respawn.GetHashCode();
-                hash = hash * 23 + save.GetHashCode();
-                return hash;
-            }
+                init = init,
+                load = load,
+                respawn = respawn,
+                save = save
+            };
         }
     }
 }

@@ -134,7 +134,7 @@ namespace Day2eEditor
 
                 var popup = new CategoryPopupForm(_categories, new listsCategory() { name = listcatname }, selectedCategory =>
                 {
-                    entry.changecategory(selectedCategory);
+                    entry.ChangeCategory(selectedCategory);
                     _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                     _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
                 });
@@ -155,14 +155,14 @@ namespace Day2eEditor
                     {
                         if (tag is listsTag t)
                         {
-                            entry.Addnewtag(t);
+                            entry.AddNewTag(t);
                         }
                         _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                         _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
                     },
                     removeSelectedTag: tag =>
                     {
-                        entry.removetag(tag);
+                        entry.RemoveTag(tag);
                         _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                         _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
                     }
@@ -185,18 +185,18 @@ namespace Day2eEditor
                     {
                         if (usage is listsUsage u)
                         {
-                            entry.AddnewUsage(u);
+                            entry.AddNewUsage(u);
                         }
                         else if (usage is user_listsUser uu)
                         {
-                            entry.AddnewUserUsage(uu);
+                            entry.AddNewUserUsage(uu);
                         }
                         _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                         _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
                     },
                     removeSelectedUsage: usage =>
                     {
-                        entry.removeusage(usage);
+                        entry.RemoveUsage(usage);
                         _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                         _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
                     }
@@ -223,7 +223,7 @@ namespace Day2eEditor
                         }
                         else if (value is user_listsUser1 vv)
                         {
-                            entry.AdduserTier(vv.name);
+                            entry.AddUserTier(vv.name);
                         }
                         _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                         _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
@@ -232,11 +232,11 @@ namespace Day2eEditor
                     {
                         if (value is listsValue v)
                         {
-                            entry.removetier(v.name);
+                            entry.RemoveTier(v.name);
                         }
                         else if (value is user_listsUser1 vv)
                         {
-                            entry.removeusertier(vv.name);
+                            entry.RemoveUserTier(vv.name);
                         }
                         _grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
                         _grid.AutoResizeColumn(e.ColumnIndex, DataGridViewAutoSizeColumnMode.AllCells);
@@ -318,7 +318,6 @@ namespace Day2eEditor
             if (openfile.ShowDialog() == DialogResult.OK)
             {
                 TypesFile newtypes = new TypesFile(openfile.FileName);
-                newtypes.Load();
                 _entries = newtypes.Data.TypeList;
                 _grid.DataSource = _entries;
             }

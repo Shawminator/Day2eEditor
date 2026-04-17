@@ -10,17 +10,14 @@ using System.Xml.Linq;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionMarketTraderMapsConfig : MultiFileConfigLoader<ExpansionMarketTraderNpcs>
+    public class ExpansionMarketTraderMapsConfig : MultiFileConfigLoaderBase<ExpansionMarketTraderNpcs>
     {
         public ExpansionMarketTraderMapsConfig(string path) : base(path)
         {
         }
         public override void Load()
         {
-            HasErrors = false;
-            Errors.Clear();
-            Items.Clear();
-            ClonedItems.Clear();
+            ResetState();
 
             var filePaths = Directory.GetFiles(BasePath, "*.map");
 
@@ -31,7 +28,7 @@ namespace ExpansionPlugin
                     var item = LoadItem(file);
 
                     OnAfterItemLoad(item, file);
-                    ClonedItems.Add(GetID(item), item.Clone());
+                    _clonedItems.Add(GetID(item), item.Clone());
                     //var issues = ValidateData(item);
                     //if (issues?.Any() == true)
                     //{
@@ -39,7 +36,7 @@ namespace ExpansionPlugin
                     //    foreach (var msg in issues)
                     //        Console.WriteLine("- " + msg);
                     //}
-                    Items.Add(item);
+                    MutableItems.Add(item);
 
                 }
                 catch (Exception ex)

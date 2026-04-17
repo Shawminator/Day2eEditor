@@ -1,10 +1,10 @@
 using Day2eEditor;
-using DayZeLib;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -53,21 +53,21 @@ namespace EconomyPlugin
             _typeHandlers = new Dictionary<Type, Action<TreeNode, List<TreeNode>>>
             {
                 // Core files
-                [typeof(economyFile)] = (node, selected) => ShowHandler<IUIHandler>(null, null, null, selected),
+                [typeof(EconomyFile)] = (node, selected) => ShowHandler<IUIHandler>(null, null, null, selected),
                 [typeof(EconomySection)] = (node, selected) =>
                 {
-                    economyFile ef = node.Parent.Tag as economyFile;
+                    EconomyFile ef = node.Parent.Tag as EconomyFile;
                     if (ef.IsModded)
-                        ShowHandler(new economyControl(), typeof(economyFile), node.Tag as EconomySection, selected);
+                        ShowHandler(new economyControl(), typeof(EconomyFile), node.Tag as EconomySection, selected);
                     else
                         ShowHandler<IUIHandler>(null, null, null, selected);
                 },
-                [typeof(globalsFile)] = (node, selected) => ShowHandler<IUIHandler>(null, null, null, selected),
+                [typeof(GlobalsFile)] = (node, selected) => ShowHandler<IUIHandler>(null, null, null, selected),
                 [typeof(variablesVar)] = (node, selected) =>
                 {
-                    globalsFile ef = node.Parent.Tag as globalsFile;
+                    GlobalsFile ef = node.Parent.Tag as GlobalsFile;
                     if (ef.IsModded)
-                        ShowHandler(new VariablesVarControl(), typeof(globalsFile), node.Tag as variablesVar, selected);
+                        ShowHandler(new VariablesVarControl(), typeof(GlobalsFile), node.Tag as variablesVar, selected);
                     else
                         ShowHandler<IUIHandler>(null, null, null, selected);
                 },
@@ -81,7 +81,7 @@ namespace EconomyPlugin
                 [typeof(TypeEntry)] = (node, selected) =>
                 {
                     var typentry = node.Tag as TypeEntry;
-                    var matches = _economyManager.TypesConfig.AllData
+                    var matches = _economyManager.TypesConfig.MutableItems
                         .SelectMany(tf => tf.Data.TypeList.Select(te => (File: tf, Entry: te)))
                         .Where(x => x.Entry.Name == typentry.Name)
                         .ToList();
@@ -107,7 +107,7 @@ namespace EconomyPlugin
                 [typeof(eventsEvent)] = (node, selected) =>
                 {
                     var ev = node.Tag as eventsEvent;
-                    var matches = _economyManager.eventsConfig.AllData
+                    var matches = _economyManager.eventsConfig.MutableItems
                         .SelectMany(tf => tf.Data.@event.Select(te => (File: tf, Event: te)))
                         .Where(x => x.Event.name == ev.name)
                         .ToList();
@@ -179,7 +179,7 @@ namespace EconomyPlugin
                 [typeof(Areas)] = (node, selected) =>
                 {
                     Areas area = node.Tag as Areas;
-                    ShowHandler(new cfgeffectAreaMainControl(), typeof(cfgeffectareaConfig), area, selected);
+                    ShowHandler(new cfgeffectAreaMainControl(), typeof(CfgeffectareaConfig), area, selected);
                     SetupEffectAreaMap(node.Tag as Areas, node);
                     _mapControl.EnsureVisible(new PointF((float)area.Data.Pos[0], (float)area.Data.Pos[2]));
                 },
@@ -222,7 +222,7 @@ namespace EconomyPlugin
 
                 //economy
                 [typeof(envTerritoriesTerritory)] = (node, selected) =>
-                    ShowHandler(new envTerritoriesTerritoryControl(), typeof(cfgenvironmentConfig), node.Tag as envTerritoriesTerritory, selected),
+                    ShowHandler(new envTerritoriesTerritoryControl(), typeof(CfgenvironmentConfig), node.Tag as envTerritoriesTerritory, selected),
 
                 //Economycore preview
                 [typeof(economyCoreConfig)] = (node, selected) =>
@@ -230,27 +230,27 @@ namespace EconomyPlugin
 
                 // SpawnGear / Discrete / Complex
                 [typeof(Discreteitemset)] = (node, selected) =>
-                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), node.Tag as Discreteitemset, selected),
+                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFile), node.Tag as Discreteitemset, selected),
                 [typeof(Discreteunsorteditemset)] = (node, selected) =>
-                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), node.Tag as Discreteunsorteditemset, selected),
+                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFile), node.Tag as Discreteunsorteditemset, selected),
                 [typeof(Complexchildrentype)] = (node, selected) =>
-                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFiles), node.Tag as Complexchildrentype, selected),
+                    ShowHandler(new SpawnGearItemControl(), typeof(SpawnGearPresetFile), node.Tag as Complexchildrentype, selected),
                 [typeof(Attachmentslotitemset)] = (node, selected) =>
-                    ShowHandler(new AttachmentslotitemsetControl(), typeof(SpawnGearPresetFiles), node.Tag as Attachmentslotitemset, selected),
+                    ShowHandler(new AttachmentslotitemsetControl(), typeof(SpawnGearPresetFile), node.Tag as Attachmentslotitemset, selected),
 
                 // SpawnableTypes
                 [typeof(SpawnableType)] = (node, selected) =>
-                    ShowHandler(new SpawnabletypesControl(), typeof(cfgspawnabletypesFile), node.Tag as SpawnableType, selected),
+                    ShowHandler(new SpawnabletypesControl(), typeof(CfgSpawnableTypesFile), node.Tag as SpawnableType, selected),
                 [typeof(spawnableTypeItem)] = (node, selected) =>
-                    ShowHandler(new SpawnableTypesItemControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeItem, selected),
+                    ShowHandler(new SpawnableTypesItemControl(), typeof(CfgSpawnableTypesFile), node.Tag as spawnableTypeItem, selected),
                 [typeof(spawnableTypeAttachment)] = (node, selected) =>
-                    ShowHandler(new SpawnableTypesAttachmentsControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeAttachment, selected),
+                    ShowHandler(new SpawnableTypesAttachmentsControl(), typeof(CfgSpawnableTypesFile), node.Tag as spawnableTypeAttachment, selected),
                 [typeof(spawnableTypeCargo)] = (node, selected) =>
-                    ShowHandler(new SpawnableTypesCargoControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeCargo, selected),
+                    ShowHandler(new SpawnableTypesCargoControl(), typeof(CfgSpawnableTypesFile), node.Tag as spawnableTypeCargo, selected),
                 [typeof(spawnableTypeDamage)] = (node, selected) =>
-                    ShowHandler(new SpawnabletypesDamageControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeDamage, selected),
+                    ShowHandler(new SpawnabletypesDamageControl(), typeof(CfgSpawnableTypesFile), node.Tag as spawnableTypeDamage, selected),
                 [typeof(spawnableTypeTag)] = (node, selected) =>
-                    ShowHandler(new SpawnabletypesTagsControl(), typeof(cfgspawnabletypesFile), node.Tag as spawnableTypeTag, selected),
+                    ShowHandler(new SpawnabletypesTagsControl(), typeof(CfgSpawnableTypesFile), node.Tag as spawnableTypeTag, selected),
 
                 // CFG Gameplay
                 [typeof(Generaldata)] = (node, selected) =>
@@ -270,23 +270,23 @@ namespace EconomyPlugin
 
                 // Random Presets
                 [typeof(randompresetsAttachments)] = (node, selected) =>
-                    ShowHandler(new RandompresetsAttchmentsControl(), typeof(cfgrandompresetsFile), node.Tag as randompresetsAttachments, selected),
+                    ShowHandler(new RandompresetsAttchmentsControl(), typeof(CfgrandompresetsFile), node.Tag as randompresetsAttachments, selected),
                 [typeof(randompresetsCargo)] = (node, selected) =>
-                    ShowHandler(new RandompresetsCargoControl(), typeof(cfgrandompresetsFile), node.Tag as randompresetsCargo, selected),
+                    ShowHandler(new RandompresetsCargoControl(), typeof(CfgrandompresetsFile), node.Tag as randompresetsCargo, selected),
                 [typeof(randompresetsItem)] = (node, selected) =>
-                    ShowHandler(new RandomPresetItemControl(), typeof(cfgrandompresetsFile), node.Tag as randompresetsItem, selected),
+                    ShowHandler(new RandomPresetItemControl(), typeof(CfgrandompresetsFile), node.Tag as randompresetsItem, selected),
 
                 // Vector / Areas
                 [typeof(Vec3)] = (node, selected) =>
                 {
-                    var parent = node.FindParentOfType<PlayerRestrictedFiles>();
+                    var parent = node.FindParentOfType<PlayerRestrictedFile>();
                     if (parent != null)
-                        ShowHandler(new Vector3Control(), typeof(PlayerRestrictedFiles), node.Tag as Vec3, selected);
+                        ShowHandler(new Vector3Control(), typeof(PlayerRestrictedFile), node.Tag as Vec3, selected);
                 },
                 [typeof(Data)] = (node, selected) =>
-                    ShowHandler<IUIHandler>(new cfgeffectAreaDataControl(), typeof(cfgeffectareaConfig), node.Tag as Data, selected),
+                    ShowHandler<IUIHandler>(new cfgeffectAreaDataControl(), typeof(CfgeffectareaConfig), node.Tag as Data, selected),
                 [typeof(PlayerData)] = (node, selected) =>
-                    ShowHandler<IUIHandler>(new cfgeffectAreaPlayerDataControl(), typeof(cfgeffectareaConfig), node.Tag as PlayerData, selected),
+                    ShowHandler<IUIHandler>(new cfgeffectAreaPlayerDataControl(), typeof(CfgeffectareaConfig), node.Tag as PlayerData, selected),
 
                 // Player spawns
                 [typeof(playerspawnpointsSpawn_params)] = (node, selected) =>
@@ -379,29 +379,29 @@ namespace EconomyPlugin
 
                 ["SpawnGearName"] = (node, selected) =>
                 {
-                    var preset = node.FindParentOfType<SpawnGearPresetFiles>();
-                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFiles), preset, selected);
+                    var preset = node.FindParentOfType<SpawnGearPresetFile>();
+                    ShowHandler(new SpawnGearNameControl(), typeof(SpawnGearPresetFile), preset.Data, selected);
                 },
                 ["SpawnGearSpawnWeight"] = (node, selected) =>
                 {
-                    var preset = node.FindParentOfType<SpawnGearPresetFiles>();
-                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), preset, selected);
+                    var preset = node.FindParentOfType<SpawnGearPresetFile>();
+                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFile), preset.Data, selected);
                 },
                 ["SpawnGearCharacterTypes"] = (node, selected) =>
                 {
-                    var preset = node.FindParentOfType<SpawnGearPresetFiles>();
-                    ShowHandler(new SpawnGearCharacterTypesControl(), typeof(SpawnGearPresetFiles), preset, selected);
+                    var preset = node.FindParentOfType<SpawnGearPresetFile>();
+                    ShowHandler(new SpawnGearCharacterTypesControl(), typeof(SpawnGearPresetFile), preset, selected);
                 },
 
                 ["DiscreteitemsetSpawnWeight"] = (node, selected) =>
                 {
                     var ds = node.FindParentOfType<Discreteitemset>();
-                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFile), ds, selected);
                 },
                 ["DiscreteitemsetQuickBarSlot"] = (node, selected) =>
                 {
                     var ds = node.FindParentOfType<Discreteitemset>();
-                    ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                    ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFile), ds, selected);
                 },
                 ["DiscreteitemsetComplexChildrenTypes"] = (node, selected) =>
                     ShowHandler<IUIHandler>(null, null, null, selected),
@@ -409,33 +409,33 @@ namespace EconomyPlugin
                 ["DiscreteitemsetSimpleChildrenTypes"] = (node, selected) =>
                 {
                     var ds = node.FindParentOfType<Discreteitemset>();
-                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFile), ds, selected);
                 },
                 ["DiscreteitemsetSimpleChildrenUseDefaultAttributes"] = (node, selected) =>
                 {
                     var ds = node.FindParentOfType<Discreteitemset>();
-                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), ds, selected);
+                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFile), ds, selected);
                 },
 
                 ["DiscreteunsorteditemsetSpawnWeight"] = (node, selected) =>
                 {
                     var dsu = node.FindParentOfType<Discreteunsorteditemset>();
-                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFiles), dsu, selected);
+                    ShowHandler(new SpawnGearSpawnWeightControl(), typeof(SpawnGearPresetFile), dsu, selected);
                 },
                 ["DiscreteunsorteditemsetAttributes"] = (node, selected) =>
                 {
                     var dsu = node.FindParentOfType<Discreteunsorteditemset>();
-                    ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), dsu.attributes, selected);
+                    ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFile), dsu.attributes, selected);
                 },
                 ["DiscreteunsorteditemsetSimpleChildrenTypes"] = (node, selected) =>
                 {
                     var dsu = node.FindParentOfType<Discreteunsorteditemset>();
-                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), dsu, selected);
+                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFile), dsu, selected);
                 },
                 ["DiscreteunsorteditemsetSimpleChildrenUseDefaultAttributes"] = (node, selected) =>
                 {
                     var dsu = node.FindParentOfType<Discreteunsorteditemset>();
-                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), dsu, selected);
+                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFile), dsu, selected);
                 },
                 ["DiscreteunsorteditemsetComplexChildrenTypes"] = (node, selected) =>
                     ShowHandler<IUIHandler>(null, null, null, selected),
@@ -443,22 +443,22 @@ namespace EconomyPlugin
                 ["ComplexchildrentypeAttributes"] = (node, selected) =>
                 {
                     var cc = node.FindParentOfType<Complexchildrentype>();
-                    ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFiles), cc.attributes, selected);
+                    ShowHandler(new SpawnGearAttributesControl(), typeof(SpawnGearPresetFile), cc.attributes, selected);
                 },
                 ["ComplexchildrentypeQuickBarSlot"] = (node, selected) =>
                 {
                     var cc = node.FindParentOfType<Complexchildrentype>();
-                    ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                    ShowHandler(new SpawnGearQuickBarSlotControl(), typeof(SpawnGearPresetFile), cc, selected);
                 },
                 ["ComplexchildrentypeSimpleChildrenUseDefaultAttributes"] = (node, selected) =>
                 {
                     var cc = node.FindParentOfType<Complexchildrentype>();
-                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                    ShowHandler(new SpawnGearsimpleChildrenUseDefaultAttributesControl(), typeof(SpawnGearPresetFile), cc, selected);
                 },
                 ["ComplexchildrentypeSimpleChildrenTypes"] = (node, selected) =>
                 {
                     var cc = node.FindParentOfType<Complexchildrentype>();
-                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFiles), cc, selected);
+                    ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFile), cc, selected);
                 },
                 ["INITC"] = (node, selected) =>
                 {
@@ -487,14 +487,14 @@ namespace EconomyPlugin
                 // Economy / Globals
                 [typeof(EconomySection)] = node =>
                 {
-                    var ef = node.Parent.Tag as economyFile;
+                    var ef = node.Parent.Tag as EconomyFile;
                     editPropertyToolStripMenuItem.Visible = !ef.IsModded;
                     setToDefaultToolStripMenuItem.Visible = ef.IsModded;
                     EditPropertyCMS.Show(Cursor.Position);
                 },
                 [typeof(variablesVar)] = node =>
                 {
-                    var gf = node.Parent.Tag as globalsFile;
+                    var gf = node.Parent.Tag as GlobalsFile;
                     editPropertyToolStripMenuItem.Visible = !gf.IsModded;
                     setToDefaultToolStripMenuItem.Visible = gf.IsModded;
                     EditPropertyCMS.Show(Cursor.Position);
@@ -553,11 +553,11 @@ namespace EconomyPlugin
                 },
 
                 // Random Presets
-                [typeof(cfgrandompresetsFile)] = node =>
+                [typeof(CfgrandompresetsFile)] = node =>
                 {
-                    //RandomPresetsCM.Items.Clear();
-                    //RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
-                    //RandomPresetsCM.Show(Cursor.Position);
+                    RandomPresetsCM.Items.Clear();
+                    RandomPresetsCM.Items.Add(removeSelectedRandomPresetToolStripmenuItem);
+                    RandomPresetsCM.Show(Cursor.Position);
                 },
                 [typeof(randompresetsAttachments)] = node =>
                 {
@@ -581,11 +581,11 @@ namespace EconomyPlugin
                 },
 
                 // Spawnable Types
-                [typeof(cfgspawnabletypesFile)] = node =>
+                [typeof(CfgSpawnableTypesFile)] = node =>
                 {
                     SpawnableTypesCM.Items.Clear();
                     SpawnableTypesCM.Items.Add(addNewSpawnableTypeToolStripMenuItem);
-                    if ((node.Tag as cfgspawnabletypesFile).IsModded)
+                    if ((node.Tag as CfgSpawnableTypesFile).IsModded)
                         SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
                     SpawnableTypesCM.Show(Cursor.Position);
                 },
@@ -648,7 +648,7 @@ namespace EconomyPlugin
                 },
 
                 // Spawn Gear
-                [typeof(SpawnGearPresetFiles)] = node =>
+                [typeof(SpawnGearPresetFile)] = node =>
                 {
                     SpawnGearPresetCM.Items.Clear();
                     SpawnGearPresetCM.Items.Add(SpawnGearremoveSelectedToolStripMenuItem2);
@@ -693,7 +693,7 @@ namespace EconomyPlugin
                     PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
                     PlayerRestrictedAreaCM.Show(Cursor.Position);
                 },
-                [typeof(PlayerRestrictedFiles)] = node =>
+                [typeof(PlayerRestrictedFile)] = node =>
                 {
                     PlayerRestrictedAreaCM.Items.Clear();
                     PlayerRestrictedAreaCM.Items.AddRange(removePRASelectedToolStripMenuItem);
@@ -902,8 +902,6 @@ namespace EconomyPlugin
         public void savefiles(bool updated = false)
         {
             var savedFiles = _economyManager.Save();
-            if (_currentHandler != null)
-                _currentHandler.ApplyChanges();
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
@@ -912,6 +910,31 @@ namespace EconomyPlugin
             if (savedFiles.Count() > 0)
             {
                 ShowSavedFilesMessage(savedFiles);
+            }
+            RebuildWarning();
+            
+
+        }
+        private void RebuildWarning()
+        {
+            if (EconomyTV.Nodes.Count == 0)
+                return;
+
+            TreeNode rootNode = EconomyTV.Nodes[0];
+
+            TreeNode existingWarningsNode = rootNode.Nodes
+                .Cast<TreeNode>()
+                .FirstOrDefault(n => n.Tag?.ToString() == "WarningsCategory");
+
+            if (existingWarningsNode != null)
+                rootNode.Nodes.Remove(existingWarningsNode);
+            _economyManager.ClearWarnings();
+            _economyManager.RebuildWarnings();
+
+            TreeNode warningsNode = BuildWarningsNode();
+            if (warningsNode != null)
+            {
+                rootNode.Nodes.Add(warningsNode);
             }
         }
         private void ShowSavedFilesMessage(IEnumerable<string> files)
@@ -1003,126 +1026,9 @@ namespace EconomyPlugin
                 }
             }
         }
-        private void LoadTreeview()
-        {
-            EconomyTV.Nodes.Clear();
-
-            TreeNode rootNode = new TreeNode(Path.GetFileName(_economyManager.basePath))
-            {
-                Tag = "RootNode",
-            };
-
-            // Add all economy files directly under root
-            foreach (var ef in _economyManager.economyConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
-                AddFileToTree(rootNode, relativePath, ef, CreateEconomyfileNodes);
-            }
-
-            // Add all globals files directly under root
-            foreach (var gf in _economyManager.globalsConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, gf.FilePath);
-                AddFileToTree(rootNode, relativePath, gf, CreateGlobalsfileNodes);
-            }
-
-            // Types config
-            foreach (var tf in _economyManager.TypesConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, tf.FilePath);
-                AddFileToTree(rootNode, relativePath, tf, CreateTypesfileNodes);
-            }
-
-            // Events config
-            foreach (var ef in _economyManager.eventsConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, ef.FilePath);
-                AddFileToTree(rootNode, relativePath, ef, CreateEventNodes);
-            }
-
-            //Territories
-            foreach (territorytype tt in _economyManager.territoriesConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, tt.FilePath);
-                AddFileToTree(rootNode, relativePath, tt, CreateTerritoryNodes);
-            }
-
-            //cfgeconomycore preview
-
-            string _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.eonomyCoreConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.eonomyCoreConfig, CreatecfgeconomycoreConfigConfigNodes);
-
-            // cfgeffectareaConfig
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgeffectareaConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgeffectareaConfig, CreatecfgeffectareaConfigConfigNodes);
-
-            //Enviroment
-
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgenvironmentConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgenvironmentConfig, CreateEnviromentConfigNodes);
-
-
-
-
-            // Gameplay config
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.CFGGameplayConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.CFGGameplayConfig, CreateGameplayConfigNodes);
-
-            // cfgignorelist
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgignorelistConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgignorelistConfig, CreatecfgignorelistNodes);
-
-            // limitdefinitions
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionConfig, CreatelimitsDefininitionsConfigNodes);
-
-            // limitdefinitionsuser
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfglimitsdefinitionuserConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfglimitsdefinitionuserConfig, CreatelimitsDefininitionsUserConfigNodes);
-
-            // cfgplayerspawnconfig
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgplayerspawnpointsConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgplayerspawnpointsConfig, CreatecfgPlayerSpawnPointNodes);
-
-            // SpawnableTypes config
-            foreach (var sf in _economyManager.cfgspawnabletypesConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, sf.FilePath);
-                AddFileToTree(rootNode, relativePath, sf, CreateSpawnableTypesfileNodes);
-            }
-
-            // RandomPresets config
-            foreach (var rf in _economyManager.cfgrandompresetsConfig.AllData)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, rf.FilePath);
-                AddFileToTree(rootNode, relativePath, rf, CreateRandomPresetsFileNodes);
-            }
-
-            // cfgundergroundtriggersConfig
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgundergroundtriggersConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgundergroundtriggersConfig, CreatecfgundergroundtriggersConfigUserConfigNodes);
-
-            // cfgweatherconfig
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.cfgweatherConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.cfgweatherConfig, CreatecfgweatherNodes);
-
-            TreeNode initnode = new TreeNode("init.c")
-            { Tag = "INITC" };
-            rootNode.Nodes.Add(initnode);
-
-            // mapgroupos
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.mapgroupposConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.mapgroupposConfig, CreatemapgeroupposNodes);
-
-            // mapgroupproto
-            _relativePath = Path.GetRelativePath(_economyManager.basePath, _economyManager.mapgroupprotoConfig.FilePath);
-            AddFileToTree(rootNode, _relativePath, _economyManager.mapgroupprotoConfig, CreatemapgeroupprotoNodes);
-
-            EconomyTV.Nodes.Add(rootNode);
-        }
 
         //creating economy Nodes
-        private TreeNode CreateEconomyfileNodes(economyFile ef)
+        private TreeNode CreateEconomyfileNodes(EconomyFile ef)
         {
             TreeNode EconomyRootNode = new TreeNode(ef.FileName)
             {
@@ -1132,7 +1038,7 @@ namespace EconomyPlugin
 
             return EconomyRootNode;
         }
-        private static void CreateEconomyNodes(economyFile ef, TreeNode EconomyRootNode)
+        private static void CreateEconomyNodes(EconomyFile ef, TreeNode EconomyRootNode)
         {
             if (ef.Data.dynamic != null)
             {
@@ -1192,7 +1098,7 @@ namespace EconomyPlugin
             }
         }
         //creating globals Nodes
-        private TreeNode CreateGlobalsfileNodes(globalsFile gf)
+        private TreeNode CreateGlobalsfileNodes(GlobalsFile gf)
         {
             TreeNode GlobalsRootNode = new TreeNode(gf.FileName)
             {
@@ -1210,30 +1116,62 @@ namespace EconomyPlugin
             return GlobalsRootNode;
         }
         //create enviroment config nodes
-        private TreeNode CreateEnviromentConfigNodes(cfgenvironmentConfig gf)
+        private TreeNode CreateEnviromentConfigNodes(CfgenvironmentConfig gf)
         {
-            TreeNode GlobalsRootNode = new TreeNode(gf.FileName)
+            TreeNode rootNode = new TreeNode(gf.FileName)
             {
                 Tag = gf
             };
-            foreach (envTerritoriesTerritory ett in gf.Data.territories.territory)
+
+            if (gf.Data?.territories?.territory != null && gf.Data.territories.territory.Count > 0)
             {
-                TreeNode ettnode = new TreeNode(ett.name)
+                TreeNode territoriesNode = new TreeNode("Territories")
                 {
-                    Tag = ett
+                    Tag = gf.Data.territories
                 };
-                envTerritoriesFile etv = gf.Data.territories.GetUsableFile(ett.file.usable);
-                if (etv != null)
+
+                foreach (envTerritoriesTerritory ett in gf.Data.territories.territory)
                 {
-                    TreeNode etfnode = new TreeNode($"Usable File: {etv.path}")
+                    TreeNode territoryRefNode = new TreeNode(ett.name)
                     {
-                        Tag = etv
+                        Tag = ett
                     };
-                    ettnode.Nodes.Add(etfnode);
+
+                    envTerritoriesFile usableFile = gf.Data.territories.GetUsableFile(ett.file.usable);
+                    if (usableFile != null)
+                    {
+                        TreeNode usableFileNode = new TreeNode($"Usable File: {Path.GetFileName(usableFile.path)}")
+                        {
+                            Tag = usableFile
+                        };
+
+                        territorytype linkedTerritoryFile = _economyManager.territoriesConfig.MutableItems
+                            .FirstOrDefault(t =>
+                                string.Equals(
+                                    NormalizePath(t.FilePath),
+                                    NormalizePath(Path.Combine(_economyManager.basePath, usableFile.path)),
+                                    StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(
+                                    NormalizePath(t.FileName),
+                                    NormalizePath(Path.GetFileName(usableFile.path)),
+                                    StringComparison.OrdinalIgnoreCase)
+                            );
+
+                        if (linkedTerritoryFile != null)
+                        {
+                            usableFileNode.Nodes.Add(CreateTerritoryNodes(linkedTerritoryFile));
+                        }
+
+                        territoryRefNode.Nodes.Add(usableFileNode);
+                    }
+
+                    territoriesNode.Nodes.Add(territoryRefNode);
                 }
-                GlobalsRootNode.Nodes.Add(ettnode);
+
+                rootNode.Nodes.Add(territoriesNode);
             }
-            return GlobalsRootNode;
+
+            return rootNode;
         }
         // create territory nodes 
         private TreeNode CreateTerritoryNodes(territorytype tf)
@@ -1287,7 +1225,7 @@ namespace EconomyPlugin
             };
             foreach (string spawnfile in ganmeplay.Data.PlayerData.spawnGearPresetFiles)
             {
-                SpawnGearPresetFiles spawnGearPresetFiles = ganmeplay.GetSpawnGearPreset(spawnfile);
+                SpawnGearPresetFile spawnGearPresetFiles = ganmeplay.GetSpawnGearPreset(spawnfile);
                 spawnGearNodes.Nodes.Add(CreateSpawnGearFilesNodes(spawnGearPresetFiles));
             }
             PlayerDataNodes.Nodes.Add(spawnGearNodes);
@@ -1302,7 +1240,7 @@ namespace EconomyPlugin
             };
             foreach (string restrictedfile in ganmeplay.Data.WorldsData.playerRestrictedAreaFiles)
             {
-                PlayerRestrictedFiles PlayerRestrictedFiles = ganmeplay.getRestrictedFiles(restrictedfile);
+                PlayerRestrictedFile PlayerRestrictedFiles = ganmeplay.GetRestrictedFiles(restrictedfile);
                 playerRestrictedAreaFilesNodes.Nodes.Add(CreateRestrictedfilesNodes(PlayerRestrictedFiles));
             }
             TreeNode objectspawnerarrfilenodes = new TreeNode($"Object Spawner Arr Files")
@@ -1311,7 +1249,7 @@ namespace EconomyPlugin
             };
             foreach (string objectspawnerarrfile in ganmeplay.Data.WorldsData.objectSpawnersArr)
             {
-                ObjectSpawnerArr ObjectSpawnerArr = ganmeplay.getobjectspawnerFiles(objectspawnerarrfile);
+                ObjectSpawnerArrFile ObjectSpawnerArr = ganmeplay.GetObjectSpawnerFiles(objectspawnerarrfile);
                 objectspawnerarrfilenodes.Nodes.Add(new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName)) { Tag = ObjectSpawnerArr });
             }
             WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
@@ -1336,17 +1274,17 @@ namespace EconomyPlugin
 
             return GameplayRootNode;
         }
-        private TreeNode CreateSpawnGearFilesNodes(SpawnGearPresetFiles spawnGearPresetFiles)
+        private TreeNode CreateSpawnGearFilesNodes(SpawnGearPresetFile spawnGearPresetFiles)
         {
             TreeNode rootNode = new TreeNode(Path.Combine(spawnGearPresetFiles.ModFolder, spawnGearPresetFiles.FileName))
             {
                 Tag = spawnGearPresetFiles
             };
-            rootNode.Nodes.Add(new TreeNode($"Name: {spawnGearPresetFiles.name}")
+            rootNode.Nodes.Add(new TreeNode($"Name: {spawnGearPresetFiles.Data.name}")
             {
                 Tag = "SpawnGearName"
             });
-            rootNode.Nodes.Add(new TreeNode($"Spawn Weight: {spawnGearPresetFiles.spawnWeight}")
+            rootNode.Nodes.Add(new TreeNode($"Spawn Weight: {spawnGearPresetFiles.Data.spawnWeight}")
             {
                 Tag = "SpawnGearSpawnWeight"
             });
@@ -1358,7 +1296,7 @@ namespace EconomyPlugin
             {
                 Tag = "SpawnGearAttachmentSlotItemSetsParent"
             };
-            foreach (Attachmentslotitemset Slot in spawnGearPresetFiles.attachmentSlotItemSets)
+            foreach (Attachmentslotitemset Slot in spawnGearPresetFiles.Data.attachmentSlotItemSets)
             {
                 AttachmentslotitemsetNode.Nodes.Add(AttachmentslotitemsetNodeTN(Slot));
             }
@@ -1367,7 +1305,7 @@ namespace EconomyPlugin
             {
                 Tag = "SpawnGearDiscreteUnsortedItemSetsParent"
             };
-            foreach (Discreteunsorteditemset DUIS in spawnGearPresetFiles.discreteUnsortedItemSets)
+            foreach (Discreteunsorteditemset DUIS in spawnGearPresetFiles.Data.discreteUnsortedItemSets)
             {
                 discreteUnsortedItemSets.Nodes.Add(DiscreteunsorteditemsetTN(DUIS));
             }
@@ -1484,7 +1422,7 @@ namespace EconomyPlugin
             });
             return CCTNode;
         }
-        private TreeNode CreateRestrictedfilesNodes(PlayerRestrictedFiles playerRestrictedFiles)
+        private TreeNode CreateRestrictedfilesNodes(PlayerRestrictedFile playerRestrictedFiles)
         {
             TreeNode areaNode = new TreeNode(Path.Combine(playerRestrictedFiles.ModFolder, playerRestrictedFiles.FileName))
             {
@@ -1494,9 +1432,9 @@ namespace EconomyPlugin
             {
                 Tag = "PRABoxes"
             };
-            for (int i = 0; i < playerRestrictedFiles._PRABoxes.Count; i++)
+            for (int i = 0; i < playerRestrictedFiles.BoxesView.Count; i++)
             {
-                var box = playerRestrictedFiles._PRABoxes[i];
+                var box = playerRestrictedFiles.BoxesView[i];
                 praBoxesNode.Nodes.Add(CreatePRABoxesNodes(i, box));
             }
             TreeNode safePositionsNode = new TreeNode("SafePositions3D")
@@ -1504,9 +1442,9 @@ namespace EconomyPlugin
                 Tag = "PRASafePositions3D"
             };
 
-            for (int i = 0; i < playerRestrictedFiles._SafePositions3D.Count; i++)
+            for (int i = 0; i < playerRestrictedFiles.SafePositionsView.Count; i++)
             {
-                var PRASafePosition = playerRestrictedFiles._SafePositions3D[i];
+                var PRASafePosition = playerRestrictedFiles.SafePositionsView[i];
                 safePositionsNode.Nodes.Add(CreatePRASafePositionNodes(PRASafePosition, i));
             }
 
@@ -1553,33 +1491,39 @@ namespace EconomyPlugin
             };
             foreach (TypeEntry type in tf.Data.TypeList)
             {
-                Category cat = type.Category;
-                if (type.Category == null)
-                {
-                    cat = new Category()
-                    {
-                        Name = "other"
-                    };
-                }
-                TreeNode typenode = new TreeNode(type.Name)
-                {
-                    Tag = type
-                };
-                if (!TypesrootNode.Nodes.ContainsKey(cat.Name))
-                {
-                    TreeNode newcatnode = new TreeNode(cat.Name)
-                    {
-                        Name = cat.Name,
-                        Tag = cat
-                    };
-                    TypesrootNode.Nodes.Add(newcatnode);
-                }
-                TypesrootNode.Nodes[cat.Name].Nodes.Add(typenode);
+                CreateTyoesNodes(TypesrootNode, type);
             }
             return TypesrootNode;
         }
+
+        private static void CreateTyoesNodes(TreeNode TypesrootNode, TypeEntry type)
+        {
+            Category cat = type.Category;
+            if (type.Category == null)
+            {
+                cat = new Category()
+                {
+                    Name = "other"
+                };
+            }
+            TreeNode typenode = new TreeNode(type.Name)
+            {
+                Tag = type
+            };
+            if (!TypesrootNode.Nodes.ContainsKey(cat.Name))
+            {
+                TreeNode newcatnode = new TreeNode(cat.Name)
+                {
+                    Name = cat.Name,
+                    Tag = cat
+                };
+                TypesrootNode.Nodes.Add(newcatnode);
+            }
+            TypesrootNode.Nodes[cat.Name].Nodes.Add(typenode);
+        }
+
         //Creating spawnableTypes Nodes
-        private TreeNode CreateSpawnableTypesfileNodes(cfgspawnabletypesFile stf)
+        private TreeNode CreateSpawnableTypesfileNodes(CfgSpawnableTypesFile stf)
         {
             TreeNode ConfigRoot = new TreeNode(stf.FileName)
             {
@@ -1764,7 +1708,7 @@ namespace EconomyPlugin
             return itemstring;
         }
         //Creating Random presets Nodes
-        private TreeNode CreateRandomPresetsFileNodes(cfgrandompresetsFile rpc)
+        private TreeNode CreateRandomPresetsFileNodes(CfgrandompresetsFile rpc)
         {
             TreeNode ConfigRoot = new TreeNode(rpc.FileName)
             {
@@ -1876,38 +1820,51 @@ namespace EconomyPlugin
             }
             if (eventspawns.pos != null && eventspawns.pos.Count > 0)
             {
+                eventspawnroot.Nodes.Add(CreateEventposnodes(eventspawns));
+            }
+            return eventspawnroot;
+        }
+
+        private TreeNode CreateEventposnodes(eventposdefEvent? eventspawns)
+        {
+
                 TreeNode eventposnodes = new TreeNode("pos");
                 eventposnodes.Name = "POS";
                 eventposnodes.Tag = "PosParent";
                 foreach (eventposdefEventPos pos in eventspawns.pos)
                 {
-                    TreeNode posnodes = new TreeNode(pos.ToString());
-                    posnodes.Tag = pos;
-                    if (pos.group != null)
+                    eventposnodes.Nodes.Add(CreateEventPositionNode(pos));
+                }
+                return eventposnodes;
+        }
+
+        private TreeNode CreateEventPositionNode(eventposdefEventPos pos)
+        {
+            TreeNode posnodes = new TreeNode(pos.ToString());
+            posnodes.Tag = pos;
+            if (pos.group != null)
+            {
+                eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
+                if (evg != null)
+                {
+                    TreeNode neweventgroup = new TreeNode($"Group Name : {evg.name}");
+                    neweventgroup.Tag = evg;
+                    if (evg.child != null && evg.child.Count > 0)
                     {
-                        eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
-                        if (evg != null)
+                        foreach (eventgroupdefGroupChild child in evg.child)
                         {
-                            TreeNode neweventgroup = new TreeNode($"Group Name : {evg.name}");
-                            neweventgroup.Tag = evg;
-                            if (evg.child != null && evg.child.Count > 0)
-                            {
-                                foreach (eventgroupdefGroupChild child in evg.child)
-                                {
-                                    TreeNode childnode = new TreeNode(child.ToString());
-                                    childnode.Tag = child;
-                                    neweventgroup.Nodes.Add(childnode);
-                                }
-                            }
-                            posnodes.Nodes.Add(neweventgroup);
+                            TreeNode childnode = new TreeNode(child.ToString());
+                            childnode.Tag = child;
+                            neweventgroup.Nodes.Add(childnode);
                         }
                     }
-                    eventposnodes.Nodes.Add(posnodes);
+                    posnodes.Nodes.Add(neweventgroup);
                 }
-                eventspawnroot.Nodes.Add(eventposnodes);
             }
-            return eventspawnroot;
+
+            return posnodes;
         }
+
         //CreatecfgeconomycoreConfigConfigNodes
         private TreeNode CreatecfgeconomycoreConfigConfigNodes(economyCoreConfig config)
         {
@@ -2084,7 +2041,7 @@ namespace EconomyPlugin
             return rootNode;
         }
         //creating trigger effect nodes
-        private TreeNode CreatecfgeffectareaConfigConfigNodes(cfgeffectareaConfig config)
+        private TreeNode CreatecfgeffectareaConfigConfigNodes(CfgeffectareaConfig config)
         {
             var root = new TreeNode(config.FileName) { Tag = config };
 
@@ -2247,58 +2204,336 @@ namespace EconomyPlugin
         }
         #endregion loading treeview
 
+        #region loading newtreeview
+        private void LoadTreeview()
+        {
+            EconomyTV.BeginUpdate();
+            try
+            {
+                EconomyTV.Nodes.Clear();
+
+                TreeNode rootNode = new TreeNode(Path.GetFileName(_economyManager.basePath))
+                {
+                    Tag = "RootNode"
+                };
+
+                rootNode.Nodes.Add(BuildCoreNode());
+                rootNode.Nodes.Add(BuildEnvironmentNode());
+                rootNode.Nodes.Add(BuildEconomyDatabaseNode());
+                rootNode.Nodes.Add(BuildMapPlacementNode());
+                rootNode.Nodes.Add(BuildAreaEffectsNode());
+                rootNode.Nodes.Add(BuildGameplayNode());
+                TreeNode warningsNode = BuildWarningsNode();
+                if (warningsNode != null)
+                    rootNode.Nodes.Add(warningsNode);
+
+                EconomyTV.Nodes.Add(rootNode);
+                rootNode.Expand();
+            }
+            finally
+            {
+                EconomyTV.EndUpdate();
+            }
+        }
+        private static TreeNode CreateCategoryNode(string text, object tag)
+        {
+            return new TreeNode(text)
+            {
+                Tag = tag
+            };
+        }
+        private TreeNode BuildCoreNode()
+        {
+            TreeNode coreNode = CreateCategoryNode("Core", "CoreCategory");
+
+            if (_economyManager.eonomyCoreConfig != null)
+                coreNode.Nodes.Add(CreatecfgeconomycoreConfigConfigNodes(_economyManager.eonomyCoreConfig));
+
+            if (_economyManager.cfglimitsdefinitionConfig != null)
+                coreNode.Nodes.Add(CreatelimitsDefininitionsConfigNodes(_economyManager.cfglimitsdefinitionConfig));
+
+            if (_economyManager.cfglimitsdefinitionuserConfig != null)
+                coreNode.Nodes.Add(CreatelimitsDefininitionsUserConfigNodes(_economyManager.cfglimitsdefinitionuserConfig));
+
+            return coreNode;
+        }
+        private TreeNode BuildEnvironmentNode()
+        {
+            TreeNode environmentNode = new TreeNode("Environment")
+            {
+                Tag = "EnvironmentCategory"
+            };
+
+            if (_economyManager.cfgenvironmentConfig != null)
+                environmentNode.Nodes.Add(CreateEnviromentConfigNodes(_economyManager.cfgenvironmentConfig));
+
+            if (_economyManager.cfgweatherConfig != null)
+                environmentNode.Nodes.Add(CreatecfgweatherNodes(_economyManager.cfgweatherConfig));
+
+            return environmentNode;
+        }
+        private TreeNode BuildEconomyDatabaseNode()
+        {
+            TreeNode dbNode = CreateCategoryNode("Economy Database", "EconomyDatabaseCategory");
+
+            TreeNode economyNode = CreateCategoryNode("Economy", "EconomyCategory");
+            foreach (var ef in _economyManager.economyConfig.MutableItems)
+                economyNode.Nodes.Add(CreateEconomyfileNodes(ef));
+            dbNode.Nodes.Add(economyNode);
+
+            TreeNode globalsNode = CreateCategoryNode("Globals", "GlobalsCategory");
+            foreach (var gf in _economyManager.globalsConfig.MutableItems)
+                globalsNode.Nodes.Add(CreateGlobalsfileNodes(gf));
+            dbNode.Nodes.Add(globalsNode);
+
+            TreeNode typesNode = CreateCategoryNode("Types", "TypesCategory");
+            foreach (var tf in _economyManager.TypesConfig.MutableItems)
+                typesNode.Nodes.Add(CreateTypesfileNodes(tf));
+            dbNode.Nodes.Add(typesNode);
+
+            TreeNode spawnableTypesNode = CreateCategoryNode("Spawnable Types", "SpawnableTypesCategory");
+            foreach (var sf in _economyManager.cfgspawnabletypesConfig.MutableItems)
+                spawnableTypesNode.Nodes.Add(CreateSpawnableTypesfileNodes(sf));
+            dbNode.Nodes.Add(spawnableTypesNode);
+
+            TreeNode randomPresetsNode = CreateCategoryNode("Random Presets", "RandomPresetsCategory");
+            foreach (var rf in _economyManager.cfgrandompresetsConfig.MutableItems)
+                randomPresetsNode.Nodes.Add(CreateRandomPresetsFileNodes(rf));
+            dbNode.Nodes.Add(randomPresetsNode);
+
+            TreeNode eventsNode = CreateCategoryNode("Events", "EventsCategory");
+            foreach (var ef in _economyManager.eventsConfig.MutableItems)
+                eventsNode.Nodes.Add(CreateEventNodes(ef));
+            dbNode.Nodes.Add(eventsNode);
+
+            return dbNode;
+        }
+        private TreeNode BuildMapPlacementNode()
+        {
+            TreeNode mapPlacementNode = CreateCategoryNode("Map Placement", "MapPlacementCategory");
+
+            if (_economyManager.mapgroupposConfig != null)
+                mapPlacementNode.Nodes.Add(CreatemapgeroupposNodes(_economyManager.mapgroupposConfig));
+
+            if (_economyManager.mapgroupprotoConfig != null)
+                mapPlacementNode.Nodes.Add(CreatemapgeroupprotoNodes(_economyManager.mapgroupprotoConfig));
+
+            //if (_economyManager.mapgroup != null)
+            //    mapPlacementNode.Nodes.Add(CreatemapgroupclusterNodes(_economyManager.mapgroupclusterConfig));
+
+            //if (_economyManager.mapclusterprotoConfig != null)
+            //    mapPlacementNode.Nodes.Add(CreatemapclusterprotoNodes(_economyManager.mapclusterprotoConfig));
+
+            return mapPlacementNode;
+        }
+        private TreeNode BuildAreaEffectsNode()
+        {
+            TreeNode areaEffectsNode = CreateCategoryNode("Area Effects", "AreaEffectsCategory");
+
+            if (_economyManager.cfgeffectareaConfig != null)
+                areaEffectsNode.Nodes.Add(CreatecfgeffectareaConfigConfigNodes(_economyManager.cfgeffectareaConfig));
+
+            if (_economyManager.cfgundergroundtriggersConfig != null)
+                areaEffectsNode.Nodes.Add(CreatecfgundergroundtriggersConfigUserConfigNodes(_economyManager.cfgundergroundtriggersConfig));
+
+            return areaEffectsNode;
+        }
+        private TreeNode BuildGameplayNode()
+        {
+            TreeNode gameplayNode = CreateCategoryNode("Player / Gameplay", "GameplayCategory");
+
+            if (_economyManager.CFGGameplayConfig != null)
+                gameplayNode.Nodes.Add(CreateGameplayConfigNodes(_economyManager.CFGGameplayConfig));
+
+            if (_economyManager.cfgplayerspawnpointsConfig != null)
+                gameplayNode.Nodes.Add(CreatecfgPlayerSpawnPointNodes(_economyManager.cfgplayerspawnpointsConfig));
+
+            if (_economyManager.cfgignorelistConfig != null)
+                gameplayNode.Nodes.Add(CreatecfgignorelistNodes(_economyManager.cfgignorelistConfig));
+
+            TreeNode initNode = new TreeNode("init.c")
+            {
+                Tag = "INITC"
+            };
+            gameplayNode.Nodes.Add(initNode);
+
+            return gameplayNode;
+        }
+        private TreeNode BuildWarningsNode()
+        {
+            if (_economyManager.WarningList.Count == 0)
+                return null;
+
+            TreeNode warningsNode = new TreeNode($"Warnings ({_economyManager.WarningList.Count})")
+            {
+                Tag = "WarningsCategory"
+            };
+
+            var grouped = _economyManager.WarningList
+                .GroupBy(w => w.Group)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in grouped)
+            {
+                TreeNode groupNode = new TreeNode($"{group.Key} ({group.Count()})")
+                {
+                    Tag = $"WarningsGroup:{group.Key}"
+                };
+
+                foreach (var warning in group.OrderBy(w => w.Title))
+                {
+                    TreeNode warningNode = new TreeNode(warning.Title)
+                    {
+                        Tag = warning
+                    };
+
+                    groupNode.Nodes.Add(warningNode);
+                }
+
+                warningsNode.Nodes.Add(groupNode);
+            }
+
+            return warningsNode;
+        }
+        private static string NormalizePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            return path
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                .Trim();
+        }
+        private void AddFileToDBTree(object file, bool selectAndExpand = true)
+        {
+            if (EconomyTV.Nodes.Count == 0)
+                return;
+
+            TreeNode rootNode = EconomyTV.Nodes[0];
+
+            TreeNode dbNode = GetOrCreateChildNode(rootNode, "Economy Database", "EconomyDatabaseCategory");
+
+            TreeNode targetCategoryNode = null;
+            TreeNode newFileNode = null;
+
+            switch (file)
+            {
+                case TypesFile tf:
+                    targetCategoryNode = GetOrCreateChildNode(dbNode, "Types", "TypesCategory");
+                    newFileNode = CreateTypesfileNodes(tf);
+                    break;
+
+                case EventsFile ef:
+                    targetCategoryNode = GetOrCreateChildNode(dbNode, "Events", "EventsCategory");
+                    newFileNode = CreateEventNodes(ef);
+                    break;
+
+                case CfgSpawnableTypesFile sf:
+                    targetCategoryNode = GetOrCreateChildNode(dbNode, "Spawnable Types", "SpawnableTypesCategory");
+                    newFileNode = CreateSpawnableTypesfileNodes(sf);
+                    break;
+
+                case CfgrandompresetsFile rf:
+                    targetCategoryNode = GetOrCreateChildNode(dbNode, "Random Presets", "RandomPresetsCategory");
+                    newFileNode = CreateRandomPresetsFileNodes(rf);
+                    break;
+
+                case GlobalsFile gf:
+                    targetCategoryNode = GetOrCreateChildNode(dbNode, "Globals", "GlobalsCategory");
+                    newFileNode = CreateGlobalsfileNodes(gf);
+                    break;
+
+                case EconomyFile ef2:
+                    targetCategoryNode = GetOrCreateChildNode(dbNode, "Economy", "EconomyCategory");
+                    newFileNode = CreateEconomyfileNodes(ef2);
+                    break;
+
+                default:
+                    return; // unknown type, ignore or log
+            }
+
+            if (newFileNode == null)
+                return;
+
+            targetCategoryNode.Nodes.Add(newFileNode);
+
+            if (selectAndExpand)
+            {
+                rootNode.Expand();
+                dbNode.Expand();
+                targetCategoryNode.Expand();
+                newFileNode.Expand();
+                EconomyTV.SelectedNode = newFileNode;
+            }
+        }
+        private TreeNode GetOrCreateChildNode(TreeNode parent, string text, object tag)
+        {
+            TreeNode existingNode = parent.Nodes
+                .Cast<TreeNode>()
+                .FirstOrDefault(n => n.Text.Equals(text, StringComparison.OrdinalIgnoreCase));
+
+            if (existingNode != null)
+                return existingNode;
+
+            TreeNode newNode = new TreeNode(text)
+            {
+                Tag = tag
+            };
+
+            parent.Nodes.Add(newNode);
+            return newNode;
+        }
+        private void InsertNodeSorted(TreeNode parent, TreeNode child)
+        {
+            int insertIndex = 0;
+
+            for (int i = 0; i < parent.Nodes.Count; i++)
+            {
+                TreeNode existing = parent.Nodes[i];
+
+                if (string.Compare(child.Text, existing.Text, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    insertIndex = i;
+                    break;
+                }
+
+                insertIndex = i + 1;
+            }
+
+            parent.Nodes.Insert(insertIndex, child);
+        }
+        #endregion
         /// <summary>
         /// Treeview stuff
         /// </summary>
-        private void HandleTreeViewSelection<TFile, TSection>(TFile file, string sectionName, Func<TFile, TSection> getSection, TreeView treeView)
-                    where TFile : class
-                    where TSection : class
+        private void HandleTreeViewSelection<TFile, TSection>(
+            TFile file,
+            string sectionName,
+            Func<TFile, TSection> getSection,
+            TreeView treeView)
+            where TFile : class
+            where TSection : class
         {
-            TreeNode parentNode = EconomyTV.Nodes[0];
-            TreeNode fileNode = FindOrCreateFileNodeFor(file, treeView, parentNode);
+            if (treeView.Nodes.Count == 0)
+                return;
+
+            TreeNode rootNode = treeView.Nodes[0];
+
+            TreeNode fileNode = FindNodeRecursive(rootNode.Nodes, file);
+
+            if (fileNode == null)
+            {
+                AddFileToDBTree(file, false);
+                fileNode = FindNodeRecursive(rootNode.Nodes, file);
+            }
+
+            if (fileNode == null)
+                return;
+
             TreeNode sectionNode = FindOrCreateSectionNode(fileNode, sectionName, getSection(file));
 
             treeView.SelectedNode = sectionNode;
             sectionNode.EnsureVisible();
-        }
-        private TreeNode FindOrCreateFileNodeFor<T>(T data, TreeView treeView, TreeNode parentNode = null)
-        {
-            // First, try to find an existing node for this file anywhere in the tree
-            TreeNode foundNode = (parentNode != null)
-                ? FindNodeRecursive(parentNode.Nodes, data)
-                : FindNodeRecursive(treeView.Nodes, data);
-
-            if (foundNode != null)
-                return foundNode;
-
-            // If not found, create it using existing AddFileToTree logic
-            if (data is economyFile ecfile)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, ecfile.FilePath);
-
-                // We pass in either the provided parent node or the root
-                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
-
-                // This uses your *existing* implementation so nothing breaks
-                AddFileToTree(rootNode, relativePath, ecfile, CreateEconomyfileNodes);
-
-                // Return the node that was just added
-                return FindNodeRecursive(rootNode.Nodes, ecfile);
-            }
-            else if (data is globalsFile globalsFile)
-            {
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, globalsFile.FilePath);
-
-                // We pass in either the provided parent node or the root
-                TreeNode rootNode = parentNode ?? treeView.Nodes[0];
-
-                // Reuse AddFileToTree to respect folder structure
-                AddFileToTree(rootNode, relativePath, globalsFile, CreateGlobalsfileNodes);
-
-                return FindNodeRecursive(rootNode.Nodes, globalsFile);
-            }
-
-            return null;
         }
         private TreeNode FindNodeRecursive<T>(TreeNodeCollection nodes, T data)
         {
@@ -2464,6 +2699,12 @@ namespace EconomyPlugin
                 currentTreeNode = e.Node;
                 var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
 
+                if (e.Node.Tag is EconomyWarning warning)
+                {
+                    HandleWarningNodeSelection(warning);
+                    return;
+                }
+
                 if (e.Node.Tag == null)
                 {
                     ShowHandler<IUIHandler>(null, null, null, null);
@@ -2497,8 +2738,98 @@ namespace EconomyPlugin
                 ShowHandler<IUIHandler>(null, null, null, selectedNodes);
             }));
         }
+        private void HandleWarningNodeSelection(EconomyWarning warning)
+        {
+            if (warning == null)
+                return;
 
+            var sb = new StringBuilder();
 
+            sb.AppendLine($"[{warning.Code}]");
+            sb.AppendLine();
+            sb.AppendLine(warning.Title);
+            sb.AppendLine(new string('-', 40));
+            sb.AppendLine(warning.Message);
+            sb.AppendLine();
+
+            if (!string.IsNullOrWhiteSpace(warning.SourceFile))
+                sb.AppendLine($"File: {warning.SourceFile}");
+
+            if (!string.IsNullOrWhiteSpace(warning.RelatedFile))
+                sb.AppendLine($"Related: {warning.RelatedFile}");
+
+            sb.AppendLine();
+            sb.AppendLine("Do you want to navigate to this item?");
+
+            var result = MessageBox.Show(
+                sb.ToString(),
+                "Warning Details",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                NavigateToWarning(warning);
+            }
+        }
+        private void NavigateToWarning(EconomyWarning warning)
+        {
+            if (warning?.SourceObject == null)
+                return;
+
+            switch (warning.SourceObject)
+            {
+                case TypesFile tf:
+                    AddFileToDBTree(tf, true);
+                    SelectNodeForObject(tf);
+                    break;
+
+                case EventsFile ef:
+                    AddFileToDBTree(ef, true);
+                    SelectNodeForObject(ef);
+                    break;
+
+                case GlobalsFile gf:
+                    AddFileToDBTree(gf, true);
+                    SelectNodeForObject(gf);
+                    break;
+
+                case EconomyFile eco:
+                    AddFileToDBTree(eco, true);
+                    SelectNodeForObject(eco);
+                    break;
+
+                case TypeEntry typeEntry:
+                    SelectNodeForObject(typeEntry);
+                    break;
+
+                case eventsEvent evt:
+                    SelectNodeForObject(evt);
+                    break;
+
+                case eventgroupdefGroup group:
+                    SelectNodeForObject(group);
+                    break;
+
+                default:
+                    // fallback: try selecting source object anyway
+                    SelectNodeForObject(warning.SourceObject);
+                    break;
+            }
+        }
+        private void SelectNodeForObject(object data)
+        {
+            if (EconomyTV.Nodes.Count == 0)
+                return;
+
+            TreeNode node = FindNodeRecursive(EconomyTV.Nodes, data);
+            if (node != null)
+            {
+                EconomyTV.SelectedNode = node;
+                node.EnsureVisible();
+            }
+        }
         private TreeNode FindNodeByTag(TreeNodeCollection nodes, object tagToFind)
         {
             foreach (TreeNode node in nodes)
@@ -2534,7 +2865,7 @@ namespace EconomyPlugin
         {
             if (currentTreeNode?.Tag is EconomySection section)
             {
-                economyFile file = currentTreeNode.Parent?.Tag as economyFile;
+                EconomyFile file = currentTreeNode.Parent?.Tag as EconomyFile;
                 if (file != null && !file.IsModded)
                 {
                     HandleVanillaeconomyEditRedirect(file, section, currentTreeNode.Text.Split(' ')[0]);
@@ -2543,7 +2874,7 @@ namespace EconomyPlugin
             }
             else if (currentTreeNode?.Tag is variablesVar variablevar)
             {
-                globalsFile file = currentTreeNode.Parent?.Tag as globalsFile;
+                GlobalsFile file = currentTreeNode.Parent?.Tag as GlobalsFile;
                 if (file != null && !file.IsModded)
                 {
                     HandleVanillaglobalsEditRedirect(file, variablevar, currentTreeNode.Text.Split(' ')[0]);
@@ -2555,7 +2886,7 @@ namespace EconomyPlugin
         {
             if (currentTreeNode?.Tag is EconomySection section)
             {
-                economyFile file = currentTreeNode.Parent?.Tag as economyFile;
+                EconomyFile file = currentTreeNode.Parent?.Tag as EconomyFile;
                 if (file != null && file.IsModded)
                 {
                     bool removed = false;
@@ -2572,7 +2903,7 @@ namespace EconomyPlugin
 
                     if (removed)
                     {
-                        file.isDirty = true;
+                        file.IsDirty = true;
 
                         TreeNode fileNode = currentTreeNode.Parent; // file node in tree
 
@@ -2601,7 +2932,7 @@ namespace EconomyPlugin
                             );
 
                             RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                            file.toDelete = true;
+                            file.ToDelete = true;
                             AppServices.GetRequired<EconomyManager>().eonomyCoreConfig.Save();
                         }
                         else
@@ -2616,14 +2947,14 @@ namespace EconomyPlugin
             }
             else if (currentTreeNode?.Tag is variablesVar variablevar)
             {
-                globalsFile file = currentTreeNode.Parent?.Tag as globalsFile;
+                GlobalsFile file = currentTreeNode.Parent?.Tag as GlobalsFile;
                 if (file != null && file.IsModded)
                 {
                     var removed = file.Data?.var?.Remove(variablevar) ?? false;
 
                     if (removed)
                     {
-                        file.isDirty = true;
+                        file.IsDirty = true;
 
                         TreeNode fileNode = currentTreeNode.Parent; // file node in tree
 
@@ -2642,7 +2973,7 @@ namespace EconomyPlugin
 
                             // Remove file node and clean up empty parent nodes
                             RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                            file.toDelete = true;
+                            file.ToDelete = true;
                             AppServices.GetRequired<EconomyManager>().eonomyCoreConfig.Save();
                         }
                         else
@@ -2705,7 +3036,7 @@ namespace EconomyPlugin
                 _mapControl.MapsingleClicked += MapControl_EffectSafePositionsSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_EffectSafePositionsDoubleclicked;
 
-                var cfg = node.FindParentOfType<cfgeffectareaConfig>();
+                var cfg = node.FindParentOfType<CfgeffectareaConfig>();
                 if (cfg != null)
                     DrawEffectSafePositions(cfg);
             });
@@ -2718,7 +3049,7 @@ namespace EconomyPlugin
                 _mapControl.MapsingleClicked += MapControl_EffectPRABoxSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_EffectPRABoxDoubleclicked;
 
-                var files = node.FindParentOfType<PlayerRestrictedFiles>();
+                var files = node.FindParentOfType<PlayerRestrictedFile>();
                 if (files != null)
                     DrawPRABoxesPOsitions(files);
             });
@@ -2731,7 +3062,7 @@ namespace EconomyPlugin
                 _mapControl.MapsingleClicked += MapControl_EffectPRASafePositionsSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_EffectPRASafePositionsDoubleclicked;
 
-                var files = node.FindParentOfType<PlayerRestrictedFiles>();
+                var files = node.FindParentOfType<PlayerRestrictedFile>();
                 if (files != null)
                     DrawEffectPRASafePositions(files);
             });
@@ -2744,7 +3075,7 @@ namespace EconomyPlugin
                 _mapControl.MapsingleClicked += MapControl_EffectAreaSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_EffectAreaDoubleclicked;
 
-                var cfg = node.FindParentOfType<cfgeffectareaConfig>();
+                var cfg = node.FindParentOfType<CfgeffectareaConfig>();
                 if (cfg != null)
                     DrawEffectEffectArea(cfg);
             });
@@ -2852,9 +3183,9 @@ namespace EconomyPlugin
                 }
             }
         }
-        private void DrawPRABoxesPOsitions(PlayerRestrictedFiles PlayerRestrictedFiles)
+        private void DrawPRABoxesPOsitions(PlayerRestrictedFile PlayerRestrictedFiles)
         {
-            foreach (PRABoxes pos in PlayerRestrictedFiles._PRABoxes)
+            foreach (PRABoxes pos in PlayerRestrictedFiles.BoxesView)
             {
                 if (_selectedRPABox == pos)
                 {
@@ -2875,9 +3206,9 @@ namespace EconomyPlugin
 
             }
         }
-        private void DrawEffectPRASafePositions(PlayerRestrictedFiles PlayerRestrictedFiles)
+        private void DrawEffectPRASafePositions(PlayerRestrictedFile PlayerRestrictedFiles)
         {
-            foreach (PRASafePosition safeposition in PlayerRestrictedFiles._SafePositions3D)
+            foreach (PRASafePosition safeposition in PlayerRestrictedFiles.SafePositionsView)
             {
                 if (_selectedRPASafePosition == safeposition)
                 {
@@ -2901,7 +3232,7 @@ namespace EconomyPlugin
                 }
             }
         }
-        private void DrawEffectSafePositions(cfgeffectareaConfig cfgeffectareaConfig)
+        private void DrawEffectSafePositions(CfgeffectareaConfig cfgeffectareaConfig)
         {
             foreach (cfgeffectareaSafePosition pos in cfgeffectareaConfig.Data._positions)
             {
@@ -2944,7 +3275,7 @@ namespace EconomyPlugin
                 _mapControl.RegisterDrawable(marker);
             }
         }
-        private void DrawEffectEffectArea(cfgeffectareaConfig cfgeffectareaConfig)
+        private void DrawEffectEffectArea(CfgeffectareaConfig cfgeffectareaConfig)
         {
             foreach (Areas area in cfgeffectareaConfig.Data.Areas)
             {
@@ -3106,7 +3437,6 @@ namespace EconomyPlugin
 
             _selectedEventPos.x = (decimal)e.MapCoordinates.X;
             _selectedEventPos.z = (decimal)e.MapCoordinates.Y;
-            _economyManager.cfgeventspawnsConfig.isDirty = true;
 
             _mapControl.ClearDrawables();
 
@@ -3169,11 +3499,11 @@ namespace EconomyPlugin
 
             _selectedSafePosition.X = (decimal)e.MapCoordinates.X;
             _selectedSafePosition.Z = (decimal)e.MapCoordinates.Y;
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
 
             _mapControl.ClearDrawables();
 
-            cfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<cfgeffectareaConfig>();
+            CfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<CfgeffectareaConfig>();
             DrawEffectSafePositions(cfgeffectareaConfig);
             currentTreeNode.Text = $"Position {currentTreeNode.Index + 1} ({_selectedSafePosition.X}, {_selectedSafePosition.Z})";
         }
@@ -3231,11 +3561,11 @@ namespace EconomyPlugin
 
             _selectedeffectarea.Data.Pos[0] = (decimal)e.MapCoordinates.X;
             _selectedeffectarea.Data.Pos[2] = (decimal)e.MapCoordinates.Y;
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
 
             _mapControl.ClearDrawables();
 
-            cfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<cfgeffectareaConfig>();
+            CfgeffectareaConfig cfgeffectareaConfig = currentTreeNode.FindParentOfType<CfgeffectareaConfig>();
             DrawEffectEffectArea(cfgeffectareaConfig);
         }
         private void MapControl_EffectPRASafePositionsSingleclicked(object sender, MapClickEventArgs e)
@@ -3295,8 +3625,7 @@ namespace EconomyPlugin
 
             _mapControl.ClearDrawables();
 
-            PlayerRestrictedFiles PlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
-            PlayerRestrictedFiles.isDirty = true;
+            PlayerRestrictedFile PlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
             DrawEffectPRASafePositions(PlayerRestrictedFiles);
             currentTreeNode.Text = $"Position {currentTreeNode.Index + 1}: [{string.Join(", ", _selectedRPASafePosition)}]";
         }
@@ -3357,8 +3686,7 @@ namespace EconomyPlugin
 
             _mapControl.ClearDrawables();
 
-            PlayerRestrictedFiles PlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
-            PlayerRestrictedFiles.isDirty = true;
+            PlayerRestrictedFile PlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
             DrawPRABoxesPOsitions(PlayerRestrictedFiles);
         }
         private void MapControl_PlayerSpawnSingleclicked(object? sender, MapClickEventArgs e)
@@ -3466,7 +3794,6 @@ namespace EconomyPlugin
             _mapControl.ClearDrawables();
 
             cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig = currentTreeNode.FindParentOfType<cfgplayerspawnpointsConfig>();
-            cfgplayerspawnpointsConfig.isDirty = true;
             playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
             DrawPlayerSpawnPointPositions(playerspawnpointssection);
             currentTreeNode.Text = _selectedSpawnpointPosition.ToString();
@@ -3624,7 +3951,6 @@ namespace EconomyPlugin
             _mapControl.ClearDrawables();
 
             cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig = currentTreeNode.FindParentOfType<cfgplayerspawnpointsConfig>();
-            cfgplayerspawnpointsConfig.isDirty = true;
             playerspawnpointssection playerspawnpointssection = currentTreeNode.FindParentOfType<playerspawnpointssection>();
             DrawPlayerSpawnPointPositions(playerspawnpointssection);
             currentTreeNode.Text = _selectedSpawnpointPosition.ToString();
@@ -3692,7 +4018,7 @@ namespace EconomyPlugin
             _mapControl.ClearDrawables();
 
             territorytype territorytype = currentTreeNode.FindParentOfType<territorytype>();
-            territorytype.isDirty = true;
+            territorytype.IsDirty = true;
             territorytypeTerritory territorytypeTerritory = currentTreeNode.FindParentOfType<territorytypeTerritory>();
             DrawTerritoriesPositions(territorytypeTerritory);
             currentTreeNode.Text = _selectedterritory.ToString();
@@ -3704,20 +4030,20 @@ namespace EconomyPlugin
         /// <param name="vanillaFile"></param>
         /// <param name="section"></param>
         /// <param name="sectionName"></param>
-        private void HandleVanillaeconomyEditRedirect(economyFile vanillaFile, EconomySection section, string sectionName)
+        private void HandleVanillaeconomyEditRedirect(EconomyFile vanillaFile, EconomySection section, string sectionName)
         {
-            string newmodPath = "CustomMods\\Customdb";
+            string newmodPath = "db";
             string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_" + vanillaFile.FileName);
 
-            var existingFile = _economyManager.economyConfig.AllData
+            var existingFile = _economyManager.economyConfig.MutableItems
                 .FirstOrDefault(f => f.FilePath.Equals(newPath, StringComparison.OrdinalIgnoreCase));
 
-            economyFile newFile = existingFile ?? new economyFile(newPath)
+            EconomyFile newFile = existingFile ?? new EconomyFile(newPath)
             {
                 IsModded = true,
                 FileType = "economy",
                 ModFolder = newmodPath,
-                isDirty = true,
+                IsDirty = true,
                 Data = new economy()
             };
 
@@ -3725,7 +4051,7 @@ namespace EconomyPlugin
             {
                 _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "economy");
                 _economyManager.eonomyCoreConfig.Save();
-                _economyManager.economyConfig.AllData.Add(newFile);
+                _economyManager.economyConfig.MutableItems.Add(newFile);
             }
 
             if (GetSectionByName(newFile.Data, sectionName) == null)
@@ -3743,7 +4069,7 @@ namespace EconomyPlugin
                     case "Player": newFile.Data.player = cloned; break;
                 }
 
-                newFile.isDirty = true;
+                newFile.IsDirty = true;
             }
             _economyManager.economyConfig.Save();
             HandleTreeViewSelection(newFile, sectionName, f => GetSectionByName(f.Data, sectionName), EconomyTV);
@@ -3779,21 +4105,21 @@ namespace EconomyPlugin
         /// <param name="vanillaFile"></param>
         /// <param name="section"></param>
         /// <param name="sectionName"></param>
-        private void HandleVanillaglobalsEditRedirect(globalsFile vanillaFile, variablesVar section, string sectionName)
+        private void HandleVanillaglobalsEditRedirect(GlobalsFile vanillaFile, variablesVar section, string sectionName)
         {
-            string newmodPath = "CustomMods\\Customdb";
+            string newmodPath = "db";
             string newPath = EnsureModFolderAndGetPath(newmodPath, "Custom_" + vanillaFile.FileName);
 
             // 2. Create new economyFile and add only selected section
-            var existingFile = _economyManager.globalsConfig.AllData
+            var existingFile = _economyManager.globalsConfig.MutableItems
                 .FirstOrDefault(f => f.FilePath.Equals(newPath, StringComparison.OrdinalIgnoreCase));
 
-            globalsFile newFile = existingFile ?? new globalsFile(newPath)
+            GlobalsFile newFile = existingFile ?? new GlobalsFile(newPath)
             {
                 IsModded = true,
                 FileType = "globals",
                 ModFolder = newmodPath,
-                isDirty = true,
+                IsDirty = true,
                 Data = new variables { var = new System.ComponentModel.BindingList<variablesVar>() }
             };
 
@@ -3801,13 +4127,13 @@ namespace EconomyPlugin
             {
                 _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "globals");
                 _economyManager.eonomyCoreConfig.Save();
-                _economyManager.globalsConfig.AllData.Add(newFile);
+                _economyManager.globalsConfig.MutableItems.Add(newFile);
             }
 
             if (GetVariableByName(newFile.Data, sectionName) == null)
             {
                 newFile.Data.var.Add(CloneVariable(section));
-                newFile.isDirty = true;
+                newFile.IsDirty = true;
             }
 
             _economyManager.globalsConfig.Save();
@@ -3872,13 +4198,9 @@ namespace EconomyPlugin
                         if (typefile.Data.TypeList.Any(x => x.Name == te.Name))
                             continue;
                         typefile.Data.TypeList.Add(te);
+                        CreateTyoesNodes(currentTreeNode, te);
                     }
-                    ;
-                    typefile.isDirty = true;
-
-                    string relativePath = Path.GetRelativePath(_economyManager.basePath, typefile.FilePath);
-                    EconomyTV.Nodes.Remove(currentTreeNode);
-                    AddFileToTree(EconomyTV.Nodes[0], relativePath, typefile, CreateTypesfileNodes);
+                    typefile.IsDirty = true;
                     savefiles();
                 }
             }
@@ -3890,7 +4212,7 @@ namespace EconomyPlugin
                 if (dr == DialogResult.OK)
                 {
                     string newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname + ".xml";
+                    string typesfile = frm.typesname + "_ce_types.xml";
                     string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
                     BindingList<TypeEntry> types = frm._entries;
@@ -3898,15 +4220,13 @@ namespace EconomyPlugin
                     {
                         FileType = "types",
                         IsModded = true,
-                        ModFolder = newmodPath
+                        ModFolder = newmodPath,
+                        Data = new Types()
                     };
-                    newtypesfile.CreateNew();
                     newtypesfile.Data.TypeList = types;
-                    newtypesfile.isDirty = true;
                     _economyManager.eonomyCoreConfig.AddCe(newtypesfile.ModFolder, newtypesfile.FileName, "types");
-                    _economyManager.TypesConfig.AllData.Add(newtypesfile);
-                    string relativePath = Path.GetRelativePath(_economyManager.basePath, newtypesfile.FilePath);
-                    AddFileToTree(EconomyTV.Nodes[0], relativePath, newtypesfile, CreateTypesfileNodes);
+                    _economyManager.TypesConfig.MutableItems.Add(newtypesfile);
+                    AddFileToDBTree(newtypesfile);
                     savefiles();
                 }
             }
@@ -3946,7 +4266,7 @@ namespace EconomyPlugin
                     out deleteDirectory
                 );
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                typefile.isDirty = true;
+                typefile.IsDirty = true;
                 typefile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is TypeEntry typeentry)
@@ -3970,7 +4290,7 @@ namespace EconomyPlugin
                     var parent = node.Parent;
                     RemoveTreeNodeAndEmptyParents(node);
                 }
-                _typefile.isDirty = true;
+                _typefile.IsDirty = true;
             }
         }
         private void updateTypesFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3991,11 +4311,11 @@ namespace EconomyPlugin
                         if (typefile.Data.TypeList.Any(x => x.Name == te.Name))
                             continue;
                         typefile.Data.TypeList.Add(te);
-                        typefile.isDirty = true;
+                        typefile.IsDirty = true;
                         added.Add(te.Name);
                         Console.WriteLine($"\t{te.Name} added to file....");
                     }
-                    
+
 
                     string relativePath = Path.GetRelativePath(_economyManager.basePath, typefile.FilePath);
                     EconomyTV.Nodes.Remove(currentTreeNode);
@@ -4104,7 +4424,7 @@ namespace EconomyPlugin
                         }
                         break;
                     case 2:
-                        ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
+                        ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath));
                         foreach (SpawnObjects so in newobjectspawner.Objects)
                         {
                             eventposdefEventPos newpos = new eventposdefEventPos()
@@ -4175,7 +4495,6 @@ namespace EconomyPlugin
                     eventposnodes.Nodes.Add(posnodes);
                 }
                 EconomyTV.SelectedNode.Nodes.Add(eventposnodes);
-                _economyManager.cfgeventspawnsConfig.isDirty = true;
             }
         }
         private void AddNewEventsToolstripMenuItem_Click(object sender, EventArgs e)
@@ -4211,8 +4530,7 @@ namespace EconomyPlugin
                         flags = new eventsEventFlags(),
                         children = new BindingList<eventsEventChild>()
                     };
-                    eventfile.Data.AddnewEvent(neweventEvent);
-                    eventfile.isDirty = true;
+                    eventfile.Data.AddNewEvent(neweventEvent);
                     currentTreeNode.Nodes.Add(new TreeNode(neweventEvent.name)
                     {
                         Tag = neweventEvent
@@ -4227,22 +4545,20 @@ namespace EconomyPlugin
                 if (dr == DialogResult.OK)
                 {
                     string newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname + ".xml";
+                    string typesfile = frm.typesname + "_ce_events.xml";
                     string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
                     EventsFile newEventsfile = new EventsFile(newPath)
                     {
                         FileType = "events",
                         IsModded = true,
-                        ModFolder = newmodPath
+                        ModFolder = newmodPath,
+                        Data = new events()
                     };
-                    newEventsfile.CreateNew();
                     newEventsfile.Data.@event = frm._entries;
-                    newEventsfile.isDirty = true;
                     _economyManager.eonomyCoreConfig.AddCe(newEventsfile.ModFolder, newEventsfile.FileName, "events");
-                    _economyManager.eventsConfig.AllData.Add(newEventsfile);
-                    string relativePath = Path.GetRelativePath(_economyManager.basePath, newEventsfile.FilePath);
-                    AddFileToTree(EconomyTV.Nodes[0], relativePath, newEventsfile, CreateEventNodes);
+                    _economyManager.eventsConfig.MutableItems.Add(newEventsfile);
+                    AddFileToDBTree(newEventsfile);
                     savefiles();
                 }
             }
@@ -4284,8 +4600,10 @@ namespace EconomyPlugin
                     foreach (eventsEvent evev in eventfile.Data.@event)
                     {
                         eventposdefEvent evevpoints = _economyManager.cfgeventspawnsConfig.Findevent(evev.name);
+                        if (evevpoints == null)
+                            continue;
                         int count = 0;
-                        foreach (EventsFile evfile in _economyManager.eventsConfig.AllData)
+                        foreach (EventsFile evfile in _economyManager.eventsConfig.MutableItems)
                         {
                             foreach (eventsEvent evev1 in evfile.Data.@event)
                             {
@@ -4297,7 +4615,6 @@ namespace EconomyPlugin
                         if (count == 1)
                         {
                             _economyManager.cfgeventspawnsConfig.Data.@event.Remove(evevpoints);
-                            _economyManager.cfgeventspawnsConfig.isDirty = true;
                         }
                     }
                 }
@@ -4312,7 +4629,7 @@ namespace EconomyPlugin
                     out deleteDirectory
                 );
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                eventfile.isDirty = true;
+                eventfile.IsDirty = true;
                 eventfile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is eventsEvent _event)
@@ -4335,7 +4652,7 @@ namespace EconomyPlugin
                 if (points != null)
                 {
                     int count = 0;
-                    foreach (EventsFile evfile in _economyManager.eventsConfig.AllData)
+                    foreach (EventsFile evfile in _economyManager.eventsConfig.MutableItems)
                     {
                         foreach (eventsEvent evev in evfile.Data.@event)
                         {
@@ -4355,13 +4672,68 @@ namespace EconomyPlugin
                         if (result == DialogResult.Yes)
                         {
                             _economyManager.cfgeventspawnsConfig.Data.@event.Remove(points);
-                            _economyManager.cfgeventspawnsConfig.isDirty = true;
                         }
                     }
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _eventfile.isDirty = true;
+                _eventfile.IsDirty = true;
             }
+        }
+        private void addNewEventSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void deleteSelectedEventSpawnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void exportPositionTodzeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewPosirtionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            eventposdefEventPos newpos = new eventposdefEventPos()
+            {
+                x = _projectManager.CurrentProject.MapSize / 2,
+                z = _projectManager.CurrentProject.MapSize / 2,
+            };
+            eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
+            if (eventposdefEvent.pos == null)
+                eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+            eventposdefEvent.pos.Add(newpos);
+            TreeNode existing = currentTreeNode.Nodes["POS"];
+            if (existing == null)
+            {
+                TreeNode eventposnodes = new TreeNode("pos")
+                {
+                    Name = "POS",
+                    Tag = "PosParent"
+                };
+                existing = eventposnodes;
+                currentTreeNode.Nodes.Add(eventposnodes);
+            }
+            existing.Nodes.Add(CreateEventPositionNode(newpos));
+        }
+        private void removeSelectedPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeAllPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
+            eventposdefEvent.pos = null;
+            TreeNode existing = currentTreeNode.Nodes["POS"];
+            existing.Remove();
+        }
+        private void exportGroupSpawnTodzeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void importPositionAndCreateEventgroupFormdzeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         /// <summary>
@@ -4377,27 +4749,25 @@ namespace EconomyPlugin
             if (dr == DialogResult.OK)
             {
                 string newmodPath = frm.moddir.Replace("/", "\\");
-                string typesfile = frm.typesname + "_cfgrandompresets.xml";
+                string typesfile = frm.typesname + "_ce_cfgrandompresets.xml";
                 string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
-                cfgrandompresetsFile newpresetfile = new cfgrandompresetsFile(newPath)
+                CfgrandompresetsFile newpresetfile = new CfgrandompresetsFile(newPath)
                 {
                     FileType = "randompresets",
                     IsModded = true,
-                    ModFolder = newmodPath
+                    ModFolder = newmodPath,
+                    Data = new randompresets()
                 };
-                newpresetfile.CreateNew();
-                newpresetfile.isDirty = true;
                 _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "randompresets");
-                _economyManager.cfgrandompresetsConfig.AllData.Add(newpresetfile);
-                string relativePath = Path.GetRelativePath(_economyManager.basePath, newpresetfile.FilePath);
-                AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateRandomPresetsFileNodes, true);
+                _economyManager.cfgrandompresetsConfig.MutableItems.Add(newpresetfile);
+                AddFileToDBTree(newpresetfile);
                 savefiles();
             }
         }
         private void addNewAttchementToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+            CfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
             if (!rpf.IsModded)
             {
                 var ismoddedresult = MessageBox.Show(
@@ -4422,11 +4792,10 @@ namespace EconomyPlugin
             rpf.Data.Items.Add(newattachment);
             currentTreeNode.Nodes.Add(IN);
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
-            rpf.isDirty = true;
         }
         private void addNewCargoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+            CfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
             if (rpf != null)
             {
                 if (!rpf.IsModded)
@@ -4453,12 +4822,12 @@ namespace EconomyPlugin
                 rpf.Data.Items.Add(newcargo);
                 currentTreeNode.Nodes.Add(IN);
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-                rpf.isDirty = true;
+                rpf.IsDirty = true;
             }
         }
         private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+            CfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
             AddItemfromTypes form = new AddItemfromTypes();
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.OK)
@@ -4483,7 +4852,7 @@ namespace EconomyPlugin
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
 
-                rpf.isDirty = true;
+                rpf.IsDirty = true;
             }
             else if (result == DialogResult.Cancel)
             {
@@ -4492,7 +4861,7 @@ namespace EconomyPlugin
         }
         private void removeSelectedToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (currentTreeNode.Tag is cfgrandompresetsFile randompresetsfile)
+            if (currentTreeNode.Tag is CfgrandompresetsFile randompresetsfile)
             {
                 if (randompresetsfile.IsModded == false)
                 {
@@ -4524,13 +4893,13 @@ namespace EconomyPlugin
                     out fileName,
                     out deleteDirectory
                 );
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                randompresetsfile.isDirty = true;
+                currentTreeNode.Remove();
+                randompresetsfile.IsDirty = true;
                 randompresetsfile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is randompresetsAttachments randompresetsAttachments)
             {
-                cfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+                CfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
                 if (_randompresetsfile.IsModded == false)
                 {
                     var result = MessageBox.Show(
@@ -4544,11 +4913,11 @@ namespace EconomyPlugin
                 _randompresetsfile.Data.Items.Remove(randompresetsAttachments);
                 var parent = currentTreeNode.Parent;
                 currentTreeNode.Remove();
-                _randompresetsfile.isDirty = true;
+                _randompresetsfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is randompresetsCargo randompresetsCargo)
             {
-                cfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+                CfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
                 if (_randompresetsfile.IsModded == false)
                 {
                     var result = MessageBox.Show(
@@ -4562,11 +4931,11 @@ namespace EconomyPlugin
                 _randompresetsfile.Data.Items.Remove(randompresetsCargo);
                 var parent = currentTreeNode.Parent;
                 currentTreeNode.Remove();
-                _randompresetsfile.isDirty = true;
+                _randompresetsfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is randompresetsItem randompresetsItem)
             {
-                cfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<cfgrandompresetsFile>();
+                CfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
                 if (_randompresetsfile.IsModded == false)
                 {
                     var result = MessageBox.Show(
@@ -4586,7 +4955,7 @@ namespace EconomyPlugin
                     currentcargo.item.Remove(randompresetsItem);
                 }
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                _randompresetsfile.isDirty = true;
+                _randompresetsfile.IsDirty = true;
             }
 
         }
@@ -4596,35 +4965,33 @@ namespace EconomyPlugin
         /// </summary>
         private void addNewSpawnableTypesFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-                AddEventFile frm = new AddEventFile();
-                frm.SetTitle = "Add new Spawnable Types";
-                frm.Button4visable = false;
-                frm.StartPosition = FormStartPosition.CenterParent;
-                DialogResult dr = frm.ShowDialog();
-                if (dr == DialogResult.OK)
-                {
-                    string newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname + "cfgspawnabletypes.xml";
-                    string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Spawnable Types";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string typesfile = frm.typesname + "_ce_cfgspawnabletypes.xml";
+                string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
-                    cfgspawnabletypesFile newpresetfile = new cfgspawnabletypesFile(newPath)
-                    {
-                        FileType = "spawnabletypes",
-                        IsModded = true,
-                        ModFolder = newmodPath
-                    };
-                    newpresetfile.CreateNew();
-                    newpresetfile.isDirty = true;
-                    _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "spawnabletypes");
-                    _economyManager.cfgspawnabletypesConfig.AllData.Add(newpresetfile);
-                    string relativePath = Path.GetRelativePath(_economyManager.basePath, newpresetfile.FilePath);
-                    AddFileToTree(EconomyTV.Nodes[0], relativePath, newpresetfile, CreateSpawnableTypesfileNodes);
-                    savefiles();
-                }
+                CfgSpawnableTypesFile newpresetfile = new CfgSpawnableTypesFile(newPath)
+                {
+                    FileType = "spawnabletypes",
+                    IsModded = true,
+                    ModFolder = newmodPath,
+                    Data = new SpawnableTypes()
+                };
+                _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "spawnabletypes");
+                _economyManager.cfgspawnabletypesConfig.MutableItems.Add(newpresetfile);
+                AddFileToDBTree(newpresetfile);
+                savefiles();
+            }
         }
         private void addNewSpawnableTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             if (!spf.IsModded)
             {
                 var ismoddedresult = MessageBox.Show(
@@ -4655,7 +5022,7 @@ namespace EconomyPlugin
                     currentTreeNode.Nodes.Add(IN);
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-                spf.isDirty = true;
+                spf.IsDirty = true;
             }
             else if (result == DialogResult.Cancel)
             {
@@ -4664,7 +5031,7 @@ namespace EconomyPlugin
         }
         private void addNewHoarderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             if (currentTreeNode.Tag is SpawnableType type)
             {
                 spawnableTypesHoarder newhoarder = new spawnableTypesHoarder();
@@ -4673,12 +5040,12 @@ namespace EconomyPlugin
                 {
                     Tag = newhoarder
                 });
-                spf.isDirty = true;
+                spf.IsDirty = true;
             }
         }
         private void addNewTagToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             if (currentTreeNode.Tag is SpawnableType type)
             {
                 spawnableTypeTag newtag = new spawnableTypeTag();
@@ -4688,12 +5055,12 @@ namespace EconomyPlugin
                     Tag = newtag
                 };
                 currentTreeNode.Nodes.Add(newTagNode);
-                spf.isDirty = true;
+                spf.IsDirty = true;
             }
         }
         private void addNewDamageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             spawnableTypeDamage newdamage = new spawnableTypeDamage();
             if (currentTreeNode.Tag is SpawnableType type)
             {
@@ -4711,17 +5078,17 @@ namespace EconomyPlugin
             {
                 item.damage = newdamage;
             }
-            else if (currentTreeNode.Tag is cfgspawnabletypesFile)
+            else if (currentTreeNode.Tag is CfgSpawnableTypesFile)
             {
                 spf.Data.damage = newdamage;
             }
             TreeNode newdamageNode = CreateDamageNode(newdamage);
             currentTreeNode.Nodes.Insert(0, newdamageNode);
-            spf.isDirty = true;
+            spf.IsDirty = true;
         }
         private void addNewItemToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             AddItemfromTypes form = new AddItemfromTypes();
             DialogResult result = form.ShowDialog();
             if (result == DialogResult.OK)
@@ -4748,7 +5115,7 @@ namespace EconomyPlugin
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
 
-                spf.isDirty = true;
+                spf.IsDirty = true;
             }
             else if (result == DialogResult.Cancel)
             {
@@ -4757,7 +5124,7 @@ namespace EconomyPlugin
         }
         private void addNewCargoToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             spawnableTypeCargo newcargo = new spawnableTypeCargo()
             {
                 item = new BindingList<spawnableTypeItem>()
@@ -4771,11 +5138,11 @@ namespace EconomyPlugin
                 item.cargo.Add(newcargo);
             }
             currentTreeNode.Nodes.Add(createCargoNopdes(newcargo));
-            spf.isDirty = true;
+            spf.IsDirty = true;
         }
         private void addNewAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            cfgspawnabletypesFile spf = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+            CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
             spawnableTypeAttachment newattchemnts = new spawnableTypeAttachment()
             {
                 item = new BindingList<spawnableTypeItem>()
@@ -4789,11 +5156,11 @@ namespace EconomyPlugin
                 item.attachments.Add(newattchemnts);
             }
             currentTreeNode.Nodes.Add(createattachmentnodes(newattchemnts));
-            spf.isDirty = true;
+            spf.IsDirty = true;
         }
         private void removeSelectedToolStripMenuItem1_Click_1(object sender, EventArgs e)
         {
-            if (currentTreeNode.Tag is cfgspawnabletypesFile spawnabletypesfile)
+            if (currentTreeNode.Tag is CfgSpawnableTypesFile spawnabletypesfile)
             {
                 if (spawnabletypesfile.IsModded == false)
                 {
@@ -4827,12 +5194,12 @@ namespace EconomyPlugin
                     out deleteDirectory
                 );
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                spawnabletypesfile.isDirty = true;
+                spawnabletypesfile.IsDirty = true;
                 spawnabletypesfile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is SpawnableType type)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
                 if (_spawnabletypesfile.IsModded == false)
                 {
                     var result = MessageBox.Show(
@@ -4845,11 +5212,11 @@ namespace EconomyPlugin
                 }
                 _spawnabletypesfile.Data.type.Remove(type);
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.isDirty = true;
+                _spawnabletypesfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is spawnableTypesHoarder Hoarder)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
                 if (_spawnabletypesfile.IsModded == false)
                 {
                     var result = MessageBox.Show(
@@ -4862,23 +5229,23 @@ namespace EconomyPlugin
                 }
                 SpawnableType _type = currentTreeNode.Parent.Tag as SpawnableType;
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.isDirty = true;
+                _spawnabletypesfile.IsDirty = true;
 
             }
             else if (currentTreeNode.Tag is spawnableTypeTag Tag)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
                 if (currentTreeNode.Parent.Tag is SpawnableType _type)
                 {
                     _type.Items.Remove(Tag);
                     RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                    _spawnabletypesfile.isDirty = true;
+                    _spawnabletypesfile.IsDirty = true;
                 }
             }
             else if (currentTreeNode.Tag is spawnableTypeDamage damage)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
-                if (currentTreeNode.Parent.Tag is cfgspawnabletypesFile typefile)
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
+                if (currentTreeNode.Parent.Tag is CfgSpawnableTypesFile typefile)
                 {
                     typefile.Data.damage = null;
                 }
@@ -4899,11 +5266,11 @@ namespace EconomyPlugin
                     _attachment.damage = null;
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.isDirty = true;
+                _spawnabletypesfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is spawnableTypeCargo cargo)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
                 if (currentTreeNode.Parent.Tag is SpawnableType _type)
                 {
                     _type.Items.Remove(cargo);
@@ -4913,11 +5280,11 @@ namespace EconomyPlugin
                     _Item.cargo.Remove(cargo);
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.isDirty = true;
+                _spawnabletypesfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is spawnableTypeAttachment attachment)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
                 if (currentTreeNode.Parent.Tag is SpawnableType _type)
                 {
                     _type.Items.Remove(attachment);
@@ -4927,11 +5294,11 @@ namespace EconomyPlugin
                     _Item.attachments.Remove(attachment);
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.isDirty = true;
+                _spawnabletypesfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is spawnableTypeItem Item)
             {
-                cfgspawnabletypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<cfgspawnabletypesFile>();
+                CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
                 if (currentTreeNode.Parent.Tag is spawnableTypeCargo _cargo)
                 {
                     _cargo.item.Remove(Item);
@@ -4941,7 +5308,7 @@ namespace EconomyPlugin
                     _attachment.item.Remove(Item);
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.isDirty = true;
+                _spawnabletypesfile.IsDirty = true;
             }
         }
 
@@ -4960,13 +5327,10 @@ namespace EconomyPlugin
                 string newmodPath = frm.moddir.Replace("/", "\\");
                 string typesfile = frm.typesname + ".json";
                 string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
-                SpawnGearPresetFiles newfile = new SpawnGearPresetFiles()
+                SpawnGearPresetFile newfile = new SpawnGearPresetFile(newPath)
                 {
-                    name = frm.typesname,
                     ModFolder = newmodPath
                 };
-                newfile.setpath(newPath);
-                newfile.isDirty = true;
                 bool added = _economyManager.CFGGameplayConfig.AddNewSpawnGear(newfile);
                 if (added)
                 {
@@ -4980,20 +5344,20 @@ namespace EconomyPlugin
         }
         private void addNewAttachmentSlotItemSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
             Attachmentslotitemset newASIS = new Attachmentslotitemset()
             {
                 slotName = "CHANGE ME",
                 discreteItemSets = new BindingList<Discreteitemset>()
             };
-            currentspawnGearPresetFiles.attachmentSlotItemSets.Add(newASIS);
+            currentspawnGearPresetFiles.Data.attachmentSlotItemSets.Add(newASIS);
             currentTreeNode.Nodes.Add(AttachmentslotitemsetNodeTN(newASIS));
-            currentspawnGearPresetFiles.isDirty = true;
+            currentspawnGearPresetFiles.IsDirty = true;
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewDisctreetItemSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
             Attachmentslotitemset Attachmentslotitemset = currentTreeNode.FindParentOfType<Attachmentslotitemset>();
             Discreteitemset newDIS = new Discreteitemset()
             {
@@ -5013,12 +5377,12 @@ namespace EconomyPlugin
             };
             Attachmentslotitemset.discreteItemSets.Add(newDIS);
             currentTreeNode.Nodes.Add(DiscreetItemSetsTN(newDIS));
-            currentspawnGearPresetFiles.isDirty = true;
+            currentspawnGearPresetFiles.IsDirty = true;
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewComplexChildSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
             Complexchildrentype newCCIS = new Complexchildrentype()
             {
                 itemType = "CHANGE ME",
@@ -5037,20 +5401,20 @@ namespace EconomyPlugin
             {
                 Discreteunsorteditemset.complexChildrenTypes.Add(newCCIS);
                 currentTreeNode.Nodes.Add(ComplexChildrenTypesNodeTN(newCCIS));
-                currentspawnGearPresetFiles.isDirty = true;
+                currentspawnGearPresetFiles.IsDirty = true;
 
             }
             else if (currentTreeNode.Parent.Tag is Discreteitemset Discreteitemset)
             {
                 Discreteitemset.complexChildrenTypes.Add(newCCIS);
                 currentTreeNode.Nodes.Add(ComplexChildrenTypesNodeTN(newCCIS));
-                currentspawnGearPresetFiles.isDirty = true;
+                currentspawnGearPresetFiles.IsDirty = true;
             }
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewDiscreetUnsortedItemSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+            SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
             Discreteunsorteditemset newDUIS = new Discreteunsorteditemset()
             {
                 name = "New Cargo - Change me",
@@ -5066,58 +5430,58 @@ namespace EconomyPlugin
                 simpleChildrenUseDefaultAttributes = false,
                 simpleChildrenTypes = new BindingList<string>()
             };
-            currentspawnGearPresetFiles.discreteUnsortedItemSets.Add(newDUIS);
+            currentspawnGearPresetFiles.Data.discreteUnsortedItemSets.Add(newDUIS);
             currentTreeNode.Nodes.Add(DiscreteunsorteditemsetTN(newDUIS));
-            currentspawnGearPresetFiles.isDirty = true;
+            currentspawnGearPresetFiles.IsDirty = true;
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void SpawnGearremoveSelectedToolStripMenuItem2_Click(object sender, EventArgs e)
         {
 
-            if (currentTreeNode.Tag is SpawnGearPresetFiles SpawnGearPresetFiles)
+            if (currentTreeNode.Tag is SpawnGearPresetFile SpawnGearPresetFiles)
             {
                 _economyManager.CFGGameplayConfig.RemoveSpawnGearPreset(SpawnGearPresetFiles);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                SpawnGearPresetFiles.isDirty = true;
+                SpawnGearPresetFiles.IsDirty = true;
                 SpawnGearPresetFiles.ToDelete = true;
             }
             else if (currentTreeNode.Tag is Complexchildrentype complexchildrentype)
             {
-                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+                SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
                 if (currentTreeNode.Parent.Parent.Tag is Discreteunsorteditemset CurrentDiscreteunsorteditemset)
                 {
                     CurrentDiscreteunsorteditemset.complexChildrenTypes.Remove(complexchildrentype);
                     currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                    currentspawnGearPresetFiles.isDirty = true;
+                    currentspawnGearPresetFiles.IsDirty = true;
                 }
                 else if (currentTreeNode.Parent.Parent.Tag is Discreteitemset CurrentDiscreteitemset)
                 {
                     CurrentDiscreteitemset.complexChildrenTypes.Remove(complexchildrentype);
                     currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                    currentspawnGearPresetFiles.isDirty = true;
+                    currentspawnGearPresetFiles.IsDirty = true;
                 }
             }
             else if (currentTreeNode.Tag is Discreteitemset Discreteitemset)
             {
-                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
+                SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
                 Attachmentslotitemset Attachmentslotitemset = currentTreeNode.FindParentOfType<Attachmentslotitemset>();
                 Attachmentslotitemset.discreteItemSets.Remove(Discreteitemset);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                currentspawnGearPresetFiles.isDirty = true;
+                currentspawnGearPresetFiles.IsDirty = true;
             }
             else if (currentTreeNode.Tag is Discreteunsorteditemset Discreteunsorteditemset)
             {
-                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
-                currentspawnGearPresetFiles.discreteUnsortedItemSets.Remove(Discreteunsorteditemset);
+                SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
+                currentspawnGearPresetFiles.Data.discreteUnsortedItemSets.Remove(Discreteunsorteditemset);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                currentspawnGearPresetFiles.isDirty = true;
+                currentspawnGearPresetFiles.IsDirty = true;
             }
             else if (currentTreeNode.Tag is Attachmentslotitemset Attachmentslotitemset)
             {
-                SpawnGearPresetFiles currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFiles>();
-                currentspawnGearPresetFiles.attachmentSlotItemSets.Remove(Attachmentslotitemset);
+                SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
+                currentspawnGearPresetFiles.Data.attachmentSlotItemSets.Remove(Attachmentslotitemset);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                currentspawnGearPresetFiles.isDirty = true;
+                currentspawnGearPresetFiles.IsDirty = true;
             }
         }
 
@@ -5136,16 +5500,17 @@ namespace EconomyPlugin
                 string newmodPath = frm.moddir.Replace("/", "\\");
                 string typesfile = frm.typesname + ".json";
                 string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
-                PlayerRestrictedFiles newfile = new PlayerRestrictedFiles()
+                PlayerRestrictedFile newfile = new PlayerRestrictedFile(newPath)
                 {
-                    areaName = frm.typesname,
                     ModFolder = newmodPath,
-                    _PRABoxes = new BindingList<PRABoxes>(),
-                    _SafePositions3D = new BindingList<PRASafePosition>()
+                    BoxesView = new BindingList<PRABoxes>(),
+                    SafePositionsView = new BindingList<PRASafePosition>(),
+                    Data = new PlayerRestrictedData()
+                    {
+                        areaName = frm.typesname,
+                    }
                 };
-                newfile.setpath(newPath);
-                newfile.isDirty = true;
-                bool added = _economyManager.CFGGameplayConfig.AddNewPlayerRestrictedAreaFIle(newfile);
+                bool added = _economyManager.CFGGameplayConfig.AddNewPlayerRestrictedAreaFile(newfile);
                 if (added)
                 {
                     currentTreeNode.Nodes.Add(CreateRestrictedfilesNodes(newfile));
@@ -5158,48 +5523,47 @@ namespace EconomyPlugin
         }
         private void addNewPRABoxToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PlayerRestrictedFiles currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
             PRABoxes newbox = new PRABoxes()
             {
                 HalfExtents = new Vec3(20f, 20f, 20f),
                 Orientation = new Vec3(0m, 0m, 0m),
                 Position = new Vec3((float)_projectManager.CurrentProject.MapSize / 2, 0, (float)_projectManager.CurrentProject.MapSize / 2)
             };
-            currentTreeNode.Nodes.Add(CreatePRABoxesNodes(currentPlayerRestrictedFiles._PRABoxes.Count(), newbox));
-            currentPlayerRestrictedFiles._PRABoxes.Add(newbox);
-            currentPlayerRestrictedFiles.isDirty = true;
+            currentTreeNode.Nodes.Add(CreatePRABoxesNodes(currentPlayerRestrictedFiles.BoxesView.Count(), newbox));
+            currentPlayerRestrictedFiles.BoxesView.Add(newbox);
+            currentPlayerRestrictedFiles.IsDirty = true;
         }
         private void addNewPRASafePositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PlayerRestrictedFiles currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
             PRASafePosition newsafeposition = new PRASafePosition()
             {
                 Position = new Vec3((float)_projectManager.CurrentProject.MapSize / 2, 0, (float)_projectManager.CurrentProject.MapSize / 2)
             };
-            currentTreeNode.Nodes.Add(CreatePRASafePositionNodes(newsafeposition, currentPlayerRestrictedFiles._SafePositions3D.Count()));
-            currentPlayerRestrictedFiles._SafePositions3D.Add(newsafeposition);
-            currentPlayerRestrictedFiles.isDirty = true;
+            currentTreeNode.Nodes.Add(CreatePRASafePositionNodes(newsafeposition, currentPlayerRestrictedFiles.SafePositionsView.Count()));
+            currentPlayerRestrictedFiles.SafePositionsView.Add(newsafeposition);
+            currentPlayerRestrictedFiles.IsDirty = true;
         }
         private void removePRASelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PlayerRestrictedFiles currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFiles>();
+            PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
             if (currentTreeNode.Tag is PRABoxes prabox)
             {
-                currentPlayerRestrictedFiles._PRABoxes.Remove(prabox);
-                currentPlayerRestrictedFiles.isDirty = true;
+                currentPlayerRestrictedFiles.BoxesView.Remove(prabox);
+                currentPlayerRestrictedFiles.IsDirty = true;
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             }
             else if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
             {
-                currentPlayerRestrictedFiles._SafePositions3D.Remove(PRASafePosition);
-                currentPlayerRestrictedFiles.isDirty = true;
+                currentPlayerRestrictedFiles.SafePositionsView.Remove(PRASafePosition);
+                currentPlayerRestrictedFiles.IsDirty = true;
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             }
-            else if (currentTreeNode.Tag is PlayerRestrictedFiles PlayerRestrictedFiles)
+            else if (currentTreeNode.Tag is PlayerRestrictedFile PlayerRestrictedFiles)
             {
                 _economyManager.CFGGameplayConfig.RemovePlayerRestrictedAreaFile(PlayerRestrictedFiles);
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                PlayerRestrictedFiles.isDirty = true;
                 PlayerRestrictedFiles.ToDelete = true;
             }
         }
@@ -5226,13 +5590,14 @@ namespace EconomyPlugin
                     string newmodPath = frm.moddir.Replace("/", "\\");
                     string typesfile = frm.typesname + ".json";
                     string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
-                    ObjectSpawnerArr newfile = new ObjectSpawnerArr()
+                    ObjectSpawnerArrFile newfile = new ObjectSpawnerArrFile(newPath)
                     {
                         ModFolder = newmodPath,
-                        Objects = new BindingList<SpawnObjects>()
+                        Data = new ObjectSpawnerArrData()
+                        {
+                            Objects = new BindingList<SpawnObjects>(),
+                        }
                     };
-                    newfile.setpath(newPath);
-                    newfile.isDirty = true;
 
                     switch (openFileDialog.FilterIndex)
                     {
@@ -5252,18 +5617,18 @@ namespace EconomyPlugin
                                     scale = 1,
                                     enableCEPersistency = false
                                 };
-                                newfile.Objects.Add(newso);
+                                newfile.Data.Objects.Add(newso);
                             }
                             break;
                         case 2://.Json
-                            ObjectSpawnerArr newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArr>(File.ReadAllText(filePath));
-                            newfile.Objects = new BindingList<SpawnObjects>(newobjectspawner.Objects.Select(obj => new SpawnObjects(obj)).ToList());
+                            ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath));
+                            newfile.Data.Objects = new BindingList<SpawnObjects>(newobjectspawner.Objects.Select(obj => new SpawnObjects(obj)).ToList());
 
                             break;
                         case 3://.DZE
                             DZE importfile = DZEHelpers.LoadFile(filePath);
-                            ObjectSpawnerArr newobjectspawnerarr = importfile.convertToObjectSpawner();
-                            newfile.Objects = new BindingList<SpawnObjects>(newobjectspawnerarr.Objects.Select(obj => new SpawnObjects(obj)).ToList());
+                            ObjectSpawnerArrData newobjectspawnerarr = importfile.convertToObjectSpawner();
+                            newfile.Data.Objects = new BindingList<SpawnObjects>(newobjectspawnerarr.Objects.Select(obj => new SpawnObjects(obj)).ToList());
                             break;
                     }
                     bool added = _economyManager.CFGGameplayConfig.AddNewObjectSpawnerArrFile(newfile);
@@ -5280,10 +5645,10 @@ namespace EconomyPlugin
         }
         private void removeSelectedObjectSpawnerArrToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ObjectSpawnerArr ObjectSpawnerArr = currentTreeNode.FindParentOfType<ObjectSpawnerArr>();
+            ObjectSpawnerArrFile ObjectSpawnerArr = currentTreeNode.FindParentOfType<ObjectSpawnerArrFile>();
             _economyManager.CFGGameplayConfig.RemoveObjectSpawnerArrFile(ObjectSpawnerArr);
             RemoveTreeNodeAndEmptyParents(currentTreeNode);
-            ObjectSpawnerArr.isDirty = true;
+            ObjectSpawnerArr.IsDirty = true;
             ObjectSpawnerArr.ToDelete = true;
         }
 
@@ -5307,7 +5672,7 @@ namespace EconomyPlugin
                 Data = newdata
             };
             _economyManager.cfgeffectareaConfig.Data.Areas.Add(newArea);
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
             currentTreeNode.Nodes.Add(createeffectareanodes(newArea));
         }
         private void usePlayerDataToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5324,20 +5689,20 @@ namespace EconomyPlugin
             {
                 Tag = newPlayerData
             });
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
         }
         private void removePlayerDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Areas areas = currentTreeNode.Parent.Tag as Areas;
             areas.PlayerData = null;
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
         }
         private void removeEffectAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Areas area = currentTreeNode.Tag as Areas;
             _economyManager.cfgeffectareaConfig.Data.Areas.Remove(area);
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewSafePositionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5350,7 +5715,7 @@ namespace EconomyPlugin
                 Z = middle
             };
             _economyManager.cfgeffectareaConfig.Data._positions.Add(newpos);
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
             currentTreeNode.Nodes.Add(new TreeNode($"Position {currentTreeNode.Nodes.Count + 1} ({newpos.X}, {newpos.Z})")
             {
                 Tag = newpos
@@ -5362,7 +5727,7 @@ namespace EconomyPlugin
             cfgeffectareaSafePosition sp = currentTreeNode.Tag as cfgeffectareaSafePosition;
             _economyManager.cfgeffectareaConfig.Data._positions.Remove(sp);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _economyManager.cfgeffectareaConfig.isDirty = true;
+            
         }
 
 
@@ -5396,7 +5761,6 @@ namespace EconomyPlugin
             {
                 Tag = newpos
             });
-            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
         }
         private void removeSpawnPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5411,7 +5775,6 @@ namespace EconomyPlugin
                 playerspawnpointssection.generator_posbubbles.Remove(pos);
             }
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
         }
         private void addNewSpawnGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5434,7 +5797,6 @@ namespace EconomyPlugin
                 playerspawnpointssection.group_params.counter = -1;
             }
             playerspawnpointssection.generator_posbubbles.Add(newgroup);
-            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
         }
         private void removeSpawnGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5442,7 +5804,6 @@ namespace EconomyPlugin
             playerspawnpointsGroup group = currentTreeNode.Tag as playerspawnpointsGroup;
             playerspawnpointssection.generator_posbubbles.Remove(group);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            _economyManager.cfgplayerspawnpointsConfig.isDirty = true;
         }
 
         /// <summary>
@@ -5452,7 +5813,6 @@ namespace EconomyPlugin
         {
             ignoreType ignotrtype = currentTreeNode.Tag as ignoreType;
             _economyManager.cfgignorelistConfig.Data.type.Remove(ignotrtype);
-            _economyManager.cfgignorelistConfig.isDirty = true;
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addClassnameToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5485,8 +5845,6 @@ namespace EconomyPlugin
                         MessageBox.Show(newignoretype.name + " Allready exists.....");
                     }
                 }
-                _economyManager.cfgignorelistConfig.isDirty = true;
-
             }
             else if (result == DialogResult.Cancel)
             {
@@ -5520,7 +5878,6 @@ namespace EconomyPlugin
                         Parent.Parent.Nodes.Remove(Parent);
                 }
             }
-            _economyManager.mapgroupposConfig.isDirty = true;
         }
 
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
@@ -5530,19 +5887,11 @@ namespace EconomyPlugin
 
         private void button1_Click(object sender, EventArgs e)
         {
-            IConfigLoader IConfigLoaderFile = currentTreeNode.FindParentOfType<IConfigLoader>();
-            if (IConfigLoaderFile != null)
-            {
-                string folderPath = IConfigLoaderFile.FilePath;
-                if (!Directory.Exists(folderPath))
-                    folderPath = Path.GetDirectoryName(folderPath);
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = folderPath,
+                    FileName = _economyManager.basePath,
                     UseShellExecute = true
                 });
-
-            }
         }
 
         #region search treeview
@@ -5600,6 +5949,7 @@ namespace EconomyPlugin
             node.EnsureVisible();
         }
         #endregion search treeview
+
 
 
     }

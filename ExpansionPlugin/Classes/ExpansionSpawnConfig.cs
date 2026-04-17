@@ -5,7 +5,7 @@ using static FileService;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionSpawnConfig : ExpansionBaseIConfigLoader<ExpansionSpawnSettings>
+    public class ExpansionSpawnConfig : SingleFileConfigLoaderBase<ExpansionSpawnSettings>
     {
         public const int CurrentVersion = 7;
 
@@ -34,7 +34,7 @@ namespace ExpansionPlugin
                     foreach (var msg in issues)
                         Console.WriteLine("- " + msg);
 
-                    isDirty = true;
+                    IsDirty = true;
                 }
                 OnAfterLoad(Data);
                 ClonedData = CloneData(Data);
@@ -50,9 +50,9 @@ namespace ExpansionPlugin
             if (Data is null)
                 return Array.Empty<string>();
 
-            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                isDirty = false;
+                IsDirty = false;
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true, true);
                 ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };

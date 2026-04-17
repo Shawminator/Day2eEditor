@@ -3,60 +3,82 @@ using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfgenvironmentConfig : IConfigLoader
+    public class CfgenvironmentConfig : SingleFileConfigLoaderBase<env>
     {
-        private readonly string _path;
-        public string FileName => Path.GetFileName(_path);
-        public string FilePath => _path;
-        public env Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
-
-        public cfgenvironmentConfig(string path)
+        public CfgenvironmentConfig(string path) : base(path)
         {
-            _path = path;
         }
-
-
-        public void Load()
+        public override void Load()
         {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<env>(
-                _path,
-                createNew: () => new env(),
-                onAfterLoad: cfg =>
-                {
-                    // Add validation here if needed
-                },
-                onError: ex =>
-                {
-                    HasErrors = true;
-                    Errors.Add($"Error loading cfgenviroment file: {ex.Message}");
-                },
-                configName: "cfgenviroment"
-            );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<env>(
+                        _path,
+                        createNew: () => new env(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: "cfgenviroment"
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
-
-        public bool needToSave()
+        protected override env CreateDefaultData()
         {
-            return isDirty;
+            return new env();
+        }
+
+        protected override void OnAfterLoad(env data)
+        {
+            // Optional post-load logic
+        }
+
+        protected override IEnumerable<string> ValidateData()
+        {
+            return Enumerable.Empty<string>();
         }
     }
+
     [XmlRoot("env")]
-    public class env
+    public class env : IEquatable<env>, IDeepCloneable<env>
     {
-        private envTerritories _territories;
+        private envTerritories? _territories;
 
         [XmlElement("territories")]
         public envTerritories territories
@@ -65,423 +87,249 @@ namespace Day2eEditor
             set => _territories = value;
         }
 
-    }
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritories
-    {
-
-        private BindingList<envTerritoriesFile> fileField;
-
-        private BindingList<envTerritoriesTerritory> territoryField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("file")]
-        public BindingList<envTerritoriesFile> file
+        public bool Equals(env? other)
         {
-            get
-            {
-                return this.fileField;
-            }
-            set
-            {
-                this.fileField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Equals(territories, other.territories);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("territory")]
-        public BindingList<envTerritoriesTerritory> territory
-        {
-            get
-            {
-                return this.territoryField;
-            }
-            set
-            {
-                this.territoryField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as env);
 
-        public envTerritoriesFile GetUsableFile(string usable)
+        public env Clone()
         {
-            envTerritoriesFile etf = file.FirstOrDefault(x => Path.GetFileNameWithoutExtension(x.path) == usable);
-            return etf;
+            return new env
+            {
+                territories = territories?.Clone() ?? new envTerritories()
+            };
         }
     }
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesFile
+    public partial class envTerritories : IEquatable<envTerritories>, IDeepCloneable<envTerritories>
     {
+        [XmlElement("file")]
+        public BindingList<envTerritoriesFile> file { get; set; } = new();
+        [XmlElement("territory")]
 
-        private string pathField;
+        public BindingList<envTerritoriesTerritory> territory { get; set; } = new();
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string path
+        public envTerritoriesFile? GetUsableFile(string usable)
         {
-            get
+            return file.FirstOrDefault(x => Path.GetFileNameWithoutExtension(x.path) == usable);
+        }
+
+        public bool Equals(envTerritories? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return file.SequenceEqual(other.file) &&
+                   territory.SequenceEqual(other.territory);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as envTerritories);
+
+        public envTerritories Clone()
+        {
+            return new envTerritories
             {
-                return this.pathField;
-            }
-            set
-            {
-                this.pathField = value;
-            }
+                file = new BindingList<envTerritoriesFile>(file.Select(x => x.Clone()).ToList()),
+                territory = new BindingList<envTerritoriesTerritory>(territory.Select(x => x.Clone()).ToList())
+            };
         }
     }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesTerritory
+    public partial class envTerritoriesFile : IEquatable<envTerritoriesFile>, IDeepCloneable<envTerritoriesFile>
     {
+        [XmlAttribute]
+        public string? path { get; set; }
 
-        private envTerritoriesTerritoryFile fileField;
-
-        private BindingList<envTerritoriesTerritoryAgent> agentField;
-
-        private BindingList<envTerritoriesTerritoryItem> itemField;
-
-        private string typeField;
-
-        private string nameField;
-
-        private string behaviorField;
-
-        /// <remarks/>
-        public envTerritoriesTerritoryFile file
+        public bool Equals(envTerritoriesFile? other)
         {
-            get
-            {
-                return this.fileField;
-            }
-            set
-            {
-                this.fileField = value;
-            }
+            if (other is null) return false;
+            return string.Equals(path, other.path, StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("agent")]
-        public BindingList<envTerritoriesTerritoryAgent> agent
-        {
-            get
-            {
-                return this.agentField;
-            }
-            set
-            {
-                this.agentField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesFile);
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("item")]
-        public BindingList<envTerritoriesTerritoryItem> item
+        public envTerritoriesFile Clone()
         {
-            get
+            return new envTerritoriesFile
             {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type
-        {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
-        {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string behavior
-        {
-            get
-            {
-                return this.behaviorField;
-            }
-            set
-            {
-                this.behaviorField = value;
-            }
+                path = path
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesTerritoryFile
+    public partial class envTerritoriesTerritory : IEquatable<envTerritoriesTerritory>, IDeepCloneable<envTerritoriesTerritory>
     {
+        [XmlElement("file")]
+        public envTerritoriesTerritoryFile? file { get; set; }
 
-        private string usableField;
+        [XmlElement("agent")]
+        public BindingList<envTerritoriesTerritoryAgent> agent { get; set; } = new();
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string usable
+        [XmlElement("item")]
+        public BindingList<envTerritoriesTerritoryItem> item { get; set; } = new();
+
+        [XmlAttribute] public string? type { get; set; }
+        [XmlAttribute] public string? name { get; set; }
+        [XmlAttribute] public string? behavior { get; set; }
+
+        public bool Equals(envTerritoriesTerritory? other)
         {
-            get
+            if (other is null) return false;
+
+            return
+                Equals(file, other.file) &&
+                agent.SequenceEqual(other.agent) &&
+                item.SequenceEqual(other.item) &&
+                string.Equals(type, other.type, StringComparison.Ordinal) &&
+                string.Equals(name, other.name, StringComparison.Ordinal) &&
+                string.Equals(behavior, other.behavior, StringComparison.Ordinal);
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesTerritory);
+
+        public envTerritoriesTerritory Clone()
+        {
+            return new envTerritoriesTerritory
             {
-                return this.usableField;
-            }
-            set
-            {
-                this.usableField = value;
-            }
+                file = file?.Clone(),
+                agent = new BindingList<envTerritoriesTerritoryAgent>(agent.Select(x => x.Clone()).ToList()),
+                item = new BindingList<envTerritoriesTerritoryItem>(item.Select(x => x.Clone()).ToList()),
+                type = type,
+                name = name,
+                behavior = behavior
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesTerritoryAgent
+    public partial class envTerritoriesTerritoryFile : IEquatable<envTerritoriesTerritoryFile>, IDeepCloneable<envTerritoriesTerritoryFile>
     {
+        [XmlAttribute]
+        public string? usable { get; set; }
 
-        private envTerritoriesTerritoryAgentSpawn[] spawnField;
-
-        private envTerritoriesTerritoryAgentItem[] itemField;
-
-        private string typeField;
-
-        private int chanceField;
-
-        private bool chanceFieldSpecified;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("spawn")]
-        public envTerritoriesTerritoryAgentSpawn[] spawn
+        public bool Equals(envTerritoriesTerritoryFile? other)
         {
-            get
-            {
-                return this.spawnField;
-            }
-            set
-            {
-                this.spawnField = value;
-            }
+            if (other is null) return false;
+            return string.Equals(usable, other.usable, StringComparison.Ordinal);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("item")]
-        public envTerritoriesTerritoryAgentItem[] item
-        {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesTerritoryFile);
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type
+        public envTerritoriesTerritoryFile Clone()
         {
-            get
+            return new envTerritoriesTerritoryFile
             {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int chance
-        {
-            get
-            {
-                return this.chanceField;
-            }
-            set
-            {
-                this.chanceField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool chanceSpecified
-        {
-            get
-            {
-                return this.chanceFieldSpecified;
-            }
-            set
-            {
-                this.chanceFieldSpecified = value;
-            }
+                usable = usable
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesTerritoryAgentSpawn
+    public partial class envTerritoriesTerritoryAgent : IEquatable<envTerritoriesTerritoryAgent>, IDeepCloneable<envTerritoriesTerritoryAgent>
     {
+        [XmlElement("spawn")]
+        public envTerritoriesTerritoryAgentSpawn[]? spawn { get; set; }
+        [XmlElement("item")]
+        public envTerritoriesTerritoryAgentItem[]? item { get; set; }
 
-        private string configNameField;
+        [XmlAttribute] public string? type { get; set; }
+        [XmlAttribute] public int chance { get; set; }
 
-        private int chanceField;
+        [XmlIgnore] public bool chanceSpecified { get; set; }
 
-        private bool chanceFieldSpecified;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string configName
+        public bool Equals(envTerritoriesTerritoryAgent? other)
         {
-            get
-            {
-                return this.configNameField;
-            }
-            set
-            {
-                this.configNameField = value;
-            }
+            if (other is null) return false;
+
+            return
+                (spawn?.SequenceEqual(other.spawn ?? Array.Empty<envTerritoriesTerritoryAgentSpawn>()) ?? other.spawn == null) &&
+                (item?.SequenceEqual(other.item ?? Array.Empty<envTerritoriesTerritoryAgentItem>()) ?? other.item == null) &&
+                string.Equals(type, other.type, StringComparison.Ordinal) &&
+                chance == other.chance &&
+                chanceSpecified == other.chanceSpecified;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int chance
-        {
-            get
-            {
-                return this.chanceField;
-            }
-            set
-            {
-                this.chanceField = value;
-            }
-        }
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesTerritoryAgent);
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool chanceSpecified
+        public envTerritoriesTerritoryAgent Clone()
         {
-            get
+            return new envTerritoriesTerritoryAgent
             {
-                return this.chanceFieldSpecified;
-            }
-            set
-            {
-                this.chanceFieldSpecified = value;
-            }
+                spawn = spawn?.Select(x => x.Clone()).ToArray(),
+                item = item?.Select(x => x.Clone()).ToArray(),
+                type = type,
+                chance = chance,
+                chanceSpecified = chanceSpecified
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesTerritoryAgentItem
+    public partial class envTerritoriesTerritoryAgentSpawn : IEquatable<envTerritoriesTerritoryAgentSpawn>, IDeepCloneable<envTerritoriesTerritoryAgentSpawn>
     {
+        [XmlAttribute] public string? configName { get; set; }
+        [XmlAttribute] public int chance { get; set; }
 
-        private string nameField;
+        [XmlIgnore] public bool chanceSpecified { get; set; }
 
-        private int valField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(envTerritoriesTerritoryAgentSpawn? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+
+            return
+                string.Equals(configName, other.configName, StringComparison.Ordinal) &&
+                chance == other.chance &&
+                chanceSpecified == other.chanceSpecified;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int val
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesTerritoryAgentSpawn);
+
+        public envTerritoriesTerritoryAgentSpawn Clone()
         {
-            get
+            return new envTerritoriesTerritoryAgentSpawn
             {
-                return this.valField;
-            }
-            set
-            {
-                this.valField = value;
-            }
+                configName = configName,
+                chance = chance,
+                chanceSpecified = chanceSpecified
+            };
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class envTerritoriesTerritoryItem
+    public partial class envTerritoriesTerritoryAgentItem : IEquatable<envTerritoriesTerritoryAgentItem>, IDeepCloneable<envTerritoriesTerritoryAgentItem>
     {
+        [XmlAttribute] public string? name { get; set; }
+        [XmlAttribute] public int val { get; set; }
 
-        private string nameField;
-
-        private int valField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public bool Equals(envTerritoriesTerritoryAgentItem? other)
         {
-            get
-            {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+            if (other is null) return false;
+            return name == other.name && val == other.val;
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int val
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesTerritoryAgentItem);
+
+        public envTerritoriesTerritoryAgentItem Clone()
         {
-            get
-            {
-                return this.valField;
-            }
-            set
-            {
-                this.valField = value;
-            }
+            return new envTerritoriesTerritoryAgentItem { name = name, val = val };
+        }
+    }
+
+    public partial class envTerritoriesTerritoryItem : IEquatable<envTerritoriesTerritoryItem>, IDeepCloneable<envTerritoriesTerritoryItem>
+    {
+        [XmlAttribute] public string? name { get; set; }
+        [XmlAttribute] public int val { get; set; }
+
+        public bool Equals(envTerritoriesTerritoryItem? other)
+        {
+            if (other is null) return false;
+            return name == other.name && val == other.val;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as envTerritoriesTerritoryItem);
+
+        public envTerritoriesTerritoryItem Clone()
+        {
+            return new envTerritoriesTerritoryItem { name = name, val = val };
         }
     }
 }

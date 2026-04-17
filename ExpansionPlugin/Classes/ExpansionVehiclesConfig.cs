@@ -9,7 +9,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionVehiclesConfig: ExpansionBaseIConfigLoader<ExpansionVehicleSettings>
+    public class ExpansionVehiclesConfig : SingleFileConfigLoaderBase<ExpansionVehicleSettings>
     {
         public const int CurrentVersion = 23;
 

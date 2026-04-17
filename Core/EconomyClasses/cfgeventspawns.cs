@@ -4,410 +4,245 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Day2eEditor
 {
-    public class cfgeventspawnsConfig : IConfigLoader
+    public class cfgeventspawnsConfig : SingleFileConfigLoaderBase<eventposdef>
     {
-        public string FileName => Path.GetFileName(_path); // e.g., "types.xml"
-        public string FilePath => _path;
-        private readonly string _path;
-        public eventposdef Data { get; private set; }
-        public bool HasErrors { get; private set; }
-        public List<string> Errors { get; private set; } = new List<string>();
-        public bool isDirty { get; set; }
+        public cfgeventspawnsConfig(string path) : base(path)
+        {
+        }
 
-        public cfgeventspawnsConfig(string path)
+        public override void Load()
         {
-            _path = path;
-        }
-        public void Load()
-        {
-            Data = AppServices.GetRequired<FileService>().LoadOrCreateXml<eventposdef>(
-               _path,
-               createNew: () => new eventposdef(),
-               onAfterLoad: cfg => { /* optional: do something after load */ },
-               onError: ex =>
-               {
-                   HasErrors = true;
-                   Console.WriteLine(
-                       "Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message + "\n"
-                   );
-                   Errors.Add("Error in " + Path.GetFileName(_path) + "\n" +
-                       ex.Message + "\n" +
-                       ex.InnerException?.Message);
-               },
-               configName: "cfgeventspawns"
-           );
-        }
-        public IEnumerable<string> Save()
-        {
-            if (isDirty)
+            HasErrors = false;
+            _errors.Clear();
+
+            try
             {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateXml<eventposdef>(
+                        _path,
+                        createNew: () => new eventposdef(),
+                        onError: ex => HandleLoadError(ex),
+                        configName: "cfgeventspawns"
+                    );
+
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty)
+            {
+                ClearDirty();
                 AppServices.GetRequired<FileService>().SaveXml(_path, Data);
-                isDirty = false;
+                ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };
             }
 
             return Array.Empty<string>();
         }
 
-        public bool needToSave()
+        protected override eventposdef CreateDefaultData()
+            => new eventposdef();
+
+        protected override IEnumerable<string> ValidateData()
+            => Enumerable.Empty<string>();
+
+        public eventposdefEvent? Findevent(string eventpname)
         {
-            return isDirty;
+            return Data?.@event?.FirstOrDefault(x => x.name == eventpname);
         }
-        public eventposdefEvent Findevent(string eventpname)
+
+        public eventposdefEventPos? findeventgroup(string eventgroupname)
         {
-            foreach (eventposdefEvent _eventspawn in Data.@event)
-            {
-                if (_eventspawn.name == eventpname)
-                    return _eventspawn;
-            }
-            return null;
+            return Data?.@event?
+                .SelectMany(e => e.pos ?? new BindingList<eventposdefEventPos>())
+                .FirstOrDefault(p => p.group == eventgroupname);
         }
-        public eventposdefEventPos findeventgroup(string eventgroupname)
-        {
-            foreach (eventposdefEvent eventposdefEvent in Data.@event)
-            {
-                foreach (eventposdefEventPos eventposdefEventPos in eventposdefEvent.pos)
-                {
-                    if (eventposdefEventPos.group != null && eventposdefEventPos.group == eventgroupname)
-                    {
-                        return eventposdefEventPos;
-                    }
-                }
-            }
-            return null;
-        }
+
         public void AddNewEventSpawn(eventposdefEvent newvenspawn)
         {
+            Data.@event ??= new BindingList<eventposdefEvent>();
             Data.@event.Add(newvenspawn);
-            isDirty = true;
-        }
-    }
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class eventposdef
-    {
-        private BindingList<eventposdefEvent> eventField;
-
-        [System.Xml.Serialization.XmlElementAttribute("event")]
-        public BindingList<eventposdefEvent> @event
-        {
-            get
-            {
-                return this.eventField;
-            }
-            set
-            {
-                this.eventField = value;
-            }
+            MarkDirty();
         }
     }
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventposdefEvent
+    [XmlRoot("eventposdef")]
+    public partial class eventposdef : IEquatable<eventposdef>, IDeepCloneable<eventposdef>
     {
+        [XmlElement("event")]
+        public BindingList<eventposdefEvent> @event { get; set; } = new();
 
-        private eventposdefEventZone zoneField;
-
-        private BindingList<eventposdefEventPos> posField;
-
-        private string nameField;
-
-        /// <remarks/>
-        public eventposdefEventZone zone
+        public bool Equals(eventposdef? other)
         {
-            get
-            {
-                return this.zoneField;
-            }
-            set
-            {
-                this.zoneField = value;
-            }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return @event.SequenceEqual(other.@event);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("pos")]
-        public BindingList<eventposdefEventPos> pos
+        public override bool Equals(object? obj) => Equals(obj as eventposdef);
+
+        public eventposdef Clone()
         {
-            get
+            return new eventposdef
             {
-                return this.posField;
-            }
-            set
-            {
-                this.posField = value;
-            }
+                @event = new BindingList<eventposdefEvent>(
+                    @event.Select(x => x.Clone()).ToList())
+            };
+        }
+    }
+
+    public partial class eventposdefEvent : IEquatable<eventposdefEvent>, IDeepCloneable<eventposdefEvent>
+    {
+        [XmlElement("zone")]
+        public eventposdefEventZone? zone { get; set; }
+
+        [XmlElement("pos")]
+        public BindingList<eventposdefEventPos> pos { get; set; } = new();
+
+        [XmlAttribute] public string? name { get; set; }
+
+        public override string ToString() => name ?? string.Empty;
+
+        public bool Equals(eventposdefEvent? other)
+        {
+            if (other is null) return false;
+
+            return
+                string.Equals(name, other.name, StringComparison.Ordinal) &&
+                Equals(zone, other.zone) &&
+                pos.SequenceEqual(other.pos);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name
+        public override bool Equals(object? obj) => Equals(obj as eventposdefEvent);
+
+        public eventposdefEvent Clone()
         {
-            get
+            return new eventposdefEvent
             {
-                return this.nameField;
-            }
-            set
-            {
-                this.nameField = value;
-            }
+                name = name,
+                zone = zone?.Clone(),
+                pos = new BindingList<eventposdefEventPos>(
+                    pos.Select(x => x.Clone()).ToList())
+            };
         }
+    }
+
+    public partial class eventposdefEventZone : IEquatable<eventposdefEventZone>, IDeepCloneable<eventposdefEventZone>
+    {
+        [XmlAttribute] public int smin { get; set; }
+        [XmlAttribute] public int smax { get; set; }
+        [XmlAttribute] public int dmin { get; set; }
+        [XmlAttribute] public int dmax { get; set; }
+        [XmlAttribute] public int r { get; set; }
+
+        public bool Equals(eventposdefEventZone? other)
+        {
+            if (other is null) return false;
+
+            return smin == other.smin &&
+                   smax == other.smax &&
+                   dmin == other.dmin &&
+                   dmax == other.dmax &&
+                   r == other.r;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as eventposdefEventZone);
+
+        public eventposdefEventZone Clone()
+        {
+            return new eventposdefEventZone
+            {
+                smin = smin,
+                smax = smax,
+                dmin = dmin,
+                dmax = dmax,
+                r = r
+            };
+        }
+    }
+
+    public partial class eventposdefEventPos : IEquatable<eventposdefEventPos>, IDeepCloneable<eventposdefEventPos>
+    {
+        [XmlAttribute] public decimal x { get; set; }
+        [XmlAttribute] public decimal y { get; set; }
+        [XmlIgnore] public bool ySpecified { get; set; }
+
+        [XmlAttribute] public decimal z { get; set; }
+
+        [XmlAttribute] public decimal a { get; set; }
+        [XmlIgnore] public bool aSpecified { get; set; }
+
+        [XmlAttribute] public string? group { get; set; }
 
         public override string ToString()
         {
-            return name;
-        }
-    }
+            var parts = new List<string> { $"x={x}", $"z={z}" };
 
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventposdefEventZone
-    {
+            if (ySpecified) parts.Add($"y={y}");
+            if (aSpecified) parts.Add($"a={a}");
+            if (!string.IsNullOrEmpty(group)) parts.Add($"group={group}");
 
-        private int sminField;
-
-        private int smaxField;
-
-        private int dminField;
-
-        private int dmaxField;
-
-        private int rField;
-
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int smin
-        {
-            get
-            {
-                return this.sminField;
-            }
-            set
-            {
-                this.sminField = value;
-            }
+            return string.Join(", ", parts);
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int smax
-        {
-            get
-            {
-                return this.smaxField;
-            }
-            set
-            {
-                this.smaxField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int dmin
-        {
-            get
-            {
-                return this.dminField;
-            }
-            set
-            {
-                this.dminField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int dmax
-        {
-            get
-            {
-                return this.dmaxField;
-            }
-            set
-            {
-                this.dmaxField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int r
-        {
-            get
-            {
-                return this.rField;
-            }
-            set
-            {
-                this.rField = value;
-            }
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not eventposdefEventZone other)
-                return false;
-
-            return smin == other.smin && smax == other.smax && dmin == other.dmin && dmax == other.dmax && r == other.r;
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class eventposdefEventPos
-    {
-
-        private decimal xField;
-
-        private decimal yField;
-
-        private bool yFieldSpecified;
-
-        private decimal zField;
-
-        private decimal aField;
-
-        private bool aFieldSpecified;
-
-        private string groupField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal x
-        {
-            get
-            {
-                return this.xField;
-            }
-            set
-            {
-                this.xField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal y
-        {
-            get
-            {
-                return this.yField;
-            }
-            set
-            {
-                this.yField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ySpecified
-        {
-            get
-            {
-                return this.yFieldSpecified;
-            }
-            set
-            {
-                this.yFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal z
-        {
-            get
-            {
-                return this.zField;
-            }
-            set
-            {
-                this.zField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public decimal a
-        {
-            get
-            {
-                return this.aField;
-            }
-            set
-            {
-                this.aField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool aSpecified
-        {
-            get
-            {
-                return this.aFieldSpecified;
-            }
-            set
-            {
-                this.aFieldSpecified = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string group
-        {
-            get
-            {
-                return this.groupField;
-            }
-            set
-            {
-                this.groupField = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return x.ToString() + "," + z.ToString();
-        }
         public string ToExpansionMapString(float y, float a)
         {
-            return x.ToString() + " " + y + " " + z.ToString() + "|" + a.ToString() + " 0.0 0.0";
+            return $"{x} {y} {z}|{a} 0.0 0.0";
         }
-        public override bool Equals(object obj)
+
+        public bool Equals(eventposdefEventPos? other)
         {
-            if (ReferenceEquals(this, obj))
-                return true;
+            if (other is null) return false;
 
-            if (obj is not eventposdefEventPos other)
-                return false;
+            return
+                x == other.x &&
+                y == other.y &&
+                ySpecified == other.ySpecified &&
+                z == other.z &&
+                a == other.a &&
+                aSpecified == other.aSpecified &&
+                group == other.group;
+        }
 
-            return this.x == other.x
-                   && this.y == other.y
-                   && this.yFieldSpecified == other.yFieldSpecified
-                   && this.z == other.z
-                   && this.a == other.a
-                   && this.aFieldSpecified == other.aFieldSpecified
-                   && this.group == other.group;
+        public override bool Equals(object? obj) => Equals(obj as eventposdefEventPos);
+
+        public eventposdefEventPos Clone()
+        {
+            return new eventposdefEventPos
+            {
+                x = x,
+                y = y,
+                ySpecified = ySpecified,
+                z = z,
+                a = a,
+                aSpecified = aSpecified,
+                group = group
+            };
         }
     }
 }

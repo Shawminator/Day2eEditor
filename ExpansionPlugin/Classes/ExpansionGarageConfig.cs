@@ -9,7 +9,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionGarageConfig : ExpansionBaseIConfigLoader<ExpansionGarageSettings>
+    public class ExpansionGarageConfig : SingleFileConfigLoaderBase<ExpansionGarageSettings>
     {
         public const int CurrentVersion = 6;
 

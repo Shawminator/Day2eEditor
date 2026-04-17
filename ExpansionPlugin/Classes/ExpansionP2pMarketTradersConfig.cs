@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionP2pMarketTradersConfig : MultiFileConfigLoader<ExpansionP2PMarketTraderConfig>
+    public class ExpansionP2pMarketTradersConfig : MultiFileConfigLoaderBase<ExpansionP2PMarketTraderConfig>
     {
         public List<int> UsedIDS = new List<int>();
         public ExpansionP2pMarketTradersConfig(string path) : base(path)
@@ -91,7 +91,7 @@ namespace ExpansionPlugin
             P2PTrader.SetPath(Path.Combine(filepath, filename));
             P2PTrader.SetGuid(Guid.NewGuid());
             UsedIDS.Add((int)P2PTrader.m_TraderID);
-            Items.Add(P2PTrader);
+            MutableItems.Add(P2PTrader);
             return P2PTrader;
 
         }
@@ -103,7 +103,7 @@ namespace ExpansionPlugin
         {
             return false;
         }
-        protected override IEnumerable<string> ValidateData(ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+        protected override IEnumerable<string> ValidateItem(ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
         {
             return ExpansionP2PMarketTraderConfig.FixMissingOrInvalidFields();
         }

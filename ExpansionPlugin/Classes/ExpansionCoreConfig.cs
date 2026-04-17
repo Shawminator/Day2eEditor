@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionCoreConfig : ExpansionBaseIConfigLoader<ExpansionCoreSettings>
+    public class ExpansionCoreConfig : SingleFileConfigLoaderBase<ExpansionCoreSettings>
     {
         public const int CurrentVersion = 9;
  

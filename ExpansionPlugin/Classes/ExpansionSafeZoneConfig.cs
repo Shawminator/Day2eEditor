@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionSafeZoneConfig : ExpansionBaseIConfigLoader<ExpansionSafeZoneSettings>
+    public class ExpansionSafeZoneConfig : SingleFileConfigLoaderBase<ExpansionSafeZoneSettings>
     {
         public const int CurrentVersion = 11;
 
@@ -39,7 +39,7 @@ namespace ExpansionPlugin
                     foreach (var msg in issues)
                         Console.WriteLine("- " + msg);
 
-                    isDirty = true;
+                    IsDirty = true;
                 }
                 OnAfterLoad(Data);
                 ClonedData = CloneData(Data);
@@ -55,9 +55,9 @@ namespace ExpansionPlugin
             if (Data is null)
                 return Array.Empty<string>();
 
-            if (!AreEqual(Data, ClonedData) || isDirty == true)
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
-                isDirty = false;
+                IsDirty = false;
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
                 ClonedData = CloneData(Data);
                 return new[] { Path.GetFileName(_path) };

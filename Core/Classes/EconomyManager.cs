@@ -1,5 +1,6 @@
-﻿using DayZeLib;
+﻿
 using System.Collections.Generic;
+using System.ComponentModel;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Day2eEditor
@@ -10,23 +11,24 @@ namespace Day2eEditor
         public string basePath { get; set; }
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
+        public BindingList<EconomyWarning> WarningList { get; } = new();
 
         public economyCoreConfig eonomyCoreConfig { get; set; }
         public cfglimitsdefinitionConfig cfglimitsdefinitionConfig { get; set; }
         public cfglimitsdefinitionuserConfig cfglimitsdefinitionuserConfig { get; set; }
-        public cfgenvironmentConfig cfgenvironmentConfig { get; set; }
+        public CfgenvironmentConfig cfgenvironmentConfig { get; set; }
         public cfgeventspawnsConfig cfgeventspawnsConfig { get; set; }
         public cfgeventgroupsConfig cfgeventgroupsConfig { get; set; }
 
-        public economyConfig economyConfig { get; set; }
-        public globalsConfig globalsConfig { get; set; }
+        public EconomyConfig economyConfig { get; set; }
+        public GlobalsConfig globalsConfig { get; set; }
         public TypesConfig TypesConfig { get; set; }
-        public eventsConfig eventsConfig { get; set; }
-        public cfgspawnabletypesConfig cfgspawnabletypesConfig { get; set; }
-        public cfgrandompresetsConfig cfgrandompresetsConfig { get; set; }
+        public EventsConfig eventsConfig { get; set; }
+        public CfgSpawnableTypesConfig cfgspawnabletypesConfig { get; set; }
+        public CfgrandompresetsConfig cfgrandompresetsConfig { get; set; }
 
         public CFGGameplayConfig CFGGameplayConfig { get; set; }
-        public cfgeffectareaConfig cfgeffectareaConfig { get; set; }
+        public CfgeffectareaConfig cfgeffectareaConfig { get; set; }
         public cfgundergroundtriggersConfig cfgundergroundtriggersConfig { get; set; }
         public cfgplayerspawnpointsConfig cfgplayerspawnpointsConfig { get; set; }
         public cfgweatherConfig cfgweatherConfig { get; set; }
@@ -69,7 +71,7 @@ namespace Day2eEditor
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
         {
-            if (config is IAdvancedConfigLoader advanced)
+            if (config is IParameterizedConfigLoader parameterized)
             {
                 string vanillaPath = null;
                 List<string> modPaths = new();
@@ -95,7 +97,7 @@ namespace Day2eEditor
                     throw new InvalidOperationException($"Unknown advanced config type '{name}' or missing path.");
                 }
 
-                advanced.LoadWithParameters(basePath, vanillaPath, modPaths);
+                parameterized.Load(basePath, vanillaPath, modPaths);
             }
             else
             {
@@ -121,7 +123,7 @@ namespace Day2eEditor
             cfglimitsdefinitionuserConfig = new cfglimitsdefinitionuserConfig(_paths["cfglimitsdefinitionuser"]);
             LoadConfigWithErrorReport("cfglimitsdefinitionuser", cfglimitsdefinitionuserConfig);
 
-            cfgenvironmentConfig = new cfgenvironmentConfig(_paths["cfgenvironment"]);
+            cfgenvironmentConfig = new CfgenvironmentConfig(_paths["cfgenvironment"]);
             LoadConfigWithErrorReport("cfgenvironment", cfgenvironmentConfig);
 
             territoriesConfig = new TerritoriesConfig(_paths["territoriesConfig"]);
@@ -136,7 +138,7 @@ namespace Day2eEditor
             CFGGameplayConfig = new CFGGameplayConfig(_paths["CFGGameplay"]);
             LoadConfigWithErrorReport("CFGGameplay", CFGGameplayConfig);
 
-            cfgeffectareaConfig = new cfgeffectareaConfig(_paths["cfgeffectarea"]);
+            cfgeffectareaConfig = new CfgeffectareaConfig(_paths["cfgeffectarea"]);
             LoadConfigWithErrorReport("cfgeffectarea", cfgeffectareaConfig);
 
             cfgundergroundtriggersConfig = new cfgundergroundtriggersConfig(_paths["cfgundergroundtriggers"]);
@@ -159,29 +161,27 @@ namespace Day2eEditor
 
             Console.WriteLine($"\n**** Starting load of EconomyCore Files Including Vanilla ****");
 
-            economyConfig = new economyConfig();
+            economyConfig = new EconomyConfig(basePath);
             LoadConfigWithErrorReport("Economy", economyConfig);
 
-            globalsConfig = new globalsConfig();
+            globalsConfig = new GlobalsConfig(basePath);
             LoadConfigWithErrorReport("Globals", globalsConfig);
 
-            TypesConfig = new TypesConfig();
+            TypesConfig = new TypesConfig(basePath);
             LoadConfigWithErrorReport("Types", TypesConfig);
 
-            eventsConfig = new eventsConfig();
+            eventsConfig = new EventsConfig(basePath);
             LoadConfigWithErrorReport("Events", eventsConfig);
 
-            cfgspawnabletypesConfig = new cfgspawnabletypesConfig();
+            cfgspawnabletypesConfig = new CfgSpawnableTypesConfig(basePath);
             LoadConfigWithErrorReport("SpawnableTypes", cfgspawnabletypesConfig);
 
-            cfgrandompresetsConfig = new cfgrandompresetsConfig();
+            cfgrandompresetsConfig = new CfgrandompresetsConfig(basePath);
             LoadConfigWithErrorReport("RandomPresets", cfgrandompresetsConfig);
 
             Save();
-        }
-        public void Reset()
-        {
 
+            RebuildWarnings();
         }
         public IEnumerable<string> Save()
         {
@@ -219,7 +219,8 @@ namespace Day2eEditor
                     savedFiles.AddRange(config.Save());
                 }
             }
-
+            savedFiles.AddRange(DeleteEmptyDirectoriesFromPath(basePath));
+            RebuildWarnings();
             return savedFiles;
         }
         public bool needToSave()
@@ -253,15 +254,39 @@ namespace Day2eEditor
             {
                 if (obj is not IConfigLoader config)
                     continue;
-                if (config.needToSave())
+                if (config.NeedToSave())
                     needtosave = true;
             }
             return needtosave;
         }
+        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        {
+            var removedFolders = new List<string>();
 
+            if (!Directory.Exists(rootPath))
+                return removedFolders;
+
+            var directories = Directory
+                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Count(c =>
+                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
+                .ToList();
+
+            foreach (var dir in directories)
+            {
+                if (!Directory.EnumerateFileSystemEntries(dir).Any())
+                {
+                    Directory.Delete(dir);
+                    var relativePath = Path.GetRelativePath(rootPath, dir);
+                    removedFolders.Add("Empty Folder Removed " + relativePath);
+                }
+            }
+
+            return removedFolders;
+        }
         public void CheckallTypes(string uuname, string name)
         {
-            foreach (TypesFile ft in TypesConfig.AllData)
+            foreach (TypesFile ft in TypesConfig.MutableItems)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
                 {
@@ -269,14 +294,14 @@ namespace Day2eEditor
                     if (typeusage != null)
                     {
                         typeusage.User = name;
-                        ft.isDirty = true;
+                        ft.IsDirty = true;
                     }
                 }
             }
         }
         public void CheckallTypes(string uuname)
         {
-            foreach (TypesFile ft in TypesConfig.AllData)
+            foreach (TypesFile ft in TypesConfig.MutableItems)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
                 {
@@ -284,14 +309,14 @@ namespace Day2eEditor
                     if (typeusage != null)
                     {
                         type.Usages.Remove(typeusage);
-                        ft.isDirty = true;
+                        ft.IsDirty = true;
                     }
                 }
             }
         }
         public void CheckallTypesValues(string uuname)
         {
-            foreach (TypesFile ft in TypesConfig.AllData)
+            foreach (TypesFile ft in TypesConfig.MutableItems)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
                 {
@@ -299,14 +324,14 @@ namespace Day2eEditor
                     if (typevalue != null)
                     {
                         type.Values.Remove(typevalue);
-                        ft.isDirty = true;
+                        ft.IsDirty = true;
                     }
                 }
             }
         }
         public void CheckallTypesValues(string uuname, string name)
         {
-            foreach (TypesFile ft in TypesConfig.AllData)
+            foreach (TypesFile ft in TypesConfig.MutableItems)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
                 {
@@ -314,7 +339,7 @@ namespace Day2eEditor
                     if (typevalue != null)
                     {
                         typevalue.User = name;
-                        ft.isDirty = true;
+                        ft.IsDirty = true;
                     }
                 }
             }
@@ -325,6 +350,466 @@ namespace Day2eEditor
             checkVanillaSlotNames();
             checkVanillaCharacterClassnames();
         }
+
+
+
+        #region Warning
+        public void ClearWarnings()
+        {
+            WarningList.Clear();
+        }
+        public void AddWarning(EconomyWarning warning)
+        {
+            if (warning == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(warning.Group))
+                warning.Group = EconomyWarning.GetWarningGroup(warning.Code);
+
+            if (string.IsNullOrWhiteSpace(warning.Key))
+                warning.Key = $"{warning.Code}|{warning.SourceFile}|{warning.Message}";
+
+            bool exists = WarningList.Any(w => string.Equals(w.Key, warning.Key, StringComparison.OrdinalIgnoreCase));
+            if (!exists)
+                WarningList.Add(warning);
+        }
+        public void RebuildWarnings()
+        {
+            ClearWarnings();
+
+            CheckDuplicateTypes();
+            CheckDuplicateEvents();
+            //CheckDuplicateSpawnables();
+            //CheckDuplicateRandomPresets();
+
+            CheckEmptyFiles();
+
+            CheckTypeEntryWarnings();
+            //CheckMissingEventSpawns();
+            //CheckMissingEventGroups();
+            CheckMissingTerritoryLinks();
+            //CheckMissingObjectSpawnerFiles();
+
+            CheckUnusedEventGroups();
+            //CheckUnusedRandomPresets();
+            //CheckUnusedSpawnableTypes();
+            //CheckUnusedTerritoryFiles();
+
+            CheckCeRegistrations();
+        }
+
+        private void CheckDuplicateTypes()
+        {
+            foreach (var file in TypesConfig.MutableItems)
+            {
+                if (file.Data?.TypeList == null || file.Data.TypeList.Count == 0)
+                    continue;
+
+                var duplicates = file.Data.TypeList
+                    .GroupBy(t => t.Name, StringComparer.OrdinalIgnoreCase)
+                    .Where(g => g.Count() > 1);
+
+                foreach (var group in duplicates)
+                {
+                    foreach (var item in group)
+                    {
+                        AddWarning(new EconomyWarning
+                        {
+                            Code = WarningCode.DuplicateTypeName,
+                            Title = $"Duplicate type in {file.FileName}: {group.Key}",
+                            Message = $"Type '{group.Key}' appears multiple times in '{file.FileName}'.",
+                            SourceObject = item,
+                            RelatedObject = file,
+                            SourceFile = file.FilePath,
+                            Key = $"DuplicateTypeName|{file.FilePath}|{group.Key}"
+                        });
+                    }
+                }
+            }
+        }
+        private void CheckDuplicateEvents()
+        {
+            foreach (var file in eventsConfig.MutableItems)
+            {
+                if (file.Data?.@event == null || file.Data.@event.Count == 0)
+                    continue;
+
+                var duplicates = file.Data.@event
+                    .GroupBy(e => e.name, StringComparer.OrdinalIgnoreCase)
+                    .Where(g => g.Count() > 1);
+
+                foreach (var group in duplicates)
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.DuplicateEventName,
+                        Title = $"Duplicate event in {file.FileName}: {group.Key}",
+                        Message = $"Event '{group.Key}' appears {group.Count()} times in '{file.FileName}'.",
+                        SourceObject = file, // cleaner than per-item spam
+                        SourceFile = file.FilePath,
+                        Key = $"DuplicateEventName|{file.FilePath}|{group.Key}"
+                    });
+                }
+            }
+        }
+        private void CheckEmptyFiles()
+        {
+            foreach (var file in TypesConfig.MutableItems)
+            {
+                if (file.Data?.TypeList == null || file.Data.TypeList.Count == 0)
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.EmptyTypesFile,
+                        Title = $"Empty types file: {file.FileName}",
+                        Message = $"'{file.FileName}' contains no types.",
+                        SourceObject = file,
+                        SourceFile = file.FilePath,
+                        Key = $"EmptyTypesFile|{file.FilePath}"
+                    });
+                }
+            }
+
+            foreach (var file in eventsConfig.MutableItems)
+            {
+                if (file.Data?.@event == null || file.Data.@event.Count == 0)
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.EmptyEventsFile,
+                        Title = $"Empty events file: {file.FileName}",
+                        Message = $"'{file.FileName}' contains no events.",
+                        SourceObject = file,
+                        SourceFile = file.FilePath,
+                        Key = $"EmptyEventsFile|{file.FilePath}"
+                    });
+                }
+            }
+        }
+        private void CheckTypeEntryWarnings()
+        {
+            HashSet<string> validCategories = GetValidCategoryNames();
+            HashSet<string> validUsageFlags = GetValidUsageFlagNames();
+            HashSet<string> validValueFlags = GetValidValueFlagNames();
+            HashSet<string> validTagNames = GetValidTagNames();
+
+            foreach (var file in TypesConfig.MutableItems)
+            {
+                if (file.Data?.TypeList == null)
+                    continue;
+
+                foreach (var type in file.Data.TypeList)
+                {
+                    CheckSingleTypeEntry(file, type, validCategories, validUsageFlags, validValueFlags, validTagNames);
+                }
+            }
+        }
+        private void CheckSingleTypeEntry(
+    TypesFile file,
+    TypeEntry type,
+    HashSet<string> validCategories,
+    HashSet<string> validUsageFlags,
+    HashSet<string> validValueFlags,
+    HashSet<string> validTagNames)
+        {
+            if (type == null)
+                return;
+
+            string typeName = string.IsNullOrWhiteSpace(type.Name) ? "<unnamed>" : type.Name;
+
+            // min > nominal
+            if (type.Min > type.Nominal)
+            {
+                AddWarning(new EconomyWarning
+                {
+                    Code = WarningCode.InvalidTypeEntry,
+                    Title = $"Invalid nominal/min in {file.FileName}: {typeName}",
+                    Message = $"Type '{typeName}' has min ({type.Min}) greater than nominal ({type.Nominal}).",
+                    SourceObject = type,
+                    RelatedObject = file,
+                    SourceFile = file.FilePath,
+                    Key = $"InvalidTypeEntry|MinGreaterThanNominal|{file.FilePath}|{typeName}"
+                });
+            }
+
+            // quant min/max
+            if (type.QuantMin > type.QuantMax)
+            {
+                AddWarning(new EconomyWarning
+                {
+                    Code = WarningCode.InvalidTypeEntry,
+                    Title = $"Invalid quantity range in {file.FileName}: {typeName}",
+                    Message = $"Type '{typeName}' has quantmin ({type.QuantMin}) greater than quantmax ({type.QuantMax}).",
+                    SourceObject = type,
+                    RelatedObject = file,
+                    SourceFile = file.FilePath,
+                    Key = $"InvalidTypeEntry|QuantRange|{file.FilePath}|{typeName}"
+                });
+            }
+
+            // category
+            if (type.Category != null && !string.IsNullOrWhiteSpace(type.Category.Name))
+            {
+                if (!validCategories.Contains(type.Category.Name))
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.UnknownCategory,
+                        Title = $"Unknown category in {file.FileName}: {typeName}",
+                        Message = $"Type '{typeName}' uses category '{type.Category.Name}' which is not defined in limits definitions.",
+                        SourceObject = type,
+                        RelatedObject = file,
+                        SourceFile = file.FilePath,
+                        Key = $"UnknownCategory|{file.FilePath}|{typeName}|{type.Category.Name}"
+                    });
+                }
+            }
+
+            // usage flags
+            if (type.Usages != null)
+            {
+                foreach (var usage in type.Usages)
+                {
+                    if (string.IsNullOrWhiteSpace(usage.Name))
+                        continue;
+
+                    if (!validUsageFlags.Contains(usage.Name))
+                    {
+                        AddWarning(new EconomyWarning
+                        {
+                            Code = WarningCode.UnknownUsageFlag,
+                            Title = $"Unknown usage flag in {file.FileName}: {typeName}",
+                            Message = $"Type '{typeName}' references usage '{usage.Name}' which is not defined in limits definitions.",
+                            SourceObject = type,
+                            RelatedObject = usage,
+                            SourceFile = file.FilePath,
+                            Key = $"UnknownUsageFlag|{file.FilePath}|{typeName}|{usage.Name}"
+                        });
+                    }
+                }
+            }
+
+            // value flags
+            if (type.Values != null)
+            {
+                foreach (var value in type.Values)
+                {
+                    if (string.IsNullOrWhiteSpace(value.Name))
+                        continue;
+
+                    if (!validValueFlags.Contains(value.Name))
+                    {
+                        AddWarning(new EconomyWarning
+                        {
+                            Code = WarningCode.UnknownValueFlag,
+                            Title = $"Unknown value flag in {file.FileName}: {typeName}",
+                            Message = $"Type '{typeName}' references value '{value.Name}' which is not defined in limits definitions.",
+                            SourceObject = type,
+                            RelatedObject = value,
+                            SourceFile = file.FilePath,
+                            Key = $"UnknownValueFlag|{file.FilePath}|{typeName}|{value.Name}"
+                        });
+                    }
+                }
+            }
+
+            // tags
+            if (type.Tags != null)
+            {
+                foreach (var tag in type.Tags)
+                {
+                    if (string.IsNullOrWhiteSpace(tag.Name))
+                        continue;
+
+                    if (!validTagNames.Contains(tag.Name))
+                    {
+                        AddWarning(new EconomyWarning
+                        {
+                            Code = WarningCode.UnknownTag,
+                            Title = $"Unknown tag in {file.FileName}: {typeName}",
+                            Message = $"Type '{typeName}' references tag '{tag.Name}' which is not defined in limits definitions.",
+                            SourceObject = type,
+                            RelatedObject = tag,
+                            SourceFile = file.FilePath,
+                            Key = $"UnknownTag|{file.FilePath}|{typeName}|{tag.Name}"
+                        });
+                    }
+                }
+            }
+        }
+        private HashSet<string> GetValidCategoryNames()
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (cfglimitsdefinitionConfig?.Data?.categories != null)
+            {
+                foreach (var item in cfglimitsdefinitionConfig.Data.categories)
+                    result.Add(item.name);
+            }
+
+            return result;
+        }
+        private HashSet<string> GetValidUsageFlagNames()
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (cfglimitsdefinitionConfig?.Data?.usageflags != null)
+            {
+                foreach (var item in cfglimitsdefinitionConfig.Data.usageflags)
+                    result.Add(item.name);
+            }
+
+            if (cfglimitsdefinitionuserConfig?.Data?.usageflags != null)
+            {
+                foreach (var item in cfglimitsdefinitionuserConfig.Data.usageflags)
+                    result.Add(item.name);
+            }
+
+            return result;
+        }
+        private HashSet<string> GetValidValueFlagNames()
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (cfglimitsdefinitionConfig?.Data?.valueflags != null)
+            {
+                foreach (var item in cfglimitsdefinitionConfig.Data.valueflags)
+                    result.Add(item.name);
+            }
+
+            if (cfglimitsdefinitionuserConfig?.Data?.valueflags != null)
+            {
+                foreach (var item in cfglimitsdefinitionuserConfig.Data.valueflags)
+                    result.Add(item.name);
+            }
+
+            return result;
+        }
+        private HashSet<string> GetValidTagNames()
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (cfglimitsdefinitionConfig?.Data?.tags != null)
+            {
+                foreach (var item in cfglimitsdefinitionConfig.Data.tags)
+                    result.Add(item.name);
+            }
+
+            return result;
+        }
+        private void CheckUnusedEventGroups()
+        {
+            var usedGroups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var evtSpawn in cfgeventspawnsConfig.Data.@event)
+            {
+                if (evtSpawn.pos == null)
+                    continue;
+
+                foreach (var pos in evtSpawn.pos)
+                {
+                    if (!string.IsNullOrWhiteSpace(pos.group))
+                        usedGroups.Add(pos.group);
+                }
+            }
+
+            foreach (var group in cfgeventgroupsConfig.Data.group)
+            {
+                if (!usedGroups.Contains(group.name))
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.UnusedEventGroup,
+                        Title = $"Unused event group: {group.name}",
+                        Message = $"Event group '{group.name}' is not referenced by any event spawn position.",
+                        SourceObject = group,
+                        SourceFile = cfgeventgroupsConfig.FilePath,
+                        Key = $"UnusedEventGroup|{group.name}"
+                    });
+                }
+            }
+        }
+        private void CheckMissingTerritoryLinks()
+        {
+            if (cfgenvironmentConfig?.Data?.territories?.territory == null)
+                return;
+
+            foreach (var territoryRef in cfgenvironmentConfig.Data.territories.territory)
+            {
+                var usable = cfgenvironmentConfig.Data.territories.GetUsableFile(territoryRef.file.usable);
+
+                if (usable == null)
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.MissingTerritoryFile,
+                        Title = $"Missing usable territory file for {territoryRef.name}",
+                        Message = $"Territory '{territoryRef.name}' does not resolve to a usable file in cfgenvironment.xml.",
+                        SourceObject = territoryRef,
+                        SourceFile = cfgenvironmentConfig.FilePath,
+                        Key = $"MissingTerritoryFile|{territoryRef.name}|unresolved"
+                    });
+                    continue;
+                }
+
+                bool exists = territoriesConfig.MutableItems.Any(t =>
+                    string.Equals(Path.GetFileName(t.FilePath), Path.GetFileName(usable.path), StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(t.FileName, Path.GetFileName(usable.path), StringComparison.OrdinalIgnoreCase));
+
+                if (!exists)
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.MissingTerritoryFile,
+                        Title = $"Missing territory file: {usable.path}",
+                        Message = $"Territory '{territoryRef.name}' points to '{usable.path}', but no loaded territory file matches it.",
+                        SourceObject = territoryRef,
+                        RelatedFile = usable.path,
+                        SourceFile = cfgenvironmentConfig.FilePath,
+                        Key = $"MissingTerritoryFile|{territoryRef.name}|{usable.path}"
+                    });
+                }
+            }
+        }
+        private void CheckCeRegistrations()
+        {
+            var registered = new HashSet<string>(
+                eonomyCoreConfig.Data.ce
+                    .SelectMany(ce => ce.file.Select(f => NormalizeCeKey(ce.folder, f.name))),
+                StringComparer.OrdinalIgnoreCase);
+
+            foreach (var file in TypesConfig.MutableItems)
+            {
+                if (!file.IsModded)
+                    continue;
+
+                var key = NormalizeCeKey(file.ModFolder, file.FileName);
+                if (!registered.Contains(key))
+                {
+                    AddWarning(new EconomyWarning
+                    {
+                        Code = WarningCode.FileExistsButNotRegistered,
+                        Title = $"Unregistered CE file: {file.FileName}",
+                        Message = $"Custom file '{file.FileName}' exists but is not registered in cfgeconomycore.xml.",
+                        SourceObject = file,
+                        SourceFile = file.FilePath,
+                        Key = $"FileExistsButNotRegistered|{key}"
+                    });
+                }
+            }
+        }
+        private string NormalizeCeKey(string folder, string name)
+        {
+            folder ??= string.Empty;
+            name ??= string.Empty;
+
+            string combined = Path.Combine(folder, name)
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                .Trim();
+
+            return combined;
+        }
+        #endregion
 
         private void checkVanillaCharacterClassnames()
         {
