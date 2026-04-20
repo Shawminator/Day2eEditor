@@ -75,71 +75,98 @@ namespace Day2eEditor
 
         protected override IEnumerable<string> ValidateData()
         {
-            if (Data is null)
-                yield break;
+            var issues = new List<string>();
+            issues.AddRange(ValidateSection(Data.fresh, x => Data.fresh = x, "fresh"));
+            issues.AddRange(ValidateSection(Data.hop, x => Data.hop = x, "hop"));
+            issues.AddRange(ValidateSection(Data.travel, x => Data.travel = x, "travel"));
 
-            foreach (var issue in ValidateSection(Data.fresh, "fresh"))
-                yield return issue;
-
-            foreach (var issue in ValidateSection(Data.hop, "hop"))
-                yield return issue;
-
-            foreach (var issue in ValidateSection(Data.travel, "travel"))
-                yield return issue;
+            return issues;
         }
 
-        private static IEnumerable<string> ValidateSection(playerspawnpointssection section, string sectionName)
+        private static IEnumerable<string> ValidateSection(
+            playerspawnpointssection? section,
+            Action<playerspawnpointssection> assignSection,
+            string sectionName)
         {
-            if (section is null)
-            {
-                yield return $"Section '{sectionName}' is missing.";
-                yield break;
-            }
+            var issues = new List<string>();
 
-            if (section.spawn_params is null)
-                yield return $"Section '{sectionName}' is missing spawn_params.";
+            section = Ensure(section, assignSection, sectionName, issues);
 
-            if (section.generator_params is null)
-                yield return $"Section '{sectionName}' is missing generator_params.";
+            Ensure(section.spawn_params,
+                x => section.spawn_params = x,
+                $"{sectionName}.spawn_params",
+                issues);
 
-            if (section.group_params is null)
-                yield return $"Section '{sectionName}' is missing group_params.";
+            Ensure(section.generator_params,
+                x => section.generator_params = x,
+                $"{sectionName}.generator_params",
+                issues);
+
+            Ensure(section.group_params,
+                x => section.group_params = x,
+                $"{sectionName}.group_params",
+                issues);
+
+            var bubbles = Ensure(section.generator_posbubbles,
+                x => section.generator_posbubbles = x,
+                $"{sectionName}.generator_posbubbles",
+                issues);
 
             var groupNames = new HashSet<string>(StringComparer.Ordinal);
             int index = 0;
 
-            foreach (var item in section.generator_posbubbles)
+            foreach (var item in bubbles)
             {
                 switch (item)
                 {
                     case playerspawnpointsGroup g:
                         if (string.IsNullOrWhiteSpace(g.name))
-                            yield return $"{sectionName}.generator_posbubbles[{index}] group has a missing or empty name.";
-                        else if (!groupNames.Add(g.name))
-                            yield return $"{sectionName}.generator_posbubbles[{index}] duplicate group name '{g.name}' found.";
-
-                        for (int i = 0; i < g.pos.Count; i++)
                         {
-                            // no required validation beyond presence; coordinates are value types
-                            _ = g.pos[i];
+                            issues.Add($"{sectionName}.generator_posbubbles[{index}] group has a missing or empty name.");
                         }
+                        else if (!groupNames.Add(g.name))
+                        {
+                            issues.Add($"{sectionName}.generator_posbubbles[{index}] duplicate group name '{g.name}' found.");
+                        }
+
+                        if (g.pos is null)
+                        {
+                            g.pos = new BindingList<playerspawnpointsGroupPos>();
+                            issues.Add($"{sectionName}.generator_posbubbles[{index}].pos was missing. Created empty pos list.");
+                        }
+
                         break;
 
-                    case playerspawnpointsGroupPos p:
-                        _ = p;
+                    case playerspawnpointsGroupPos:
                         break;
 
                     case null:
-                        yield return $"{sectionName}.generator_posbubbles[{index}] contains a null item.";
+                        issues.Add($"{sectionName}.generator_posbubbles[{index}] contains a null item.");
                         break;
 
                     default:
-                        yield return $"{sectionName}.generator_posbubbles[{index}] contains unsupported type '{item.GetType().Name}'.";
+                        issues.Add($"{sectionName}.generator_posbubbles[{index}] contains unsupported type '{item.GetType().Name}'.");
                         break;
                 }
 
                 index++;
             }
+            return issues;
+        }
+        private static T Ensure<T>(
+            T? value,
+            Action<T> assign,
+            string path,
+            List<string> issues)
+            where T : class, new()
+        {
+            if (value is not null)
+                return value;
+
+            var created = new T();
+            assign(created);
+            issues.Add($"Missing {path}. Created default section.");
+            return created;
         }
     }
 
@@ -155,19 +182,19 @@ namespace Day2eEditor
 
         public playerspawnpointssection fresh
         {
-            get => _fresh ??= new playerspawnpointssection();
+            get => _fresh ;
             set => _fresh = value;
         }
 
         public playerspawnpointssection hop
         {
-            get => _hop ??= new playerspawnpointssection();
+            get => _hop ;
             set => _hop = value;
         }
 
         public playerspawnpointssection travel
         {
-            get => _travel ??= new playerspawnpointssection();
+            get => _travel ;
             set => _travel = value;
         }
 
@@ -206,19 +233,19 @@ namespace Day2eEditor
 
         public playerspawnpointsSpawn_params spawn_params
         {
-            get => _spawn_params ??= new playerspawnpointsSpawn_params();
+            get => _spawn_params;
             set => _spawn_params = value;
         }
 
         public playerspawnpointsGenerator_params generator_params
         {
-            get => _generator_params ??= new playerspawnpointsGenerator_params();
+            get => _generator_params;
             set => _generator_params = value;
         }
 
         public playerspawnpointsGroup_params group_params
         {
-            get => _group_params ??= new playerspawnpointsGroup_params();
+            get => _group_params;
             set => _group_params = value;
         }
 
@@ -457,7 +484,7 @@ namespace Day2eEditor
         [XmlElement("pos")]
         public BindingList<playerspawnpointsGroupPos> pos
         {
-            get => _pos ??= new BindingList<playerspawnpointsGroupPos>();
+            get => _pos;
             set => _pos = value;
         }
 
@@ -540,174 +567,4 @@ namespace Day2eEditor
         }
     }
 
-    [Serializable]
-    [DesignerCategory("code")]
-    [XmlType(AnonymousType = true)]
-    [XmlRoot(ElementName = "playerspawnpoints", Namespace = "", IsNullable = false)]
-    public partial class playerspawnpoints_old
-    {
-        private playerspawnpointsFresh_old? _fresh;
-        private playerspawnpointsHop_old? _hop;
-        private playerspawnpointsTravel_old? _travel;
-
-        public playerspawnpointsFresh_old fresh
-        {
-            get => _fresh ??= new playerspawnpointsFresh_old();
-            set => _fresh = value;
-        }
-
-        public playerspawnpointsHop_old hop
-        {
-            get => _hop ??= new playerspawnpointsHop_old();
-            set => _hop = value;
-        }
-
-        public playerspawnpointsTravel_old travel
-        {
-            get => _travel ??= new playerspawnpointsTravel_old();
-            set => _travel = value;
-        }
-
-        public playerspawnpoints convertToNewFormat()
-        {
-            playerspawnpoints newsp = new playerspawnpoints();
-
-            newsp.fresh.generator_params.grid_density = fresh.generator_params.grid_density;
-            newsp.fresh.generator_params.grid_width = fresh.generator_params.grid_width;
-            newsp.fresh.generator_params.grid_height = fresh.generator_params.grid_height;
-            newsp.fresh.generator_params.min_dist_static = fresh.generator_params.min_dist_static;
-            newsp.fresh.generator_params.max_dist_static = fresh.generator_params.max_dist_static;
-            newsp.fresh.generator_params.min_steepness = fresh.generator_params.min_steepness;
-            newsp.fresh.generator_params.max_dist_static = fresh.generator_params.max_dist_static;
-
-            newsp.hop.generator_params = newsp.fresh.generator_params.Clone();
-            newsp.travel.generator_params = newsp.fresh.generator_params.Clone();
-
-            newsp.fresh.spawn_params.min_dist_infected = fresh.spawn_params.min_dist_infected;
-            newsp.fresh.spawn_params.max_dist_infected = fresh.spawn_params.max_dist_infected;
-            newsp.fresh.spawn_params.min_dist_player = fresh.spawn_params.min_dist_player;
-            newsp.fresh.spawn_params.max_dist_player = fresh.spawn_params.max_dist_player;
-            newsp.fresh.spawn_params.min_dist_static = fresh.spawn_params.min_dist_static;
-            newsp.fresh.spawn_params.max_dist_static = fresh.spawn_params.max_dist_static;
-
-            newsp.hop.spawn_params = newsp.fresh.spawn_params.Clone();
-            newsp.travel.spawn_params = newsp.fresh.spawn_params.Clone();
-
-            newsp.fresh.group_params.counter = -1;
-            newsp.fresh.group_params.lifetime = 360;
-            newsp.fresh.group_params.enablegroups = true;
-
-            newsp.hop.group_params = newsp.fresh.group_params.Clone();
-            newsp.travel.group_params = newsp.fresh.group_params.Clone();
-
-            if (fresh.generator_posbubbles.Count > 0)
-            {
-                newsp.fresh.generator_posbubbles = new BindingList<object>(
-                    fresh.generator_posbubbles.Select(x => (object)x.Clone()).ToList()
-                );
-            }
-
-            if (travel != null && travel.generator_posbubbles.Count > 0)
-            {
-                newsp.travel.generator_posbubbles = new BindingList<object>(
-                    travel.generator_posbubbles.Select(x => (object)x.Clone()).ToList()
-                );
-            }
-
-            if (hop != null && hop.generator_posbubbles.Count > 0)
-            {
-                newsp.hop.generator_posbubbles = new BindingList<object>(
-                    hop.generator_posbubbles.Select(x => (object)x.Clone()).ToList()
-                );
-            }
-
-            return newsp;
-        }
-    }
-
-    [Serializable]
-    [DesignerCategory("code")]
-    [XmlType(AnonymousType = true)]
-    public partial class playerspawnpointsFresh_old
-    {
-        private playerspawnpointsFreshSpawn_params_old? _spawn_params;
-        private playerspawnpointsFreshGenerator_params_old? _generator_params;
-        private BindingList<playerspawnpointsGroupPos>? _generator_posbubbles;
-
-        public playerspawnpointsFreshSpawn_params_old spawn_params
-        {
-            get => _spawn_params ??= new playerspawnpointsFreshSpawn_params_old();
-            set => _spawn_params = value;
-        }
-
-        public playerspawnpointsFreshGenerator_params_old generator_params
-        {
-            get => _generator_params ??= new playerspawnpointsFreshGenerator_params_old();
-            set => _generator_params = value;
-        }
-
-        [XmlArrayItem("pos", IsNullable = false)]
-        public BindingList<playerspawnpointsGroupPos> generator_posbubbles
-        {
-            get => _generator_posbubbles ??= new BindingList<playerspawnpointsGroupPos>();
-            set => _generator_posbubbles = value;
-        }
-    }
-
-    [Serializable]
-    [DesignerCategory("code")]
-    [XmlType(AnonymousType = true)]
-    public partial class playerspawnpointsFreshSpawn_params_old
-    {
-        public decimal min_dist_infected { get; set; }
-        public decimal max_dist_infected { get; set; }
-        public decimal min_dist_player { get; set; }
-        public decimal max_dist_player { get; set; }
-        public decimal min_dist_static { get; set; }
-        public decimal max_dist_static { get; set; }
-    }
-
-    [Serializable]
-    [DesignerCategory("code")]
-    [XmlType(AnonymousType = true)]
-    public partial class playerspawnpointsFreshGenerator_params_old
-    {
-        public decimal grid_density { get; set; }
-        public decimal grid_width { get; set; }
-        public decimal grid_height { get; set; }
-        public decimal min_dist_static { get; set; }
-        public decimal max_dist_static { get; set; }
-        public decimal min_steepness { get; set; }
-        public decimal max_steepness { get; set; }
-    }
-
-    [Serializable]
-    [DesignerCategory("code")]
-    [XmlType(AnonymousType = true)]
-    public partial class playerspawnpointsHop_old
-    {
-        private BindingList<playerspawnpointsGroupPos>? _generator_posbubbles;
-
-        [XmlArrayItem("pos", IsNullable = false)]
-        public BindingList<playerspawnpointsGroupPos> generator_posbubbles
-        {
-            get => _generator_posbubbles ??= new BindingList<playerspawnpointsGroupPos>();
-            set => _generator_posbubbles = value;
-        }
-    }
-
-    [Serializable]
-    [DesignerCategory("code")]
-    [XmlType(AnonymousType = true)]
-    public partial class playerspawnpointsTravel_old
-    {
-        private BindingList<playerspawnpointsGroupPos>? _generator_posbubbles;
-
-        [XmlArrayItem("pos", IsNullable = false)]
-        public BindingList<playerspawnpointsGroupPos> generator_posbubbles
-        {
-            get => _generator_posbubbles ??= new BindingList<playerspawnpointsGroupPos>();
-            set => _generator_posbubbles = value;
-        }
-    }
 }

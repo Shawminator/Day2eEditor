@@ -83,7 +83,7 @@ namespace Day2eEditor
         [XmlElement("territories")]
         public envTerritories territories
         {
-            get => _territories ??= new envTerritories();
+            get => _territories;
             set => _territories = value;
         }
 
@@ -108,10 +108,10 @@ namespace Day2eEditor
     public partial class envTerritories : IEquatable<envTerritories>, IDeepCloneable<envTerritories>
     {
         [XmlElement("file")]
-        public BindingList<envTerritoriesFile> file { get; set; } = new();
+        public BindingList<envTerritoriesFile> file { get; set; }
         [XmlElement("territory")]
 
-        public BindingList<envTerritoriesTerritory> territory { get; set; } = new();
+        public BindingList<envTerritoriesTerritory> territory { get; set; }
 
         public envTerritoriesFile? GetUsableFile(string usable)
         {
@@ -166,10 +166,10 @@ namespace Day2eEditor
         public envTerritoriesTerritoryFile? file { get; set; }
 
         [XmlElement("agent")]
-        public BindingList<envTerritoriesTerritoryAgent> agent { get; set; } = new();
+        public BindingList<envTerritoriesTerritoryAgent> agent { get; set; }
 
         [XmlElement("item")]
-        public BindingList<envTerritoriesTerritoryItem> item { get; set; } = new();
+        public BindingList<envTerritoriesTerritoryItem> item { get; set; }
 
         [XmlAttribute] public string? type { get; set; }
         [XmlAttribute] public string? name { get; set; }

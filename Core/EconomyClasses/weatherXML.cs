@@ -19,7 +19,7 @@ namespace Day2eEditor
                 Data = AppServices.GetRequired<FileService>()
                     .LoadOrCreateXml<weather>(
                         _path,
-                        createNew: () => new weather(),
+                        createNew: () => CreateDefaultData(),
                         onError: ex =>
                         {
                             HandleLoadError(ex);
@@ -74,16 +74,61 @@ namespace Day2eEditor
 
         protected override IEnumerable<string> ValidateData()
         {
-            if (Data is null)
-                yield break;
+            var issues = new List<string>();
 
-            if (Data.overcast is null) yield return "Missing overcast section.";
-            if (Data.fog is null) yield return "Missing fog section.";
-            if (Data.rain is null) yield return "Missing rain section.";
-            if (Data.windMagnitude is null) yield return "Missing windMagnitude section.";
-            if (Data.windDirection is null) yield return "Missing windDirection section.";
-            if (Data.snowfall is null) yield return "Missing snowfall section.";
-            if (Data.storm is null) yield return "Missing storm section.";
+            var overcast = Ensure(Data.overcast, x => Data.overcast = x, "overcast", issues);
+            Ensure(overcast.current, x => overcast.current = x, "overcast/current", issues);
+            Ensure(overcast.limits, x => overcast.limits = x, "overcast/limits", issues);
+            Ensure(overcast.timelimits, x => overcast.timelimits = x, "overcast/timelimits", issues);
+            Ensure(overcast.changelimits, x => overcast.changelimits = x, "overcast/changelimits", issues);
+
+            var fog = Ensure(Data.fog, x => Data.fog = x, "fog", issues);
+            Ensure(fog.current, x => fog.current = x, "fog/current", issues);
+            Ensure(fog.limits, x => fog.limits = x, "fog/limits", issues);
+            Ensure(fog.timelimits, x => fog.timelimits = x, "fog/timelimits", issues);
+            Ensure(fog.changelimits, x => fog.changelimits = x, "fog/changelimits", issues);
+
+            var rain = Ensure(Data.rain, x => Data.rain = x, "rain", issues);
+            Ensure(rain.current, x => rain.current = x, "rain/current", issues);
+            Ensure(rain.limits, x => rain.limits = x, "rain/limits", issues);
+            Ensure(rain.timelimits, x => rain.timelimits = x, "rain/timelimits", issues);
+            Ensure(rain.changelimits, x => rain.changelimits = x, "rain/changelimits", issues);
+            Ensure(rain.thresholds, x => rain.thresholds = x, "rain/thresholds", issues);
+
+            var windMagnitude = Ensure(Data.windMagnitude, x => Data.windMagnitude = x, "windMagnitude", issues);
+            Ensure(windMagnitude.current, x => windMagnitude.current = x, "windMagnitude/current", issues);
+            Ensure(windMagnitude.limits, x => windMagnitude.limits = x, "windMagnitude/limits", issues);
+            Ensure(windMagnitude.timelimits, x => windMagnitude.timelimits = x, "windMagnitude/timelimits", issues);
+            Ensure(windMagnitude.changelimits, x => windMagnitude.changelimits = x, "windMagnitude/changelimits", issues);
+
+            var windDirection = Ensure(Data.windDirection, x => Data.windDirection = x, "windDirection", issues);
+            Ensure(windDirection.current, x => windDirection.current = x, "windDirection/current", issues);
+            Ensure(windDirection.limits, x => windDirection.limits = x, "windDirection/limits", issues);
+            Ensure(windDirection.timelimits, x => windDirection.timelimits = x, "windDirection/timelimits", issues);
+            Ensure(windDirection.changelimits, x => windDirection.changelimits = x, "windDirection/changelimits", issues);
+
+            var snowfall = Ensure(Data.snowfall, x => Data.snowfall = x, "snowfall", issues);
+            Ensure(snowfall.current, x => snowfall.current = x, "snowfall/current", issues);
+            Ensure(snowfall.limits, x => snowfall.limits = x, "snowfall/limits", issues);
+            Ensure(snowfall.timelimits, x => snowfall.timelimits = x, "snowfall/timelimits", issues);
+            Ensure(snowfall.changelimits, x => snowfall.changelimits = x, "snowfall/changelimits", issues);
+            Ensure(snowfall.thresholds, x => snowfall.thresholds = x, "snowfall/thresholds", issues);
+
+            Ensure(Data.storm, x => Data.storm = x, "storm", issues);
+
+            return issues;
+        }
+
+        private static T Ensure<T>(T? value, Action<T> assign, string path, List<string> issues)
+            where T : class, new()
+        {
+            if (value is not null)
+                return value;
+
+            var created = new T();
+            assign(created);
+            issues.Add($"Missing {path} section. Created default section.");
+            return created;
         }
     }
 
@@ -109,37 +154,37 @@ namespace Day2eEditor
 
         public weatherFog fog
         {
-            get => _fog ??= new weatherFog();
+            get => _fog;
             set => _fog = value;
         }
 
         public weatherRain rain
         {
-            get => _rain ??= new weatherRain();
+            get => _rain;
             set => _rain = value;
         }
 
         public weatherWindMagnitude windMagnitude
         {
-            get => _windMagnitude ??= new weatherWindMagnitude();
+            get => _windMagnitude;
             set => _windMagnitude = value;
         }
 
         public weatherWindDirection windDirection
         {
-            get => _windDirection ??= new weatherWindDirection();
+            get => _windDirection;
             set => _windDirection = value;
         }
 
         public weatherSnowfall snowfall
         {
-            get => _snowfall ??= new weatherSnowfall();
+            get => _snowfall;
             set => _snowfall = value;
         }
 
         public weatherStorm storm
         {
-            get => _storm ??= new weatherStorm();
+            get => _storm;
             set => _storm = value;
         }
 
@@ -198,25 +243,25 @@ namespace Day2eEditor
 
         public weatherOvercastCurrent current
         {
-            get => _current ??= new weatherOvercastCurrent();
+            get => _current;
             set => _current = value;
         }
 
         public weatherOvercastLimits limits
         {
-            get => _limits ??= new weatherOvercastLimits();
+            get => _limits;
             set => _limits = value;
         }
 
         public weatherOvercastTimelimits timelimits
         {
-            get => _timelimits ??= new weatherOvercastTimelimits();
+            get => _timelimits;
             set => _timelimits = value;
         }
 
         public weatherOvercastChangelimits changelimits
         {
-            get => _changelimits ??= new weatherOvercastChangelimits();
+            get => _changelimits;
             set => _changelimits = value;
         }
 
@@ -367,25 +412,25 @@ namespace Day2eEditor
 
         public weatherFogCurrent current
         {
-            get => _current ??= new weatherFogCurrent();
+            get => _current;
             set => _current = value;
         }
 
         public weatherFogLimits limits
         {
-            get => _limits ??= new weatherFogLimits();
+            get => _limits;
             set => _limits = value;
         }
 
         public weatherFogTimelimits timelimits
         {
-            get => _timelimits ??= new weatherFogTimelimits();
+            get => _timelimits;
             set => _timelimits = value;
         }
 
         public weatherFogChangelimits changelimits
         {
-            get => _changelimits ??= new weatherFogChangelimits();
+            get => _changelimits;
             set => _changelimits = value;
         }
 
@@ -537,31 +582,31 @@ namespace Day2eEditor
 
         public weatherRainCurrent current
         {
-            get => _current ??= new weatherRainCurrent();
+            get => _current;
             set => _current = value;
         }
 
         public weatherRainLimits limits
         {
-            get => _limits ??= new weatherRainLimits();
+            get => _limits;
             set => _limits = value;
         }
 
         public weatherRainTimelimits timelimits
         {
-            get => _timelimits ??= new weatherRainTimelimits();
+            get => _timelimits;
             set => _timelimits = value;
         }
 
         public weatherRainChangelimits changelimits
         {
-            get => _changelimits ??= new weatherRainChangelimits();
+            get => _changelimits;
             set => _changelimits = value;
         }
 
         public weatherRainThresholds thresholds
         {
-            get => _thresholds ??= new weatherRainThresholds();
+            get => _thresholds;
             set => _thresholds = value;
         }
 
@@ -742,25 +787,25 @@ namespace Day2eEditor
 
         public weatherWindMagnitudeCurrent current
         {
-            get => _current ??= new weatherWindMagnitudeCurrent();
+            get => _current ;
             set => _current = value;
         }
 
         public weatherWindMagnitudeLimits limits
         {
-            get => _limits ??= new weatherWindMagnitudeLimits();
+            get => _limits;
             set => _limits = value;
         }
 
         public weatherWindMagnitudeTimelimits timelimits
         {
-            get => _timelimits ??= new weatherWindMagnitudeTimelimits();
+            get => _timelimits;
             set => _timelimits = value;
         }
 
         public weatherWindMagnitudeChangelimits changelimits
         {
-            get => _changelimits ??= new weatherWindMagnitudeChangelimits();
+            get => _changelimits;
             set => _changelimits = value;
         }
 
@@ -911,25 +956,25 @@ namespace Day2eEditor
 
         public weatherWindDirectionCurrent current
         {
-            get => _current ??= new weatherWindDirectionCurrent();
+            get => _current;
             set => _current = value;
         }
 
         public weatherWindDirectionLimits limits
         {
-            get => _limits ??= new weatherWindDirectionLimits();
+            get => _limits;
             set => _limits = value;
         }
 
         public weatherWindDirectionTimelimits timelimits
         {
-            get => _timelimits ??= new weatherWindDirectionTimelimits();
+            get => _timelimits;
             set => _timelimits = value;
         }
 
         public weatherWindDirectionChangelimits changelimits
         {
-            get => _changelimits ??= new weatherWindDirectionChangelimits();
+            get => _changelimits;
             set => _changelimits = value;
         }
 
@@ -1081,31 +1126,31 @@ namespace Day2eEditor
 
         public weatherSnowfallCurrent current
         {
-            get => _current ??= new weatherSnowfallCurrent();
+            get => _current ;
             set => _current = value;
         }
 
         public weatherSnowfallLimits limits
         {
-            get => _limits ??= new weatherSnowfallLimits();
+            get => _limits;
             set => _limits = value;
         }
 
         public weatherSnowfallTimelimits timelimits
         {
-            get => _timelimits ??= new weatherSnowfallTimelimits();
+            get => _timelimits;
             set => _timelimits = value;
         }
 
         public weatherSnowfallChangelimits changelimits
         {
-            get => _changelimits ??= new weatherSnowfallChangelimits();
+            get => _changelimits ;
             set => _changelimits = value;
         }
 
         public weatherSnowfallThresholds thresholds
         {
-            get => _thresholds ??= new weatherSnowfallThresholds();
+            get => _thresholds;
             set => _thresholds = value;
         }
 

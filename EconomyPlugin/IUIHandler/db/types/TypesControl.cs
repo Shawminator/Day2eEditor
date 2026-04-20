@@ -204,7 +204,8 @@ namespace EconomyPlugin
             if (typeQuantMINNUD.Visible = QuanMinCB.Checked = _currentdata.QuantMinSpecified)
                 typeQuantMINNUD.Value = (decimal)_currentdata.QuantMin;
             if (typeQuantMAXNUD.Visible = QuanMaxCB.Checked = _currentdata.QuantMaxSpecified)
-                if (typeCostNUD.Visible = costCB.Checked = _currentdata.CostSpecified)
+                typeQuantMAXNUD.Value = (decimal)_currentdata.QuantMax;
+            if (typeCostNUD.Visible = costCB.Checked = _currentdata.CostSpecified)
                     typeCostNUD.Value = (decimal)_currentdata.Cost;
         }
         private void populateUsage()

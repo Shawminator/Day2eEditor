@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -94,46 +95,344 @@ namespace Day2eEditor
 
             OnAfterLoadAll();
         }
+
         protected override TypesFile LoadItem(string filePath)
         {
             var item = new TypesFile(filePath);
-            var loadFailed = false;
 
-            item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
-                filePath,
-                createNew: () => new Types
+            try
+            {
+                item.Data = LoadTypesXmlCustom(filePath, item);
+            }
+            catch (Exception ex)
+            {
+                item.HasErrors = true;
+
+                var message = $"Error in {Path.GetFileName(filePath)}{Environment.NewLine}{FlattenExceptionMessages(ex)}";
+                Console.WriteLine(message + Environment.NewLine);
+                item.Errors.Add(message);
+
+                item.Data = new Types
                 {
                     TypeList = new BindingList<TypeEntry>()
-                },
-                onError: ex =>
-                {
-                    loadFailed = true;
-                    item.HasErrors = true;
-
-                    var message =
-                        $"Error in {Path.GetFileName(filePath)}\n{ex.Message}\n{ex.InnerException?.Message}";
-
-                    Console.WriteLine(message + "\n");
-                    item.Errors.Add(message);
-                },
-                configName: "Types"
-            );
+                };
+            }
 
             item.Data.TypeList ??= new BindingList<TypeEntry>();
             item.SetPath(filePath);
             item.SetGuid(Guid.NewGuid());
 
-            if (!loadFailed)
-            {
-                ValidateLoadedTypes(item, item.Data);
-            }
+            ValidateLoadedTypes(item, item.Data);
 
             return item;
         }
+
+        private Types LoadTypesXmlCustom(string filePath, TypesFile owner)
+        {
+            if (!File.Exists(filePath))
+            {
+                return new Types
+                {
+                    TypeList = new BindingList<TypeEntry>()
+                };
+            }
+
+            var doc = XDocument.Load(filePath, LoadOptions.SetLineInfo);
+
+            var result = new Types
+            {
+                TypeList = new BindingList<TypeEntry>()
+            };
+
+            if (doc.Root == null)
+            {
+                owner.HasErrors = true;
+                owner.Errors.Add("XML root element is missing.");
+                return result;
+            }
+
+            if (!string.Equals(doc.Root.Name.LocalName, "types", StringComparison.OrdinalIgnoreCase))
+            {
+                owner.HasErrors = true;
+                owner.Errors.Add($"Root element must be 'types' but was '{doc.Root.Name.LocalName}'.");
+            }
+
+            foreach (var typeElement in doc.Root.Elements("type"))
+            {
+                try
+                {
+                    var entry = ParseTypeEntry(typeElement, owner);
+                    result.TypeList.Add(entry);
+                }
+                catch (Exception ex)
+                {
+                    var typeName = typeElement.Attribute("name")?.Value ?? "UnknownType";
+                    AddTypeError(owner, typeName, $"Failed to parse type entry. {FlattenExceptionMessages(ex)}{GetLineInfo(typeElement)}");
+                }
+            }
+
+            return result;
+        }
+
+        private TypeEntry ParseTypeEntry(XElement typeElement, TypesFile owner)
+        {
+            var entry = new TypeEntry();
+
+            entry.Name = GetAttributeValue(typeElement, "name");
+            entry.NameSpecified = !string.IsNullOrWhiteSpace(entry.Name);
+
+            if (!entry.NameSpecified)
+            {
+                AddTypeError(owner, "UnknownType", $"Attribute 'name' is missing or empty on element 'type'.{GetLineInfo(typeElement)}");
+            }
+
+            var typeName = entry.Name ?? "UnknownType";
+
+            entry.Nominal = GetNullableIntElement(typeElement, "nominal", owner, typeName);
+            entry.NominalSpecified = entry.Nominal.HasValue;
+
+            entry.Lifetime = GetNullableIntElement(typeElement, "lifetime", owner, typeName);
+            entry.LifetimeSpecified = entry.Lifetime.HasValue;
+
+            entry.Restock = GetNullableIntElement(typeElement, "restock", owner, typeName);
+            entry.RestockSpecified = entry.Restock.HasValue;
+
+            entry.Min = GetNullableIntElement(typeElement, "min", owner, typeName);
+            entry.MinSpecified = entry.Min.HasValue;
+
+            entry.QuantMin = GetNullableIntElement(typeElement, "quantmin", owner, typeName);
+            entry.QuantMinSpecified = entry.QuantMin.HasValue;
+
+            entry.QuantMax = GetNullableIntElement(typeElement, "quantmax", owner, typeName);
+            entry.QuantMaxSpecified = entry.QuantMax.HasValue;
+
+            entry.Cost = GetNullableIntElement(typeElement, "cost", owner, typeName);
+            entry.CostSpecified = entry.Cost.HasValue;
+
+            entry.Flags = ParseFlags(typeElement.Element("flags"), owner, typeName);
+            entry.Category = ParseCategory(typeElement.Element("category"), owner, typeName);
+            entry.Usages = ParseUsages(typeElement.Elements("usage"), owner, typeName);
+            entry.Tags = ParseTags(typeElement.Elements("tag"), owner, typeName);
+            entry.Values = ParseValues(typeElement.Elements("value"), owner, typeName);
+
+            return entry;
+        }
+
+        private Flags? ParseFlags(XElement? flagsElement, TypesFile owner, string typeName)
+        {
+            if (flagsElement == null)
+                return null;
+
+            return new Flags
+            {
+                count_in_cargo = GetIntAttributeOrDefault(flagsElement, "count_in_cargo", owner, typeName),
+                count_in_hoarder = GetIntAttributeOrDefault(flagsElement, "count_in_hoarder", owner, typeName),
+                count_in_map = GetIntAttributeOrDefault(flagsElement, "count_in_map", owner, typeName),
+                count_in_player = GetIntAttributeOrDefault(flagsElement, "count_in_player", owner, typeName),
+                crafted = GetIntAttributeOrDefault(flagsElement, "crafted", owner, typeName),
+                deloot = GetIntAttributeOrDefault(flagsElement, "deloot", owner, typeName)
+            };
+        }
+
+        private Category? ParseCategory(XElement? categoryElement, TypesFile owner, string typeName)
+        {
+            if (categoryElement == null)
+                return null;
+
+            var name = GetAttributeValue(categoryElement, "name");
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                AddTypeError(owner, typeName, $"Attribute 'name' on element 'category' is missing or empty.{GetLineInfo(categoryElement)}");
+                return null;
+            }
+
+            return new Category
+            {
+                Name = name,
+                NameSpecified = true
+            };
+        }
+
+        private BindingList<Usage> ParseUsages(IEnumerable<XElement> usageElements, TypesFile owner, string typeName)
+        {
+            var list = new BindingList<Usage>();
+
+            foreach (var el in usageElements)
+            {
+                var usage = new Usage();
+
+                var name = GetAttributeValue(el, "name");
+                var user = GetAttributeValue(el, "user");
+
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    usage.Name = name;
+                    usage.NameSpecified = true;
+                }
+
+                if (!string.IsNullOrWhiteSpace(user))
+                {
+                    usage.User = user;
+                    usage.UserSpecified = true;
+                }
+
+                if (!usage.NameSpecified && !usage.UserSpecified)
+                {
+                    AddTypeError(owner, typeName, $"Element 'usage' must contain either a non-empty 'name' or 'user' attribute.{GetLineInfo(el)}");
+                }
+
+                list.Add(usage);
+            }
+
+            return list;
+        }
+
+        private BindingList<Tag> ParseTags(IEnumerable<XElement> tagElements, TypesFile owner, string typeName)
+        {
+            var list = new BindingList<Tag>();
+
+            foreach (var el in tagElements)
+            {
+                var tag = new Tag();
+                var name = GetAttributeValue(el, "name");
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    AddTypeError(owner, typeName, $"Element 'tag' must contain a non-empty 'name' attribute.{GetLineInfo(el)}");
+                }
+                else
+                {
+                    tag.Name = name;
+                    tag.NameSpecified = true;
+                }
+
+                list.Add(tag);
+            }
+
+            return list;
+        }
+
+        private BindingList<Value> ParseValues(IEnumerable<XElement> valueElements, TypesFile owner, string typeName)
+        {
+            var list = new BindingList<Value>();
+
+            foreach (var el in valueElements)
+            {
+                var value = new Value();
+
+                var name = GetAttributeValue(el, "name");
+                var user = GetAttributeValue(el, "user");
+
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    value.Name = name;
+                    value.NameSpecified = true;
+                }
+
+                if (!string.IsNullOrWhiteSpace(user))
+                {
+                    value.User = user;
+                    value.UserSpecified = true;
+                }
+
+                if (!value.NameSpecified && !value.UserSpecified)
+                {
+                    AddTypeError(owner, typeName, $"Element 'value' must contain either a non-empty 'name' or 'user' attribute.{GetLineInfo(el)}");
+                }
+
+                list.Add(value);
+            }
+
+            return list;
+        }
+
+        private int? GetNullableIntElement(XElement parent, string elementName, TypesFile owner, string typeName)
+        {
+            var el = parent.Element(elementName);
+            if (el == null)
+                return null;
+
+            var raw = el.Value?.Trim();
+
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                AddTypeError(owner, typeName, $"Element '{elementName}' is empty but requires an integer value.{GetLineInfo(el)}");
+                return null;
+            }
+
+            if (!int.TryParse(raw, out var value))
+            {
+                AddTypeError(owner, typeName, $"Element '{elementName}' has invalid integer value '{raw}'.{GetLineInfo(el)}");
+                return null;
+            }
+
+            return value;
+        }
+
+        private int GetIntAttributeOrDefault(XElement element, string attributeName, TypesFile owner, string typeName, int defaultValue = 0)
+        {
+            var attr = element.Attribute(attributeName);
+            if (attr == null)
+                return defaultValue;
+
+            var raw = attr.Value?.Trim();
+
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                AddTypeError(owner, typeName, $"Attribute '{attributeName}' on element '{element.Name.LocalName}' is empty but requires an integer value.{GetLineInfo(attr)}");
+                return defaultValue;
+            }
+
+            if (!int.TryParse(raw, out var value))
+            {
+                AddTypeError(owner, typeName, $"Attribute '{attributeName}' on element '{element.Name.LocalName}' has invalid integer value '{raw}'.{GetLineInfo(attr)}");
+                return defaultValue;
+            }
+
+            return value;
+        }
+
+        private static string? GetAttributeValue(XElement element, string attributeName)
+        {
+            return element.Attribute(attributeName)?.Value;
+        }
+
+        private void AddTypeError(TypesFile owner, string typeName, string message)
+        {
+            owner.HasErrors = true;
+            owner.Errors.Add($"[{typeName}] {message}");
+        }
+
+        private static string GetLineInfo(XObject node)
+        {
+            if (node is IXmlLineInfo li && li.HasLineInfo())
+                return $" Line {li.LineNumber}, position {li.LinePosition}.";
+
+            return string.Empty;
+        }
+
+        private static string FlattenExceptionMessages(Exception ex)
+        {
+            var messages = new List<string>();
+            var current = ex;
+
+            while (current != null)
+            {
+                if (!string.IsNullOrWhiteSpace(current.Message) && !messages.Contains(current.Message))
+                    messages.Add(current.Message);
+
+                current = current.InnerException;
+            }
+
+            return string.Join(Environment.NewLine, messages);
+        }
+
         protected override IEnumerable<string> ValidateItem(TypesFile item)
         {
             return item.Errors;
         }
+
         public override IEnumerable<string> Save()
         {
             var saved = new List<string>();
@@ -206,12 +505,16 @@ namespace Day2eEditor
             AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
             item.IsDirty = false;
         }
+
         protected override string GetItemFileName(TypesFile item)
-                    => item.FileName;
+            => item.FileName;
+
         protected override Guid GetID(TypesFile item)
             => item.Id;
+
         protected override bool ShouldDelete(TypesFile item)
             => item.ToDelete;
+
         protected override void DeleteItemFile(TypesFile item)
         {
             if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
@@ -219,18 +522,21 @@ namespace Day2eEditor
                 File.Delete(item.FilePath);
             }
         }
+
         protected override void HandleItemError(string path, Exception ex)
         {
             var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
             _errors.Add(msg);
             Console.WriteLine(msg);
         }
+
         public TypeEntry? GetTypeByName(string name)
         {
             return Items
                 .SelectMany(tf => tf.Data.TypeList)
                 .LastOrDefault(te => te.Name == name);
         }
+
         public List<TypeEntry> SearchTypes(string searchTerm, bool exact = false)
         {
             var query = Items.SelectMany(tf => tf.Data.TypeList);
@@ -247,6 +553,7 @@ namespace Day2eEditor
                              te.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
+
         private void ValidateLoadedTypes(TypesFile item, Types cfg)
         {
             foreach (var type in cfg.TypeList)
@@ -254,6 +561,7 @@ namespace Day2eEditor
                 CheckPropertiesRecursively(item, type, type?.Name ?? "UnknownEntry");
             }
         }
+
         private void CheckPropertiesRecursively(TypesFile owner, object obj, string topTypeName)
         {
             if (obj == null)
@@ -308,31 +616,6 @@ namespace Day2eEditor
                     }
                 }
             }
-        }
-        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
-        {
-            var removedFolders = new List<string>();
-
-            if (!Directory.Exists(rootPath))
-                return removedFolders;
-
-            var directories = Directory
-                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
-                .OrderByDescending(d => d.Count(c =>
-                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
-                .ToList();
-
-            foreach (var dir in directories)
-            {
-                if (!Directory.EnumerateFileSystemEntries(dir).Any())
-                {
-                    Directory.Delete(dir);
-                    var relativePath = Path.GetRelativePath(rootPath, dir);
-                    removedFolders.Add("Empty Folder Removed " + relativePath);
-                }
-            }
-
-            return removedFolders;
         }
     }
     public class TypesFile : IDeepCloneable<TypesFile>, IEquatable<TypesFile>
@@ -477,25 +760,25 @@ namespace Day2eEditor
         private string? _name;
         private bool _nameSpecified;
 
-        private int _nominal;
+        private int? _nominal;
         private bool _nominalSpecified;
 
-        private int _lifetime;
+        private int? _lifetime;
         private bool _lifetimeSpecified;
 
-        private int _restock;
+        private int? _restock;
         private bool _restockSpecified;
 
-        private int _min;
+        private int? _min;
         private bool _minSpecified;
 
-        private int _quantMin;
+        private int? _quantMin;
         private bool _quantMinSpecified;
 
-        private int _quantMax;
+        private int? _quantMax;
         private bool _quantMaxSpecified;
 
-        private int _cost;
+        private int? _cost;
         private bool _costSpecified;
 
         private Flags? _flags;
@@ -520,7 +803,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("nominal")]
-        public int Nominal
+        public int? Nominal
         {
             get => _nominal;
             set => _nominal = value;
@@ -534,7 +817,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("lifetime")]
-        public int Lifetime
+        public int? Lifetime
         {
             get => _lifetime;
             set => _lifetime = value;
@@ -548,7 +831,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("restock")]
-        public int Restock
+        public int? Restock
         {
             get => _restock;
             set => _restock = value;
@@ -562,7 +845,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("min")]
-        public int Min
+        public int? Min
         {
             get => _min;
             set => _min = value;
@@ -576,7 +859,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("quantmin")]
-        public int QuantMin
+        public int? QuantMin
         {
             get => _quantMin;
             set => _quantMin = value;
@@ -590,7 +873,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("quantmax")]
-        public int QuantMax
+        public int? QuantMax
         {
             get => _quantMax;
             set => _quantMax = value;
@@ -604,7 +887,7 @@ namespace Day2eEditor
         }
 
         [XmlElement("cost")]
-        public int Cost
+        public int? Cost
         {
             get => _cost;
             set => _cost = value;
