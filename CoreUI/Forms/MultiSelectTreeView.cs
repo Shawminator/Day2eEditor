@@ -279,7 +279,7 @@ namespace Day2eEditor
                 this.m_lastNode = e.Node;
 
                 // allow multi for this batch only if the first node is a TypeEntry
-                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry)||(e.Node.Tag is mapGroup);
+                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry)||(e.Node.Tag is mapGroup) || (e.Node.Tag is randompresetsItem);
 
                 // let OnAfterSelect run normally (it will add the node as single select)
                 return;
@@ -290,7 +290,7 @@ namespace Day2eEditor
             if (this.m_firstNode == null)
             {
                 this.m_firstNode = e.Node;
-                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry)||(e.Node.Tag is mapGroup);
+                this.m_allowMultiForBatch = (e.Node.Tag is TypeEntry)||(e.Node.Tag is mapGroup)||(e.Node.Tag is randompresetsItem);
             }
 
             // If the current batch does NOT allow multi select, treat this click as a single-select
@@ -311,7 +311,7 @@ namespace Day2eEditor
                 this.paintSelectedNodes();
                 return;
             }
-            if ((e.Node.Tag is TypeEntry == false) && (e.Node.Tag is mapGroup == false))
+            if ((e.Node.Tag is TypeEntry == false) && (e.Node.Tag is mapGroup == false) && (e.Node.Tag is randompresetsItem == false))
             {
                 e.Cancel = true; // keep toggle behavior
                 this.removePaintFromNodes();
@@ -382,7 +382,7 @@ namespace Day2eEditor
                 {
                     for (TreeNode i = bottomnode; i != uppernode.Parent; i = i.Parent)
                     {
-                        if (!this.m_coll.Contains(i) && (i.Tag is TypeEntry||i.Tag is mapGroup))
+                        if (!this.m_coll.Contains(i) && (i.Tag is TypeEntry||i.Tag is mapGroup || i.Tag is randompresetsItem))
                         {
                             myQueue.Enqueue(i);
                         }
@@ -409,7 +409,7 @@ namespace Day2eEditor
                         TreeNode j = uppernode;
                         while (nIndexUpper <= nIndexBottom)
                         {
-                            if (!this.m_coll.Contains(j) && (j.Tag is TypeEntry||j.Tag is mapGroup))
+                            if (!this.m_coll.Contains(j) && (j.Tag is TypeEntry||j.Tag is mapGroup || j.Tag is randompresetsItem))
                             {
                                 myQueue.Enqueue(j);
                             }
@@ -419,11 +419,11 @@ namespace Day2eEditor
                     }
                     else
                     {
-                        if (!this.m_coll.Contains(uppernode) && (uppernode.Tag is TypeEntry || uppernode.Tag is mapGroup))
+                        if (!this.m_coll.Contains(uppernode) && (uppernode.Tag is TypeEntry || uppernode.Tag is mapGroup || uppernode.Tag is randompresetsItem))
                         {
                             myQueue.Enqueue(uppernode);
                         }
-                        if (!this.m_coll.Contains(bottomnode) && (bottomnode.Tag is TypeEntry || bottomnode.Tag is mapGroup))
+                        if (!this.m_coll.Contains(bottomnode) && (bottomnode.Tag is TypeEntry || bottomnode.Tag is mapGroup || bottomnode.Tag is randompresetsItem))
                         {
                             myQueue.Enqueue(bottomnode);
                         }

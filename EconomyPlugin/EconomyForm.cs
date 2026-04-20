@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -758,6 +759,36 @@ namespace EconomyPlugin
                     MapGroupPosCM.Items.Clear();
                     MapGroupPosCM.Items.Add(removeSelectedPositionsToolStripMenuItem);
                     MapGroupPosCM.Show(Cursor.Position);
+                },
+
+                //Territory
+                [typeof(territorytypeTerritoryZone)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(removeTerritoryPositionToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
+                },
+                [typeof(territorytypeTerritory)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(addNewTerritoryPositionToolStripMenuItem);
+                    MapGroupPosCM.Items.Add(new ToolStripSeparator());
+                    MapGroupPosCM.Items.Add(removeTerritoryToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
+                },
+                [typeof(territorytype)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(addNewTerritoryToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
+                },
+                [typeof(envTerritoriesFile)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(addNewUsableFileToolStripMenuItem);
+                    MapGroupPosCM.Items.Add(new ToolStripSeparator());
+                    MapGroupPosCM.Items.Add(removeUsableFileToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
                 }
             };
 
@@ -912,7 +943,7 @@ namespace EconomyPlugin
                 ShowSavedFilesMessage(savedFiles);
             }
             RebuildWarning();
-            
+
 
         }
         private void RebuildWarning()
@@ -1828,14 +1859,14 @@ namespace EconomyPlugin
         private TreeNode CreateEventposnodes(eventposdefEvent? eventspawns)
         {
 
-                TreeNode eventposnodes = new TreeNode("pos");
-                eventposnodes.Name = "POS";
-                eventposnodes.Tag = "PosParent";
-                foreach (eventposdefEventPos pos in eventspawns.pos)
-                {
-                    eventposnodes.Nodes.Add(CreateEventPositionNode(pos));
-                }
-                return eventposnodes;
+            TreeNode eventposnodes = new TreeNode("pos");
+            eventposnodes.Name = "POS";
+            eventposnodes.Tag = "PosParent";
+            foreach (eventposdefEventPos pos in eventspawns.pos)
+            {
+                eventposnodes.Nodes.Add(CreateEventPositionNode(pos));
+            }
+            return eventposnodes;
         }
 
         private TreeNode CreateEventPositionNode(eventposdefEventPos pos)
@@ -3499,7 +3530,7 @@ namespace EconomyPlugin
 
             _selectedSafePosition.X = (decimal)e.MapCoordinates.X;
             _selectedSafePosition.Z = (decimal)e.MapCoordinates.Y;
-            
+
 
             _mapControl.ClearDrawables();
 
@@ -3561,7 +3592,7 @@ namespace EconomyPlugin
 
             _selectedeffectarea.Data.Pos[0] = (decimal)e.MapCoordinates.X;
             _selectedeffectarea.Data.Pos[2] = (decimal)e.MapCoordinates.Y;
-            
+
 
             _mapControl.ClearDrawables();
 
@@ -5672,7 +5703,7 @@ namespace EconomyPlugin
                 Data = newdata
             };
             _economyManager.cfgeffectareaConfig.Data.Areas.Add(newArea);
-            
+
             currentTreeNode.Nodes.Add(createeffectareanodes(newArea));
         }
         private void usePlayerDataToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5689,20 +5720,20 @@ namespace EconomyPlugin
             {
                 Tag = newPlayerData
             });
-            
+
         }
         private void removePlayerDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Areas areas = currentTreeNode.Parent.Tag as Areas;
             areas.PlayerData = null;
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void removeEffectAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Areas area = currentTreeNode.Tag as Areas;
             _economyManager.cfgeffectareaConfig.Data.Areas.Remove(area);
-            
+
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewSafePositionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5715,7 +5746,7 @@ namespace EconomyPlugin
                 Z = middle
             };
             _economyManager.cfgeffectareaConfig.Data._positions.Add(newpos);
-            
+
             currentTreeNode.Nodes.Add(new TreeNode($"Position {currentTreeNode.Nodes.Count + 1} ({newpos.X}, {newpos.Z})")
             {
                 Tag = newpos
@@ -5727,7 +5758,7 @@ namespace EconomyPlugin
             cfgeffectareaSafePosition sp = currentTreeNode.Tag as cfgeffectareaSafePosition;
             _economyManager.cfgeffectareaConfig.Data._positions.Remove(sp);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
 
 
@@ -5887,11 +5918,11 @@ namespace EconomyPlugin
 
         private void button1_Click(object sender, EventArgs e)
         {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = _economyManager.basePath,
-                    UseShellExecute = true
-                });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = _economyManager.basePath,
+                UseShellExecute = true
+            });
         }
 
         #region search treeview
@@ -5952,6 +5983,107 @@ namespace EconomyPlugin
 
 
 
+        private void addNewTerritoryPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
+            {
+                territorytypeTerritoryZone newzone = new territorytypeTerritoryZone()
+                {
+                    name = "Graze",
+                    smin = 0,
+                    smax = 0,
+                    dmin = 0,
+                    dmax = 0,
+                    x = _projectManager.CurrentProject.MapSize / 2,
+                    z = _projectManager.CurrentProject.MapSize / 2,
+                    r = 50
+                };
+                territorytypeTerritory.zone.Add(newzone);
+                TreeNode tn = new TreeNode(newzone.ToString())
+                {
+                    Tag = newzone
+                };
+                currentTreeNode.Nodes.Add(tn);
+                EconomyTV.SelectedNode = tn;
+            }
+        }
+
+        private void removeTerritoryPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
+            {
+                territorytypeTerritory ttt = currentTreeNode.Parent.Tag as territorytypeTerritory;
+                ttt.zone.Remove(territoryzone);
+                currentTreeNode.Remove();
+            }
+        }
+
+        private void addNewTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Tag is territorytype territorytype)
+            {
+                territorytypeTerritory newterritorytypeTerritory = new territorytypeTerritory()
+                {
+                    zone = new BindingList<territorytypeTerritoryZone>(),
+                    color = 4294967295
+                };
+                territorytype.territory.Add(newterritorytypeTerritory);
+                TreeNode typeterritorynode = new TreeNode("Territory" + (territorytype.territory.Count()).ToString())
+                {
+                    Tag = newterritorytypeTerritory
+                };
+                foreach (territorytypeTerritoryZone zone in newterritorytypeTerritory.zone)
+                {
+                    TreeNode tn = new TreeNode(zone.ToString())
+                    {
+                        Tag = zone
+                    };
+                    typeterritorynode.Nodes.Add(tn);
+                }
+                currentTreeNode.Nodes.Add(typeterritorynode);
+                EconomyTV.SelectedNode = typeterritorynode;
+            }
+        }
+
+        private void removeTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
+            {
+                territorytype territorytype = currentTreeNode.Parent.Tag as territorytype;
+                territorytype.territory.Remove(territorytypeTerritory);
+                currentTreeNode.Remove();
+            }
+        }
+
+        private void createUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void createNewEnviromentTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeEnviromentTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addNewUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeUsableFileToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin", "EconomyPlugin.DayzEconomy.png")]

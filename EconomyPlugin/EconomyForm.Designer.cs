@@ -110,6 +110,16 @@ namespace EconomyPlugin
             addClassnameToolStripMenuItem = new ToolStripMenuItem();
             MapGroupPosCM = new ContextMenuStrip(components);
             removeSelectedPositionsToolStripMenuItem = new ToolStripMenuItem();
+            addNewTerritoryPositionToolStripMenuItem = new ToolStripMenuItem();
+            removeTerritoryPositionToolStripMenuItem = new ToolStripMenuItem();
+            addNewTerritoryToolStripMenuItem = new ToolStripMenuItem();
+            removeTerritoryToolStripMenuItem = new ToolStripMenuItem();
+            createUsableFileToolStripMenuItem = new ToolStripMenuItem();
+            removeUsableFileToolStripMenuItem = new ToolStripMenuItem();
+            createNewEnviromentTerritoryToolStripMenuItem = new ToolStripMenuItem();
+            removeEnviromentTerritoryToolStripMenuItem = new ToolStripMenuItem();
+            addNewUsableFileToolStripMenuItem = new ToolStripMenuItem();
+            removeUsableFileToolStripMenuItem1 = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -803,18 +813,98 @@ namespace EconomyPlugin
             // MapGroupPosCM
             // 
             MapGroupPosCM.BackColor = Color.FromArgb(60, 63, 65);
-            MapGroupPosCM.Items.AddRange(new ToolStripItem[] { removeSelectedPositionsToolStripMenuItem });
+            MapGroupPosCM.Items.AddRange(new ToolStripItem[] { removeSelectedPositionsToolStripMenuItem, addNewTerritoryPositionToolStripMenuItem, removeTerritoryPositionToolStripMenuItem, addNewTerritoryToolStripMenuItem, removeTerritoryToolStripMenuItem, createUsableFileToolStripMenuItem, removeUsableFileToolStripMenuItem, createNewEnviromentTerritoryToolStripMenuItem, removeEnviromentTerritoryToolStripMenuItem, addNewUsableFileToolStripMenuItem, removeUsableFileToolStripMenuItem1 });
             MapGroupPosCM.Name = "TypesCM";
             MapGroupPosCM.ShowImageMargin = false;
-            MapGroupPosCM.Size = new Size(190, 26);
+            MapGroupPosCM.Size = new Size(222, 268);
             // 
             // removeSelectedPositionsToolStripMenuItem
             // 
             removeSelectedPositionsToolStripMenuItem.ForeColor = SystemColors.Control;
             removeSelectedPositionsToolStripMenuItem.Name = "removeSelectedPositionsToolStripMenuItem";
-            removeSelectedPositionsToolStripMenuItem.Size = new Size(189, 22);
+            removeSelectedPositionsToolStripMenuItem.Size = new Size(221, 22);
             removeSelectedPositionsToolStripMenuItem.Text = "Remove selected Positions";
             removeSelectedPositionsToolStripMenuItem.Click += removeSelectedPositionsToolStripMenuItem_Click;
+            // 
+            // addNewTerritoryPositionToolStripMenuItem
+            // 
+            addNewTerritoryPositionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTerritoryPositionToolStripMenuItem.Name = "addNewTerritoryPositionToolStripMenuItem";
+            addNewTerritoryPositionToolStripMenuItem.Size = new Size(221, 22);
+            addNewTerritoryPositionToolStripMenuItem.Text = "Add New Territory Position";
+            addNewTerritoryPositionToolStripMenuItem.Click += addNewTerritoryPositionToolStripMenuItem_Click;
+            // 
+            // removeTerritoryPositionToolStripMenuItem
+            // 
+            removeTerritoryPositionToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTerritoryPositionToolStripMenuItem.Name = "removeTerritoryPositionToolStripMenuItem";
+            removeTerritoryPositionToolStripMenuItem.Size = new Size(221, 22);
+            removeTerritoryPositionToolStripMenuItem.Text = "Remove Territory Position";
+            removeTerritoryPositionToolStripMenuItem.Click += removeTerritoryPositionToolStripMenuItem_Click;
+            // 
+            // addNewTerritoryToolStripMenuItem
+            // 
+            addNewTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTerritoryToolStripMenuItem.Name = "addNewTerritoryToolStripMenuItem";
+            addNewTerritoryToolStripMenuItem.Size = new Size(221, 22);
+            addNewTerritoryToolStripMenuItem.Text = "Add New Territory";
+            addNewTerritoryToolStripMenuItem.Click += addNewTerritoryToolStripMenuItem_Click;
+            // 
+            // removeTerritoryToolStripMenuItem
+            // 
+            removeTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTerritoryToolStripMenuItem.Name = "removeTerritoryToolStripMenuItem";
+            removeTerritoryToolStripMenuItem.Size = new Size(221, 22);
+            removeTerritoryToolStripMenuItem.Text = "Remove Territory";
+            removeTerritoryToolStripMenuItem.Click += removeTerritoryToolStripMenuItem_Click;
+            // 
+            // createUsableFileToolStripMenuItem
+            // 
+            createUsableFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            createUsableFileToolStripMenuItem.Name = "createUsableFileToolStripMenuItem";
+            createUsableFileToolStripMenuItem.Size = new Size(221, 22);
+            createUsableFileToolStripMenuItem.Text = "Create Usable File";
+            createUsableFileToolStripMenuItem.Click += createUsableFileToolStripMenuItem_Click;
+            // 
+            // removeUsableFileToolStripMenuItem
+            // 
+            removeUsableFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeUsableFileToolStripMenuItem.Name = "removeUsableFileToolStripMenuItem";
+            removeUsableFileToolStripMenuItem.Size = new Size(221, 22);
+            removeUsableFileToolStripMenuItem.Text = "Remove Usable File";
+            removeUsableFileToolStripMenuItem.Click += removeUsableFileToolStripMenuItem_Click;
+            // 
+            // createNewEnviromentTerritoryToolStripMenuItem
+            // 
+            createNewEnviromentTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            createNewEnviromentTerritoryToolStripMenuItem.Name = "createNewEnviromentTerritoryToolStripMenuItem";
+            createNewEnviromentTerritoryToolStripMenuItem.Size = new Size(221, 22);
+            createNewEnviromentTerritoryToolStripMenuItem.Text = "Create New Enviroment Territory";
+            createNewEnviromentTerritoryToolStripMenuItem.Click += createNewEnviromentTerritoryToolStripMenuItem_Click;
+            // 
+            // removeEnviromentTerritoryToolStripMenuItem
+            // 
+            removeEnviromentTerritoryToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeEnviromentTerritoryToolStripMenuItem.Name = "removeEnviromentTerritoryToolStripMenuItem";
+            removeEnviromentTerritoryToolStripMenuItem.Size = new Size(221, 22);
+            removeEnviromentTerritoryToolStripMenuItem.Text = "Remove Enviroment Territory";
+            removeEnviromentTerritoryToolStripMenuItem.Click += removeEnviromentTerritoryToolStripMenuItem_Click;
+            // 
+            // addNewUsableFileToolStripMenuItem
+            // 
+            addNewUsableFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewUsableFileToolStripMenuItem.Name = "addNewUsableFileToolStripMenuItem";
+            addNewUsableFileToolStripMenuItem.Size = new Size(221, 22);
+            addNewUsableFileToolStripMenuItem.Text = "Add New Usable File";
+            addNewUsableFileToolStripMenuItem.Click += addNewUsableFileToolStripMenuItem_Click;
+            // 
+            // removeUsableFileToolStripMenuItem1
+            // 
+            removeUsableFileToolStripMenuItem1.ForeColor = SystemColors.Control;
+            removeUsableFileToolStripMenuItem1.Name = "removeUsableFileToolStripMenuItem1";
+            removeUsableFileToolStripMenuItem1.Size = new Size(221, 22);
+            removeUsableFileToolStripMenuItem1.Text = "Remove Usable File";
+            removeUsableFileToolStripMenuItem1.Click += removeUsableFileToolStripMenuItem1_Click;
             // 
             // EconomyForm
             // 
@@ -933,5 +1023,15 @@ namespace EconomyPlugin
         private Button button2;
         private TextBox txtSearch;
         private ToolStripMenuItem updateTypesFromXMLToolStripMenuItem;
+        private ToolStripMenuItem addNewTerritoryPositionToolStripMenuItem;
+        private ToolStripMenuItem removeTerritoryPositionToolStripMenuItem;
+        private ToolStripMenuItem addNewTerritoryToolStripMenuItem;
+        private ToolStripMenuItem removeTerritoryToolStripMenuItem;
+        private ToolStripMenuItem createUsableFileToolStripMenuItem;
+        private ToolStripMenuItem removeUsableFileToolStripMenuItem;
+        private ToolStripMenuItem createNewEnviromentTerritoryToolStripMenuItem;
+        private ToolStripMenuItem removeEnviromentTerritoryToolStripMenuItem;
+        private ToolStripMenuItem addNewUsableFileToolStripMenuItem;
+        private ToolStripMenuItem removeUsableFileToolStripMenuItem1;
     }
 }

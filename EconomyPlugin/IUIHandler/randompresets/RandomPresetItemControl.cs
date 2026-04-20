@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using System.ComponentModel;
 using System.Security.Cryptography;
 
 namespace EconomyPlugin
@@ -6,13 +7,30 @@ namespace EconomyPlugin
     public partial class RandomPresetItemControl : UserControl, IUIHandler
     {
         private Type _parentType;
+        private randompresetsItem _data;
+        private BindingList<randompresetsItem> _entries;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+
+        public RandomPresetItemControl()
+        {
+            InitializeComponent();
+        }
+        private void LoadNodesTotypeslist(List<TreeNode> selectedNodes)
+        {
+            _entries = new BindingList<randompresetsItem>();
+            foreach (TreeNode _node in selectedNodes)
+            {
+                _entries.Add(_node.Tag as randompresetsItem);
+            }
+        }
         public Control GetControl() => this;
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
             _data = data as randompresetsItem ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
+            LoadNodesTotypeslist(_nodes);
             _suppressEvents = true;
 
             RandomPresetItemNameTB.Text = _data.name;
@@ -20,46 +38,24 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-        public void Reset()
-        {
 
-        }
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
 
-        private randompresetsItem _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private randompresetsItem _originalData;
 
-        public RandomPresetItemControl()
-        {
-            InitializeComponent();
-        }
-        private randompresetsItem CloneData(randompresetsItem data)
-        {
-            return new randompresetsItem
-            {
-                name = data.name,
-                chance = data.chance,
-            };
-        }
         private void UpdateTreeNodeText()
         {
             if (_nodes.Last() != null)
             {
                 _nodes.Last().Text = $"Name = {_data.name}, Chance = {_data.chance}";
+            }
+
+        }
+        private void UpdateTreeNodeTextAll()
+        {
+            for (int i = 0; i < _nodes.Count; i++)
+            {
+
+                _nodes[i].Text = $"Name = {_entries[i].name}, Chance = {_entries[i].chance}";
+               
             }
 
         }
@@ -93,15 +89,16 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.name = RandomPresetItemNameTB.Text;
-            HasChanges();
         }
 
         private void RandomPresetItemChanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.chance = RandomPresetItemChanceNUD.Value;
-            HasChanges();
-            UpdateTreeNodeText();
+            foreach (randompresetsItem randompresetsItem in _entries)
+            {
+                randompresetsItem.chance = RandomPresetItemChanceNUD.Value;
+            }
+            UpdateTreeNodeTextAll();
         }
     }
 }
