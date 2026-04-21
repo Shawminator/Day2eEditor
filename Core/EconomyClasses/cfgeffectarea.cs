@@ -23,7 +23,7 @@ namespace Day2eEditor
                 ConvertListToPositions();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 ClonedData = CloneData(Data);
-                return new[] { Path.GetFileName(_path) };
+                return new[] { _path };
             }
 
             return Array.Empty<string>();

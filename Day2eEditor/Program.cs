@@ -37,11 +37,18 @@ namespace Day2eEditor
             projectManager.SetExternalFiles();
             projectManager.Load();
 
+            // Register upload tracker
+            var uploadTracker = new UploadTrackerService("pendingUploads.json");
+            uploadTracker.InitializeProjects(projectManager.Projects);
+            AppServices.Register(uploadTracker);
+
             string activeProject = projectManager.CurrentProject == null
                 ? "Active Project : None Selected"
                 : $"Active Project : {projectManager.CurrentProject.ProjectName}";
 
             Console.WriteLine(activeProject);
+
+
 
             // EconomyManager
             Console.WriteLine("[Load] Loading Economy Manager");
@@ -58,7 +65,7 @@ namespace Day2eEditor
                         StartPosition = FormStartPosition.CenterScreen
                     };
                     errorForm.ShowDialog();
-                    Application.Exit(); // Cleanly close WinForms app
+                    Application.Exit();
                     return;
                 }
             }

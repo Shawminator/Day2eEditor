@@ -57,7 +57,54 @@ namespace Day2eEditor
                 ModFolder = Path.GetRelativePath(BasePath, Path.GetDirectoryName(filePath) ?? BasePath)
             };
         }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
 
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
+            {
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+                var fullfielName = item.FilePath;
+
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fullfielName);
+                    continue;
+                }
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fullfielName);
+                    continue;
+                }
+
+                if (!item.Equals(baseline))
+                {
+                    var oldPath = baseline.FilePath;
+
+                    SaveItem(item);
+
+                    if (!string.Equals(oldPath, item.FilePath, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(oldPath) &&
+                        File.Exists(oldPath))
+                    {
+                        File.Delete(oldPath);
+                    }
+
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fullfielName);
+                }
+            }
+
+            return saved;
+        }
         protected override void SaveItem(ObjectSpawnerArrFile item)
         {
             AppServices.GetRequired<FileService>().SaveJson(item.FilePath, item.Data);

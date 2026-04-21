@@ -136,13 +136,14 @@ namespace Day2eEditor
                 var item = MutableItems[i];
                 var id = GetID(item);
                 var fileName = GetItemFileName(item);
+                var fullfielName = item.FilePath;
 
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
                     MutableItems.RemoveAt(i);
                     _clonedItems.Remove(id);
-                    saved.Add("File Remove " + fileName);
+                    saved.Add("File Remove " + fullfielName);
                     continue;
                 }
 
@@ -150,7 +151,7 @@ namespace Day2eEditor
                 {
                     SaveItem(item);
                     _clonedItems[id] = item.Clone();
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                     continue;
                 }
 
@@ -168,7 +169,7 @@ namespace Day2eEditor
                     }
 
                     _clonedItems[id] = item.Clone();
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                 }
             }
 

@@ -936,7 +936,7 @@ namespace EconomyPlugin
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
-                Console.WriteLine(file);
+                Console.WriteLine(Path.GetFileName(file));
             }
             if (savedFiles.Count() > 0)
             {
@@ -970,14 +970,23 @@ namespace EconomyPlugin
         }
         private void ShowSavedFilesMessage(IEnumerable<string> files)
         {
+            if (files == null)
+                return;
+
+            // Convert to filenames first
+            var fileNames = files
+                .Where(f => !string.IsNullOrWhiteSpace(f))
+                .Select(f => Path.GetFileName(f))
+                .ToList();
+
             // Build a nice multiline string
-            var fileListText = string.Join(Environment.NewLine, files);
+            var fileListText = string.Join(Environment.NewLine, fileNames);
 
             // Limit length so the box doesn't get too tall
-            if (files.Count() > 15)
+            if (fileNames.Count > 15)
             {
-                fileListText = string.Join(Environment.NewLine, files.Take(15)) +
-                               Environment.NewLine + $"...and {files.Count() - 15} more";
+                fileListText = string.Join(Environment.NewLine, fileNames.Take(15)) +
+                               Environment.NewLine + $"...and {fileNames.Count - 15} more";
             }
 
             MessageBox.Show(

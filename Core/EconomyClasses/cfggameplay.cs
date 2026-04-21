@@ -87,7 +87,7 @@ namespace Day2eEditor
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 ClonedData = CloneData(Data);
                 ClearDirty();
-                fileNames.Add(Path.GetFileName(_path));
+                fileNames.Add(_path);
             }
 
             fileNames.AddRange(SpawnGearPresetconfigs.Save());
