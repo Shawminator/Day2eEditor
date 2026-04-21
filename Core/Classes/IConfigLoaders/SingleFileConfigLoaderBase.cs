@@ -75,7 +75,7 @@ namespace Day2eEditor
             ClonedData = CloneData(Data);
             IsDirty = false;
 
-            return new[] { FileName };
+            return new[] { _path };
         }
 
         public virtual bool NeedToSave()

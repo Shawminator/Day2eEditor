@@ -68,13 +68,13 @@ namespace ExpansionPlugin
                 var item = Items[i];
                 var id = GetID(item);
                 var fileName = GetItemFileName(item);
-                //delete file from disk
+                var fullfielName = item.FilePath;
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
                     MutableItems.RemoveAt(i);
                     _clonedItems.Remove(id);
-                    saved.Add("File Remove " + fileName);
+                    saved.Add("File Remove " + fullfielName);
                     continue;
                 }
                 //new file, needs to be written to disk and cloned
@@ -82,7 +82,7 @@ namespace ExpansionPlugin
                 {
                     SaveItem(item);
                     _clonedItems[id] = item.Clone();
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                     continue;
                 }
                 //edit to existing file, needs to be recloned
@@ -95,34 +95,10 @@ namespace ExpansionPlugin
                             File.Delete(_clonedItems[id]._path);
                     }
                     _clonedItems[id] = item.Clone();
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                 }
             }
-            saved.AddRange(DeleteEmptyDirectoriesFromPath(FilePath));
             return saved;
-        }
-        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
-        {
-            List<string> removedFolders = new List<string>();
-            if (!Directory.Exists(rootPath))
-                return removedFolders;
-
-            var directories = Directory
-                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
-                .OrderByDescending(d => d.Count(c => c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
-                .ToList();
-
-            foreach (var dir in directories)
-            {
-                if (!Directory.EnumerateFileSystemEntries(dir).Any())
-                {
-                    Directory.Delete(dir);
-                    string relativePath = Path.GetRelativePath(rootPath, dir);
-                    removedFolders.Add("Empty Folder Removed " + relativePath);
-                }
-            }
-
-            return removedFolders;
         }
         protected override void SaveItem(ExpansionMarketCategory ExpansionMarketCategory)
         {
@@ -535,6 +511,8 @@ namespace ExpansionPlugin
         public List<string> FolderParts { get; private set; }
         [JsonIgnore]
         public string FileName => Path.GetFileName(_path);
+        [JsonIgnore]
+        public string FilePath => _path;
         [JsonIgnore]
         public bool ToDelete { get; set; }
         [JsonIgnore]

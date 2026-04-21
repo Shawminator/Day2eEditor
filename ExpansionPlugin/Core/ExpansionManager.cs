@@ -303,14 +303,22 @@ namespace ExpansionPlugin
             };
 
             var savedFiles = new List<string>();
-
+            var projectManager = AppServices.GetRequired<ProjectManager>();
+            var uploadTracker = AppServices.GetRequired<UploadTrackerService>();
             foreach (var obj in configs)
             {
                 if (obj is IConfigLoader config)
                 {
-                    savedFiles.AddRange(config.Save());
+                    IEnumerable<string> savedfiles = config.Save();
+                    if (savedfiles.Count() > 0)
+                    {
+                        savedFiles.AddRange(savedfiles);
+                        uploadTracker.MarkForUpload(projectManager.CurrentProject.ProjectName, savedfiles);
+                    }
                 }
             }
+
+            
 
             return savedFiles;
         }

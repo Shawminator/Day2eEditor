@@ -24,7 +24,7 @@ namespace ExpansionPlugin
                 convertreplisttodict();
                 AppServices.GetRequired<FileService>().SaveJson(_path, Data);
                 IsDirty = false;
-                return new[] { Path.GetFileName(_path) };
+                return new[] { _path };
             }
 
             return Array.Empty<string>();

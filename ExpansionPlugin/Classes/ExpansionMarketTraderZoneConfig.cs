@@ -74,13 +74,13 @@ namespace ExpansionPlugin
                 var item = Items[i];
                 var id = GetID(item);
                 var fileName = GetItemFileName(item);
-                //delete file from disk
+                var fullfielName = item.FilePath;
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
                     MutableItems.RemoveAt(i);
                     _clonedItems.Remove(id);
-                    saved.Add("File Remove " + fileName);
+                    saved.Add("File Remove " + fullfielName);
                     continue;
                 }
                 //new file, needs to be written to disk and cloned
@@ -89,7 +89,7 @@ namespace ExpansionPlugin
                     item.CreatestockDictionary();
                     SaveItem(item);
                     _clonedItems[id] = item.Clone();
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                     continue;
                 }
                 //edit to existing file, needs to be recloned
@@ -103,7 +103,7 @@ namespace ExpansionPlugin
                             File.Delete(_clonedItems[id]._path);
                     }
                     _clonedItems[id] = item.Clone();
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                 }
             }
             saved.AddRange(DeleteEmptyDirectoriesFromPath(FilePath));
@@ -189,6 +189,8 @@ namespace ExpansionPlugin
         public string _path { get; private set; }
         [JsonIgnore]
         public string FileName => Path.GetFileName(_path);
+        [JsonIgnore]
+        public string FilePath => _path;
         [JsonIgnore]
         public bool ToDelete { get; set; }
         [JsonIgnore]
