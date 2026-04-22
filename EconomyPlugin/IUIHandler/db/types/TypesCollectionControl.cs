@@ -18,7 +18,6 @@ namespace EconomyPlugin
         private TypesFile _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
-        private TypeEntry _originalData;
         private Category Cat;
         private bool isCat = false;
 

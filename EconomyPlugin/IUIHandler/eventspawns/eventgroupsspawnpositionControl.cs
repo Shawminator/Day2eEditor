@@ -16,7 +16,6 @@ namespace EconomyPlugin
         public event Action<eventposdefEventPos> PositionChanged;
         private Type _parentType;
         private eventposdefEventPos _data;
-        private eventposdefEventPos _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -48,7 +47,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as eventposdefEventPos ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -63,58 +61,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private eventposdefEventPos CloneData(eventposdefEventPos data)
-        {
-            // TODO: Implement actual cloning logic
-            return new eventposdefEventPos
-            {
-                x = data.x,
-                z = data.z,
-                ySpecified = data.ySpecified,
-                y = data.y,
-                aSpecified = data.aSpecified,
-                a = data.a
-            };
-        }
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -123,13 +69,10 @@ namespace EconomyPlugin
             }
         }
 
-        #endregion
-
         private void EventSpawnPosXNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.x = EventSpawnPosXNUD.Value;
-            HasChanges();
             UpdateTreeNodeText();
             PositionChanged?.Invoke(_data);
         }
@@ -138,7 +81,6 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.z = EventSpawnPosZNUD.Value;
-            HasChanges();
             UpdateTreeNodeText();
             PositionChanged?.Invoke(_data);
         }
@@ -158,7 +100,6 @@ namespace EconomyPlugin
             {
                 _data.ySpecified = false;
             }
-            HasChanges();
             UpdateTreeNodeText();
         }
 
@@ -166,7 +107,6 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.y = EventSpawnPosYNUD.Value;
-            HasChanges();
             UpdateTreeNodeText();
         }
 
@@ -184,10 +124,8 @@ namespace EconomyPlugin
             {
                 _data.aSpecified = false;
             }
-            HasChanges();
             UpdateTreeNodeText();
         }
-
         private void EventSpawnPosANUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -209,13 +147,7 @@ namespace EconomyPlugin
             }
             _suppressEvents = false;
             _data.a = EventSpawnPosANUD.Value;
-            HasChanges();
             UpdateTreeNodeText();
-        }
-
-        private void label116_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

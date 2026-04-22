@@ -14,7 +14,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private Playerdata _data;
-        private Playerdata _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as Playerdata ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -73,259 +71,135 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Playerdata CloneData(Playerdata data)
-        {
-            // TODO: Implement actual cloning logic
-
-            return new Playerdata
-            {
-                disablePersonalLight = data.disablePersonalLight,
-                // spawnGearPresetFiles is intentionally not cloned
-
-                StaminaData = new Staminadata
-                {
-                    sprintStaminaModifierErc = data.StaminaData.sprintStaminaModifierErc,
-                    sprintStaminaModifierCro = data.StaminaData.sprintStaminaModifierCro,
-                    staminaWeightLimitThreshold = data.StaminaData.staminaWeightLimitThreshold,
-                    staminaMax = data.StaminaData.staminaMax,
-                    staminaKgToStaminaPercentPenalty = data.StaminaData.staminaKgToStaminaPercentPenalty,
-                    staminaMinCap = data.StaminaData.staminaMinCap,
-                    sprintSwimmingStaminaModifier = data.StaminaData.sprintSwimmingStaminaModifier,
-                    sprintLadderStaminaModifier = data.StaminaData.sprintLadderStaminaModifier,
-                    meleeStaminaModifier = data.StaminaData.meleeStaminaModifier,
-                    obstacleTraversalStaminaModifier = data.StaminaData.obstacleTraversalStaminaModifier,
-                    holdBreathStaminaModifier = data.StaminaData.holdBreathStaminaModifier
-                },
-
-                ShockHandlingData = new Shockhandlingdata
-                {
-                    shockRefillSpeedConscious = data.ShockHandlingData.shockRefillSpeedConscious,
-                    shockRefillSpeedUnconscious = data.ShockHandlingData.shockRefillSpeedUnconscious,
-                    allowRefillSpeedModifier = data.ShockHandlingData.allowRefillSpeedModifier
-                },
-
-                MovementData = new MovementData
-                {
-                    timeToStrafeJog = data.MovementData.timeToStrafeJog,
-                    rotationSpeedJog = data.MovementData.rotationSpeedJog,
-                    timeToSprint = data.MovementData.timeToSprint,
-                    timeToStrafeSprint = data.MovementData.timeToStrafeSprint,
-                    rotationSpeedSprint = data.MovementData.rotationSpeedSprint,
-                    allowStaminaAffectInertia = data.MovementData.allowStaminaAffectInertia
-                },
-
-                DrowningData = new DrowningData
-                {
-                    staminaDepletionSpeed = data.DrowningData.staminaDepletionSpeed,
-                    healthDepletionSpeed = data.DrowningData.healthDepletionSpeed,
-                    shockDepletionSpeed = data.DrowningData.shockDepletionSpeed
-                },
-
-                WeaponObstructionData = new WeaponObstructionData
-                {
-                    staticMode = data.WeaponObstructionData.staticMode,
-                    dynamicMode = data.WeaponObstructionData.dynamicMode
-                }
-            };
-
-        }
-
-        #endregion
-
         private void disablePersonalLightCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.disablePersonalLight = disablePersonalLightCB.Checked;
-            HasChanges();
         }
         private void sprintStaminaModifierErcNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.sprintStaminaModifierErc = Math.Round(sprintStaminaModifierErcNUD.Value, 2);
-            HasChanges();
         }
         private void sprintStaminaModifierCroNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.sprintStaminaModifierCro = Math.Round(sprintStaminaModifierCroNUD.Value, 2);
-            HasChanges();
         }
         private void staminaWeightLimitThresholdNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.staminaWeightLimitThreshold = Math.Round(staminaWeightLimitThresholdNUD.Value, 2);
-            HasChanges();
         }
         private void staminaMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.staminaMax = Math.Round(staminaMaxNUD.Value, 2);
-            HasChanges();
         }
         private void staminaKgToStaminaPercentPenaltyNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.staminaKgToStaminaPercentPenalty = Math.Round(staminaKgToStaminaPercentPenaltyNUD.Value, 2);
-            HasChanges();
         }
         private void staminaMinCapNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.staminaMinCap = Math.Round(staminaMinCapNUD.Value, 2);
-            HasChanges();
         }
         private void sprintSwimmingStaminaModifierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.sprintSwimmingStaminaModifier = Math.Round(sprintSwimmingStaminaModifierNUD.Value, 2);
-            HasChanges();
         }
         private void sprintLadderStaminaModifierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.sprintLadderStaminaModifier = Math.Round(sprintLadderStaminaModifierNUD.Value, 2);
-            HasChanges();
         }
         private void meleeStaminaModifierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.meleeStaminaModifier = Math.Round(meleeStaminaModifierNUD.Value, 2);
-            HasChanges();
         }
         private void obstacleTraversalStaminaModifierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.obstacleTraversalStaminaModifier = Math.Round(obstacleTraversalStaminaModifierNUD.Value, 2);
-            HasChanges();
         }
         private void holdBreathStaminaModifierNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.StaminaData.holdBreathStaminaModifier = Math.Round(holdBreathStaminaModifierNUD.Value, 2);
-            HasChanges();
         }
-
-
         private void shockRefillSpeedConsciousNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShockHandlingData.shockRefillSpeedConscious = Math.Round(shockRefillSpeedConsciousNUD.Value, 2);
-            HasChanges();
         }
         private void shockRefillSpeedUnconsciousNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShockHandlingData.shockRefillSpeedUnconscious = Math.Round(shockRefillSpeedUnconsciousNUD.Value, 2);
-            HasChanges();
         }
         private void allowRefillSpeedModifierCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ShockHandlingData.allowRefillSpeedModifier = allowRefillSpeedModifierCB.Checked;
-            HasChanges();
         }
         private void staminaDepletionSpeedNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DrowningData.staminaDepletionSpeed = Math.Round(staminaDepletionSpeedNUD.Value, 2);
-            HasChanges();
         }
         private void healthDepletionSpeedNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DrowningData.healthDepletionSpeed = Math.Round(healthDepletionSpeedNUD.Value, 2);
-            HasChanges();
         }
         private void shockDepletionSpeedNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.DrowningData.shockDepletionSpeed = Math.Round(shockDepletionSpeedNUD.Value, 2);
-            HasChanges();
-
         }
-
         private void timeToStrafeJogNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MovementData.timeToStrafeJog = Math.Round(timeToStrafeJogNUD.Value, 2);
-            HasChanges();
         }
         private void rotationSpeedJogNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MovementData.rotationSpeedJog = Math.Round(rotationSpeedJogNUD.Value, 2);
-            HasChanges();
         }
         private void timeToSprintNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MovementData.timeToSprint = Math.Round(timeToSprintNUD.Value, 2);
-            HasChanges();
         }
         private void timeToStrafeSprintNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MovementData.timeToStrafeSprint = Math.Round(timeToStrafeSprintNUD.Value, 2);
-            HasChanges();
         }
         private void rotationSpeedSprintNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MovementData.rotationSpeedSprint = Math.Round(rotationSpeedSprintNUD.Value, 2);
-            HasChanges();
         }
         private void allowStaminaAffectInertiaCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MovementData.allowStaminaAffectInertia = allowStaminaAffectInertiaCB.Checked;
-            HasChanges();
         }
         private void staticModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.WeaponObstructionData.staticMode = staticModeCB.SelectedIndex;
-            HasChanges();
         }
         private void dynamicModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.WeaponObstructionData.dynamicMode = dynamicModeCB.SelectedIndex;
-            HasChanges();
         }
     }
 }

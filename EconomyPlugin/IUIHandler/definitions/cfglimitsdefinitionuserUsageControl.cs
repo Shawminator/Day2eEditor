@@ -15,7 +15,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private cfglimitsdefinitionuserConfig _data;
-        private cfglimitsdefinitionuser _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -54,7 +53,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as cfglimitsdefinitionuserConfig ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -63,76 +61,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private cfglimitsdefinitionuser CloneData(cfglimitsdefinitionuserConfig data)
-        {
-            if (data == null) return null;
-
-            // Deep clone Data (cfglimitsdefinitionuser)
-            return  new cfglimitsdefinitionuser
-            {
-                usageflags = new BindingList<user_listsUser>(
-                    data.Data?.usageflags?.Select(u => new user_listsUser
-                    {
-                        name = u.name,
-                        usage = new BindingList<user_listsUserUsage>(
-                            u.usage?.Select(x => new user_listsUserUsage
-                            {
-                                name = x.name
-                            }).ToList() ?? new List<user_listsUserUsage>()
-                        )
-                    }).ToList() ?? new List<user_listsUser>()
-                ),
-
-                valueflags = new BindingList<user_listsUser1>(
-                    data.Data?.valueflags?.Select(v => new user_listsUser1
-                    {
-                        name = v.name,
-                        value = new BindingList<user_listsUserValue>(
-                            v.value?.Select(x => new user_listsUserValue
-                            {
-                                name = x.name
-                            }).ToList() ?? new List<user_listsUserValue>()
-                        )
-                    }).ToList() ?? new List<user_listsUser1>()
-                )
-            };
-        }
-        #endregion
 
         private void listBox9_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -156,7 +84,6 @@ namespace EconomyPlugin
             newusage.name = "NewUserUsageDef";
             newusage.usage = new BindingList<user_listsUserUsage>();
             _data.Data.usageflags.Add(newusage);
-            HasChanges();
         }
 
         private void darkButton76_Click(object sender, EventArgs e)
@@ -166,7 +93,6 @@ namespace EconomyPlugin
             user_listsUser uu = listBox9.SelectedItem as user_listsUser;
             string uuname = uu.name;
             _data.Data.usageflags.Remove(uu);
-            HasChanges();
             AppServices.GetRequired<EconomyManager>().CheckallTypes(uuname);
             Cursor.Current = Cursors.Default;
         }
@@ -179,7 +105,6 @@ namespace EconomyPlugin
             string uuname = uu.name;
             uu.name = textBox3.Text;
             AppServices.GetRequired<EconomyManager>().CheckallTypes(uuname, uu.name);
-            HasChanges();
             darkButton83.Visible = false;
             Cursor.Current = Cursors.Default;
         }
@@ -191,7 +116,6 @@ namespace EconomyPlugin
             user_listsUser uu = listBox9.SelectedItem as user_listsUser;
             user_listsUserUsage luu = listBox11.SelectedItem as user_listsUserUsage;
             uu.usage.Remove(luu);
-            HasChanges();
         }
 
         private void darkButton78_Click(object sender, EventArgs e)
@@ -204,8 +128,6 @@ namespace EconomyPlugin
                 newluu.name = lu.name;
                 user_listsUser uu = listBox9.SelectedItem as user_listsUser;
                 uu.usage.Add(newluu);
-                HasChanges();
-
             }
         }
         

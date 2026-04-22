@@ -40,7 +40,6 @@
             xmlPreview.Size = new Size(647, 287);
             xmlPreview.TabIndex = 0;
             xmlPreview.Text = "";
-            xmlPreview.TextChanged += xmlPreview_TextChanged;
             // 
             // cfgeconomycorePreviewControl
             // 

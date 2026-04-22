@@ -45,34 +45,25 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        #region Helper Methods
-
-        #endregion
-
         private void disableBaseDamageCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.disableBaseDamage = disableBaseDamageCB.Checked;
-
         }
         private void disableContainerDamageCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.disableContainerDamage = disableContainerDamageCB.Checked;
-
         }
         private void disableRespawnDialogCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.disableRespawnDialog = disableRespawnDialogCB.Checked;
-
         }
         private void disableRespawnInUnconsciousnessCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.disableRespawnInUnconsciousness = disableRespawnInUnconsciousnessCB.Checked;
-
         }
     }
 }

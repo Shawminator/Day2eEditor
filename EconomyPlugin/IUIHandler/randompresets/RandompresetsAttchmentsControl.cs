@@ -6,13 +6,20 @@ namespace EconomyPlugin
     public partial class RandompresetsAttchmentsControl : UserControl, IUIHandler
     {
         private Type _parentType;
+        private randompresetsAttachments _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+
+        public RandompresetsAttchmentsControl()
+        {
+            InitializeComponent();
+        }
         public Control GetControl() => this;
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
             _data = data as randompresetsAttachments ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
             _suppressEvents = true;
 
             RandomPresetAttchemntNameTB.Text = _data.name;
@@ -20,61 +27,23 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-        public void Reset()
-        {
-
-        }
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        private randompresetsAttachments _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private randompresetsAttachments _originalData;
-
-        public RandompresetsAttchmentsControl()
-        {
-            InitializeComponent();
-        }
-        private randompresetsAttachments CloneData(randompresetsAttachments data)
-        {
-            return new randompresetsAttachments
-            {
-                name = data.name,
-                chance = data.chance,
-            };
-        }
         private void UpdateTreeNodeText()
         {
             if (_nodes.Last() != null)
             {
                 _nodes.Last().Text = $"Name = {_data.name}, Chance = {_data.chance}";
             }
-
         }
         private void RandomPresetItemNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.name = RandomPresetAttchemntNameTB.Text;
-            HasChanges();
             UpdateTreeNodeText();
         }
         private void RandomPresetItemChanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.chance = RandomPresetAttachmentChanceNUD.Value;
-            HasChanges();
             UpdateTreeNodeText();
         }
     }

@@ -33,8 +33,6 @@ namespace Day2eEditor
                     Console.WriteLine("Validation issues in " + FileName + ":");
                     foreach (var msg in issues)
                         Console.WriteLine("- " + msg);
-
-                    MarkDirty();
                 }
 
                 OnAfterLoad(Data);
@@ -84,8 +82,8 @@ namespace Day2eEditor
 
                 if (string.IsNullOrWhiteSpace(item.name))
                     yield return $"defaults[{i}] has a missing or empty name.";
-                else if (!defaultNames.Add(item.name))
-                    yield return $"Duplicate default name '{item.name}' found.";
+                else if (!defaultNames.Add(item.de) && item.name == "clusterMatrix")
+                    yield return $"Duplicate default de '{item.de}' found.";
             }
 
             var groupNames = new HashSet<string>(StringComparer.Ordinal);

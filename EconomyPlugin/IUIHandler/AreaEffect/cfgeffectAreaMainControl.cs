@@ -14,7 +14,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private Areas _data;
-        private Areas _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as Areas ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -48,54 +46,6 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Areas CloneData(Areas data)
-        {
-            // TODO: Implement actual cloning logic
-            return new Areas
-            {
-                AreaName = data.AreaName,
-                Type = data.Type,
-                TriggerType = data.TriggerType
-            };
-        }
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -104,29 +54,24 @@ namespace EconomyPlugin
             }
         }
 
-        #endregion
 
         private void AreaNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.AreaName = AreaNameTB.Text;
             UpdateTreeNodeText();
-            HasChanges();
         }
 
         private void TypeTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Type = TypeTB.Text;
-            HasChanges();
-
         }
 
         private void TriggerTypeTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.TriggerType = TriggerTypeTB.Text;
-            HasChanges();
         }
     }
 }

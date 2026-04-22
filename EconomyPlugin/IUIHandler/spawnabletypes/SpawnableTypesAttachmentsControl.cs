@@ -33,15 +33,7 @@ namespace EconomyPlugin
             }
             AttachmentPresetComboBox.DataSource = cargoAttachments;
         }
-
-        /// <summary>
-        /// Returns the UserControl instance
-        /// </summary>
         public Control GetControl() => this;
-
-        /// <summary>
-        /// Loads data into the control and stores the selected tree nodes
-        /// </summary>
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
@@ -59,14 +51,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-
-        #region Helper Methods
-
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -83,22 +67,17 @@ namespace EconomyPlugin
                 _nodes.Last().Text = attachmentstring;
             }
         }
-
-        #endregion
-
         private void UseAttachmentchanceCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             AttachmentchanceNUD.Visible = _data.chanceSpecified = UseAttachmentchanceCB.Checked;
             UpdateTreeNodeText();
-
         }
         private void AttachmentchanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.chance = AttachmentchanceNUD.Value;
             UpdateTreeNodeText();
-
         }
         private void isAttchmentIsPresetCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -112,15 +91,12 @@ namespace EconomyPlugin
                 _data.preset = null;
             }
             UpdateTreeNodeText();
-
         }
-
         private void darkButton37_Click(object sender, EventArgs e)
         {
             randompresetsAttachments newattachmentpreset = AttachmentPresetComboBox.SelectedItem as randompresetsAttachments;
             AttachemntTB.Text = _data.preset = newattachmentpreset.name;
             UpdateTreeNodeText();
-
         }
     }
 }

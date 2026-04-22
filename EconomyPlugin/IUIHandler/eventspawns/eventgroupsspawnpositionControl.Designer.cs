@@ -115,7 +115,6 @@
             label116.Size = new Size(25, 15);
             label116.TabIndex = 0;
             label116.Text = "X - ";
-            label116.Click += label116_Click;
             // 
             // EventSpawnPosYNUD
             // 

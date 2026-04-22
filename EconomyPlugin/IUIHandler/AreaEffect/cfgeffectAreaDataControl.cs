@@ -22,14 +22,8 @@ namespace EconomyPlugin
             InitializeComponent();
         }
 
-        /// <summary>
-        /// Returns the UserControl instance
-        /// </summary>
         public Control GetControl() => this;
 
-        /// <summary>
-        /// Loads data into the control and stores the selected tree nodes
-        /// </summary>
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
@@ -71,10 +65,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-
-        #region Helper Methods
-
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -82,10 +72,6 @@ namespace EconomyPlugin
                 // TODO: Update _nodes.Last().Text based on _data
             }
         }
-
-        #endregion
-
-        #region usecases
         private void UseInnerRingCountCB_CheckedChanged(object sender, EventArgs e)
         {
             InnerRingCountNUD.Visible = UseInnerRingCountCB.Checked;
@@ -192,8 +178,6 @@ namespace EconomyPlugin
                 _data.EffectModifier = null;
 
         }
-        #endregion usecases
-
         private void PosNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;

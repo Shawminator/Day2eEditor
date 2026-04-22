@@ -14,13 +14,20 @@ namespace EconomyPlugin
     public partial class VariablesVarControl : UserControl, IUIHandler
     {
         private Type _parentType;
+        private variablesVar _data;
+        private List<TreeNode> _nodes;
+        private bool _suppressEvents;
+
+        public VariablesVarControl()
+        {
+            InitializeComponent();
+        }
         public Control GetControl() => this;
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
             _data = data as variablesVar ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
             _suppressEvents = true;
 
             globalsGB.Text = _data.name;
@@ -43,36 +50,7 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-        public void Reset()
-        {
-            // Reset the data and controls to the original state
-            _data = CloneData(_originalData);
-            UpdateTypedValueDisplay();
-            UpdateTreeNodeText();
-        }
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
 
-        private variablesVar _data;
-        private List<TreeNode> _nodes;
-        private bool _suppressEvents;
-        private variablesVar _originalData; 
-
-        public VariablesVarControl()
-        {
-            InitializeComponent();
-        }
         private void UpdateTreeNodeText()
         {
             if (_nodes[0] != null)
@@ -110,7 +88,6 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.TypedValue = variablesvarvalueNUD.Value;
             UpdateTreeNodeText();
-            HasChanges();
         }
     }
 }

@@ -62,13 +62,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -89,9 +82,6 @@ namespace EconomyPlugin
                 _nodes.Last().Text = itemstring;
             }
         }
-
-        #endregion
-
         private void CargoChangeItemButton_Click(object sender, EventArgs e)
         {
             AddItemfromTypes form = new AddItemfromTypes
@@ -113,20 +103,17 @@ namespace EconomyPlugin
                 return;
             }
         }
-
         private void UseItemchanceCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             ItemChanceNUD.Visible = _data.chanceSpecified = UseItemchanceCB.Checked;
             UpdateTreeNodeText();
         }
-
         private void ItemChanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.chance = ItemChanceNUD.Value;
             UpdateTreeNodeText();
-
         }
 
         private void checkBox49_CheckedChanged(object sender, EventArgs e)
@@ -136,15 +123,12 @@ namespace EconomyPlugin
             numericUpDown4.Value = _data.quantmin;
             numericUpDown3.Value = _data.quantmax;
             UpdateTreeNodeText();
-
         }
-
         private void numericUpDown4_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.quantmin = (int)numericUpDown4.Value;
             UpdateTreeNodeText();
-
         }
 
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
@@ -152,9 +136,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.quantmax = (int)numericUpDown3.Value;
             UpdateTreeNodeText();
-
         }
-
         private void isItemEquipCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -167,9 +149,7 @@ namespace EconomyPlugin
 
             }
             UpdateTreeNodeText();
-
         }
-
         private void darkButton26_Click(object sender, EventArgs e)
         {
             string newitem = ItemPresetCB.GetItemText(ItemPresetCB.SelectedItem);

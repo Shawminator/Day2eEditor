@@ -43,14 +43,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-
-        #region Helper Methods
-
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -58,9 +50,6 @@ namespace EconomyPlugin
                 _nodes.Last().Text = $"Group Name : {_data.name}";
             }
         }
-
-        #endregion
-
         private void button1_Click(object sender, EventArgs e)
         {
             _data.name = textBox1.Text;

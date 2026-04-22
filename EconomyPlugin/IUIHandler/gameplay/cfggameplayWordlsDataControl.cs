@@ -15,7 +15,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private Worldsdata _data;
-        private Worldsdata _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as Worldsdata ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -77,60 +75,10 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Worldsdata CloneData(Worldsdata data)
-        {
-
-            return new Worldsdata
-            {
-                lightingConfig = data.lightingConfig,
-                environmentMinTemps = new BindingList<decimal>(data.environmentMinTemps.ToList()),
-                environmentMaxTemps = new BindingList<decimal>(data.environmentMaxTemps.ToList()),
-                wetnessWeightModifiers = new BindingList<decimal>(data.wetnessWeightModifiers.ToList())
-                // objectSpawnersArr and playerRestrictedAreaFiles are intentionally excluded
-            };
-
-        }
-        #endregion
-
         private void lightingConfigNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.lightingConfig = (int)lightingConfigNUD.Value;
-            HasChanges();
         }
 
         private void MinTemp_ValueChanged(object sender, EventArgs e)
@@ -148,7 +96,6 @@ namespace EconomyPlugin
             _data.environmentMinTemps[9] = OctMinNUD.Value;
             _data.environmentMinTemps[10] = NovMinNUD.Value;
             _data.environmentMinTemps[11] = DecMinNUD.Value;
-            HasChanges();
         }
         private void MaxTemp_ValueChanged(object sender, EventArgs e)
         {
@@ -165,7 +112,6 @@ namespace EconomyPlugin
             _data.environmentMaxTemps[9] = OctMaxNUD.Value;
             _data.environmentMaxTemps[10] = NovMaxNUD.Value;
             _data.environmentMaxTemps[11] = DecMaxNUD.Value;
-            HasChanges();
         }
         private void wetnessWeightModifiers_ValueChanged(object sender, EventArgs e)
         {
@@ -175,7 +121,6 @@ namespace EconomyPlugin
             _data.wetnessWeightModifiers[2] = wetnessWeightModifiers3NUD.Value;
             _data.wetnessWeightModifiers[3] = wetnessWeightModifiers4NUD.Value;
             _data.wetnessWeightModifiers[4] = wetnessWeightModifiers5NUD.Value;
-            HasChanges();
         }
     }
 }

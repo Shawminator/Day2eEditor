@@ -14,7 +14,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private SpawnableType _data;
-        private SpawnableType _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +35,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as SpawnableType ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -44,53 +42,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = _data.name != _originalData.name;
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private SpawnableType CloneData(SpawnableType data)
-        {
-            // TODO: Implement actual cloning logic
-            return new SpawnableType
-            {
-                name = data.name
-            };
-        }
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -98,9 +49,6 @@ namespace EconomyPlugin
                 _nodes.Last().Text = _data.name;
             }
         }
-
-        #endregion
-
         private void darkButton30_Click(object sender, EventArgs e)
         {
             AddItemfromTypes form = new AddItemfromTypes
@@ -115,7 +63,6 @@ namespace EconomyPlugin
                 {
                     SpawnableTypeTB.Text = _data.name = l;
                     UpdateTreeNodeText();
-                    HasChanges();
                 }
             }
             else if (result == DialogResult.Cancel)

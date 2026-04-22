@@ -15,7 +15,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private Basebuildingdata _data;
-        private Basebuildingdata _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -37,7 +36,6 @@ namespace EconomyPlugin
             _parentType = parentType;
             _data = data as Basebuildingdata ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -63,73 +61,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private Basebuildingdata CloneData(Basebuildingdata data)
-        {
-
-            return new Basebuildingdata
-            {
-                HologramData = new Hologramdata
-                {
-                    disableIsCollidingBBoxCheck = data.HologramData.disableIsCollidingBBoxCheck,
-                    disableIsCollidingPlayerCheck = data.HologramData.disableIsCollidingPlayerCheck,
-                    disableIsClippingRoofCheck = data.HologramData.disableIsClippingRoofCheck,
-                    disableIsBaseViableCheck = data.HologramData.disableIsBaseViableCheck,
-                    disableIsCollidingGPlotCheck = data.HologramData.disableIsCollidingGPlotCheck,
-                    disableIsCollidingAngleCheck = data.HologramData.disableIsCollidingAngleCheck,
-                    disableIsPlacementPermittedCheck = data.HologramData.disableIsPlacementPermittedCheck,
-                    disableHeightPlacementCheck = data.HologramData.disableHeightPlacementCheck,
-                    disableIsUnderwaterCheck = data.HologramData.disableIsUnderwaterCheck,
-                    disableIsInTerrainCheck = data.HologramData.disableIsInTerrainCheck,
-                    disableColdAreaBuildingCheck = data.HologramData.disableColdAreaBuildingCheck,
-                    disallowedTypesInUnderground = new BindingList<string>(data.HologramData.disallowedTypesInUnderground.ToList())
-                },
-                ConstructionData = new Constructiondata
-                {
-                    disablePerformRoofCheck = data.ConstructionData.disablePerformRoofCheck,
-                    disableIsCollidingCheck = data.ConstructionData.disableIsCollidingCheck,
-                    disableDistanceCheck = data.ConstructionData.disableDistanceCheck
-
-
-                }
-            };
-        }
-
-        #endregion
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             ListBox lb = sender as ListBox;
@@ -152,85 +83,70 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsCollidingBBoxCheck = disableIsCollidingBBoxCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsCollidingPlayerCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsCollidingPlayerCheck = disableIsCollidingPlayerCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsClippingRoofCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsClippingRoofCheck = disableIsClippingRoofCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsBaseViableCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsBaseViableCheck = disableIsBaseViableCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsCollidingGPlotCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsCollidingGPlotCheck = disableIsCollidingGPlotCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsCollidingAngleCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.HologramData.disableIsCollidingAngleCheck = disableIsCollidingAngleCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsPlacementPermittedCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsPlacementPermittedCheck = disableIsPlacementPermittedCheckCB.Checked;
-            HasChanges();
         }
         private void disableHeightPlacementCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableHeightPlacementCheck = disableHeightPlacementCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsUnderwaterCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsUnderwaterCheck = disableIsUnderwaterCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsInTerrainCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableIsInTerrainCheck = disableIsInTerrainCheckCB.Checked;
-            HasChanges();
         }
         private void disableColdAreaBuildingCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.HologramData.disableColdAreaBuildingCheck = disableColdAreaBuildingCheckCB.Checked;
-            HasChanges();
         }
         private void disablePerformRoofCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ConstructionData.disablePerformRoofCheck = disablePerformRoofCheckCB.Checked;
-            HasChanges();
         }
         private void disableIsCollidingCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ConstructionData.disableIsCollidingCheck = disableIsCollidingCheckCB.Checked;
-            HasChanges();
         }
         private void disableDistanceCheckCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.ConstructionData.disableDistanceCheck = disableDistanceCheckCB.Checked;
-            HasChanges();
         }
         private void darkButton66_Click(object sender, EventArgs e)
         {
@@ -244,8 +160,6 @@ namespace EconomyPlugin
                     if (!_data.HologramData.disallowedTypesInUnderground.Contains(l))
                         _data.HologramData.disallowedTypesInUnderground.Add(l);
                 }
-                HasChanges();
-
             }
             else if (result == DialogResult.Cancel)
             {
@@ -255,7 +169,6 @@ namespace EconomyPlugin
         private void darkButton67_Click(object sender, EventArgs e)
         {
             _data.HologramData.disallowedTypesInUnderground.Remove(CFGGameplayDisallowedtypesLB.GetItemText(CFGGameplayDisallowedtypesLB.SelectedItem));
-            HasChanges();
         }
     }
 }

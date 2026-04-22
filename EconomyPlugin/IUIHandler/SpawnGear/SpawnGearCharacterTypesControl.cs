@@ -24,14 +24,8 @@ namespace EconomyPlugin
             characterTypesCB.DataSource = File.ReadAllLines("Data\\VanillaCharacterClassnames.txt").ToList();
         }
 
-        /// <summary>
-        /// Returns the UserControl instance
-        /// </summary>
         public Control GetControl() => this;
 
-        /// <summary>
-        /// Loads data into the control and stores the selected tree nodes
-        /// </summary>
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
@@ -73,7 +67,6 @@ namespace EconomyPlugin
             e.Graphics.DrawString(lb.Items[e.Index].ToString(), e.Font, myBrush, e.Bounds);
             e.DrawFocusRectangle();
         }
-
         private void darkButton71_Click(object sender, EventArgs e)
         {
             string NPCClassname = characterTypesCB.GetItemText(characterTypesCB.SelectedItem);
@@ -82,7 +75,6 @@ namespace EconomyPlugin
                 _data.Data.characterTypes.Add(NPCClassname);
             }
         }
-
         private void darkButton75_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < characterTypesCB.Items.Count; i++)
@@ -94,7 +86,6 @@ namespace EconomyPlugin
                 }
             }
         }
-
         private void darkButton72_Click(object sender, EventArgs e)
         {
             if (characterTypesLB.SelectedItems.Count < 1) return;

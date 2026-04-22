@@ -21,17 +21,11 @@ namespace EconomyPlugin
         public AttachmentslotitemsetControl()
         {
             InitializeComponent();
-            
         }
 
-        /// <summary>
-        /// Returns the UserControl instance
-        /// </summary>
+
         public Control GetControl() => this;
 
-        /// <summary>
-        /// Loads data into the control and stores the selected tree nodes
-        /// </summary>
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
@@ -44,14 +38,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-
-        #region Helper Methods
-
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -59,9 +45,6 @@ namespace EconomyPlugin
                 _nodes.Last().Text = _data.slotName;
             }
         }
-
-        #endregion
-
         private void ItemAttachmentSlotNameCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;

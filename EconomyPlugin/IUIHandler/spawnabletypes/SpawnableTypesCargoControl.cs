@@ -62,12 +62,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -84,15 +78,11 @@ namespace EconomyPlugin
                 _nodes.Last().Text = cargostring;
             }
         }
-
-        #endregion
-
         private void UseCargoChanceCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             CarcgoChanceNUD.Visible = _data.chanceSpecified = UseCargoChanceCB.Checked;
             UpdateTreeNodeText();
-
         }
 
         private void CarcgoChanceNUD_ValueChanged(object sender, EventArgs e)
@@ -100,9 +90,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.chance = CarcgoChanceNUD.Value;
             UpdateTreeNodeText();
-
         }
-
         private void IsCargoPresetCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -115,15 +103,12 @@ namespace EconomyPlugin
                 _data.preset = null;
             }
             UpdateTreeNodeText();
-
         }
-
         private void darkButton36_Click(object sender, EventArgs e)
         {
             randompresetsCargo newcargopreset = CargoPresetComboBox.SelectedItem as randompresetsCargo;
             CargoPresetTB.Text = _data.preset = newcargopreset.name;
             UpdateTreeNodeText();
-
         }
     }
 }

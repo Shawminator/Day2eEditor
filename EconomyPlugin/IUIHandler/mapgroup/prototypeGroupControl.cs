@@ -16,7 +16,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private prototypeGroup _data;
-        private prototypeGroup _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -81,20 +80,13 @@ namespace EconomyPlugin
             _suppressEvents = false;
         }
 
-        /// <summary>
-        /// Returns the UserControl instance
-        /// </summary>
         public Control GetControl() => this;
 
-        /// <summary>
-        /// Loads data into the control and stores the selected tree nodes
-        /// </summary>
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
             _data = data as prototypeGroup ?? throw new InvalidCastException();
             _nodes = selectedNodes;
-            _originalData = CloneData(_data); // Store original data for reset
 
             _suppressEvents = true;
 
@@ -156,118 +148,6 @@ namespace EconomyPlugin
                 }
             }
         }
-
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-            _originalData = CloneData(_data);
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Clones the data for reset purposes
-        /// </summary>
-        private prototypeGroup CloneData(prototypeGroup data)
-        {
-            if (data == null) return null;
-
-            return new prototypeGroup
-            {
-                name = data.name,
-                lootmax = data.lootmax,
-                lootmaxSpecified = data.lootmaxSpecified,
-
-                value = data.value == null
-                    ? null
-                    : new BindingList<prototypeGroupValue>(
-                        data.value.Select(v => new prototypeGroupValue
-                        {
-                            name = v.name,
-                            user = v.user
-                        }).ToList()),
-
-                usage = data.usage == null
-                    ? null
-                    : new BindingList<prototypeGroupUsage>(
-                        data.usage.Select(u => new prototypeGroupUsage
-                        {
-                            name = u.name
-                        }).ToList()),
-
-                container = data.container == null
-                    ? null
-                    : new BindingList<prototypeGroupContainer>(
-                        data.container.Select(c => new prototypeGroupContainer
-                        {
-                            name = c.name,
-                            lootmax = c.lootmax,
-                            lootmaxSpecified = c.lootmaxSpecified,
-                            category = c.category == null
-                                ? null
-                                : new BindingList<prototypeGroupContainerCategory>(
-                                    c.category.Select(cat => new prototypeGroupContainerCategory
-                                    {
-                                        name = cat.name
-                                    }).ToList()),
-                            tag = c.tag == null
-                                ? null
-                                : new BindingList<prototypeGroupContainerTag>(
-                                    c.tag.Select(t => new prototypeGroupContainerTag
-                                    {
-                                        name = t.name
-                                    }).ToList()),
-                            point = c.point == null
-                                ? null
-                                : new BindingList<prototypeGroupContainerPoint>(
-                                    c.point.Select(p => new prototypeGroupContainerPoint
-                                    {
-                                        pos = p.pos,
-                                        range = p.range,
-                                        height = p.height,
-                                        flags = p.flags,
-                                        flagsSpecified = p.flagsSpecified
-                                    }).ToList())
-                        }).ToList()),
-
-                dispatch = data.dispatch == null
-                    ? null
-                    : new BindingList<prototypeGroupProxy>(
-                        data.dispatch.Select(d => new prototypeGroupProxy
-                        {
-                            type = d.type,
-                            pos = d.pos,
-                            rpy = d.rpy
-                        }).ToList())
-            };
-        }
-
-        /// <summary>
-        /// Updates the TreeNode text based on current data
-        /// </summary>
         private void UpdateTreeNodeText()
         {
             if (_nodes?.Any() == true)
@@ -275,9 +155,6 @@ namespace EconomyPlugin
                 _nodes.Last().Text = _data.name;
             }
         }
-
-        #endregion
-
         private void mapgroupprotoTierCheckBoxchanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -287,7 +164,6 @@ namespace EconomyPlugin
                 _data.AddTier(tier);
             else
                 _data.removetier(tier);
-            HasChanges();
         }
         private void MapgroupProtoUserdefiniedTiersChanged(object sender, EventArgs e)
         {
@@ -304,37 +180,31 @@ namespace EconomyPlugin
             }
             else
                 _data.removeusertier(tier);
-            HasChanges();
         }
         private void MapgroupprotoGroupNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.name = MapgroupprotoGroupNameTB.Text;
-            HasChanges();
             UpdateTreeNodeText();
         }
         private void MapGroupprotoGroupUseLootmaxCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             MapGroupProtoGroupUseLootMaxNUD.Visible = _data.lootmaxSpecified = MapGroupprotoGroupUseLootmaxCB.Checked;
-            HasChanges();
         }
         private void MapGroupProtoGroupUseLootMaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.lootmax = (int)MapGroupProtoGroupUseLootMaxNUD.Value;
-            HasChanges();
         }
         private void darkButton56_Click(object sender, EventArgs e)
         {
             _data.AddnewUsage(MapGroupProtoUsageCB.SelectedItem as listsUsage);
-            HasChanges();
         }
         private void darkButton58_Click(object sender, EventArgs e)
         {
             prototypeGroupUsage u = MapGroupProtoGroupUsageLB.SelectedItem as prototypeGroupUsage;
             _data.removeusage(u);
-            HasChanges();
         }
     }
 }

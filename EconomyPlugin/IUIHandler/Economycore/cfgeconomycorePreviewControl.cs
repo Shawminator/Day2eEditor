@@ -16,7 +16,6 @@ namespace EconomyPlugin
     {
         private Type _parentType;
         private economyCoreConfig _data;
-        private economyCoreConfig _originalData;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -106,37 +105,6 @@ namespace EconomyPlugin
                 rtb.Select(m.Index, m.Length);
                 rtb.SelectionColor = color;
             }
-        }
-        /// <summary>
-        /// Applies changes to the data and updates the original snapshot
-        /// </summary>
-        public void ApplyChanges()
-        {
-        }
-
-        /// <summary>
-        /// Resets control fields to the original data
-        /// </summary>
-        public void Reset()
-        {
-            // TODO: Reset control fields to _originalData
-        }
-
-        /// <summary>
-        /// Checks if there are changes and updates the parent file's dirty state
-        /// </summary>
-        public void HasChanges()
-        {
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
-            {
-                dynamic parent = parentObj;
-                parent.IsDirty = !_data.Equals(_originalData);
-            }
-        }
-
-        private void xmlPreview_TextChanged(object sender, EventArgs e)
-        {
         }
     }
 }

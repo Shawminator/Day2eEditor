@@ -38,9 +38,6 @@ namespace EconomyPlugin
 
             _suppressEvents = false;
         }
-
-
-
         private void UpdateTreeNodeText()
         {
             if (_nodes.Last() != null)
@@ -59,7 +56,6 @@ namespace EconomyPlugin
             }
 
         }
-
         private void darkButton60_Click(object sender, EventArgs e)
         {
             AddItemfromTypes form = new AddItemfromTypes
@@ -84,13 +80,11 @@ namespace EconomyPlugin
                 return;
             }
         }
-
         private void RandomPresetItemNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.name = RandomPresetItemNameTB.Text;
         }
-
         private void RandomPresetItemChanceNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
