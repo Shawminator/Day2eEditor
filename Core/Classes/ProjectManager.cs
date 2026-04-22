@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -156,7 +157,8 @@ namespace Day2eEditor
             var json = JsonSerializer.Serialize(_store, new JsonSerializerOptions
             {
                 WriteIndented = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             });
 
             File.WriteAllText(path, json);

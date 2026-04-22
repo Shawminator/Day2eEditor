@@ -50,6 +50,16 @@ namespace ProjectsPlugin
                 }
             }
 
+            ProtocolCB.DataSource = new[]
+            {
+                new EnumItem<TransferProtocol> { Value = TransferProtocol.Ftp,  Text = "FTP" },
+                new EnumItem<TransferProtocol> { Value = TransferProtocol.Ftps, Text = "FTPS (FTP over TLS)" },
+                new EnumItem<TransferProtocol> { Value = TransferProtocol.Sftp, Text = "SFTP (SSH)" }
+            };
+
+            ProtocolCB.DisplayMember = "Text";
+            ProtocolCB.ValueMember = "Value";
+
             ProjectTypeComboBox.SelectedIndex = 0;
 
             listBoxProjects.DataSource = _ProjectManager.Projects;
@@ -188,7 +198,7 @@ namespace ProjectsPlugin
         private void ProjectTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
-            if (projecttype == "Create Local from FTP/SFTP" || projecttype == "Connect Direct to FTP/SFTP")
+            if (projecttype == "Create From SFTP")
             {
                 ProjectNameLabel.Visible = true;
                 ProjectNameTB.Visible = true;
@@ -317,7 +327,7 @@ namespace ProjectsPlugin
                 listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
                 
             }
-            else if (projecttype == "Create Local from FTP/SFTP")
+            else if (projecttype == "Create From SFTP")
             {
             }
             else if (projecttype == "Create Project to Existing Project Files")
@@ -501,7 +511,11 @@ namespace ProjectsPlugin
             EditMissionPathTB.Text = p.MpMissionPath;
             EditMapPathTB.Text = p.MapPath;
             EditMapSizeNUD.Value = p.MapSize;
-            EditCreateBackupsCB.Checked = p.CreateBackups;
+            ProtocolCB.SelectedItem  = p.ServerSettings.Protocol;
+            HostTB.Text = p.ServerSettings.Host;
+            PortNUD.Value = p.ServerSettings.Port;
+            UsernameTB.Text = p.ServerSettings.Username;
+            PasswordTB.Text = Helper.DecryptPassword(p.ServerSettings.EncryptedPassword);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -513,7 +527,15 @@ namespace ProjectsPlugin
             p.MpMissionPath = EditMissionPathTB.Text;
             p.MapPath = EditMapPathTB.Text;
             p.MapSize = (int)EditMapSizeNUD.Value;
-            p.CreateBackups = EditCreateBackupsCB.Checked;
+            p.ServerSettings = new ProjectServerSettings()
+            {
+                Protocol = (TransferProtocol)ProtocolCB.SelectedValue,
+                Host = HostTB.Text,
+                Port = (int)PortNUD.Value,
+                Username = UsernameTB.Text,
+                EncryptedPassword = Helper.EncryptPassword(PasswordTB.Text),
+                PassiveMode = true
+            };
             _ProjectManager.Save();
             listBoxProjects.Invalidate();
             MessageBox.Show("Projects Json has now been saved.");
@@ -535,6 +557,13 @@ namespace ProjectsPlugin
             button3.Enabled = false;
         }
     }
+    public sealed class EnumItem<T>
+    {
+        public T Value { get; init; }
+        public string Text { get; init; } = string.Empty;
+    }
+
+
     [PluginInfo("Project Manager", "ProjectsPlugin", "ProjectsPlugin.Projects.png")]
     public class PluginProject : IPluginForm, IDisposable
     {

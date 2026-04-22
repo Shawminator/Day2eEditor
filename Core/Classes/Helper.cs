@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Text;
+using System.Security.Cryptography;
+
 
 namespace Day2eEditor
 {
@@ -181,6 +181,31 @@ namespace Day2eEditor
         {
             return TimeSpan.FromSeconds(seconds).TotalMinutes;
         }
+        public static string EncryptPassword(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+                return string.Empty;
 
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var encrypted = ProtectedData.Protect(
+                bytes,
+                optionalEntropy: null,
+                DataProtectionScope.CurrentUser);
+
+            return Convert.ToBase64String(encrypted);
+        }
+        public static string DecryptPassword(string encryptedBase64)
+        {
+            if (string.IsNullOrWhiteSpace(encryptedBase64))
+                return string.Empty;
+
+            var encrypted = Convert.FromBase64String(encryptedBase64);
+            var decrypted = ProtectedData.Unprotect(
+                encrypted,
+                optionalEntropy: null,
+                DataProtectionScope.CurrentUser);
+
+            return Encoding.UTF8.GetString(decrypted);
+        }
     }
 }

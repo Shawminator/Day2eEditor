@@ -129,55 +129,52 @@ namespace Day2eEditor
                 ShowWindow(handle, SW_HIDE);
             }
         }
+
+        private static readonly Dictionary<string, int> PluginPriority =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                { "ProjectsPlugin", 0 },
+                { "DayZFileManagerPlugin", 1 },
+                { "EconomyPlugin", 2 }
+            };
+
+
         private void LoadPlugins()
         {
             pluginEntries.Clear();
 
-            // Add static entries (e.g., Donate, Discord)
             string pluginPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
             if (!Directory.Exists(pluginPath))
             {
                 Directory.CreateDirectory(pluginPath);
                 return;
             }
-            List<PluginEntry> entries = new List<PluginEntry>();
+
+            List<PluginEntry> entries = new();
+
             foreach (var dll in Directory.GetFiles(pluginPath, "*.dll"))
             {
                 try
                 {
                     var asm = Assembly.LoadFrom(dll);
                     var types = asm.GetTypes()
-                                   .Where(t => typeof(IPluginForm).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-
+                        .Where(t => typeof(IPluginForm).IsAssignableFrom(t)
+                                    && !t.IsInterface
+                                    && !t.IsAbstract);
 
                     foreach (var type in types)
                     {
-                        // Get the PluginInfo attribute
                         var pluginInfo = type.GetCustomAttribute<PluginInfoAttribute>();
-                        if (pluginInfo != null)
+                        if (pluginInfo == null)
+                            continue;
+
+                        entries.Add(new PluginEntry
                         {
-                            var icon = LoadPluginIcon(type);
-                            // Add the plugin info to the list
-                            PluginEntry pe = new PluginEntry
-                            {
-                                Name = pluginInfo.Name,
-                                Identifier = pluginInfo.Identifier,
-                                PluginType = type,
-                                Icon = icon,
-                            };
-                            if (pe.Identifier == "EconomyPlugin" || pe.Identifier == "ProjectsPlugin")
-                            {
-                                pluginEntries.Insert(0, pe);
-                                entries.Insert(0, pe);
-                            }
-                            else
-                            {
-                                pluginEntries.Add(pe);
-                                entries.Add(pe);
-                            }
-
-                        }
-
+                            Name = pluginInfo.Name,
+                            Identifier = pluginInfo.Identifier,
+                            PluginType = type,
+                            Icon = LoadPluginIcon(type),
+                        });
                     }
                 }
                 catch (Exception ex)
@@ -185,10 +182,18 @@ namespace Day2eEditor
                     Debug.WriteLine($"Failed to load plugin from {dll}: {ex.Message}");
                 }
             }
-            AppServices.Register(entries);
-            // Bind the list to the ListBox
+
+            pluginEntries = entries
+                .OrderBy(p => PluginPriority.TryGetValue(p.Identifier, out var order)
+                                ? order
+                                : int.MaxValue)
+                .ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            AppServices.Register(pluginEntries);
             Setlistbox();
         }
+
         private void Setlistbox()
         {
             List<PluginEntry> availbeentries = new List<PluginEntry>();

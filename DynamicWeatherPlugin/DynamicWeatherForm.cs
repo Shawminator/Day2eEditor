@@ -248,7 +248,7 @@ namespace DynamicWeatherPlugin
         private bool disposed = false;
 
         public string pluginIdentifier => "DynamicWeatherPlugin";
-        public string pluginName => "Dynamic Weather  Manager";
+        public string pluginName => "Dynamic Weather Manager";
 
         public Form GetForm()
         {

@@ -55,9 +55,18 @@
             toolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             groupBox2 = new GroupBox();
-            button2 = new Button();
+            groupBox3 = new GroupBox();
+            PortNUD = new NumericUpDown();
+            PasswordTB = new TextBox();
+            UsernameTB = new TextBox();
+            HostTB = new TextBox();
+            label11 = new Label();
+            label10 = new Label();
+            label9 = new Label();
+            label8 = new Label();
             label7 = new Label();
-            EditCreateBackupsCB = new CheckBox();
+            ProtocolCB = new ComboBox();
+            button2 = new Button();
             label6 = new Label();
             EditMapSizeNUD = new NumericUpDown();
             label5 = new Label();
@@ -79,6 +88,8 @@
             groupBox1.SuspendLayout();
             ProjectsCM.SuspendLayout();
             groupBox2.SuspendLayout();
+            groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)PortNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)EditMapSizeNUD).BeginInit();
             SuspendLayout();
             // 
@@ -91,7 +102,7 @@
             PluginLB.Location = new Point(12, 41);
             PluginLB.MultiSelect = false;
             PluginLB.Name = "PluginLB";
-            PluginLB.Size = new Size(307, 402);
+            PluginLB.Size = new Size(307, 588);
             PluginLB.TabIndex = 1;
             PluginLB.UseCompatibleStateImageBehavior = false;
             PluginLB.View = View.Details;
@@ -250,7 +261,7 @@
             SelectsetupTypeLabel.AutoSize = true;
             SelectsetupTypeLabel.Location = new Point(202, 25);
             SelectsetupTypeLabel.Name = "SelectsetupTypeLabel";
-            SelectsetupTypeLabel.Size = new Size(71, 15);
+            SelectsetupTypeLabel.Size = new Size(72, 15);
             SelectsetupTypeLabel.TabIndex = 6;
             SelectsetupTypeLabel.Text = "Project Type";
             // 
@@ -341,9 +352,8 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(groupBox3);
             groupBox2.Controls.Add(button2);
-            groupBox2.Controls.Add(label7);
-            groupBox2.Controls.Add(EditCreateBackupsCB);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(EditMapSizeNUD);
             groupBox2.Controls.Add(label5);
@@ -359,49 +369,145 @@
             groupBox2.ForeColor = SystemColors.Control;
             groupBox2.Location = new Point(325, 217);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(792, 226);
+            groupBox2.Size = new Size(623, 412);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Highlighted Project";
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(PortNUD);
+            groupBox3.Controls.Add(PasswordTB);
+            groupBox3.Controls.Add(UsernameTB);
+            groupBox3.Controls.Add(HostTB);
+            groupBox3.Controls.Add(label11);
+            groupBox3.Controls.Add(label10);
+            groupBox3.Controls.Add(label9);
+            groupBox3.Controls.Add(label8);
+            groupBox3.Controls.Add(label7);
+            groupBox3.Controls.Add(ProtocolCB);
+            groupBox3.ForeColor = SystemColors.Control;
+            groupBox3.Location = new Point(15, 196);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(597, 176);
+            groupBox3.TabIndex = 25;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Server Connection Settings";
+            // 
+            // PortNUD
+            // 
+            PortNUD.BackColor = Color.FromArgb(60, 63, 65);
+            PortNUD.ForeColor = SystemColors.Control;
+            PortNUD.Location = new Point(132, 51);
+            PortNUD.Maximum = new decimal(new int[] { 50000, 0, 0, 0 });
+            PortNUD.Name = "PortNUD";
+            PortNUD.Size = new Size(148, 23);
+            PortNUD.TabIndex = 34;
+            PortNUD.TextAlign = HorizontalAlignment.Center;
+            // 
+            // PasswordTB
+            // 
+            PasswordTB.BackColor = Color.FromArgb(60, 63, 65);
+            PasswordTB.ForeColor = SystemColors.Control;
+            PasswordTB.Location = new Point(132, 140);
+            PasswordTB.Name = "PasswordTB";
+            PasswordTB.Size = new Size(452, 23);
+            PasswordTB.TabIndex = 33;
+            // 
+            // UsernameTB
+            // 
+            UsernameTB.BackColor = Color.FromArgb(60, 63, 65);
+            UsernameTB.ForeColor = SystemColors.Control;
+            UsernameTB.Location = new Point(132, 111);
+            UsernameTB.Name = "UsernameTB";
+            UsernameTB.Size = new Size(452, 23);
+            UsernameTB.TabIndex = 32;
+            // 
+            // HostTB
+            // 
+            HostTB.BackColor = Color.FromArgb(60, 63, 65);
+            HostTB.ForeColor = SystemColors.Control;
+            HostTB.Location = new Point(132, 82);
+            HostTB.Name = "HostTB";
+            HostTB.Size = new Size(452, 23);
+            HostTB.TabIndex = 31;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(12, 143);
+            label11.Name = "label11";
+            label11.Size = new Size(57, 15);
+            label11.TabIndex = 29;
+            label11.Text = "Password";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(9, 114);
+            label10.Name = "label10";
+            label10.Size = new Size(60, 15);
+            label10.TabIndex = 28;
+            label10.Text = "Username";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(9, 53);
+            label9.Name = "label9";
+            label9.Size = new Size(29, 15);
+            label9.TabIndex = 27;
+            label9.Text = "Port";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(9, 85);
+            label8.Name = "label8";
+            label8.Size = new Size(32, 15);
+            label8.TabIndex = 26;
+            label8.Text = "Host";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(6, 25);
+            label7.Name = "label7";
+            label7.Size = new Size(117, 15);
+            label7.TabIndex = 25;
+            label7.Text = "Connection Protocol";
+            // 
+            // ProtocolCB
+            // 
+            ProtocolCB.BackColor = Color.FromArgb(60, 63, 65);
+            ProtocolCB.ForeColor = SystemColors.Control;
+            ProtocolCB.FormattingEnabled = true;
+            ProtocolCB.Items.AddRange(new object[] { "Create Blank", "Create Project to Existing Project Files" });
+            ProtocolCB.Location = new Point(132, 22);
+            ProtocolCB.Name = "ProtocolCB";
+            ProtocolCB.Size = new Size(452, 23);
+            ProtocolCB.TabIndex = 24;
             // 
             // button2
             // 
             button2.BackColor = Color.FromArgb(60, 63, 65);
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(615, 196);
+            button2.Location = new Point(15, 378);
             button2.Name = "button2";
-            button2.Size = new Size(171, 23);
+            button2.Size = new Size(597, 23);
             button2.TabIndex = 23;
             button2.Text = "Save Changes";
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(15, 195);
-            label7.Name = "label7";
-            label7.Size = new Size(88, 15);
-            label7.TabIndex = 21;
-            label7.Text = "Create Backups";
-            // 
-            // EditCreateBackupsCB
-            // 
-            EditCreateBackupsCB.AutoSize = true;
-            EditCreateBackupsCB.Location = new Point(147, 196);
-            EditCreateBackupsCB.Name = "EditCreateBackupsCB";
-            EditCreateBackupsCB.Size = new Size(15, 14);
-            EditCreateBackupsCB.TabIndex = 20;
-            EditCreateBackupsCB.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Location = new Point(15, 169);
             label6.Name = "label6";
-            label6.Size = new Size(54, 15);
+            label6.Size = new Size(10, 15);
             label6.TabIndex = 19;
-            label6.Text = "Map Size";
+            label6.Text = " ";
             // 
             // EditMapSizeNUD
             // 
@@ -559,7 +665,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            ClientSize = new Size(1148, 455);
+            ClientSize = new Size(1148, 654);
             Controls.Add(button3);
             Controls.Add(button1);
             Controls.Add(groupBox2);
@@ -578,6 +684,9 @@
             ProjectsCM.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)PortNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)EditMapSizeNUD).EndInit();
             ResumeLayout(false);
         }
@@ -610,8 +719,6 @@
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem toolStripMenuItem2;
         private GroupBox groupBox2;
-        private Label label7;
-        private CheckBox EditCreateBackupsCB;
         private Label label6;
         private NumericUpDown EditMapSizeNUD;
         private Label label5;
@@ -630,5 +737,16 @@
         private ListView MapAddonsLB;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
+        private GroupBox groupBox3;
+        private ComboBox ProtocolCB;
+        private NumericUpDown PortNUD;
+        private TextBox PasswordTB;
+        private TextBox UsernameTB;
+        private TextBox HostTB;
+        private Label label11;
+        private Label label10;
+        private Label label9;
+        private Label label8;
+        private Label label7;
     }
 }
