@@ -16,6 +16,54 @@ namespace ExpansionPlugin
         public ExpansionPersonalStorageSettingsConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex =>
+                        {
+                            HandleLoadError(ex);
+                        },
+                        configName: FileName,
+                        useVecConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    IsDirty = true;
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+
+        }
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                IsDirty = false;
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
+                ClonedData = CloneData(Data);
+                return new[] { _path };
+            }
+
+            return Array.Empty<string>();
+        }
         protected override ExpansionPersonalStorageSettings CreateDefaultData()
         {
             return new ExpansionPersonalStorageSettings(CurrentVersion);

@@ -106,31 +106,7 @@ namespace ExpansionPlugin
                     saved.Add(fullfielName);
                 }
             }
-            saved.AddRange(DeleteEmptyDirectoriesFromPath(FilePath));
             return saved;
-        }
-        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
-        {
-            List<string> removedFolders = new List<string>();
-            if (!Directory.Exists(rootPath))
-                return removedFolders;
-
-            var directories = Directory
-                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
-                .OrderByDescending(d => d.Count(c => c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
-                .ToList();
-
-            foreach (var dir in directories)
-            {
-                if (!Directory.EnumerateFileSystemEntries(dir).Any())
-                {
-                    Directory.Delete(dir);
-                    string relativePath = Path.GetRelativePath(rootPath, dir);
-                    removedFolders.Add("Empty Folder Removed " + relativePath);
-                }
-            }
-
-            return removedFolders;
         }
         protected override void SaveItem(ExpansionMarketTraderZone TraderZone)
         {
@@ -138,6 +114,8 @@ namespace ExpansionPlugin
         }
         protected override string GetItemFileName(ExpansionMarketTraderZone TraderZone)
             => TraderZone.FileName;
+        protected override string GetItemFilePath(ExpansionMarketTraderZone ExpansionMarketTraderZone)
+          => ExpansionMarketTraderZone.FilePath;
         protected override bool ShouldDelete(ExpansionMarketTraderZone TraderZone)
             => TraderZone.ToDelete;
         protected override Guid GetID(ExpansionMarketTraderZone TraderZone)

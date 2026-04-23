@@ -45,47 +45,6 @@ namespace ExpansionPlugin
             item.SetGuid(Guid.NewGuid());
             return item;
         }
-        public override IEnumerable<string> Save()
-        {
-            var saved = new List<string>();
-
-            for (int i = Items.Count - 1; i >= 0; i--)
-            {
-                var item = Items[i];
-                var id = GetID(item);
-                var fileName = GetItemFileName(item);
-                var fullfielName = item.FilePath;
-                if (ShouldDelete(item))
-                {
-                    DeleteItemFile(item);
-                    MutableItems.RemoveAt(i);
-                    _clonedItems.Remove(id);
-                    saved.Add("File Remove " + fullfielName);
-                    continue;
-                }
-                //new file, needs to be written to disk and cloned
-                if (!_clonedItems.TryGetValue(id, out var baseline))
-                {
-                    SaveItem(item);
-                    _clonedItems[id] = item.Clone();
-                    saved.Add(fullfielName);
-                    continue;
-                }
-                //edit to existing file, needs to be recloned
-                if (!item.Equals(baseline))
-                {
-                    SaveItem(item);
-                    if (_clonedItems[id]._path != item._path)
-                    {
-                        if (File.Exists(_clonedItems[id]._path))
-                            File.Delete(_clonedItems[id]._path);
-                    }
-                    _clonedItems[id] = item.Clone();
-                    saved.Add(fullfielName);
-                }
-            }
-            return saved;
-        }
         protected override void SaveItem(ExpansionMissionEventBase item)
         {
             var fs = AppServices.GetRequired<FileService>();
@@ -101,6 +60,8 @@ namespace ExpansionPlugin
         }
         protected override string GetItemFileName(ExpansionMissionEventBase item)
             => item.FileName;
+        protected override string GetItemFilePath(ExpansionMissionEventBase ExpansionMissionEventBase)
+            => ExpansionMissionEventBase.FilePath;
         protected override bool ShouldDelete(ExpansionMissionEventBase item)
             => item.ToDelete;
         protected override Guid GetID(ExpansionMissionEventBase item)

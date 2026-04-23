@@ -509,6 +509,8 @@ namespace Day2eEditor
 
         protected override string GetItemFileName(TypesFile item)
             => item.FileName;
+        protected override string GetItemFilePath(TypesFile TypesFile)
+            => TypesFile.FilePath;
 
         protected override Guid GetID(TypesFile item)
             => item.Id;

@@ -201,6 +201,8 @@ namespace ExpansionPlugin
         }
         protected override string GetItemFileName(ExpansionMarketTrader ExpansionMarketTrader)
             => ExpansionMarketTrader.FileName;
+        protected override string GetItemFilePath(ExpansionMarketTrader ExpansionMarketTrader)
+            => ExpansionMarketTrader.FilePath;
         protected override bool ShouldDelete(ExpansionMarketTrader ExpansionMarketTrader)
             => ExpansionMarketTrader.ToDelete;
         protected override Guid GetID(ExpansionMarketTrader ExpansionMarketTrader)

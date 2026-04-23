@@ -42,7 +42,7 @@ namespace Day2eEditor
                     var item = LoadItem(file);
 
                     OnAfterItemLoad(item, file);
-
+                    _clonedItems[GetID(item)] = CloneItem(item);
                     var issues = ValidateItem(item);
                     if (issues?.Any() == true)
                     {
@@ -52,10 +52,8 @@ namespace Day2eEditor
                             Console.WriteLine("- " + msg);
                         }
                     }
-
                     MutableItems.Add(item);
-                    _clonedItems[GetID(item)] = CloneItem(item);
-                }
+                   }
                 catch (Exception ex)
                 {
                     HasErrors = true;
@@ -75,13 +73,13 @@ namespace Day2eEditor
                 var item = MutableItems[i];
                 var id = GetID(item);
                 var fileName = GetItemFileName(item);
-
+                var fullfielName = GetItemFilePath(item);
                 if (ShouldDelete(item))
                 {
                     DeleteItemFile(item);
                     MutableItems.RemoveAt(i);
                     _clonedItems.Remove(id);
-                    saved.Add("File Remove " + fileName);
+                    saved.Add("File Remove " + fullfielName);
                     continue;
                 }
 
@@ -89,18 +87,22 @@ namespace Day2eEditor
                 {
                     SaveItem(item);
                     _clonedItems[id] = CloneItem(item);
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                     continue;
                 }
 
                 if (!AreEqual(item, baseline))
                 {
                     SaveItem(item);
+                    if (GetItemFilePath(_clonedItems[id]) != GetItemFilePath(item))
+                    {
+                        if (File.Exists(GetItemFilePath(_clonedItems[id])))
+                            File.Delete(GetItemFilePath(_clonedItems[id]));
+                    }
                     _clonedItems[id] = CloneItem(item);
-                    saved.Add(fileName);
+                    saved.Add(fullfielName);
                 }
             }
-
             return saved;
         }
 
@@ -134,6 +136,7 @@ namespace Day2eEditor
         protected abstract TItem LoadItem(string filePath);
         protected abstract void SaveItem(TItem item);
         protected abstract string GetItemFileName(TItem item);
+        protected abstract string GetItemFilePath(TItem item);
         protected abstract Guid GetID(TItem item);
         protected abstract bool ShouldDelete(TItem item);
         protected abstract void DeleteItemFile(TItem item);
