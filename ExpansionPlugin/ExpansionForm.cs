@@ -2192,6 +2192,7 @@ namespace ExpansionPlugin
                 Tag = "QuestsrootNode"
             };
             AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestConfig, CreateExpansionQuestConfig);
+            AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestPersistentServerDataConfig, CreateExpansionQuestPersistentServerDataConfig);
             rootNode.Nodes.Add(QuestsrootNode);
 
             ExpansionTV.Nodes.Add(rootNode);
@@ -3947,6 +3948,31 @@ namespace ExpansionPlugin
                 Tag = ef.Data
             });
         }
+        private TreeNode CreateExpansionQuestPersistentServerDataConfig(ExpansionQuestPersistentServerDataConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode(ef.FileName)
+            {
+                Tag = ef
+            };
+            CreatexpansionQuestPersistentServerDataNodes(ef, EconomyRootNode);
+            return EconomyRootNode;
+        }
+        private void CreatexpansionQuestPersistentServerDataNodes(ExpansionQuestPersistentServerDataConfig ef, TreeNode economyRootNode)
+        {
+            TreeNode QMInode = new TreeNode("Quest Market Items")
+            {
+                Tag = "QuestPersitantMarketItems"
+            };
+            foreach(ExpansionQuestItemForMarket item in ef.Data.m_QuestMarketItems)
+            {
+                QMInode.Nodes.Add(new TreeNode(item.ClassName)
+                {
+                    Tag = item
+                });
+            }
+            economyRootNode.Nodes.Add(QMInode);
+        }
+
         //Raid
         private TreeNode CreateExpansionRaidConfig(ExpansionRaidConfig ef)
         {

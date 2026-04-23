@@ -47,6 +47,7 @@ namespace ExpansionPlugin
         public ExpansionPersonalStorageSettingsConfig ExpansionPersonalStorageConfig { get; set; }
         public ExpansionPlayerListConfig ExpansionPlayerListConfig { get; set; }
         public ExpansionQuestConfig ExpansionQuestConfig { get; set; }
+        public ExpansionQuestPersistentServerDataConfig ExpansionQuestPersistentServerDataConfig { get; set; }
         public ExpansionRaidConfig ExpansionRaidConfig { get; set; }
         public ExpansionSafeZoneConfig ExpansionSafeZoneConfig { get; set; }
         public ExpansionSocialMediaConfig ExpansionSocialMediaConfig { get; set; }
@@ -109,6 +110,9 @@ namespace ExpansionPlugin
             _paths["MarketTraders"] = Path.Combine(profilePath, "ExpansionMod", "Traders");
             _paths["MarketTraderZones"] = Path.Combine(basePath, "expansion", "traderzones");
             _paths["MarketTraderNPCs"] = Path.Combine(basePath, "expansion", "traders");
+
+            //Quest Files
+            _paths["QuestPersistentServerData"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "PersistentServerData.json");
 
             LoadFiles();
         }
@@ -206,6 +210,9 @@ namespace ExpansionPlugin
             ExpansionQuestConfig = new ExpansionQuestConfig(_paths["QuestSettings"]);
             LoadConfigWithErrorReport("QuestSettings", ExpansionQuestConfig);
 
+            ExpansionQuestPersistentServerDataConfig = new ExpansionQuestPersistentServerDataConfig(_paths["QuestPersistentServerData"]);
+            LoadConfigWithErrorReport("QuestPersistentServerData", ExpansionQuestPersistentServerDataConfig);
+
             ExpansionRaidConfig = new ExpansionRaidConfig(_paths["RaidSettings"]);
             LoadConfigWithErrorReport("RaidSettings", ExpansionRaidConfig);
 
@@ -293,6 +300,7 @@ namespace ExpansionPlugin
                 ExpansionPersonalStorageConfig,
                 ExpansionPlayerListConfig,
                 ExpansionQuestConfig,
+                ExpansionQuestPersistentServerDataConfig,
                 ExpansionRaidConfig,
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
@@ -362,6 +370,7 @@ namespace ExpansionPlugin
                 ExpansionPersonalStorageConfig,
                 ExpansionPlayerListConfig,
                 ExpansionQuestConfig,
+                ExpansionQuestPersistentServerDataConfig,
                 ExpansionRaidConfig,
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,

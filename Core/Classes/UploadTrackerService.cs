@@ -86,7 +86,7 @@ namespace Day2eEditor
                     list.Add(new PendingUploadFile
                     {
                         FileName = displayFileName,
-                        FullPath = filePath,
+                        FullPath = filePath.Replace("File Remove ", ""),
                         ProjectName = projectName,
                         LastSavedAt = DateTime.Now,
                         Action = action
@@ -212,9 +212,7 @@ namespace Day2eEditor
 
         private PendingServerAction DetermineAction(string filePath)
         {
-            var fileName = Path.GetFileName(filePath);
-
-            if (fileName.StartsWith(RemovePrefix, StringComparison.OrdinalIgnoreCase))
+            if (filePath.StartsWith(RemovePrefix, StringComparison.OrdinalIgnoreCase))
                 return PendingServerAction.Remove;
 
             return PendingServerAction.Upload;
