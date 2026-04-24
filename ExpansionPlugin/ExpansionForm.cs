@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
@@ -2193,6 +2194,8 @@ namespace ExpansionPlugin
             };
             AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestConfig, CreateExpansionQuestConfig);
             AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestPersistentServerDataConfig, CreateExpansionQuestPersistentServerDataConfig);
+            AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestNPCDataConfig, CreateExpansionQuestNPCDataConfig);
+
             rootNode.Nodes.Add(QuestsrootNode);
 
             ExpansionTV.Nodes.Add(rootNode);
@@ -3972,7 +3975,55 @@ namespace ExpansionPlugin
             }
             economyRootNode.Nodes.Add(QMInode);
         }
+        private TreeNode CreateExpansionQuestNPCDataConfig(ExpansionQuestNPCDataConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Quest NPCS")
+            {
+                Tag = ef
+            };
+            CreateQuestNPCNodes(EconomyRootNode, ef);
+            return EconomyRootNode;
+        }
+        private static void CreateQuestNPCNodes(TreeNode node, ExpansionQuestNPCDataConfig NPCdata)
+        {
+            foreach (ExpansionQuestNPCData map in NPCdata.MutableItems)
+            {
+                TreeNode classNameNode = new TreeNode($"{map.NPCName} ({map.ClassName}) {map.GetNPCType()}")
+                {
+                    Tag = map
+                };
 
+                // --- Rotation ---
+                TreeNode rotationNode = new TreeNode("Orientation: " + map.Orientation.ToString())
+                {
+                    Tag = map.Orientation
+                };
+                classNameNode.Nodes.Add(rotationNode);
+
+                // --- Positions / Waypoints ---
+                TreeNode positionsNode = new TreeNode(map.GetISAI() ? "Waypoints" : "Position")
+                {
+                    Tag = "expansionQuestNPCMovement"
+                };
+
+                if (map.GetISAI())
+                {
+                    foreach (Vec3 v3 in map.Waypoints)
+                    {
+                        positionsNode.Nodes.Add(new TreeNode(v3.ToString()) { Tag = v3 });
+                    }
+                }
+                else if (map.Position != null)
+                {
+                    positionsNode.Nodes.Add(new TreeNode(map.Position.ToString()) { Tag = map.Position });
+                }
+
+                classNameNode.Nodes.Add(positionsNode);
+
+
+                Helpers.InsertNodeAlphabetically(node.Nodes, classNameNode);
+            }
+        }
         //Raid
         private TreeNode CreateExpansionRaidConfig(ExpansionRaidConfig ef)
         {

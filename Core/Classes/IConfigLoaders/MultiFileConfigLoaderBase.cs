@@ -33,7 +33,12 @@ namespace Day2eEditor
             if (!Directory.Exists(BasePath))
                 return;
 
-            var filePaths = Directory.GetFiles(BasePath, "*.json");
+            var filePaths = Directory.GetFiles(
+                BasePath,
+                "*.json",
+                SearchOption.AllDirectories
+            );
+
 
             foreach (var file in filePaths)
             {

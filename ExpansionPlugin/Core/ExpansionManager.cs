@@ -48,6 +48,9 @@ namespace ExpansionPlugin
         public ExpansionPlayerListConfig ExpansionPlayerListConfig { get; set; }
         public ExpansionQuestConfig ExpansionQuestConfig { get; set; }
         public ExpansionQuestPersistentServerDataConfig ExpansionQuestPersistentServerDataConfig { get; set; }
+        public ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig { get;set; }
+        public ExpansionQuestQuestConfig ExpansionQuestQuestConfig { get; set; }
+        public ExpansionQuestObjectiveConfigConfig ExpansionQuestObjectiveConfigConfig { get; set; }
         public ExpansionRaidConfig ExpansionRaidConfig { get; set; }
         public ExpansionSafeZoneConfig ExpansionSafeZoneConfig { get; set; }
         public ExpansionSocialMediaConfig ExpansionSocialMediaConfig { get; set; }
@@ -113,6 +116,9 @@ namespace ExpansionPlugin
 
             //Quest Files
             _paths["QuestPersistentServerData"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "PersistentServerData.json");
+            _paths["ExpansionQuestNPCData"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "NPCs");
+            _paths["ExpansionQuestQuests"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "Quests");
+            _paths["ExpansionQuestObjectives"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "Objectives");
 
             LoadFiles();
         }
@@ -213,6 +219,15 @@ namespace ExpansionPlugin
             ExpansionQuestPersistentServerDataConfig = new ExpansionQuestPersistentServerDataConfig(_paths["QuestPersistentServerData"]);
             LoadConfigWithErrorReport("QuestPersistentServerData", ExpansionQuestPersistentServerDataConfig);
 
+            ExpansionQuestNPCDataConfig = new ExpansionQuestNPCDataConfig(_paths["ExpansionQuestNPCData"]);
+            LoadConfigWithErrorReport("ExpansionQuestNPCData", ExpansionQuestNPCDataConfig);
+
+            ExpansionQuestObjectiveConfigConfig = new ExpansionQuestObjectiveConfigConfig(_paths["ExpansionQuestObjectives"]);
+            LoadConfigWithErrorReport("ExpansionQuestObjectives", ExpansionQuestObjectiveConfigConfig);
+
+            //ExpansionQuestQuestConfig = new ExpansionQuestQuestConfig(_paths["ExpansionQuestQuests"]);
+            //LoadConfigWithErrorReport("ExpansionQuestQuests", ExpansionQuestQuestConfig);
+
             ExpansionRaidConfig = new ExpansionRaidConfig(_paths["RaidSettings"]);
             LoadConfigWithErrorReport("RaidSettings", ExpansionRaidConfig);
 
@@ -301,6 +316,9 @@ namespace ExpansionPlugin
                 ExpansionPlayerListConfig,
                 ExpansionQuestConfig,
                 ExpansionQuestPersistentServerDataConfig,
+                ExpansionQuestNPCDataConfig,
+                ExpansionQuestQuestConfig,
+                ExpansionQuestObjectiveConfigConfig,
                 ExpansionRaidConfig,
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
@@ -371,6 +389,9 @@ namespace ExpansionPlugin
                 ExpansionPlayerListConfig,
                 ExpansionQuestConfig,
                 ExpansionQuestPersistentServerDataConfig,
+                ExpansionQuestNPCDataConfig,
+                ExpansionQuestQuestConfig,
+                ExpansionQuestObjectiveConfigConfig,
                 ExpansionRaidConfig,
                 ExpansionSafeZoneConfig,
                 ExpansionSocialMediaConfig,
