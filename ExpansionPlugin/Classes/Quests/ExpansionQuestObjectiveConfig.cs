@@ -41,16 +41,17 @@ namespace ExpansionPlugin
 
             Type targetType = objectiveType switch
             {
+                ExpansionQuestObjectiveType.ACTION => typeof(ExpansionQuestObjectiveActionConfig),
+                ExpansionQuestObjectiveType.AICAMP => typeof(ExpansionQuestObjectiveAICampConfig),
+                ExpansionQuestObjectiveType.AIPATROL => typeof(ExpansionQuestObjectiveAIPatrolConfig),
+                ExpansionQuestObjectiveType.AIESCORT => typeof(ExpansionQuestObjectiveAIEscortConfig),
+                ExpansionQuestObjectiveType.COLLECT => typeof(ExpansionQuestObjectiveCollectionConfig),
+                ExpansionQuestObjectiveType.CRAFTING => typeof(ExpansionQuestObjectiveCraftingConfig),
+                ExpansionQuestObjectiveType.DELIVERY => typeof(ExpansionQuestObjectiveDeliveryConfig),
                 ExpansionQuestObjectiveType.TARGET => typeof(ExpansionQuestObjectiveTargetConfig),
-                //ExpansionQuestObjectiveType.TRAVEL => typeof(ExpansionQuestObjectiveTravelConfig),
-                //ExpansionQuestObjectiveType.COLLECT => typeof(ExpansionQuestObjectiveCollectionConfig),
-                //ExpansionQuestObjectiveType.DELIVERY => typeof(ExpansionQuestObjectiveDeliveryConfig),
-                //ExpansionQuestObjectiveType.TREASUREHUNT => typeof(ExpansionQuestObjectiveTreasureHuntConfig),
-                //ExpansionQuestObjectiveType.AIPATROL => typeof(ExpansionQuestObjectiveAIPatrolConfig),
-                //ExpansionQuestObjectiveType.AICAMP => typeof(ExpansionQuestObjectiveAICampConfig),
-                //ExpansionQuestObjectiveType.AIESCORT => typeof(ExpansionQuestObjectiveAIEscortConfig),
-                //ExpansionQuestObjectiveType.ACTION => typeof(ExpansionQuestObjectiveActionConfig),
-                //ExpansionQuestObjectiveType.CRAFTING => typeof(ExpansionQuestObjectiveCraftingConfig),
+                ExpansionQuestObjectiveType.TRAVEL => typeof(ExpansionQuestObjectiveTravelConfig),
+                ExpansionQuestObjectiveType.TREASUREHUNT => typeof(ExpansionQuestObjectiveTreasureHuntConfig),
+
                 _ => throw new ArgumentOutOfRangeException(nameof(objectiveType))
             };
 
@@ -73,12 +74,27 @@ namespace ExpansionPlugin
         {
             var fs = AppServices.GetRequired<FileService>();
 
-            if (item is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+           
+            if (item is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+                fs.SaveJson(ExpansionQuestObjectiveActionConfig._path, ExpansionQuestObjectiveActionConfig, false, true);
+            else if (item is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+                fs.SaveJson(ExpansionQuestObjectiveAICampConfig._path, ExpansionQuestObjectiveAICampConfig, false, true);
+            else if (item is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+                fs.SaveJson(ExpansionQuestObjectiveAIPatrolConfig._path, ExpansionQuestObjectiveAIPatrolConfig, false, true);
+            else if (item is ExpansionQuestObjectiveAIEscortConfig ExpansionQuestObjectiveAIEscortConfig)
+                fs.SaveJson(ExpansionQuestObjectiveAIEscortConfig._path, ExpansionQuestObjectiveAIEscortConfig, false, true);
+             else if (item is ExpansionQuestObjectiveCollectionConfig ExpansionQuestObjectiveCollectionConfig)
+                fs.SaveJson(ExpansionQuestObjectiveCollectionConfig._path, ExpansionQuestObjectiveCollectionConfig, false, true);
+            else if (item is ExpansionQuestObjectiveCraftingConfig ExpansionQuestObjectiveCraftingConfig)
+                fs.SaveJson(ExpansionQuestObjectiveCraftingConfig._path, ExpansionQuestObjectiveCraftingConfig, false, true);
+            else if (item is ExpansionQuestObjectiveDeliveryConfig ExpansionQuestObjectiveDeliveryConfig)
+                fs.SaveJson(ExpansionQuestObjectiveDeliveryConfig._path, ExpansionQuestObjectiveDeliveryConfig, false, true);
+            else if (item is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
                 fs.SaveJson(ExpansionQuestObjectiveTargetConfig._path, ExpansionQuestObjectiveTargetConfig, false, true);
-            //else if (item is ExpansionMissionEventContaminatedArea contaminated)
-            //    fs.SaveJson(contaminated._path, contaminated, true);
-            //else if (item is ExpansionMissionEventHeliCrash helicrash)
-            //    fs.SaveJson(helicrash._path, helicrash);
+            else if (item is ExpansionQuestObjectiveTravelConfig ExpansionQuestObjectiveTravelConfig)
+                fs.SaveJson(ExpansionQuestObjectiveTravelConfig._path, ExpansionQuestObjectiveTravelConfig, false, true);
+            else if (item is ExpansionQuestObjectiveTreasureHuntConfig ExpansionQuestObjectiveTreasureHuntConfig)
+                fs.SaveJson(ExpansionQuestObjectiveTreasureHuntConfig._path, ExpansionQuestObjectiveTreasureHuntConfig, false, true);
             else
                 fs.SaveJson(item._path, item);
         }
@@ -146,15 +162,24 @@ namespace ExpansionPlugin
 
             if (ConfigVersion != other.ConfigVersion)
                 return false;
-
             if (ID != other.ID)
                 return false;
-
             if (ObjectiveType != other.ObjectiveType)
                 return false;
+            if (ObjectiveText != other.ObjectiveText)
+                return false;
+            if (TimeLimit != other.TimeLimit)
+                return false;
+            if (Active != other.Active)
+                return false;
 
+            return EqualsCore(other);
+        }
+        protected virtual bool EqualsCore(ExpansionQuestObjectiveConfig other)
+        {
             return true;
         }
+
         public override bool Equals(object? obj) => Equals(obj as ExpansionQuestObjectiveConfig);
 
         internal virtual IEnumerable<string> FixMissingOrInvalidFields()

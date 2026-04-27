@@ -15,23 +15,23 @@ namespace ExpansionPlugin
         public Vec3 Position { get; set; }
         [JsonPropertyOrder(11)]
         public decimal? MaxDistance { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(12)]
         public decimal? MinDistance { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(13)]
         public int? Amount { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(14)]
         public BindingList<string> ClassNames { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(15)]
         public int? CountSelfKill { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(16)]
         public BindingList<string> AllowedWeapons { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(17)]
         public BindingList<string> ExcludedClassNames { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(18)]
         public int? CountAIPlayers { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(19)]
         public BindingList<string> AllowedTargetFactions { get; set; }
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(20)]
         public BindingList<string> AllowedDamageZones { get; set; }
 
 
@@ -76,46 +76,41 @@ namespace ExpansionPlugin
                     : null
             };
         }
-        public override bool Equals(object? obj)
+        protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
-            if (!base.Equals(obj))
+            var o = (ExpansionQuestObjectiveTargetConfig)other;
+
+            if (!Equals(Position, o.Position))
                 return false;
 
-            var other = obj as ExpansionQuestObjectiveTargetConfig;
-            if (other is null)
+            if (MaxDistance != o.MaxDistance)
                 return false;
 
-            if (!Equals(Position, other.Position))
+            if (MinDistance != o.MinDistance)
                 return false;
 
-            if (MaxDistance != other.MaxDistance)
+            if (Amount != o.Amount)
                 return false;
 
-            if (MinDistance != other.MinDistance)
+            if (!ListEquals(ClassNames, o.ClassNames))
                 return false;
 
-            if (Amount != other.Amount)
+            if (CountSelfKill != o.CountSelfKill)
                 return false;
 
-            if (!ListEquals(ClassNames, other.ClassNames))
+            if (!ListEquals(AllowedWeapons, o.AllowedWeapons))
                 return false;
 
-            if (CountSelfKill != other.CountSelfKill)
+            if (!ListEquals(ExcludedClassNames, o.ExcludedClassNames))
                 return false;
 
-            if (!ListEquals(AllowedWeapons, other.AllowedWeapons))
+            if (CountAIPlayers != o.CountAIPlayers)
                 return false;
 
-            if (!ListEquals(ExcludedClassNames, other.ExcludedClassNames))
+            if (!ListEquals(AllowedTargetFactions, o.AllowedTargetFactions))
                 return false;
 
-            if (CountAIPlayers != other.CountAIPlayers)
-                return false;
-
-            if (!ListEquals(AllowedTargetFactions, other.AllowedTargetFactions))
-                return false;
-
-            if (!ListEquals(AllowedDamageZones, other.AllowedDamageZones))
+            if (!ListEquals(AllowedDamageZones, o.AllowedDamageZones))
                 return false;
 
             return true;
@@ -149,6 +144,72 @@ namespace ExpansionPlugin
             {
                 Position = new Vec3();
                 fixes.Add("Initialised Position");
+            }
+
+            if (MaxDistance == null || (MaxDistance.HasValue && MaxDistance < -1))
+            {
+                MaxDistance = -1;
+                fixes.Add("Clamped MaxDistance to -1");
+            }
+
+            if (MinDistance == null || (MinDistance.HasValue && MinDistance < -1))
+            {
+                MinDistance = -1;
+                fixes.Add("Clamped MinDistance to -1");
+            }
+
+            if (MinDistance > MaxDistance)
+            {
+                (MinDistance, MaxDistance) = (MaxDistance, MinDistance);
+                fixes.Add("Swapped MinDistance and MaxDistance");
+            }
+
+            if (Amount == null || (Amount.HasValue && Amount < 0))
+            {
+                Amount = 0;
+                fixes.Add("Clamped Amount to 0");
+            }
+            if (CountSelfKill is null || (CountSelfKill != 0 && CountSelfKill != 1))
+            {
+                CountSelfKill = 0;
+                fixes.Add("Normalised CountSelfKill to 0 (valid values: 0 or 1)");
+            }
+
+            if (CountAIPlayers is null || (CountAIPlayers != 0 && CountAIPlayers != 1))
+            {
+                CountAIPlayers = 0;
+                fixes.Add("Normalised CountAIPlayers to 0 (valid values: 0 or 1)");
+            }
+
+
+            if (ClassNames == null)
+            {
+                ClassNames = new BindingList<string>();
+                fixes.Add("Initialised ClassNames");
+            }
+
+            if (AllowedWeapons == null)
+            {
+                AllowedWeapons = new BindingList<string>();
+                fixes.Add("Initialised AllowedWeapons");
+            }
+
+            if (ExcludedClassNames == null)
+            {
+                ExcludedClassNames = new BindingList<string>();
+                fixes.Add("Initialised ExcludedClassNames");
+            }
+
+            if (AllowedTargetFactions == null)
+            {
+                AllowedTargetFactions = new BindingList<string>();
+                fixes.Add("Initialised AllowedTargetFactions");
+            }
+
+            if (AllowedDamageZones == null)
+            {
+                AllowedDamageZones = new BindingList<string>();
+                fixes.Add("Initialised AllowedDamageZones");
             }
 
             return fixes;
