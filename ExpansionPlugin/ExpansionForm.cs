@@ -2195,7 +2195,8 @@ namespace ExpansionPlugin
             AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestConfig, CreateExpansionQuestConfig);
             AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestPersistentServerDataConfig, CreateExpansionQuestPersistentServerDataConfig);
             AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestNPCDataConfig, CreateExpansionQuestNPCDataConfig);
-
+            AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestQuestConfig, CreateExpansionQuestQuestConfig);
+            AddFileToTree(QuestsrootNode, null, _expansionManager.ExpansionQuestObjectiveConfigConfig, CreateExpansionQuestObjectiveConfigConfig);
             rootNode.Nodes.Add(QuestsrootNode);
 
             ExpansionTV.Nodes.Add(rootNode);
@@ -4024,6 +4025,73 @@ namespace ExpansionPlugin
                 Helpers.InsertNodeAlphabetically(node.Nodes, classNameNode);
             }
         }
+        private TreeNode CreateExpansionQuestQuestConfig(ExpansionQuestQuestConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Quests")
+            {
+                Tag = ef
+            };
+            CreateQuestQuestNodes(EconomyRootNode, ef);
+            return EconomyRootNode;
+        }
+
+        private void CreateQuestQuestNodes(TreeNode economyRootNode, ExpansionQuestQuestConfig ef)
+        {
+            foreach(ExpansionQuestQuest quest in ef.MutableItems)
+            {
+                TreeNode QuestNode = new TreeNode(quest.Title)
+                {
+                    Tag = quest
+                };
+                economyRootNode.Nodes.Add(QuestNode);
+            }
+        }
+        private TreeNode CreateExpansionQuestObjectiveConfigConfig(ExpansionQuestObjectiveConfigConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Quest Objectives")
+            {
+                Tag = ef
+            };
+            CreateQuestObjectiveNodes(EconomyRootNode, ef);
+            return EconomyRootNode;
+        }
+        private void CreateQuestObjectiveNodes(TreeNode economyRootNode, ExpansionQuestObjectiveConfigConfig ef)
+        {
+            var categoryNodes = new Dictionary<Type, TreeNode>
+            {
+                { typeof(ExpansionQuestObjectiveActionConfig), new TreeNode("Action") { Tag = "Action" } },
+                { typeof(ExpansionQuestObjectiveAICampConfig), new TreeNode("AICamp") { Tag = "AICamp" } },
+                { typeof(ExpansionQuestObjectiveAIPatrolConfig), new TreeNode("AIPatrol") { Tag = "AIPatrol" } },
+                { typeof(ExpansionQuestObjectiveAIEscortConfig), new TreeNode("AIVIP") { Tag = "AIVIP" } },
+                { typeof(ExpansionQuestObjectiveCollectionConfig), new TreeNode("Collection") { Tag = "Collection" } },
+                { typeof(ExpansionQuestObjectiveCraftingConfig), new TreeNode("Crafting") { Tag = "Crafting" } },
+                { typeof(ExpansionQuestObjectiveDeliveryConfig), new TreeNode("Delivery") { Tag = "Delivery" } },
+                { typeof(ExpansionQuestObjectiveTargetConfig), new TreeNode("Target") { Tag = "Target" } },
+                { typeof(ExpansionQuestObjectiveTravelConfig), new TreeNode("Travel") { Tag = "Travel" } },
+                { typeof(ExpansionQuestObjectiveTreasureHuntConfig), new TreeNode("TreasureHunt") { Tag = "TreasureHunt" } }
+            };
+
+            foreach (var objective in ef.MutableItems)
+            {
+                var objectiveType = objective.GetType();
+
+                if (categoryNodes.TryGetValue(objectiveType, out var categoryNode))
+                {
+                    categoryNode.Nodes.Add(new TreeNode(objective.FileName)
+                    {
+                        Tag = objective
+                    });
+                }
+            }
+
+            foreach (var node in categoryNodes.Values)
+            {
+                economyRootNode.Nodes.Add(node);
+            }
+
+        }
+
+
         //Raid
         private TreeNode CreateExpansionRaidConfig(ExpansionRaidConfig ef)
         {
