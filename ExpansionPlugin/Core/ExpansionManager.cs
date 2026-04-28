@@ -225,8 +225,8 @@ namespace ExpansionPlugin
             ExpansionQuestObjectiveConfigConfig = new ExpansionQuestObjectiveConfigConfig(_paths["ExpansionQuestObjectives"]);
             LoadConfigWithErrorReport("ExpansionQuestObjectives", ExpansionQuestObjectiveConfigConfig);
 
-            //ExpansionQuestQuestConfig = new ExpansionQuestQuestConfig(_paths["ExpansionQuestQuests"]);
-            //LoadConfigWithErrorReport("ExpansionQuestQuests", ExpansionQuestQuestConfig);
+            ExpansionQuestQuestConfig = new ExpansionQuestQuestConfig(_paths["ExpansionQuestQuests"]);
+            LoadConfigWithErrorReport("ExpansionQuestQuests", ExpansionQuestQuestConfig);
 
             ExpansionRaidConfig = new ExpansionRaidConfig(_paths["RaidSettings"]);
             LoadConfigWithErrorReport("RaidSettings", ExpansionRaidConfig);

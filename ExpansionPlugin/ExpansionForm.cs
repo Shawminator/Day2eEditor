@@ -83,6 +83,12 @@ namespace ExpansionPlugin
                         SetupAIPatrols(ExpansionAIPatrol, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
+                    else if (node.Parent.Tag.ToString() == "ObjectivesTreasureHuntPositions")
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
+                    }
                     else if (node.Parent.Tag is ExpansionSafeZonePolygon)
                     {
                         Vec3 v3 = node.Tag as Vec3;
@@ -651,13 +657,49 @@ namespace ExpansionPlugin
                 {
                     ExpansionVehiclesLockConfig ExpansionVehiclesLockConfig = node.Tag as ExpansionVehiclesLockConfig;
                     ShowHandler(new ExpansionVehiclesLockConfigControl(), typeof(ExpansionVehiclesConfig), ExpansionVehiclesLockConfig, selected);
-                }
+                },
+                //Quests
+                //objective node type
+                [typeof(ObjectiveNodeTag)] = (node, selected) =>
+                {
+
+                    if (node.Tag is ObjectiveNodeTag tag)
+                    {
+                        switch (tag.Kind)
+                        {
+                            case ObjectiveNodeKind.BaseConfig:
+                                ShowHandler(new ExpansionQuestObjectiveConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), tag.Object, selected);
+                                return;
+
+                            case ObjectiveNodeKind.SpecificConfig:
+                                DispatchSpecificEditor(tag.Object, selected);
+                                return;
+                        }
+                    }
+
+                },
             };
             // ----------------------
             // String handlers
             // ----------------------
             _stringHandlers = new Dictionary<string, Action<TreeNode, List<TreeNode>>>
             {
+                //ExpansionLoot shared
+                ["ExpansionLootList"] = (node, selected) =>
+                {
+                    if (node.Parent.Tag is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+                    {
+                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionMissionEventAirdrop), ExpansionMissionEventAirdrop.Loot, selected);
+                    }
+                    else if (node.Parent.Tag is ExpansionLootContainer ExpansionLootContainer)
+                    {
+                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionAirdropConfig), ExpansionLootContainer.Loot, selected);
+                    }
+                    else if (node.Parent.Tag is ExpansionQuestObjectiveTreasureHuntConfig ExpansionQuestObjectiveTreasureHuntConfig)
+                    {
+                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionQuestObjectiveTreasureHuntConfig), ExpansionQuestObjectiveTreasureHuntConfig.Loot, selected);
+                    }
+                },
                 //AI
                 ["AIPatrolGeneral"] = (node, selected) =>
                 {
@@ -665,19 +707,6 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
                 },
                 //Airdrops
-                ["AirdropContainersLoot"] = (node, selected) =>
-                {
-                    if (node.Parent.Tag is ExpansionMissionEventAirdrop)
-                    {
-                        ExpansionMissionEventAirdrop cfg = node.FindParentOfType<ExpansionMissionEventAirdrop>();
-                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionMissionEventAirdrop), cfg.Loot, selected);
-                    }
-                    else
-                    {
-                        ExpansionLootContainer cfg = node.FindParentOfType<ExpansionLootContainer>();
-                        ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionAirdropConfig), cfg.Loot, selected);
-                    }
-                },
                 ["AirdropContainersInfected"] = (node, selected) =>
                 {
                     if (node.Parent.Tag is ExpansionMissionEventAirdrop)
@@ -2447,7 +2476,7 @@ namespace ExpansionPlugin
 
                 TreeNode alclnodes = new TreeNode("Loot")
                 {
-                    Tag = "AirdropContainersLoot"
+                    Tag = "ExpansionLootList"
                 };
                 alcnodes.Nodes.Add(alclnodes);
 
@@ -3400,7 +3429,7 @@ namespace ExpansionPlugin
 
                 TreeNode alclnodes = new TreeNode("Loot")
                 {
-                    Tag = "AirdropContainersLoot"
+                    Tag = "ExpansionLootList"
                 };
                 missionNode.Nodes.Add(alclnodes);
             }
@@ -4075,13 +4104,14 @@ namespace ExpansionPlugin
             {
                 var objectiveType = objective.GetType();
 
-                if (categoryNodes.TryGetValue(objectiveType, out var categoryNode))
-                {
-                    categoryNode.Nodes.Add(new TreeNode(objective.FileName)
-                    {
-                        Tag = objective
-                    });
-                }
+                if (!categoryNodes.TryGetValue(objectiveType, out var categoryNode))
+                    continue;
+
+                var node = new TreeNode(objective.FileName) { Tag = objective };
+                objective.BuildTree(node);
+
+                categoryNode.Nodes.Add(node);
+
             }
 
             foreach (var node in categoryNodes.Values)
@@ -4731,17 +4761,29 @@ namespace ExpansionPlugin
                     }
                 }
 
-
                 var nodeType = e.Node.Tag.GetType();
                 if (_typeHandlers.TryGetValue(nodeType, out var typeHandler))
                 {
                     typeHandler(e.Node, selectedNodes);
                     return;
                 }
-
                 ShowHandler<IUIHandler>(null, null, null, selectedNodes);
             }));
         }
+
+        void DispatchSpecificEditor(
+            ExpansionQuestObjectiveConfig obj,
+            List<TreeNode> selected)
+        {
+            var runtimeType = obj.GetType();
+
+            if (_typeHandlers.TryGetValue(runtimeType, out var handler))
+            {
+                handler(currentTreeNode, selected);
+                return;
+            }
+        }
+
         private void ExpansionTV_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             ExpansionTV.SelectedNode = e.Node;
@@ -6885,7 +6927,7 @@ namespace ExpansionPlugin
 
             TreeNode alclnodes = new TreeNode("Loot")
             {
-                Tag = "AirdropContainersLoot"
+                Tag = "ExpansionLootList"
             };
             alcnodes.Nodes.Add(alclnodes);
             currentTreeNode.Nodes.Add(alcnodes);
@@ -8956,7 +8998,7 @@ namespace ExpansionPlugin
 
                     TreeNode alclnodes = new TreeNode("Loot")
                     {
-                        Tag = "AirdropContainersLoot"
+                        Tag = "ExpansionLootList"
                     };
                     missionNode.Nodes.Add(alclnodes);
                 }

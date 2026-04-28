@@ -9,6 +9,23 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
+    public enum ObjectiveNodeKind
+    {
+        BaseConfig,
+        SpecificConfig
+    }
+    public sealed class ObjectiveNodeTag
+    {
+        public ExpansionQuestObjectiveConfig Object { get; }
+        public ObjectiveNodeKind Kind { get; }
+
+        public ObjectiveNodeTag(ExpansionQuestObjectiveConfig obj, ObjectiveNodeKind kind)
+        {
+            Object = obj;
+            Kind = kind;
+        }
+    }
+
     public enum ExpansionQuestObjectiveType
     {
         NONE = 1,
@@ -154,12 +171,14 @@ namespace ExpansionPlugin
         public virtual int? Active { get; set; }
 
         public abstract ExpansionQuestObjectiveConfig Clone();
-
         public bool Equals(ExpansionQuestObjectiveConfig? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
+            if (_path != other._path)
+                return false;
             if (ConfigVersion != other.ConfigVersion)
                 return false;
             if (ID != other.ID)
@@ -179,9 +198,7 @@ namespace ExpansionPlugin
         {
             return true;
         }
-
         public override bool Equals(object? obj) => Equals(obj as ExpansionQuestObjectiveConfig);
-
         internal virtual IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -195,5 +212,15 @@ namespace ExpansionPlugin
 
             return fixes;
         }
+        internal virtual void BuildTree(TreeNode node)
+        {
+            TreeNode baseConfigNode = new TreeNode("Base Config")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.BaseConfig)
+            };
+            node.Nodes.Add(baseConfigNode);
+            AddSpecificCategoryNodes(node);
+        }
+        internal abstract void AddSpecificCategoryNodes(TreeNode categoryNode);
     }
 }

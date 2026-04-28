@@ -24,7 +24,7 @@ namespace ExpansionPlugin
 
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveDeliveryConfig
+            ExpansionQuestObjectiveDeliveryConfig clone = new ExpansionQuestObjectiveDeliveryConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -42,6 +42,9 @@ namespace ExpansionPlugin
                 MaxDistance = MaxDistance,
                 MarkerName = MarkerName
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
@@ -114,6 +117,11 @@ namespace ExpansionPlugin
                 fixes.Add("Clamped MarkerName to MarkerName");
             }
             return fixes;
+        }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+           
         }
     }
     public class ExpansionQuestObjectiveDelivery : IDeepCloneable<ExpansionQuestObjectiveDelivery>, IEquatable<ExpansionQuestObjectiveDelivery>

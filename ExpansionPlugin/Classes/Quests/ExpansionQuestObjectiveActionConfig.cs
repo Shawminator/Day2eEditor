@@ -21,7 +21,7 @@ namespace ExpansionPlugin
         public int? ExecutionAmount { get; set; }
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveActionConfig
+            ExpansionQuestObjectiveActionConfig clone =  new ExpansionQuestObjectiveActionConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -44,6 +44,9 @@ namespace ExpansionPlugin
 
                 ExecutionAmount = ExecutionAmount,
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
@@ -110,6 +113,50 @@ namespace ExpansionPlugin
                 fixes.Add("Clamped ExecutionAmount to 0");
             }
             return fixes;
+        }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode ActionamesNode = new TreeNode("Action Names")
+            {
+                Tag = "ObjectivesActionNamesList",
+            };
+            foreach (string  actionName in ActionNames) 
+            {
+                ActionamesNode.Nodes.Add(new TreeNode(actionName)
+                {
+                    Tag = "ObjectivesActioName"
+                });
+            }
+            categoryNode.Nodes.Add(ActionamesNode);
+            TreeNode ActionAllowedClassNamesNode = new TreeNode("Allowed ClassNames")
+            {
+                Tag = "ObjectivesActionAllowedClassNamesList",
+            };
+            foreach (string actionName in AllowedClassNames)
+            {
+                ActionAllowedClassNamesNode.Nodes.Add(new TreeNode(actionName)
+                {
+                    Tag = "ObjectivesActioAllowedClassName"
+                });
+            }
+            categoryNode.Nodes.Add(ActionAllowedClassNamesNode);
+            TreeNode ActioExcludedClassNamesNode = new TreeNode("ExcludedClassNames")
+            {
+                Tag = "ObjectivesActionExcludedClassNamesList",
+            };
+            foreach (string actionName in ExcludedClassNames)
+            {
+                ActioExcludedClassNamesNode.Nodes.Add(new TreeNode(actionName)
+                {
+                    Tag = "ObjectivesActioExcludedClassName"
+                });
+            }
+            categoryNode.Nodes.Add(ActioExcludedClassNamesNode);
         }
     }
 }

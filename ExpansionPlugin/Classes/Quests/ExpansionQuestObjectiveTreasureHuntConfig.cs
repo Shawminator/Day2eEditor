@@ -31,7 +31,7 @@ namespace ExpansionPlugin
         public BindingList<ExpansionLoot> Loot { get; set; }
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveTreasureHuntConfig
+            ExpansionQuestObjectiveTreasureHuntConfig clone = new ExpansionQuestObjectiveTreasureHuntConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -54,6 +54,9 @@ namespace ExpansionPlugin
                 LootItemsAmount = LootItemsAmount,
                 MaxDistance = MaxDistance
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
@@ -66,6 +69,9 @@ namespace ExpansionPlugin
                 MarkerVisibility != o.MarkerVisibility ||
                 LootItemsAmount != o.LootItemsAmount ||
                 MaxDistance != o.MaxDistance)
+                return false;
+
+            if(!ListEquals(Loot, o.Loot))
                 return false;
 
             return true;
@@ -144,6 +150,31 @@ namespace ExpansionPlugin
             }
 
             return fixes;
+        }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode THPositionsNode = new TreeNode("Positions")
+            {
+                Tag = "ObjectivesTreasureHuntPositions",
+            };
+            foreach (Vec3 v3 in Positions)
+            {
+                THPositionsNode.Nodes.Add(new TreeNode(v3.ToString())
+                {
+                    Tag = v3
+                });
+            }
+            categoryNode.Nodes.Add(THPositionsNode);
+            TreeNode THLootNode = new TreeNode("Loot")
+            {
+                Tag = "ExpansionLootList",
+            };
+            categoryNode.Nodes.Add(THLootNode);
         }
     }
 }

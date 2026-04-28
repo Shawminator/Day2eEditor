@@ -21,7 +21,7 @@ namespace ExpansionPlugin
 
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveCollectionConfig
+            ExpansionQuestObjectiveCollectionConfig clone = new ExpansionQuestObjectiveCollectionConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -38,6 +38,9 @@ namespace ExpansionPlugin
                 AddItemsToNearbyMarketZone = AddItemsToNearbyMarketZone,
                 NeedAnyCollection = NeedAnyCollection
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
@@ -104,6 +107,11 @@ namespace ExpansionPlugin
                 fixes.Add("Normalised NeedAnyCollection to 0 (valid values: 0 or 1)");
             }
             return fixes;
+        }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            
         }
     }
 }

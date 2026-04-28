@@ -30,7 +30,7 @@ namespace ExpansionPlugin
 
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveAIEscortConfig
+            ExpansionQuestObjectiveAIEscortConfig clone =  new ExpansionQuestObjectiveAIEscortConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -48,6 +48,9 @@ namespace ExpansionPlugin
                 NPCClassName = NPCClassName,
                 NPCName = NPCName
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
@@ -65,6 +68,12 @@ namespace ExpansionPlugin
 
             return true;
         }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            
+        }
+
         internal override IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();

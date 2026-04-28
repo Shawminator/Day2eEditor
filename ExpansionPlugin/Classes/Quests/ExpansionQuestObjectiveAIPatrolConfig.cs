@@ -23,7 +23,7 @@ namespace ExpansionPlugin
 
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveAIPatrolConfig
+            ExpansionQuestObjectiveAIPatrolConfig clone = new ExpansionQuestObjectiveAIPatrolConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -46,12 +46,13 @@ namespace ExpansionPlugin
 
                 AISpawn = AISpawn.Clone()
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
             var o = (ExpansionQuestObjectiveAIPatrolConfig)other;
-
- 
 
             if (MinDistance != o.MinDistance)
                 return false;
@@ -127,6 +128,11 @@ namespace ExpansionPlugin
             }
 
             return fixes;
+        }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            
         }
     }
 }

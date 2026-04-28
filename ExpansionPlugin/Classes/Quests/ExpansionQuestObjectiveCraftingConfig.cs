@@ -17,7 +17,7 @@ namespace ExpansionPlugin
 
         public override ExpansionQuestObjectiveConfig Clone()
         {
-            return new ExpansionQuestObjectiveCraftingConfig
+            ExpansionQuestObjectiveCraftingConfig clone = new ExpansionQuestObjectiveCraftingConfig
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -32,6 +32,9 @@ namespace ExpansionPlugin
 
                 ExecutionAmount = ExecutionAmount
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         protected override bool EqualsCore(ExpansionQuestObjectiveConfig other)
         {
@@ -81,6 +84,11 @@ namespace ExpansionPlugin
                 fixes.Add("Clamped MarkerName to 1");
             }
             return fixes;
+        }
+
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            
         }
     }
 }
