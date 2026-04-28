@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Day2eEditor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -147,7 +149,79 @@ namespace ExpansionPlugin
 
         internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
         {
-           
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode AIAPatrolsNode = new TreeNode("AI Spawns")
+            {
+                Tag = "AIPatrols"
+            };
+            foreach (ExpansionAIPatrol pat in AISpawns)
+            {
+                TreeNode PatrolRoot = new TreeNode(pat.Name)
+                {
+                    Tag = pat
+                };
+                CreatePatrolNodes(pat, PatrolRoot);
+                AIAPatrolsNode.Nodes.Add(PatrolRoot);
+            }
+            categoryNode.Nodes.Add(AIAPatrolsNode);
+            TreeNode AllowedWeaponsNode = new TreeNode("Allowed Weapons")
+            {
+                Tag = "ObjectivesAICAllowedWeapons",
+            };
+            foreach (string AllowedWeapon in AllowedWeapons)
+            {
+                AllowedWeaponsNode.Nodes.Add(new TreeNode(AllowedWeapon)
+                {
+                    Tag = "bjectivesAICAllowedWeapon"
+                });
+            }
+            categoryNode.Nodes.Add(AllowedWeaponsNode);
+            TreeNode AllowedDamageZonesNode = new TreeNode("Allowed Damage Zones")
+            {
+                Tag = "ObjectivesAICAllowedDamageZones",
+            };
+            foreach (string AllowedDamageZone in AllowedDamageZones)
+            {
+                AllowedDamageZonesNode.Nodes.Add(new TreeNode(AllowedDamageZone)
+                {
+                    Tag = "bjectivesAICAllowedDamageZone"
+                });
+            }
+            categoryNode.Nodes.Add(AllowedDamageZonesNode);
+        }
+        private void CreatePatrolNodes(ExpansionAIPatrol pat, TreeNode Root)
+        {
+            Root.Nodes.Add(new TreeNode("General")
+            {
+                Tag = "AIPatrolGeneral"
+            });
+            TreeNode WaypointsNode = new TreeNode("WayPoints")
+            {
+                Tag = "AIPatrolWayPoints"
+            };
+            foreach (Vec3 v3 in pat.Waypoints)
+            {
+                WaypointsNode.Nodes.Add(new TreeNode(v3.GetString())
+                {
+                    Tag = v3
+                });
+            }
+            Root.Nodes.Add(WaypointsNode);
+            TreeNode UnitsNode = new TreeNode("Units")
+            {
+                Tag = "AIPatrolUnits"
+            };
+            foreach (string s in pat.Units)
+            {
+                UnitsNode.Nodes.Add(new TreeNode(s)
+                {
+                    Tag = "AIPatrolsUnit"
+                });
+            }
+            Root.Nodes.Add(UnitsNode);
         }
     }
 }

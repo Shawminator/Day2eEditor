@@ -678,6 +678,17 @@ namespace ExpansionPlugin
                     }
 
                 },
+                [typeof(ExpansionQuestObjectiveTreasureHuntConfig)] = (node,selected) =>
+                {                  
+                    if(node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveTreasureHuntConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveTreasureHuntConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
+                },
             };
             // ----------------------
             // String handlers
@@ -703,8 +714,16 @@ namespace ExpansionPlugin
                 //AI
                 ["AIPatrolGeneral"] = (node, selected) =>
                 {
-                    ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
-                    ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
+                    if (node.Parent.Parent.Parent.Tag is ExpansionAIPatrolConfig)
+                    {
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
+                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
+                    }
+                    else if (node.Parent.Parent.Parent.Tag is ExpansionQuestObjectiveAICampConfig)
+                    {
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
+                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAICampConfig), ExpansionAIPatrol, selected);
+                    }
                 },
                 //Airdrops
                 ["AirdropContainersInfected"] = (node, selected) =>

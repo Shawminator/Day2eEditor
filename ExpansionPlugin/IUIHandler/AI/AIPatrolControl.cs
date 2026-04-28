@@ -66,7 +66,7 @@ namespace ExpansionPlugin
                 Factions.Insert(0, "");
                 StaticPatrolFactionCB.DataSource = Factions;
 
-                StaticPatrolLoadBalancingCategoryCB.DataSource = new BindingSource(parent.Data._LoadBalancingCategories, null);
+                StaticPatrolLoadBalancingCategoryCB.DataSource = new BindingSource(AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data._LoadBalancingCategories, null);
             }
             StaticPatrolNameTB.Text = _data.Name;
             StaticPatrolPersistCB.Checked = _data.Persist == 1 ? true : false;
