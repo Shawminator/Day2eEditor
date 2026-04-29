@@ -111,7 +111,22 @@ namespace ExpansionPlugin
 
         internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
         {
-            
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode collectionNodes = new TreeNode("Collections")
+            {
+                Tag = "QuestObjectivesCollectionCollections"
+            };
+            foreach(ExpansionQuestObjectiveDelivery delivery in Collections)
+            {
+                collectionNodes.Nodes.Add(new TreeNode(delivery.ClassName)
+                {
+                    Tag = delivery
+                });
+            }
+            categoryNode.Nodes.Add(collectionNodes);
         }
     }
 }

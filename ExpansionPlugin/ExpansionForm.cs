@@ -18,6 +18,8 @@ using System.Windows.Forms.Design.Behavior;
 using System.Xml;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ExpansionPlugin
 {
@@ -75,11 +77,23 @@ namespace ExpansionPlugin
                         control.PositionChanged += (updatedPos) =>
                         {
                             _mapControl.ClearDrawables();
-                            DrawbaseAIPatrols(node.Parent.Parent.Parent.Parent.Tag as ExpansionAIPatrolConfig);
+                            var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
+                            if (tag is ExpansionAIPatrolConfig patrolConfig)
+                            {
+                                DrawbaseAIPatrols(patrolConfig);
+                            }
+                            else if (tag is ExpansionQuestObjectiveAICampConfig campConfig)
+                            {
+                                DrawbaseObjectiveAICamp(campConfig);
+                            }
+                            else if (tag is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+                            {
+                                DrawbaseObjectiveAIPatrols(questPatrolConfig);
+                            }
                         };
                         ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
 
-                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Nodes[0].Tag as ExpansionAIPatrol;
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Parent.Tag as ExpansionAIPatrol;
                         SetupAIPatrols(ExpansionAIPatrol, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
@@ -87,7 +101,73 @@ namespace ExpansionPlugin
                     {
                         Vec3 v3 = node.Tag as Vec3;
                         var control = new Vector3Control();
-                        ShowHandler(control, typeof(ExpansionAIPatrolConfig), v3, selected);
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            var tag = node.Parent?.Parent?.Tag;
+                            if (tag is ExpansionQuestObjectiveTreasureHuntConfig tresure)
+                            {
+                                DrawbaseTreasureHunt(tresure);
+                            }
+                        };
+                        ShowHandler(control, typeof(ExpansionQuestObjectiveTreasureHuntConfig), v3, selected);
+                        ExpansionQuestObjectiveTreasureHuntConfig tresure = node.Parent.Parent.Tag as ExpansionQuestObjectiveTreasureHuntConfig;
+                        SetupTreasureHunt(tresure, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                    else if (node.Parent.Tag.ToString() == "QuestObjectiveAIEscortPosition")
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            var tag = node.Parent?.Parent?.Tag;
+                            if (tag is ExpansionQuestObjectiveAIEscortConfig ExpansionQuestObjectiveAIEscortConfig)
+                            {
+                                DrawbaseAIEscort(ExpansionQuestObjectiveAIEscortConfig);
+                            }
+                        };
+                        ShowHandler(control, typeof(ExpansionQuestObjectiveAIEscortConfig), v3, selected);
+                        ExpansionQuestObjectiveAIEscortConfig ExpansionQuestObjectiveAIEscortConfig = node.Parent.Parent.Tag as ExpansionQuestObjectiveAIEscortConfig;
+                        SetupAIEscort(ExpansionQuestObjectiveAIEscortConfig, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                    else if (node.Parent.Tag.ToString() == "QuestObjectiveTargetPosition")
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            var tag = node.Parent?.Parent?.Tag;
+                            if (tag is ExpansionQuestObjectiveTargetConfig target)
+                            {
+                                DrawbaseTarget(target);
+                            }
+                        };
+                        ShowHandler(control, typeof(ExpansionQuestObjectiveTargetConfig), v3, selected);
+                        ExpansionQuestObjectiveTargetConfig target = node.Parent.Parent.Tag as ExpansionQuestObjectiveTargetConfig;
+                        SetupTarget(target, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                    else if (node.Parent.Tag.ToString() == "QuestObjectiveTravelPosition")
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            var tag = node.Parent?.Parent?.Tag;
+                            if (tag is ExpansionQuestObjectiveTravelConfig travel)
+                            {
+                                DrawbaseTravel(travel);
+                            }
+                        };
+                        ShowHandler(control, typeof(ExpansionQuestObjectiveTravelConfig), v3, selected);
+                        ExpansionQuestObjectiveTravelConfig travel = node.Parent.Parent.Tag as ExpansionQuestObjectiveTravelConfig;
+                        SetupTravel(travel, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                     else if (node.Parent.Tag is ExpansionSafeZonePolygon)
                     {
@@ -689,6 +769,122 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveTreasureHuntConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveTreasureHuntConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
                 },
+                [typeof(ExpansionQuestObjectiveActionConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveActionConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveActionConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveAICampConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveAICampConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveAICampConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveAIPatrolConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveAIPatrolConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveAIPatrolConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveAIEscortConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveAIEscortConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveAIEscortConfigControl(), typeof(ExpansionQuestObjectiveAIEscortConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveCollectionConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveCollectionConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveCollectionConfigControl(), typeof(ExpansionQuestObjectiveCollectionConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveDelivery)] = (node,selected) =>
+                {
+                    if (node.Parent.Parent.Tag is ExpansionQuestObjectiveCollectionConfig)
+                    {
+                        ExpansionQuestObjectiveDelivery ExpansionQuestObjectiveDelivery = node.Tag as ExpansionQuestObjectiveDelivery;
+                        ShowHandler(new ExpansionQuestObjectiveDeliveryControl(), typeof(ExpansionQuestObjectiveCollectionConfig), ExpansionQuestObjectiveDelivery, selected);
+                    }
+                    else if (node.Parent.Parent.Tag is ExpansionQuestObjectiveDeliveryConfig)
+                    {
+                        ExpansionQuestObjectiveDelivery ExpansionQuestObjectiveDelivery = node.Tag as ExpansionQuestObjectiveDelivery;
+                        ShowHandler(new ExpansionQuestObjectiveDeliveryControl(), typeof(ExpansionQuestObjectiveDeliveryConfig), ExpansionQuestObjectiveDelivery, selected);
+                    }
+                },
+                [typeof(ExpansionQuestObjectiveCraftingConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveCraftingConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveCraftingConfigControl(), typeof(ExpansionQuestObjectiveCraftingConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveDeliveryConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveDeliveryConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveDeliveryConfigControl(), typeof(ExpansionQuestObjectiveDeliveryConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveTargetConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveTargetConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveTargetConfigControl(), typeof(ExpansionQuestObjectiveTargetConfig), cfg, selected);
+                },
+                [typeof(ExpansionQuestObjectiveTravelConfig)] = (node,selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        return;
+                    }
+                    var tag = (ObjectiveNodeTag)node.Tag;
+                    var cfg = (ExpansionQuestObjectiveTravelConfig)tag.Object;
+                    ShowHandler(new ExpansionQuestObjectiveTravelConfigControl(), typeof(ExpansionQuestObjectiveTravelConfig), cfg, selected);
+                },
+                
+
+
+
             };
             // ----------------------
             // String handlers
@@ -723,6 +919,11 @@ namespace ExpansionPlugin
                     {
                         ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
                         ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAICampConfig), ExpansionAIPatrol, selected);
+                    }
+                    else if (node.Parent.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                    {
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
+                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAIPatrolConfig), ExpansionAIPatrol, selected);
                     }
                 },
                 //Airdrops
@@ -948,6 +1149,9 @@ namespace ExpansionPlugin
                 }
             };
         }
+
+
+
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -4735,6 +4939,14 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_ExpansionTraderZonesPositionSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_ExpansionTraderZonePositionsDoubleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_AIEscortDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_AIEscortSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_TargetDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_TargetSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_TravelDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_TravelSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_TreasureHuntDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_TreasureHuntSingleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -4753,6 +4965,9 @@ namespace ExpansionPlugin
             _selectedP2PTradervehiclespawn = null;
             _selectedPersonalStorageContainer = null;
             _selectedtraderZone = null;
+            _selectedTarget = null;
+            _selectedTravel = null;
+            _selectedTreasureHunt = null;
         }
 
 
@@ -4836,6 +5051,7 @@ namespace ExpansionPlugin
         private ExpansionBuildNoBuildZone _selectedNoBuildZonePos;
         private ExpansionAIRoamingLocation _selectedAIRoamingLocations;
         private ExpansionAIPatrol _selectedAIPatrol;
+        private ExpansionQuestObjectiveAIEscortConfig _selectedAIEscort;
         private ExpansionAINoGoArea _selectedAINOGoArea;
         private ExpansionServerMarkerData _selectedServerMarkerData;
         private ExpansionMarketSpawnPosition _selectedVehicleSpanPosition;
@@ -4850,6 +5066,10 @@ namespace ExpansionPlugin
         private ExpansionP2PMarketTraderConfig _selectedP2PMarketTrader;
         private ExpansionPersonalStorageConfig _selectedPersonalStorageContainer;
         private ExpansionMarketTraderZone _selectedtraderZone;
+        private ExpansionQuestObjectiveTargetConfig _selectedTarget;
+        private ExpansionQuestObjectiveTravelConfig _selectedTravel;
+        private ExpansionQuestObjectiveTreasureHuntConfig _selectedTreasureHunt;
+        private Vec3 _SelectedVec3;
 
         // Generic map reset + show
         private void SetupMap(Action config)
@@ -4896,9 +5116,68 @@ namespace ExpansionPlugin
                 _mapControl.MapDoubleClicked += MapControl_AIPatrolDoubleclicked;
                 _mapControl.MapsingleClicked += MapControl_AIPatrolSingleclicked;
 
-                var ExpansionAIPatrolConfig = node.Parent?.Parent?.Parent?.Parent?.Tag as ExpansionAIPatrolConfig;
-                if (ExpansionAIPatrolConfig != null)
-                    DrawbaseAIPatrols(ExpansionAIPatrolConfig);
+                var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
+                if (tag is ExpansionAIPatrolConfig patrolConfig)
+                {
+                    DrawbaseAIPatrols(patrolConfig);
+                }
+                else if (tag is ExpansionQuestObjectiveAICampConfig campConfig)
+                {
+                    DrawbaseObjectiveAICamp(campConfig);
+                }
+                else if (tag is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+                {
+                    DrawbaseObjectiveAIPatrols(questPatrolConfig);
+                }
+            });
+        }
+        private void SetupAIEscort(ExpansionQuestObjectiveAIEscortConfig escort, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedAIEscort = escort;
+                _mapControl.MapDoubleClicked += MapControl_AIEscortDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_AIEscortSingleclicked;
+
+                var tag = node.Parent?.Parent?.Tag;
+                if (tag is ExpansionQuestObjectiveAIEscortConfig cfg)
+                {
+                    DrawbaseAIEscort(cfg);
+                }
+            });
+        }
+        private void SetupTarget(ExpansionQuestObjectiveTargetConfig target, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedTarget = target;
+                _mapControl.MapDoubleClicked += MapControl_TargetDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_TargetSingleclicked;
+
+                DrawbaseTarget(target);
+            });
+        }
+        private void SetupTravel(ExpansionQuestObjectiveTravelConfig travel, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedTravel = travel;
+                _mapControl.MapDoubleClicked += MapControl_TravelDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_TravelSingleclicked;
+
+                DrawbaseTravel(travel);
+            });
+        }
+        private void SetupTreasureHunt(ExpansionQuestObjectiveTreasureHuntConfig tresure, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedTreasureHunt = tresure;
+                _SelectedVec3 = node.Tag as Vec3;
+                _mapControl.MapDoubleClicked += MapControl_TreasureHuntDoubleclicked;
+                _mapControl.MapsingleClicked += MapControl_TreasureHuntSingleclicked;
+
+                DrawbaseTreasureHunt(tresure);
             });
         }
         private void SetupAILocationNoGoAreas(ExpansionAINoGoArea pos, TreeNode node)
@@ -5158,6 +5437,165 @@ namespace ExpansionPlugin
 
                     _mapControl.RegisterDrawable(marker);
                 }
+            }
+        }
+        private void DrawbaseObjectiveAICamp(ExpansionQuestObjectiveAICampConfig campConfig)
+        {
+            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
+            foreach (ExpansionAIPatrol patrol in campConfig.AISpawns)
+            {
+                PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                if (!string.IsNullOrEmpty(patrol.Behaviour))
+                {
+                    Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
+                }
+
+                for (int i = 0; i < patrol.Waypoints.Count; i++)
+                {
+                    Vec3 waypoints = patrol.Waypoints[i];
+
+                    // Determine next waypoint index
+                    bool isLast = i == patrol.Waypoints.Count - 1;
+                    Vec3 nextWaypoint;
+
+                    if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                    {
+                        // Don't connect last to first for ALTERNATE
+                        nextWaypoint = waypoints;
+                    }
+                    else
+                    {
+                        nextWaypoint = patrol.Waypoints[(i + 1) % patrol.Waypoints.Count];
+                    }
+
+                    var marker = new AIPatrolDrawable(
+                        new PointF(waypoints.X, waypoints.Z),
+                        new PointF(nextWaypoint.X, nextWaypoint.Z),
+                        _mapControl.MapSize,
+                        behaviour)
+                    {
+                        Color = Color.Red,
+                        WriteString = true
+                    };
+
+                    if (_selectedAIPatrol == patrol)
+                        marker.Color = Color.LimeGreen;
+
+                    Vec3 v3 = currentTreeNode.Tag as Vec3;
+                    if (v3 == waypoints)
+                        marker.Color = Color.Yellow;
+
+                    marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
+
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+
+        }
+        private void DrawbaseObjectiveAIPatrols(ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+        {
+            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
+            PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+            if (!string.IsNullOrEmpty(questPatrolConfig.AISpawn.Behaviour))
+            {
+                Enum.TryParse(questPatrolConfig.AISpawn.Behaviour.Replace("-", "_"), true, out behaviour);
+            }
+
+            for (int i = 0; i < questPatrolConfig.AISpawn.Waypoints.Count; i++)
+            {
+                Vec3 waypoints = questPatrolConfig.AISpawn.Waypoints[i];
+
+                // Determine next waypoint index
+                bool isLast = i == questPatrolConfig.AISpawn.Waypoints.Count - 1;
+                Vec3 nextWaypoint;
+
+                if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                {
+                    // Don't connect last to first for ALTERNATE
+                    nextWaypoint = waypoints;
+                }
+                else
+                {
+                    nextWaypoint = questPatrolConfig.AISpawn.Waypoints[(i + 1) % questPatrolConfig.AISpawn.Waypoints.Count];
+                }
+
+                var marker = new AIPatrolDrawable(
+                    new PointF(waypoints.X, waypoints.Z),
+                    new PointF(nextWaypoint.X, nextWaypoint.Z),
+                    _mapControl.MapSize,
+                    behaviour)
+                {
+                    Color = Color.Red,
+                    WriteString = true
+                };
+
+                if (_selectedAIPatrol == questPatrolConfig.AISpawn)
+                    marker.Color = Color.LimeGreen;
+
+                Vec3 v3 = currentTreeNode.Tag as Vec3;
+                if (v3 == waypoints)
+                    marker.Color = Color.Yellow;
+
+                marker.text = (i == 0 ? questPatrolConfig.AISpawn.Name + "\n" : "") + (i + 1).ToString();
+
+                _mapControl.RegisterDrawable(marker);
+            }
+        }
+        private void DrawbaseAIEscort(ExpansionQuestObjectiveAIEscortConfig expansionQuestObjectiveAIEscortConfig)
+        {
+            var marker = new TextMarkerDrawable(new PointF((float)expansionQuestObjectiveAIEscortConfig.Position.X, (float)expansionQuestObjectiveAIEscortConfig.Position.Z), _mapControl.MapSize)
+            {
+                Color = Color.Red,
+                Text = $"VIP Name - {expansionQuestObjectiveAIEscortConfig.NPCName}",
+                TextPlacement = MarkerLabelPlacement.Top,
+                TextBackground = true,
+                TextBackgroundColor = Color.Blue
+            };
+            _mapControl.RegisterDrawable(marker);
+        }
+        private void DrawbaseTarget(ExpansionQuestObjectiveTargetConfig target)
+        {
+            var marker = new MarkerDrawable(new PointF((float)target.Position.X, (float)target.Position.Z), _mapControl.MapSize)
+            {
+                Color = Color.LimeGreen,
+                Scaleradius = true,
+                Radius = (float)target.MaxDistance
+            };
+            _mapControl.RegisterDrawable(marker);
+        }
+        private void DrawbaseTravel(ExpansionQuestObjectiveTravelConfig travel)
+        {
+            var marker = new MarkerDrawable(new PointF((float)travel.Position.X, (float)travel.Position.Z), _mapControl.MapSize)
+            {
+                Color = Color.LimeGreen,
+                Scaleradius = true,
+                Radius = (float)travel.MaxDistance
+            };
+            _mapControl.RegisterDrawable(marker);
+        }
+        private void DrawbaseTreasureHunt(ExpansionQuestObjectiveTreasureHuntConfig tresure)
+        {
+            MarkerDrawable? selectedMarker = null;
+            foreach (Vec3 pos in tresure.Positions)
+            {
+                var marker = new MarkerDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = 10f
+                };
+                if (_SelectedVec3 == pos)
+                {
+                    marker.Color = Color.LimeGreen;
+                    selectedMarker = marker;
+                }
+                else
+                {
+                    _mapControl.RegisterDrawable(marker);
+                }
+            }
+            if (selectedMarker != null)
+            {
+                _mapControl.RegisterDrawable(selectedMarker);
             }
         }
         private void DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig ExpansionAILocationConfig)
@@ -5770,10 +6208,148 @@ namespace ExpansionPlugin
                 }
                 _mapControl.ClearDrawables();
 
-                ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
-                ShowHandler(new Vector3Control(), typeof(ExpansionAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
-                DrawbaseAIPatrols(ExpansionAIPatrolConfig);
+                var tag = currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag;
+                if (tag is ExpansionAIPatrolConfig patrolConfig)
+                {
+                    ShowHandler(new Vector3Control(), typeof(ExpansionAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
+                    DrawbaseAIPatrols(patrolConfig);
+                }
+                else if (tag is ExpansionQuestObjectiveAICampConfig campConfig)
+                {
+                    ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveAICampConfig), v3, new List<TreeNode>() { currentTreeNode });
+                    DrawbaseObjectiveAICamp(campConfig);
+                }
+                else if (tag is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+                {
+                    ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
+                    DrawbaseObjectiveAIPatrols(questPatrolConfig);
+                }
                 currentTreeNode.Text = v3.GetString();
+            }
+        }
+        private void MapControl_AIEscortSingleclicked(object? sender, MapClickEventArgs e)
+        {
+           //same as travel/target
+        }
+        private void MapControl_AIEscortDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 vec3)
+            {
+                vec3.X = (float)e.MapCoordinates.X;
+                vec3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    vec3.Y = (MapData.gethieght(vec3.X, vec3.Z));
+                }
+                _mapControl.ClearDrawables();
+                ExpansionQuestObjectiveAIEscortConfig escort = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAIEscortConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveAIEscortConfig), vec3, new List<TreeNode>() { currentTreeNode });
+                DrawbaseAIEscort(escort);
+                currentTreeNode.Text = vec3.GetString();
+            }
+        }
+        private void MapControl_TravelSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            //same as target
+        }
+        private void MapControl_TravelDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 vec3)
+            {
+                vec3.X = (float)e.MapCoordinates.X;
+                vec3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    vec3.Y = (MapData.gethieght(vec3.X, vec3.Z));
+                }
+                _mapControl.ClearDrawables();
+                ExpansionQuestObjectiveTravelConfig travel = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTravelConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveTravelConfig), vec3, new List<TreeNode>() { currentTreeNode });
+                DrawbaseTravel(travel);
+                currentTreeNode.Text = vec3.GetString();
+            }
+        }
+        private void MapControl_TargetSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            //will update if i decide to show all targets from all objectives on the same map
+        }
+        private void MapControl_TargetDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 vec3)
+            {
+                vec3.X = (float)e.MapCoordinates.X;
+                vec3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    vec3.Y = (MapData.gethieght(vec3.X, vec3.Z));
+                }
+                _mapControl.ClearDrawables();
+                ExpansionQuestObjectiveTargetConfig target = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTargetConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveTargetConfig), vec3, new List<TreeNode>() { currentTreeNode });
+                DrawbaseTarget(target);
+                currentTreeNode.Text = vec3.GetString();
+            }
+        }
+        private void MapControl_TreasureHuntSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent;
+            Vec3 closestPos = null;
+            double closestDistance = double.MaxValue;
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            // Loop through all child nodes of the parent
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                if (child.Tag is Vec3 pos)
+                {
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    if (child.Tag == closestPos)
+                    {
+                        ExpansionTV.SelectedNode = child;
+                        break;
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_TreasureHuntDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 vec3)
+            {
+                vec3.X = (float)e.MapCoordinates.X;
+                vec3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    vec3.Y = (MapData.gethieght(vec3.X, vec3.Z));
+                }
+                _mapControl.ClearDrawables();
+                ExpansionQuestObjectiveTreasureHuntConfig treasure = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveTreasureHuntConfig), vec3, new List<TreeNode>() { currentTreeNode });
+                DrawbaseTreasureHunt(treasure);
+                currentTreeNode.Text = vec3.GetString();
             }
         }
         private void MapControl_AILocationNoGoAreasSingleclicked(object sender, MapClickEventArgs e)
@@ -10352,7 +10928,7 @@ namespace ExpansionPlugin
         #region Search Treeview
         private List<TreeNode> _searchResults = new();
         private int _currentIndex = -1;
-
+        
 
         private void button2_Click(object sender, EventArgs e)
         {

@@ -68,12 +68,6 @@ namespace ExpansionPlugin
 
             return true;
         }
-
-        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
-        {
-            
-        }
-
         internal override IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -122,6 +116,22 @@ namespace ExpansionPlugin
                 fixes.Add("Initialised NPCName to Survivior");
             }
             return fixes;
+        }
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode Positionnode = new TreeNode("Position")
+            {
+                Tag = "QuestObjectiveAIEscortPosition"
+            };
+            Positionnode.Nodes.Add(new TreeNode(Position.ToString())
+            {
+                Tag = Position
+            });
+            categoryNode.Nodes.Add(Positionnode);
         }
     }
 }

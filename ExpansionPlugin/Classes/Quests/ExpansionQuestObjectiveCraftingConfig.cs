@@ -85,10 +85,24 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-
         internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
         {
-            
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode collectionNodes = new TreeNode("Item Names")
+            {
+                Tag = "QuestObjectivesCraftingItemNames"
+            };
+            foreach (string crafting in ItemNames)
+            {
+                collectionNodes.Nodes.Add(new TreeNode(crafting)
+                {
+                    Tag = "QuestObjectivesCraftingItemName"
+                });
+            }
+            categoryNode.Nodes.Add(collectionNodes);
         }
     }
 }

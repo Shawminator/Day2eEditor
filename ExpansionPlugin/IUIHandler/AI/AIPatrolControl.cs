@@ -38,36 +38,33 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
-            var parentObj = _nodes.Last().FindParentOfType(_parentType);
-            if (parentObj != null)
+
+            BindingList<string> LoadoutNameList = new BindingList<string>
+                {
+                    ""
+                };
+            foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
             {
-                dynamic parent = parentObj;
-                BindingList<string> LoadoutNameList = new BindingList<string>
-                {
-                    ""
-                };
-                foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
-                {
-                    LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
-                }
-                StaticPatrolLoadoutsCB.DataSource = new BindingList<string>(LoadoutNameList);
-
-                BindingList<string> LootDropOnDeathNameList = new BindingList<string>
-                {
-                    ""
-                };
-                foreach (AILootDrops AILootDrops in AppServices.GetRequired<ExpansionManager>().ExpansionLootDropConfig.Items)
-                {
-                    LootDropOnDeathNameList.Add(Path.GetFileNameWithoutExtension(AILootDrops.FileName));
-                }
-                StaticPatrolLootDropOnDeathCB.DataSource = new BindingList<string>(LootDropOnDeathNameList);
-
-                BindingList<string> Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
-                Factions.Insert(0, "");
-                StaticPatrolFactionCB.DataSource = Factions;
-
-                StaticPatrolLoadBalancingCategoryCB.DataSource = new BindingSource(AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data._LoadBalancingCategories, null);
+                LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
             }
+            StaticPatrolLoadoutsCB.DataSource = new BindingList<string>(LoadoutNameList);
+
+            BindingList<string> LootDropOnDeathNameList = new BindingList<string>
+                {
+                    ""
+                };
+            foreach (AILootDrops AILootDrops in AppServices.GetRequired<ExpansionManager>().ExpansionLootDropConfig.Items)
+            {
+                LootDropOnDeathNameList.Add(Path.GetFileNameWithoutExtension(AILootDrops.FileName));
+            }
+            StaticPatrolLootDropOnDeathCB.DataSource = new BindingList<string>(LootDropOnDeathNameList);
+
+            BindingList<string> Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
+            Factions.Insert(0, "");
+            StaticPatrolFactionCB.DataSource = Factions;
+
+            StaticPatrolLoadBalancingCategoryCB.DataSource = new BindingSource(AppServices.GetRequired<ExpansionManager>().ExpansionAIPatrolConfig.Data._LoadBalancingCategories, null);
+
             StaticPatrolNameTB.Text = _data.Name;
             StaticPatrolPersistCB.Checked = _data.Persist == 1 ? true : false;
             StaticPatrolFactionCB.SelectedIndex = StaticPatrolFactionCB.FindStringExact(_data.Faction);

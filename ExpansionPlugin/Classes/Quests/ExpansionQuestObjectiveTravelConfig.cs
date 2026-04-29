@@ -63,12 +63,6 @@ namespace ExpansionPlugin
 
             return true;
         }
-
-        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
-        {
-           
-        }
-
         internal override IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -106,6 +100,22 @@ namespace ExpansionPlugin
                 fixes.Add("Normalised TriggerOnExit to 0 (valid values: 0 or 1)");
             }
             return fixes;
+        }
+        internal override void AddSpecificCategoryNodes(TreeNode categoryNode)
+        {
+            categoryNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
+            });
+            TreeNode Positionnode = new TreeNode("Position")
+            {
+                Tag = "QuestObjectiveTravelPosition"
+            };
+            Positionnode.Nodes.Add(new TreeNode(Position.ToString())
+            {
+                Tag = Position
+            });
+            categoryNode.Nodes.Add(Positionnode);
         }
     }
 }
