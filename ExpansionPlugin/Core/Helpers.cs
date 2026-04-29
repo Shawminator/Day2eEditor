@@ -12,6 +12,20 @@ namespace ExpansionPlugin
 {
     public static class Helpers
     {
+        public static  TreeNode FindNodeByTag(TreeNodeCollection nodes, object target)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Tag == target)
+                    return node;
+
+                var found = FindNodeByTag(node.Nodes, target);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
+        }
         public static void InsertNodeAlphabetically(TreeNodeCollection nodes, TreeNode newNode)
         {
             int index = 0;

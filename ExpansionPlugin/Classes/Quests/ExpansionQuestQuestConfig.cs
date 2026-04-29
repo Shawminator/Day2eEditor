@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
+    public enum ExpansionQuestType
+    {
+        NORMAL = 1,
+        SCRIPTED = 2
+    };
+    public enum ExpansionQuestRewardBehavior
+    {
+        RANDOMIZED_ON_COMPLETION = 0,
+        RANDOMIZED_ON_START = 1
+    };
     public class ExpansionQuestQuestConfig : MultiFileConfigLoaderBase<ExpansionQuestQuest>
     {
         public const int CurrentVersion = 22;
@@ -77,27 +87,34 @@ namespace ExpansionPlugin
 
         public int ConfigVersion { get; set; }
         public int? ID { get; set; }
-        public int? Type { get; set; }
+        public ExpansionQuestType? Type { get; set; }
         public string? Title { get; set; }
         public BindingList<string> Descriptions { get; set; }
         public string? ObjectiveText { get; set; }
         public int? FollowUpQuest { get; set; }
+
+        //! Additional quest logic controll parameters
         public int? Repeatable { get; set; }
         public int? IsDailyQuest { get; set; }
         public int? IsWeeklyQuest { get; set; }
         public int CancelQuestOnPlayerDeath { get; set; }
         public int? Autocomplete { get; set; }
         public int? IsGroupQuest { get; set; }
+
         public string? ObjectSetFileName { get; set; }
+
         public BindingList<ExpansionQuestItemConfig> QuestItems { get; set; }
         public BindingList<ExpansionQuestRewardConfig> Rewards { get; set; }
+
         public int? NeedToSelectReward { get; set; }
         public int? RandomReward { get; set; }
         public int? RandomRewardAmount { get; set; }
         public int? RewardsForGroupOwnerOnly { get; set; }
-        public int? RewardBehavior { get; set; }
+        public ExpansionQuestRewardBehavior? RewardBehavior { get; set; }
+
         public BindingList<int> QuestGiverIDs { get; set; }
         public BindingList<int> QuestTurnInIDs { get; set; }
+
         public int? IsAchievement { get; set; }
         public BindingList<Objectives> Objectives { get; set; }
         public int? QuestColor { get; set; }
@@ -282,7 +299,7 @@ namespace ExpansionPlugin
     {
         public int ConfigVersion { get; set; }
         public int ID { get; set; }
-        public int ObjectiveType { get; set; }
+        public ExpansionQuestObjectiveType ObjectiveType { get; set; }
 
         public Objectives Clone()
         {

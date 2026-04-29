@@ -881,6 +881,39 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveTravelConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveTravelConfigControl(), typeof(ExpansionQuestObjectiveTravelConfig), cfg, selected);
                 },
+                [typeof(Objectives)] = (node,selected) =>
+                {
+                    var objectiveRef = node.Tag as Objectives;
+                    if (MessageBox.Show(
+                        $"Jump to Objective {objectiveRef.ID}?",
+                        "Navigate",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        
+                        if (objectiveRef == null)
+                            return;
+
+                        var objectiveFiles = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems;
+
+                        var objectiveConfig = objectiveFiles.FirstOrDefault(x =>
+                            x.ID == objectiveRef.ID &&
+                            x.ObjectiveType == objectiveRef.ObjectiveType);
+
+                        if (objectiveConfig == null)
+                        {
+                            MessageBox.Show($"Objective {objectiveRef.ID} not found.");
+                            return;
+                        }
+                        var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, objectiveConfig);
+
+                        if (targetNode != null)
+                        {
+                            ExpansionTV.SelectedNode = targetNode;
+                            targetNode.EnsureVisible();
+                            ExpansionTV.SelectedNode.ExpandAll();
+                        }
+                    }
+                },
                 
 
 
@@ -4289,15 +4322,145 @@ namespace ExpansionPlugin
 
         private void CreateQuestQuestNodes(TreeNode economyRootNode, ExpansionQuestQuestConfig ef)
         {
-            foreach(ExpansionQuestQuest quest in ef.MutableItems)
+            var sortedQuests = ef.MutableItems
+               .OrderBy(q => q.ID ?? int.MaxValue)
+               .ToList();
+
+            foreach (ExpansionQuestQuest quest in sortedQuests)
             {
-                TreeNode QuestNode = new TreeNode(quest.Title)
+                TreeNode questNode = new TreeNode($"Quest {quest.ID} : {quest.Title}")
                 {
                     Tag = quest
                 };
-                economyRootNode.Nodes.Add(QuestNode);
+                questNode.Nodes.Add(new TreeNode("Basic Info") { Tag = quest });
+                questNode.Nodes.Add(new TreeNode("Text / Dialogue") { Tag = quest });
+
+                TreeNode flowNode = new TreeNode("Flow") { Tag = quest };
+
+                TreeNode preQuestNode = new TreeNode($"Pre Quests") { Tag = quest };
+                if (quest.PreQuestIDs != null && quest.PreQuestIDs.Count > 0)
+                {
+                    foreach (int preQuestId in quest.PreQuestIDs)
+                    {
+                        ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == preQuestId);
+
+                        preQuestNode.Nodes.Add(new TreeNode(GetQuestReferenceText(preQuestId, linkedQuest))
+                        {
+                            Tag = linkedQuest ?? (object)preQuestId
+                        });
+                    }
+                }
+
+                TreeNode followUpNode = new TreeNode("Follow Up Quest") { Tag = quest };
+                if (quest.FollowUpQuest.HasValue && quest.FollowUpQuest.Value != -1)
+                {
+                    ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == quest.FollowUpQuest.Value);
+
+                    followUpNode.Nodes.Add(new TreeNode(GetQuestReferenceText(quest.FollowUpQuest.Value, linkedQuest))
+                    {
+                        Tag = linkedQuest ?? (object)quest.FollowUpQuest.Value
+                    });
+                }
+
+                flowNode.Nodes.Add(preQuestNode);
+                flowNode.Nodes.Add(followUpNode);
+                questNode.Nodes.Add(flowNode);
+
+                TreeNode npcNode = new TreeNode("NPCs") { Tag = quest };
+
+                TreeNode giverNode = new TreeNode($"Quest Givers") { Tag = quest };
+                if (quest.QuestGiverIDs != null)
+                {
+                    foreach (int id in quest.QuestGiverIDs)
+                        giverNode.Nodes.Add(new TreeNode($"{GetNPCReferenceText(id)}") { Tag = id });
+                }
+
+                TreeNode turnInNode = new TreeNode($"Quest Turn Ins") { Tag = quest };
+                if (quest.QuestTurnInIDs != null)
+                {
+                    foreach (int id in quest.QuestTurnInIDs)
+                        turnInNode.Nodes.Add(new TreeNode($"{GetNPCReferenceText(id)}") { Tag = id });
+                }
+
+                npcNode.Nodes.Add(giverNode);
+                npcNode.Nodes.Add(turnInNode);
+                questNode.Nodes.Add(npcNode);
+                
+                TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = quest };
+                if (quest.Objectives != null && quest.Objectives.Count > 0)
+                {
+                    foreach (Objectives objective in quest.Objectives)
+                    {
+                        objectivesNode.Nodes.Add(new TreeNode(GetObjectiveReferenceText(objective))
+                        {
+                            Tag = objective
+                        });
+                    }
+                }
+
+                questNode.Nodes.Add(objectivesNode);
+
+                TreeNode questItemsNode = new TreeNode($"Quest Items") { Tag = quest };
+                if (quest.QuestItems != null)
+                {
+                    foreach (ExpansionQuestItemConfig item in quest.QuestItems)
+                    {
+                        questItemsNode.Nodes.Add(new TreeNode(item.ClassName)
+                        {
+                            Tag = item
+                        });
+                    }
+                }
+                questNode.Nodes.Add(questItemsNode);
+
+                TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = quest };
+                if (quest.Rewards != null)
+                {
+                    foreach (ExpansionQuestRewardConfig reward in quest.Rewards)
+                    {
+                        rewardsNode.Nodes.Add(new TreeNode(reward.ClassName)
+                        {
+                            Tag = reward
+                        });
+                    }
+                }
+                questNode.Nodes.Add(rewardsNode);
+
+                questNode.Nodes.Add(new TreeNode("Requirements") { Tag = quest });
+                questNode.Nodes.Add(new TreeNode("Reputation / Faction") { Tag = quest });
+                questNode.Nodes.Add(new TreeNode("Advanced") { Tag = quest });
+
+                economyRootNode.Nodes.Add(questNode);
+
             }
         }
+        private string GetQuestReferenceText(int questId, ExpansionQuestQuest linkedQuest)
+        {
+            if (linkedQuest == null)
+                return $"🔗 Quest {questId}: Missing";
+
+            string title = string.IsNullOrWhiteSpace(linkedQuest.Title) ? "Untitled Quest" : linkedQuest.Title;
+
+            return $"🔗 Quest {questId}: {title}";
+        }
+        private string GetNPCReferenceText(int id)
+        {
+            var NPCfiles = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems;
+            ExpansionQuestNPCData npc = NPCfiles.FirstOrDefault(x => x.ID == id);
+
+            return $"🔗 {npc.NPCName} ({npc.ClassName}) {npc.GetNPCType()}";
+        }
+        private string GetObjectiveReferenceText(Objectives objective)
+        {
+            if (objective == null)
+                return "Objective: Missing";
+
+            var objectiveFiles = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems;
+            ExpansionQuestObjectiveConfig objectiveBase = objectiveFiles.FirstOrDefault(x => x.ID == objective.ID && x.ObjectiveType == objective.ObjectiveType);
+
+            return $"🔗 {objectiveBase.ObjectiveType} : {objectiveBase.ObjectiveText}";
+        }
+
         private TreeNode CreateExpansionQuestObjectiveConfigConfig(ExpansionQuestObjectiveConfigConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode("Quest Objectives")
