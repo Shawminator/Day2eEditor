@@ -72,5 +72,10 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.Active = QuestObjectivesActiveCB.Checked == true ? 1 : 0;
         }
+
+        private void QuestsObjectivesIDNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -25,7 +25,6 @@ namespace ExpansionPlugin
             Kind = kind;
         }
     }
-
     public enum ExpansionQuestObjectiveType
     {
         NONE = 1,

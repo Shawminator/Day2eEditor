@@ -189,6 +189,11 @@ namespace ExpansionPlugin
                     item.CreateCategoryList();
                     item.CreateDictionary();
                     SaveItem(item);
+                    if (GetItemFilePath(_clonedItems[id]) != GetItemFilePath(item))
+                    {
+                        if (File.Exists(GetItemFilePath(_clonedItems[id])))
+                            File.Delete(GetItemFilePath(_clonedItems[id]));
+                    }
                     _clonedItems[id] = item.Clone();
                     saved.Add(fullfielName);
                 }

@@ -238,6 +238,7 @@
             QuestsObjectivesIDNUD.Size = new Size(140, 23);
             QuestsObjectivesIDNUD.TabIndex = 107;
             QuestsObjectivesIDNUD.TextAlign = HorizontalAlignment.Center;
+            QuestsObjectivesIDNUD.ValueChanged += QuestsObjectivesIDNUD_ValueChanged;
             // 
             // darkLabel46
             // 

@@ -883,6 +883,7 @@ namespace ExpansionPlugin
                 },
                 [typeof(Objectives)] = (node,selected) =>
                 {
+                    ShowHandler<IUIHandler>(null, null, null, selected);
                     var objectiveRef = node.Tag as Objectives;
                     if (MessageBox.Show(
                         $"Jump to Objective {objectiveRef.ID}?",
@@ -914,10 +915,75 @@ namespace ExpansionPlugin
                         }
                     }
                 },
-                
+                [typeof(ExpansionQuestQuest)] = (node,selected) =>
+                {
+                    ExpansionQuestQuest quest = node.Tag as ExpansionQuestQuest;
+                    ExpansionQuestQuest parentquest = node.Parent.Tag as ExpansionQuestQuest;
 
+                    if (quest.Equals(parentquest))
+                    {
+                        switch(node.Text)
+                        {
+                            case "Basic Info":
+                                ShowHandler(new ExpansionQuestQuestBasicInfoControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
+                            case "Advanced":
+                                ShowHandler(new ExpansionQuestQuestAdvancedControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
+                            case "Text / Dialogue":
+                                ShowHandler(new ExpansionQuestQuestTextDialogueControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
+                            case "Flow":
+                                ShowHandler(new ExpansionQuestQuestFlowControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
+                            case "Quest Items":
+                                ShowHandler(new ExpansionQuestQuestItemsControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
+                            case "Rewards":
+                                ShowHandler(new ExpansionQuestQuestRewardsControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
+                            default:
+                                ShowHandler<IUIHandler>(null, null, null, selected);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                    }
+                },
+                [typeof(QuestReferenceNode)] = (node,selected) =>
+                {
+                    if (node.Tag is QuestReferenceNode questRef)
+                    { 
+                        ShowHandler<IUIHandler>(null, null, null, selected);
+                        if (MessageBox.Show(
+                        $"Jump to Quest {questRef.QuestID}?",
+                        "Navigate",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            var quest = _expansionManager.ExpansionQuestQuestConfig.GetQuestbyID(questRef.QuestID);
+                            var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, quest);
 
-
+                            if (targetNode != null)
+                            {
+                                ExpansionTV.SelectedNode = targetNode;
+                                targetNode.EnsureVisible();
+                                targetNode.Expand();
+                            }
+                        }
+                    }
+                },
+                [typeof(ExpansionQuestItemConfig)] = (node,selected) =>
+                {
+                    ExpansionQuestItemConfig ExpansionQuestItemConfig = node.Tag as ExpansionQuestItemConfig;
+                    ShowHandler(new ExpansionQuestItemConfigControl(), typeof(ExpansionQuestItemConfig), ExpansionQuestItemConfig, selected);
+                },
+                [typeof(ExpansionQuestRewardConfig)] = (node, selected) =>
+                {
+                    ExpansionQuestRewardConfig ExpansionQuestRewardConfig = node.Tag as ExpansionQuestRewardConfig;
+                    ShowHandler(new ExpansionQuestRewardConfigControl(), typeof(ExpansionQuestItemConfig), ExpansionQuestRewardConfig, selected);
+                },
             };
             // ----------------------
             // String handlers
@@ -4332,7 +4398,9 @@ namespace ExpansionPlugin
                 {
                     Tag = quest
                 };
+                
                 questNode.Nodes.Add(new TreeNode("Basic Info") { Tag = quest });
+                questNode.Nodes.Add(new TreeNode("Advanced") { Tag = quest });
                 questNode.Nodes.Add(new TreeNode("Text / Dialogue") { Tag = quest });
 
                 TreeNode flowNode = new TreeNode("Flow") { Tag = quest };
@@ -4346,7 +4414,7 @@ namespace ExpansionPlugin
 
                         preQuestNode.Nodes.Add(new TreeNode(GetQuestReferenceText(preQuestId, linkedQuest))
                         {
-                            Tag = linkedQuest ?? (object)preQuestId
+                            Tag = new QuestReferenceNode { QuestID = (int)linkedQuest.ID }
                         });
                     }
                 }
@@ -4358,7 +4426,7 @@ namespace ExpansionPlugin
 
                     followUpNode.Nodes.Add(new TreeNode(GetQuestReferenceText(quest.FollowUpQuest.Value, linkedQuest))
                     {
-                        Tag = linkedQuest ?? (object)quest.FollowUpQuest.Value
+                        Tag = new QuestReferenceNode { QuestID = (int)linkedQuest.ID }
                     });
                 }
 
@@ -4418,17 +4486,28 @@ namespace ExpansionPlugin
                 {
                     foreach (ExpansionQuestRewardConfig reward in quest.Rewards)
                     {
-                        rewardsNode.Nodes.Add(new TreeNode(reward.ClassName)
+                        TreeNode rewardnode = new TreeNode(reward.ClassName)
                         {
                             Tag = reward
-                        });
+                        };
+                        TreeNode Attachmentnode = new TreeNode("Attachments")
+                        {
+                            Tag = "QuestRewardAttachments"
+                        };
+                        foreach(string att in reward.Attachments)
+                        {
+                            Attachmentnode.Nodes.Add(new TreeNode(att)
+                            {
+                                Tag = "QuestRewardAttachment"
+                            });
+                        }
+                        rewardnode.Nodes.Add(Attachmentnode);
+                        rewardsNode.Nodes.Add(rewardnode);
                     }
                 }
                 questNode.Nodes.Add(rewardsNode);
 
-                questNode.Nodes.Add(new TreeNode("Requirements") { Tag = quest });
                 questNode.Nodes.Add(new TreeNode("Reputation / Faction") { Tag = quest });
-                questNode.Nodes.Add(new TreeNode("Advanced") { Tag = quest });
 
                 economyRootNode.Nodes.Add(questNode);
 

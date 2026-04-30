@@ -19,11 +19,86 @@ namespace ExpansionPlugin
         RANDOMIZED_ON_COMPLETION = 0,
         RANDOMIZED_ON_START = 1
     };
+    public class QuestReferenceNode
+    {
+        public int QuestID { get; set; }
+    }
+    public class FactionQuestRep : IDeepCloneable<FactionQuestRep>, IEquatable<FactionQuestRep>
+    {
+        public string Faction { get; set; }
+        public int Reputation { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Faction} ({Reputation})";
+        }
+        public bool Equals(FactionQuestRep other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            if (Faction != other.Faction ||
+                 Reputation != other.Reputation)
+                return false;
+
+            return true;
+        }
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMarketTrader);
+        public FactionQuestRep Clone()
+        {
+            FactionQuestRep clone = new FactionQuestRep
+            {
+                Faction = this.Faction,
+                Reputation = this.Reputation
+            };
+            return clone;
+        }
+    }
     public class ExpansionQuestQuestConfig : MultiFileConfigLoaderBase<ExpansionQuestQuest>
     {
         public const int CurrentVersion = 22;
         public ExpansionQuestQuestConfig(string path) : base(path)
         {
+        }
+        public override void Load()
+        {
+            ResetState();
+
+            var filePaths = Directory.GetFiles(BasePath, "*.json");
+
+            foreach (var file in filePaths)
+            {
+                try
+                {
+                    var item = LoadItem(file);
+
+                    OnAfterItemLoad(item, file);
+                    _clonedItems.Add(GetID(item), item.Clone());
+                    var issues = ValidateItem(item);
+                    if (issues?.Any() == true)
+                    {
+                        Console.WriteLine("Validation issues in " + FileName + ":");
+                        foreach (var msg in issues)
+                            Console.WriteLine("- " + msg);
+                    }
+                    _clonedItems[item.Id].FactionReputationRequirementsList = item.FactionReputationRequirementsList != null
+                        ? new BindingList<FactionQuestRep>(item.FactionReputationRequirementsList.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<FactionQuestRep>();
+                    _clonedItems[item.Id].FactionReputationRewardsList = item.FactionReputationRewardsList != null
+                        ? new BindingList<FactionQuestRep>(item.FactionReputationRewardsList.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<FactionQuestRep>();
+                   
+                    MutableItems.Add(item);
+
+                }
+                catch (Exception ex)
+                {
+                    HasErrors = true;
+                    HandleItemError(file, ex);
+                }
+            }
+
+            OnAfterLoadAll();
         }
         protected override ExpansionQuestQuest LoadItem(string filePath)
         {
@@ -38,6 +113,49 @@ namespace ExpansionPlugin
             TraderZone.SetPath(filePath);
             TraderZone.SetGuid(Guid.NewGuid());
             return TraderZone;
+        }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = Items.Count - 1; i >= 0; i--)
+            {
+                var item = Items[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+                var fullfielName = item.FilePath;
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fullfielName);
+                    continue;
+                }
+                //new file, needs to be written to disk and cloned
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    item.SyncToDictionary();
+                    SaveItem(item);
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fullfielName);
+                    continue;
+                }
+                //edit to existing file, needs to be recloned
+                if (!item.Equals(baseline))
+                {
+                    item.SyncToDictionary();
+                    SaveItem(item);
+                    if (GetItemFilePath(_clonedItems[id]) != GetItemFilePath(item))
+                    {
+                        if (File.Exists(GetItemFilePath(_clonedItems[id])))
+                            File.Delete(GetItemFilePath(_clonedItems[id]));
+                    }
+                    _clonedItems[id] = item.Clone();
+                    saved.Add(fullfielName);
+                }
+            }
+            return saved;
         }
         protected override void SaveItem(ExpansionQuestQuest ExpansionQuestQuest)
         {
@@ -66,6 +184,20 @@ namespace ExpansionPlugin
         {
             return ExpansionQuestQuest.FixMissingOrInvalidFields();
         }
+        public List<int> GetAllQuestIDS()
+        {
+            List<int> Numberofquests = new List<int>();
+            foreach (ExpansionQuestQuest quest in MutableItems)
+            {
+                Numberofquests.Add((int)quest.ID);
+            }
+            Numberofquests.Sort();
+            return Numberofquests;
+        }
+        public ExpansionQuestQuest GetQuestbyID(int ID)
+        {
+            return MutableItems.FirstOrDefault(x => x.ID == ID);
+        }
     }
     public class ExpansionQuestQuest: IDeepCloneable<ExpansionQuestQuest>, IEquatable<ExpansionQuestQuest>
     {
@@ -81,6 +213,10 @@ namespace ExpansionPlugin
         public bool ToDelete { get; set; }
         [JsonIgnore]
         public Guid Id { get; set; }
+        [JsonIgnore]
+        public BindingList<FactionQuestRep> FactionReputationRequirementsList { get; set; }
+        [JsonIgnore]
+        public BindingList<FactionQuestRep> FactionReputationRewardsList { get; set; }
 
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;
@@ -133,7 +269,7 @@ namespace ExpansionPlugin
 
         public ExpansionQuestQuest Clone()
         {
-            return new ExpansionQuestQuest()
+            ExpansionQuestQuest clone = new ExpansionQuestQuest()
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -197,6 +333,9 @@ namespace ExpansionPlugin
                 ToDelete = ToDelete,
                 Id = Id
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
         public override bool Equals(object? obj) => Equals(obj as ExpansionQuestQuest);
         public bool Equals(ExpansionQuestQuest? other)
@@ -204,8 +343,10 @@ namespace ExpansionPlugin
 
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
-            return ConfigVersion == other.ConfigVersion
+            return _path == other._path
+                && ConfigVersion == other.ConfigVersion
                 && ID == other.ID
                 && Type == other.Type
                 && Equals(Title, other.Title)
@@ -239,8 +380,8 @@ namespace ExpansionPlugin
                 && PlayerNeedQuestItems == other.PlayerNeedQuestItems
                 && DeleteQuestItems == other.DeleteQuestItems
                 && SequentialObjectives == other.SequentialObjectives
-                && DictionaryEquals(FactionReputationRequirements, other.FactionReputationRequirements)
-                && DictionaryEquals(FactionReputationRewards, other.FactionReputationRewards)
+                && ListEquals(FactionReputationRequirementsList, other.FactionReputationRequirementsList)
+                && ListEquals(FactionReputationRewardsList, other.FactionReputationRewardsList)
                 && SuppressQuestLogOnCompetion == other.SuppressQuestLogOnCompetion
                 && Active == other.Active;
 
@@ -290,9 +431,36 @@ namespace ExpansionPlugin
                 fixes.Add($"Updated version from {ConfigVersion} to {ExpansionQuestQuestConfig.CurrentVersion}");
                 ConfigVersion = ExpansionQuestQuestConfig.CurrentVersion;
             }
-
+            SyncFromDictionary();
 
             return fixes;
+        }
+        public void SyncFromDictionary()
+        {
+            FactionReputationRequirementsList = new BindingList<FactionQuestRep>(
+                FactionReputationRequirements
+                    .Select(kvp => new FactionQuestRep
+                    {
+                        Faction = kvp.Key,
+                        Reputation = kvp.Value
+                    }).ToList());
+
+            FactionReputationRewardsList = new BindingList<FactionQuestRep>(
+                FactionReputationRewards
+                    .Select(kvp => new FactionQuestRep
+                    {
+                        Faction = kvp.Key,
+                        Reputation = kvp.Value
+                    }).ToList());
+        }
+
+        public void SyncToDictionary()
+        {
+            FactionReputationRequirements = FactionReputationRequirementsList
+                .ToDictionary(x => x.Faction, x => x.Reputation);
+
+            FactionReputationRewards = FactionReputationRewardsList
+                .ToDictionary(x => x.Faction, x => x.Reputation);
         }
     }
     public class Objectives : IDeepCloneable<Objectives>, IEquatable<Objectives>
