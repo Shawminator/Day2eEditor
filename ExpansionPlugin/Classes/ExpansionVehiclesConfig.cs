@@ -50,20 +50,26 @@ namespace ExpansionPlugin
         public decimal? VehicleRoadKillDamageMultiplier { get; set; }
         public int? CollisionDamageIfEngineOff { get; set; }    //! Should the vehicle be able to receive damage if the engine is off?
         public decimal? CollisionDamageMinSpeedKmh { get; set; }	//! Minimum speed in km/h for vehicle to take collision damage
+        
         public int? CanChangeLock { get; set; }
         public BindingList<string> ChangeLockTools { get; set; }
         public int? ChangeLockTimeSeconds{ get; set; }
         public decimal? ChangeLockToolDamagePercent { get; set; }
+        
         public ExpansionPPOGORIVMode? PlacePlayerOnGroundOnReconnectInVehicle { get; set; }
         public int? RevvingOverMaxRPMRuinsEngineInstantly { get; set; }
         public int? VehicleDropsRuinedDoors { get; set; }
         public int? ExplodingVehicleDropsAttachments { get; set; }
         //public float? ForcePilotSyncIntervalSeconds { get; set; } 
         public decimal? DesyncInvulnerabilityTimeoutSeconds { get; set; }  //! Timeout for temporary vehicle godmode during desync. Set to 0 to disable.
+       
         public decimal? PilotlessAutoHoverEngineStopDelaySeconds { get; set; }
         public decimal? RoughLandingVerticalSpeedThreshold { get; set;  }
+        
         public decimal? DamagedEngineStartupChancePercent { get; set; }
+        
         public decimal? FuelConsumptionPercent { get; set; }
+        
         public int? EnableVehicleCovers { get; set; }
         public int? AllowCoveringDEVehicles { get; set; } //! Allow covering of vehicles spawned via dynamic events (events.xml)
         public int? CanCoverWithCargo { get; set; }
@@ -71,10 +77,13 @@ namespace ExpansionPlugin
         public decimal? VehicleAutoCoverTimeSeconds { get; set; }
         public int? VehicleAutoCoverRequireCamonet { get; set; }
         public int? EnableAutoCoveringDEVehicles { get; set; }
+
         public string? CFToolsHeliCoverIconName { get; set; }
         public string? CFToolsBoatCoverIconName { get; set; }
         public string? CFToolsCarCoverIconName { get; set; }
+        
         public int? ShowVehicleOwners { get; set; }
+        
         public BindingList<ExpansionVehiclesLockConfig> VehiclesConfig { get; set; }
 
         public ExpansionVehicleSettings() { }

@@ -9,7 +9,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionNameTagsConfig : SingleFileConfigLoaderBase<NameTagsSettings>
     {
-        public const int CurrentVersion = 4;
+        public const int CurrentVersion = 5;
         public ExpansionNameTagsConfig(string path) : base(path)
         {
         }
@@ -44,8 +44,8 @@ namespace ExpansionPlugin
             EnablePlayerTags = 1;
             PlayerTagViewRange = 5;
             PlayerTagsIcon = "Persona";
-            PlayerTagsColor = -1;
-            PlayerNameColor = -1;
+            PlayerTagsColor = -1644826;
+            PlayerNameColor = -1644826;
             OnlyInSafeZones = 0;
             OnlyInTerritories = 0;
             ShowPlayerItemInHands = 0;
@@ -80,13 +80,13 @@ namespace ExpansionPlugin
 
             if (PlayerTagsColor is null)
             {
-                PlayerTagsColor = -1;
+                PlayerTagsColor = -1644826;
                 fixes.Add("Corrected PlayerTagsColor");
             }
 
             if (PlayerNameColor is null)
             {
-                PlayerNameColor = -1;
+                PlayerNameColor = -1644826;
                 fixes.Add("Corrected PlayerNameColor");
             }
 
