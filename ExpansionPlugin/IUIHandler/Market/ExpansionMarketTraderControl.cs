@@ -53,7 +53,7 @@ namespace ExpansionPlugin
             RequiredCompletedQuestIDNUD.Value = (int)_data.RequiredCompletedQuestID;
             TraderIconCB.SelectedIndex = TraderIconCB.FindStringExact(_data.TraderIcon);
             UseCategoryOrderCB.Checked = _data.UseCategoryOrder == 1 ? true : false;
-
+            GetIcon();
             _suppressEvents = false;
         }
 
@@ -126,6 +126,29 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.TraderIcon = TraderIconCB.Text;
+            GetIcon();
+        }
+
+        private void GetIcon()
+        {
+            string iconname = _data.TraderIcon.Replace("/", "");
+            var resourceName = $"ExpansionPlugin.Icons.{iconname}.png";
+            var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
+            if (stream != null)
+            {
+                Bitmap image = new Bitmap(Image.FromStream(stream));
+                //Image image2 = ResourceHelper.MultiplyColorToBitmap(image, Color.FromArgb(_data.IconColor), 200, true);
+                Image image3 = resizeImage(image, new Size(128, 128));
+                pictureBox1.Image = image3;
+            }
+            else
+            {
+                pictureBox1.Image = null;
+            }
+        }
+        public static Image resizeImage(Image imgToResize, Size size)
+        {
+            return (Image)(new Bitmap(imgToResize, size));
         }
     }
 }

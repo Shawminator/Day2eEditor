@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            TraderIconCB = new ComboBox();
             label1 = new Label();
             UseCategoryOrderCB = new CheckBox();
             darkLabel80 = new Label();
@@ -44,15 +45,19 @@
             textBox2 = new TextBox();
             darkLabel50 = new Label();
             textBox5 = new TextBox();
-            TraderIconCB = new ComboBox();
+            pictureBox1 = new PictureBox();
+            label2 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MinRequiredHumanityNUD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(pictureBox1);
+            groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(TraderIconCB);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(UseCategoryOrderCB);
@@ -74,17 +79,29 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(464, 261);
+            groupBox1.Size = new Size(464, 397);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Market Category Info";
             groupBox1.Enter += groupBox1_Enter;
             // 
+            // TraderIconCB
+            // 
+            TraderIconCB.BackColor = Color.FromArgb(60, 63, 65);
+            TraderIconCB.ForeColor = SystemColors.Control;
+            TraderIconCB.FormattingEnabled = true;
+            TraderIconCB.Location = new Point(197, 202);
+            TraderIconCB.Margin = new Padding(4, 3, 4, 3);
+            TraderIconCB.Name = "TraderIconCB";
+            TraderIconCB.Size = new Size(256, 23);
+            TraderIconCB.TabIndex = 6;
+            TraderIconCB.SelectedIndexChanged += TraderIconCB_SelectedIndexChanged;
+            // 
             // label1
             // 
             label1.AutoSize = true;
             label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(14, 235);
+            label1.Location = new Point(14, 367);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(110, 15);
@@ -95,7 +112,7 @@
             // 
             UseCategoryOrderCB.AutoSize = true;
             UseCategoryOrderCB.ForeColor = SystemColors.Control;
-            UseCategoryOrderCB.Location = new Point(197, 236);
+            UseCategoryOrderCB.Location = new Point(197, 368);
             UseCategoryOrderCB.Margin = new Padding(4, 3, 4, 3);
             UseCategoryOrderCB.Name = "UseCategoryOrderCB";
             UseCategoryOrderCB.RightToLeft = RightToLeft.Yes;
@@ -258,17 +275,25 @@
             textBox5.TabIndex = 177;
             textBox5.TextChanged += textBox5_TextChanged;
             // 
-            // TraderIconCB
+            // pictureBox1
             // 
-            TraderIconCB.BackColor = Color.FromArgb(60, 63, 65);
-            TraderIconCB.ForeColor = SystemColors.Control;
-            TraderIconCB.FormattingEnabled = true;
-            TraderIconCB.Location = new Point(197, 202);
-            TraderIconCB.Margin = new Padding(4, 3, 4, 3);
-            TraderIconCB.Name = "TraderIconCB";
-            TraderIconCB.Size = new Size(256, 23);
-            TraderIconCB.TabIndex = 6;
-            TraderIconCB.SelectedIndexChanged += TraderIconCB_SelectedIndexChanged;
+            pictureBox1.BackColor = Color.FromArgb(60, 63, 65);
+            pictureBox1.Location = new Point(197, 231);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(128, 128);
+            pictureBox1.TabIndex = 196;
+            pictureBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.ForeColor = Color.FromArgb(220, 220, 220);
+            label2.Location = new Point(14, 235);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(74, 15);
+            label2.TabIndex = 195;
+            label2.Text = "Icon Preview";
             // 
             // ExpansionMarketTraderControl
             // 
@@ -278,12 +303,13 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "ExpansionMarketTraderControl";
-            Size = new Size(464, 261);
+            Size = new Size(464, 397);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MinRequiredHumanityNUD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
@@ -306,5 +332,7 @@
         private TextBox textBox5;
         private Label label1;
         private ComboBox TraderIconCB;
+        private PictureBox pictureBox1;
+        private Label label2;
     }
 }

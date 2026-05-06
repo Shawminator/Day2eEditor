@@ -23,7 +23,7 @@ namespace ExpansionPlugin
                     filePath,
                     createNew: () => new ExpansionPersonalStorageConfig(),
                     onError: ex => HandleItemError(filePath, ex),
-                    configName: "P2PTrader",
+                    configName: "PersonalStorageContainer",
                     useVecConvertor: true
                 );
 
@@ -131,8 +131,10 @@ namespace ExpansionPlugin
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
-            if (ConfigVersion != other.ConfigVersion ||
+            if (_path != other._path ||
+                ConfigVersion != other.ConfigVersion ||
                 StorageID != other.StorageID ||
                 ClassName != other.ClassName ||
                 DisplayName != other.DisplayName ||

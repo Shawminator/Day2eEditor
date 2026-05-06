@@ -173,7 +173,7 @@
     <Compile Update="IUIHandler\PersonalStorage\ExpansionPersonalStorageSettingsCatControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="IUIHandler\PersonalStorage\ExpansionPersonalStorageSettingsGeneralControl - Copy.cs">
+    <Compile Update="IUIHandler\PersonalStorage\ExpansionPersonalStorageSettingsGeneralControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="IUIHandler\PersonalStorage\ExpasnionPersonalStorageContainerSpawnInfoControl.cs">

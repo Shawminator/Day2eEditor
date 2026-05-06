@@ -17,7 +17,7 @@ namespace DayZeEditor
             InitializeComponent();
         }
 
-        private void darkLabel56_Click(object sender, EventArgs e)
+        private void BaseBuildingRaidModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

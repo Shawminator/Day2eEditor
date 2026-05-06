@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            IconCB = new ComboBox();
             textBox11 = new TextBox();
             textBox9 = new TextBox();
             darkLabel2 = new Label();
@@ -40,14 +41,18 @@
             ColorPB = new PictureBox();
             IconLabel = new Label();
             darkLabel75 = new Label();
-            IconCB = new ComboBox();
+            pictureBox1 = new PictureBox();
+            label2 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)InitStockPercentNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorPB).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(pictureBox1);
+            groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(IconCB);
             groupBox1.Controls.Add(textBox11);
             groupBox1.Controls.Add(textBox9);
@@ -65,16 +70,28 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(567, 241);
+            groupBox1.Size = new Size(567, 345);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Market Category Info";
+            // 
+            // IconCB
+            // 
+            IconCB.BackColor = Color.FromArgb(60, 63, 65);
+            IconCB.ForeColor = SystemColors.Control;
+            IconCB.FormattingEnabled = true;
+            IconCB.Location = new Point(132, 82);
+            IconCB.Margin = new Padding(4, 3, 4, 3);
+            IconCB.Name = "IconCB";
+            IconCB.Size = new Size(427, 23);
+            IconCB.TabIndex = 6;
+            IconCB.SelectedIndexChanged += IconCB_SelectedIndexChanged;
             // 
             // textBox11
             // 
             textBox11.BackColor = Color.FromArgb(60, 63, 65);
             textBox11.ForeColor = SystemColors.Control;
-            textBox11.Location = new Point(132, 25);
+            textBox11.Location = new Point(132, 22);
             textBox11.Margin = new Padding(4, 3, 4, 3);
             textBox11.Name = "textBox11";
             textBox11.Size = new Size(428, 23);
@@ -85,7 +102,7 @@
             // 
             textBox9.BackColor = Color.FromArgb(60, 63, 65);
             textBox9.ForeColor = SystemColors.Control;
-            textBox9.Location = new Point(132, 60);
+            textBox9.Location = new Point(132, 52);
             textBox9.Margin = new Padding(4, 3, 4, 3);
             textBox9.Name = "textBox9";
             textBox9.Size = new Size(428, 23);
@@ -96,7 +113,7 @@
             // 
             darkLabel2.AutoSize = true;
             darkLabel2.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel2.Location = new Point(17, 63);
+            darkLabel2.Location = new Point(15, 55);
             darkLabel2.Margin = new Padding(4, 0, 4, 0);
             darkLabel2.Name = "darkLabel2";
             darkLabel2.Size = new Size(80, 15);
@@ -107,7 +124,7 @@
             // 
             darkLabel4.AutoSize = true;
             darkLabel4.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel4.Location = new Point(17, 29);
+            darkLabel4.Location = new Point(15, 25);
             darkLabel4.Margin = new Padding(4, 0, 4, 0);
             darkLabel4.Name = "darkLabel4";
             darkLabel4.Size = new Size(60, 15);
@@ -118,7 +135,7 @@
             // 
             darkLabel13.AutoSize = true;
             darkLabel13.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel13.Location = new Point(17, 167);
+            darkLabel13.Location = new Point(15, 285);
             darkLabel13.Margin = new Padding(4, 0, 4, 0);
             darkLabel13.Name = "darkLabel13";
             darkLabel13.Size = new Size(68, 15);
@@ -129,7 +146,7 @@
             // 
             IsExchangeCB.AutoSize = true;
             IsExchangeCB.ForeColor = SystemColors.Control;
-            IsExchangeCB.Location = new Point(133, 167);
+            IsExchangeCB.Location = new Point(131, 285);
             IsExchangeCB.Margin = new Padding(4, 3, 4, 3);
             IsExchangeCB.Name = "IsExchangeCB";
             IsExchangeCB.Size = new Size(15, 14);
@@ -142,7 +159,7 @@
             InitStockPercentNUD.BackColor = Color.FromArgb(60, 63, 65);
             InitStockPercentNUD.DecimalPlaces = 1;
             InitStockPercentNUD.ForeColor = SystemColors.Control;
-            InitStockPercentNUD.Location = new Point(132, 200);
+            InitStockPercentNUD.Location = new Point(132, 313);
             InitStockPercentNUD.Margin = new Padding(4, 3, 4, 3);
             InitStockPercentNUD.Name = "InitStockPercentNUD";
             InitStockPercentNUD.Size = new Size(132, 23);
@@ -154,7 +171,7 @@
             // 
             darkLabel76.AutoSize = true;
             darkLabel76.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel76.Location = new Point(17, 202);
+            darkLabel76.Location = new Point(15, 315);
             darkLabel76.Margin = new Padding(4, 0, 4, 0);
             darkLabel76.Name = "darkLabel76";
             darkLabel76.Size = new Size(98, 15);
@@ -163,7 +180,7 @@
             // 
             // ColorPB
             // 
-            ColorPB.Location = new Point(132, 133);
+            ColorPB.Location = new Point(132, 115);
             ColorPB.Margin = new Padding(4, 3, 4, 3);
             ColorPB.Name = "ColorPB";
             ColorPB.Size = new Size(257, 18);
@@ -175,7 +192,7 @@
             // 
             IconLabel.AutoSize = true;
             IconLabel.ForeColor = Color.FromArgb(220, 220, 220);
-            IconLabel.Location = new Point(17, 98);
+            IconLabel.Location = new Point(15, 85);
             IconLabel.Margin = new Padding(4, 0, 4, 0);
             IconLabel.Name = "IconLabel";
             IconLabel.Size = new Size(30, 15);
@@ -186,24 +203,32 @@
             // 
             darkLabel75.AutoSize = true;
             darkLabel75.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel75.Location = new Point(17, 133);
+            darkLabel75.Location = new Point(15, 115);
             darkLabel75.Margin = new Padding(4, 0, 4, 0);
             darkLabel75.Name = "darkLabel75";
             darkLabel75.Size = new Size(43, 15);
             darkLabel75.TabIndex = 116;
             darkLabel75.Text = "Colour";
             // 
-            // IconCB
+            // pictureBox1
             // 
-            IconCB.BackColor = Color.FromArgb(60, 63, 65);
-            IconCB.ForeColor = SystemColors.Control;
-            IconCB.FormattingEnabled = true;
-            IconCB.Location = new Point(132, 95);
-            IconCB.Margin = new Padding(4, 3, 4, 3);
-            IconCB.Name = "IconCB";
-            IconCB.Size = new Size(427, 23);
-            IconCB.TabIndex = 6;
-            IconCB.SelectedIndexChanged += IconCB_SelectedIndexChanged;
+            pictureBox1.BackColor = Color.FromArgb(60, 63, 65);
+            pictureBox1.Location = new Point(132, 145);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(128, 128);
+            pictureBox1.TabIndex = 198;
+            pictureBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.ForeColor = Color.FromArgb(220, 220, 220);
+            label2.Location = new Point(15, 145);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(74, 15);
+            label2.TabIndex = 197;
+            label2.Text = "Icon Preview";
             // 
             // ExpansionMarketCategoryControl
             // 
@@ -213,11 +238,12 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "ExpansionMarketCategoryControl";
-            Size = new Size(567, 241);
+            Size = new Size(567, 345);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)InitStockPercentNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorPB).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
@@ -237,5 +263,7 @@
         private Label IconLabel;
         private Label darkLabel75;
         private ComboBox IconCB;
+        private PictureBox pictureBox1;
+        private Label label2;
     }
 }

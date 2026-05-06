@@ -38,18 +38,36 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
+            List<ComboItem> comboItems = new List<ComboItem>();
+            foreach (ExpansionQuestQuest quest in AppServices.GetRequired<ExpansionManager>().ExpansionQuestQuestConfig.MutableItems)
+            {
+                comboItems.Add(new ComboItem()
+                {
+                    Id = (int)quest.ID,
+                    Name = $"Quest {(int)quest.ID}: {quest.Title}"
+                });
+            }
+            comboItems.Insert(0, new ComboItem()
+            {
+                Id = -1,
+                Name = $"Quest {-1}: No Quest Selected"
+            });
+            QuestCB.DataSource = comboItems.OrderBy(x => x.Id).ToList();
+            QuestCB.DisplayMember = "Name";
+            QuestCB.ValueMember = "Id";
+
             BindingList<string> Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
             Factions.Insert(0, "");
             m_FactionCB.DataSource = new BindingList<string>(Factions?.ToList() ?? new List<string>());
             m_RequiredFactionCB.DataSource = new BindingList<string>(Factions?.ToList() ?? new List<string>());
-            
-            BindingList<string> LoadoutNameList = new BindingList<string>{ "" };
+
+            BindingList<string> LoadoutNameList = new BindingList<string> { "" };
             foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
             {
                 LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
             }
             m_LoadoutFileCB.DataSource = new BindingList<string>(LoadoutNameList);
-
+            FilenameTB.Text = Path.GetFileNameWithoutExtension(_data.FileName);
             m_TraderIDNUD.Value = (int)_data.m_TraderID;
             m_ClassNameCB.SelectedIndex = m_ClassNameCB.FindStringExact(_data.m_ClassName);
             m_LoadoutFileCB.SelectedIndex = m_LoadoutFileCB.FindStringExact(_data.m_LoadoutFile);
@@ -63,7 +81,7 @@ namespace ExpansionPlugin
             m_MinRequiredReputationNUD.Value = (int)_data.m_MinRequiredReputation;
             m_MaxRequiredReputationNUD.Value = (int)_data.m_MaxRequiredReputation;
             m_RequiredFactionCB.SelectedIndex = m_RequiredFactionCB.FindStringExact(_data.m_RequiredFaction);
-            m_RequiredCompletedQuestIDNUD.Value = (int)_data.m_RequiredCompletedQuestID;
+            QuestCB.SelectedValue = (int)_data.m_RequiredCompletedQuestID;
             m_DisplayCurrencyValueNUD.Value = (int)_data.m_DisplayCurrencyValue;
             m_DisplayCurrencyNameTB.Text = _data.m_DisplayCurrencyName;
 

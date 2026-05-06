@@ -162,7 +162,8 @@ namespace ExpansionPlugin
             if (ReferenceEquals(this, other)) return true;
             if (Id != other.Id) return false;
 
-            if (m_Version != other.m_Version ||
+            if (_path != other._path ||
+                m_Version != other.m_Version ||
                 m_TraderID != other.m_TraderID ||
                 m_ClassName != other.m_ClassName ||
                 !m_Position.Equals(other.m_Position) ||

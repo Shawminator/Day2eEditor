@@ -199,7 +199,7 @@ namespace ExpansionPlugin
                         SetupSpawnLocationMarkers(ExpansionSpawnLocation, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
-                    else if (node.Parent.Tag is ExpansionP2PMarketTraderConfig)
+                    else if (node.Parent.Nodes[0].Tag is ExpansionP2PMarketTraderConfig)
                     {
                         Vec3 v3 = node.Tag as Vec3;
                         var control = new Vector3Control();
@@ -1159,7 +1159,7 @@ namespace ExpansionPlugin
                 //P2P Market
                 ["P2PMarketTraderPOSandOri"] = (node, selected) =>
                 {
-                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Tag as ExpansionP2PMarketTraderConfig;
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Nodes[0].Tag as ExpansionP2PMarketTraderConfig;
                     var control = new ExpasnionP2PMarksetTraderSpawnInfoControl();
                     control.PositionChanged += (updatedPos) =>
                     {
@@ -1193,6 +1193,11 @@ namespace ExpansionPlugin
                     ShowHandler(control, typeof(ExpansionPersonalStorageContainersConfig), ExpansionPersonalStorageConfig, selected);
                     SetupExpansionPersonalStorageSpawnPositions(ExpansionPersonalStorageConfig, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionPersonalStorageConfig.Position.X, ExpansionPersonalStorageConfig.Position.Z));
+                },
+                ["ExpansionPersonalStorageConfigGeneral"] = (node,selected) =>
+                {
+                    ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = node.Parent.Tag as ExpansionPersonalStorageConfig;
+                    ShowHandler<IUIHandler>(new ExpasnionPersonalStorageContainerGeneralControl(), typeof(ExpansionPersonalStorageContainersConfig), ExpansionPersonalStorageConfig, selected);
                 },
                 //Raid
                 ["RaidExplosives"] = (node, selected) =>
@@ -4032,8 +4037,12 @@ namespace ExpansionPlugin
         {
             TreeNode P2PTraderRootNode = new TreeNode(ef.FileName)
             {
-                Tag = ef
+                Tag = "P2PTraderFile"
             };
+            P2PTraderRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = ef
+            });
             P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
             {
                 Tag = "P2PMarketTraderPOSandOri"
@@ -4261,6 +4270,10 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
+            P2PTraderRootNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = "ExpansionPersonalStorageConfigGeneral"
+            });
             P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
             {
                 Tag = "ExpansionPersonalStorageConfigPOSandOri"
@@ -7336,7 +7349,7 @@ namespace ExpansionPlugin
 
                     if (pos == closestPos)
                     {
-                        ExpansionTV.SelectedNode = child.Nodes[0];
+                        ExpansionTV.SelectedNode = child.Nodes[1];
                         break;
                     }
                 }

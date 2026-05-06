@@ -48,6 +48,7 @@ namespace ExpansionPlugin
             InitStockPercentNUD.Value = (decimal)_data.InitStockPercent;
             IsExchangeCB.Checked = _data.IsExchange == 1 ? true : false;
             SetColor(_data.Color, ColorPB);
+            GetIcon();
             _suppressEvents = false;
         }
         private void SetColor(string hexColor, PictureBox targetPB)
@@ -130,6 +131,30 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Icon = IconCB.SelectedItem.ToString();
+            GetIcon();
+        }
+        private void GetIcon()
+        {
+            string iconname = _data.Icon.Replace("/", "");
+            var resourceName = $"ExpansionPlugin.Icons.{iconname}.png";
+            var stream = ResourceHelper.OpenEmbeddedStream(resourceName);
+            if (stream != null)
+            {
+                Bitmap image = new Bitmap(Image.FromStream(stream));
+                string formattedColor = "#" + _data.Color.Substring(6) + _data.Color.Remove(6, 2);
+                Color selectedColor = ColorTranslator.FromHtml(formattedColor);
+                Image image2 = ResourceHelper.MultiplyColorToBitmap(image, selectedColor, 200, true);
+                Image image3 = resizeImage(image2, new Size(128, 128));
+                pictureBox1.Image = image3;
+            }
+            else
+            {
+                pictureBox1.Image = null;
+            }
+        }
+        public static Image resizeImage(Image imgToResize, Size size)
+        {
+            return (Image)(new Bitmap(imgToResize, size));
         }
     }
 }
