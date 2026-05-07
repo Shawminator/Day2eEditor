@@ -134,8 +134,7 @@
             ReputationLossOnDeathNUD.ForeColor = SystemColors.Control;
             ReputationLossOnDeathNUD.Location = new Point(167, 23);
             ReputationLossOnDeathNUD.Margin = new Padding(4, 3, 4, 3);
-            ReputationLossOnDeathNUD.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            ReputationLossOnDeathNUD.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            ReputationLossOnDeathNUD.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             ReputationLossOnDeathNUD.Name = "ReputationLossOnDeathNUD";
             ReputationLossOnDeathNUD.Size = new Size(118, 23);
             ReputationLossOnDeathNUD.TabIndex = 1;
@@ -161,8 +160,7 @@
             ReputationMaxReputationNUD.ForeColor = SystemColors.Control;
             ReputationMaxReputationNUD.Location = new Point(167, 53);
             ReputationMaxReputationNUD.Margin = new Padding(4, 3, 4, 3);
-            ReputationMaxReputationNUD.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            ReputationMaxReputationNUD.Minimum = new decimal(new int[] { 999999999, 0, 0, int.MinValue });
+            ReputationMaxReputationNUD.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             ReputationMaxReputationNUD.Name = "ReputationMaxReputationNUD";
             ReputationMaxReputationNUD.Size = new Size(118, 23);
             ReputationMaxReputationNUD.TabIndex = 3;
@@ -177,7 +175,7 @@
             darkLabel221.Location = new Point(15, 55);
             darkLabel221.Margin = new Padding(4, 0, 4, 0);
             darkLabel221.Name = "darkLabel221";
-            darkLabel221.Size = new Size(91, 15);
+            darkLabel221.Size = new Size(90, 15);
             darkLabel221.TabIndex = 2;
             darkLabel221.Tag = "";
             darkLabel221.Text = "Max Reputation";

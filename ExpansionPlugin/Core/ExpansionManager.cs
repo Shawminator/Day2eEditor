@@ -730,7 +730,8 @@ namespace ExpansionPlugin
             "Battery Med",
             "Battery Low",
             "Battery Empty",
-            "Clock Blank",
+            "Clock",
+            "Blank",
             "Expansion",
             "Expansion B/W"
         };

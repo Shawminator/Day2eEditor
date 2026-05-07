@@ -38,6 +38,23 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
+
+
+            List<ComboConditionItem> conditionList = new()
+            {
+                new ComboConditionItem { Name = "Pristine x1.0",        multiplier = 1.0m },
+                new ComboConditionItem { Name = "Worn x0.75",           multiplier = 0.75m },
+                new ComboConditionItem { Name = "Damaged x0.5",         multiplier = 0.5m },
+                new ComboConditionItem { Name = "Badly Damaged x0.25",  multiplier = 0.25m },
+                new ComboConditionItem { Name = "Ruined x0",            multiplier = 0m }
+            };
+
+            ConditionCB.DataSource = conditionList;
+            ConditionCB.SelectedIndex = 0;
+            ConditionCB.DisplayMember = "Name";
+            ConditionCB.ValueMember = "multiplier";
+            trackBar1.Maximum = (int)_data.MaxStockThreshold;
+            trackBar1.Minimum = (int)_data.MinStockThreshold;
             textBox10.Text = _data.ClassName;
             numericUpDown6.Value = (int)_data.MaxPriceThreshold;
             numericUpDown7.Value = (int)_data.MinPriceThreshold;
@@ -46,6 +63,13 @@ namespace ExpansionPlugin
             numericUpDown9.Value = (int)_data.MinStockThreshold;
             numericUpDown24.Value = (int)_data.QuantityPercent;
 
+            decimal SellpricePercent = (decimal)_data.SellPricePercent;
+            if(SellpricePercent == -1)
+            {
+                
+            }
+
+            
             _suppressEvents = false;
         }
 
@@ -100,5 +124,14 @@ namespace ExpansionPlugin
             _data.QuantityPercent = (int)numericUpDown24.Value;
         }
 
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
+        }
+    }
+    public class ComboConditionItem
+    {
+        public decimal multiplier { get; set; }        // value
+        public string Name { get; set; }   // display
     }
 }

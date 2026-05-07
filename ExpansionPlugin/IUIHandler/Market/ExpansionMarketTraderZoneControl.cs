@@ -43,8 +43,9 @@ namespace ExpansionPlugin
             FilenameTB.Text = Path.GetFileNameWithoutExtension(_data.FileName);
             m_DisplayNameTB.Text = _data.m_DisplayName;
             BuyPricePercentNUD.Value = (int)_data.BuyPricePercent;
+            trackBar1.Value = (int)_data.BuyPricePercent;
             SellPricePercentNUD.Value = (int)_data.SellPricePercent;
-
+            trackBar2.Value = (int)_data.SellPricePercent;
             _suppressEvents = false;
         }
 
@@ -81,12 +82,26 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.BuyPricePercent = (decimal)BuyPricePercentNUD.Value;
+            trackBar1.Value = (int)_data.BuyPricePercent;
         }
 
         private void SellPricePercentNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.SellPricePercent = (decimal)SellPricePercentNUD.Value;
+            trackBar2.Value = (int)_data.SellPricePercent;
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            BuyPricePercentNUD.Value = trackBar1.Value;
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            SellPricePercentNUD.Value = trackBar2.Value;
         }
     }
 }
