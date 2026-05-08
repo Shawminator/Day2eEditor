@@ -26,16 +26,8 @@ namespace ExpansionPlugin
                 try
                 {
                     var item = LoadItem(file);
-
                     OnAfterItemLoad(item, file);
                     _clonedItems.Add(GetID(item), item.Clone());
-                    //var issues = ValidateData(item);
-                    //if (issues?.Any() == true)
-                    //{
-                    //    Console.WriteLine("Validation issues in " + FileName + ":");
-                    //    foreach (var msg in issues)
-                    //        Console.WriteLine("- " + msg);
-                    //}
                     MutableItems.Add(item);
 
                 }
@@ -78,9 +70,56 @@ namespace ExpansionPlugin
             ExpansionMarketTraderNpcs.SetGuid(Guid.NewGuid());  //Runtime Only
             return ExpansionMarketTraderNpcs;
         }
+        public override IEnumerable<string> Save()
+        {
+            var saved = new List<string>();
+
+            for (int i = MutableItems.Count - 1; i >= 0; i--)
+            {
+                var item = MutableItems[i];
+                var id = GetID(item);
+                var fileName = GetItemFileName(item);
+                var fullfielName = GetItemFilePath(item);
+                if (ShouldDelete(item))
+                {
+                    DeleteItemFile(item);
+                    MutableItems.RemoveAt(i);
+                    _clonedItems.Remove(id);
+                    saved.Add("File Remove " + fullfielName);
+                    continue;
+                }
+
+                if (!_clonedItems.TryGetValue(id, out var baseline))
+                {
+                    SaveItem(item);
+                    _clonedItems[id] = CloneItem(item);
+                    saved.Add(fullfielName);
+                    continue;
+                }
+
+                if (!AreEqual(item, baseline))
+                {
+                    SaveItem(item);
+                    if (GetItemFilePath(_clonedItems[id]) != GetItemFilePath(item))
+                    {
+                        if (File.Exists(GetItemFilePath(_clonedItems[id])))
+                            File.Delete(GetItemFilePath(_clonedItems[id]));
+                    }
+                    _clonedItems[id] = CloneItem(item);
+                    saved.Add(fullfielName);
+                }
+            }
+            return saved;
+        }
         protected override void SaveItem(ExpansionMarketTraderNpcs ExpansionMarketTrader)
         {
-            AppServices.GetRequired<FileService>().SaveJson(ExpansionMarketTrader._path, ExpansionMarketTrader, false, true);
+            List<string> MapFile = new List<string>();
+            foreach(ExpansionTraderMaps tm in ExpansionMarketTrader.Tradersmaps)
+            {
+                string line = Helpers.BuildTraderMissionLine(tm);
+                MapFile.Add(line);
+            }
+            File.WriteAllLines(ExpansionMarketTrader._path, MapFile);
         }
         protected override bool ShouldDelete(ExpansionMarketTraderNpcs ExpansionMarketTraderNpcs)
             => ExpansionMarketTraderNpcs.ToDelete;
@@ -97,6 +136,25 @@ namespace ExpansionPlugin
             => ExpansionMarketTraderNpcs.FileName;
         protected override string GetItemFilePath(ExpansionMarketTraderNpcs ExpansionMarketTraderNpcs)
             => ExpansionMarketTraderNpcs.FilePath;
+
+        internal List<ExpansionTraderMaps> GetNPCSFromTraders(List<ExpansionMarketTrader> intraderlists)
+        {
+            List<ExpansionTraderMaps> tradermaps = new List<ExpansionTraderMaps>();
+            foreach(ExpansionMarketTraderNpcs npcfile in MutableItems)
+            {
+                foreach(ExpansionTraderMaps tmap in npcfile.Tradersmaps)
+                {
+                    foreach(ExpansionMarketTrader t in intraderlists)
+                    {
+                        if(Path.GetFileNameWithoutExtension(t.FileName) == tmap.TraderName)
+                        {
+                            tradermaps.Add(tmap);
+                        }
+                    }
+                }
+            }
+            return tradermaps;
+        }
     }
     public class ExpansionMarketTraderNpcs : IDeepCloneable<ExpansionMarketTraderNpcs>, IEquatable<ExpansionMarketTraderNpcs>
     {
@@ -120,7 +178,32 @@ namespace ExpansionPlugin
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
+            if (_path != other._path)
+                return false;
+
+            if (!ListEquals(Tradersmaps, other.Tradersmaps))
+                return false;
+
+            return true;
+        }
+        private static bool ListEquals<T>(IList<T> a, IList<T> b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+
+            if (a is null || b is null)
+                return false;
+
+            if (a.Count != b.Count)
+                return false;
+
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Equals(a[i], b[i]))
+                    return false;
+            }
 
             return true;
         }
@@ -128,7 +211,12 @@ namespace ExpansionPlugin
         {
             ExpansionMarketTraderNpcs clone = new ExpansionMarketTraderNpcs
             {
+                Tradersmaps = this.Tradersmaps != null
+                    ? new BindingList<ExpansionTraderMaps>(this.Tradersmaps.Select(cat => cat.Clone()).ToList())
+                    : null,
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
 

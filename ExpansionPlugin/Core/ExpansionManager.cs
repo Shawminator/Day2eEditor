@@ -413,6 +413,7 @@ namespace ExpansionPlugin
             checkExpansionSlotNames();
             CheckExpansionFactions();
             checkExpansionIcons();
+            checkExpansionTraderNPCS();
         }
         private void CheckExpansionFactions()
         {
@@ -506,6 +507,37 @@ namespace ExpansionPlugin
             if (updated || !File.Exists(filePath))
             {
                 File.WriteAllLines(filePath, fileIconNames);
+            }
+        }
+        private void checkExpansionTraderNPCS()
+        {
+            string filePath = "Data\\ExpansionTradernames.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> TraderNames = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                TraderNames = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string trader in ExpansionTraderNPCS)
+            {
+                if (!TraderNames.Contains(trader))
+                {
+                    TraderNames.Add(trader);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, TraderNames);
             }
         }
         static List<string> ExpansionFactions = new List<string>()
@@ -735,8 +767,84 @@ namespace ExpansionPlugin
             "Expansion",
             "Expansion B/W"
         };
+        public static List<string> ExpansionTraderNPCS = new List<string>()
+        {
+            "ExpansionTraderPumpkin",
+            "ExpansionTraderZucchini",
+            "ExpansionExchangeMachine",
+            "ExpansionTraderLockerClosedBlueV1",
+            "ExpansionTraderLockerClosedBlueV2",
+            "ExpansionTraderLockerClosedBlueV3",
+            "ExpansionTraderLockerClosedV1",
+            "ExpansionTraderLockerClosedV2",
+            "ExpansionTraderLockerClosedV3",
+            "ExpansionTraderMirek",
+            "ExpansionTraderDenis",
+            "ExpansionTraderBoris",
+            "ExpansionTraderCyril",
+            "ExpansionTraderElias",
+            "ExpansionTraderFrancis",
+            "ExpansionTraderGuo",
+            "ExpansionTraderHassan",
+            "ExpansionTraderIndar",
+            "ExpansionTraderJose",
+            "ExpansionTraderKaito",
+            "ExpansionTraderLewis",
+            "ExpansionTraderManua",
+            "ExpansionTraderNiki",
+            "ExpansionTraderOliver",
+            "ExpansionTraderPeter",
+            "ExpansionTraderQuinn",
+            "ExpansionTraderRolf",
+            "ExpansionTraderSeth",
+            "ExpansionTraderTaiki",
+            "ExpansionTraderLinda",
+            "ExpansionTraderMaria",
+            "ExpansionTraderFrida",
+            "ExpansionTraderGabi",
+            "ExpansionTraderHelga",
+            "ExpansionTraderIrena",
+            "ExpansionTraderJudy",
+            "ExpansionTraderKeiko",
+            "ExpansionTraderEva",
+            "ExpansionTraderNaomi",
+            "ExpansionTraderBaty",
+            "ExpansionTraderAIMirek",
+            "ExpansionTraderAIDenis",
+            "ExpansionTraderAIBoris",
+            "ExpansionTraderAICyril",
+            "ExpansionTraderAIElias",
+            "ExpansionTraderAIFrancis",
+            "ExpansionTraderAIGuo",
+            "ExpansionTraderAIHassan",
+            "ExpansionTraderAIIndar",
+            "ExpansionTraderAIJose",
+            "ExpansionTraderAIKaito",
+            "ExpansionTraderAILewis",
+            "ExpansionTraderAIManua",
+            "ExpansionTraderAINiki",
+            "ExpansionTraderAIOliver",
+            "ExpansionTraderAIPeter",
+            "ExpansionTraderAIQuinn",
+            "ExpansionTraderAIRolf",
+            "ExpansionTraderAISeth",
+            "ExpansionTraderAITaiki",
+            "ExpansionTraderAILinda",
+            "ExpansionTraderAIMaria",
+            "ExpansionTraderAIFrida",
+            "ExpansionTraderAIGabi",
+            "ExpansionTraderAIHelga",
+            "ExpansionTraderAIIrena",
+            "ExpansionTraderAIJudy",
+            "ExpansionTraderAIKeiko",
+            "ExpansionTraderAIEva",
+            "ExpansionTraderAINaomi",
+            "ExpansionTraderAIBaty"
+        };
+
+
     }
-      public static class ResourceHelper
+    public static class ResourceHelper
     {
         public static Stream? OpenEmbeddedStream(string resourceName)
         {

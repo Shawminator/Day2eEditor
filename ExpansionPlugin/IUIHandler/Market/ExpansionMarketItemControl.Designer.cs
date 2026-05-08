@@ -44,6 +44,11 @@
             darkLabel10 = new Label();
             darkLabel9 = new Label();
             groupBox1 = new GroupBox();
+            label7 = new Label();
+            ZoneCB = new ComboBox();
+            label6 = new Label();
+            label4 = new Label();
+            label5 = new Label();
             ConditionCB = new ComboBox();
             IconLabel = new Label();
             numericUpDown1 = new NumericUpDown();
@@ -52,8 +57,6 @@
             label3 = new Label();
             label1 = new Label();
             trackBar1 = new TrackBar();
-            label4 = new Label();
-            label5 = new Label();
             groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown24).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown23).BeginInit();
@@ -264,6 +267,9 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(ZoneCB);
+            groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(ConditionCB);
@@ -282,6 +288,62 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Price Calculator";
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.ForeColor = Color.FromArgb(220, 220, 220);
+            label7.Location = new Point(313, 53);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(0, 15);
+            label7.TabIndex = 122;
+            label7.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // ZoneCB
+            // 
+            ZoneCB.BackColor = Color.FromArgb(60, 63, 65);
+            ZoneCB.ForeColor = SystemColors.Control;
+            ZoneCB.FormattingEnabled = true;
+            ZoneCB.Location = new Point(101, 112);
+            ZoneCB.Margin = new Padding(4, 3, 4, 3);
+            ZoneCB.Name = "ZoneCB";
+            ZoneCB.Size = new Size(243, 23);
+            ZoneCB.TabIndex = 120;
+            ZoneCB.SelectedIndexChanged += ZoneCB_SelectedIndexChanged;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.FromArgb(220, 220, 220);
+            label6.Location = new Point(15, 115);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(39, 15);
+            label6.TabIndex = 121;
+            label6.Text = "Zones";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.ForeColor = Color.FromArgb(220, 220, 220);
+            label4.Location = new Point(85, 55);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(60, 15);
+            label4.TabIndex = 119;
+            label4.Text = "Min Stock";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.ForeColor = Color.FromArgb(220, 220, 220);
+            label5.Location = new Point(490, 52);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(61, 15);
+            label5.TabIndex = 118;
+            label5.Text = "Max Stock";
+            // 
             // ConditionCB
             // 
             ConditionCB.BackColor = Color.FromArgb(60, 63, 65);
@@ -292,6 +354,7 @@
             ConditionCB.Name = "ConditionCB";
             ConditionCB.Size = new Size(243, 23);
             ConditionCB.TabIndex = 116;
+            ConditionCB.SelectedIndexChanged += ConditionCB_SelectedIndexChanged;
             // 
             // IconLabel
             // 
@@ -369,28 +432,6 @@
             trackBar1.TabIndex = 0;
             trackBar1.Scroll += trackBar1_Scroll;
             // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.ForeColor = Color.FromArgb(220, 220, 220);
-            label4.Location = new Point(497, 52);
-            label4.Margin = new Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(60, 15);
-            label4.TabIndex = 119;
-            label4.Text = "Min Stock";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(87, 52);
-            label5.Margin = new Padding(4, 0, 4, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(61, 15);
-            label5.TabIndex = 118;
-            label5.Text = "Max Stock";
-            // 
             // ExpansionMarketItemControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -400,7 +441,7 @@
             Controls.Add(groupBox6);
             ForeColor = SystemColors.Control;
             Name = "ExpansionMarketItemControl";
-            Size = new Size(956, 593);
+            Size = new Size(956, 242);
             groupBox6.ResumeLayout(false);
             groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown24).EndInit();
@@ -443,6 +484,9 @@
         private Label label3;
         private ComboBox ConditionCB;
         private Label IconLabel;
+        private ComboBox ZoneCB;
+        private Label label6;
+        private Label label7;
         private Label label4;
         private Label label5;
     }

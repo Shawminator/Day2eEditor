@@ -191,51 +191,61 @@ namespace ExpansionPlugin
         private void m_EmoteIDNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_EmoteID = (int)m_EmoteIDNUD.Value;
         }
 
         private void m_EmoteIsStaticCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_EmoteIsStatic = m_EmoteIsStaticCB.Checked == true ? 1 : 0;
         }
 
         private void m_IsGlobalTraderCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_IsGlobalTrader = m_IsGlobalTraderCB.Checked == true ? 1 : 0;
         }
 
         private void m_UseReputationCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_UseReputation = m_UseReputationCB.Checked == true ? 1 : 0;
         }
 
         private void m_MinRequiredReputationNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_MinRequiredReputation = (int)m_MinRequiredReputationNUD.Value;
         }
 
         private void m_MaxRequiredReputationNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_MaxRequiredReputation = (int)m_MaxRequiredReputationNUD.Value;
         }
 
         private void m_RequiredFactionCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_RequiredFaction = m_RequiredFactionCB.GetItemText(m_RequiredFactionCB.SelectedItem);
         }
 
         private void QuestCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_RequiredCompletedQuestID = (QuestCB.SelectedItem as ComboItem).Id ;
         }
 
         private void m_DisplayCurrencyValueNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_DisplayCurrencyValue = (int)m_DisplayCurrencyValueNUD.Value;
         }
 
         private void m_DisplayCurrencyNameTB_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            _data.m_DisplayCurrencyName = m_DisplayCurrencyNameTB.Text;
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)

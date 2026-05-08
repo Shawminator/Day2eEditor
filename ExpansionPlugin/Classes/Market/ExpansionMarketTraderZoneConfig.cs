@@ -160,6 +160,26 @@ namespace ExpansionPlugin
         {
             return TraderZone.FixMissingOrInvalidFields();
         }
+
+        internal List<ExpansionMarketTraderZone> GetzonesfromNPClist(List<ExpansionTraderMaps> associatedNPC)
+        {
+            List<ExpansionMarketTraderZone> zonelist = new List<ExpansionMarketTraderZone>();
+            foreach(ExpansionMarketTraderZone zone in MutableItems)
+            {
+                bool inzone = false;
+                foreach (ExpansionTraderMaps tmap in associatedNPC)
+                {
+                    if (zone.IsInRadius(tmap.Positions[0]))
+                    {
+                        inzone = true;
+                        break;
+                    }
+                }
+                if (inzone == true)
+                    zonelist.Add(zone);
+            }
+            return zonelist;
+        }
     }
     public class ExpansionMarketTraderZone : IDeepCloneable<ExpansionMarketTraderZone>, IEquatable<ExpansionMarketTraderZone>
     {
@@ -186,8 +206,10 @@ namespace ExpansionPlugin
         public Dictionary<string, int> Stock { get; set; }
         public BindingList<ExpansionMarketTraderStockItem> stockList { get; set; }
 
-
-
+        public override string ToString()
+        {
+            return m_DisplayName;
+        }
         public bool Equals(ExpansionMarketTraderZone other)
         {
             if (other is null) return false;
@@ -298,6 +320,16 @@ namespace ExpansionPlugin
             }
             BuildStocklistruntime();
             return fixes;
+        }
+        internal bool IsInRadius(Vec3 vec3)
+        {
+            decimal dx = (decimal)(vec3.X - Position.X);
+            decimal dz = (decimal)(vec3.Z - Position.Z);
+
+            decimal distanceSquared = (dx * dx) + (dz * dz);
+            decimal radiusSquared = (decimal)Radius * (decimal)Radius;
+
+            return distanceSquared <= radiusSquared;
         }
     }
     public class ExpansionMarketTraderStockItem : IDeepCloneable<ExpansionMarketTraderStockItem>, IEquatable<ExpansionMarketTraderStockItem>

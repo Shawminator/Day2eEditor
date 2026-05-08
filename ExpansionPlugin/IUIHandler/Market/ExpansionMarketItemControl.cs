@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -39,6 +40,10 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
+            List<ExpansionMarketTrader> intraderlists = AppServices.GetRequired<ExpansionManager>().ExpansionMarketTraderConfig.GetTradersForItem(_data);
+            List<ExpansionTraderMaps> associatedNPC = AppServices.GetRequired<ExpansionManager>().ExpansionMarketTraderMapsConfig.GetNPCSFromTraders(intraderlists);
+            List<ExpansionMarketTraderZone> itemzones = AppServices.GetRequired<ExpansionManager>().ExpansionMarketTraderZoneConfig.GetzonesfromNPClist(associatedNPC);
+            ZoneCB.DataSource = itemzones;
 
             List<ComboConditionItem> conditionList = new()
             {
@@ -53,6 +58,7 @@ namespace ExpansionPlugin
             ConditionCB.SelectedIndex = 0;
             ConditionCB.DisplayMember = "Name";
             ConditionCB.ValueMember = "multiplier";
+            label7.Text = $"Stock Value:{trackBar1.Value.ToString()}";
             trackBar1.Maximum = (int)_data.MaxStockThreshold;
             trackBar1.Minimum = (int)_data.MinStockThreshold;
             textBox10.Text = _data.ClassName;
@@ -63,15 +69,32 @@ namespace ExpansionPlugin
             numericUpDown9.Value = (int)_data.MinStockThreshold;
             numericUpDown24.Value = (int)_data.QuantityPercent;
 
-            decimal SellpricePercent = (decimal)_data.SellPricePercent;
-            if(SellpricePercent == -1)
-            {
-                
-            }
-
-            
+            GetBuyPrice();
+            GetSellPrince();
             _suppressEvents = false;
         }
+        private void GetBuyPrice()
+        {
+            ExpansionMarketTraderZone currentzone = ZoneCB.SelectedItem as ExpansionMarketTraderZone;
+            decimal initialbuyPriceModifier = (decimal)currentzone.BuyPricePercent / 100;
+            numericUpDown1.Value = _data.CalculatePrice(trackBar1.Value, (float)initialbuyPriceModifier, true);
+        }
+        private void GetSellPrince()
+        {
+            decimal SellpricePercent = (decimal)_data.SellPricePercent;
+            if (SellpricePercent == -1)
+            {
+                ExpansionMarketTraderZone currentzone = ZoneCB.SelectedItem as ExpansionMarketTraderZone;
+                SellpricePercent = (decimal)currentzone.SellPricePercent;
+                if (SellpricePercent == -1)
+                {
+                    SellpricePercent = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionMarketSettingsConfig.Data.SellPricePercent;
+                }
+            }
+            decimal initialSellPriceModifier = (SellpricePercent / 100) * (decimal)ConditionCB.SelectedValue;
+            numericUpDown2.Value = _data.CalculatePrice(trackBar1.Value, (float)initialSellPriceModifier, true);
+        }
+
 
         #region Helper Methods
         /// <summary>
@@ -97,37 +120,70 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.MaxPriceThreshold = (int)numericUpDown6.Value;
+            GetSellPrince();
+            GetBuyPrice();
         }
         private void numericUpDown7_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinPriceThreshold = (int)numericUpDown7.Value;
+            GetBuyPrice();
+            GetSellPrince();
         }
         private void numericUpDown23_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.SellPricePercent = (int)numericUpDown23.Value;
+            GetBuyPrice();
+            GetSellPrince();
         }
         private void numericUpDown8_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MaxStockThreshold = (int)numericUpDown8.Value;
+            trackBar1.Maximum = (int)_data.MaxStockThreshold;
+            trackBar1.Minimum = (int)_data.MinStockThreshold;
+            GetBuyPrice();
+            GetSellPrince();
         }
         private void numericUpDown9_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.MinStockThreshold = (int)numericUpDown9.Value;
+            trackBar1.Maximum = (int)_data.MaxStockThreshold;
+            trackBar1.Minimum = (int)_data.MinStockThreshold;
+            GetBuyPrice();
+            GetSellPrince();
         }
         private void numericUpDown24_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.QuantityPercent = (int)numericUpDown24.Value;
+            GetBuyPrice();
+            GetSellPrince();
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            label7.Text = $"Stock Value:{trackBar1.Value.ToString()}";
+            GetBuyPrice();
+            GetSellPrince();
         }
+        private void ZoneCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            GetBuyPrice();
+            GetSellPrince();
+        }
+        private void ConditionCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            GetBuyPrice();
+            GetSellPrince();
+        }
+
+ 
     }
     public class ComboConditionItem
     {

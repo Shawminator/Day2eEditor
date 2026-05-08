@@ -212,6 +212,28 @@ namespace ExpansionPlugin
                         SetupP2PTraderVehicleSpawnMarkers(v3, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
+                    else if (node.Parent.Tag is ExpansionTraderMaps ExpansionTraderMaps)
+                    {
+                        ShowHandler(new Vector3Control(), typeof(ExpansionMarketTraderMapsConfig), node.Tag as Vec3, selected);
+                    }
+                    else if (node.Parent.Tag.ToString() == "expansionMarketTraderMapWaypoints")
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            var tag = node.Parent?.Parent?.Tag;
+                            if(tag is ExpansionTraderMaps tm)
+                            {
+                                //DrawTraderNPCPositions(tm);
+                            }
+                        };
+                        ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), v3, selected);
+                        ExpansionTraderMaps tm = node.Parent.Parent.Tag as ExpansionTraderMaps;
+                        //SetupTraderNPCPOsitions(tm, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
                 },
                 //Loadouts
                 [typeof(AILoadouts)] = (node, selected) =>
@@ -3656,7 +3678,7 @@ namespace ExpansionPlugin
                 };
 
                 // --- Rotation ---
-                TreeNode rotationNode = new TreeNode("Rotation: " + map.Rotation.ToString())
+                TreeNode rotationNode = new TreeNode("Rotation")
                 {
                     Tag = map.Rotation
                 };

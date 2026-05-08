@@ -253,6 +253,33 @@ namespace ExpansionPlugin
         {
             return ExpansionMarketTrader.FixMissingOrInvalidFields();
         }
+
+        internal List<ExpansionMarketTrader> GetTradersForItem(ExpansionMarketItem data)
+        {
+            List<ExpansionMarketTrader> intraderslist = new List<ExpansionMarketTrader>();
+            foreach(ExpansionMarketTrader trader in MutableItems)
+            {
+                bool addtrader = false;
+                foreach(ExpansionMarketTraderCategory cat in trader.m_Categories)
+                {
+                    foreach(ExpansionMarketItem item in cat.MarketCategory.Items)
+                    {
+                        if(item.Equals(data))
+                        {
+                            addtrader = true;
+                        }
+                    }
+                }
+                foreach(ExpansionMarketTraderItem titem in trader.m_Items)
+                {
+                    if (titem.MarketItem.Equals(data))
+                        addtrader = true;
+                }
+                if (addtrader == true)
+                    intraderslist.Add(trader);
+            }
+            return intraderslist;
+        }
     }
     public class ExpansionMarketTrader : IDeepCloneable<ExpansionMarketTrader>, IEquatable<ExpansionMarketTrader>
     {
@@ -330,22 +357,6 @@ namespace ExpansionPlugin
             for (int i = 0; i < a.Count; i++)
             {
                 if (!Equals(a[i], b[i]))
-                    return false;
-            }
-
-            return true;
-        }
-        private static bool AreEqual(Dictionary<string, ExpansionMarketTraderBuySell> a, Dictionary<string, ExpansionMarketTraderBuySell> b)
-        {
-            if (a.Count != b.Count)
-                return false;
-
-            foreach (var kvp in a)
-            {
-                if (!b.TryGetValue(kvp.Key, out ExpansionMarketTraderBuySell value))
-                    return false;
-
-                if (kvp.Value != value)
                     return false;
             }
 

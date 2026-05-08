@@ -154,7 +154,7 @@ namespace ExpansionPlugin
                 return false;
 
             string[] tokens = line.Split('|');
-            if (tokens.Length < 4)
+            if (tokens.Length < 3)
                 return false;
 
             // --- Name split ---
@@ -184,58 +184,120 @@ namespace ExpansionPlugin
             rotation = new Vec3(tokens[2].Trim());
 
             // --- Gear / Items / Special Props ---
-            string[] gearTokens = tokens[3].Split(',');
-
-            foreach (string token in gearTokens)
+            if (tokens.Count() > 3)
             {
-                string trimmed = token.Trim();
-                if (string.IsNullOrEmpty(trimmed))
-                    continue;
+                string[] gearTokens = tokens[3].Split(',');
 
-                // 🔹 Special properties (key:value)
-                if (trimmed.Contains(":"))
+                foreach (string token in gearTokens)
                 {
-                    var parts = trimmed.Split(':', 2);
-                    string key = parts[0].ToLower();
-                    string value = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+                    string trimmed = token.Trim();
+                    if (string.IsNullOrEmpty(trimmed))
+                        continue;
 
-                    switch (key)
+                    // 🔹 Special properties (key:value)
+                    if (trimmed.Contains(":"))
                     {
-                        case "name":
-                            special.Name = value;
-                            break;
-                        case "loadout":
-                            special.Loadout = value;
-                            break;
-                        case "faction":
-                            special.Faction = value;
-                            break;
+                        var parts = trimmed.Split(':', 2);
+                        string key = parts[0].ToLower();
+                        string value = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+
+                        switch (key)
+                        {
+                            case "name":
+                                special.Name = value;
+                                break;
+                            case "loadout":
+                                special.Loadout = value;
+                                break;
+                            case "faction":
+                                special.Faction = value;
+                                break;
+                        }
+
+                        continue;
                     }
 
-                    continue;
-                }
+                    // 🔹 Item + attachments
+                    var itemParts = trimmed.Split('+');
 
-                // 🔹 Item + attachments
-                var itemParts = trimmed.Split('+');
-
-                var item = new TraderNPCItem
-                {
-                    ClassName = itemParts[0].Trim()
-                };
-
-                for (int i = 1; i < itemParts.Length; i++)
-                {
-                    string attachment = itemParts[i].Trim();
-                    if (!string.IsNullOrEmpty(attachment))
+                    var item = new TraderNPCItem
                     {
-                        item.Attachments.Add(attachment);
-                    }
-                }
+                        ClassName = itemParts[0].Trim()
+                    };
 
-                items.Add(item);
+                    for (int i = 1; i < itemParts.Length; i++)
+                    {
+                        string attachment = itemParts[i].Trim();
+                        if (!string.IsNullOrEmpty(attachment))
+                        {
+                            item.Attachments.Add(attachment);
+                        }
+                    }
+
+                    items.Add(item);
+                }
             }
 
             return true;
         }
+
+        public static string BuildTraderMissionLine(ExpansionTraderMaps trader)
+        {
+            if (trader == null)
+                throw new ArgumentNullException(nameof(trader));
+
+            var parts = new List<string>();
+
+            // --- NPC class + trader name ---
+            if (!string.IsNullOrEmpty(trader.TraderName))
+                parts.Add($"{trader.NpcClassName}.{trader.TraderName}");
+            else
+                parts.Add(trader.NpcClassName);
+
+            // --- Positions ---
+            var positions = trader.Positions
+                .Select(p => p.GetString())
+                .Where(s => !string.IsNullOrWhiteSpace(s));
+
+            parts.Add(string.Join(",", positions));
+
+            // --- Rotation ---
+            parts.Add(trader.Rotation.GetString());
+
+            // --- Items + Special props ---
+            var gear = new List<string>();
+
+            // Items (with attachments)
+            foreach (var item in trader.Items)
+            {
+                if (string.IsNullOrWhiteSpace(item.ClassName))
+                    continue;
+
+                if (item.Attachments.Count > 0)
+                {
+                    gear.Add(item.ClassName + "+" + string.Join("+", item.Attachments));
+                }
+                else
+                {
+                    gear.Add(item.ClassName);
+                }
+            }
+
+            // Special properties (only if set)
+            if (!string.IsNullOrWhiteSpace(trader.Special.Name))
+                gear.Add($"name:{trader.Special.Name}");
+
+            if (!string.IsNullOrWhiteSpace(trader.Special.Loadout))
+                gear.Add($"loadout:{trader.Special.Loadout}");
+
+            if (!string.IsNullOrWhiteSpace(trader.Special.Faction))
+                gear.Add($"faction:{trader.Special.Faction}");
+
+            if (gear.Count > 0)
+                parts.Add(string.Join(",", gear));
+
+            return string.Join("|", parts);
+        }
+
     }
 }

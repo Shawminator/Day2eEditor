@@ -822,5 +822,31 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
+
+        public int CalculatePrice(int stock, float modifier = 1.0f, bool round = false)
+        {
+            float price;
+
+            if (!IsStaticStock() && MaxStockThreshold != 0)
+                price = PowerConversion((float)MinStockThreshold, (float)MaxStockThreshold, stock, (float)MaxPriceThreshold, (float)MinPriceThreshold, 6.0f);
+            else
+                price = (float)MinPriceThreshold;
+
+            price *= modifier;
+
+            if (round)
+                price = (float)Math.Round(price);
+
+            return (int)price;
+        }
+        public bool IsStaticStock()
+        {
+            return MaxStockThreshold > 0 && MinStockThreshold == MaxStockThreshold;
+        }
+        static float PowerConversion(float minFrom, float maxFrom, float value, float minTo = 0, float maxTo = 1, float power = 1.0f)
+        {
+            value = Math.Clamp((value - minFrom) / (maxFrom - minFrom), 0, 1); //! value must be equal to or between 0 and 1
+            return (float)(1 - Math.Pow(1 - value, power)) * (maxTo - minTo) + minTo;
+        }
     }
 }

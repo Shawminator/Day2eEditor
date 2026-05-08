@@ -55,7 +55,8 @@ namespace ExpansionPlugin
         private void UpdateTreeNodeText()
         {
 
-            if (_parentType == typeof(ExpansionP2pMarketTradersConfig))
+            if (_parentType == typeof(ExpansionP2pMarketTradersConfig) ||
+                _parentType == typeof(ExpansionMarketTraderMapsConfig))
                 return;
 
             if (_nodes?.Any() == true )
