@@ -268,7 +268,7 @@ namespace Day2eEditor
             float oldZoom = _zoom;
             float zoomFactor = e.Delta > 0 ? 1.1f : 0.9f;
             _zoom *= zoomFactor;
-            _zoom = Math.Clamp(_zoom, 0.1f, 10f);
+            _zoom = Math.Clamp(_zoom, 0.1f, 100f);
 
             var mouseBeforeZoom = new PointF(
                 (e.X - _panOffset.X) / oldZoom,

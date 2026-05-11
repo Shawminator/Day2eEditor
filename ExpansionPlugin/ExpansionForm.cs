@@ -223,15 +223,15 @@ namespace ExpansionPlugin
                         control.PositionChanged += (updatedPos) =>
                         {
                             _mapControl.ClearDrawables();
-                            var tag = node.Parent?.Parent?.Tag;
-                            if(tag is ExpansionTraderMaps tm)
+                            var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
+                            if (tag is ExpansionMarketTraderMapsConfig ExpansionMarketTraderMapsConfig)
                             {
-                                //DrawTraderNPCPositions(tm);
+                                DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig);
                             }
                         };
-                        ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), v3, selected);
+                        ShowHandler(control, typeof(ExpansionMarketTraderMapsConfig), v3, selected);
                         ExpansionTraderMaps tm = node.Parent.Parent.Tag as ExpansionTraderMaps;
-                        //SetupTraderNPCPOsitions(tm, node);
+                        SetupTraderNPCPOsitions(tm, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                 },
@@ -780,9 +780,9 @@ namespace ExpansionPlugin
                     }
 
                 },
-                [typeof(ExpansionQuestObjectiveTreasureHuntConfig)] = (node,selected) =>
-                {                  
-                    if(node.Tag is not ObjectiveNodeTag)
+                [typeof(ExpansionQuestObjectiveTreasureHuntConfig)] = (node, selected) =>
+                {
+                    if (node.Tag is not ObjectiveNodeTag)
                     {
                         ShowHandler<IUIHandler>(null, null, null, selected);
                         return;
@@ -791,7 +791,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveTreasureHuntConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveTreasureHuntConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveActionConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveActionConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -802,7 +802,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveActionConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveActionConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveAICampConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveAICampConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -813,7 +813,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveAICampConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveAICampConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveAIPatrolConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveAIPatrolConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -824,7 +824,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveAIPatrolConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveAIPatrolConfigControl(), typeof(ExpansionQuestObjectiveConfigConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveAIEscortConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveAIEscortConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -835,7 +835,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveAIEscortConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveAIEscortConfigControl(), typeof(ExpansionQuestObjectiveAIEscortConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveCollectionConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveCollectionConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -846,7 +846,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveCollectionConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveCollectionConfigControl(), typeof(ExpansionQuestObjectiveCollectionConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveDelivery)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveDelivery)] = (node, selected) =>
                 {
                     if (node.Parent.Parent.Tag is ExpansionQuestObjectiveCollectionConfig)
                     {
@@ -859,7 +859,7 @@ namespace ExpansionPlugin
                         ShowHandler(new ExpansionQuestObjectiveDeliveryControl(), typeof(ExpansionQuestObjectiveDeliveryConfig), ExpansionQuestObjectiveDelivery, selected);
                     }
                 },
-                [typeof(ExpansionQuestObjectiveCraftingConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveCraftingConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -870,7 +870,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveCraftingConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveCraftingConfigControl(), typeof(ExpansionQuestObjectiveCraftingConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveDeliveryConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveDeliveryConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -881,7 +881,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveDeliveryConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveDeliveryConfigControl(), typeof(ExpansionQuestObjectiveDeliveryConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveTargetConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveTargetConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -892,7 +892,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveTargetConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveTargetConfigControl(), typeof(ExpansionQuestObjectiveTargetConfig), cfg, selected);
                 },
-                [typeof(ExpansionQuestObjectiveTravelConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestObjectiveTravelConfig)] = (node, selected) =>
                 {
                     if (node.Tag is not ObjectiveNodeTag)
                     {
@@ -903,7 +903,7 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveTravelConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveTravelConfigControl(), typeof(ExpansionQuestObjectiveTravelConfig), cfg, selected);
                 },
-                [typeof(Objectives)] = (node,selected) =>
+                [typeof(Objectives)] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(null, null, null, selected);
                     var objectiveRef = node.Tag as Objectives;
@@ -912,7 +912,7 @@ namespace ExpansionPlugin
                         "Navigate",
                         MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        
+
                         if (objectiveRef == null)
                             return;
 
@@ -937,14 +937,14 @@ namespace ExpansionPlugin
                         }
                     }
                 },
-                [typeof(ExpansionQuestQuest)] = (node,selected) =>
+                [typeof(ExpansionQuestQuest)] = (node, selected) =>
                 {
                     ExpansionQuestQuest quest = node.Tag as ExpansionQuestQuest;
                     ExpansionQuestQuest parentquest = node.Parent.Tag as ExpansionQuestQuest;
 
                     if (quest.Equals(parentquest))
                     {
-                        switch(node.Text)
+                        switch (node.Text)
                         {
                             case "Basic Info":
                                 ShowHandler(new ExpansionQuestQuestBasicInfoControl(), typeof(ExpansionQuestQuest), quest, selected);
@@ -974,10 +974,10 @@ namespace ExpansionPlugin
                         ShowHandler<IUIHandler>(null, null, null, selected);
                     }
                 },
-                [typeof(QuestReferenceNode)] = (node,selected) =>
+                [typeof(QuestReferenceNode)] = (node, selected) =>
                 {
                     if (node.Tag is QuestReferenceNode questRef)
-                    { 
+                    {
                         ShowHandler<IUIHandler>(null, null, null, selected);
                         if (MessageBox.Show(
                         $"Jump to Quest {questRef.QuestID}?",
@@ -996,7 +996,7 @@ namespace ExpansionPlugin
                         }
                     }
                 },
-                [typeof(ExpansionQuestItemConfig)] = (node,selected) =>
+                [typeof(ExpansionQuestItemConfig)] = (node, selected) =>
                 {
                     ExpansionQuestItemConfig ExpansionQuestItemConfig = node.Tag as ExpansionQuestItemConfig;
                     ShowHandler(new ExpansionQuestItemConfigControl(), typeof(ExpansionQuestItemConfig), ExpansionQuestItemConfig, selected);
@@ -1216,7 +1216,7 @@ namespace ExpansionPlugin
                     SetupExpansionPersonalStorageSpawnPositions(ExpansionPersonalStorageConfig, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionPersonalStorageConfig.Position.X, ExpansionPersonalStorageConfig.Position.Z));
                 },
-                ["ExpansionPersonalStorageConfigGeneral"] = (node,selected) =>
+                ["ExpansionPersonalStorageConfigGeneral"] = (node, selected) =>
                 {
                     ExpansionPersonalStorageConfig ExpansionPersonalStorageConfig = node.Parent.Tag as ExpansionPersonalStorageConfig;
                     ShowHandler<IUIHandler>(new ExpasnionPersonalStorageContainerGeneralControl(), typeof(ExpansionPersonalStorageContainersConfig), ExpansionPersonalStorageConfig, selected);
@@ -1313,6 +1313,12 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                         ExpansionSettingsCM.Items.Add(moveSpawnPointUpToolStripMenuItem);
                         ExpansionSettingsCM.Items.Add(moveSpawnPointDownToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                    else if (node.Parent.Tag.ToString() == "expansionMarketTraderMapWaypoints")
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeTraderNPCWaypointToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
@@ -1515,10 +1521,39 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewTraderZoneToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                [typeof(ExpansionMarketTraderZone)] = noe =>
+                [typeof(ExpansionMarketTraderZone)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeTraderZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Tradermaps
+                [typeof(ExpansionMarketTraderMapsConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewTraderMapFIleToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionTraderMaps)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(checkNPCIsInAZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionMarketTraderNpcs)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderMapFileToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewTraderNPCToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(TraderNPCItem)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderNPCItemToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNPCTraderNPCAttachmentToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Missions
@@ -2042,6 +2077,49 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(clearStockToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Market Maps
+                ["expansionMarketTraderMapWaypoints"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addTraderNPCWaypointToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["expansionMarketTraderMapItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addTraderNPCItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["expansionMarketTraderMapAttachment"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderNPCAttachmentToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["expansionMarketTraderMapProperties"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addTraderNPCPropertyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["expansionMarketTraderMapPropertiesName"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderNPCPropertyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["expansionMarketTraderMapPropertiesLoadout"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderNPCPropertyToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["expansionMarketTraderMapPropertiesFaction"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeTraderNPCPropertyToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //P2P Market
@@ -3703,7 +3781,7 @@ namespace ExpansionPlugin
                     TreeNode itemNode = new TreeNode(item.ClassName) { Tag = item };
                     foreach (var att in item.Attachments)
                     {
-                        itemNode.Nodes.Add(new TreeNode(att) { Tag = att });
+                        itemNode.Nodes.Add(new TreeNode(att) { Tag = "expansionMarketTraderMapAttachment" });
                     }
                     itemsNode.Nodes.Add(itemNode);
                 }
@@ -3712,11 +3790,11 @@ namespace ExpansionPlugin
                 // --- Special Properties ---
                 TreeNode propertiesNode = new TreeNode("Properties") { Tag = "expansionMarketTraderMapProperties" };
                 if (!string.IsNullOrEmpty(map.Special.Name))
-                    propertiesNode.Nodes.Add(new TreeNode("Name: " + map.Special.Name) { Tag = map.Special.Name });
+                    propertiesNode.Nodes.Add(new TreeNode("Name: " + map.Special.Name) { Tag = "expansionMarketTraderMapPropertiesName:" + map.Special.Name });
                 if (!string.IsNullOrEmpty(map.Special.Loadout))
-                    propertiesNode.Nodes.Add(new TreeNode("Loadout: " + map.Special.Loadout) { Tag = map.Special.Loadout });
+                    propertiesNode.Nodes.Add(new TreeNode("Loadout: " + map.Special.Loadout) { Tag = "expansionMarketTraderMapPropertiesLoadout:" + map.Special.Loadout });
                 if (!string.IsNullOrEmpty(map.Special.Faction))
-                    propertiesNode.Nodes.Add(new TreeNode("Faction: " + map.Special.Faction) { Tag = map.Special.Faction });
+                    propertiesNode.Nodes.Add(new TreeNode("Faction: " + map.Special.Faction) { Tag = "expansionMarketTraderMapPropertiesFaction:" + map.Special.Faction });
 
                 classNameNode.Nodes.Add(propertiesNode);
 
@@ -4353,7 +4431,7 @@ namespace ExpansionPlugin
             {
                 Tag = "QuestPersitantMarketItems"
             };
-            foreach(ExpansionQuestItemForMarket item in ef.Data.m_QuestMarketItems)
+            foreach (ExpansionQuestItemForMarket item in ef.Data.m_QuestMarketItems)
             {
                 QMInode.Nodes.Add(new TreeNode(item.ClassName)
                 {
@@ -4433,7 +4511,7 @@ namespace ExpansionPlugin
                 {
                     Tag = quest
                 };
-                
+
                 questNode.Nodes.Add(new TreeNode("Basic Info") { Tag = quest });
                 questNode.Nodes.Add(new TreeNode("Advanced") { Tag = quest });
                 questNode.Nodes.Add(new TreeNode("Text / Dialogue") { Tag = quest });
@@ -4488,7 +4566,7 @@ namespace ExpansionPlugin
                 npcNode.Nodes.Add(giverNode);
                 npcNode.Nodes.Add(turnInNode);
                 questNode.Nodes.Add(npcNode);
-                
+
                 TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = quest };
                 if (quest.Objectives != null && quest.Objectives.Count > 0)
                 {
@@ -4529,7 +4607,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "QuestRewardAttachments"
                         };
-                        foreach(string att in reward.Attachments)
+                        foreach (string att in reward.Attachments)
                         {
                             Attachmentnode.Nodes.Add(new TreeNode(att)
                             {
@@ -5216,6 +5294,8 @@ namespace ExpansionPlugin
             _mapControl.MapDoubleClicked -= MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_ExpansionTraderZonesPositionSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_ExpansionTraderZonePositionsDoubleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_ExpansionTraderMapsDoubleclicked;
+            _mapControl.MapsingleClicked -= MapControl_ExpansionTraderMapsSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_AIEscortDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_AIEscortSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_TargetDoubleclicked;
@@ -5242,6 +5322,7 @@ namespace ExpansionPlugin
             _selectedP2PTradervehiclespawn = null;
             _selectedPersonalStorageContainer = null;
             _selectedtraderZone = null;
+            _selectedExpansionTraderMaps = null;
             _selectedTarget = null;
             _selectedTravel = null;
             _selectedTreasureHunt = null;
@@ -5343,6 +5424,7 @@ namespace ExpansionPlugin
         private ExpansionP2PMarketTraderConfig _selectedP2PMarketTrader;
         private ExpansionPersonalStorageConfig _selectedPersonalStorageContainer;
         private ExpansionMarketTraderZone _selectedtraderZone;
+        private ExpansionTraderMaps _selectedExpansionTraderMaps;
         private ExpansionQuestObjectiveTargetConfig _selectedTarget;
         private ExpansionQuestObjectiveTravelConfig _selectedTravel;
         private ExpansionQuestObjectiveTreasureHuntConfig _selectedTreasureHunt;
@@ -5626,7 +5708,19 @@ namespace ExpansionPlugin
                     DrawbaseTraderZonePositions(ExpansionMarketTraderZoneConfig);
             });
         }
+        private void SetupTraderNPCPOsitions(ExpansionTraderMaps ExpansionTraderMaps, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedExpansionTraderMaps = ExpansionTraderMaps;
+                _mapControl.MapsingleClicked += MapControl_ExpansionTraderMapsSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ExpansionTraderMapsDoubleclicked;
 
+                var ExpansionMarketTraderMapsConfig = node.FindParentOfType<ExpansionMarketTraderMapsConfig>();
+                if (ExpansionMarketTraderMapsConfig != null)
+                    DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig);
+            });
+        }
         //Draw Methods
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
         {
@@ -6224,6 +6318,7 @@ namespace ExpansionPlugin
                     TextBackground = true,
                     TextBackgroundColor = Color.BlueViolet
                 };
+
                 if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig)
                 {
                     marker.Color = Color.LimeGreen;
@@ -6303,6 +6398,72 @@ namespace ExpansionPlugin
                 _mapControl.RegisterDrawable(selectedMarker);
             }
         }
+        private void DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig ExpansionMarketTraderMapsConfig)
+        {
+            foreach (ExpansionMarketTraderZone ExpansionMarketTraderZone in _expansionManager.ExpansionMarketTraderZoneConfig.MutableItems)
+            {
+                var marker = new TextMarkerDrawable(new PointF((float)ExpansionMarketTraderZone.Position.X, (float)ExpansionMarketTraderZone.Position.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)ExpansionMarketTraderZone.Radius,
+                    Scaleradius = true,
+                    Shade = false,
+                    Text = $"TraderZone - {ExpansionMarketTraderZone.m_DisplayName}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.Blue,
+                    DrawCenterDot = false
+                };
+                _mapControl.RegisterDrawable(marker);
+            }
+            TraderSpawnDrawable? selected_marker = null;
+            foreach (ExpansionMarketTraderNpcs tmnpc in ExpansionMarketTraderMapsConfig.MutableItems)
+            {
+                foreach (ExpansionTraderMaps tm in tmnpc.Tradersmaps)
+                {
+                    for (int i = 0; i < tm.Positions.Count; i++)
+                    {
+                        Vec3 pos = tm.Positions[i];
+                        var marker = new TraderSpawnDrawable(new PointF((float)pos.X, (float)pos.Z),_mapControl.MapSize)
+                        {
+                            Color = Color.Red,
+                            Orientation = tm.Rotation.getfloatarray(),
+                            Text = $"{tm.TraderName} {i.ToString()}",
+                            TextPlacement = MarkerLabelPlacement.Top,
+                            TextBackground = true,
+                            TextBackgroundColor = Color.BlueViolet
+                        };
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        
+                        if (_selectedExpansionTraderMaps == tm)
+                        {
+                            if (v3 == pos)
+                            {
+                                marker.Color = Color.LimeGreen;
+                                selected_marker = marker;
+                            }
+                            else
+                            {
+                                marker.Color = Color.Yellow;
+                                _mapControl.RegisterDrawable(marker);
+                            }
+                        }
+                        else
+                        {
+                            _mapControl.RegisterDrawable(marker);
+                        }
+                    }
+                }
+            }
+
+            if (selected_marker != null)
+            {
+                _mapControl.RegisterDrawable(selected_marker);
+            }
+
+        }
+
+
         //map click methods
         private void MapControl_BuildZoneSingleclicked(object sender, MapClickEventArgs e)
         {
@@ -6362,7 +6523,7 @@ namespace ExpansionPlugin
             {
                 _selectedNoBuildZonePos.Center[1] = (MapData.gethieght(_selectedNoBuildZonePos.Center[0], _selectedNoBuildZonePos.Center[2]));
             }
-            
+
 
             _mapControl.ClearDrawables();
 
@@ -6506,7 +6667,7 @@ namespace ExpansionPlugin
         }
         private void MapControl_AIEscortSingleclicked(object? sender, MapClickEventArgs e)
         {
-           //same as travel/target
+            //same as travel/target
         }
         private void MapControl_AIEscortDoubleclicked(object? sender, MapClickEventArgs e)
         {
@@ -6827,7 +6988,7 @@ namespace ExpansionPlugin
                     }
                 }
                 _mapControl.ClearDrawables();
-               
+
                 ShowHandler(new ExpasnionMarksetSettingsVehicleSpawnInfoControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSpawnPosition, new List<TreeNode>() { currentTreeNode });
                 DrawbaseVehicleSpawnPositions(_expansionManager.ExpansionMarketSettingsConfig);
                 currentTreeNode.Text = ExpansionMarketSpawnPosition.ToString();
@@ -7446,6 +7607,81 @@ namespace ExpansionPlugin
                 DrawbaseTraderZonePositions(currentTreeNode.FindParentOfType<ExpansionMarketTraderZoneConfig>());
             }
         }
+        private void MapControl_ExpansionTraderMapsSingleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                foreach(TreeNode child2 in child.Nodes)
+                {
+                    foreach(TreeNode child3 in child2.Nodes[1].Nodes)
+                    {
+                        Vec3 pos = child3.Tag as Vec3;
+
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    foreach (TreeNode child2 in child.Nodes)
+                    {
+                        foreach (TreeNode child3 in child2.Nodes[1].Nodes)
+                        {
+                            Vec3 pos = child3.Tag as Vec3;
+
+                            if (pos == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = child3;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
+        }
+        private void MapControl_ExpansionTraderMapsDoubleclicked(object? sender, MapClickEventArgs e)
+        {
+            if (currentTreeNode.Tag is Vec3 v3)
+            {
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionMarketTraderMapsConfig ExpansionMarketTraderMapsConfig = currentTreeNode.FindParentOfType<ExpansionMarketTraderMapsConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionMarketTraderMapsConfig), v3, new List<TreeNode>() { currentTreeNode });
+                DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig);
+            }
+        }
         #endregion mapstuff
 
         #region right click methods
@@ -7786,7 +8022,7 @@ namespace ExpansionPlugin
         {
             ExpansionLootContainer NewContainer = new ExpansionLootContainer();
             _expansionManager.ExpansionAirdropConfig.Data.Containers.Add(NewContainer);
-           
+
             TreeNode alcnodes = new TreeNode(NewContainer.Container)
             {
                 Tag = NewContainer
@@ -7808,7 +8044,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionAirdropConfig.Data.Containers.Remove(currentTreeNode.Tag as ExpansionLootContainer);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-           
+
         }
         //AI Settings
         private void addAIAdminToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7827,7 +8063,7 @@ namespace ExpansionPlugin
                         Tag = "AISettingsAdminString"
                     });
                 }
-                
+
             }
         }
         private void addAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7846,7 +8082,7 @@ namespace ExpansionPlugin
                         Tag = "AISettingsPreventClimbString"
                     });
                 }
-                
+
             }
         }
         private void addAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7866,7 +8102,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "AISettingsPlayerFactionsString"
                         });
-                        
+
                     }
                 }
             }
@@ -7875,19 +8111,19 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionAIConfig.Data.Admins.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void removeAIPreventClimbToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.PreventClimb.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void removeAIPlayerFactionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionAIConfig.Data.PlayerFactions.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         //AI Patrol Settings
         private void addNewPatrolToolStripMenuItem_Click(object sender, EventArgs e)
@@ -7949,14 +8185,14 @@ namespace ExpansionPlugin
             };
             CreatePatrolNodes(newpatrol, PatrolRoot);
             currentTreeNode.Nodes.Add(PatrolRoot);
-           
+
         }
         private void removePatrolToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrolConfig.Data.Patrols.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
             currentTreeNode.Remove();
-           
+
         }
         private void addWaypointToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7996,7 +8232,7 @@ namespace ExpansionPlugin
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
             ExpansionAIPatrol.Waypoints.Remove(currentTreeNode.Tag as Vec3);
-           
+
             currentTreeNode.Remove();
 
         }
@@ -8050,7 +8286,7 @@ namespace ExpansionPlugin
                         Tag = v3
                     });
                 }
-               
+
             }
         }
         private void exportWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8116,7 +8352,7 @@ namespace ExpansionPlugin
                 siblings.Insert(index - 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
-           
+
         }
         private void moveWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8142,7 +8378,7 @@ namespace ExpansionPlugin
                 siblings.Insert(index + 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
-           
+
         }
         private void addUnitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8203,7 +8439,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-               
+
                 currentTreeNode.Expand();
             }
         }
@@ -8213,7 +8449,7 @@ namespace ExpansionPlugin
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
             ExpansionAIPatrol.Units.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-           
+
         }
         private void addNewLoadBalancingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8230,7 +8466,7 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(newtreenode);
             ExpansionTV.SelectedNode = newtreenode;
-           
+
         }
         private void removeCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8238,7 +8474,7 @@ namespace ExpansionPlugin
             Loadbalancingcategorie Loadbalancingcategorie = currentTreeNode.Tag as Loadbalancingcategorie;
             ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Remove(Loadbalancingcategorie);
             currentTreeNode.Remove();
-           
+
         }
         private void addNewLoadBalancingCountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8256,12 +8492,12 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(Newtreenode);
             ExpansionTV.SelectedNode = Newtreenode;
-           
+
         }
         private void removeCountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (currentTreeNode.Parent.Tag as Loadbalancingcategorie).Categorieslist.Remove(currentTreeNode.Tag as Loadbalancingcategories);
-            
+
             currentTreeNode.Remove();
         }
         private void addAiNoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8285,14 +8521,14 @@ namespace ExpansionPlugin
             };
             currentTreeNode.Nodes.Add(newtreenode);
             ExpansionTV.SelectedNode = newtreenode;
-           
+
         }
         private void removeAINoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
             ExpansionAIPatrolConfig.Data.NoGoAreas.Remove(currentTreeNode.Tag as ExpansionAINoGoArea);
             currentTreeNode.Remove();
-           
+
         }
         private void addAIExcludedBuildingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8314,7 +8550,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-               
+
             }
         }
         private void removeAIExlusdedBuildingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8322,7 +8558,7 @@ namespace ExpansionPlugin
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
             ExpansionAIPatrolConfig.Data.ExcludedRoamingBuildings.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-           
+
         }
         //BaseBuilding Settings
         private void addNewDeployableOutsideTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8341,7 +8577,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingDeployableOutsideATerritoryItem"
                         });
-                        
+
                     }
                 }
             }
@@ -8350,7 +8586,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableOutsideATerritory.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void addNewDeployableInsideEnemyTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8368,7 +8604,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingDeployableInsideAEnemyTerritoryItem"
                         });
-                        
+
                     }
                 }
             }
@@ -8377,7 +8613,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.DeployableInsideAEnemyTerritory.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void addNewVirtualStorageExcludedContainerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8395,7 +8631,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingVirtualStorageExcludedContainersItem"
                         });
-                        
+
                     }
                 }
             }
@@ -8404,7 +8640,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.VirtualStorageExcludedContainers.Remove(currentTreeNode.Text);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void addNewNoBuildZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8436,14 +8672,14 @@ namespace ExpansionPlugin
             }
             nbznode.Nodes.Add(nbzinodes);
             currentTreeNode.Nodes.Add(nbznode);
-            
+
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void RemoveNoBuildZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Remove(currentTreeNode.Tag as ExpansionBuildNoBuildZone);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         private void addBuildZoneItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8462,7 +8698,7 @@ namespace ExpansionPlugin
                         {
                             Tag = "BaseBuildingNoBuldZoneItem"
                         });
-                        
+
                     }
                 }
             }
@@ -8472,7 +8708,7 @@ namespace ExpansionPlugin
             ExpansionBuildNoBuildZone currentbuildzone = currentTreeNode.Parent.Parent.Tag as ExpansionBuildNoBuildZone;
             currentbuildzone.Items.Remove(currentTreeNode.Text.Substring(6));
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            
+
         }
         //Book settings
         private void addNewDescriptionCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8483,7 +8719,7 @@ namespace ExpansionPlugin
                 Descriptions = new BindingList<ExpansionBookDescription>()
             };
             _expansionManager.ExpansionBookConfig.Data.Descriptions.Add(newdescrioptcat);
-           
+
             currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newdescrioptcat.CategoryName}")
             {
                 Tag = newdescrioptcat
@@ -8492,7 +8728,7 @@ namespace ExpansionPlugin
         private void removeDescriptionCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.Descriptions.Remove(currentTreeNode.Tag as ExpansionBookDescriptionCategory);
-           
+
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewRuleCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8503,7 +8739,7 @@ namespace ExpansionPlugin
                 Rules = new BindingList<ExpansionBookRule>()
             };
             _expansionManager.ExpansionBookConfig.Data.RuleCategories.Add(newExpansionBookRuleCategory);
-           
+
             currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newExpansionBookRuleCategory.CategoryName}")
             {
                 Tag = newExpansionBookRuleCategory
@@ -8512,7 +8748,7 @@ namespace ExpansionPlugin
         private void removeRuleCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.RuleCategories.Remove(currentTreeNode.Tag as ExpansionBookRuleCategory);
-           
+
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewRuleParagraphToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8524,7 +8760,7 @@ namespace ExpansionPlugin
                 RuleText = "NewText"
             };
             ExpansionBookRuleCategory.Rules.Add(newExpansionBookRule);
-           
+
             currentTreeNode.Nodes.Add(new TreeNode($"Rule Paragraph: {newExpansionBookRule.RuleParagraph}")
             {
                 Tag = newExpansionBookRule
@@ -8534,7 +8770,7 @@ namespace ExpansionPlugin
         {
             ExpansionBookRuleCategory ExpansionBookRuleCategory = currentTreeNode.Parent.Tag as ExpansionBookRuleCategory;
             ExpansionBookRuleCategory.Rules.Remove(currentTreeNode.Tag as ExpansionBookRule);
-           
+
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewLinkToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8547,7 +8783,7 @@ namespace ExpansionPlugin
                 IconName = "Homepage"
             };
             _expansionManager.ExpansionBookConfig.Data.Links.Add(newExpansionBookLink);
-           
+
             currentTreeNode.Nodes.Add(new TreeNode($"Links: {newExpansionBookLink.Name}")
             {
                 Tag = newExpansionBookLink
@@ -8556,7 +8792,7 @@ namespace ExpansionPlugin
         private void removeLinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.Links.Remove(currentTreeNode.Tag as ExpansionBookLink);
-           
+
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         private void addNewCraftingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8567,7 +8803,7 @@ namespace ExpansionPlugin
                 Results = new BindingList<string>()
             };
             _expansionManager.ExpansionBookConfig.Data.CraftingCategories.Add(newExpansionBookCraftingCategory);
-           
+
             currentTreeNode.Nodes.Add(new TreeNode($"Category: {newExpansionBookCraftingCategory.CategoryName}")
             {
                 Tag = newExpansionBookCraftingCategory
@@ -8576,7 +8812,7 @@ namespace ExpansionPlugin
         private void removeCraftingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionBookConfig.Data.CraftingCategories.Remove(currentTreeNode.Tag as ExpansionBookCraftingCategory);
-           
+
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
         //Chat
@@ -8599,14 +8835,14 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                
+
             }
         }
         private void removeBlacklistedWordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionChatConfig.Data.BlacklistedWords.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            
+
         }
         //Damage
         private void addNewExplosionTargetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8628,14 +8864,14 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-               
+
             }
         }
         private void removeExplosionTargetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionDamageSystemConfig.Data.ExplosionTargets.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-           
+
         }
         private void addNewExplosiveProjectileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8647,7 +8883,7 @@ namespace ExpansionPlugin
             if (!_expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Any(x => x.explosion == newEP.explosion))
             {
                 _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Add(newEP);
-               
+
                 currentTreeNode.Nodes.Add(new TreeNode($"{newEP.explosion}:{newEP.ammo}")
                 {
                     Tag = newEP
@@ -8664,7 +8900,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionDamageSystemConfig.Data._ExplosiveProjectiles.Remove(currentTreeNode.Tag as ExplosiveProjectiles);
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-           
+
         }
         //Garage
         private void addNewEntityWhitelistToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8685,7 +8921,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-                
+
             }
 
         }
@@ -8693,7 +8929,7 @@ namespace ExpansionPlugin
         {
             _expansionManager.ExpansionGarageConfig.Data.EntityWhitelist.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-            
+
         }
         //Map
         private void addNewServerMarkerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8750,14 +8986,14 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-               
+
             }
         }
         private void removeLargeVehicleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionMarketSettingsConfig.Data.LargeVehicles.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
-           
+
         }
         private void addNewCurrencyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -8848,7 +9084,7 @@ namespace ExpansionPlugin
                         });
                     }
                 }
-               
+
             }
         }
         private void removeVehicleKeyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8913,7 +9149,7 @@ namespace ExpansionPlugin
             {
                 Tag = newspawn
             });
-           
+
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewWaterSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -8940,7 +9176,7 @@ namespace ExpansionPlugin
             {
                 Tag = newspawn
             });
-           
+
             ExpansionTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewTrainSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -9792,7 +10028,7 @@ namespace ExpansionPlugin
         }
         private void clearStockToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Parent.Tag is ExpansionMarketTraderZone ExpansionMarketTraderZone)
+            if (currentTreeNode.Parent.Tag is ExpansionMarketTraderZone ExpansionMarketTraderZone)
             {
                 ExpansionMarketTraderZone.stockList = new BindingList<ExpansionMarketTraderStockItem>();
             }
@@ -9800,6 +10036,92 @@ namespace ExpansionPlugin
             TreeNode parent = currentTreeNode.Parent;
             ExpansionTV.SelectedNode = parent;
             ExpansionTV.SelectedNode = stocknode;
+        }
+        //Market Trader Maps
+        private void addNewTraderMapFIleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeTraderMapFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNewTraderNPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeTraderNPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addTraderNPCWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeTraderNPCWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addTraderNPCItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeTraderNPCItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addNPCTraderNPCAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeTraderNPCAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void addTraderNPCPropertyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void rempveTraderNPCPropertyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void checkNPCIsInAZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            ExpansionTraderMaps tm = currentTreeNode.Tag as ExpansionTraderMaps;
+            if (tm == null)
+                return;
+
+            List<ExpansionMarketTraderZone> TMzone =
+                AppServices.GetRequired<ExpansionManager>()
+                           .ExpansionMarketTraderZoneConfig
+                           .GetZonefromTraderMap(tm);
+
+            if (TMzone == null || TMzone.Count == 0)
+            {
+                MessageBox.Show(
+                    "This trader is not in any zone.",
+                    "Zone Check",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return;
+            }
+
+            // Build a readable list of zones
+            string zoneList = string.Join(
+                Environment.NewLine,
+                TMzone.Select(z => z.m_DisplayName) // adjust property if needed
+            );
+
+            MessageBox.Show(
+                $"This trader is in the following zone(s):{Environment.NewLine}{Environment.NewLine}{zoneList}",
+                "Zone Check",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -11205,7 +11527,7 @@ namespace ExpansionPlugin
         #region Search Treeview
         private List<TreeNode> _searchResults = new();
         private int _currentIndex = -1;
-        
+
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -11259,6 +11581,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
 
 
 

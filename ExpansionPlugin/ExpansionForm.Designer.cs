@@ -186,6 +186,19 @@
             removeExcludedStorageSlotToolStripMenuItem = new ToolStripMenuItem();
             addNewPersonalStorageConfigToolStripMenuItem = new ToolStripMenuItem();
             removePersonalStorageConfigToolStripMenuItem = new ToolStripMenuItem();
+            addNewTraderMapFIleToolStripMenuItem = new ToolStripMenuItem();
+            removeTraderMapFileToolStripMenuItem = new ToolStripMenuItem();
+            addNewTraderNPCToolStripMenuItem = new ToolStripMenuItem();
+            removeTraderNPCToolStripMenuItem = new ToolStripMenuItem();
+            addTraderNPCWaypointToolStripMenuItem = new ToolStripMenuItem();
+            removeTraderNPCWaypointToolStripMenuItem = new ToolStripMenuItem();
+            addTraderNPCItemToolStripMenuItem = new ToolStripMenuItem();
+            removeTraderNPCItemToolStripMenuItem = new ToolStripMenuItem();
+            addNPCTraderNPCAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            removeTraderNPCAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            addTraderNPCPropertyToolStripMenuItem = new ToolStripMenuItem();
+            removeTraderNPCPropertyToolStripMenuItem = new ToolStripMenuItem();
+            checkNPCIsInAZoneToolStripMenuItem = new ToolStripMenuItem();
             MarketCM = new ContextMenuStrip(components);
             addNewMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
             removeMarketCategoryFileToolStripMenuItem = new ToolStripMenuItem();
@@ -1402,10 +1415,10 @@
             // P2PCM
             // 
             P2PCM.BackColor = Color.FromArgb(60, 63, 65);
-            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem, addNewExcludedStorageSlotToolStripMenuItem, removeExcludedStorageSlotToolStripMenuItem, addNewPersonalStorageConfigToolStripMenuItem, removePersonalStorageConfigToolStripMenuItem });
+            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem, addNewExcludedStorageSlotToolStripMenuItem, removeExcludedStorageSlotToolStripMenuItem, addNewPersonalStorageConfigToolStripMenuItem, removePersonalStorageConfigToolStripMenuItem, addNewTraderMapFIleToolStripMenuItem, removeTraderMapFileToolStripMenuItem, addNewTraderNPCToolStripMenuItem, removeTraderNPCToolStripMenuItem, addTraderNPCWaypointToolStripMenuItem, removeTraderNPCWaypointToolStripMenuItem, addTraderNPCItemToolStripMenuItem, removeTraderNPCItemToolStripMenuItem, addNPCTraderNPCAttachmentToolStripMenuItem, removeTraderNPCAttachmentToolStripMenuItem, addTraderNPCPropertyToolStripMenuItem, removeTraderNPCPropertyToolStripMenuItem, checkNPCIsInAZoneToolStripMenuItem });
             P2PCM.Name = "ChatCM";
             P2PCM.ShowImageMargin = false;
-            P2PCM.Size = new Size(229, 312);
+            P2PCM.Size = new Size(229, 598);
             // 
             // AddNewP2PMarketCategoryToolStripMenuItem
             // 
@@ -1519,13 +1532,117 @@
             removePersonalStorageConfigToolStripMenuItem.Text = "Remove Personal Storage Config";
             removePersonalStorageConfigToolStripMenuItem.Click += removePersonalStorageConfigToolStripMenuItem_Click;
             // 
+            // addNewTraderMapFIleToolStripMenuItem
+            // 
+            addNewTraderMapFIleToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTraderMapFIleToolStripMenuItem.Name = "addNewTraderMapFIleToolStripMenuItem";
+            addNewTraderMapFIleToolStripMenuItem.Size = new Size(228, 22);
+            addNewTraderMapFIleToolStripMenuItem.Text = "Add New Trader Map FIle";
+            addNewTraderMapFIleToolStripMenuItem.Click += addNewTraderMapFIleToolStripMenuItem_Click;
+            // 
+            // removeTraderMapFileToolStripMenuItem
+            // 
+            removeTraderMapFileToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTraderMapFileToolStripMenuItem.Name = "removeTraderMapFileToolStripMenuItem";
+            removeTraderMapFileToolStripMenuItem.Size = new Size(228, 22);
+            removeTraderMapFileToolStripMenuItem.Text = "Remove Trader Map File";
+            removeTraderMapFileToolStripMenuItem.Click += removeTraderMapFileToolStripMenuItem_Click;
+            // 
+            // addNewTraderNPCToolStripMenuItem
+            // 
+            addNewTraderNPCToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewTraderNPCToolStripMenuItem.Name = "addNewTraderNPCToolStripMenuItem";
+            addNewTraderNPCToolStripMenuItem.Size = new Size(228, 22);
+            addNewTraderNPCToolStripMenuItem.Text = "Add New Trader NPC";
+            addNewTraderNPCToolStripMenuItem.Click += addNewTraderNPCToolStripMenuItem_Click;
+            // 
+            // removeTraderNPCToolStripMenuItem
+            // 
+            removeTraderNPCToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTraderNPCToolStripMenuItem.Name = "removeTraderNPCToolStripMenuItem";
+            removeTraderNPCToolStripMenuItem.Size = new Size(228, 22);
+            removeTraderNPCToolStripMenuItem.Text = "Remove Trader NPC";
+            removeTraderNPCToolStripMenuItem.Click += removeTraderNPCToolStripMenuItem_Click;
+            // 
+            // addTraderNPCWaypointToolStripMenuItem
+            // 
+            addTraderNPCWaypointToolStripMenuItem.ForeColor = SystemColors.Control;
+            addTraderNPCWaypointToolStripMenuItem.Name = "addTraderNPCWaypointToolStripMenuItem";
+            addTraderNPCWaypointToolStripMenuItem.Size = new Size(228, 22);
+            addTraderNPCWaypointToolStripMenuItem.Text = "Add Trader NPC Waypoint";
+            addTraderNPCWaypointToolStripMenuItem.Click += addTraderNPCWaypointToolStripMenuItem_Click;
+            // 
+            // removeTraderNPCWaypointToolStripMenuItem
+            // 
+            removeTraderNPCWaypointToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTraderNPCWaypointToolStripMenuItem.Name = "removeTraderNPCWaypointToolStripMenuItem";
+            removeTraderNPCWaypointToolStripMenuItem.Size = new Size(228, 22);
+            removeTraderNPCWaypointToolStripMenuItem.Text = "Remove Trader NPC Waypoint";
+            removeTraderNPCWaypointToolStripMenuItem.Click += removeTraderNPCWaypointToolStripMenuItem_Click;
+            // 
+            // addTraderNPCItemToolStripMenuItem
+            // 
+            addTraderNPCItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            addTraderNPCItemToolStripMenuItem.Name = "addTraderNPCItemToolStripMenuItem";
+            addTraderNPCItemToolStripMenuItem.Size = new Size(228, 22);
+            addTraderNPCItemToolStripMenuItem.Text = "Add Trader NPC Item";
+            addTraderNPCItemToolStripMenuItem.Click += addTraderNPCItemToolStripMenuItem_Click;
+            // 
+            // removeTraderNPCItemToolStripMenuItem
+            // 
+            removeTraderNPCItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTraderNPCItemToolStripMenuItem.Name = "removeTraderNPCItemToolStripMenuItem";
+            removeTraderNPCItemToolStripMenuItem.Size = new Size(228, 22);
+            removeTraderNPCItemToolStripMenuItem.Text = "Remove Trader NPC Item";
+            removeTraderNPCItemToolStripMenuItem.Click += removeTraderNPCItemToolStripMenuItem_Click;
+            // 
+            // addNPCTraderNPCAttachmentToolStripMenuItem
+            // 
+            addNPCTraderNPCAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNPCTraderNPCAttachmentToolStripMenuItem.Name = "addNPCTraderNPCAttachmentToolStripMenuItem";
+            addNPCTraderNPCAttachmentToolStripMenuItem.Size = new Size(228, 22);
+            addNPCTraderNPCAttachmentToolStripMenuItem.Text = "Add Item Attachment";
+            addNPCTraderNPCAttachmentToolStripMenuItem.Click += addNPCTraderNPCAttachmentToolStripMenuItem_Click;
+            // 
+            // removeTraderNPCAttachmentToolStripMenuItem
+            // 
+            removeTraderNPCAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTraderNPCAttachmentToolStripMenuItem.Name = "removeTraderNPCAttachmentToolStripMenuItem";
+            removeTraderNPCAttachmentToolStripMenuItem.Size = new Size(228, 22);
+            removeTraderNPCAttachmentToolStripMenuItem.Text = "Remove Item Attachment";
+            removeTraderNPCAttachmentToolStripMenuItem.Click += removeTraderNPCAttachmentToolStripMenuItem_Click;
+            // 
+            // addTraderNPCPropertyToolStripMenuItem
+            // 
+            addTraderNPCPropertyToolStripMenuItem.ForeColor = SystemColors.Control;
+            addTraderNPCPropertyToolStripMenuItem.Name = "addTraderNPCPropertyToolStripMenuItem";
+            addTraderNPCPropertyToolStripMenuItem.Size = new Size(228, 22);
+            addTraderNPCPropertyToolStripMenuItem.Text = "Add Trader NPC Property";
+            addTraderNPCPropertyToolStripMenuItem.Click += addTraderNPCPropertyToolStripMenuItem_Click;
+            // 
+            // removeTraderNPCPropertyToolStripMenuItem
+            // 
+            removeTraderNPCPropertyToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTraderNPCPropertyToolStripMenuItem.Name = "removeTraderNPCPropertyToolStripMenuItem";
+            removeTraderNPCPropertyToolStripMenuItem.Size = new Size(228, 22);
+            removeTraderNPCPropertyToolStripMenuItem.Text = "Remove Trader NPC Property";
+            removeTraderNPCPropertyToolStripMenuItem.Click += rempveTraderNPCPropertyToolStripMenuItem_Click;
+            // 
+            // checkNPCIsInAZoneToolStripMenuItem
+            // 
+            checkNPCIsInAZoneToolStripMenuItem.ForeColor = SystemColors.Control;
+            checkNPCIsInAZoneToolStripMenuItem.Name = "checkNPCIsInAZoneToolStripMenuItem";
+            checkNPCIsInAZoneToolStripMenuItem.Size = new Size(228, 22);
+            checkNPCIsInAZoneToolStripMenuItem.Text = "Check NPC is in a Zone";
+            checkNPCIsInAZoneToolStripMenuItem.Click += checkNPCIsInAZoneToolStripMenuItem_Click;
+            // 
             // MarketCM
             // 
             MarketCM.BackColor = Color.FromArgb(60, 63, 65);
             MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem, addItemAttachmentToolStripMenuItem, removeItemAttachmentToolStripMenuItem, addItemVariantToolStripMenuItem, removeItemVariantToolStripMenuItem, addItemVariantAutoSearchToolStripMenuItem, createItemFromItemVariantToolStripMenuItem, addCategoryToTraderToolStripMenuItem, removeCategoryFromTraderToolStripMenuItem, addItemToTraderToolStripMenuItem, removeItemFromTraderToolStripMenuItem, checkForMissingTraderItemsToolStripMenuItem, previewTraderToolStripMenuItem, addNewTraderZoneToolStripMenuItem, removeTraderZoneToolStripMenuItem, addNewTraderFileToolStripMenuItem, removeTraderFileToolStripMenuItem, clearStockToolStripMenuItem });
             MarketCM.Name = "ChatCM";
             MarketCM.ShowImageMargin = false;
-            MarketCM.Size = new Size(215, 576);
+            MarketCM.Size = new Size(215, 554);
             // 
             // addNewMarketCategoryFileToolStripMenuItem
             // 
@@ -1947,5 +2064,18 @@
         private ToolStripMenuItem addNewTraderFileToolStripMenuItem;
         private ToolStripMenuItem removeTraderFileToolStripMenuItem;
         private ToolStripMenuItem clearStockToolStripMenuItem;
+        private ToolStripMenuItem addNewTraderMapFIleToolStripMenuItem;
+        private ToolStripMenuItem removeTraderMapFileToolStripMenuItem;
+        private ToolStripMenuItem addNewTraderNPCToolStripMenuItem;
+        private ToolStripMenuItem removeTraderNPCToolStripMenuItem;
+        private ToolStripMenuItem addTraderNPCWaypointToolStripMenuItem;
+        private ToolStripMenuItem removeTraderNPCWaypointToolStripMenuItem;
+        private ToolStripMenuItem addTraderNPCItemToolStripMenuItem;
+        private ToolStripMenuItem removeTraderNPCItemToolStripMenuItem;
+        private ToolStripMenuItem addNPCTraderNPCAttachmentToolStripMenuItem;
+        private ToolStripMenuItem removeTraderNPCAttachmentToolStripMenuItem;
+        private ToolStripMenuItem addTraderNPCPropertyToolStripMenuItem;
+        private ToolStripMenuItem removeTraderNPCPropertyToolStripMenuItem;
+        private ToolStripMenuItem checkNPCIsInAZoneToolStripMenuItem;
     }
 }

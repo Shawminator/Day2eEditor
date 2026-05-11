@@ -169,11 +169,27 @@ namespace ExpansionPlugin
                 bool inzone = false;
                 foreach (ExpansionTraderMaps tmap in associatedNPC)
                 {
-                    if (zone.IsInRadius(tmap.Positions[0]))
+                    if (tmap.Positions.All(v3 => zone.IsInRadius(v3)))
                     {
                         inzone = true;
                         break;
                     }
+                }
+                if (inzone == true)
+                    zonelist.Add(zone);
+            }
+            return zonelist;
+        }
+
+        internal List<ExpansionMarketTraderZone> GetZonefromTraderMap(ExpansionTraderMaps? tm)
+        {
+            List<ExpansionMarketTraderZone> zonelist = new List<ExpansionMarketTraderZone>();
+            foreach (ExpansionMarketTraderZone zone in MutableItems)
+            {
+                bool inzone = false;
+                if (tm.Positions.All(v3 => zone.IsInRadius(v3)))
+                {
+                    inzone = true;
                 }
                 if (inzone == true)
                     zonelist.Add(zone);

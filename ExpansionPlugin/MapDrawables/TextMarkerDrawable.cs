@@ -52,6 +52,8 @@ namespace ExpansionPlugin
         /// <summary>If true, flips label side to keep it within drawBounds.</summary>
         public bool KeepTextInsideBounds { get; set; } = true;
 
+        public bool DrawCenterDot { get; set; } = true;
+
         private readonly Size _mapSize;
 
         public TextMarkerDrawable(PointF mapPosition, Size mapSize)
@@ -131,16 +133,18 @@ namespace ExpansionPlugin
                     g.Restore(state);
                 }
             }
-
-            // Center dot
-            float dotRadius = 2f;
-            using (var brush = new SolidBrush(Color))
+            if (DrawCenterDot == true)
             {
-                g.FillEllipse(brush,
-                    screenX - dotRadius,
-                    screenY - dotRadius,
-                    dotRadius * 2,
-                    dotRadius * 2);
+                // Center dot
+                float dotRadius = 2f;
+                using (var brush = new SolidBrush(Color))
+                {
+                    g.FillEllipse(brush,
+                        screenX - dotRadius,
+                        screenY - dotRadius,
+                        dotRadius * 2,
+                        dotRadius * 2);
+                }
             }
 
             // Label
