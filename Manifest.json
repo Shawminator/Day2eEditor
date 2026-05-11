@@ -37,7 +37,7 @@
       "name": "ExpansionPlugin",
       "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ExpansionPlugin.dll",
-      "checksum": "sha256:ba4d99465924d5350d3f179caa4dad2d45c70ab12bda51bcb8237fe635b249cd"
+      "checksum": "sha256:6aa7a0e7293beb28d264e97b609ed8c3ff82612bec59a9cdebaf673eb2433d7d"
     },
     {
       "name": "DynamicWeatherPlugin",

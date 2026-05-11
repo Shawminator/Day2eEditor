@@ -11266,12 +11266,12 @@ namespace ExpansionPlugin
 
     }
 
-    [PluginInfo("Exspansion Manager", "ExspansionPlugin", "ExpansionPlugin.Expansion.png")]
+    [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]
     public class PluginExspansion : IPluginForm, IDisposable
     {
         private bool disposed = false;
 
-        public string pluginIdentifier => "ExspansionPlugin";
+        public string pluginIdentifier => "ExpansionPlugin";
         public string pluginName => "Exspansion Manager";
 
         public Form GetForm()
