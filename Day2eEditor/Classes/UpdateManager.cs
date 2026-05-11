@@ -16,7 +16,7 @@ namespace Day2eEditor
         private readonly string _appDirectory;
         private readonly HttpClient _http;
         public string manifestUrl = "https://raw.githubusercontent.com/Shawminator/Day2eEditor/refs/heads/master/Manifest.json";
-        private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin", "EconomyPlugin"};
+        private readonly HashSet<string> _compulsoryPlugins = new() { "ProjectsPlugin", "DayZFileManagerPlugin", "EconomyPlugin" };
 
         public UpdateManager(string pluginsDirectory = "Plugins", string mapAddonsDirectory = "MapAddons", string tempDirectory = "Temp", string appDirectory = "")
         {

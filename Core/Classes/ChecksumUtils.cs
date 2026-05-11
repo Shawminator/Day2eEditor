@@ -35,7 +35,7 @@ public static class ChecksumUtils
         if (string.IsNullOrWhiteSpace(raw))
             throw new ArgumentException("Checksum is null or empty.");
 
-        string hex = raw.StartsWith("sha256-", StringComparison.OrdinalIgnoreCase)
+        string hex = raw.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
             ? raw.Substring(7)
             : raw;
 
