@@ -34,7 +34,7 @@
       "checksum": "sha256:ffe489d402551d4b41f19f0b610df5f8427218406d8fca831c24fc1b0bf3db20"
     },
     {
-      "name": "ExspansionPlugin",
+      "name": "ExpansionPlugin",
       "version": "0.0.2",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ExpansionPlugin.dll",
       "checksum": "sha256:ba4d99465924d5350d3f179caa4dad2d45c70ab12bda51bcb8237fe635b249cd"
