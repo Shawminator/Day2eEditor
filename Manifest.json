@@ -28,6 +28,18 @@
       "checksum": "sha256-ec998ab79711bc65dcaf5758a96c5ab40f7a82e18a8db88a17d59efd68e2edcf"
     },
     {
+      "name": "DayZFileManagerPlugin",
+      "version": "0.0.2",
+      "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/DayZFileManagerPlugin.dll",
+      "checksum": "sha256:ffe489d402551d4b41f19f0b610df5f8427218406d8fca831c24fc1b0bf3db20"
+    },
+    {
+      "name": "ExspansionPlugin",
+      "version": "0.0.2",
+      "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ExpansionPlugin.dll",
+      "checksum": "sha256:ba4d99465924d5350d3f179caa4dad2d45c70ab12bda51bcb8237fe635b249cd"
+    },
+    {
       "name": "DynamicWeatherPlugin",
       "version": "1.0.0",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/DynamicWeatherPlugin.dll",
