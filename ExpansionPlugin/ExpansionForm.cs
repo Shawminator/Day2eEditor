@@ -1276,8 +1276,6 @@ namespace ExpansionPlugin
             };
         }
 
-
-
         private void InitializeContextMenuHandlers()
         {
             // ----------------------

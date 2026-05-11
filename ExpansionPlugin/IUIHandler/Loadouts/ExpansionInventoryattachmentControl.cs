@@ -38,7 +38,7 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
-            ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\VanillaSlotNames.txt").ToList();
+            ItemAttachmentSlotNameCB.DataSource = File.ReadAllLines("Data\\ExpansionSlotnames.txt").ToList();
             string slotname = string.IsNullOrWhiteSpace(_data.SlotName)
                     ? "Default Slot"
                     : _data.SlotName;
