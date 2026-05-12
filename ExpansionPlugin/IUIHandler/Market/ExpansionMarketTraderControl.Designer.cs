@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            pictureBox1 = new PictureBox();
+            label2 = new Label();
             TraderIconCB = new ComboBox();
             label1 = new Label();
             UseCategoryOrderCB = new CheckBox();
@@ -45,13 +47,11 @@
             textBox2 = new TextBox();
             darkLabel50 = new Label();
             textBox5 = new TextBox();
-            pictureBox1 = new PictureBox();
-            label2 = new Label();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MinRequiredHumanityNUD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // groupBox1
@@ -84,6 +84,26 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Market Category Info";
             groupBox1.Enter += groupBox1_Enter;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackColor = Color.FromArgb(60, 63, 65);
+            pictureBox1.Location = new Point(197, 231);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(128, 128);
+            pictureBox1.TabIndex = 196;
+            pictureBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.ForeColor = Color.FromArgb(220, 220, 220);
+            label2.Location = new Point(14, 235);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(74, 15);
+            label2.TabIndex = 195;
+            label2.Text = "Icon Preview";
             // 
             // TraderIconCB
             // 
@@ -248,7 +268,6 @@
             textBox2.Location = new Point(197, 22);
             textBox2.Margin = new Padding(4, 3, 4, 3);
             textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
             textBox2.Size = new Size(256, 23);
             textBox2.TabIndex = 176;
             textBox2.TextChanged += textBox2_TextChanged;
@@ -275,26 +294,6 @@
             textBox5.TabIndex = 177;
             textBox5.TextChanged += textBox5_TextChanged;
             // 
-            // pictureBox1
-            // 
-            pictureBox1.BackColor = Color.FromArgb(60, 63, 65);
-            pictureBox1.Location = new Point(197, 231);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(128, 128);
-            pictureBox1.TabIndex = 196;
-            pictureBox1.TabStop = false;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.ForeColor = Color.FromArgb(220, 220, 220);
-            label2.Location = new Point(14, 235);
-            label2.Margin = new Padding(4, 0, 4, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(74, 15);
-            label2.TabIndex = 195;
-            label2.Text = "Icon Preview";
-            // 
             // ExpansionMarketTraderControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -306,10 +305,10 @@
             Size = new Size(464, 397);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MinRequiredHumanityNUD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 

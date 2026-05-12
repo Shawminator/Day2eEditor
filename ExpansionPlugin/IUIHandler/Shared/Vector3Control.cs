@@ -56,7 +56,7 @@ namespace ExpansionPlugin
         {
 
             if (_parentType == typeof(ExpansionP2pMarketTradersConfig) ||
-                _parentType == typeof(ExpansionMarketTraderMapsConfig))
+                _nodes.Last().Text == "Rotation" )
                 return;
 
             if (_nodes?.Any() == true )

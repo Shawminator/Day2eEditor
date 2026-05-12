@@ -225,6 +225,12 @@
             addNewTraderFileToolStripMenuItem = new ToolStripMenuItem();
             removeTraderFileToolStripMenuItem = new ToolStripMenuItem();
             clearStockToolStripMenuItem = new ToolStripMenuItem();
+            QuestsCM = new ContextMenuStrip(components);
+            toolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripMenuItem();
+            toolStripMenuItem4 = new ToolStripMenuItem();
+            questFlowPreviewToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -241,6 +247,7 @@
             SafeZoneCM.SuspendLayout();
             P2PCM.SuspendLayout();
             MarketCM.SuspendLayout();
+            QuestsCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -1844,6 +1851,50 @@
             clearStockToolStripMenuItem.Text = "Clear Stock";
             clearStockToolStripMenuItem.Click += clearStockToolStripMenuItem_Click;
             // 
+            // QuestsCM
+            // 
+            QuestsCM.BackColor = Color.FromArgb(60, 63, 65);
+            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem });
+            QuestsCM.Name = "DamageCM";
+            QuestsCM.ShowImageMargin = false;
+            QuestsCM.Size = new Size(202, 136);
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.ForeColor = SystemColors.Control;
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(201, 22);
+            toolStripMenuItem1.Text = "Add New Explosion Target";
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.ForeColor = SystemColors.Control;
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(201, 22);
+            toolStripMenuItem2.Text = "Remove Explosion Target";
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.ForeColor = SystemColors.Control;
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(201, 22);
+            toolStripMenuItem3.Text = "Add New Explosive Projectile";
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.ForeColor = SystemColors.Control;
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new Size(201, 22);
+            toolStripMenuItem4.Text = "Remove Explosive Projectile";
+            // 
+            // questFlowPreviewToolStripMenuItem
+            // 
+            questFlowPreviewToolStripMenuItem.ForeColor = SystemColors.Control;
+            questFlowPreviewToolStripMenuItem.Name = "questFlowPreviewToolStripMenuItem";
+            questFlowPreviewToolStripMenuItem.Size = new Size(201, 22);
+            questFlowPreviewToolStripMenuItem.Text = "Quest Flow Preview";
+            questFlowPreviewToolStripMenuItem.Click += questFlowPreviewToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1876,6 +1927,7 @@
             SafeZoneCM.ResumeLayout(false);
             P2PCM.ResumeLayout(false);
             MarketCM.ResumeLayout(false);
+            QuestsCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -2077,5 +2129,11 @@
         private ToolStripMenuItem addTraderNPCPropertyToolStripMenuItem;
         private ToolStripMenuItem removeTraderNPCPropertyToolStripMenuItem;
         private ToolStripMenuItem checkNPCIsInAZoneToolStripMenuItem;
+        private ContextMenuStrip QuestsCM;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem toolStripMenuItem3;
+        private ToolStripMenuItem toolStripMenuItem4;
+        private ToolStripMenuItem questFlowPreviewToolStripMenuItem;
     }
 }

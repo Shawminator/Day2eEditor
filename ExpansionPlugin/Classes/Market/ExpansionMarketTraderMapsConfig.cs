@@ -155,6 +155,22 @@ namespace ExpansionPlugin
             }
             return tradermaps;
         }
+        public ExpansionMarketTraderNpcs AddNewMarketMap(string ExpansionMarketMapName)
+        {
+            string filename = Helpers.SanitizePath(ExpansionMarketMapName) + ".map";
+            ExpansionMarketTraderNpcs newExpansionMarketTraderNpcs = new ExpansionMarketTraderNpcs()
+            {
+                Tradersmaps = new BindingList<ExpansionTraderMaps>()
+            };
+            newExpansionMarketTraderNpcs.SetPath(Path.Combine(FilePath, filename));
+            newExpansionMarketTraderNpcs.SetGuid(Guid.NewGuid());
+            MutableItems.Add(newExpansionMarketTraderNpcs);
+            return newExpansionMarketTraderNpcs;
+        }
+        internal void RemoveFile(ExpansionMarketTraderNpcs ExpansionMarketTrader)
+        {
+            ExpansionMarketTrader.ToDelete = true;
+        }
     }
     public class ExpansionMarketTraderNpcs : IDeepCloneable<ExpansionMarketTraderNpcs>, IEquatable<ExpansionMarketTraderNpcs>
     {
