@@ -22,6 +22,7 @@ namespace ExpansionPlugin.Forms
         {
             InitializeComponent();
             Quest = quest;
+            QuestID.Text = $"Quest ID: {quest.ID}";
             title.Text = $"{quest.Title}\n{quest.ObjectiveText}";
             flags.Text = BuildFlags(quest);
 
@@ -53,13 +54,6 @@ namespace ExpansionPlugin.Forms
 
                 Controls.Add(objPanel);
             }
-
-            Paint += (_, e) =>
-            {
-                using var pen = new Pen(
-                    Highlighted ? Color.Gold : Color.DimGray, 2);
-                e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
-            };
         }
         private static string BuildFlags(ExpansionQuestQuest q)
         {
@@ -73,9 +67,10 @@ namespace ExpansionPlugin.Forms
             return string.Join(" | ", flags);
         }
 
-        private void QuestNodeControl_Load(object sender, EventArgs e)
+        private void QuestNodeControl_Paint(object sender, PaintEventArgs e)
         {
-                
+            using var pen = new Pen(Highlighted ? Color.Gold : Color.DimGray, 2);
+            e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
         }
     }
 }

@@ -30,13 +30,14 @@
         {
             flags = new Label();
             title = new Label();
+            QuestID = new Label();
             SuspendLayout();
             // 
             // flags
             // 
             flags.Dock = DockStyle.Top;
             flags.ForeColor = SystemColors.Control;
-            flags.Location = new Point(8, 8);
+            flags.Location = new Point(8, 114);
             flags.Name = "flags";
             flags.Size = new Size(284, 18);
             flags.TabIndex = 0;
@@ -46,23 +47,34 @@
             // 
             title.Dock = DockStyle.Top;
             title.ForeColor = SystemColors.Control;
-            title.Location = new Point(8, 26);
+            title.Location = new Point(8, 23);
             title.Name = "title";
-            title.Size = new Size(284, 106);
+            title.Size = new Size(284, 91);
             title.TabIndex = 1;
             title.Text = "title";
+            // 
+            // QuestID
+            // 
+            QuestID.Dock = DockStyle.Top;
+            QuestID.ForeColor = SystemColors.Control;
+            QuestID.Location = new Point(8, 8);
+            QuestID.Name = "QuestID";
+            QuestID.Size = new Size(284, 15);
+            QuestID.TabIndex = 2;
+            QuestID.Text = "QuestID";
             // 
             // QuestNodeControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(48, 48, 48);
-            Controls.Add(title);
             Controls.Add(flags);
+            Controls.Add(title);
+            Controls.Add(QuestID);
             Name = "QuestNodeControl";
             Padding = new Padding(8);
             Size = new Size(300, 140);
-            Load += QuestNodeControl_Load;
+            Paint += QuestNodeControl_Paint;
             ResumeLayout(false);
         }
 
@@ -70,5 +82,6 @@
 
         private Label flags;
         private Label title;
+        private Label QuestID;
     }
 }

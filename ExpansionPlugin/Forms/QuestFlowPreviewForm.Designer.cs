@@ -33,7 +33,7 @@
             // 
             // _canvas
             // 
-            _canvas.BackColor = Color.FromArgb(32, 32, 32);
+            _canvas.BackColor = Color.FromArgb(60, 63, 65);
             _canvas.Dock = DockStyle.Fill;
             _canvas.Location = new Point(0, 0);
             _canvas.Name = "_canvas";

@@ -30,15 +30,11 @@ namespace ExpansionPlugin
         private readonly Dictionary<Control, (PointF pos, Size size)> _worldTransforms = new();
         private readonly List<Link> _links = new();
 
-
         public QuestFlowPreviewForm(ExpansionQuestQuest selectedQuest, IReadOnlyDictionary<int, ExpansionQuestQuest> allQuests)
         {
             InitializeComponent();
             _selectedQuest = selectedQuest;
             _allQuests = allQuests;
-
-           
-
             BuildGraph();
         }
 
@@ -112,10 +108,41 @@ namespace ExpansionPlugin
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+        private PointF GetScreenCenter(Control c)
+        {
+            return new PointF(
+                c.Left + c.Width / 2f,
+                c.Top + c.Height / 2f);
+        }
+        private void ApplyZoomToControls()
+        {
+            foreach (var kv in _worldTransforms)
+            {
+                Control ctrl = kv.Key;
+                var (worldPos, worldSize) = kv.Value;
 
+                ctrl.SuspendLayout();
 
+                ctrl.Location = new Point(
+                    (int)(worldPos.X * _zoom + _panOffset.X),
+                    (int)(worldPos.Y * _zoom + _panOffset.Y));
 
+                ctrl.Size = new Size(
+                    (int)(worldSize.Width * _zoom),
+                    (int)(worldSize.Height * _zoom));
 
+                ctrl.ResumeLayout();
+            }
+        }
+
+        // ───────────────────── Get Text From Classes ─────────────────────
+        private string GetNPCReferenceText(int id)
+        {
+            var NPCfiles = AppServices.GetRequired<ExpansionManager>().ExpansionQuestNPCDataConfig.MutableItems;
+            ExpansionQuestNPCData npc = NPCfiles.FirstOrDefault(x => x.ID == id);
+
+            return $"{npc.NPCName}";
+        }
         private string GetObjectiveReferenceText(Objectives objective)
         {
             if (objective == null)
@@ -124,50 +151,9 @@ namespace ExpansionPlugin
             var objectiveFiles = AppServices.GetRequired<ExpansionManager>().ExpansionQuestObjectiveConfigConfig.MutableItems;
             ExpansionQuestObjectiveConfig objectiveBase = objectiveFiles.FirstOrDefault(x => x.ID == objective.ID && x.ObjectiveType == objective.ObjectiveType);
 
-            return $"🔗 {objectiveBase.ObjectiveType} : {objectiveBase.ObjectiveText}";
+            return $"{objectiveBase.ObjectiveType} : {objectiveBase.ObjectiveText}";
         }
-        private void AddObjectiveNodes(QuestNodeControl questNode, ExpansionQuestQuest quest)
-        {
-            if (quest.Objectives == null || quest.Objectives.Count == 0)
-                return;
-
-            const int objXOffset = 40;
-            const int objYOffset = 40;
-
-            Control previous = null;
-            int y = questNode.Bottom + objYOffset;
-
-            foreach (var obj in quest.Objectives)
-            {
-                var objNode = new ObjectiveNodeControl(GetObjectiveReferenceText(obj))
-                {
-                    Location = new Point(
-                        questNode.Left + objXOffset,
-                        y)
-                };
-
-                _canvas.Controls.Add(objNode);
-                _worldTransforms[objNode] = (objNode.Location, objNode.Size);
-
-                if (quest.SequentialObjectives == 1)
-                {
-                    if (previous != null)
-                        _links.Add(new Link(previous, objNode));
-                    else
-                        _links.Add(new Link(questNode, objNode));
-
-                    previous = objNode;
-                }
-                else
-                {
-                    _links.Add(new Link(questNode, objNode));
-                }
-
-                y += objNode.Height + 20;
-            }
-        }
-
-
+        // ───────────────────── Build Graph ─────────────────────
         private void BuildGraph()
         {
             Dictionary<int, int> columnBottoms = new();
@@ -311,28 +297,84 @@ namespace ExpansionPlugin
 
             _canvas.Invalidate();
         }
-        private void ApplyZoomToControls()
+        private void AddObjectiveNodes(QuestNodeControl questNode, ExpansionQuestQuest quest)
         {
-            foreach (var kv in _worldTransforms)
+            if (quest.Objectives == null || quest.Objectives.Count == 0)
+                return;
+
+            const int objXOffset = 40;
+            const int objYOffset = 40;
+
+            Control previous = null;
+            int y = questNode.Bottom + objYOffset;
+
+            foreach (var obj in quest.Objectives)
             {
-                Control ctrl = kv.Key;
-                var (worldPos, worldSize) = kv.Value;
+                var objNode = new ObjectiveNodeControl(GetObjectiveReferenceText(obj), obj.ObjectiveType)
+                {
+                    Location = new Point(
+                        questNode.Left + objXOffset,
+                        y)
+                };
 
-                ctrl.SuspendLayout();
+                _canvas.Controls.Add(objNode);
+                _worldTransforms[objNode] = (objNode.Location, objNode.Size);
 
-                ctrl.Location = new Point(
-                    (int)(worldPos.X * _zoom + _panOffset.X),
-                    (int)(worldPos.Y * _zoom + _panOffset.Y));
+                if (quest.SequentialObjectives == 1)
+                {
+                    if (previous != null)
+                        _links.Add(new Link(previous, objNode));
+                    else
+                        _links.Add(new Link(questNode, objNode));
 
-                ctrl.Size = new Size(
-                    (int)(worldSize.Width * _zoom),
-                    (int)(worldSize.Height * _zoom));
+                    previous = objNode;
+                }
+                else
+                {
+                    _links.Add(new Link(questNode, objNode));
+                }
 
-                ctrl.ResumeLayout();
+                y += objNode.Height + 20;
             }
         }
+        private void AddNpcNodesAbove(BindingList<int> ids, string label, QuestNodeControl questNode, bool alignLeft)
+        {
+            if (ids == null || ids.Count == 0)
+                return;
+
+            const int verticalSpacing = 10;
+            const int horizontalSpacing = 6;
+
+            int npcY = questNode.Top - 80;
+
+            int x = alignLeft
+                ? questNode.Left
+                : questNode.Right;
+
+            foreach (var id in ids)
+            {
+                var npc = new NpcNodeControl($"{label}\n{GetNPCReferenceText(id)}", label);
+
+                if (!alignLeft)
+                    x -= npc.Width;
+
+                npc.Location = new Point(x, npcY);
 
 
+                _canvas.Controls.Add(npc);
+                _worldTransforms[npc] = (npc.Location, npc.Size);
+
+
+                // Link direction
+                if (alignLeft)
+                    _links.Add(new Link(npc, questNode));     // Giver → Quest
+                else
+                    _links.Add(new Link(questNode, npc));     // Quest → Turn‑In
+
+                npcY -= npc.Height + verticalSpacing;
+                x += alignLeft ? (npc.Width + horizontalSpacing) : 0;
+            }
+        }
         private List<ExpansionQuestQuest> BuildPreChain(ExpansionQuestQuest quest, HashSet<int> visited = null)
         {
             visited ??= new HashSet<int>();
@@ -355,7 +397,6 @@ namespace ExpansionPlugin
 
             return result;
         }
-
         private List<ExpansionQuestQuest> BuildFollowUpChain(ExpansionQuestQuest quest, HashSet<int> visited = null)
         {
             visited ??= new HashSet<int>();
@@ -372,59 +413,6 @@ namespace ExpansionPlugin
             }
 
             return result;
-        }
-        private string GetNPCReferenceText(int id)
-        {
-            var NPCfiles = AppServices.GetRequired<ExpansionManager>().ExpansionQuestNPCDataConfig.MutableItems;
-            ExpansionQuestNPCData npc = NPCfiles.FirstOrDefault(x => x.ID == id);
-
-            return $"🔗 {npc.NPCName} ({npc.ClassName}) {npc.GetNPCType()}";
-        }
-
-        private void AddNpcNodesAbove(BindingList<int> ids, string label, QuestNodeControl questNode, bool alignLeft)
-        {
-            if (ids == null || ids.Count == 0)
-                return;
-
-            const int verticalSpacing = 10;
-            const int horizontalSpacing = 6;
-
-            int npcY = questNode.Top - 80;
-
-            int x = alignLeft
-                ? questNode.Left
-                : questNode.Right;
-
-            foreach (var id in ids)
-            {
-                var npc = new NpcNodeControl($"{label}\n{GetNPCReferenceText(id)}");
-
-                if (!alignLeft)
-                    x -= npc.Width;
-
-                npc.Location = new Point(x, npcY);
-
-
-                _canvas.Controls.Add(npc);
-                _worldTransforms[npc] = (npc.Location, npc.Size);
-
-
-                // Link direction
-                if (alignLeft)
-                    _links.Add(new Link(npc, questNode));     // Giver → Quest
-                else
-                    _links.Add(new Link(questNode, npc));     // Quest → Turn‑In
-
-                npcY -= npc.Height + verticalSpacing;
-                x += alignLeft ? (npc.Width + horizontalSpacing) : 0;
-            }
-        }
-
-        private PointF GetScreenCenter(Control c)
-        {
-            return new PointF(
-                c.Left + c.Width / 2f,
-                c.Top + c.Height / 2f);
         }
         private List<ExpansionQuestQuest> BuildReversePreChain(ExpansionQuestQuest quest, HashSet<int> visited = null)
         {
@@ -460,78 +448,4 @@ namespace ExpansionPlugin
             To = to;
         }
     }
-
-    public class NpcNodeControl : UserControl
-    {
-        public Point Center =>
-            new(Left + Width / 2, Top + Height / 2);
-
-        public NpcNodeControl(string text)
-        {
-            Width = 120;
-            Height = 60;
-            BackColor = Color.FromArgb(70, 70, 70);
-            ForeColor = Color.White;
-            Padding = new Padding(6);
-
-            Controls.Add(new Label
-            {
-                Text = text,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter
-            });
-
-            Paint += (_, e) =>
-            {
-                using var pen = new Pen(Color.DimGray, 2);
-                e.Graphics.DrawEllipse(pen, 0, 0, Width - 1, Height - 1);
-            };
-
-        }
-    }
-
-    public class ObjectiveNodeControl : UserControl
-    {
-        public Point Center =>
-            new Point(
-                Left + Width / 2,
-                Top + Height / 2);
-
-        public ObjectiveNodeControl(string text)
-        {
-            Width = 260;
-            Height = 40;
-            BackColor = Color.FromArgb(60, 60, 60);
-            ForeColor = Color.White;
-            Padding = new Padding(6);
-
-            var label = new Label
-            {
-                Text = text,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleLeft,
-                AutoEllipsis = true
-            };
-
-            Controls.Add(label);
-
-            Paint += ObjectiveNodeControl_Paint;
-        }
-
-        private void ObjectiveNodeControl_Paint(object sender, PaintEventArgs e)
-        {
-            using var pen = new Pen(Color.SteelBlue, 2);
-            e.Graphics.SmoothingMode =
-                System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-            e.Graphics.DrawRectangle(
-                pen,
-                0,
-                0,
-                Width - 1,
-                Height - 1);
-        }
-    }
-
-
 }
