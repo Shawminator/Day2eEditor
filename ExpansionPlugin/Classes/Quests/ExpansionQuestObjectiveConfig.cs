@@ -137,6 +137,16 @@ namespace ExpansionPlugin
         {
             return ExpansionQuestObjectiveConfigBase.FixMissingOrInvalidFields();
         }
+
+        internal List<int> GetAllObjectivesIDS(ExpansionQuestObjectiveType objectiveType)
+        {
+            return Items
+              .Where(x => x.ObjectiveType == objectiveType)
+              .Select(x => (int)x.ID)
+              .Distinct()
+              .OrderBy(x => x)
+              .ToList();
+        }
     }
     public abstract class ExpansionQuestObjectiveConfig : IDeepCloneable<ExpansionQuestObjectiveConfig>, IEquatable<ExpansionQuestObjectiveConfig>
     {
@@ -159,7 +169,7 @@ namespace ExpansionPlugin
         [JsonPropertyOrder(1)]
         public virtual int ConfigVersion { get; set; }
         [JsonPropertyOrder(2)]
-        public virtual int ID { get; set; }
+        public virtual int? ID { get; set; }
         [JsonPropertyOrder(3)]
         public virtual ExpansionQuestObjectiveType ObjectiveType { get; set; }
         [JsonPropertyOrder(4)]

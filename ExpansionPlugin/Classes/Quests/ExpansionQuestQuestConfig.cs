@@ -322,11 +322,11 @@ namespace ExpansionPlugin
                 PlayerNeedQuestItems = PlayerNeedQuestItems,
                 DeleteQuestItems = DeleteQuestItems,
                 SequentialObjectives = SequentialObjectives,
-                FactionReputationRequirements = FactionReputationRequirements != null
-                      ? new Dictionary<string, int>(FactionReputationRequirements)
+                FactionReputationRequirementsList = FactionReputationRequirementsList != null
+                      ? new BindingList<FactionQuestRep>(FactionReputationRequirementsList.Select(x => x.Clone()).ToList())
                       : null,
-                FactionReputationRewards = FactionReputationRewards != null
-                      ? new Dictionary<string, int>(FactionReputationRewards)
+                FactionReputationRewardsList = FactionReputationRewardsList != null
+                      ? new BindingList<FactionQuestRep>(FactionReputationRewardsList.Select(x => x.Clone()).ToList())
                       : null,
                 SuppressQuestLogOnCompetion = SuppressQuestLogOnCompetion,
                 Active = Active,

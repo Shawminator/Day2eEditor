@@ -62,7 +62,7 @@ namespace ExpansionPlugin
                 TreeNode parent = _nodes.Last().Parent;
                 TreeNode grandparent = _nodes.Last().Parent.Parent;
 
-                parent.Text = $"Quest {_data.ID} : {_data.Title}";
+                parent.Text = $"ID {_data.ID} : {_data.Title}";
 
                 grandparent.Nodes.Remove(parent);
 

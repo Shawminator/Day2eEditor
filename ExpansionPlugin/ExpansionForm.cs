@@ -4584,7 +4584,7 @@ namespace ExpansionPlugin
         {
             foreach (ExpansionQuestNPCData map in NPCdata.MutableItems)
             {
-                TreeNode classNameNode = new TreeNode($"{map.NPCName} ({map.ClassName}) {map.GetNPCType()}")
+                TreeNode classNameNode = new TreeNode($"ID:{map.ID} {map.NPCName} ({map.ClassName}) {map.GetNPCType()}")
                 {
                     Tag = map
                 };
@@ -4637,7 +4637,7 @@ namespace ExpansionPlugin
 
             foreach (ExpansionQuestQuest quest in sortedQuests)
             {
-                TreeNode questNode = new TreeNode($"Quest {quest.ID} : {quest.Title}")
+                TreeNode questNode = new TreeNode($"ID {quest.ID} : {quest.Title}")
                 {
                     Tag = quest
                 };
@@ -4815,7 +4815,7 @@ namespace ExpansionPlugin
                 if (!categoryNodes.TryGetValue(objectiveType, out var categoryNode))
                     continue;
 
-                var node = new TreeNode(objective.FileName) { Tag = objective };
+                var node = new TreeNode($"ID:{objective.ID} {objective.ObjectiveText}") { Tag = objective };
                 objective.BuildTree(node);
 
                 categoryNode.Nodes.Add(node);

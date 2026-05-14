@@ -234,7 +234,6 @@
             QuestsObjectivesIDNUD.Margin = new Padding(4, 3, 4, 3);
             QuestsObjectivesIDNUD.Maximum = new decimal(new int[] { 1000000000, 0, 0, 0 });
             QuestsObjectivesIDNUD.Name = "QuestsObjectivesIDNUD";
-            QuestsObjectivesIDNUD.ReadOnly = true;
             QuestsObjectivesIDNUD.Size = new Size(140, 23);
             QuestsObjectivesIDNUD.TabIndex = 107;
             QuestsObjectivesIDNUD.TextAlign = HorizontalAlignment.Center;
