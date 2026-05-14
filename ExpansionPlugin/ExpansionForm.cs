@@ -10464,7 +10464,6 @@ namespace ExpansionPlugin
             }
 
         }
-
         private void moveTraderNPCWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.FindParentOfType<ExpansionTraderMaps>();
