@@ -231,6 +231,8 @@
             toolStripMenuItem3 = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripMenuItem();
             questFlowPreviewToolStripMenuItem = new ToolStripMenuItem();
+            moveTraderNPCWaypointUpToolStripMenuItem = new ToolStripMenuItem();
+            moveTraderNPCWaypointDownToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1422,10 +1424,10 @@
             // P2PCM
             // 
             P2PCM.BackColor = Color.FromArgb(60, 63, 65);
-            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem, addNewExcludedStorageSlotToolStripMenuItem, removeExcludedStorageSlotToolStripMenuItem, addNewPersonalStorageConfigToolStripMenuItem, removePersonalStorageConfigToolStripMenuItem, addNewTraderMapFIleToolStripMenuItem, removeTraderMapFileToolStripMenuItem, addNewTraderNPCToolStripMenuItem, removeTraderNPCToolStripMenuItem, addTraderNPCWaypointToolStripMenuItem, removeTraderNPCWaypointToolStripMenuItem, addTraderNPCItemToolStripMenuItem, removeTraderNPCItemToolStripMenuItem, addNPCTraderNPCAttachmentToolStripMenuItem, removeTraderNPCAttachmentToolStripMenuItem, addTraderNPCPropertyToolStripMenuItem, removeTraderNPCPropertyToolStripMenuItem, checkNPCIsInAZoneToolStripMenuItem });
+            P2PCM.Items.AddRange(new ToolStripItem[] { AddNewP2PMarketCategoryToolStripMenuItem, RemoveP2PMarketCategoryToolStripMenuItem, AddNewP2PMarketSubCategoryToolStripMenuItem, RemoveP2PMarketSubCategoryToolStripMenuItem, AddNewP2PMarketIncludedToolStripMenuItem, RemoveP2PMarketIncludedToolStripMenuItem, AddNewP2PMarketExcludedToolStripMenuItem, removeP2PMarketExcludedToolStripMenuItem, addNewP2PTraderToolStripMenuItem, removeP2PTraderToolStripMenuItem, addNewExcludedStorageSlotToolStripMenuItem, removeExcludedStorageSlotToolStripMenuItem, addNewPersonalStorageConfigToolStripMenuItem, removePersonalStorageConfigToolStripMenuItem, addNewTraderMapFIleToolStripMenuItem, removeTraderMapFileToolStripMenuItem, addNewTraderNPCToolStripMenuItem, removeTraderNPCToolStripMenuItem, addTraderNPCWaypointToolStripMenuItem, removeTraderNPCWaypointToolStripMenuItem, addTraderNPCItemToolStripMenuItem, removeTraderNPCItemToolStripMenuItem, addNPCTraderNPCAttachmentToolStripMenuItem, removeTraderNPCAttachmentToolStripMenuItem, addTraderNPCPropertyToolStripMenuItem, removeTraderNPCPropertyToolStripMenuItem, checkNPCIsInAZoneToolStripMenuItem, moveTraderNPCWaypointUpToolStripMenuItem, moveTraderNPCWaypointDownToolStripMenuItem });
             P2PCM.Name = "ChatCM";
             P2PCM.ShowImageMargin = false;
-            P2PCM.Size = new Size(229, 598);
+            P2PCM.Size = new Size(229, 664);
             // 
             // AddNewP2PMarketCategoryToolStripMenuItem
             // 
@@ -1857,7 +1859,7 @@
             QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem });
             QuestsCM.Name = "DamageCM";
             QuestsCM.ShowImageMargin = false;
-            QuestsCM.Size = new Size(202, 136);
+            QuestsCM.Size = new Size(202, 114);
             // 
             // toolStripMenuItem1
             // 
@@ -1894,6 +1896,22 @@
             questFlowPreviewToolStripMenuItem.Size = new Size(201, 22);
             questFlowPreviewToolStripMenuItem.Text = "Quest Flow Preview";
             questFlowPreviewToolStripMenuItem.Click += questFlowPreviewToolStripMenuItem_Click;
+            // 
+            // moveTraderNPCWaypointUpToolStripMenuItem
+            // 
+            moveTraderNPCWaypointUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveTraderNPCWaypointUpToolStripMenuItem.Name = "moveTraderNPCWaypointUpToolStripMenuItem";
+            moveTraderNPCWaypointUpToolStripMenuItem.Size = new Size(228, 22);
+            moveTraderNPCWaypointUpToolStripMenuItem.Text = "Move Trader NPC Waypoint Up";
+            moveTraderNPCWaypointUpToolStripMenuItem.Click += moveTraderNPCWaypointUpToolStripMenuItem_Click;
+            // 
+            // moveTraderNPCWaypointDownToolStripMenuItem
+            // 
+            moveTraderNPCWaypointDownToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveTraderNPCWaypointDownToolStripMenuItem.Name = "moveTraderNPCWaypointDownToolStripMenuItem";
+            moveTraderNPCWaypointDownToolStripMenuItem.Size = new Size(228, 22);
+            moveTraderNPCWaypointDownToolStripMenuItem.Text = "Move trader NPC Waypoint Down";
+            moveTraderNPCWaypointDownToolStripMenuItem.Click += moveTraderNPCWaypointDownToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2135,5 +2153,7 @@
         private ToolStripMenuItem toolStripMenuItem3;
         private ToolStripMenuItem toolStripMenuItem4;
         private ToolStripMenuItem questFlowPreviewToolStripMenuItem;
+        private ToolStripMenuItem moveTraderNPCWaypointUpToolStripMenuItem;
+        private ToolStripMenuItem moveTraderNPCWaypointDownToolStripMenuItem;
     }
 }

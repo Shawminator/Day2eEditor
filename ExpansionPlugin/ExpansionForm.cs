@@ -491,7 +491,7 @@ namespace ExpansionPlugin
                     ExpansionMarketTraderNpcs ExpansionMarketTraderNpcs = node.Tag as ExpansionMarketTraderNpcs;
                     ShowHandler(new ExpansionMarketTraderNpcsControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionMarketTraderNpcs, selected);
                 },
-                [typeof(ExpansionTraderMaps)] = (node,selected) =>
+                [typeof(ExpansionTraderMaps)] = (node, selected) =>
                 {
                     ExpansionTraderMaps ExpansionTraderMaps = node.Tag as ExpansionTraderMaps;
                     ShowHandler(new ExpansionTraderMapsControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps, selected);
@@ -1176,12 +1176,12 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionMarketTraderZoneStockControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
                 },
                 //Market Npcs
-                ["expansionMarketTraderMapPropertiesName"] = (node,selected) =>
+                ["expansionMarketTraderMapPropertiesName"] = (node, selected) =>
                 {
                     ExpansionTraderMaps ExpansionTraderMaps = node.Parent.Parent.Tag as ExpansionTraderMaps;
                     ShowHandler<IUIHandler>(new ExpansionTraderMapsSpecialNameControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps.Special, selected);
                 },
-                ["expansionMarketTraderMapPropertiesLoadout"] = (node,selected) =>
+                ["expansionMarketTraderMapPropertiesLoadout"] = (node, selected) =>
                 {
                     ExpansionTraderMaps ExpansionTraderMaps = node.Parent.Parent.Tag as ExpansionTraderMaps;
                     ShowHandler<IUIHandler>(new ExpansionTraderMapsSpecialNameLoadoutControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps.Special, selected);
@@ -10352,7 +10352,7 @@ namespace ExpansionPlugin
 
                 if (itemsNode != null)
                 {
-                    itemsNode.Nodes.Clear(); 
+                    itemsNode.Nodes.Clear();
                 }
             }
 
@@ -10441,8 +10441,7 @@ namespace ExpansionPlugin
         }
         private void moveTraderNPCWaypointUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
-            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.FindParentOfType<ExpansionTraderMaps>();
             Vec3 waypoint = currentTreeNode.Tag as Vec3;
             TreeNodeCollection siblings;
             if (currentTreeNode.Parent != null)
@@ -10458,18 +10457,17 @@ namespace ExpansionPlugin
             if (index > 0)
             {
                 siblings.RemoveAt(index);
-                ExpansionAIPatrol.Waypoints.RemoveAt(index);
-                ExpansionAIPatrol.Waypoints.Insert(index - 1, waypoint);
+                ExpansionTraderMaps.Positions.RemoveAt(index);
+                ExpansionTraderMaps.Positions.Insert(index - 1, waypoint);
                 siblings.Insert(index - 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
 
         }
-        
+
         private void moveTraderNPCWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
-            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.FindParentOfType<ExpansionTraderMaps>();
             Vec3 waypoint = currentTreeNode.Tag as Vec3;
             TreeNodeCollection siblings;
             if (currentTreeNode.Parent != null)
@@ -10485,8 +10483,8 @@ namespace ExpansionPlugin
             if (index < siblings.Count - 1)
             {
                 siblings.RemoveAt(index);
-                ExpansionAIPatrol.Waypoints.RemoveAt(index);
-                ExpansionAIPatrol.Waypoints.Insert(index + 1, waypoint);
+                ExpansionTraderMaps.Positions.RemoveAt(index);
+                ExpansionTraderMaps.Positions.Insert(index + 1, waypoint);
                 siblings.Insert(index + 1, currentTreeNode);
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
@@ -11966,14 +11964,6 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
-
-
-
-
-
-
-
-
     }
 
     [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]
