@@ -1299,7 +1299,43 @@ namespace ExpansionPlugin
                 ["VehicleSettingsCFCloud"] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsCFCloudControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
-                }
+                },
+                //Quests
+                ["ExpansionQuestSettingsGeneral"] = (node,selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsGeneralControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ExpansionQuestSettingsIndicators"] = (node, selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsIndicatorsControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ExpansionQuestSettingsNotifications"] = (node, selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsNotificationsControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ExpansionQuestSettingsGroupMessages"] = (node, selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsGroupMessagesControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ExpansionQuestSettingsCooldowns"] = (node, selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsCooldownsControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ExpansionQuestSettingsAchievements"] = (node, selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsAchievementsControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ExpansionQuestSettingsResetSchedule"] = (node, selected) =>
+                {
+                    ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
+                    ShowHandler<IUIHandler>( new ExpansionQuestSettingsResetScheduleControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
             };
         }
 
@@ -2121,6 +2157,9 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addTraderNPCWaypointToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(importTraderNPCWaypointsToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(exportTraderNPCWaypointsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 ["expansionMarketTraderMapItems"] = node =>
@@ -4475,7 +4514,37 @@ namespace ExpansionPlugin
         {
             EconomyRootNode.Nodes.Add(new TreeNode("General")
             {
-                Tag = ef.Data
+                Tag = "ExpansionQuestSettingsGeneral"
+            });
+
+            EconomyRootNode.Nodes.Add(new TreeNode("NPC Indicators & Markers")
+            {
+                Tag = "ExpansionQuestSettingsIndicators"
+            });
+
+            EconomyRootNode.Nodes.Add(new TreeNode("Quest Notifications")
+            {
+                Tag = "ExpansionQuestSettingsNotifications"
+            });
+
+            EconomyRootNode.Nodes.Add(new TreeNode("Group Quest Messages")
+            {
+                Tag = "ExpansionQuestSettingsGroupMessages"
+            });
+
+            EconomyRootNode.Nodes.Add(new TreeNode("Cooldowns & Restrictions")
+            {
+                Tag = "ExpansionQuestSettingsCooldowns"
+            });
+
+            EconomyRootNode.Nodes.Add(new TreeNode("Achievements")
+            {
+                Tag = "ExpansionQuestSettingsAchievements"
+            });
+
+            EconomyRootNode.Nodes.Add(new TreeNode("Reset Schedule")
+            {
+                Tag = "ExpansionQuestSettingsResetSchedule"
             });
         }
         private TreeNode CreateExpansionQuestPersistentServerDataConfig(ExpansionQuestPersistentServerDataConfig ef)
@@ -10232,6 +10301,8 @@ namespace ExpansionPlugin
         {
             ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
             ExpansionTraderMaps.Positions.Remove(currentTreeNode.Tag as Vec3);
+            string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
+            currentTreeNode.Parent.Text = posLabel;
             currentTreeNode.Remove();
         }
         private void addTraderNPCItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -10488,6 +10559,97 @@ namespace ExpansionPlugin
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
             }
 
+        }
+        private void importTraderNPCWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Import Trader NPC Waypoints";
+            openFileDialog.Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.FindParentOfType<ExpansionTraderMaps>();
+                string filePath = openFileDialog.FileName;
+                DialogResult dialogResult = MessageBox.Show("Clear Exisitng Position?", "Clear position", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    ExpansionTraderMaps.Positions.Clear();
+                    currentTreeNode.Nodes.Clear();
+                }
+                switch (openFileDialog.FilterIndex)
+                {
+                    case 1:
+                        string[] fileContent = File.ReadAllLines(filePath);
+                        for (int i = 0; i < fileContent.Length; i++)
+                        {
+                            if (fileContent[i] == "") continue;
+                            string[] linesplit = fileContent[i].Split('|');
+                            string[] XYZ = linesplit[1].Split(' ');
+                            ExpansionTraderMaps.Positions.Add(new Vec3(XYZ));
+                        }
+                        break;
+                    case 2:
+                        ObjectSpawnerArrFile newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrFile>(File.ReadAllText(filePath));
+                        foreach (SpawnObjects so in newobjectspawner.Data.Objects)
+                        {
+                            ExpansionTraderMaps.Positions.Add(new Vec3(so.pos));
+                        }
+                        break;
+                    case 3:
+                        DZE importfile = DZEHelpers.LoadFile(filePath);
+                        foreach (Editorobject eo in importfile.EditorObjects)
+                        {
+                            ExpansionTraderMaps.Positions.Add(new Vec3(eo.Position));
+                        }
+                        break;
+                }
+                foreach (Vec3 v3 in ExpansionTraderMaps.Positions)
+                {
+                    currentTreeNode.Nodes.Add(new TreeNode(v3.GetString())
+                    {
+                        Tag = v3
+                    });
+                }
+
+            }
+        }
+        private void exportTraderNPCWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.FindParentOfType<ExpansionTraderMaps>();
+            SaveFileDialog save = new SaveFileDialog();
+            save.Title = "Export Trader NPC Waypoints";
+            save.Filter = "Expansion Map |*.map|Object Spawner|*.json";
+            save.FileName = $"{ExpansionTraderMaps.NpcClassName}_{ExpansionTraderMaps.TraderName}";
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                switch (save.FilterIndex)
+                {
+                    case 1:
+                        StringBuilder SB = new StringBuilder();
+                        foreach (Vec3 array in ExpansionTraderMaps.Positions)
+                        {
+                            SB.AppendLine($"{ExpansionTraderMaps.NpcClassName}|{ array.GetString()}|0.0 0.0 0.0");
+                        }
+                        File.WriteAllText(save.FileName, SB.ToString());
+                        break;
+                    case 2:
+                        ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
+                        newobjectspawner.Objects = new BindingList<SpawnObjects>();
+                        foreach (Vec3 array in ExpansionTraderMaps.Positions)
+                        {
+                            SpawnObjects newobject = new SpawnObjects();
+                            newobject.name = "eAI_SurvivorM_Lewis";
+                            newobject.pos = array.getfloatarray();
+                            newobject.ypr = new float[] { 0, 0, 0 };
+                            newobject.scale = 1;
+                            newobject.enableCEPersistency = false;
+                            newobjectspawner.Objects.Add(newobject);
+                        }
+                        var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                        string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
+                        File.WriteAllText(save.FileName, jsonString);
+                        break;
+                }
+            }
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -11963,6 +12125,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
     }
 
     [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]
