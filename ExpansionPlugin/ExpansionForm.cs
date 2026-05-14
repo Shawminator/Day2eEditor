@@ -491,6 +491,11 @@ namespace ExpansionPlugin
                     ExpansionMarketTraderNpcs ExpansionMarketTraderNpcs = node.Tag as ExpansionMarketTraderNpcs;
                     ShowHandler(new ExpansionMarketTraderNpcsControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionMarketTraderNpcs, selected);
                 },
+                [typeof(ExpansionTraderMaps)] = (node,selected) =>
+                {
+                    ExpansionTraderMaps ExpansionTraderMaps = node.Tag as ExpansionTraderMaps;
+                    ShowHandler(new ExpansionTraderMapsControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps, selected);
+                },
                 //Missions
                 [typeof(ExpansionMissionSettings)] = (node, selected) =>
                 {
@@ -1170,6 +1175,22 @@ namespace ExpansionPlugin
                     ExpansionMarketTraderZone ExpansionMarketTraderZone = node.Parent.Tag as ExpansionMarketTraderZone;
                     ShowHandler<IUIHandler>(new ExpansionMarketTraderZoneStockControl(), typeof(ExpansionMarketTraderZoneConfig), ExpansionMarketTraderZone, selected);
                 },
+                //Market Npcs
+                ["expansionMarketTraderMapPropertiesName"] = (node,selected) =>
+                {
+                    ExpansionTraderMaps ExpansionTraderMaps = node.Parent.Parent.Tag as ExpansionTraderMaps;
+                    ShowHandler<IUIHandler>(new ExpansionTraderMapsSpecialNameControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps.Special, selected);
+                },
+                ["expansionMarketTraderMapPropertiesLoadout"] = (node,selected) =>
+                {
+                    ExpansionTraderMaps ExpansionTraderMaps = node.Parent.Parent.Tag as ExpansionTraderMaps;
+                    ShowHandler<IUIHandler>(new ExpansionTraderMapsSpecialNameLoadoutControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps.Special, selected);
+                },
+                ["expansionMarketTraderMapPropertiesFaction"] = (node, selected) =>
+                {
+                    ExpansionTraderMaps ExpansionTraderMaps = node.Parent.Parent.Tag as ExpansionTraderMaps;
+                    ShowHandler<IUIHandler>(new TraderNPCSpecialPropertiesFactionControl(), typeof(ExpansionMarketTraderMapsConfig), ExpansionTraderMaps.Special, selected);
+                },
                 //Missions
                 ["MissionAirdrop"] = (node, selected) =>
                 {
@@ -1323,6 +1344,9 @@ namespace ExpansionPlugin
                     {
                         ExpansionSettingsCM.Items.Clear();
                         ExpansionSettingsCM.Items.Add(removeTraderNPCWaypointToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveTraderNPCWaypointUpToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(moveTraderNPCWaypointDownToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
@@ -3807,13 +3831,34 @@ namespace ExpansionPlugin
 
             // --- Special Properties ---
             TreeNode propertiesNode = new TreeNode("Properties") { Tag = "expansionMarketTraderMapProperties" };
-            if (!string.IsNullOrEmpty(map.Special.Name))
-                propertiesNode.Nodes.Add(new TreeNode("Name: " + map.Special.Name) { Tag = "expansionMarketTraderMapPropertiesName:" + map.Special.Name });
-            if (!string.IsNullOrEmpty(map.Special.Loadout))
-                propertiesNode.Nodes.Add(new TreeNode("Loadout: " + map.Special.Loadout) { Tag = "expansionMarketTraderMapPropertiesLoadout:" + map.Special.Loadout });
-            if (!string.IsNullOrEmpty(map.Special.Faction))
-                propertiesNode.Nodes.Add(new TreeNode("Faction: " + map.Special.Faction) { Tag = "expansionMarketTraderMapPropertiesFaction:" + map.Special.Faction });
 
+            string name = map.Special?.Name;
+            string loadout = map.Special?.Loadout;
+            string faction = map.Special?.Faction;
+
+            if (map.Special?.Name != null ||
+                map.Special?.Loadout != null ||
+                map.Special?.Faction != null)
+            {
+
+                propertiesNode.Nodes.Add(new TreeNode(
+                string.IsNullOrEmpty(name) ? "Name:" : $"Name: {name}")
+                {
+                    Tag = "expansionMarketTraderMapPropertiesName"
+                });
+
+                propertiesNode.Nodes.Add(new TreeNode(
+                    string.IsNullOrEmpty(loadout) ? "Loadout:" : $"Loadout: {loadout}")
+                {
+                    Tag = "expansionMarketTraderMapPropertiesLoadout"
+                });
+
+                propertiesNode.Nodes.Add(new TreeNode(
+                    string.IsNullOrEmpty(faction) ? "Faction:" : $"Faction: {faction}")
+                {
+                    Tag = "expansionMarketTraderMapPropertiesFaction"
+                });
+            }
             classNameNode.Nodes.Add(propertiesNode);
             return classNameNode;
         }
@@ -10185,31 +10230,177 @@ namespace ExpansionPlugin
         }
         private void removeTraderNPCWaypointToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
+            ExpansionTraderMaps.Positions.Remove(currentTreeNode.Tag as Vec3);
+            currentTreeNode.Remove();
         }
         private void addTraderNPCItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Tag as ExpansionTraderMaps;
+            bool hasSpecialData =
+               ExpansionTraderMaps.Special != null &&
+               (!string.IsNullOrWhiteSpace(ExpansionTraderMaps.Special.Name) ||
+                !string.IsNullOrWhiteSpace(ExpansionTraderMaps.Special.Loadout) ||
+                !string.IsNullOrWhiteSpace(ExpansionTraderMaps.Special.Faction));
 
+            if (hasSpecialData)
+            {
+                DialogResult clearResult = MessageBox.Show(
+                    "Special properties are currently set (Name / Loadout / Faction).\n\n" +
+                    "To add Trader NPC Items, these must be cleared.\n\n" +
+                    "Do you want to clear them now?",
+                    "Clear Special Properties?",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (clearResult == DialogResult.No)
+                    return;
+
+                ExpansionTraderMaps.Special = new TraderNPCSpecialProperties();
+                TreeNode itemsNode = currentTreeNode.Parent?.Nodes
+                .Cast<TreeNode>()
+                .FirstOrDefault(n => n.Text == "Properties");
+
+                if (itemsNode != null)
+                {
+                    itemsNode.Nodes.Clear();
+                }
+            }
+            AddItemfromTypes form = new AddItemfromTypes()
+            {
+            };
+
+            DialogResult result = form.ShowDialog();
+            if (result != DialogResult.OK)
+                return;
+
+            List<string> addedtypes = form.AddedTypes.ToList();
+            foreach (var l in addedtypes)
+            {
+                TraderNPCItem newTraderNPCItem = new TraderNPCItem()
+                {
+                    Attachments = new List<string>(),
+                    ClassName = l
+                };
+
+                ExpansionTraderMaps.Items.Add(newTraderNPCItem);
+                TreeNode itemNode = new TreeNode(newTraderNPCItem.ClassName) { Tag = newTraderNPCItem };
+                foreach (var att in newTraderNPCItem.Attachments)
+                {
+                    itemNode.Nodes.Add(new TreeNode(att) { Tag = "expansionMarketTraderMapAttachment" });
+                }
+                currentTreeNode.Nodes.Add(itemNode);
+            }
         }
         private void removeTraderNPCItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
+            ExpansionTraderMaps.Items.Remove(currentTreeNode.Tag as TraderNPCItem);
+            currentTreeNode.Remove();
         }
         private void addNPCTraderNPCAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            TraderNPCItem TraderNPCItem = currentTreeNode.Tag as TraderNPCItem;
+            AddItemfromTypes form = new AddItemfromTypes()
+            {
+            };
+
+            DialogResult result = form.ShowDialog();
+            if (result != DialogResult.OK)
+                return;
+
+            if (TraderNPCItem.Attachments == null)
+                TraderNPCItem.Attachments = new List<string>();
+
+            List<string> addedtypes = form.AddedTypes.ToList();
+            foreach (var l in addedtypes)
+            {
+                TraderNPCItem.Attachments.Add(l);
+                currentTreeNode.Nodes.Add(new TreeNode(l) { Tag = "expansionMarketTraderMapAttachment" });
+            }
 
         }
         private void removeTraderNPCAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            TraderNPCItem TraderNPCItem = currentTreeNode.Parent.Tag as TraderNPCItem;
+            TraderNPCItem.Attachments.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
         }
         private void addTraderNPCPropertyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionTraderMaps map = currentTreeNode.Parent.Tag as ExpansionTraderMaps;
 
+            bool hasItems = map.Items != null && map.Items.Count > 0;
+
+            if (hasItems)
+            {
+                DialogResult result = MessageBox.Show(
+                    "This Trader already has Items assigned.\n\n" +
+                    "To add Special properties, all Items must be cleared.\n\n" +
+                    "Do you want to clear Items and continue?",
+                    "Clear Items?",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.No)
+                    return;
+
+                map.Items.Clear();
+                TreeNode itemsNode = currentTreeNode.Parent?.Nodes
+                .Cast<TreeNode>()
+                .FirstOrDefault(n => n.Text == "Items");
+
+                if (itemsNode != null)
+                {
+                    itemsNode.Nodes.Clear(); 
+                }
+            }
+
+
+            map.Special = new TraderNPCSpecialProperties();
+            string name = map.Special?.Name;
+            string loadout = map.Special?.Loadout;
+            string faction = map.Special?.Faction;
+
+            currentTreeNode.Nodes.Add(new TreeNode(string.IsNullOrEmpty(name) ? "Name:" : $"Name: {name}")
+            {
+                Tag = "expansionMarketTraderMapPropertiesName"
+            });
+
+            currentTreeNode.Nodes.Add(new TreeNode(string.IsNullOrEmpty(loadout) ? "Loadout:" : $"Loadout: {loadout}")
+            {
+                Tag = "expansionMarketTraderMapPropertiesLoadout"
+            });
+
+            currentTreeNode.Nodes.Add(new TreeNode(string.IsNullOrEmpty(faction) ? "Faction:" : $"Faction: {faction}")
+            {
+                Tag = "expansionMarketTraderMapPropertiesFaction"
+            });
+            currentTreeNode.ExpandAll();
         }
         private void rempveTraderNPCPropertyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionTraderMaps map = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
 
+            if (map == null || map.Special == null)
+                return;
+
+            DialogResult result = MessageBox.Show(
+                "This will remove all Special properties (Name, Loadout, Faction).\n\n" +
+                "All values will be set to NULL.\n\n" +
+                "Do you want to continue?",
+                "Remove Special Properties?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result == DialogResult.No)
+                return;
+
+            map.Special.Name = null;
+            map.Special.Loadout = null;
+            map.Special.Faction = null;
+
+            currentTreeNode.Parent.Nodes.Clear();
         }
         private void checkNPCIsInAZoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -10246,6 +10437,59 @@ namespace ExpansionPlugin
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information
             );
+
+        }
+        private void moveTraderNPCWaypointUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index > 0)
+            {
+                siblings.RemoveAt(index);
+                ExpansionAIPatrol.Waypoints.RemoveAt(index);
+                ExpansionAIPatrol.Waypoints.Insert(index - 1, waypoint);
+                siblings.Insert(index - 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
+
+        }
+        
+        private void moveTraderNPCWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+            ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index < siblings.Count - 1)
+            {
+                siblings.RemoveAt(index);
+                ExpansionAIPatrol.Waypoints.RemoveAt(index);
+                ExpansionAIPatrol.Waypoints.Insert(index + 1, waypoint);
+                siblings.Insert(index + 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
 
         }
         //MIssions
