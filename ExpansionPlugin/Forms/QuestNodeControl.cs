@@ -63,7 +63,7 @@ namespace ExpansionPlugin.Forms
             if (q.IsWeeklyQuest == 1) flags.Add("Weekly");
             if (q.Repeatable == 1) flags.Add("Repeatable");
             if (q.IsGroupQuest == 1) flags.Add("Group");
-
+            if (q.IsAchievement == 1) flags.Add("Achievment");
             return string.Join(" | ", flags);
         }
 
