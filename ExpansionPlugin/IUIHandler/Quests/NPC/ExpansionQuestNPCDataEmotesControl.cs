@@ -38,7 +38,22 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            // TODO: Populate control with data fields here
+            List<EmoteID> emoteList = Enum.GetValues(typeof(EmoteID))
+                .Cast<EmoteID>()
+                .ToList();
+
+            NPCEmoteIDCB.DataSource = new List<EmoteID>(emoteList);
+            NPCInteractionEmoteIDCB.DataSource = new List<EmoteID>(emoteList);
+            NPCQuestCancelEmoteIDCB.DataSource = new List<EmoteID>(emoteList);
+            NPCQuestStartEmoteIDCB.DataSource = new List<EmoteID>(emoteList);
+            NPCQuestCompleteEmoteIDCB.DataSource = new List<EmoteID>(emoteList);
+
+            NPCEmoteIDCB.SelectedItem = (EmoteID)_data.NPCEmoteID;
+            NPCEmoteIsStaticCB.Checked = _data.NPCEmoteIsStatic == 1 ? true : false;
+            NPCInteractionEmoteIDCB.SelectedItem = (EmoteID)_data.NPCInteractionEmoteID;
+            NPCQuestCancelEmoteIDCB.SelectedItem = (EmoteID)_data.NPCQuestCancelEmoteID;
+            NPCQuestStartEmoteIDCB.SelectedItem = (EmoteID)_data.NPCQuestStartEmoteID;
+            NPCQuestCompleteEmoteIDCB.SelectedItem = (EmoteID)_data.NPCQuestCompleteEmoteID;
 
             _suppressEvents = false;
         }
@@ -56,5 +71,35 @@ namespace ExpansionPlugin
         }
 
         #endregion
+
+        private void NPCEmoteIDCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NPCEmoteIsStaticCB_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NPCInteractionEmoteIDCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NPCQuestCancelEmoteIDCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NPCQuestStartEmoteIDCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NPCQuestCompleteEmoteIDCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

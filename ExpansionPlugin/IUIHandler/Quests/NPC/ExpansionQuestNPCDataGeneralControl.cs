@@ -51,7 +51,9 @@ namespace ExpansionPlugin
             NPCLoadoutFileCB.DataSource = new BindingList<string>(LoadoutNameList);
             ClassNameCB.DataSource = File.ReadAllLines("Data\\ExpansionQuestNPCnames.txt").ToList(); ;
             NPCTypeCB.DataSource = Enum.GetValues(typeof(ExpansionQuestNPCType));
-
+            BindingList<string> Factions = new BindingList<string>(File.ReadAllLines("Data\\ExpansionFactions.txt").ToList());
+            Factions.Insert(0, "");
+            NPCFactionCB.DataSource = Factions;
 
 
             FilenameTB.Text = Path.GetFileNameWithoutExtension(_data.FileName);
@@ -62,6 +64,7 @@ namespace ExpansionPlugin
             NPCNameTB.Text = _data.NPCName;
             DefaultNPCTextTB.Text = _data.DefaultNPCText;
             NPCLoadoutFileCB.SelectedIndex = NPCLoadoutFileCB.FindStringExact(_data.NPCLoadoutFile);
+            NPCFactionCB.SelectedIndex = NPCFactionCB.FindStringExact(_data.NPCFaction);
             ActiveCB.Checked = _data.Active == 1 ? true : false;
             _suppressEvents = false;
         }
@@ -243,6 +246,10 @@ namespace ExpansionPlugin
             _data.Active = ActiveCB.Checked == true ? 1 : 0;
         }
 
-
+        private void NPCFactionCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.NPCFaction = NPCFactionCB.GetItemText(NPCFactionCB.SelectedItem);
+        }
     }
 }

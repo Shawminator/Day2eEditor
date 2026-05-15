@@ -248,12 +248,12 @@ namespace ExpansionPlugin
                             var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
                             if (tag is ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig)
                             {
-                                //DrawQuestNPCPositions(ExpansionMarketTraderMapsConfig);
+                                DrawQuestNPCPositions(ExpansionQuestNPCDataConfig);
                             }
                         };
                         ShowHandler(control, typeof(ExpansionQuestNPCDataConfig), v3, selected);
                         ExpansionQuestNPCData ExpansionQuestNPCData = node.Parent.Parent.Tag as ExpansionQuestNPCData;
-                        //SetupQuestNPCPOsitions(tm, node);
+                        SetupQuestNPCPOsitions(ExpansionQuestNPCData, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                 },
@@ -1378,6 +1378,8 @@ namespace ExpansionPlugin
                 },
             };
         }
+
+ 
 
         private void InitializeContextMenuHandlers()
         {
@@ -5480,6 +5482,8 @@ namespace ExpansionPlugin
             _mapControl.MapsingleClicked -= MapControl_TravelSingleclicked;
             _mapControl.MapDoubleClicked -= MapControl_TreasureHuntDoubleclicked;
             _mapControl.MapsingleClicked -= MapControl_TreasureHuntSingleclicked;
+            _mapControl.MapsingleClicked -= MapControl_ExpansionQuestNPCDataSingleclicked;
+            _mapControl.MapDoubleClicked -= MapControl_ExpansionQuestNPCDataDoubleclicked;
 
             // Reset "selected" state objects
             _selectedNoBuildZonePos = null;
@@ -5502,6 +5506,7 @@ namespace ExpansionPlugin
             _selectedTarget = null;
             _selectedTravel = null;
             _selectedTreasureHunt = null;
+            _selectedExpansionQuestNPCData = null;
         }
 
 
@@ -5604,6 +5609,7 @@ namespace ExpansionPlugin
         private ExpansionQuestObjectiveTargetConfig _selectedTarget;
         private ExpansionQuestObjectiveTravelConfig _selectedTravel;
         private ExpansionQuestObjectiveTreasureHuntConfig _selectedTreasureHunt;
+        private ExpansionQuestNPCData _selectedExpansionQuestNPCData;
         private Vec3 _SelectedVec3;
 
         // Generic map reset + show
@@ -5897,6 +5903,23 @@ namespace ExpansionPlugin
                     DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig);
             });
         }
+        private void SetupQuestNPCPOsitions(ExpansionQuestNPCData ExpansionQuestNPCData, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedExpansionQuestNPCData = ExpansionQuestNPCData;
+                _mapControl.MapsingleClicked += MapControl_ExpansionQuestNPCDataSingleclicked;
+                _mapControl.MapDoubleClicked += MapControl_ExpansionQuestNPCDataDoubleclicked;
+
+                var ExpansionQuestNPCDataConfig = node.FindParentOfType<ExpansionQuestNPCDataConfig>();
+                if (ExpansionQuestNPCDataConfig != null)
+                    DrawQuestNPCPositions(ExpansionQuestNPCDataConfig);
+            });
+        }
+
+
+
+
         //Draw Methods
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
         {
@@ -6686,7 +6709,91 @@ namespace ExpansionPlugin
             }
 
         }
+        private void DrawQuestNPCPositions(ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig)
+        {
+            TraderSpawnDrawable? selected_marker = null;
+            TextMarkerDrawable? selectedtext_marker = null;
+            foreach (ExpansionQuestNPCData ExpansionQuestNPCData in ExpansionQuestNPCDataConfig.MutableItems)
+            {
+                PatrolBehaviour behaviour = PatrolBehaviour.LOOP;
+                if (!ExpansionQuestNPCData.GetISAI())
+                {
+                    Vec3 pos = ExpansionQuestNPCData.Position;
+                    var marker = new TraderSpawnDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Orientation = ExpansionQuestNPCData.Orientation.getfloatarray(),
+                        Text = $"{ExpansionQuestNPCData.NPCName}",
+                        TextPlacement = MarkerLabelPlacement.Top,
+                        TextBackground = true,
+                        TextBackgroundColor = Color.BlueViolet
+                    };
+                    Vec3 v3 = currentTreeNode.Tag as Vec3;
 
+                    if (_selectedExpansionQuestNPCData == ExpansionQuestNPCData)
+                    {
+                        marker.Color = Color.LimeGreen;
+                        selected_marker = marker;
+                    }
+                    else
+                    {
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < ExpansionQuestNPCData.Waypoints.Count; i++)
+                    {
+                        Vec3 waypoints = ExpansionQuestNPCData.Waypoints[i];
+
+                        // Determine next waypoint index
+                        bool isLast = i == ExpansionQuestNPCData.Waypoints.Count - 1;
+                        Vec3 nextWaypoint;
+
+                        if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                        {
+                            //Don't connect last to first for ALTERNATE
+                            nextWaypoint = waypoints;
+                        }
+                        else
+                        {
+                            nextWaypoint = ExpansionQuestNPCData.Waypoints[(i + 1) % ExpansionQuestNPCData.Waypoints.Count];
+                        }
+
+                        var marker = new AIPatrolDrawable(
+                            new PointF(waypoints.X, waypoints.Z),
+                            new PointF(nextWaypoint.X, nextWaypoint.Z),
+                            _mapControl.MapSize,
+                            behaviour)
+                        {
+                            Color = Color.Red,
+                            WriteString = true
+                        };
+
+                        if (_selectedExpansionQuestNPCData == ExpansionQuestNPCData)
+                            marker.Color = Color.Yellow;
+
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        if (v3 == waypoints)
+                            marker.Color = Color.LimeGreen;
+
+                        marker.text = (i == 0 ? $"{ExpansionQuestNPCData.NPCName}" + "\n" : "") + (i + 1).ToString();
+
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+            }
+
+            if (selected_marker != null)
+            {
+                _mapControl.RegisterDrawable(selected_marker);
+            }
+            if (selectedtext_marker != null)
+            {
+                _mapControl.RegisterDrawable(selectedtext_marker);
+            }
+
+        }
 
         //map click methods
         private void MapControl_BuildZoneSingleclicked(object sender, MapClickEventArgs e)
@@ -7906,6 +8013,12 @@ namespace ExpansionPlugin
                 DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig);
                 currentTreeNode.Text = v3.GetString();
             }
+        }
+        private void MapControl_ExpansionQuestNPCDataSingleclicked(object? sender, MapClickEventArgs e)
+        {
+        }
+        private void MapControl_ExpansionQuestNPCDataDoubleclicked(object? sender, MapClickEventArgs e)
+        {
         }
         #endregion mapstuff
 

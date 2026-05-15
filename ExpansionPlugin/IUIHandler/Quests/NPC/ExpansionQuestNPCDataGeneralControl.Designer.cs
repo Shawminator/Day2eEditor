@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             QuestObjectivesBaseInfoGB = new GroupBox();
+            darkButton36 = new Button();
             NPCLoadoutFileCB = new ComboBox();
             label5 = new Label();
             DefaultNPCTextTB = new TextBox();
@@ -47,7 +48,8 @@
             ActiveCB = new CheckBox();
             darkLabel47 = new Label();
             label2 = new Label();
-            darkButton36 = new Button();
+            NPCFactionCB = new ComboBox();
+            label6 = new Label();
             QuestObjectivesBaseInfoGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ConfigVersionNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)IDNUD).BeginInit();
@@ -55,6 +57,8 @@
             // 
             // QuestObjectivesBaseInfoGB
             // 
+            QuestObjectivesBaseInfoGB.Controls.Add(NPCFactionCB);
+            QuestObjectivesBaseInfoGB.Controls.Add(label6);
             QuestObjectivesBaseInfoGB.Controls.Add(darkButton36);
             QuestObjectivesBaseInfoGB.Controls.Add(NPCLoadoutFileCB);
             QuestObjectivesBaseInfoGB.Controls.Add(label5);
@@ -79,17 +83,29 @@
             QuestObjectivesBaseInfoGB.Margin = new Padding(4, 3, 4, 3);
             QuestObjectivesBaseInfoGB.Name = "QuestObjectivesBaseInfoGB";
             QuestObjectivesBaseInfoGB.Padding = new Padding(4, 3, 4, 3);
-            QuestObjectivesBaseInfoGB.Size = new Size(428, 294);
+            QuestObjectivesBaseInfoGB.Size = new Size(428, 319);
             QuestObjectivesBaseInfoGB.TabIndex = 219;
             QuestObjectivesBaseInfoGB.TabStop = false;
             QuestObjectivesBaseInfoGB.Text = "Base Info";
+            // 
+            // darkButton36
+            // 
+            darkButton36.Enabled = false;
+            darkButton36.FlatStyle = FlatStyle.Flat;
+            darkButton36.Location = new Point(361, 171);
+            darkButton36.Margin = new Padding(4, 3, 4, 3);
+            darkButton36.Name = "darkButton36";
+            darkButton36.Size = new Size(48, 24);
+            darkButton36.TabIndex = 173;
+            darkButton36.Text = "Set";
+            darkButton36.Click += darkButton36_Click;
             // 
             // NPCLoadoutFileCB
             // 
             NPCLoadoutFileCB.BackColor = Color.FromArgb(60, 63, 65);
             NPCLoadoutFileCB.ForeColor = SystemColors.Control;
             NPCLoadoutFileCB.FormattingEnabled = true;
-            NPCLoadoutFileCB.Location = new Point(120, 232);
+            NPCLoadoutFileCB.Location = new Point(119, 232);
             NPCLoadoutFileCB.Margin = new Padding(4, 3, 4, 3);
             NPCLoadoutFileCB.Name = "NPCLoadoutFileCB";
             NPCLoadoutFileCB.Size = new Size(289, 23);
@@ -100,7 +116,7 @@
             // 
             label5.AutoSize = true;
             label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(15, 235);
+            label5.Location = new Point(12, 235);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new Size(99, 15);
@@ -261,7 +277,7 @@
             // 
             ActiveCB.AutoSize = true;
             ActiveCB.ForeColor = SystemColors.Control;
-            ActiveCB.Location = new Point(120, 266);
+            ActiveCB.Location = new Point(120, 296);
             ActiveCB.Margin = new Padding(4, 3, 4, 3);
             ActiveCB.Name = "ActiveCB";
             ActiveCB.Size = new Size(15, 14);
@@ -284,24 +300,35 @@
             // 
             label2.AutoSize = true;
             label2.ForeColor = SystemColors.Control;
-            label2.Location = new Point(15, 265);
+            label2.Location = new Point(15, 295);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(40, 15);
             label2.TabIndex = 115;
             label2.Text = "Active";
             // 
-            // darkButton36
+            // NPCFactionCB
             // 
-            darkButton36.Enabled = false;
-            darkButton36.FlatStyle = FlatStyle.Flat;
-            darkButton36.Location = new Point(361, 171);
-            darkButton36.Margin = new Padding(4, 3, 4, 3);
-            darkButton36.Name = "darkButton36";
-            darkButton36.Size = new Size(48, 24);
-            darkButton36.TabIndex = 173;
-            darkButton36.Text = "Set";
-            darkButton36.Click += darkButton36_Click;
+            NPCFactionCB.BackColor = Color.FromArgb(60, 63, 65);
+            NPCFactionCB.ForeColor = SystemColors.Control;
+            NPCFactionCB.FormattingEnabled = true;
+            NPCFactionCB.Location = new Point(120, 262);
+            NPCFactionCB.Margin = new Padding(4, 3, 4, 3);
+            NPCFactionCB.Name = "NPCFactionCB";
+            NPCFactionCB.Size = new Size(289, 23);
+            NPCFactionCB.TabIndex = 174;
+            NPCFactionCB.SelectedIndexChanged += NPCFactionCB_SelectedIndexChanged;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.ForeColor = Color.FromArgb(220, 220, 220);
+            label6.Location = new Point(15, 265);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(73, 15);
+            label6.TabIndex = 175;
+            label6.Text = "NPC Faction";
             // 
             // ExpansionQuestNPCDataGeneralControl
             // 
@@ -311,7 +338,7 @@
             Controls.Add(QuestObjectivesBaseInfoGB);
             ForeColor = SystemColors.Control;
             Name = "ExpansionQuestNPCDataGeneralControl";
-            Size = new Size(428, 294);
+            Size = new Size(428, 319);
             QuestObjectivesBaseInfoGB.ResumeLayout(false);
             QuestObjectivesBaseInfoGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ConfigVersionNUD).EndInit();
@@ -341,5 +368,7 @@
         private ComboBox ClassNameCB;
         private Label label1;
         private Button darkButton36;
+        private ComboBox NPCFactionCB;
+        private Label label6;
     }
 }
