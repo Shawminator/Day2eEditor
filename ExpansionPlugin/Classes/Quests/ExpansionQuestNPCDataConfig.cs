@@ -57,6 +57,11 @@ namespace ExpansionPlugin
         {
             return ExpansionQuestNPCData.FixMissingOrInvalidFields();
         }
+
+        internal List<int> GetAllNPCIDS()
+        {
+            return MutableItems.Select(npcdata => (int)npcdata.ID).OrderBy(id => id).ToList();
+        }
     }
     public class ExpansionQuestNPCData : IDeepCloneable<ExpansionQuestNPCData>, IEquatable<ExpansionQuestNPCData>
     {
@@ -95,10 +100,11 @@ namespace ExpansionPlugin
         public EmoteConstants? NPCQuestCompleteEmoteID { get; set; }
         public string? NPCFaction { get; set; }
         public ExpansionQuestNPCType? NPCType { get; set; }
+        public int? Active { get; set;  }
 
         public ExpansionQuestNPCData Clone()
         {
-            return new ExpansionQuestNPCData()
+            var clone = new ExpansionQuestNPCData()
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
@@ -119,9 +125,11 @@ namespace ExpansionPlugin
                 NPCQuestCompleteEmoteID = NPCQuestCompleteEmoteID,
                 NPCFaction = NPCFaction,
                 NPCType = NPCType,
-                ToDelete = ToDelete,
-                Id = Id
+                Active = Active
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
 
         }
         public override bool Equals(object? obj) => Equals(obj as ExpansionQuestNPCData);
@@ -129,7 +137,9 @@ namespace ExpansionPlugin
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
+            if (_path != other._path) return false;
             if (ConfigVersion != other.ConfigVersion) return false;
             if (ID != other.ID) return false;
             if (!Equals(ClassName, other.ClassName)) return false;
@@ -147,7 +157,8 @@ namespace ExpansionPlugin
             if (NPCQuestCompleteEmoteID != other.NPCQuestCompleteEmoteID) return false;
             if (!Equals(NPCFaction, other.NPCFaction)) return false;
             if (NPCType != other.NPCType) return false;
-
+            if (Active != other.Active) return false;
+            
             return true;
 
         }

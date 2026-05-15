@@ -234,6 +234,28 @@ namespace ExpansionPlugin
                         SetupTraderNPCPOsitions(tm, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
+                    else if (node.Parent.Tag is ExpansionQuestNPCData)
+                    {
+                        ShowHandler(new Vector3Control(), typeof(ExpansionQuestNPCDataConfig), node.Tag as Vec3, selected);
+                    }
+                    else if (node.Parent.Tag.ToString() == "expansionQuestNPCMovement")
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
+                            if (tag is ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig)
+                            {
+                                //DrawQuestNPCPositions(ExpansionMarketTraderMapsConfig);
+                            }
+                        };
+                        ShowHandler(control, typeof(ExpansionQuestNPCDataConfig), v3, selected);
+                        ExpansionQuestNPCData ExpansionQuestNPCData = node.Parent.Parent.Tag as ExpansionQuestNPCData;
+                        //SetupQuestNPCPOsitions(tm, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
                 },
                 //Loadouts
                 [typeof(AILoadouts)] = (node, selected) =>
@@ -772,6 +794,24 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionVehiclesLockConfigControl(), typeof(ExpansionVehiclesConfig), ExpansionVehiclesLockConfig, selected);
                 },
                 //Quests
+                //Npcs
+                [typeof(ExpansionQuestNPCData)] = (node,selected) =>
+                {
+                    ExpansionQuestNPCData ExpansionQuestNPCData = node.Tag as ExpansionQuestNPCData;
+                    switch (node.Text)
+                    {
+                        case "General":
+                            ShowHandler(new ExpansionQuestNPCDataGeneralControl(), typeof(ExpansionQuestNPCDataConfig), ExpansionQuestNPCData, selected);
+                            break;
+                        case "Emotes":
+                            ShowHandler(new ExpansionQuestNPCDataEmotesControl(), typeof(ExpansionQuestNPCDataConfig), ExpansionQuestNPCData, selected);
+                            break;
+                        default:
+                            ShowHandler<IUIHandler>(null, null, null, selected);
+                            break;
+                    }
+                   
+                },
                 //objective node type
                 [typeof(ObjectiveNodeTag)] = (node, selected) =>
                 {
@@ -1762,9 +1802,12 @@ namespace ExpansionPlugin
                 //Quests
                 [typeof(ExpansionQuestQuest)] = node =>
                 {
-                    ExpansionSettingsCM.Items.Clear();
-                    ExpansionSettingsCM.Items.Add(questFlowPreviewToolStripMenuItem);
-                    ExpansionSettingsCM.Show(Cursor.Position);
+                    if (node.Parent.Tag is ExpansionQuestQuestConfig)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(questFlowPreviewToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 },
             };
             // ----------------------
@@ -4582,15 +4625,25 @@ namespace ExpansionPlugin
         }
         private static void CreateQuestNPCNodes(TreeNode node, ExpansionQuestNPCDataConfig NPCdata)
         {
-            foreach (ExpansionQuestNPCData map in NPCdata.MutableItems)
+            var sortedQuests = NPCdata.MutableItems
+               .OrderBy(q => q.ID ?? int.MaxValue)
+               .ToList();
+            foreach (ExpansionQuestNPCData map in sortedQuests)
             {
                 TreeNode classNameNode = new TreeNode($"ID:{map.ID} {map.NPCName} ({map.ClassName}) {map.GetNPCType()}")
                 {
                     Tag = map
                 };
-
+                classNameNode.Nodes.Add(new TreeNode("General")
+                {
+                    Tag = map
+                });
+                classNameNode.Nodes.Add(new TreeNode("Emotes")
+                {
+                    Tag = map
+                });
                 // --- Rotation ---
-                TreeNode rotationNode = new TreeNode("Orientation: " + map.Orientation.ToString())
+                TreeNode rotationNode = new TreeNode("Orientation: " + map.Orientation.GetString())
                 {
                     Tag = map.Orientation
                 };
@@ -4606,18 +4659,17 @@ namespace ExpansionPlugin
                 {
                     foreach (Vec3 v3 in map.Waypoints)
                     {
-                        positionsNode.Nodes.Add(new TreeNode(v3.ToString()) { Tag = v3 });
+                        positionsNode.Nodes.Add(new TreeNode(v3.GetString()) { Tag = v3 });
                     }
                 }
                 else if (map.Position != null)
                 {
-                    positionsNode.Nodes.Add(new TreeNode(map.Position.ToString()) { Tag = map.Position });
+                    positionsNode.Nodes.Add(new TreeNode(map.Position.GetString()) { Tag = map.Position });
                 }
 
                 classNameNode.Nodes.Add(positionsNode);
 
-
-                Helpers.InsertNodeAlphabetically(node.Nodes, classNameNode);
+                node.Nodes.Add(classNameNode);
             }
         }
         private TreeNode CreateExpansionQuestQuestConfig(ExpansionQuestQuestConfig ef)
@@ -4683,14 +4735,14 @@ namespace ExpansionPlugin
                 if (quest.QuestGiverIDs != null)
                 {
                     foreach (int id in quest.QuestGiverIDs)
-                        giverNode.Nodes.Add(new TreeNode($"{GetNPCReferenceText(id)}") { Tag = id });
+                        giverNode.Nodes.Add(new TreeNode($"{Helpers.GetNPCReferenceText(id)}") { Tag = id });
                 }
 
                 TreeNode turnInNode = new TreeNode($"Quest Turn Ins") { Tag = quest };
                 if (quest.QuestTurnInIDs != null)
                 {
                     foreach (int id in quest.QuestTurnInIDs)
-                        turnInNode.Nodes.Add(new TreeNode($"{GetNPCReferenceText(id)}") { Tag = id });
+                        turnInNode.Nodes.Add(new TreeNode($"{Helpers.GetNPCReferenceText(id)}") { Tag = id });
                 }
 
                 npcNode.Nodes.Add(giverNode);
@@ -4765,13 +4817,7 @@ namespace ExpansionPlugin
 
             return $"🔗 Quest {questId}: {title}";
         }
-        private string GetNPCReferenceText(int id)
-        {
-            var NPCfiles = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems;
-            ExpansionQuestNPCData npc = NPCfiles.FirstOrDefault(x => x.ID == id);
 
-            return $"🔗 {npc.NPCName} ({npc.ClassName}) {npc.GetNPCType()}";
-        }
         private string GetObjectiveReferenceText(Objectives objective)
         {
             if (objective == null)

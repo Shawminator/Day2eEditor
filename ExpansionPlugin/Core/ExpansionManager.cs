@@ -414,6 +414,7 @@ namespace ExpansionPlugin
             CheckExpansionFactions();
             checkExpansionIcons();
             checkExpansionTraderNPCS();
+            checkExpansionQuestNPCS();
         }
         private void CheckExpansionFactions()
         {
@@ -540,6 +541,38 @@ namespace ExpansionPlugin
                 File.WriteAllLines(filePath, TraderNames);
             }
         }
+        private void checkExpansionQuestNPCS()
+        {
+            string filePath = "Data\\ExpansionQuestNPCnames.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> NPCNames = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                NPCNames = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string trader in ExpansionNPCS)
+            {
+                if (!NPCNames.Contains(trader))
+                {
+                    NPCNames.Add(trader);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, NPCNames);
+            }
+        }
+
         static List<string> ExpansionFactions = new List<string>()
         {
             "Brawlers",
@@ -841,7 +874,75 @@ namespace ExpansionPlugin
             "ExpansionTraderAINaomi",
             "ExpansionTraderAIBaty"
         };
-
+        public static List<string> ExpansionNPCS = new List<string>()
+        {
+            "ExpansionQuestObjectBoard",
+            "ExpansionQuestBoardSmall",
+            "ExpansionQuestBoardLarge",
+            "ExpansionQuestObjectLocker",
+            "ExpansionQuestNPCMirek",
+            "ExpansionQuestNPCDenis",
+            "ExpansionQuestNPCBoris",
+            "ExpansionQuestNPCCyril",
+            "ExpansionQuestNPCElias",
+            "ExpansionQuestNPCFrancis",
+            "ExpansionQuestNPCGuo",
+            "ExpansionQuestNPCHassan",
+            "ExpansionQuestNPCIndar",
+            "ExpansionQuestNPCJose",
+            "ExpansionQuestNPCKaito",
+            "ExpansionQuestNPCLewis",
+            "ExpansionQuestNPCManua",
+            "ExpansionQuestNPCNiki",
+            "ExpansionQuestNPCOliver",
+            "ExpansionQuestNPCPeter",
+            "ExpansionQuestNPCQuinn",
+            "ExpansionQuestNPCRolf",
+            "ExpansionQuestNPCSeth",
+            "ExpansionQuestNPCTaiki",
+            "ExpansionQuestNPCLinda",
+            "ExpansionQuestNPCMaria",
+            "ExpansionQuestNPCFrida",
+            "ExpansionQuestNPCGabi",
+            "ExpansionQuestNPCHelga",
+            "ExpansionQuestNPCIrena",
+            "ExpansionQuestNPCJudy",
+            "ExpansionQuestNPCKeiko",
+            "ExpansionQuestNPCEva",
+            "ExpansionQuestNPCNaomi",
+            "ExpansionQuestNPCBaty",
+            "ExpansionQuestNPCAIMirek",
+            "ExpansionQuestNPCAIDenis",
+            "ExpansionQuestNPCAIBoris",
+            "ExpansionQuestNPCAICyril",
+            "ExpansionQuestNPCAIElias",
+            "ExpansionQuestNPCAIFrancis",
+            "ExpansionQuestNPCAIGuo",
+            "ExpansionQuestNPCAIHassan",
+            "ExpansionQuestNPCAIIndar",
+            "ExpansionQuestNPCAIJose",
+            "ExpansionQuestNPCAIKaito",
+            "ExpansionQuestNPCAILewis",
+            "ExpansionQuestNPCAIManua",
+            "ExpansionQuestNPCAINiki",
+            "ExpansionQuestNPCAIOliver",
+            "ExpansionQuestNPCAIPeter",
+            "ExpansionQuestNPCAIQuinn",
+            "ExpansionQuestNPCAIRolf",
+            "ExpansionQuestNPCAISeth",
+            "ExpansionQuestNPCAITaiki",
+            "ExpansionQuestNPCAILinda",
+            "ExpansionQuestNPCAIMaria",
+            "ExpansionQuestNPCAIFrida",
+            "ExpansionQuestNPCAIGabi",
+            "ExpansionQuestNPCAIHelga",
+            "ExpansionQuestNPCAIIrena",
+            "ExpansionQuestNPCAIJudy",
+            "ExpansionQuestNPCAIKeiko",
+            "ExpansionQuestNPCAIEva",
+            "ExpansionQuestNPCAINaomi",
+            "ExpansionQuestNPCAIBaty"
+        };
 
     }
     public static class ResourceHelper

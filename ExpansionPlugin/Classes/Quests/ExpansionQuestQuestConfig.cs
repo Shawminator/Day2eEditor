@@ -186,13 +186,7 @@ namespace ExpansionPlugin
         }
         public List<int> GetAllQuestIDS()
         {
-            List<int> Numberofquests = new List<int>();
-            foreach (ExpansionQuestQuest quest in MutableItems)
-            {
-                Numberofquests.Add((int)quest.ID);
-            }
-            Numberofquests.Sort();
-            return Numberofquests;
+            return MutableItems.Select(QuestIds => (int)QuestIds.ID).OrderBy(id => id).ToList();
         }
         public ExpansionQuestQuest GetQuestbyID(int ID)
         {

@@ -298,6 +298,12 @@ namespace ExpansionPlugin
 
             return string.Join("|", parts);
         }
+        public static string GetNPCReferenceText(int id)
+        {
+            var NPCfiles = AppServices.GetRequired<ExpansionManager>().ExpansionQuestNPCDataConfig.MutableItems;
+            ExpansionQuestNPCData npc = NPCfiles.FirstOrDefault(x => x.ID == id);
 
+            return $"🔗 {npc.NPCName} ({npc.ClassName}) {npc.GetNPCType()}";
+        }
     }
 }

@@ -59,6 +59,13 @@ namespace ExpansionPlugin
                 _nodes.Last().Text == "Rotation" )
                 return;
 
+            if(_parentType == typeof(ExpansionQuestNPCDataConfig) &&
+                _nodes.Last().Parent.Tag.ToString() != "expansionQuestNPCMovement")
+            {
+                _nodes.Last().Text = "Orientation: " + _data.GetString();
+                return;
+            }
+
             if (_nodes?.Any() == true )
             {
                 string split = _nodes.Last().Text.Split(':')[0];
