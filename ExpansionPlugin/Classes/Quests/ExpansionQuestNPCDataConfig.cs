@@ -322,9 +322,7 @@ namespace ExpansionPlugin
         }
         public bool GetISAI()
         {
-            return NPCType == ExpansionQuestNPCType.AI &&
-                   Waypoints != null &&
-                   Waypoints.Count > 0;
+            return NPCType == ExpansionQuestNPCType.AI;
         }
     }
 }

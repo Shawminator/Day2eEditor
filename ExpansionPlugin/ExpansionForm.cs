@@ -795,7 +795,7 @@ namespace ExpansionPlugin
                 },
                 //Quests
                 //Npcs
-                [typeof(ExpansionQuestNPCData)] = (node,selected) =>
+                [typeof(ExpansionQuestNPCData)] = (node, selected) =>
                 {
                     ExpansionQuestNPCData ExpansionQuestNPCData = node.Tag as ExpansionQuestNPCData;
                     switch (node.Text)
@@ -810,7 +810,7 @@ namespace ExpansionPlugin
                             ShowHandler<IUIHandler>(null, null, null, selected);
                             break;
                     }
-                   
+
                 },
                 //objective node type
                 [typeof(ObjectiveNodeTag)] = (node, selected) =>
@@ -1015,6 +1015,9 @@ namespace ExpansionPlugin
                             case "Rewards":
                                 ShowHandler(new ExpansionQuestQuestRewardsControl(), typeof(ExpansionQuestQuest), quest, selected);
                                 break;
+                            case "Reputation / Faction":
+                                ShowHandler(new ExpansionQuestQuestRequirementsControl(), typeof(ExpansionQuestQuest), quest, selected);
+                                break;
                             default:
                                 ShowHandler<IUIHandler>(null, null, null, selected);
                                 break;
@@ -1056,6 +1059,11 @@ namespace ExpansionPlugin
                 {
                     ExpansionQuestRewardConfig ExpansionQuestRewardConfig = node.Tag as ExpansionQuestRewardConfig;
                     ShowHandler(new ExpansionQuestRewardConfigControl(), typeof(ExpansionQuestItemConfig), ExpansionQuestRewardConfig, selected);
+                },
+                [typeof(FactionQuestRep)] = (node, selected) =>
+                {
+                    FactionQuestRep FactionQuestRep = node.Tag as FactionQuestRep;
+                    ShowHandler(new ExpansionQuestQuestFactionRepsControl(), typeof(ExpansionQuestItemConfig), FactionQuestRep, selected);
                 },
             };
             // ----------------------
@@ -1341,7 +1349,7 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionVehicleSettingsCFCloudControl(), typeof(ExpansionVehiclesConfig), _expansionManager.ExpansionVehiclesConfig.Data, selected);
                 },
                 //Quests
-                ["ExpansionQuestSettingsGeneral"] = (node,selected) =>
+                ["ExpansionQuestSettingsGeneral"] = (node, selected) =>
                 {
                     ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
                     ShowHandler<IUIHandler>(new ExpansionQuestSettingsGeneralControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
@@ -1374,12 +1382,12 @@ namespace ExpansionPlugin
                 ["ExpansionQuestSettingsResetSchedule"] = (node, selected) =>
                 {
                     ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
-                    ShowHandler<IUIHandler>( new ExpansionQuestSettingsResetScheduleControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                    ShowHandler<IUIHandler>(new ExpansionQuestSettingsResetScheduleControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
                 },
             };
         }
 
- 
+
 
         private void InitializeContextMenuHandlers()
         {
@@ -1426,6 +1434,21 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(moveTraderNPCWaypointUpToolStripMenuItem);
                         ExpansionSettingsCM.Items.Add(moveTraderNPCWaypointDownToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                    else if (node.Parent.Tag.ToString() == "expansionQuestNPCMovement")
+                    {
+                        if (node.Parent.Parent.Tag is ExpansionQuestNPCData ExpansionQuestNPCData)
+                        {
+                            if (ExpansionQuestNPCData.GetISAI() && ExpansionQuestNPCData.Waypoints.Count > 1)
+                            {
+                                ExpansionSettingsCM.Items.Clear();
+                                ExpansionSettingsCM.Items.Add(removeNPCWaypointsToolStripMenuItem);
+                                ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                                ExpansionSettingsCM.Items.Add(moveNPCWaypointUpToolStripMenuItem);
+                                ExpansionSettingsCM.Items.Add(moveNPCWaypointDownToolStripMenuItem);
+                                ExpansionSettingsCM.Show(Cursor.Position);
+                            }
+                        }
                     }
                 },
                 //AI
@@ -2512,6 +2535,17 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewVehicleConfigToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                //Quests
+                ["expansionQuestNPCMovement"] = node =>
+                {
+                    ExpansionQuestNPCData ExpansionQuestNPCData = node.Parent.Tag as ExpansionQuestNPCData;
+                    if (ExpansionQuestNPCData.GetISAI())
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(addNPCWaypointsToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 }
             };
         }
@@ -3896,7 +3930,7 @@ namespace ExpansionPlugin
             };
             foreach (Vec3 v3 in map.Positions)
             {
-                positionsNode.Nodes.Add(new TreeNode(v3.ToString()) { Tag = v3 });
+                positionsNode.Nodes.Add(new TreeNode(v3.GetString()) { Tag = v3 });
             }
             classNameNode.Nodes.Add(positionsNode);
 
@@ -4804,7 +4838,33 @@ namespace ExpansionPlugin
                 }
                 questNode.Nodes.Add(rewardsNode);
 
-                questNode.Nodes.Add(new TreeNode("Reputation / Faction") { Tag = quest });
+                TreeNode RandFNode = new TreeNode("Reputation / Faction") { Tag = quest };
+                TreeNode FactionReputationRequirementsNode = new TreeNode("Faction Reputation Requirements")
+                {
+                    Tag = "FactionReputationRequirements"
+                };
+                foreach (FactionQuestRep fqr in quest.FactionReputationRequirementsList)
+                {
+                    FactionReputationRequirementsNode.Nodes.Add(new TreeNode($"Faction:{fqr.Faction} Rep:{fqr.Reputation}")
+                    {
+                        Tag = fqr
+                    });
+                }
+                RandFNode.Nodes.Add(FactionReputationRequirementsNode);
+                TreeNode FactionReputationRewardsListNode = new TreeNode("Faction Reputation Rewards")
+                {
+                    Tag = "FactionReputationRewardsList"
+                };
+                foreach (FactionQuestRep fqr in quest.FactionReputationRewardsList)
+                {
+                    FactionReputationRewardsListNode.Nodes.Add(new TreeNode($"Faction:{fqr.Faction} Rep:{fqr.Reputation}")
+                    {
+                        Tag = fqr
+                    });
+                }
+                RandFNode.Nodes.Add(FactionReputationRewardsListNode);
+
+                questNode.Nodes.Add(RandFNode);
 
                 economyRootNode.Nodes.Add(questNode);
 
@@ -4819,7 +4879,6 @@ namespace ExpansionPlugin
 
             return $"🔗 Quest {questId}: {title}";
         }
-
         private string GetObjectiveReferenceText(Objectives objective)
         {
             if (objective == null)
@@ -4830,7 +4889,6 @@ namespace ExpansionPlugin
 
             return $"🔗 {objectiveBase.ObjectiveType} : {objectiveBase.ObjectiveText}";
         }
-
         private TreeNode CreateExpansionQuestObjectiveConfigConfig(ExpansionQuestObjectiveConfigConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode("Quest Objectives")
@@ -4876,8 +4934,6 @@ namespace ExpansionPlugin
             }
 
         }
-
-
         //Raid
         private TreeNode CreateExpansionRaidConfig(ExpansionRaidConfig ef)
         {
@@ -10454,7 +10510,7 @@ namespace ExpansionPlugin
 
             string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
             currentTreeNode.Text = posLabel;
-            currentTreeNode.Nodes.Add(new TreeNode(newpos.ToString()) { Tag = newpos });
+            currentTreeNode.Nodes.Add(new TreeNode(newpos.GetString()) { Tag = newpos });
         }
         private void removeTraderNPCWaypointToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -10786,7 +10842,7 @@ namespace ExpansionPlugin
                         StringBuilder SB = new StringBuilder();
                         foreach (Vec3 array in ExpansionTraderMaps.Positions)
                         {
-                            SB.AppendLine($"{ExpansionTraderMaps.NpcClassName}|{ array.GetString()}|0.0 0.0 0.0");
+                            SB.AppendLine($"{ExpansionTraderMaps.NpcClassName}|{array.GetString()}|0.0 0.0 0.0");
                         }
                         File.WriteAllText(save.FileName, SB.ToString());
                         break;
@@ -12225,6 +12281,99 @@ namespace ExpansionPlugin
             form.Show(this);
 
         }
+        private void addNPCWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCData ExpansionQuestNPCData = currentTreeNode.Parent.Tag as ExpansionQuestNPCData;
+            Vec3 lastpos = ExpansionQuestNPCData.Waypoints.Last();
+            Vec3 newpos = new Vec3()
+            {
+                X = lastpos.X + 25,
+                Y = lastpos.Y,
+                Z = lastpos.Z + 10
+            };
+            if (MapData.FileExists)
+            {
+                newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
+            }
+            ExpansionQuestNPCData.Waypoints.Add(newpos);
+
+
+            string posLabel = ExpansionQuestNPCData.GetISAI() ? "Waypoints" : "Position";
+            currentTreeNode.Text = posLabel;
+            currentTreeNode.Nodes.Add(new TreeNode(newpos.GetString()) { Tag = newpos });
+        }
+
+        private void removeNPCWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCData expansionQuestNPCData = currentTreeNode.Parent.Parent.Tag as ExpansionQuestNPCData;
+            Vec3 waypointToRemove = currentTreeNode.Tag as Vec3;
+            int removedIndex = expansionQuestNPCData.Waypoints.IndexOf(waypointToRemove);
+            expansionQuestNPCData.Waypoints.Remove(waypointToRemove);
+
+            if (removedIndex == 0 && expansionQuestNPCData.Waypoints.Count > 0)
+            {
+                expansionQuestNPCData.Position = expansionQuestNPCData.Waypoints[0];
+            }
+
+            string posLabel = expansionQuestNPCData.GetISAI() ? "Waypoints" : "Position";
+            currentTreeNode.Parent.Text = posLabel;
+            currentTreeNode.Remove();
+        }
+        private void moveNPCWaypointUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCData ExpansionQuestNPCData = currentTreeNode.FindParentOfType<ExpansionQuestNPCData>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index > 0)
+            {
+                siblings.RemoveAt(index);
+                ExpansionQuestNPCData.Waypoints.RemoveAt(index);
+                ExpansionQuestNPCData.Waypoints.Insert(index - 1, waypoint);
+                siblings.Insert(index - 1, currentTreeNode);
+                if (index == 1)
+                    ExpansionQuestNPCData.Position = waypoint;
+                ExpansionTV.SelectedNode = currentTreeNode;
+            }
+        }
+
+        private void moveNPCWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCData ExpansionQuestNPCData = currentTreeNode.FindParentOfType<ExpansionQuestNPCData>();
+            Vec3 waypoint = currentTreeNode.Tag as Vec3;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
+
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index < siblings.Count - 1)
+            {
+                siblings.RemoveAt(index);
+                ExpansionQuestNPCData.Waypoints.RemoveAt(index);
+                ExpansionQuestNPCData.Waypoints.Insert(index + 1, waypoint);
+                siblings.Insert(index + 1, currentTreeNode);
+                if(index == 0)
+                {
+                    ExpansionQuestNPCData.Position = ExpansionQuestNPCData.Waypoints[0];
+                }
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -12284,6 +12433,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
 
 
     }

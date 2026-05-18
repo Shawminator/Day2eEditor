@@ -227,14 +227,18 @@
             addNewTraderFileToolStripMenuItem = new ToolStripMenuItem();
             removeTraderFileToolStripMenuItem = new ToolStripMenuItem();
             clearStockToolStripMenuItem = new ToolStripMenuItem();
+            importTraderNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
+            exportTraderNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
             QuestsCM = new ContextMenuStrip(components);
             toolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripMenuItem();
             questFlowPreviewToolStripMenuItem = new ToolStripMenuItem();
-            importTraderNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
-            exportTraderNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
+            addNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
+            removeNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
+            moveNPCWaypointUpToolStripMenuItem = new ToolStripMenuItem();
+            moveNPCWaypointDownToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1669,7 +1673,7 @@
             MarketCM.Items.AddRange(new ToolStripItem[] { addNewMarketCategoryFileToolStripMenuItem, removeMarketCategoryFileToolStripMenuItem, addNewFolderToolStripMenuItem, deleteFolderToolStripMenuItem, moveCategoryToolStripMenuItem, addNewMarketItemToolStripMenuItem, removeMarketItemToolStripMenuItem, moveMarketItemToolStripMenuItem, addItemAttachmentToolStripMenuItem, removeItemAttachmentToolStripMenuItem, addItemVariantToolStripMenuItem, removeItemVariantToolStripMenuItem, addItemVariantAutoSearchToolStripMenuItem, createItemFromItemVariantToolStripMenuItem, addCategoryToTraderToolStripMenuItem, removeCategoryFromTraderToolStripMenuItem, addItemToTraderToolStripMenuItem, removeItemFromTraderToolStripMenuItem, checkForMissingTraderItemsToolStripMenuItem, previewTraderToolStripMenuItem, addNewTraderZoneToolStripMenuItem, removeTraderZoneToolStripMenuItem, addNewTraderFileToolStripMenuItem, removeTraderFileToolStripMenuItem, clearStockToolStripMenuItem, importTraderNPCWaypointsToolStripMenuItem, exportTraderNPCWaypointsToolStripMenuItem });
             MarketCM.Name = "ChatCM";
             MarketCM.ShowImageMargin = false;
-            MarketCM.Size = new Size(215, 620);
+            MarketCM.Size = new Size(215, 598);
             // 
             // addNewMarketCategoryFileToolStripMenuItem
             // 
@@ -1871,13 +1875,29 @@
             clearStockToolStripMenuItem.Text = "Clear Stock";
             clearStockToolStripMenuItem.Click += clearStockToolStripMenuItem_Click;
             // 
+            // importTraderNPCWaypointsToolStripMenuItem
+            // 
+            importTraderNPCWaypointsToolStripMenuItem.ForeColor = SystemColors.Control;
+            importTraderNPCWaypointsToolStripMenuItem.Name = "importTraderNPCWaypointsToolStripMenuItem";
+            importTraderNPCWaypointsToolStripMenuItem.Size = new Size(214, 22);
+            importTraderNPCWaypointsToolStripMenuItem.Text = "Import Trader NPC Waypoints";
+            importTraderNPCWaypointsToolStripMenuItem.Click += importTraderNPCWaypointsToolStripMenuItem_Click;
+            // 
+            // exportTraderNPCWaypointsToolStripMenuItem
+            // 
+            exportTraderNPCWaypointsToolStripMenuItem.ForeColor = SystemColors.Control;
+            exportTraderNPCWaypointsToolStripMenuItem.Name = "exportTraderNPCWaypointsToolStripMenuItem";
+            exportTraderNPCWaypointsToolStripMenuItem.Size = new Size(214, 22);
+            exportTraderNPCWaypointsToolStripMenuItem.Text = "Export Trader NPC Waypoints";
+            exportTraderNPCWaypointsToolStripMenuItem.Click += exportTraderNPCWaypointsToolStripMenuItem_Click;
+            // 
             // QuestsCM
             // 
             QuestsCM.BackColor = Color.FromArgb(60, 63, 65);
-            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem });
+            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem, addNPCWaypointsToolStripMenuItem, removeNPCWaypointsToolStripMenuItem, moveNPCWaypointUpToolStripMenuItem, moveNPCWaypointDownToolStripMenuItem });
             QuestsCM.Name = "DamageCM";
             QuestsCM.ShowImageMargin = false;
-            QuestsCM.Size = new Size(202, 114);
+            QuestsCM.Size = new Size(202, 224);
             // 
             // toolStripMenuItem1
             // 
@@ -1915,21 +1935,37 @@
             questFlowPreviewToolStripMenuItem.Text = "Quest Flow Preview";
             questFlowPreviewToolStripMenuItem.Click += questFlowPreviewToolStripMenuItem_Click;
             // 
-            // importTraderNPCWaypointsToolStripMenuItem
+            // addNPCWaypointsToolStripMenuItem
             // 
-            importTraderNPCWaypointsToolStripMenuItem.ForeColor = SystemColors.Control;
-            importTraderNPCWaypointsToolStripMenuItem.Name = "importTraderNPCWaypointsToolStripMenuItem";
-            importTraderNPCWaypointsToolStripMenuItem.Size = new Size(214, 22);
-            importTraderNPCWaypointsToolStripMenuItem.Text = "Import Trader NPC Waypoints";
-            importTraderNPCWaypointsToolStripMenuItem.Click += importTraderNPCWaypointsToolStripMenuItem_Click;
+            addNPCWaypointsToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNPCWaypointsToolStripMenuItem.Name = "addNPCWaypointsToolStripMenuItem";
+            addNPCWaypointsToolStripMenuItem.Size = new Size(201, 22);
+            addNPCWaypointsToolStripMenuItem.Text = "Add NPC Waypoints";
+            addNPCWaypointsToolStripMenuItem.Click += addNPCWaypointsToolStripMenuItem_Click;
             // 
-            // exportTraderNPCWaypointsToolStripMenuItem
+            // removeNPCWaypointsToolStripMenuItem
             // 
-            exportTraderNPCWaypointsToolStripMenuItem.ForeColor = SystemColors.Control;
-            exportTraderNPCWaypointsToolStripMenuItem.Name = "exportTraderNPCWaypointsToolStripMenuItem";
-            exportTraderNPCWaypointsToolStripMenuItem.Size = new Size(214, 22);
-            exportTraderNPCWaypointsToolStripMenuItem.Text = "Export Trader NPC Waypoints";
-            exportTraderNPCWaypointsToolStripMenuItem.Click += exportTraderNPCWaypointsToolStripMenuItem_Click;
+            removeNPCWaypointsToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNPCWaypointsToolStripMenuItem.Name = "removeNPCWaypointsToolStripMenuItem";
+            removeNPCWaypointsToolStripMenuItem.Size = new Size(201, 22);
+            removeNPCWaypointsToolStripMenuItem.Text = "Remove NPC Waypoints";
+            removeNPCWaypointsToolStripMenuItem.Click += removeNPCWaypointsToolStripMenuItem_Click;
+            // 
+            // moveNPCWaypointUpToolStripMenuItem
+            // 
+            moveNPCWaypointUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveNPCWaypointUpToolStripMenuItem.Name = "moveNPCWaypointUpToolStripMenuItem";
+            moveNPCWaypointUpToolStripMenuItem.Size = new Size(201, 22);
+            moveNPCWaypointUpToolStripMenuItem.Text = "Move NPC Waypoint Up";
+            moveNPCWaypointUpToolStripMenuItem.Click += moveNPCWaypointUpToolStripMenuItem_Click;
+            // 
+            // moveNPCWaypointDownToolStripMenuItem
+            // 
+            moveNPCWaypointDownToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveNPCWaypointDownToolStripMenuItem.Name = "moveNPCWaypointDownToolStripMenuItem";
+            moveNPCWaypointDownToolStripMenuItem.Size = new Size(201, 22);
+            moveNPCWaypointDownToolStripMenuItem.Text = "Move NPC Waypoint Down";
+            moveNPCWaypointDownToolStripMenuItem.Click += moveNPCWaypointDownToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2175,5 +2211,9 @@
         private ToolStripMenuItem moveTraderNPCWaypointDownToolStripMenuItem;
         private ToolStripMenuItem importTraderNPCWaypointsToolStripMenuItem;
         private ToolStripMenuItem exportTraderNPCWaypointsToolStripMenuItem;
+        private ToolStripMenuItem addNPCWaypointsToolStripMenuItem;
+        private ToolStripMenuItem removeNPCWaypointsToolStripMenuItem;
+        private ToolStripMenuItem moveNPCWaypointUpToolStripMenuItem;
+        private ToolStripMenuItem moveNPCWaypointDownToolStripMenuItem;
     }
 }

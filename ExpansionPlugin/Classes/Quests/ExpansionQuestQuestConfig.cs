@@ -43,7 +43,7 @@ namespace ExpansionPlugin
 
             return true;
         }
-        public override bool Equals(object? obj) => Equals(obj as ExpansionMarketTrader);
+        public override bool Equals(object? obj) => Equals(obj as FactionQuestRep);
         public FactionQuestRep Clone()
         {
             FactionQuestRep clone = new FactionQuestRep
@@ -447,7 +447,6 @@ namespace ExpansionPlugin
                         Reputation = kvp.Value
                     }).ToList());
         }
-
         public void SyncToDictionary()
         {
             FactionReputationRequirements = FactionReputationRequirementsList

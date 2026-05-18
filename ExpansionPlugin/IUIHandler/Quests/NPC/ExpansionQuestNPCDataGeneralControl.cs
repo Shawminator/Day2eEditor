@@ -101,6 +101,26 @@ namespace ExpansionPlugin
                         }
                     }
                 }
+                string posLabel = _data.GetISAI() ? "Waypoints" : "Position";
+                parent.Nodes[3].Text = posLabel;
+                if (_data.GetISAI())
+                {
+                    if (_data.Waypoints == null || _data.Waypoints.Count == 0)
+                    {
+                        _data.Waypoints = new BindingList<Vec3>()
+                        {
+                            new Vec3(_data.Position.X, _data.Position.Y, _data.Position.Z)
+                        };
+                    }
+                }
+                else
+                {
+                    _data.Waypoints = new BindingList<Vec3>();
+                    while (parent.Nodes[3].Nodes.Count > 1)
+                    {
+                        parent.Nodes[3].Nodes[1].Remove();
+                    }
+                }
             }
         }
         private void UpdateTreeNodeTextIDChange()
