@@ -94,9 +94,12 @@ namespace ExpansionPlugin
                     {
                         foreach (TreeNode tnnn in tnn.Nodes)
                         {
-                            if ((int)tnnn.Tag == _data.ID)
+                            if (tnnn.Tag is QuestNPCReferenceNode npcref)
                             {
-                                tnnn.Text = $"{Helpers.GetNPCReferenceText((int)_data.ID)}";
+                                if (npcref.NPCID == _data.ID)
+                                {
+                                    tnnn.Text = $"{npcref.DisplayText}";
+                                }
                             }
                         }
                     }
@@ -215,10 +218,14 @@ namespace ExpansionPlugin
                         {
                             foreach (TreeNode tnnn in tnn.Nodes)
                             {
-                                if ((int)tnnn.Tag == currentid)
+                                if (tnnn.Tag is QuestNPCReferenceNode npcref)
                                 {
-                                    tnnn.Text = $"{Helpers.GetNPCReferenceText((int)_data.ID)}";
-                                    tnnn.Tag = _data.ID;
+                                    if (npcref.NPCID == currentid)
+                                    {
+                                        
+                                        npcref.NPCID = (int)_data.ID;
+                                        tnnn.Text = $"{npcref.DisplayText}";
+                                    }
                                 }
                             }
                         }

@@ -1032,22 +1032,8 @@ namespace ExpansionPlugin
                 {
                     if (node.Tag is QuestReferenceNode questRef)
                     {
-                        ShowHandler<IUIHandler>(null, null, null, selected);
-                        if (MessageBox.Show(
-                        $"Jump to Quest {questRef.QuestID}?",
-                        "Navigate",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            var quest = _expansionManager.ExpansionQuestQuestConfig.GetQuestbyID(questRef.QuestID);
-                            var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, quest);
-
-                            if (targetNode != null)
-                            {
-                                ExpansionTV.SelectedNode = targetNode;
-                                targetNode.EnsureVisible();
-                                targetNode.Expand();
-                            }
-                        }
+                        QuestReferenceNode QuestReferenceNode = node.Tag as QuestReferenceNode;
+                        ShowHandler(new ExpansionQuestQuestFollowupQuestControl(), typeof(ExpansionQuestQuestConfig), QuestReferenceNode, selected);
                     }
                 },
                 [typeof(ExpansionQuestItemConfig)] = (node, selected) =>
@@ -1834,6 +1820,37 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
+                [typeof(QuestReferenceNode)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    if (node.Parent.Tag.ToString() == "PreQuest")
+                    {
+                        ExpansionSettingsCM.Items.Add(removePreQuestToolStripMenuItem);
+                    }
+                    else if (node.Parent.Tag.ToString() == "FollowUpQuest")
+                    {
+                        ExpansionSettingsCM.Items.Add(removeFollowUpToolStripMenuItem);
+                    }
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(jumpToQuestToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(QuestNPCReferenceNode)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    if (node.Parent.Tag.ToString() == "QuestGiverIDs")
+                    {
+                        ExpansionSettingsCM.Items.Add(removeQuestGiverToolStripMenuItem);
+                    }
+                    else if (node.Parent.Tag.ToString() == "QuestTurnInIDs")
+                    {
+                        ExpansionSettingsCM.Items.Add(removeQuestTurnInToolStripMenuItem);
+                    }
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(jumpToNPCToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
+
             };
             // ----------------------
             // String handlers
@@ -2546,6 +2563,33 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(addNPCWaypointsToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
+                },
+                ["FollowUpQuest"] = node =>
+                {
+                    if (node.Nodes.Count == 0)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(addFollowUpToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                },
+                ["PreQuest"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addPreQuestToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["QuestGiverIDs"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addQuestGiverToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["QuestTurnInIDs"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addQuestTurnInToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
         }
@@ -4736,28 +4780,29 @@ namespace ExpansionPlugin
 
                 TreeNode flowNode = new TreeNode("Flow") { Tag = quest };
 
-                TreeNode preQuestNode = new TreeNode($"Pre Quests") { Tag = quest };
-                if (quest.PreQuestIDs != null && quest.PreQuestIDs.Count > 0)
+                TreeNode preQuestNode = new TreeNode($"Pre Quests") { Tag = "PreQuest" };
+                if (quest.PreQuestReferencesList != null && quest.PreQuestReferencesList.Count > 0)
                 {
-                    foreach (int preQuestId in quest.PreQuestIDs)
+                    foreach (QuestReferenceNode preQuestId in quest.PreQuestReferencesList)
                     {
-                        ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == preQuestId);
+                        ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == preQuestId.QuestID);
 
-                        preQuestNode.Nodes.Add(new TreeNode(GetQuestReferenceText(preQuestId, linkedQuest))
+                        preQuestNode.Nodes.Add(new TreeNode(preQuestId.DisplayText)
                         {
-                            Tag = new QuestReferenceNode { QuestID = (int)linkedQuest.ID }
+                            Tag = preQuestId
                         });
                     }
                 }
 
-                TreeNode followUpNode = new TreeNode("Follow Up Quest") { Tag = quest };
-                if (quest.FollowUpQuest.HasValue && quest.FollowUpQuest.Value != -1)
+                TreeNode followUpNode = new TreeNode("Follow Up Quest") { Tag = "FollowUpQuest" };
+                if (quest.FollowUpQuestReference.QuestID != -1)
                 {
-                    ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == quest.FollowUpQuest.Value);
+                    ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == quest.FollowUpQuestReference.QuestID);
 
-                    followUpNode.Nodes.Add(new TreeNode(GetQuestReferenceText(quest.FollowUpQuest.Value, linkedQuest))
+
+                    followUpNode.Nodes.Add(new TreeNode(quest.FollowUpQuestReference.DisplayText)
                     {
-                        Tag = new QuestReferenceNode { QuestID = (int)linkedQuest.ID }
+                        Tag = quest.FollowUpQuestReference
                     });
                 }
 
@@ -4767,18 +4812,18 @@ namespace ExpansionPlugin
 
                 TreeNode npcNode = new TreeNode("NPCs") { Tag = quest };
 
-                TreeNode giverNode = new TreeNode($"Quest Givers") { Tag = quest };
+                TreeNode giverNode = new TreeNode($"Quest Givers") { Tag = "QuestGiverIDs" };
                 if (quest.QuestGiverIDs != null)
                 {
-                    foreach (int id in quest.QuestGiverIDs)
-                        giverNode.Nodes.Add(new TreeNode($"{Helpers.GetNPCReferenceText(id)}") { Tag = id });
+                    foreach (QuestNPCReferenceNode id in quest.QuestGiverIDsList)
+                        giverNode.Nodes.Add(new TreeNode($"{id.DisplayText}") { Tag = id });
                 }
 
-                TreeNode turnInNode = new TreeNode($"Quest Turn Ins") { Tag = quest };
+                TreeNode turnInNode = new TreeNode($"Quest Turn Ins") { Tag = "QuestTurnInIDs" };
                 if (quest.QuestTurnInIDs != null)
                 {
-                    foreach (int id in quest.QuestTurnInIDs)
-                        turnInNode.Nodes.Add(new TreeNode($"{Helpers.GetNPCReferenceText(id)}") { Tag = id });
+                    foreach (QuestNPCReferenceNode id in quest.QuestTurnInIDsList)
+                        turnInNode.Nodes.Add(new TreeNode($"{id.DisplayText}") { Tag = id });
                 }
 
                 npcNode.Nodes.Add(giverNode);
@@ -4870,15 +4915,7 @@ namespace ExpansionPlugin
 
             }
         }
-        private string GetQuestReferenceText(int questId, ExpansionQuestQuest linkedQuest)
-        {
-            if (linkedQuest == null)
-                return $"🔗 Quest {questId}: Missing";
 
-            string title = string.IsNullOrWhiteSpace(linkedQuest.Title) ? "Untitled Quest" : linkedQuest.Title;
-
-            return $"🔗 Quest {questId}: {title}";
-        }
         private string GetObjectiveReferenceText(Objectives objective)
         {
             if (objective == null)
@@ -12302,7 +12339,6 @@ namespace ExpansionPlugin
             currentTreeNode.Text = posLabel;
             currentTreeNode.Nodes.Add(new TreeNode(newpos.GetString()) { Tag = newpos });
         }
-
         private void removeNPCWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestNPCData expansionQuestNPCData = currentTreeNode.Parent.Parent.Tag as ExpansionQuestNPCData;
@@ -12345,7 +12381,6 @@ namespace ExpansionPlugin
                 ExpansionTV.SelectedNode = currentTreeNode;
             }
         }
-
         private void moveNPCWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestNPCData ExpansionQuestNPCData = currentTreeNode.FindParentOfType<ExpansionQuestNPCData>();
@@ -12367,11 +12402,128 @@ namespace ExpansionPlugin
                 ExpansionQuestNPCData.Waypoints.RemoveAt(index);
                 ExpansionQuestNPCData.Waypoints.Insert(index + 1, waypoint);
                 siblings.Insert(index + 1, currentTreeNode);
-                if(index == 0)
+                if (index == 0)
                 {
                     ExpansionQuestNPCData.Position = ExpansionQuestNPCData.Waypoints[0];
                 }
                 ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
+        }
+        private void addPreQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest linkedQuest = _expansionManager.ExpansionQuestQuestConfig.MutableItems.First();
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+
+            QuestReferenceNode Questref = new QuestReferenceNode()
+            {
+                QuestID = (int)linkedQuest.ID
+            };
+            quest.PreQuestReferencesList.Add(Questref);
+            currentTreeNode.Nodes.Add(new TreeNode(Questref.DisplayText)
+            {
+                Tag = Questref
+            });
+        }
+        private void removePreQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Parent.Tag as ExpansionQuestQuest;
+            QuestReferenceNode questref = currentTreeNode.Tag as QuestReferenceNode;
+            quest.PreQuestReferencesList.Remove(questref);
+            currentTreeNode.Remove();
+        }
+        private void addFollowUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest linkedQuest = _expansionManager.ExpansionQuestQuestConfig.MutableItems.First();
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+
+            QuestReferenceNode Questref = new QuestReferenceNode()
+            {
+                QuestID = (int)linkedQuest.ID
+            };
+            quest.FollowUpQuestReference = Questref;
+            currentTreeNode.Nodes.Add(new TreeNode(Questref.DisplayText)
+            {
+                Tag = Questref
+            });
+        }
+        private void removeFollowUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            QuestReferenceNode questref = currentTreeNode.Tag as QuestReferenceNode;
+            questref.QuestID = -1;
+            currentTreeNode.Remove();
+        }
+        private void jumpToQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            QuestReferenceNode questRef = currentTreeNode.Tag as QuestReferenceNode;
+            var quest = _expansionManager.ExpansionQuestQuestConfig.GetQuestbyID(questRef.QuestID);
+            var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, quest);
+
+            if (targetNode != null)
+            {
+                ExpansionTV.SelectedNode = targetNode;
+                targetNode.EnsureVisible();
+                targetNode.Expand();
+            }
+        }
+        private void addQuestGiverToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCData linkedNPC = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems.First();
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+
+            QuestNPCReferenceNode NPCref = new QuestNPCReferenceNode()
+            {
+                NPCID = (int)linkedNPC.ID
+            };
+            quest.QuestGiverIDsList.Add(NPCref);
+            TreeNode newnpc = new TreeNode(NPCref.DisplayText)
+            {
+                Tag = NPCref
+            };
+            currentTreeNode.Nodes.Add(newnpc);
+            ExpansionTV.SelectedNode = newnpc;
+        }
+        private void removeQuestGiverToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Parent.Tag as ExpansionQuestQuest;
+            QuestNPCReferenceNode NPCref = currentTreeNode.Tag as QuestNPCReferenceNode;
+            quest.QuestGiverIDsList.Remove(NPCref);
+            currentTreeNode.Remove();
+        }
+        private void addQuestTurnInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCData linkedNPC = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems.First();
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+
+            QuestNPCReferenceNode NPCref = new QuestNPCReferenceNode()
+            {
+                NPCID = (int)linkedNPC.ID
+            };
+            quest.QuestTurnInIDsList.Add(NPCref);
+            TreeNode newnpc = new TreeNode(NPCref.DisplayText)
+            {
+                Tag = NPCref
+            };
+            currentTreeNode.Nodes.Add(newnpc);
+            ExpansionTV.SelectedNode = newnpc;
+        }
+        private void removeQuestTurnInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Parent.Tag as ExpansionQuestQuest;
+            QuestNPCReferenceNode NPCref = currentTreeNode.Tag as QuestNPCReferenceNode;
+            quest.QuestTurnInIDsList.Remove(NPCref);
+            currentTreeNode.Remove();
+        }
+        private void jumpToNPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            QuestNPCReferenceNode questRef = currentTreeNode.Tag as QuestNPCReferenceNode;
+            var quest = _expansionManager.ExpansionQuestNPCDataConfig.GetNPCbyID(questRef.NPCID);
+            var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, quest);
+
+            if (targetNode != null)
+            {
+                ExpansionTV.SelectedNode = targetNode;
+                targetNode.EnsureVisible();
+                targetNode.Expand();
             }
         }
         #endregion right click methods
@@ -12437,6 +12589,8 @@ namespace ExpansionPlugin
 
 
 
+
+ 
     }
 
     [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]

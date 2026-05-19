@@ -19,9 +19,77 @@ namespace ExpansionPlugin
         RANDOMIZED_ON_COMPLETION = 0,
         RANDOMIZED_ON_START = 1
     };
-    public class QuestReferenceNode
+    public class QuestReferenceNode : IDeepCloneable<QuestReferenceNode>, IEquatable<QuestReferenceNode>
     {
         public int QuestID { get; set; }
+
+        public QuestReferenceNode Clone()
+        {
+            return new QuestReferenceNode()
+            {
+                QuestID = QuestID
+            };
+        }
+        public override bool Equals(object? obj) => Equals(obj as QuestReferenceNode);
+        public bool Equals(QuestReferenceNode? other)
+        {
+
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return QuestID == other.QuestID;
+
+        }
+        public string DisplayText
+        {
+            get
+            {
+                var linkedQuest = AppServices.GetRequired<ExpansionManager>()
+                    .ExpansionQuestQuestConfig
+                    .MutableItems
+                    .FirstOrDefault(q => q.ID == QuestID);
+
+                if (linkedQuest == null)
+                    return $"🔗 Quest {QuestID}: Missing Quest";
+
+                string title = string.IsNullOrWhiteSpace(linkedQuest.Title)
+                    ? "Untitled Quest"
+                    : linkedQuest.Title;
+
+                return $"🔗 Quest {QuestID}: {title}";
+            }
+        }
+    }
+    public class QuestNPCReferenceNode : IDeepCloneable<QuestNPCReferenceNode>, IEquatable<QuestNPCReferenceNode>
+    {
+        public int NPCID { get; set; }
+
+        public QuestNPCReferenceNode Clone()
+        {
+            return new QuestNPCReferenceNode()
+            {
+                NPCID = NPCID
+            };
+        }
+        public override bool Equals(object? obj) => Equals(obj as QuestNPCReferenceNode);
+        public bool Equals(QuestNPCReferenceNode? other)
+        {
+
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return NPCID == other.NPCID;
+
+        }
+        public string DisplayText
+        {
+            get
+            {
+                var NPCfiles = AppServices.GetRequired<ExpansionManager>().ExpansionQuestNPCDataConfig.MutableItems;
+                ExpansionQuestNPCData npc = NPCfiles.FirstOrDefault(x => x.ID == NPCID);
+                return $"🔗 {npc.NPCName} ({npc.ClassName}) {npc.GetNPCType()}";
+            }
+        }
     }
     public class FactionQuestRep : IDeepCloneable<FactionQuestRep>, IEquatable<FactionQuestRep>
     {
@@ -81,13 +149,23 @@ namespace ExpansionPlugin
                         foreach (var msg in issues)
                             Console.WriteLine("- " + msg);
                     }
+                    _clonedItems[item.Id].FollowUpQuestReference = item.FollowUpQuestReference.Clone();
+                    _clonedItems[item.Id].PreQuestReferencesList = item.PreQuestReferencesList != null
+                        ? new BindingList<QuestReferenceNode>(item.PreQuestReferencesList.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<QuestReferenceNode>();
+                    _clonedItems[item.Id].QuestGiverIDsList = item.QuestGiverIDsList != null
+                        ? new BindingList<QuestNPCReferenceNode>(item.QuestGiverIDsList.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<QuestNPCReferenceNode>();
+                    _clonedItems[item.Id].QuestTurnInIDsList = item.QuestTurnInIDsList != null
+                        ? new BindingList<QuestNPCReferenceNode>(item.QuestTurnInIDsList.Select(cat => cat.Clone()).ToList())
+                        : new BindingList<QuestNPCReferenceNode>();
                     _clonedItems[item.Id].FactionReputationRequirementsList = item.FactionReputationRequirementsList != null
                         ? new BindingList<FactionQuestRep>(item.FactionReputationRequirementsList.Select(cat => cat.Clone()).ToList())
                         : new BindingList<FactionQuestRep>();
                     _clonedItems[item.Id].FactionReputationRewardsList = item.FactionReputationRewardsList != null
                         ? new BindingList<FactionQuestRep>(item.FactionReputationRewardsList.Select(cat => cat.Clone()).ToList())
                         : new BindingList<FactionQuestRep>();
-                   
+
                     MutableItems.Add(item);
 
                 }
@@ -136,6 +214,8 @@ namespace ExpansionPlugin
                 if (!_clonedItems.TryGetValue(id, out var baseline))
                 {
                     item.SyncToDictionary();
+                    item.SetReferencedQuests();
+                    item.SetReferneceNPCs();
                     SaveItem(item);
                     _clonedItems[id] = item.Clone();
                     saved.Add(fullfielName);
@@ -145,6 +225,8 @@ namespace ExpansionPlugin
                 if (!item.Equals(baseline))
                 {
                     item.SyncToDictionary();
+                    item.SetReferencedQuests();
+                    item.SetReferneceNPCs();
                     SaveItem(item);
                     if (GetItemFilePath(_clonedItems[id]) != GetItemFilePath(item))
                     {
@@ -211,6 +293,14 @@ namespace ExpansionPlugin
         public BindingList<FactionQuestRep> FactionReputationRequirementsList { get; set; }
         [JsonIgnore]
         public BindingList<FactionQuestRep> FactionReputationRewardsList { get; set; }
+        [JsonIgnore]
+        public BindingList<QuestReferenceNode> PreQuestReferencesList { get; set; }
+        [JsonIgnore]
+        public QuestReferenceNode FollowUpQuestReference {  get; set; }
+        [JsonIgnore]
+        public BindingList<QuestNPCReferenceNode> QuestGiverIDsList { get; set; }
+        [JsonIgnore]
+        public BindingList<QuestNPCReferenceNode> QuestTurnInIDsList { get; set; }
 
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;
@@ -273,7 +363,7 @@ namespace ExpansionPlugin
                       ? new BindingList<string>(Descriptions.ToList())
                       : null,
                 ObjectiveText = ObjectiveText,
-                FollowUpQuest = FollowUpQuest,
+                FollowUpQuestReference = FollowUpQuestReference?.Clone(),
                 Repeatable = Repeatable,
                 IsDailyQuest = IsDailyQuest,
                 IsWeeklyQuest = IsWeeklyQuest,
@@ -294,11 +384,11 @@ namespace ExpansionPlugin
                 RandomRewardAmount = RandomRewardAmount,
                 RewardsForGroupOwnerOnly = RewardsForGroupOwnerOnly,
                 RewardBehavior = RewardBehavior,
-                QuestGiverIDs = QuestGiverIDs != null
-                      ? new BindingList<int>(QuestGiverIDs.ToList())
+                QuestGiverIDsList = QuestGiverIDsList != null
+                      ? new BindingList<QuestNPCReferenceNode>(QuestGiverIDsList.Select(x =>x.Clone()).ToList())
                       : null,
-                QuestTurnInIDs = QuestTurnInIDs != null
-                      ? new BindingList<int>(QuestTurnInIDs.ToList())
+                QuestTurnInIDsList = QuestTurnInIDsList != null
+                      ? new BindingList<QuestNPCReferenceNode>(QuestTurnInIDsList.Select(x => x.Clone()).ToList())
                       : null,
                 IsAchievement = IsAchievement,
                 Objectives = Objectives != null
@@ -308,8 +398,8 @@ namespace ExpansionPlugin
                 QuestColor = QuestColor,
                 ReputationReward = ReputationReward,
                 ReputationRequirement = ReputationRequirement,
-                PreQuestIDs = PreQuestIDs != null
-                      ? new BindingList<int>(PreQuestIDs.ToList())
+                PreQuestReferencesList = PreQuestReferencesList != null
+                      ? new BindingList<QuestReferenceNode>(PreQuestReferencesList.Select(x => x.Clone()).ToList())
                       : null,
                 RequiredFaction = RequiredFaction,
                 FactionReward = FactionReward,
@@ -346,7 +436,7 @@ namespace ExpansionPlugin
                 && Equals(Title, other.Title)
                 && ListEquals(Descriptions, other.Descriptions)
                 && Equals(ObjectiveText, other.ObjectiveText)
-                && FollowUpQuest == other.FollowUpQuest
+                && FollowUpQuestReference.Equals(other.FollowUpQuestReference)
                 && Repeatable == other.Repeatable
                 && IsDailyQuest == other.IsDailyQuest
                 && IsWeeklyQuest == other.IsWeeklyQuest
@@ -361,14 +451,14 @@ namespace ExpansionPlugin
                 && RandomRewardAmount == other.RandomRewardAmount
                 && RewardsForGroupOwnerOnly == other.RewardsForGroupOwnerOnly
                 && RewardBehavior == other.RewardBehavior
-                && ListEquals(QuestGiverIDs, other.QuestGiverIDs)
-                && ListEquals(QuestTurnInIDs, other.QuestTurnInIDs)
+                && ListEquals(QuestGiverIDsList, other.QuestGiverIDsList)
+                && ListEquals(QuestTurnInIDsList, other.QuestTurnInIDsList)
                 && IsAchievement == other.IsAchievement
                 && ListEquals(Objectives, other.Objectives)
                 && QuestColor == other.QuestColor
                 && ReputationReward == other.ReputationReward
                 && ReputationRequirement == other.ReputationRequirement
-                && ListEquals(PreQuestIDs, other.PreQuestIDs)
+                && ListEquals(PreQuestReferencesList, other.PreQuestReferencesList)
                 && Equals(RequiredFaction, other.RequiredFaction)
                 && Equals(FactionReward, other.FactionReward)
                 && PlayerNeedQuestItems == other.PlayerNeedQuestItems
@@ -399,23 +489,6 @@ namespace ExpansionPlugin
 
             return true;
         }
-        private static bool DictionaryEquals<TKey, TValue>(IDictionary<TKey, TValue>? a, IDictionary<TKey, TValue>? b)
-        {
-            if (ReferenceEquals(a, b)) return true;
-            if (a is null || b is null) return false;
-            if (a.Count != b.Count) return false;
-
-            foreach (var kvp in a)
-            {
-                if (!b.TryGetValue(kvp.Key, out var value))
-                    return false;
-
-                if (!Equals(kvp.Value, value))
-                    return false;
-            }
-
-            return true;
-        }
         internal IEnumerable<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -426,9 +499,13 @@ namespace ExpansionPlugin
                 ConfigVersion = ExpansionQuestQuestConfig.CurrentVersion;
             }
             SyncFromDictionary();
-
+            GetReferencedQuests();
+            GetReferneceNPCs();
             return fixes;
         }
+
+
+
         public void SyncFromDictionary()
         {
             FactionReputationRequirementsList = new BindingList<FactionQuestRep>(
@@ -454,6 +531,64 @@ namespace ExpansionPlugin
 
             FactionReputationRewards = FactionReputationRewardsList
                 .ToDictionary(x => x.Faction, x => x.Reputation);
+        }
+
+        internal void GetReferencedQuests()
+        {
+            FollowUpQuestReference = new QuestReferenceNode()
+            {
+                QuestID = (int)FollowUpQuest
+            };
+            PreQuestReferencesList = new BindingList<QuestReferenceNode>();
+            foreach(int id in PreQuestIDs)
+            {
+                PreQuestReferencesList.Add(new QuestReferenceNode()
+                {
+                    QuestID = id
+                });
+            }
+        }
+
+        internal void SetReferencedQuests()
+        {
+            FollowUpQuest = FollowUpQuestReference.QuestID;
+            PreQuestIDs = new BindingList<int>();
+            foreach(QuestReferenceNode qfn in PreQuestReferencesList)
+            {
+                PreQuestIDs.Add(qfn.QuestID);
+            }
+        }
+        internal void GetReferneceNPCs()
+        {
+            QuestGiverIDsList = new BindingList<QuestNPCReferenceNode>();
+            foreach (var npc in QuestGiverIDs)
+            {
+                QuestGiverIDsList.Add(new QuestNPCReferenceNode()
+                {
+                    NPCID = npc
+                });
+            }
+            QuestTurnInIDsList = new BindingList<QuestNPCReferenceNode>();
+            foreach (var npc in QuestTurnInIDs)
+            {
+                QuestTurnInIDsList.Add(new QuestNPCReferenceNode()
+                {
+                    NPCID = npc
+                });
+            }
+        }
+        internal void SetReferneceNPCs()
+        {
+            QuestGiverIDs = new BindingList<int>();
+            foreach (var npc in QuestGiverIDsList)
+            {
+                QuestGiverIDs.Add(npc.NPCID);
+            }
+            QuestTurnInIDs = new BindingList<int>();
+            foreach(var npc in QuestTurnInIDsList)
+            {
+                QuestTurnInIDs.Add(npc.NPCID);
+            }
         }
     }
     public class Objectives : IDeepCloneable<Objectives>, IEquatable<Objectives>

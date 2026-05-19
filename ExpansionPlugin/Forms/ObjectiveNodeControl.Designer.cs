@@ -41,14 +41,14 @@
             label.Text = "label1";
             label.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // NodeContro
+            // ObjectiveNodeControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 60, 60);
             Controls.Add(label);
             ForeColor = SystemColors.Control;
-            Name = "NodeContro";
+            Name = "ObjectiveNodeControl";
             Padding = new Padding(6);
             Size = new Size(260, 40);
             Paint += NodeContro_Paint;

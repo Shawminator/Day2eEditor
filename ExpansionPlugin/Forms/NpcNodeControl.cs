@@ -13,7 +13,6 @@ namespace ExpansionPlugin
 {
     public partial class NpcNodeControl : UserControl
     {
-        public Point Center => new(Left + Width / 2, Top + Height / 2);
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color PenColor { get; set; }
         public NpcNodeControl(string text, string type)
@@ -36,8 +35,8 @@ namespace ExpansionPlugin
                 pen,
                 0,
                 0,
-                Width - 1,
-                Height - 1);
+                Width-1,
+                Height-1);
         }
     }
 }

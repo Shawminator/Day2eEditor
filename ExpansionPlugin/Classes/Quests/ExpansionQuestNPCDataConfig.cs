@@ -62,6 +62,11 @@ namespace ExpansionPlugin
         {
             return MutableItems.Select(npcdata => (int)npcdata.ID).OrderBy(id => id).ToList();
         }
+
+        internal object GetNPCbyID(int nPCID)
+        {
+            return MutableItems.FirstOrDefault(x => x.ID == nPCID);
+        }
     }
     public class ExpansionQuestNPCData : IDeepCloneable<ExpansionQuestNPCData>, IEquatable<ExpansionQuestNPCData>
     {

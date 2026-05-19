@@ -239,6 +239,16 @@
             removeNPCWaypointsToolStripMenuItem = new ToolStripMenuItem();
             moveNPCWaypointUpToolStripMenuItem = new ToolStripMenuItem();
             moveNPCWaypointDownToolStripMenuItem = new ToolStripMenuItem();
+            addPreQuestToolStripMenuItem = new ToolStripMenuItem();
+            removePreQuestToolStripMenuItem = new ToolStripMenuItem();
+            addFollowUpToolStripMenuItem = new ToolStripMenuItem();
+            removeFollowUpToolStripMenuItem = new ToolStripMenuItem();
+            jumpToQuestToolStripMenuItem = new ToolStripMenuItem();
+            addQuestGiverToolStripMenuItem = new ToolStripMenuItem();
+            removeQuestGiverToolStripMenuItem = new ToolStripMenuItem();
+            addQuestTurnInToolStripMenuItem = new ToolStripMenuItem();
+            removeQuestTurnInToolStripMenuItem = new ToolStripMenuItem();
+            jumpToNPCToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1894,10 +1904,10 @@
             // QuestsCM
             // 
             QuestsCM.BackColor = Color.FromArgb(60, 63, 65);
-            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem, addNPCWaypointsToolStripMenuItem, removeNPCWaypointsToolStripMenuItem, moveNPCWaypointUpToolStripMenuItem, moveNPCWaypointDownToolStripMenuItem });
+            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem, addNPCWaypointsToolStripMenuItem, removeNPCWaypointsToolStripMenuItem, moveNPCWaypointUpToolStripMenuItem, moveNPCWaypointDownToolStripMenuItem, addPreQuestToolStripMenuItem, removePreQuestToolStripMenuItem, addFollowUpToolStripMenuItem, removeFollowUpToolStripMenuItem, jumpToQuestToolStripMenuItem, addQuestGiverToolStripMenuItem, removeQuestGiverToolStripMenuItem, addQuestTurnInToolStripMenuItem, removeQuestTurnInToolStripMenuItem, jumpToNPCToolStripMenuItem });
             QuestsCM.Name = "DamageCM";
             QuestsCM.ShowImageMargin = false;
-            QuestsCM.Size = new Size(202, 224);
+            QuestsCM.Size = new Size(202, 444);
             // 
             // toolStripMenuItem1
             // 
@@ -1966,6 +1976,86 @@
             moveNPCWaypointDownToolStripMenuItem.Size = new Size(201, 22);
             moveNPCWaypointDownToolStripMenuItem.Text = "Move NPC Waypoint Down";
             moveNPCWaypointDownToolStripMenuItem.Click += moveNPCWaypointDownToolStripMenuItem_Click;
+            // 
+            // addPreQuestToolStripMenuItem
+            // 
+            addPreQuestToolStripMenuItem.ForeColor = SystemColors.Control;
+            addPreQuestToolStripMenuItem.Name = "addPreQuestToolStripMenuItem";
+            addPreQuestToolStripMenuItem.Size = new Size(201, 22);
+            addPreQuestToolStripMenuItem.Text = "Add Pre Quest";
+            addPreQuestToolStripMenuItem.Click += addPreQuestToolStripMenuItem_Click;
+            // 
+            // removePreQuestToolStripMenuItem
+            // 
+            removePreQuestToolStripMenuItem.ForeColor = SystemColors.Control;
+            removePreQuestToolStripMenuItem.Name = "removePreQuestToolStripMenuItem";
+            removePreQuestToolStripMenuItem.Size = new Size(201, 22);
+            removePreQuestToolStripMenuItem.Text = "Remove Pre Quest";
+            removePreQuestToolStripMenuItem.Click += removePreQuestToolStripMenuItem_Click;
+            // 
+            // addFollowUpToolStripMenuItem
+            // 
+            addFollowUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            addFollowUpToolStripMenuItem.Name = "addFollowUpToolStripMenuItem";
+            addFollowUpToolStripMenuItem.Size = new Size(201, 22);
+            addFollowUpToolStripMenuItem.Text = "Add Follow Up";
+            addFollowUpToolStripMenuItem.Click += addFollowUpToolStripMenuItem_Click;
+            // 
+            // removeFollowUpToolStripMenuItem
+            // 
+            removeFollowUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeFollowUpToolStripMenuItem.Name = "removeFollowUpToolStripMenuItem";
+            removeFollowUpToolStripMenuItem.Size = new Size(201, 22);
+            removeFollowUpToolStripMenuItem.Text = "Remove Follow Up";
+            removeFollowUpToolStripMenuItem.Click += removeFollowUpToolStripMenuItem_Click;
+            // 
+            // jumpToQuestToolStripMenuItem
+            // 
+            jumpToQuestToolStripMenuItem.ForeColor = SystemColors.Control;
+            jumpToQuestToolStripMenuItem.Name = "jumpToQuestToolStripMenuItem";
+            jumpToQuestToolStripMenuItem.Size = new Size(201, 22);
+            jumpToQuestToolStripMenuItem.Text = "Jump to Quest";
+            jumpToQuestToolStripMenuItem.Click += jumpToQuestToolStripMenuItem_Click;
+            // 
+            // addQuestGiverToolStripMenuItem
+            // 
+            addQuestGiverToolStripMenuItem.ForeColor = SystemColors.Control;
+            addQuestGiverToolStripMenuItem.Name = "addQuestGiverToolStripMenuItem";
+            addQuestGiverToolStripMenuItem.Size = new Size(201, 22);
+            addQuestGiverToolStripMenuItem.Text = "Add Quest Giver";
+            addQuestGiverToolStripMenuItem.Click += addQuestGiverToolStripMenuItem_Click;
+            // 
+            // removeQuestGiverToolStripMenuItem
+            // 
+            removeQuestGiverToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeQuestGiverToolStripMenuItem.Name = "removeQuestGiverToolStripMenuItem";
+            removeQuestGiverToolStripMenuItem.Size = new Size(201, 22);
+            removeQuestGiverToolStripMenuItem.Text = "Remove Quest Giver";
+            removeQuestGiverToolStripMenuItem.Click += removeQuestGiverToolStripMenuItem_Click;
+            // 
+            // addQuestTurnInToolStripMenuItem
+            // 
+            addQuestTurnInToolStripMenuItem.ForeColor = SystemColors.Control;
+            addQuestTurnInToolStripMenuItem.Name = "addQuestTurnInToolStripMenuItem";
+            addQuestTurnInToolStripMenuItem.Size = new Size(201, 22);
+            addQuestTurnInToolStripMenuItem.Text = "Add Quest Turn In";
+            addQuestTurnInToolStripMenuItem.Click += addQuestTurnInToolStripMenuItem_Click;
+            // 
+            // removeQuestTurnInToolStripMenuItem
+            // 
+            removeQuestTurnInToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeQuestTurnInToolStripMenuItem.Name = "removeQuestTurnInToolStripMenuItem";
+            removeQuestTurnInToolStripMenuItem.Size = new Size(201, 22);
+            removeQuestTurnInToolStripMenuItem.Text = "Remove Quest Turn In";
+            removeQuestTurnInToolStripMenuItem.Click += removeQuestTurnInToolStripMenuItem_Click;
+            // 
+            // jumpToNPCToolStripMenuItem
+            // 
+            jumpToNPCToolStripMenuItem.ForeColor = SystemColors.Control;
+            jumpToNPCToolStripMenuItem.Name = "jumpToNPCToolStripMenuItem";
+            jumpToNPCToolStripMenuItem.Size = new Size(201, 22);
+            jumpToNPCToolStripMenuItem.Text = "Jump To NPC";
+            jumpToNPCToolStripMenuItem.Click += jumpToNPCToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2215,5 +2305,15 @@
         private ToolStripMenuItem removeNPCWaypointsToolStripMenuItem;
         private ToolStripMenuItem moveNPCWaypointUpToolStripMenuItem;
         private ToolStripMenuItem moveNPCWaypointDownToolStripMenuItem;
+        private ToolStripMenuItem addPreQuestToolStripMenuItem;
+        private ToolStripMenuItem removePreQuestToolStripMenuItem;
+        private ToolStripMenuItem addFollowUpToolStripMenuItem;
+        private ToolStripMenuItem removeFollowUpToolStripMenuItem;
+        private ToolStripMenuItem jumpToQuestToolStripMenuItem;
+        private ToolStripMenuItem addQuestGiverToolStripMenuItem;
+        private ToolStripMenuItem removeQuestGiverToolStripMenuItem;
+        private ToolStripMenuItem addQuestTurnInToolStripMenuItem;
+        private ToolStripMenuItem removeQuestTurnInToolStripMenuItem;
+        private ToolStripMenuItem jumpToNPCToolStripMenuItem;
     }
 }

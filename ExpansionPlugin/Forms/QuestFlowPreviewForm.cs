@@ -156,47 +156,110 @@ namespace ExpansionPlugin
         // ───────────────────── Build Graph ─────────────────────
         private void BuildGraph()
         {
-            Dictionary<int, int> columnBottoms = new();
             _links.Clear();
             _questNodes.Clear();
 
             const int startX = 120;
             const int startY = 150;
             const int xSpacing = 450;
-            const int ySpacing = 260;
 
-            // 1. Discover all relevant quests
-            var discovered = new HashSet<int>();
+            // ─────────────────────────────────────────────
+            // 1. Build unified directed graph
+            // ─────────────────────────────────────────────
 
-            void Discover(ExpansionQuestQuest q)
+            var outgoing = new Dictionary<int, List<int>>();
+            var incoming = new Dictionary<int, List<int>>();
+
+            void AddEdge(int from, int to)
             {
-                if (!q.ID.HasValue || !discovered.Add(q.ID.Value))
-                    return;
+                if (!outgoing.ContainsKey(from))
+                    outgoing[from] = new List<int>();
 
-                if (q.PreQuestIDs != null)
+                if (!incoming.ContainsKey(to))
+                    incoming[to] = new List<int>();
+
+                outgoing[from].Add(to);
+                incoming[to].Add(from);
+            }
+
+            foreach (var q in _allQuests.Values)
+            {
+                if (!q.ID.HasValue)
+                    continue;
+
+                int id = q.ID.Value;
+
+                outgoing.TryAdd(id, new List<int>());
+                incoming.TryAdd(id, new List<int>());
+
+                // ─────────────────────────────
+                // PRE QUESTS (A → B dependency)
+                // B requires A
+                // ─────────────────────────────
+                if (q.PreQuestReferencesList != null)
                 {
-                    foreach (var id in q.PreQuestIDs)
+                    foreach (var pre in q.PreQuestReferencesList)
                     {
-                        if (_allQuests.TryGetValue(id, out var p))
-                            Discover(p);
+                        if (_allQuests.ContainsKey(pre.QuestID))
+                        {
+                            AddEdge(pre.QuestID, id);
+                        }
                     }
                 }
 
-                foreach (var candidate in _allQuests.Values)
+                // ─────────────────────────────
+                // FOLLOW UP (A → B story flow)
+                // A leads to B
+                // ─────────────────────────────
+                if (q.FollowUpQuestReference?.QuestID > 0 &&
+                    _allQuests.ContainsKey(q.FollowUpQuestReference.QuestID))
                 {
-                    if (candidate.PreQuestIDs?.Contains(q.ID.Value) == true)
-                        Discover(candidate);
+                    AddEdge(id, q.FollowUpQuestReference.QuestID);
                 }
             }
 
-            Discover(_selectedQuest);
+            // ─────────────────────────────────────────────
+            // 2. Discover full reachable graph
+            // (includes BOTH pre + follow chains)
+            // ─────────────────────────────────────────────
+
+            var discovered = new HashSet<int>();
+            var stack = new Stack<int>();
+
+            if (_selectedQuest?.ID.HasValue == true)
+                stack.Push(_selectedQuest.ID.Value);
+
+            while (stack.Count > 0)
+            {
+                int id = stack.Pop();
+                if (!discovered.Add(id))
+                    continue;
+
+                // go forward through full story graph
+                if (outgoing.TryGetValue(id, out var next))
+                {
+                    foreach (var n in next)
+                        stack.Push(n);
+                }
+
+                // also go backward (important for full context view)
+                if (incoming.TryGetValue(id, out var prev))
+                {
+                    foreach (var p in prev)
+                        stack.Push(p);
+                }
+            }
 
             var quests = discovered
+                .Where(id => _allQuests.ContainsKey(id))
                 .Select(id => _allQuests[id])
                 .Where(q => q.ID.HasValue)
                 .ToList();
 
-            // 2. Compute graph levels (column index)
+            // ─────────────────────────────────────────────
+            // 3. Level calculation (based on PRECEDENCE)
+            // ─────────────────────────────────────────────
+
             var levels = new Dictionary<int, int>();
 
             int GetLevel(int id)
@@ -204,13 +267,11 @@ namespace ExpansionPlugin
                 if (levels.TryGetValue(id, out var l))
                     return l;
 
-                var q = _allQuests[id];
-                if (q.PreQuestIDs == null || q.PreQuestIDs.Count == 0)
+                if (!incoming.TryGetValue(id, out var parents) || parents.Count == 0)
                     return levels[id] = 0;
 
-                int maxParent = q.PreQuestIDs
-                    .Where(pid => _allQuests.ContainsKey(pid))
-                    .Select(pid => GetLevel(pid))
+                int maxParent = parents
+                    .Select(GetLevel)
                     .DefaultIfEmpty(0)
                     .Max();
 
@@ -220,7 +281,10 @@ namespace ExpansionPlugin
             foreach (var q in quests)
                 GetLevel(q.ID!.Value);
 
-            // 3. Layout nodes by level
+            // ─────────────────────────────────────────────
+            // 4. Layout nodes
+            // ─────────────────────────────────────────────
+
             var grouped = quests
                 .GroupBy(q => levels[q.ID!.Value])
                 .OrderBy(g => g.Key);
@@ -230,7 +294,12 @@ namespace ExpansionPlugin
                 int x = startX + group.Key * xSpacing;
                 int y = startY;
 
-                foreach (var quest in group)
+                // IMPORTANT: enforce stable order inside column
+                var orderedGroup = group
+                    .OrderBy(q => q.ID.Value) // or replace with better ordering if you want
+                    .ToList();
+
+                foreach (var quest in orderedGroup)
                 {
                     var node = new QuestNodeControl(quest)
                     {
@@ -242,56 +311,35 @@ namespace ExpansionPlugin
                     _canvas.Controls.Add(node);
                     _worldTransforms[node] = (node.Location, node.Size);
 
-                    // Objectives
                     AddObjectiveNodes(node, quest);
-
-                    // NPCs (above)
                     AddNpcNodesAbove(quest.QuestGiverIDs, "Giver", node, true);
                     AddNpcNodesAbove(quest.QuestTurnInIDs, "Turn-In", node, false);
 
+                    // ✅ FIX: DO NOT scan canvas anymore
+                    int height =
+                        node.Height +
+                        (quest.Objectives?.Count ?? 0) * 40 +
+                        80;
 
-                    // Calculate full vertical footprint
-                    int questBottom = node.Bottom;
-
-                    // Include objectives
-                    foreach (Control ctrl in _canvas.Controls)
-                    {
-                        if (ctrl is ObjectiveNodeControl &&
-                            ctrl.Left >= node.Left - 10 &&
-                            ctrl.Left <= node.Right + 10)
-                        {
-                            questBottom = Math.Max(questBottom, ctrl.Bottom);
-                        }
-                    }
-
-                    // Include NPCs above
-                    foreach (Control ctrl in _canvas.Controls)
-                    {
-                        if (ctrl is NpcNodeControl &&
-                            ctrl.Bottom <= node.Top)
-                        {
-                            questBottom = Math.Max(questBottom, ctrl.Bottom);
-                        }
-                    }
-
-                    // Advance Y safely
-                    y = questBottom + 100;
-
+                    y += height + 80;
                 }
             }
 
-            // 4. Create edges using PreQuestIDs ONLY
-            foreach (var quest in quests)
+            // ─────────────────────────────────────────────
+            // 5. Draw ALL edges (pre + follow unified)
+            // ─────────────────────────────────────────────
+
+            foreach (var from in outgoing)
             {
-                if (quest.PreQuestIDs == null || !quest.ID.HasValue)
+                if (!_questNodes.TryGetValue(from.Key, out var fromNode))
                     continue;
 
-                var to = _questNodes[quest.ID.Value];
-
-                foreach (var preId in quest.PreQuestIDs)
+                foreach (var toId in from.Value)
                 {
-                    if (_questNodes.TryGetValue(preId, out var from))
-                        _links.Add(new Link(from, to));
+                    if (_questNodes.TryGetValue(toId, out var toNode))
+                    {
+                        _links.Add(new Link(fromNode, toNode));
+                    }
                 }
             }
 
@@ -374,67 +422,6 @@ namespace ExpansionPlugin
                 npcY -= npc.Height + verticalSpacing;
                 x += alignLeft ? (npc.Width + horizontalSpacing) : 0;
             }
-        }
-        private List<ExpansionQuestQuest> BuildPreChain(ExpansionQuestQuest quest, HashSet<int> visited = null)
-        {
-            visited ??= new HashSet<int>();
-            var result = new List<ExpansionQuestQuest>();
-
-            if (!quest.ID.HasValue || !visited.Add(quest.ID.Value))
-                return result;
-
-            if (quest.PreQuestIDs != null)
-            {
-                foreach (var preId in quest.PreQuestIDs)
-                {
-                    if (_allQuests.TryGetValue(preId, out var preQuest))
-                    {
-                        result.AddRange(BuildPreChain(preQuest, visited));
-                        result.Add(preQuest);
-                    }
-                }
-            }
-
-            return result;
-        }
-        private List<ExpansionQuestQuest> BuildFollowUpChain(ExpansionQuestQuest quest, HashSet<int> visited = null)
-        {
-            visited ??= new HashSet<int>();
-            var result = new List<ExpansionQuestQuest>();
-
-            if (!quest.ID.HasValue || !visited.Add(quest.ID.Value))
-                return result;
-
-            if (quest.FollowUpQuest.HasValue &&
-                _allQuests.TryGetValue(quest.FollowUpQuest.Value, out var next))
-            {
-                result.Add(next);
-                result.AddRange(BuildFollowUpChain(next, visited));
-            }
-
-            return result;
-        }
-        private List<ExpansionQuestQuest> BuildReversePreChain(ExpansionQuestQuest quest, HashSet<int> visited = null)
-        {
-            visited ??= new HashSet<int>();
-            var result = new List<ExpansionQuestQuest>();
-
-            if (!quest.ID.HasValue || !visited.Add(quest.ID.Value))
-                return result;
-
-            foreach (var candidate in _allQuests.Values)
-            {
-                if (candidate.PreQuestIDs == null)
-                    continue;
-
-                if (candidate.PreQuestIDs.Contains(quest.ID.Value))
-                {
-                    result.Add(candidate);
-                    result.AddRange(BuildReversePreChain(candidate, visited));
-                }
-            }
-
-            return result;
         }
     }
     public class Link

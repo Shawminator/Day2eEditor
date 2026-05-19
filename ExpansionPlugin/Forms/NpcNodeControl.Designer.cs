@@ -34,12 +34,13 @@
             // label
             // 
             label.Dock = DockStyle.Fill;
+            label.ForeColor = SystemColors.Control;
             label.Location = new Point(6, 6);
             label.Name = "label";
             label.Size = new Size(128, 48);
             label.TabIndex = 0;
             label.Text = "label1";
-            label.TextAlign = ContentAlignment.MiddleCenter;
+            label.TextAlign = ContentAlignment.TopCenter;
             // 
             // NpcNodeControl
             // 
