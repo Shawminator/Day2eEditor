@@ -719,5 +719,17 @@ namespace Day2eEditor
 
             return null;
         }
+        public static bool IsFirst(this TreeNode node)
+        {
+            return node.Index == 0;
+        }
+        public static bool IsLast(this TreeNode node)
+        {
+            TreeNodeCollection siblings =
+                node.Parent?.Nodes ??
+                node.TreeView!.Nodes;
+
+            return node.Index == siblings.Count - 1;
+        }
     }
 }

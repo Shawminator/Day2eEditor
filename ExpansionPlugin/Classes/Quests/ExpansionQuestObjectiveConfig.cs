@@ -231,5 +231,12 @@ namespace ExpansionPlugin
             AddSpecificCategoryNodes(node);
         }
         internal abstract void AddSpecificCategoryNodes(TreeNode categoryNode);
+        public string DisplayText
+        {
+            get
+            {
+                return $"{ObjectiveType} : {ObjectiveText}";
+            }
+        }
     }
 }

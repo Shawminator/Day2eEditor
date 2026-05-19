@@ -1,6 +1,6 @@
 ﻿namespace ExpansionPlugin
 {
-    partial class ExpansionQuestQuestFollowupQuestControl
+    partial class ExpansionQuestQuestNPCRefControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -42,9 +42,9 @@
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(625, 56);
-            groupBox1.TabIndex = 3;
+            groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Quests";
+            groupBox1.Text = "NPCs";
             // 
             // QuestsCB
             // 
@@ -65,19 +65,19 @@
             darkLabel38.Location = new Point(15, 25);
             darkLabel38.Margin = new Padding(4, 0, 4, 0);
             darkLabel38.Name = "darkLabel38";
-            darkLabel38.Size = new Size(43, 15);
+            darkLabel38.Size = new Size(36, 15);
             darkLabel38.TabIndex = 174;
-            darkLabel38.Text = "Quests";
+            darkLabel38.Text = "NPCs";
             // 
-            // ExpansionQuestQuestFollowupQuestControl
+            // ExpansionQuestQuestNPCRefControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
-            Name = "ExpansionQuestQuestFollowupQuestControl";
-            Size = new Size(625, 56);
+            Name = "ExpansionQuestQuestNPCRefControl";
+            Size = new Size(631, 63);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);

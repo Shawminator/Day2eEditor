@@ -958,35 +958,6 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(null, null, null, selected);
                     var objectiveRef = node.Tag as Objectives;
-                    if (MessageBox.Show(
-                        $"Jump to Objective {objectiveRef.ID}?",
-                        "Navigate",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-
-                        if (objectiveRef == null)
-                            return;
-
-                        var objectiveFiles = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems;
-
-                        var objectiveConfig = objectiveFiles.FirstOrDefault(x =>
-                            x.ID == objectiveRef.ID &&
-                            x.ObjectiveType == objectiveRef.ObjectiveType);
-
-                        if (objectiveConfig == null)
-                        {
-                            MessageBox.Show($"Objective {objectiveRef.ID} not found.");
-                            return;
-                        }
-                        var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, objectiveConfig);
-
-                        if (targetNode != null)
-                        {
-                            ExpansionTV.SelectedNode = targetNode;
-                            targetNode.EnsureVisible();
-                            ExpansionTV.SelectedNode.ExpandAll();
-                        }
-                    }
                 },
                 [typeof(ExpansionQuestQuest)] = (node, selected) =>
                 {
@@ -1036,6 +1007,14 @@ namespace ExpansionPlugin
                         ShowHandler(new ExpansionQuestQuestFollowupQuestControl(), typeof(ExpansionQuestQuestConfig), QuestReferenceNode, selected);
                     }
                 },
+                [typeof(QuestNPCReferenceNode)] = (node, selected) =>
+                {
+                    if (node.Tag is QuestNPCReferenceNode questRef)
+                    {
+                        QuestNPCReferenceNode QuestNPCReferenceNode = node.Tag as QuestNPCReferenceNode;
+                        ShowHandler(new ExpansionQuestQuestNPCRefControl(), typeof(ExpansionQuestQuestConfig), QuestNPCReferenceNode, selected);
+                    }
+                },
                 [typeof(ExpansionQuestItemConfig)] = (node, selected) =>
                 {
                     ExpansionQuestItemConfig ExpansionQuestItemConfig = node.Tag as ExpansionQuestItemConfig;
@@ -1051,6 +1030,12 @@ namespace ExpansionPlugin
                     FactionQuestRep FactionQuestRep = node.Tag as FactionQuestRep;
                     ShowHandler(new ExpansionQuestQuestFactionRepsControl(), typeof(ExpansionQuestItemConfig), FactionQuestRep, selected);
                 },
+                [typeof(Objectives)] = (node, selected) =>
+                {
+                    Objectives Objectives = node.Tag as Objectives;
+                    ShowHandler(new ExpansionQuestQuestObjectivesControl(), typeof(ExpansionQuestQuestConfig), Objectives, selected);
+                    
+                }
             };
             // ----------------------
             // String handlers
@@ -1849,6 +1834,28 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(jumpToNPCToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(Objectives)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem);
+
+                    if (!node.IsFirst())
+                    {
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveObjectiveUpToolStripMenuItem);
+                    }
+
+                    if (!node.IsLast())
+                     {
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveObjectiveDownToolStripMenuItem);
+                    }
+
+
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(jumpToObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
 
             };
@@ -2589,6 +2596,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addQuestTurnInToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["QuestObjectives"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addObjectiveToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -4830,7 +4843,7 @@ namespace ExpansionPlugin
                 npcNode.Nodes.Add(turnInNode);
                 questNode.Nodes.Add(npcNode);
 
-                TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = quest };
+                TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = "QuestObjectives" };
                 if (quest.Objectives != null && quest.Objectives.Count > 0)
                 {
                     foreach (Objectives objective in quest.Objectives)
@@ -12526,6 +12539,45 @@ namespace ExpansionPlugin
                 targetNode.Expand();
             }
         }
+        private void addObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void jumpToObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var objectiveRef = currentTreeNode.Tag as Objectives;
+            var objectiveFiles = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems;
+
+            var objectiveConfig = objectiveFiles.FirstOrDefault(x =>
+                x.ID == objectiveRef.ID &&
+                x.ObjectiveType == objectiveRef.ObjectiveType);
+
+            if (objectiveConfig == null)
+            {
+                MessageBox.Show($"Objective {objectiveRef.ID} not found.");
+                return;
+            }
+            var targetNode = Helpers.FindNodeByTag(ExpansionTV.Nodes, objectiveConfig);
+
+            if (targetNode != null)
+            {
+                ExpansionTV.SelectedNode = targetNode;
+                targetNode.EnsureVisible();
+                ExpansionTV.SelectedNode.ExpandAll();
+            }
+        }
+        private void moveObjectiveUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void moveObjectiveDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -12590,7 +12642,8 @@ namespace ExpansionPlugin
 
 
 
- 
+
+
     }
 
     [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]
