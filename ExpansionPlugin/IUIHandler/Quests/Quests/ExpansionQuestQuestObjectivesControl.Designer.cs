@@ -104,7 +104,7 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "ExpansionQuestQuestObjectivesControl";
-            Size = new Size(647, 559);
+            Size = new Size(640, 97);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
