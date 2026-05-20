@@ -4848,7 +4848,7 @@ namespace ExpansionPlugin
                 {
                     foreach (Objectives objective in quest.Objectives)
                     {
-                        objectivesNode.Nodes.Add(new TreeNode(GetObjectiveReferenceText(objective))
+                        objectivesNode.Nodes.Add(new TreeNode(objective.DisplayText)
                         {
                             Tag = objective
                         });
@@ -4929,16 +4929,6 @@ namespace ExpansionPlugin
             }
         }
 
-        private string GetObjectiveReferenceText(Objectives objective)
-        {
-            if (objective == null)
-                return "Objective: Missing";
-
-            var objectiveFiles = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems;
-            ExpansionQuestObjectiveConfig objectiveBase = objectiveFiles.FirstOrDefault(x => x.ID == objective.ID && x.ObjectiveType == objective.ObjectiveType);
-
-            return $"🔗 {objectiveBase.ObjectiveType} : {objectiveBase.ObjectiveText}";
-        }
         private TreeNode CreateExpansionQuestObjectiveConfigConfig(ExpansionQuestObjectiveConfigConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode("Quest Objectives")

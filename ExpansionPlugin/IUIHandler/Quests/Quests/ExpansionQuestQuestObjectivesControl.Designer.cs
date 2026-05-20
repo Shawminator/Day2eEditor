@@ -60,7 +60,7 @@
             ObjIdCB.Name = "ObjIdCB";
             ObjIdCB.Size = new Size(523, 23);
             ObjIdCB.TabIndex = 186;
-            ObjIdCB.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            ObjIdCB.SelectedIndexChanged += ObjIdCB_SelectedIndexChanged;
             // 
             // label1
             // 
@@ -69,9 +69,9 @@
             label1.Location = new Point(15, 55);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(32, 15);
+            label1.Size = new Size(57, 15);
             label1.TabIndex = 185;
-            label1.Text = "Type";
+            label1.Text = "Objective";
             // 
             // ObjTypeCB
             // 
@@ -83,7 +83,7 @@
             ObjTypeCB.Name = "ObjTypeCB";
             ObjTypeCB.Size = new Size(523, 23);
             ObjTypeCB.TabIndex = 184;
-            ObjTypeCB.SelectedIndexChanged += QuestsCB_SelectedIndexChanged;
+            ObjTypeCB.SelectedIndexChanged += ObjTypeCB_SelectedIndexChanged;
             // 
             // darkLabel38
             // 

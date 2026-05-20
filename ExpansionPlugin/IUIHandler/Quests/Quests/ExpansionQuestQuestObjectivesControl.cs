@@ -13,6 +13,7 @@ namespace ExpansionPlugin
     /// </summary>
     public partial class ExpansionQuestQuestObjectivesControl : UserControl, IUIHandler
     {
+        private List<ExpansionQuestObjectiveConfig> objectiveslist { get; set; }
         private Type _parentType;
         private Objectives _data;
         private List<TreeNode> _nodes;
@@ -39,7 +40,7 @@ namespace ExpansionPlugin
 
             _suppressEvents = true;
 
-            List<ExpansionQuestObjectiveConfig> objectiveslist = AppServices.GetRequired<ExpansionManager>().ExpansionQuestObjectiveConfigConfig.MutableItems;
+            objectiveslist = AppServices.GetRequired<ExpansionManager>().ExpansionQuestObjectiveConfigConfig.MutableItems;
             ObjTypeCB.DataSource = Enum.GetValues<ExpansionQuestObjectiveType>()
                 .Where(t => t != ExpansionQuestObjectiveType.NONE)
                 .ToList();
@@ -61,18 +62,31 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.DisplayText;
             }
         }
 
         #endregion
-        private void QuestsCB_SelectedIndexChanged(object sender, EventArgs e)
+        private void ObjTypeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_suppressEvents) return;
+            _suppressEvents = true;
+            var selectedValue = (ExpansionQuestObjectiveType)ObjTypeCB.SelectedItem;
 
+            ObjIdCB.DataSource = objectiveslist
+           .Where(o => o.ObjectiveType == selectedValue)
+           .ToList();
+            ObjIdCB.DisplayMember = nameof(ExpansionQuestObjectiveConfig.DisplayText);
+            ObjIdCB.SelectedIndex = -1;
+            _suppressEvents = false;
         }
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ObjIdCB_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            ExpansionQuestObjectiveConfig obj = ObjIdCB.SelectedItem as ExpansionQuestObjectiveConfig;
+            _data.ObjectiveType = obj.ObjectiveType;
+            _data.ID = (int)obj.ID;
+            UpdateTreeNodeText();
         }
 
 

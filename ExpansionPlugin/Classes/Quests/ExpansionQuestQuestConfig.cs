@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -596,6 +597,17 @@ namespace ExpansionPlugin
         public int ConfigVersion { get; set; }
         public int ID { get; set; }
         public ExpansionQuestObjectiveType ObjectiveType { get; set; }
+        [JsonIgnore]
+        public string? DisplayText 
+        {
+            get
+            {
+                var objectiveFiles = AppServices.GetRequired<ExpansionManager>().ExpansionQuestObjectiveConfigConfig.MutableItems;
+                ExpansionQuestObjectiveConfig objectiveBase = objectiveFiles.FirstOrDefault(x => x.ID == ID && x.ObjectiveType == ObjectiveType);
+
+                return $"🔗 {objectiveBase.ObjectiveType} : {objectiveBase.ObjectiveText}";
+            }
+        }
 
         public Objectives Clone()
         {

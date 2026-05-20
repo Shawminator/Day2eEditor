@@ -203,6 +203,7 @@ namespace ExpansionPlugin
                 });
 
             }
+            Root.Nodes.Add(UnitsNode);
         }
     }
 }
