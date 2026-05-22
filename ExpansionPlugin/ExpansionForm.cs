@@ -1035,7 +1035,7 @@ namespace ExpansionPlugin
                 {
                     Objectives Objectives = node.Tag as Objectives;
                     ShowHandler(new ExpansionQuestQuestObjectivesControl(), typeof(ExpansionQuestQuestConfig), Objectives, selected);
-                    
+
                 }
             };
             // ----------------------
@@ -1848,7 +1848,7 @@ namespace ExpansionPlugin
                     }
 
                     if (!node.IsLast())
-                     {
+                    {
                         ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                         ExpansionSettingsCM.Items.Add(moveObjectiveDownToolStripMenuItem);
                     }
@@ -12571,6 +12571,31 @@ namespace ExpansionPlugin
         {
 
         }
+        private void addQuestItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Tag as ExpansionQuestQuest;
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    if (!_expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Contains(l))
+                    {
+                        _expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Add(l);
+                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        {
+                            Tag = "RaidExplosiveWhiteListItem"
+                        });
+                    }
+                }
+            }
+        }
+        private void removeQuestItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -12630,6 +12655,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
