@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime;
@@ -4857,7 +4858,7 @@ namespace ExpansionPlugin
 
                 questNode.Nodes.Add(objectivesNode);
 
-                TreeNode questItemsNode = new TreeNode($"Quest Items") { Tag = quest };
+                TreeNode questItemsNode = new TreeNode($"Quest Items") { Tag = "QuestItems" };
                 if (quest.QuestItems != null)
                 {
                     foreach (ExpansionQuestItemConfig item in quest.QuestItems)
@@ -4870,7 +4871,7 @@ namespace ExpansionPlugin
                 }
                 questNode.Nodes.Add(questItemsNode);
 
-                TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = quest };
+                TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = "QuestRewards" };
                 if (quest.Rewards != null)
                 {
                     foreach (ExpansionQuestRewardConfig reward in quest.Rewards)
@@ -12470,8 +12471,9 @@ namespace ExpansionPlugin
         }
         private void addQuestGiverToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExpansionQuestNPCData linkedNPC = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems.First();
             ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+            var usedNpcIds = quest.QuestGiverIDsList.Select(n => n.NPCID).ToList();
+            ExpansionQuestNPCData linkedNPC = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems.FirstOrDefault(npc => !usedNpcIds.Contains((int)npc.ID));
 
             QuestNPCReferenceNode NPCref = new QuestNPCReferenceNode()
             {
@@ -12494,8 +12496,9 @@ namespace ExpansionPlugin
         }
         private void addQuestTurnInToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExpansionQuestNPCData linkedNPC = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems.First();
             ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+            var usedNpcIds = quest.QuestTurnInIDsList.Select(n => n.NPCID).ToList();
+            ExpansionQuestNPCData linkedNPC = _expansionManager.ExpansionQuestNPCDataConfig.MutableItems.FirstOrDefault(npc => !usedNpcIds.Contains((int)npc.ID));
 
             QuestNPCReferenceNode NPCref = new QuestNPCReferenceNode()
             {
