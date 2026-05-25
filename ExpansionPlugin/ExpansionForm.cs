@@ -1374,6 +1374,10 @@ namespace ExpansionPlugin
                     Vec3 v3 = node.Tag as Vec3;
                     if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
                     {
+                        if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
+                        {
+                            return;
+                        }
                         ExpansionSettingsCM.Items.Clear();
                         ExpansionSettingsCM.Items.Add(removeWaypointToolStripMenuItem);
                         ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
@@ -1864,7 +1868,19 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeQuestItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-                }
+                },
+                [typeof(ExpansionQuestRewardConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeQuestRewardItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(FactionQuestRep)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeFactionRepToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
 
             };
             // ----------------------
@@ -1943,6 +1959,10 @@ namespace ExpansionPlugin
                 },
                 ["AIPatrolWayPoints"] = node =>
                 {
+                    if(currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
+                    {
+                        return;
+                    }
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addWaypointToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
@@ -2616,6 +2636,37 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addQuestItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["QuestRewardItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addQuestRewardItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["QuestRewardAttachments"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAttachmentToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+
+                },
+                ["QuestRewardAttachment"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAttachmentToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["FactionReputationRequirements"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addFactionRepToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["FactionReputationRewardsList"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addFactionRepToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -4884,7 +4935,7 @@ namespace ExpansionPlugin
                 }
                 questNode.Nodes.Add(questItemsNode);
 
-                TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = "QuestRewards" };
+                TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = "QuestRewardItems" };
                 if (quest.Rewards != null)
                 {
                     foreach (ExpansionQuestRewardConfig reward in quest.Rewards)
@@ -8625,21 +8676,51 @@ namespace ExpansionPlugin
                 UseRandomWaypointAsStartPoint = 1,
                 Waypoints = new BindingList<Vec3>()
             };
-            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
-            ExpansionAIPatrolConfig.Data.Patrols.Add(newpatrol);
-            TreeNode PatrolRoot = new TreeNode(newpatrol.Name)
+            bool createTree = false;
+            if(currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>() != null)
             {
-                Tag = newpatrol
-            };
-            CreatePatrolNodes(newpatrol, PatrolRoot);
-            currentTreeNode.Nodes.Add(PatrolRoot);
-
+                ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+                ExpansionAIPatrolConfig.Data.Patrols.Add(newpatrol);
+                createTree = true;
+            }
+            if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
+            {
+                ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>();
+                ExpansionQuestObjectiveAICampConfig.AISpawns.Add(newpatrol);
+                createTree = true;
+            }
+            if (createTree == true)
+            {
+                TreeNode PatrolRoot = new TreeNode(newpatrol.Name)
+                {
+                    Tag = newpatrol
+                };
+                CreatePatrolNodes(newpatrol, PatrolRoot);
+                currentTreeNode.Nodes.Add(PatrolRoot);
+            }
         }
         private void removePatrolToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
-            ExpansionAIPatrolConfig.Data.Patrols.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
-            currentTreeNode.Remove();
+            if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
+            {
+                ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>();
+                ExpansionQuestObjectiveAICampConfig.AISpawns.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>() != null)
+            {
+                ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+                ExpansionAIPatrolConfig.Data.Patrols.Add(currentTreeNode.Tag as ExpansionAIPatrol);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>() != null)
+            {
+                ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+                ExpansionAIPatrolConfig.Data.Patrols.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
+                currentTreeNode.Remove();
+            }
+            
+           
 
         }
         private void addWaypointToolStripMenuItem_Click(object sender, EventArgs e)
@@ -12663,7 +12744,7 @@ namespace ExpansionPlugin
                         Amount = 1
                     };
 
-                    if (!quest.QuestItems.Any(x =>x.ClassName == newitem.ClassName))
+                    if (!quest.QuestItems.Any(x => x.ClassName == newitem.ClassName))
                     {
                         quest.QuestItems.Add(newitem);
                         currentTreeNode.Nodes.Add(new TreeNode(newitem.ClassName)
@@ -12680,6 +12761,118 @@ namespace ExpansionPlugin
             ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
             ExpansionQuestItemConfig questitem = currentTreeNode.Tag as ExpansionQuestItemConfig;
             quest.QuestItems.Remove(questitem);
+            currentTreeNode.Remove();
+        }
+        private void addQuestRewardItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Tag as ExpansionQuestQuest;
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    ExpansionQuestRewardConfig reward = new ExpansionQuestRewardConfig()
+                    {
+                        ClassName = l,
+                        Amount = 1,
+                        Attachments = new BindingList<string>(),
+                        DamagePercent = 0,
+                        HealthPercent = 0,
+                        QuestID = -1,
+                        Chance = 1,
+
+                    };
+
+                    if (!quest.Rewards.Any(x => x.ClassName == reward.ClassName))
+                    {
+                        quest.Rewards.Add(reward);
+                        TreeNode rewardnode = new TreeNode(reward.ClassName)
+                        {
+                            Tag = reward
+                        };
+                        TreeNode Attachmentnode = new TreeNode("Attachments")
+                        {
+                            Tag = "QuestRewardAttachments"
+                        };
+                        rewardnode.Nodes.Add(Attachmentnode);
+                        currentTreeNode.Nodes.Add(rewardnode);
+                        currentTreeNode.Expand();
+                    }
+                }
+            }
+        }
+        private void removeQuestRewardItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+            ExpansionQuestRewardConfig questitem = currentTreeNode.Tag as ExpansionQuestRewardConfig;
+            quest.Rewards.Remove(questitem);
+            currentTreeNode.Remove();
+        }
+        private void addAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestRewardConfig quest = currentTreeNode.Parent.Tag as ExpansionQuestRewardConfig;
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    quest.Attachments.Add(l);
+                    TreeNode rewardnode = new TreeNode(l)
+                    {
+                        Tag = "QuestRewardAttachment"
+                    };
+                    currentTreeNode.Nodes.Add(rewardnode);
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestRewardConfig ExpansionQuestRewardConfig = currentTreeNode.Parent.Parent.Tag as ExpansionQuestRewardConfig;
+            ExpansionQuestRewardConfig.Attachments.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+        }
+        private void addFactionRepToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+            FactionQuestRep frep = new FactionQuestRep()
+            {
+                Faction = "Civilian",
+                Reputation = 100
+            };
+            switch (currentTreeNode.Tag.ToString())
+            {
+                case "FactionReputationRequirements":
+                    quest.FactionReputationRequirementsList.Add(frep);
+                    break;
+                case "FactionReputationRewardsList":
+                    quest.FactionReputationRewardsList.Add(frep);
+                    break;
+            }
+            currentTreeNode.Nodes.Add(new TreeNode($"Faction:{frep.Faction} Rep:{frep.Reputation}")
+            {
+                Tag = frep
+            });
+            currentTreeNode.Expand();
+        }
+
+        private void removeFactionRepToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Parent.Tag as ExpansionQuestQuest;
+            FactionQuestRep frep = currentTreeNode.Tag as FactionQuestRep;
+            switch (currentTreeNode.Parent.Tag.ToString())
+            {
+                case "FactionReputationRequirements":
+                    quest.FactionReputationRequirementsList.Remove(frep);
+                    break;
+                case "FactionReputationRewardsList":
+                    quest.FactionReputationRewardsList.Remove(frep);
+                    break;
+            }
             currentTreeNode.Remove();
         }
         #endregion right click methods
@@ -12741,6 +12934,10 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
+
+
 
 
 

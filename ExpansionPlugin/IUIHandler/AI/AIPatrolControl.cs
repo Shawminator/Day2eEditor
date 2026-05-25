@@ -418,7 +418,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = _data.Name;
+                _nodes.Last().Parent.Text = _data.Name;
             }
         }
 

@@ -256,6 +256,12 @@
             moveObjectiveDownToolStripMenuItem = new ToolStripMenuItem();
             addQuestItemToolStripMenuItem = new ToolStripMenuItem();
             removeQuestItemToolStripMenuItem = new ToolStripMenuItem();
+            addQuestRewardItemToolStripMenuItem = new ToolStripMenuItem();
+            removeQuestRewardItemToolStripMenuItem = new ToolStripMenuItem();
+            addAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            removeAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            addFactionRepToolStripMenuItem = new ToolStripMenuItem();
+            removeFactionRepToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1911,10 +1917,10 @@
             // QuestsCM
             // 
             QuestsCM.BackColor = Color.FromArgb(60, 63, 65);
-            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem, addNPCWaypointsToolStripMenuItem, removeNPCWaypointsToolStripMenuItem, moveNPCWaypointUpToolStripMenuItem, moveNPCWaypointDownToolStripMenuItem, addPreQuestToolStripMenuItem, removePreQuestToolStripMenuItem, addFollowUpToolStripMenuItem, removeFollowUpToolStripMenuItem, jumpToQuestToolStripMenuItem, addQuestGiverToolStripMenuItem, removeQuestGiverToolStripMenuItem, addQuestTurnInToolStripMenuItem, removeQuestTurnInToolStripMenuItem, jumpToNPCToolStripMenuItem, addObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem, jumpToObjectiveToolStripMenuItem, moveObjectiveUpToolStripMenuItem, moveObjectiveDownToolStripMenuItem, addQuestItemToolStripMenuItem, removeQuestItemToolStripMenuItem });
+            QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem, addNPCWaypointsToolStripMenuItem, removeNPCWaypointsToolStripMenuItem, moveNPCWaypointUpToolStripMenuItem, moveNPCWaypointDownToolStripMenuItem, addPreQuestToolStripMenuItem, removePreQuestToolStripMenuItem, addFollowUpToolStripMenuItem, removeFollowUpToolStripMenuItem, jumpToQuestToolStripMenuItem, addQuestGiverToolStripMenuItem, removeQuestGiverToolStripMenuItem, addQuestTurnInToolStripMenuItem, removeQuestTurnInToolStripMenuItem, jumpToNPCToolStripMenuItem, addObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem, jumpToObjectiveToolStripMenuItem, moveObjectiveUpToolStripMenuItem, moveObjectiveDownToolStripMenuItem, addQuestItemToolStripMenuItem, removeQuestItemToolStripMenuItem, addQuestRewardItemToolStripMenuItem, removeQuestRewardItemToolStripMenuItem, removeAttachmentToolStripMenuItem, addAttachmentToolStripMenuItem, addFactionRepToolStripMenuItem, removeFactionRepToolStripMenuItem });
             QuestsCM.Name = "DamageCM";
             QuestsCM.ShowImageMargin = false;
-            QuestsCM.Size = new Size(202, 598);
+            QuestsCM.Size = new Size(202, 730);
             // 
             // toolStripMenuItem1
             // 
@@ -2119,6 +2125,54 @@
             removeQuestItemToolStripMenuItem.Size = new Size(201, 22);
             removeQuestItemToolStripMenuItem.Text = "Remove Quest Item";
             removeQuestItemToolStripMenuItem.Click += removeQuestItemToolStripMenuItem_Click;
+            // 
+            // addQuestRewardItemToolStripMenuItem
+            // 
+            addQuestRewardItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            addQuestRewardItemToolStripMenuItem.Name = "addQuestRewardItemToolStripMenuItem";
+            addQuestRewardItemToolStripMenuItem.Size = new Size(201, 22);
+            addQuestRewardItemToolStripMenuItem.Text = "Add Quest Reward Item";
+            addQuestRewardItemToolStripMenuItem.Click += addQuestRewardItemToolStripMenuItem_Click;
+            // 
+            // removeQuestRewardItemToolStripMenuItem
+            // 
+            removeQuestRewardItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeQuestRewardItemToolStripMenuItem.Name = "removeQuestRewardItemToolStripMenuItem";
+            removeQuestRewardItemToolStripMenuItem.Size = new Size(201, 22);
+            removeQuestRewardItemToolStripMenuItem.Text = "Remove Quest Reward Item";
+            removeQuestRewardItemToolStripMenuItem.Click += removeQuestRewardItemToolStripMenuItem_Click;
+            // 
+            // addAttachmentToolStripMenuItem
+            // 
+            addAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAttachmentToolStripMenuItem.Name = "addAttachmentToolStripMenuItem";
+            addAttachmentToolStripMenuItem.Size = new Size(201, 22);
+            addAttachmentToolStripMenuItem.Text = "Add Attachment";
+            addAttachmentToolStripMenuItem.Click += addAttachmentToolStripMenuItem_Click;
+            // 
+            // removeAttachmentToolStripMenuItem
+            // 
+            removeAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAttachmentToolStripMenuItem.Name = "removeAttachmentToolStripMenuItem";
+            removeAttachmentToolStripMenuItem.Size = new Size(201, 22);
+            removeAttachmentToolStripMenuItem.Text = "Remove Attachment";
+            removeAttachmentToolStripMenuItem.Click += removeAttachmentToolStripMenuItem_Click;
+            // 
+            // addFactionRepToolStripMenuItem
+            // 
+            addFactionRepToolStripMenuItem.ForeColor = SystemColors.Control;
+            addFactionRepToolStripMenuItem.Name = "addFactionRepToolStripMenuItem";
+            addFactionRepToolStripMenuItem.Size = new Size(201, 22);
+            addFactionRepToolStripMenuItem.Text = "Add Faction Rep";
+            addFactionRepToolStripMenuItem.Click += addFactionRepToolStripMenuItem_Click;
+            // 
+            // removeFactionRepToolStripMenuItem
+            // 
+            removeFactionRepToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeFactionRepToolStripMenuItem.Name = "removeFactionRepToolStripMenuItem";
+            removeFactionRepToolStripMenuItem.Size = new Size(201, 22);
+            removeFactionRepToolStripMenuItem.Text = "Remove Faction rep";
+            removeFactionRepToolStripMenuItem.Click += removeFactionRepToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2385,5 +2439,11 @@
         private ToolStripMenuItem moveObjectiveDownToolStripMenuItem;
         private ToolStripMenuItem addQuestItemToolStripMenuItem;
         private ToolStripMenuItem removeQuestItemToolStripMenuItem;
+        private ToolStripMenuItem removeAttachmentToolStripMenuItem;
+        private ToolStripMenuItem addAttachmentToolStripMenuItem;
+        private ToolStripMenuItem removeQuestRewardItemToolStripMenuItem;
+        private ToolStripMenuItem addQuestRewardItemToolStripMenuItem;
+        private ToolStripMenuItem addFactionRepToolStripMenuItem;
+        private ToolStripMenuItem removeFactionRepToolStripMenuItem;
     }
 }
