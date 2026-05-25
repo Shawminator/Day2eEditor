@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime;
 using System.Runtime.InteropServices.Marshalling;
+using System.Security.AccessControl;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -1355,7 +1356,7 @@ namespace ExpansionPlugin
                 {
                     ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
                     ShowHandler<IUIHandler>(new ExpansionQuestSettingsResetScheduleControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
-                },
+                }
             };
         }
 
@@ -1856,6 +1857,12 @@ namespace ExpansionPlugin
 
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(jumpToObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestItemConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeQuestItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
 
@@ -2603,6 +2610,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["QuestItems"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addQuestItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -12534,11 +12547,34 @@ namespace ExpansionPlugin
         }
         private void addObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Tag as ExpansionQuestQuest;
+            AddObjectives form = new AddObjectives();
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<ExpansionQuestObjectiveConfig> selectedqauests = form.selectedObjectives;
+                foreach (ExpansionQuestObjectiveConfig obj in selectedqauests)
+                {
+                    Objectives Objective = new Objectives()
+                    {
+                        ObjectiveType = obj.ObjectiveType,
+                        ID = (int)obj.ID,
+                        ConfigVersion = obj.ConfigVersion
+                    };
+                    quest.Objectives.Add(Objective);
+                    currentTreeNode.Nodes.Add(new TreeNode(Objective.DisplayText)
+                    {
+                        Tag = Objective
+                    });
+                }
+            }
         }
         private void removeObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ExpansionQuestQuest ExpansionQuestQuest = currentTreeNode.FindParentOfType<ExpansionQuestQuest>();
+            Objectives Objective = currentTreeNode.Tag as Objectives;
+            ExpansionQuestQuest.Objectives.Remove(Objective);
+            currentTreeNode.Remove();
         }
         private void jumpToObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -12565,11 +12601,51 @@ namespace ExpansionPlugin
         }
         private void moveObjectiveUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionQuestQuest ExpansionQuestQuest = currentTreeNode.FindParentOfType<ExpansionQuestQuest>();
+            Objectives Objectives = currentTreeNode.Tag as Objectives;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
 
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index > 0)
+            {
+                siblings.RemoveAt(index);
+                ExpansionQuestQuest.Objectives.RemoveAt(index);
+                ExpansionQuestQuest.Objectives.Insert(index - 1, Objectives);
+                siblings.Insert(index - 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
         }
         private void moveObjectiveDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ExpansionQuestQuest ExpansionQuestQuest = currentTreeNode.FindParentOfType<ExpansionQuestQuest>();
+            Objectives Objectives = currentTreeNode.Tag as Objectives;
+            TreeNodeCollection siblings;
+            if (currentTreeNode.Parent != null)
+            {
+                siblings = currentTreeNode.Parent.Nodes;
+            }
+            else
+            {
+                siblings = ExpansionTV.Nodes;
+            }
 
+            int index = siblings.IndexOf(currentTreeNode);
+            if (index < siblings.Count - 1)
+            {
+                siblings.RemoveAt(index);
+                ExpansionQuestQuest.Objectives.RemoveAt(index);
+                ExpansionQuestQuest.Objectives.Insert(index + 1, Objectives);
+                siblings.Insert(index + 1, currentTreeNode);
+                ExpansionTV.SelectedNode = currentTreeNode; // Optional: reselect the node
+            }
         }
         private void addQuestItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -12581,20 +12657,30 @@ namespace ExpansionPlugin
                 List<string> addedtypes = form.AddedTypes.ToList();
                 foreach (string l in addedtypes)
                 {
-                    if (!_expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Contains(l))
+                    ExpansionQuestItemConfig newitem = new ExpansionQuestItemConfig()
                     {
-                        _expansionManager.ExpansionRaidConfig.Data.ExplosiveDamageWhitelist.Add(l);
-                        currentTreeNode.Nodes.Add(new TreeNode(l)
+                        ClassName = l,
+                        Amount = 1
+                    };
+
+                    if (!quest.QuestItems.Any(x =>x.ClassName == newitem.ClassName))
+                    {
+                        quest.QuestItems.Add(newitem);
+                        currentTreeNode.Nodes.Add(new TreeNode(newitem.ClassName)
                         {
-                            Tag = "RaidExplosiveWhiteListItem"
+                            Tag = newitem
                         });
+                        currentTreeNode.Expand();
                     }
                 }
             }
         }
         private void removeQuestItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Tag as ExpansionQuestQuest;
+            ExpansionQuestItemConfig questitem = currentTreeNode.Tag as ExpansionQuestItemConfig;
+            quest.QuestItems.Remove(questitem);
+            currentTreeNode.Remove();
         }
         #endregion right click methods
 

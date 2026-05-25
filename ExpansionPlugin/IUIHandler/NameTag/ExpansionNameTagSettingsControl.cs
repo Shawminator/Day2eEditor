@@ -40,7 +40,7 @@ namespace ExpansionPlugin
             _suppressEvents = true;
 
             EnablePlayerTagsCB.Checked = _data.EnablePlayerTags == 1 ? true : false;
-            PlayerTagViewRangeNUD.Value = (int)_data.PlayerTagViewRange;
+            PlayerTagViewRangeNUD.Value = (decimal)_data.PlayerTagViewRange;
             PlayerTagsIconTB.Text = _data.PlayerTagsIcon;
             PlayerTagsColorPB.BackColor = Color.FromArgb((int)_data.PlayerTagsColor);
             PlayerNameColorPB.BackColor = Color.FromArgb((int)_data.PlayerNameColor);
@@ -77,7 +77,7 @@ namespace ExpansionPlugin
         private void PlayerTagViewRangeNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.PlayerTagViewRange = (int)PlayerTagViewRangeNUD.Value;
+            _data.PlayerTagViewRange = (decimal)PlayerTagViewRangeNUD.Value;
             
         }
         private void PlayerTagsIconTB_TextChanged(object sender, EventArgs e)

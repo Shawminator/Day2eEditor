@@ -26,7 +26,7 @@ namespace ExpansionPlugin
     {
         public int m_Version { get; set; }
         public int? EnablePlayerTags { get; set; }
-        public int? PlayerTagViewRange { get; set; }
+        public decimal? PlayerTagViewRange { get; set; }
         public string? PlayerTagsIcon { get; set; }
         public int? PlayerTagsColor { get; set; }
         public int? PlayerNameColor { get; set; }
@@ -42,7 +42,7 @@ namespace ExpansionPlugin
         {
             m_Version = CurrentVersion;
             EnablePlayerTags = 1;
-            PlayerTagViewRange = 5;
+            PlayerTagViewRange = 5.0m;
             PlayerTagsIcon = "Persona";
             PlayerTagsColor = -1644826;
             PlayerNameColor = -1644826;
@@ -68,7 +68,7 @@ namespace ExpansionPlugin
             }
             if (PlayerTagViewRange is null or < 0)
             {
-                PlayerTagViewRange = 5;
+                PlayerTagViewRange = 5.0m;
                 fixes.Add("Corrected PlayerTagViewRange");
             }
 

@@ -153,7 +153,7 @@
             label5.Location = new Point(23, 244);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
-            label5.Size = new Size(89, 15);
+            label5.Size = new Size(90, 15);
             label5.TabIndex = 130;
             label5.Text = "Show NPC Tags";
             // 
@@ -175,7 +175,7 @@
             label1.Location = new Point(23, 22);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(103, 15);
+            label1.Size = new Size(104, 15);
             label1.TabIndex = 124;
             label1.Text = "Enable Player Tags";
             // 
@@ -186,7 +186,7 @@
             label3.Location = new Point(23, 196);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
-            label3.Size = new Size(99, 15);
+            label3.Size = new Size(100, 15);
             label3.TabIndex = 126;
             label3.Text = "Only In Territories";
             // 
@@ -218,7 +218,7 @@
             darkLabel184.Location = new Point(23, 111);
             darkLabel184.Margin = new Padding(4, 0, 4, 0);
             darkLabel184.Name = "darkLabel184";
-            darkLabel184.Size = new Size(97, 15);
+            darkLabel184.Size = new Size(98, 15);
             darkLabel184.TabIndex = 122;
             darkLabel184.Text = "Player Tags Color";
             // 
@@ -260,7 +260,7 @@
             label12.Location = new Point(23, 79);
             label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
-            label12.Size = new Size(91, 15);
+            label12.Size = new Size(92, 15);
             label12.TabIndex = 117;
             label12.Text = "Player Tags Icon";
             // 
@@ -293,7 +293,7 @@
             darkLabel91.Location = new Point(23, 49);
             darkLabel91.Margin = new Padding(4, 0, 4, 0);
             darkLabel91.Name = "darkLabel91";
-            darkLabel91.Size = new Size(124, 15);
+            darkLabel91.Size = new Size(125, 15);
             darkLabel91.TabIndex = 113;
             darkLabel91.Text = "Player Tag View Range";
             // 
@@ -311,10 +311,11 @@
             // PlayerTagViewRangeNUD
             // 
             PlayerTagViewRangeNUD.BackColor = Color.FromArgb(60, 63, 65);
+            PlayerTagViewRangeNUD.DecimalPlaces = 1;
             PlayerTagViewRangeNUD.ForeColor = SystemColors.Control;
             PlayerTagViewRangeNUD.Location = new Point(226, 55);
             PlayerTagViewRangeNUD.Margin = new Padding(4, 3, 4, 3);
-            PlayerTagViewRangeNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            PlayerTagViewRangeNUD.Maximum = new decimal(new int[] { 40000, 0, 0, 0 });
             PlayerTagViewRangeNUD.Name = "PlayerTagViewRangeNUD";
             PlayerTagViewRangeNUD.Size = new Size(130, 23);
             PlayerTagViewRangeNUD.TabIndex = 3;
