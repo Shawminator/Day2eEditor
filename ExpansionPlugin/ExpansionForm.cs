@@ -8217,7 +8217,7 @@ namespace ExpansionPlugin
             // If the inventory attachment belongs to an AILoadouts file
             if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
             {
-                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                AILoadouts AILoadouts = currentTreeNode.FindParentOfType<AILoadouts>();
                 AILoadouts.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
                 if (currentTreeNode != null)
                     currentTreeNode.Remove();

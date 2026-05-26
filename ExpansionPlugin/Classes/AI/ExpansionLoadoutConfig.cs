@@ -111,21 +111,22 @@ namespace ExpansionPlugin
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return ClassName == other.ClassName &&
+            return _path == other._path &&
+                   ClassName == other.ClassName &&
                    Include == other.Include &&
                    Chance == other.Chance &&
-                   Equals(Quantity, other.Quantity) &&
-                   Health.SequenceEqual(other.Health) &&
-                   InventoryAttachments.SequenceEqual(other.InventoryAttachments) &&
-                   InventoryCargo.SequenceEqual(other.InventoryCargo) &&
-                   ConstructionPartsBuilt.SequenceEqual(other.ConstructionPartsBuilt) &&
-                   Sets.SequenceEqual(other.Sets) &&
+                   Quantity.Equals(other.Quantity) &&
+                   Helper.ListEquals(Health, other.Health) &&
+                   Helper.ListEquals(InventoryAttachments, other.InventoryAttachments) &&
+                   Helper.ListEquals(InventoryCargo, other.InventoryCargo) &&
+                   Helper.ListEquals(ConstructionPartsBuilt, other.ConstructionPartsBuilt) &&
+                   Helper.ListEquals(Sets, other.Sets) &&
                    Id == other.Id;
         }
         public override bool Equals(object? obj) => Equals(obj as AILoadouts);
         public AILoadouts Clone()
         {
-            return new AILoadouts()
+            var clone = new  AILoadouts()
             {
                 ClassName = this.ClassName,
                 Include = this.Include,
@@ -135,10 +136,11 @@ namespace ExpansionPlugin
                 InventoryAttachments = new BindingList<Inventoryattachment>(this.InventoryAttachments.Select(x => x.Clone()).ToList()),
                 InventoryCargo = new BindingList<AILoadouts>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
                 ConstructionPartsBuilt = new BindingList<object>(this.ConstructionPartsBuilt.ToList()),
-                Sets = new BindingList<AILoadouts>(this.Sets.Select(x => x.Clone()).ToList()),
-                _path = this._path,
-                Id = this.Id
+                Sets = new BindingList<AILoadouts>(this.Sets.Select(x => x.Clone()).ToList())
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
         }
 
 
@@ -151,14 +153,17 @@ namespace ExpansionPlugin
         }
     }
 
-    public class Quantity
+    public class Quantity : IDeepCloneable<Quantity>, IEquatable<Quantity>
     {
         public decimal Min { get; set; }
         public decimal Max { get; set; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj) => Equals(obj as Quantity);
+        public bool Equals(Quantity other)
         {
-            if (obj is not Quantity other) return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            
             return Min == other.Min && Max == other.Max;
         }
         public Quantity Clone()
@@ -171,7 +176,7 @@ namespace ExpansionPlugin
         }
     }
 
-    public class Health
+    public class Health : IDeepCloneable<Health>, IEquatable<Health>
     {
         public decimal Min { get; set; }
         public decimal Max { get; set; }
@@ -183,10 +188,12 @@ namespace ExpansionPlugin
                 return "No Zone";
             return Zone;
         }
-
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj) => Equals(obj as Health);
+        public bool Equals(Health other)
         {
-            if (obj is not Health other) return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
             return Min == other.Min && Max == other.Max && Zone == other.Zone;
         }
         public Health Clone()
@@ -200,7 +207,7 @@ namespace ExpansionPlugin
         }
     }
 
-    public class Inventoryattachment
+    public class Inventoryattachment : IDeepCloneable<Inventoryattachment>, IEquatable<Inventoryattachment>
     {
         public string SlotName { get; set; }
         public BindingList<AILoadouts> Items { get; set; }
@@ -209,12 +216,14 @@ namespace ExpansionPlugin
         {
             return SlotName; ;
         }
-
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj) => Equals(obj as Inventoryattachment);
+        public bool Equals(Inventoryattachment other)
         {
-            if (obj is not Inventoryattachment other) return false;
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
             return SlotName == other.SlotName &&
-                   Items.SequenceEqual(other.Items);
+                   Helper.ListEquals(Items, other.Items);
         }
         public Inventoryattachment Clone()
         {
