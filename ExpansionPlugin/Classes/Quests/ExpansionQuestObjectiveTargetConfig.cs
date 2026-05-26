@@ -299,5 +299,10 @@ namespace ExpansionPlugin
             }
             categoryNode.Nodes.Add(AllowedDamageZonesNode);
         }
+
+        internal override void createDefault()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

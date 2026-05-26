@@ -137,17 +137,12 @@ namespace ExpansionPlugin
             {
                 Tag = new ObjectiveNodeTag(this, ObjectiveNodeKind.SpecificConfig)
             });
-            TreeNode AIAPatrolsNode = new TreeNode("AI Spawns")
-            {
-                Tag = "AIPatrols"
-            };
-            TreeNode PatrolRoot = new TreeNode(AISpawn.Name)
+            TreeNode PatrolRoot = new TreeNode($"AI Spawn : {AISpawn.Name}")
             {
                 Tag = AISpawn
             };
             CreatePatrolNodes(AISpawn, PatrolRoot);
-            AIAPatrolsNode.Nodes.Add(PatrolRoot);
-            categoryNode.Nodes.Add(AIAPatrolsNode);
+            categoryNode.Nodes.Add(PatrolRoot);
             TreeNode AllowedWeaponsNode = new TreeNode("Allowed Weapons")
             {
                 Tag = "ObjectivesAICAllowedWeapons",
@@ -204,6 +199,100 @@ namespace ExpansionPlugin
 
             }
             Root.Nodes.Add(UnitsNode);
+        }
+
+        internal override void createDefault()
+        {
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "AIPatrol", $"Objective_AIP_{ID}.json");
+            ObjectiveText = "New Ai Patrol";
+            MaxDistance = -1;
+            MinDistance = -1;
+            AllowedWeapons = new BindingList<string>();
+            AllowedDamageZones = new BindingList<string>();
+            AISpawn = new ExpansionAIPatrol()
+            {
+                Name = "NewAICamp",
+                Persist = 0,
+                Faction = "West",
+                Formation = "",
+                FormationScale = (decimal)-1.0,
+                FormationLooseness = (decimal)0.0,
+                Loadout = "",
+                Units = new BindingList<string>()
+                    {
+                            "eAI_SurvivorF_Eva",
+                            "eAI_SurvivorF_Frida",
+                            "eAI_SurvivorF_Gabi",
+                            "eAI_SurvivorF_Helga",
+                            "eAI_SurvivorF_Irena",
+                            "eAI_SurvivorF_Judy",
+                            "eAI_SurvivorF_Keiko",
+                            "eAI_SurvivorF_Linda",
+                            "eAI_SurvivorF_Maria",
+                            "eAI_SurvivorF_Naomi",
+                            "eAI_SurvivorF_Baty",
+                            "eAI_SurvivorM_Boris",
+                            "eAI_SurvivorM_Cyril",
+                            "eAI_SurvivorM_Denis",
+                            "eAI_SurvivorM_Elias",
+                            "eAI_SurvivorM_Francis",
+                            "eAI_SurvivorM_Guo",
+                            "eAI_SurvivorM_Hassan",
+                            "eAI_SurvivorM_Indar",
+                            "eAI_SurvivorM_Jose",
+                            "eAI_SurvivorM_Kaito",
+                            "eAI_SurvivorM_Lewis",
+                            "eAI_SurvivorM_Manua",
+                            "eAI_SurvivorM_Mirek",
+                            "eAI_SurvivorM_Niki",
+                            "eAI_SurvivorM_Oliver",
+                            "eAI_SurvivorM_Peter",
+                            "eAI_SurvivorM_Quinn",
+                            "eAI_SurvivorM_Rolf",
+                            "eAI_SurvivorM_Seth",
+                            "eAI_SurvivorM_Taiki"
+                    },
+                NumberOfAI = 1,
+                NumberOfAIMax = 1,
+                Behaviour = "ALTERNATE",
+                LootingBehaviour = "DEFAULT",
+                Speed = "WALK",
+                UnderThreatSpeed = "SPRINT",
+                DefaultStance = "STANDING",
+                DefaultLookAngle = (decimal)0.0,
+                CanBeLooted = 1,
+                LootDropOnDeath = "",
+                UnlimitedReload = 1,
+                SniperProneDistanceThreshold = (decimal)0.0,
+                AccuracyMin = -1,
+                AccuracyMax = -1,
+                ThreatDistanceLimit = -1,
+                NoiseInvestigationDistanceLimit = -1,
+                MaxFlankingDistance = -1,
+                EnableFlankingOutsideCombat = -1,
+                DamageMultiplier = -1,
+                DamageReceivedMultiplier = -1,
+                HeadshotResistance = (decimal)0.0,
+                ShoryukenChance = -1.0M,
+                ShoryukenDamageMultiplier = -1.0M,
+                CanBeTriggeredByAI = 0,
+                CanSpawnInContaminatedArea = 0,
+                MinDistRadius = -1,
+                MaxDistRadius = -1,
+                DespawnRadius = -1,
+                MinSpreadRadius = 1,
+                MaxSpreadRadius = 100,
+                Chance = 1,
+                DespawnTime = -1,
+                RespawnTime = -2,
+                LoadBalancingCategory = "",
+                ObjectClassName = "",
+                WaypointInterpolation = "",
+                UseRandomWaypointAsStartPoint = 1,
+                Waypoints = new BindingList<Vec3>()
+            };
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

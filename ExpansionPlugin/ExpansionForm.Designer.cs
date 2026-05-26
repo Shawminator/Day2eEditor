@@ -258,10 +258,13 @@
             removeQuestItemToolStripMenuItem = new ToolStripMenuItem();
             addQuestRewardItemToolStripMenuItem = new ToolStripMenuItem();
             removeQuestRewardItemToolStripMenuItem = new ToolStripMenuItem();
-            addAttachmentToolStripMenuItem = new ToolStripMenuItem();
             removeAttachmentToolStripMenuItem = new ToolStripMenuItem();
+            addAttachmentToolStripMenuItem = new ToolStripMenuItem();
             addFactionRepToolStripMenuItem = new ToolStripMenuItem();
             removeFactionRepToolStripMenuItem = new ToolStripMenuItem();
+            ObjectivesCM = new ContextMenuStrip(components);
+            addNewObjectiveToolStripMenuItem = new ToolStripMenuItem();
+            removeObjectiveToolStripMenuItem1 = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -279,6 +282,7 @@
             P2PCM.SuspendLayout();
             MarketCM.SuspendLayout();
             QuestsCM.SuspendLayout();
+            ObjectivesCM.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -1920,7 +1924,7 @@
             QuestsCM.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, questFlowPreviewToolStripMenuItem, addNPCWaypointsToolStripMenuItem, removeNPCWaypointsToolStripMenuItem, moveNPCWaypointUpToolStripMenuItem, moveNPCWaypointDownToolStripMenuItem, addPreQuestToolStripMenuItem, removePreQuestToolStripMenuItem, addFollowUpToolStripMenuItem, removeFollowUpToolStripMenuItem, jumpToQuestToolStripMenuItem, addQuestGiverToolStripMenuItem, removeQuestGiverToolStripMenuItem, addQuestTurnInToolStripMenuItem, removeQuestTurnInToolStripMenuItem, jumpToNPCToolStripMenuItem, addObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem, jumpToObjectiveToolStripMenuItem, moveObjectiveUpToolStripMenuItem, moveObjectiveDownToolStripMenuItem, addQuestItemToolStripMenuItem, removeQuestItemToolStripMenuItem, addQuestRewardItemToolStripMenuItem, removeQuestRewardItemToolStripMenuItem, removeAttachmentToolStripMenuItem, addAttachmentToolStripMenuItem, addFactionRepToolStripMenuItem, removeFactionRepToolStripMenuItem });
             QuestsCM.Name = "DamageCM";
             QuestsCM.ShowImageMargin = false;
-            QuestsCM.Size = new Size(202, 730);
+            QuestsCM.Size = new Size(202, 708);
             // 
             // toolStripMenuItem1
             // 
@@ -2142,14 +2146,6 @@
             removeQuestRewardItemToolStripMenuItem.Text = "Remove Quest Reward Item";
             removeQuestRewardItemToolStripMenuItem.Click += removeQuestRewardItemToolStripMenuItem_Click;
             // 
-            // addAttachmentToolStripMenuItem
-            // 
-            addAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
-            addAttachmentToolStripMenuItem.Name = "addAttachmentToolStripMenuItem";
-            addAttachmentToolStripMenuItem.Size = new Size(201, 22);
-            addAttachmentToolStripMenuItem.Text = "Add Attachment";
-            addAttachmentToolStripMenuItem.Click += addAttachmentToolStripMenuItem_Click;
-            // 
             // removeAttachmentToolStripMenuItem
             // 
             removeAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
@@ -2157,6 +2153,14 @@
             removeAttachmentToolStripMenuItem.Size = new Size(201, 22);
             removeAttachmentToolStripMenuItem.Text = "Remove Attachment";
             removeAttachmentToolStripMenuItem.Click += removeAttachmentToolStripMenuItem_Click;
+            // 
+            // addAttachmentToolStripMenuItem
+            // 
+            addAttachmentToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAttachmentToolStripMenuItem.Name = "addAttachmentToolStripMenuItem";
+            addAttachmentToolStripMenuItem.Size = new Size(201, 22);
+            addAttachmentToolStripMenuItem.Text = "Add Attachment";
+            addAttachmentToolStripMenuItem.Click += addAttachmentToolStripMenuItem_Click;
             // 
             // addFactionRepToolStripMenuItem
             // 
@@ -2173,6 +2177,30 @@
             removeFactionRepToolStripMenuItem.Size = new Size(201, 22);
             removeFactionRepToolStripMenuItem.Text = "Remove Faction rep";
             removeFactionRepToolStripMenuItem.Click += removeFactionRepToolStripMenuItem_Click;
+            // 
+            // ObjectivesCM
+            // 
+            ObjectivesCM.BackColor = Color.FromArgb(60, 63, 65);
+            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1 });
+            ObjectivesCM.Name = "DamageCM";
+            ObjectivesCM.ShowImageMargin = false;
+            ObjectivesCM.Size = new Size(156, 70);
+            // 
+            // addObjectiveToolStripMenuItem1
+            // 
+            addNewObjectiveToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewObjectiveToolStripMenuItem.Name = "addObjectiveToolStripMenuItem1";
+            addNewObjectiveToolStripMenuItem.Size = new Size(201, 22);
+            addNewObjectiveToolStripMenuItem.Text = "Add Objective";
+            addNewObjectiveToolStripMenuItem.Click += addObjectiveToolStripMenuItem1_Click;
+            // 
+            // removeObjectiveToolStripMenuItem1
+            // 
+            removeObjectiveToolStripMenuItem1.ForeColor = SystemColors.Control;
+            removeObjectiveToolStripMenuItem1.Name = "removeObjectiveToolStripMenuItem1";
+            removeObjectiveToolStripMenuItem1.Size = new Size(201, 22);
+            removeObjectiveToolStripMenuItem1.Text = "Remove Objective";
+            removeObjectiveToolStripMenuItem1.Click += removeObjectiveToolStripMenuItem1_Click;
             // 
             // ExpansionForm
             // 
@@ -2207,6 +2235,7 @@
             P2PCM.ResumeLayout(false);
             MarketCM.ResumeLayout(false);
             QuestsCM.ResumeLayout(false);
+            ObjectivesCM.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -2445,5 +2474,8 @@
         private ToolStripMenuItem addQuestRewardItemToolStripMenuItem;
         private ToolStripMenuItem addFactionRepToolStripMenuItem;
         private ToolStripMenuItem removeFactionRepToolStripMenuItem;
+        private ContextMenuStrip ObjectivesCM;
+        private ToolStripMenuItem addNewObjectiveToolStripMenuItem;
+        private ToolStripMenuItem removeObjectiveToolStripMenuItem1;
     }
 }

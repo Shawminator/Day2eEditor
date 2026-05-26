@@ -138,5 +138,10 @@ namespace ExpansionPlugin
             }
             categoryNode.Nodes.Add(collectionNodes);
         }
+
+        internal override void createDefault()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

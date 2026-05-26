@@ -147,6 +147,10 @@ namespace ExpansionPlugin
               .OrderBy(x => x)
               .ToList();
         }
+        internal void RemoveObjective(ExpansionQuestObjectiveConfig ExpansionQuestObjectiveConfig)
+        {
+            ExpansionQuestObjectiveConfig.ToDelete = true;
+        }
     }
     public abstract class ExpansionQuestObjectiveConfig : IDeepCloneable<ExpansionQuestObjectiveConfig>, IEquatable<ExpansionQuestObjectiveConfig>
     {
@@ -231,6 +235,18 @@ namespace ExpansionPlugin
             AddSpecificCategoryNodes(node);
         }
         internal abstract void AddSpecificCategoryNodes(TreeNode categoryNode);
+
+        internal void createDefaultCore(ExpansionQuestObjectiveType enumType, int nextId)
+        {
+            ConfigVersion = ExpansionQuestObjectiveConfigConfig.CurrentVersion;
+            ID = nextId;
+            ObjectiveType = enumType;
+            TimeLimit = -1;
+            Active = 1;
+            createDefault();
+        }
+        internal abstract void createDefault();
+
         public string DisplayText
         {
             get

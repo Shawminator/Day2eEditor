@@ -38,11 +38,15 @@ namespace ExpansionPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
-
+            if (_nodes.Last().Parent.Parent.Parent.Tag is ExpansionQuestObjectiveAICampConfig)
+            {
+                StaticPatrolNumberOfAINUD.Enabled = false;
+                StaticPatrolNumberOfAIMaxNUD.Enabled = false;
+            }
             BindingList<string> LoadoutNameList = new BindingList<string>
-                {
-                    ""
-                };
+            {
+                ""
+            };
             foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
             {
                 LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
@@ -418,7 +422,14 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Parent.Text = _data.Name;
+                if (_nodes.Last().Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                {
+                    _nodes.Last().Parent.Text = $"AI Spawn : {_data.Name}";
+                }
+                else
+                {
+                    _nodes.Last().Parent.Text = _data.Name;
+                }
             }
         }
 
@@ -470,8 +481,8 @@ namespace ExpansionPlugin
         private void StaticPatrolNumberOfAINUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
+            
             _data.NumberOfAI = (int)StaticPatrolNumberOfAINUD.Value;
-
         }
         private void StaticPatrolNumberOfAIMaxNUD_ValueChanged(object sender, EventArgs e)
         {

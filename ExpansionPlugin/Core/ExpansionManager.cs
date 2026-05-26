@@ -6,7 +6,7 @@ namespace ExpansionPlugin
 {
     public class ExpansionManager
     {
-        private readonly Dictionary<string, string> _paths = new();
+        public readonly Dictionary<string, string> _paths = new();
         public string basePath { get; set; }
         public string profilePath { get; set; }
         public bool HasErrors { get; set; }
@@ -942,6 +942,20 @@ namespace ExpansionPlugin
             "ExpansionQuestNPCAIEva",
             "ExpansionQuestNPCAINaomi",
             "ExpansionQuestNPCAIBaty"
+        };
+
+        public readonly Dictionary<Type, ExpansionQuestObjectiveType> typeMap = new Dictionary<Type, ExpansionQuestObjectiveType>
+        {
+            { typeof(ExpansionQuestObjectiveActionConfig), ExpansionQuestObjectiveType.ACTION },
+            { typeof(ExpansionQuestObjectiveAICampConfig), ExpansionQuestObjectiveType.AICAMP },
+            { typeof(ExpansionQuestObjectiveAIPatrolConfig), ExpansionQuestObjectiveType.AIPATROL },
+            { typeof(ExpansionQuestObjectiveAIEscortConfig), ExpansionQuestObjectiveType.AIESCORT },
+            { typeof(ExpansionQuestObjectiveCollectionConfig), ExpansionQuestObjectiveType.COLLECT },
+            { typeof(ExpansionQuestObjectiveCraftingConfig), ExpansionQuestObjectiveType.CRAFTING },
+            { typeof(ExpansionQuestObjectiveDeliveryConfig), ExpansionQuestObjectiveType.DELIVERY },
+            { typeof(ExpansionQuestObjectiveTargetConfig), ExpansionQuestObjectiveType.TARGET },
+            { typeof(ExpansionQuestObjectiveTravelConfig), ExpansionQuestObjectiveType.TRAVEL },
+            { typeof(ExpansionQuestObjectiveTreasureHuntConfig), ExpansionQuestObjectiveType.TREASUREHUNT }
         };
 
     }

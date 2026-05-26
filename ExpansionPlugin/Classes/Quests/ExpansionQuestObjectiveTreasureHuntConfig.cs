@@ -176,5 +176,10 @@ namespace ExpansionPlugin
             };
             categoryNode.Nodes.Add(THLootNode);
         }
+
+        internal override void createDefault()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using System.Runtime;
 using System.Runtime.InteropServices.Marshalling;
 using System.Security.AccessControl;
@@ -1073,7 +1074,7 @@ namespace ExpansionPlugin
                         ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
                         ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAICampConfig), ExpansionAIPatrol, selected);
                     }
-                    else if (node.Parent.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                    else if (node.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
                     {
                         ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
                         ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAIPatrolConfig), ExpansionAIPatrol, selected);
@@ -1431,6 +1432,8 @@ namespace ExpansionPlugin
                 //AI
                 [typeof(ExpansionAIPatrol)] = node =>
                 {
+                    if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                        return;
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removePatrolToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
@@ -1881,6 +1884,12 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeFactionRepToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                [typeof(ExpansionQuestObjectiveActionConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
 
             };
             // ----------------------
@@ -1959,16 +1968,13 @@ namespace ExpansionPlugin
                 },
                 ["AIPatrolWayPoints"] = node =>
                 {
-                    if(currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
-                    {
-                        return;
-                    }
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addWaypointToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(importWaypointsToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(exportWaypointsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+
                 },
                 ["AIPatrolUnits"] = node =>
                 {
@@ -2668,7 +2674,70 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addFactionRepToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
-                }
+                },
+                //objectives
+                ["Action"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AICamp"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+
+                ["AIPatrol"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["AIVIP"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Collection"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Crafting"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Delivery"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Target"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["Travel"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["TreasureHunt"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+
             };
         }
 
@@ -8636,7 +8705,40 @@ namespace ExpansionPlugin
                 FormationScale = (decimal)-1.0,
                 FormationLooseness = (decimal)0.0,
                 Loadout = "",
-                Units = new BindingList<string>(),
+                Units = new BindingList<string>()
+                    {
+                            "eAI_SurvivorF_Eva",
+                            "eAI_SurvivorF_Frida",
+                            "eAI_SurvivorF_Gabi",
+                            "eAI_SurvivorF_Helga",
+                            "eAI_SurvivorF_Irena",
+                            "eAI_SurvivorF_Judy",
+                            "eAI_SurvivorF_Keiko",
+                            "eAI_SurvivorF_Linda",
+                            "eAI_SurvivorF_Maria",
+                            "eAI_SurvivorF_Naomi",
+                            "eAI_SurvivorF_Baty",
+                            "eAI_SurvivorM_Boris",
+                            "eAI_SurvivorM_Cyril",
+                            "eAI_SurvivorM_Denis",
+                            "eAI_SurvivorM_Elias",
+                            "eAI_SurvivorM_Francis",
+                            "eAI_SurvivorM_Guo",
+                            "eAI_SurvivorM_Hassan",
+                            "eAI_SurvivorM_Indar",
+                            "eAI_SurvivorM_Jose",
+                            "eAI_SurvivorM_Kaito",
+                            "eAI_SurvivorM_Lewis",
+                            "eAI_SurvivorM_Manua",
+                            "eAI_SurvivorM_Mirek",
+                            "eAI_SurvivorM_Niki",
+                            "eAI_SurvivorM_Oliver",
+                            "eAI_SurvivorM_Peter",
+                            "eAI_SurvivorM_Quinn",
+                            "eAI_SurvivorM_Rolf",
+                            "eAI_SurvivorM_Seth",
+                            "eAI_SurvivorM_Taiki"
+                    },
                 NumberOfAI = -3,
                 NumberOfAIMax = 3,
                 Behaviour = "ALTERNATE",
@@ -8677,14 +8779,17 @@ namespace ExpansionPlugin
                 Waypoints = new BindingList<Vec3>()
             };
             bool createTree = false;
-            if(currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>() != null)
+            if (currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>() != null)
             {
                 ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
                 ExpansionAIPatrolConfig.Data.Patrols.Add(newpatrol);
                 createTree = true;
             }
-            if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
+            else if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
             {
+                newpatrol.Name = "NewAICamp";
+                newpatrol.NumberOfAI = 1;
+                newpatrol.NumberOfAIMax = 0;
                 ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>();
                 ExpansionQuestObjectiveAICampConfig.AISpawns.Add(newpatrol);
                 createTree = true;
@@ -8719,8 +8824,8 @@ namespace ExpansionPlugin
                 ExpansionAIPatrolConfig.Data.Patrols.Remove(currentTreeNode.Tag as ExpansionAIPatrol);
                 currentTreeNode.Remove();
             }
-            
-           
+
+
 
         }
         private void addWaypointToolStripMenuItem_Click(object sender, EventArgs e)
@@ -12859,7 +12964,6 @@ namespace ExpansionPlugin
             });
             currentTreeNode.Expand();
         }
-
         private void removeFactionRepToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestQuest quest = currentTreeNode.Parent.Parent.Parent.Tag as ExpansionQuestQuest;
@@ -12873,6 +12977,78 @@ namespace ExpansionPlugin
                     quest.FactionReputationRewardsList.Remove(frep);
                     break;
             }
+            currentTreeNode.Remove();
+        }
+
+        //Objectives
+        private void addObjectiveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            string tag = currentTreeNode.Tag?.ToString();
+            var newObjective = CreateObjectiveFromTag(tag);
+            ExpansionQuestObjectiveType enumType = _expansionManager.typeMap[newObjective.GetType()];
+
+            var nextId = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems
+                .Where(x => x.ObjectiveType == enumType)
+                .Select(x => x.ID)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+
+            newObjective.createDefaultCore(enumType, (int)nextId);
+
+            _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems.Add(newObjective);
+
+            if (newObjective != null)
+            {
+                var node = new TreeNode($"ID:{newObjective.ID} {newObjective.ObjectiveText}") { Tag = newObjective };
+                newObjective.BuildTree(node);
+
+                currentTreeNode.Nodes.Add(node);
+                currentTreeNode.Expand();
+                ExpansionTV.SelectedNode = node;
+            }
+
+        }
+        private ExpansionQuestObjectiveConfig CreateObjectiveFromTag(string tag)
+        {
+            switch (tag)
+            {
+                case "Action":
+                    return  new ExpansionQuestObjectiveActionConfig();
+                case "AICamp":
+                    return new ExpansionQuestObjectiveAICampConfig();
+
+                case "AIPatrol":
+                    return new ExpansionQuestObjectiveAIPatrolConfig();
+
+                case "AIVIP":
+                    return new ExpansionQuestObjectiveAIEscortConfig();
+
+                case "Collection":
+                    return new ExpansionQuestObjectiveCollectionConfig();
+
+                case "Crafting":
+                    return new ExpansionQuestObjectiveCraftingConfig();
+
+                case "Delivery":
+                    return new ExpansionQuestObjectiveDeliveryConfig();
+
+                case "Target":
+                    return new ExpansionQuestObjectiveTargetConfig();
+
+                case "Travel":
+                    return new ExpansionQuestObjectiveTravelConfig();
+
+                case "TreasureHunt":
+                    return new ExpansionQuestObjectiveTreasureHuntConfig();
+
+                default:
+                    return null;
+            }
+        }
+
+        private void removeObjectiveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionQuestObjectiveConfigConfig.RemoveObjective(currentTreeNode.Tag as ExpansionQuestObjectiveConfig);
             currentTreeNode.Remove();
         }
         #endregion right click methods
@@ -12934,6 +13110,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 

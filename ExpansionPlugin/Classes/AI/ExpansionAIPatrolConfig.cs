@@ -377,8 +377,8 @@ namespace ExpansionPlugin
                    DamageReceivedMultiplier == other.DamageReceivedMultiplier &&
                    ShoryukenChance == other.ShoryukenChance &&
                    ShoryukenDamageMultiplier == other.ShoryukenDamageMultiplier &&
-                   Patrols.SequenceEqual(other.Patrols) &&
-                   _LoadBalancingCategories.SequenceEqual(other._LoadBalancingCategories);
+                   Helper.ListEquals(Patrols, other.Patrols) &&
+                   Helper.ListEquals(_LoadBalancingCategories, other._LoadBalancingCategories);
         }
         public override bool Equals(object obj) => Equals(obj as ExpansionAIPatrolSettings);
         public List<string> FixMissingOrInvalidFields()

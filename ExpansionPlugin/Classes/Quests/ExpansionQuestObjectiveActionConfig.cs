@@ -19,6 +19,8 @@ namespace ExpansionPlugin
         public BindingList<string> ExcludedClassNames { get; set; }
         [JsonPropertyOrder(13)]
         public int? ExecutionAmount { get; set; }
+
+
         public override ExpansionQuestObjectiveConfig Clone()
         {
             ExpansionQuestObjectiveActionConfig clone =  new ExpansionQuestObjectiveActionConfig
@@ -157,6 +159,19 @@ namespace ExpansionPlugin
                 });
             }
             categoryNode.Nodes.Add(ActioExcludedClassNamesNode);
+        }
+        internal override void createDefault()
+        {
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "Action", $"Objective_A_{ID}.json");
+
+            ObjectiveText = "New Action Objective";
+            ActionNames = new BindingList<string>();
+            AllowedClassNames = new BindingList<string>();
+            ExcludedClassNames = new BindingList<string>();
+            ExecutionAmount = 1;
+            
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

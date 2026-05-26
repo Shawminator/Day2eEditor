@@ -133,5 +133,10 @@ namespace ExpansionPlugin
             });
             categoryNode.Nodes.Add(Positionnode);
         }
+
+        internal override void createDefault()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
