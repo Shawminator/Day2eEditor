@@ -12,6 +12,9 @@ namespace Day2eEditor
         {
             ResetState();
 
+            if (AppServices.GetRequired<EconomyManager>().cfgenvironmentConfig.Data.territories == null)
+                return;
+
             var files = AppServices.GetRequired<EconomyManager>()
                 .cfgenvironmentConfig.Data.territories.file;
 

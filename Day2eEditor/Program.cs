@@ -48,7 +48,9 @@ namespace Day2eEditor
 
             Console.WriteLine(activeProject);
 
-
+            //Register Filetransfermanager
+            var fileTransfer = new FileTransferManager();
+            AppServices.Register(fileTransfer);
 
             // EconomyManager
             Console.WriteLine("[Load] Loading Economy Manager");

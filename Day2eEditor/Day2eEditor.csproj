@@ -35,6 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Forms\NewProjectFTP.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -87,5 +90,10 @@
 
   <ItemGroup>
     <Folder Include="Updater\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="54.2.0" />
+    <PackageReference Include="SSH.NET" Version="2025.1.0" />
   </ItemGroup>
 </Project>

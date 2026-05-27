@@ -30,11 +30,11 @@
         {
             pendingListView = new ListView();
             panel1 = new Panel();
-            CreateProjectbutton = new Button();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
             button4 = new Button();
+            button3 = new Button();
+            button2 = new Button();
+            button1 = new Button();
+            CreateProjectbutton = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -63,60 +63,65 @@
             panel1.Size = new Size(1038, 31);
             panel1.TabIndex = 6;
             // 
-            // CreateProjectbutton
+            // button4
             // 
-            CreateProjectbutton.BackColor = Color.FromArgb(60, 63, 65);
-            CreateProjectbutton.FlatStyle = FlatStyle.Flat;
-            CreateProjectbutton.Location = new Point(3, 5);
-            CreateProjectbutton.Name = "CreateProjectbutton";
-            CreateProjectbutton.Size = new Size(73, 23);
-            CreateProjectbutton.TabIndex = 16;
-            CreateProjectbutton.Text = "Upload All";
-            CreateProjectbutton.UseVisualStyleBackColor = false;
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.FromArgb(60, 63, 65);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(82, 5);
-            button1.Name = "button1";
-            button1.Size = new Size(112, 23);
-            button1.TabIndex = 17;
-            button1.Text = "Upload Checked";
-            button1.UseVisualStyleBackColor = false;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.FromArgb(60, 63, 65);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(200, 5);
-            button2.Name = "button2";
-            button2.Size = new Size(73, 23);
-            button2.TabIndex = 18;
-            button2.Text = "Refresh";
-            button2.UseVisualStyleBackColor = false;
+            button4.BackColor = Color.FromArgb(60, 63, 65);
+            button4.FlatStyle = FlatStyle.Flat;
+            button4.Location = new Point(131, 5);
+            button4.Name = "button4";
+            button4.Size = new Size(122, 23);
+            button4.TabIndex = 20;
+            button4.Text = "Set Root Directory";
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
             // 
             // button3
             // 
             button3.BackColor = Color.FromArgb(60, 63, 65);
             button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(279, 5);
+            button3.Location = new Point(3, 5);
             button3.Name = "button3";
             button3.Size = new Size(122, 23);
             button3.TabIndex = 19;
             button3.Text = "Test Connection";
             button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
-            // button4
+            // button2
             // 
-            button4.BackColor = Color.FromArgb(60, 63, 65);
-            button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(407, 5);
-            button4.Name = "button4";
-            button4.Size = new Size(122, 23);
-            button4.TabIndex = 20;
-            button4.Text = "Download All Files";
-            button4.UseVisualStyleBackColor = false;
+            button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(691, 5);
+            button2.Name = "button2";
+            button2.Size = new Size(73, 23);
+            button2.TabIndex = 18;
+            button2.Text = "Refresh";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
+            // button1
+            // 
+            button1.BackColor = Color.FromArgb(60, 63, 65);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(573, 5);
+            button1.Name = "button1";
+            button1.Size = new Size(112, 23);
+            button1.TabIndex = 17;
+            button1.Text = "Upload Checked";
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
+            // CreateProjectbutton
+            // 
+            CreateProjectbutton.BackColor = Color.FromArgb(60, 63, 65);
+            CreateProjectbutton.FlatStyle = FlatStyle.Flat;
+            CreateProjectbutton.Location = new Point(494, 5);
+            CreateProjectbutton.Name = "CreateProjectbutton";
+            CreateProjectbutton.Size = new Size(73, 23);
+            CreateProjectbutton.TabIndex = 16;
+            CreateProjectbutton.Text = "Upload All";
+            CreateProjectbutton.UseVisualStyleBackColor = false;
+            CreateProjectbutton.Click += CreateProjectbutton_Click;
             // 
             // DayZFileManagerForm
             // 

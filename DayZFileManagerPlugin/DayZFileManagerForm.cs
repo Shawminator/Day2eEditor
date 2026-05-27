@@ -1,4 +1,5 @@
 using Day2eEditor;
+using Renci.SshNet;
 using System.Windows.Forms;
 
 namespace DayZFileManagerPlugin
@@ -94,6 +95,57 @@ namespace DayZFileManagerPlugin
             pendingListView.EndUpdate();
         }
 
+
+
+        private void CreateProjectbutton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+
+            bool ok = ftp.TestConnection(_projectManager.CurrentProject.ServerSettings);
+            if (ok)
+            {
+                MessageBox.Show(
+                    "Connection successful.",
+                    "File Transfer",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show(
+                    "Connection failed.",
+                    "File Transfer",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            NewProjectFTP ftpproject = new NewProjectFTP();
+            DialogResult result = ftpproject.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string serverroot = ftpproject.MpMissionDirectory;
+                _projectManager.CurrentProject.ServerSettings.RootPath = serverroot;
+                _projectManager.Save();
+            }
+        }
     }
 
 

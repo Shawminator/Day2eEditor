@@ -31,7 +31,7 @@ namespace Day2eEditor
             return ProjectName;
         }
     }
-   public sealed class ProjectServerSettings
+    public sealed class ProjectServerSettings
     {
         public TransferProtocol Protocol { get; set; }
 
@@ -40,7 +40,7 @@ namespace Day2eEditor
 
         public string Username { get; set; } = string.Empty;
         public string EncryptedPassword { get; set; } = string.Empty;
-
+        public string RootPath { get; set; } = string.Empty;
         public bool PassiveMode { get; set; } = true;
     }
     public enum TransferProtocol

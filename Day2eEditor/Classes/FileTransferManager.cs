@@ -1,0 +1,256 @@
+﻿using FluentFTP;
+using Renci.SshNet;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Day2eEditor
+{
+    public sealed class RemoteItem
+    {
+        public string Name { get; set; } = string.Empty;
+        public string FullPath { get; set; } = string.Empty;
+        public bool IsDirectory { get; set; }
+        public long Size { get; set; }
+        public DateTime Modified { get; set; }
+    }
+    public sealed class FileTransferManager
+    {
+        // -----------------------------
+        // PUBLIC API
+        // -----------------------------
+
+        public bool TestConnection(ProjectServerSettings settings)
+        {
+            return settings.Protocol switch
+            {
+                TransferProtocol.Sftp => TestSftp(settings),
+                TransferProtocol.Ftp or TransferProtocol.Ftps => TestFtp(settings),
+                _ => false
+            };
+        }
+        public List<RemoteItem> ListDirectory(ProjectServerSettings settings, string path)
+        {
+            return settings.Protocol switch
+            {
+                TransferProtocol.Sftp => ListSftp(settings, path),
+                TransferProtocol.Ftp or TransferProtocol.Ftps => ListFtp(settings, path),
+                _ => new List<RemoteItem>()
+            };
+        }
+        private List<RemoteItem> ListSftp(ProjectServerSettings s,string path)
+        {
+            using var client = CreateSftp(s);
+
+            client.Connect();
+
+            var items = client
+                .ListDirectory(path)
+                .Where(x => x.Name != "." && x.Name != "..")
+                .Select(x => new RemoteItem
+                {
+                    Name = x.Name,
+                    FullPath = x.FullName,
+                    IsDirectory = x.IsDirectory,
+                    Size = x.Attributes.Size,
+                    Modified = x.LastWriteTime
+                })
+                .ToList();
+
+            client.Disconnect();
+
+            return items;
+        }
+        private List<RemoteItem> ListFtp(ProjectServerSettings s, string path)
+        {
+            using var client = CreateFtp(s);
+
+            client.Connect();
+
+            var items = client
+                .GetListing(BuildRemotePath(s, path))
+                .Select(x => new RemoteItem
+                {
+                    Name = x.Name,
+                    FullPath = x.FullName,
+                    IsDirectory = x.Type == FtpObjectType.Directory,
+                    Size = x.Size,
+                    Modified = x.Modified
+                })
+                .ToList();
+
+            client.Disconnect();
+
+            return items;
+        }
+        private string BuildRemotePath(ProjectServerSettings settings, string path)
+        {
+            path = path.Replace("\\", "/");
+
+            if (string.IsNullOrWhiteSpace(settings.RootPath))
+                return path;
+
+            return $"{settings.RootPath.TrimEnd('/')}/{path.TrimStart('/')}";
+        }
+        public void Upload(ProjectServerSettings settings, string localPath, string remotePath)
+        {
+            switch (settings.Protocol)
+            {
+                case TransferProtocol.Sftp:
+                    UploadSftp(settings, localPath, remotePath);
+                    break;
+
+                case TransferProtocol.Ftp:
+                case TransferProtocol.Ftps:
+                    UploadFtp(settings, localPath, remotePath);
+                    break;
+            }
+        }
+
+        public void Download(ProjectServerSettings settings, string remotePath, string localPath)
+        {
+            switch (settings.Protocol)
+            {
+                case TransferProtocol.Sftp:
+                    DownloadSftp(settings, remotePath, localPath);
+                    break;
+
+                case TransferProtocol.Ftp:
+                case TransferProtocol.Ftps:
+                    DownloadFtp(settings, remotePath, localPath);
+                    break;
+            }
+        }
+
+        // -----------------------------
+        // SFTP
+        // -----------------------------
+
+        private SftpClient CreateSftp(ProjectServerSettings s)
+        {
+            return new SftpClient(
+                s.Host,
+                s.Port,
+                s.Username,
+                Decrypt(s.EncryptedPassword)
+            );
+        }
+
+        private bool TestSftp(ProjectServerSettings s)
+        {
+            try
+            {
+                using var client = CreateSftp(s);
+                client.Connect();
+
+                bool ok = client.IsConnected;
+
+                client.Disconnect();
+                return ok;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void UploadSftp(ProjectServerSettings s, string local, string remote)
+        {
+            using var client = CreateSftp(s);
+            client.Connect();
+
+            using var fs = File.OpenRead(local);
+            client.UploadFile(fs, remote);
+
+            client.Disconnect();
+        }
+
+        private void DownloadSftp(ProjectServerSettings s, string remote, string local)
+        {
+            using var client = CreateSftp(s);
+            client.Connect();
+
+            using var fs = File.Create(local);
+            client.DownloadFile(remote, fs);
+
+            client.Disconnect();
+        }
+
+        // -----------------------------
+        // FTP / FTPS
+        // -----------------------------
+
+        private FtpClient CreateFtp(ProjectServerSettings s)
+        {
+            var client = new FtpClient(s.Host, s.Port)
+            {
+                Credentials = new System.Net.NetworkCredential(
+                    s.Username,
+                    Decrypt(s.EncryptedPassword)
+                )
+            };
+
+            if (s.Protocol == TransferProtocol.Ftps)
+            {
+                client.Config.EncryptionMode = FtpEncryptionMode.Explicit;
+                client.Config.ValidateAnyCertificate = true;
+            }
+
+            client.Config.DataConnectionType = s.PassiveMode
+                ? FtpDataConnectionType.PASV
+                : FtpDataConnectionType.PORT;
+
+            return client;
+        }
+
+        private bool TestFtp(ProjectServerSettings s)
+        {
+            try
+            {
+                using var client = CreateFtp(s);
+                client.Connect();
+
+                bool ok = client.IsConnected;
+
+                client.Disconnect();
+                return ok;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void UploadFtp(ProjectServerSettings s, string local, string remote)
+        {
+            using var client = CreateFtp(s);
+            client.Connect();
+
+            client.UploadFile(local, remote);
+
+            client.Disconnect();
+        }
+
+        private void DownloadFtp(ProjectServerSettings s, string remote, string local)
+        {
+            using var client = CreateFtp(s);
+            client.Connect();
+
+            client.DownloadFile(local, remote);
+
+            client.Disconnect();
+        }
+
+        // -----------------------------
+        // Decrypt password
+        // -----------------------------
+
+        private string Decrypt(string value)
+        {
+            return Helper.DecryptPassword(value);
+        }
+    }
+}

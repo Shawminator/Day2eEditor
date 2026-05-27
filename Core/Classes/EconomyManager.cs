@@ -40,9 +40,19 @@ namespace Day2eEditor
         public EconomyManager() 
         {
         }
+        bool IsDirectoryEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
+        }
         public void SetProject(Project project)
         {
             basePath = Path.Combine(project.ProjectRoot, "mpmissions", project.MpMissionPath);
+
+            if(IsDirectoryEmpty(basePath))
+            {
+                return;
+            }
+
 
             _paths["cfgeconomycore"] = Path.Combine(basePath, "cfgeconomycore.xml");
             _paths["cfglimitsdefinition"] = Path.Combine(basePath, "cfglimitsdefinition.xml");
@@ -110,6 +120,7 @@ namespace Day2eEditor
                 Errors.AddRange(config.Errors.Select(e => $"[{name}] {e}"));
             }
         }
+
         private void LoadFiles()
         {
             Console.WriteLine($"\n[Economy Manager] Loading all base economy files associated with the current Project.");

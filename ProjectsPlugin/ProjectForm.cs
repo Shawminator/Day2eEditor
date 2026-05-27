@@ -304,11 +304,13 @@ namespace ProjectsPlugin
                     MessageBox.Show("Please select both a Profile name and an exact mpmission name.");
                     return;
                 }
+                Directory.CreateDirectory(Path.Combine(ProjectFolder, ProjectName));
+
                 string missionsfolder = ProjectMissionFolderTB.Text;
                 string profilefolder = ProjectProfileTB.Text;
                 string mpmissionpath = Path.GetFileName(missionsfolder);
-                string PmissionFolder = ProjectFolder + "\\mpmissions\\" + Path.GetFileName(missionsfolder);
-                string Pprofilefolder = ProjectFolder + "\\" + profilefolder;
+                string PmissionFolder = Path.Combine(ProjectFolder, ProjectName, "mpmissions" , Path.GetFileName(missionsfolder));
+                string Pprofilefolder = Path.Combine(ProjectFolder, ProjectName,profilefolder);
 
                 Directory.CreateDirectory(PmissionFolder);
                 Directory.CreateDirectory(Pprofilefolder);
@@ -319,11 +321,11 @@ namespace ProjectsPlugin
                 project.MpMissionPath = mpmissionpath;
                 project.MapPath = mpmissionpath.ToLower().Split('.')[1] + "_Map.png";
                 project.ProfileName = profilefolder;
-                project.ProjectRoot = ProjectFolder;
+                project.ProjectRoot = Path.Combine(ProjectFolder, ProjectName);
                 _ProjectManager.AddProject(project);
                 CheckMapanddownload(project);
-                MessageBox.Show("Project created, Please Close the editor and populate the missions files before trying to load this project");
-                Helper.OpenFolderInExplorer(project.ProjectRoot);
+                //MessageBox.Show("Project created, Please Close the editor and populate the missions files before trying to load this project");
+                //Helper.OpenFolderInExplorer(Path.Combine(project.ProjectRoot, project.ProjectName));
                 listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
                 
             }
@@ -471,7 +473,8 @@ namespace ProjectsPlugin
 
                     if (MessageBox.Show("Double checking you want to remove all files\nselecting no will still remove the project from the editor but keep all files in the project folder\nAre you sure you want to do this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
-                        Directory.Delete(selected.ProjectRoot, true);
+                        if(Directory.Exists(selected.ProjectRoot))
+                            Directory.Delete(selected.ProjectRoot, true);
                     }
                     _ProjectManager.RemoveProject(selected);
                     MessageBox.Show("Project and files Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
