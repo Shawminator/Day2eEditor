@@ -125,37 +125,37 @@ namespace ExpansionPlugin
             });
             TreeNode ActionamesNode = new TreeNode("Action Names")
             {
-                Tag = "ObjectivesActionNamesList",
+                Tag = "ObjectivesActionNames",
             };
             foreach (string  actionName in ActionNames) 
             {
                 ActionamesNode.Nodes.Add(new TreeNode(actionName)
                 {
-                    Tag = "ObjectivesActioName"
+                    Tag = "ObjectivesActionName"
                 });
             }
             categoryNode.Nodes.Add(ActionamesNode);
             TreeNode ActionAllowedClassNamesNode = new TreeNode("Allowed ClassNames")
             {
-                Tag = "ObjectivesActionAllowedClassNamesList",
+                Tag = "ObjectivesAllowedClassNames",
             };
             foreach (string actionName in AllowedClassNames)
             {
                 ActionAllowedClassNamesNode.Nodes.Add(new TreeNode(actionName)
                 {
-                    Tag = "ObjectivesActioAllowedClassName"
+                    Tag = "ObjectivesAllowedClassName"
                 });
             }
             categoryNode.Nodes.Add(ActionAllowedClassNamesNode);
-            TreeNode ActioExcludedClassNamesNode = new TreeNode("ExcludedClassNames")
+            TreeNode ActioExcludedClassNamesNode = new TreeNode("Excluded ClassNames")
             {
-                Tag = "ObjectivesActionExcludedClassNamesList",
+                Tag = "ObjectivesExcludedClassNames",
             };
             foreach (string actionName in ExcludedClassNames)
             {
                 ActioExcludedClassNamesNode.Nodes.Add(new TreeNode(actionName)
                 {
-                    Tag = "ObjectivesActioExcludedClassName"
+                    Tag = "ObjectivesExcludedClassName"
                 });
             }
             categoryNode.Nodes.Add(ActioExcludedClassNamesNode);

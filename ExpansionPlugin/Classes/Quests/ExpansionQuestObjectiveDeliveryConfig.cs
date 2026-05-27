@@ -127,7 +127,7 @@ namespace ExpansionPlugin
             });
             TreeNode collectionNodes = new TreeNode("Collections")
             {
-                Tag = "QuestObjectivesDeliveryCollections"
+                Tag = "ObjectivesCollections"
             };
             foreach (ExpansionQuestObjectiveDelivery delivery in Collections)
             {

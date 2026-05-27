@@ -118,7 +118,7 @@ namespace ExpansionPlugin
                         SetupTreasureHunt(tresure, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
-                    else if (node.Parent.Tag.ToString() == "QuestObjectiveAIEscortPosition")
+                    else if (node.Parent.Tag.ToString() == "ObjectiveAIEscortPosition")
                     {
                         Vec3 v3 = node.Tag as Vec3;
                         var control = new Vector3Control();
@@ -136,7 +136,7 @@ namespace ExpansionPlugin
                         SetupAIEscort(ExpansionQuestObjectiveAIEscortConfig, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
-                    else if (node.Parent.Tag.ToString() == "QuestObjectiveTargetPosition")
+                    else if (node.Parent.Tag.ToString() == "ObjectiveTargetPosition")
                     {
                         Vec3 v3 = node.Tag as Vec3;
                         var control = new Vector3Control();
@@ -154,7 +154,7 @@ namespace ExpansionPlugin
                         SetupTarget(target, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
-                    else if (node.Parent.Tag.ToString() == "QuestObjectiveTravelPosition")
+                    else if (node.Parent.Tag.ToString() == "ObjectiveTravelPosition")
                     {
                         Vec3 v3 = node.Tag as Vec3;
                         var control = new Vector3Control();
@@ -1889,6 +1889,66 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveAICampConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveAIPatrolConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveAIEscortConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveCollectionConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveCraftingConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveDeliveryConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveTargetConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveTravelConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveTreasureHuntConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestObjectiveDelivery)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeCollectionItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
 
             };
@@ -2737,6 +2797,72 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewObjectiveToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                ["ObjectivesActionNames"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addActionNameToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesActionName"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeActionNameToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesAllowedClassNames"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAllowedClassNamesToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesAllowedClassName"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAllowedClassNameToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesExcludedClassNames"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addExcludedClassNameToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesExcludedClassName"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeExcludedClassNameToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesAllowedWeapons"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAllowedWeaponsToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesAllowedWeapon"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAllowedWeaponToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesAllowedDamageZones"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addAllowedDamageZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesAllowedDamageZone"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeAllowedDamageZoneToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesCollections"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addCollectionItemToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                }
 
             };
         }
@@ -5774,9 +5900,7 @@ namespace ExpansionPlugin
             }));
         }
 
-        void DispatchSpecificEditor(
-            ExpansionQuestObjectiveConfig obj,
-            List<TreeNode> selected)
+        void DispatchSpecificEditor(ExpansionQuestObjectiveConfig obj, List<TreeNode> selected)
         {
             var runtimeType = obj.GetType();
 
@@ -13013,7 +13137,7 @@ namespace ExpansionPlugin
             switch (tag)
             {
                 case "Action":
-                    return  new ExpansionQuestObjectiveActionConfig();
+                    return new ExpansionQuestObjectiveActionConfig();
                 case "AICamp":
                     return new ExpansionQuestObjectiveAICampConfig();
 
@@ -13045,12 +13169,342 @@ namespace ExpansionPlugin
                     return null;
             }
         }
-
         private void removeObjectiveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             _expansionManager.ExpansionQuestObjectiveConfigConfig.RemoveObjective(currentTreeNode.Tag as ExpansionQuestObjectiveConfig);
             currentTreeNode.Remove();
         }
+        private void addActionNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddFromList newform = new AddFromList();
+            newform.List = File.ReadAllLines("Data/ExpansionQuestActionsNames.txt").ToList();
+            DialogResult result = newform.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+                {
+                    List<string> returnlist = newform.GetSelected;
+                    foreach (string actioname in returnlist)
+                    {
+                        if (!ExpansionQuestObjectiveActionConfig.ActionNames.Contains(actioname))
+                        {
+                            ExpansionQuestObjectiveActionConfig.ActionNames.Add(actioname);
+                            currentTreeNode.Nodes.Add(new TreeNode(actioname)
+                            {
+                                Tag = "ObjectivesActionName"
+                            });
+
+                        }
+                    }
+                }
+            }
+        }
+        private void removeActionNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+            {
+                ExpansionQuestObjectiveActionConfig.ActionNames.Remove(currentTreeNode.Text);
+            }
+            currentTreeNode.Remove();
+        }
+        private void addAllowedClassNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveActionConfig.AllowedClassNames.Contains(l))
+                        {
+                            ExpansionQuestObjectiveActionConfig.AllowedClassNames.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedClassName"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeAllowedClassNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+            {
+                ExpansionQuestObjectiveActionConfig.AllowedClassNames.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+        }
+        private void addExcludedClassNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveActionConfig.ExcludedClassNames.Contains(l))
+                        {
+                            ExpansionQuestObjectiveActionConfig.ExcludedClassNames.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesExcludedClassName"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveTargetConfig.ExcludedClassNames.Contains(l))
+                        {
+                            ExpansionQuestObjectiveTargetConfig.ExcludedClassNames.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesExcludedClassName"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeExcludedClassNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveActionConfig ExpansionQuestObjectiveActionConfig)
+            {
+                ExpansionQuestObjectiveActionConfig.ExcludedClassNames.Remove(currentTreeNode.Text);
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+            {
+                ExpansionQuestObjectiveTargetConfig.ExcludedClassNames.Remove(currentTreeNode.Text);
+            }
+            currentTreeNode.Remove();
+        }
+        private void addAllowedWeaponsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveAIPatrolConfig.AllowedWeapons.Contains(l))
+                        {
+                            ExpansionQuestObjectiveAIPatrolConfig.AllowedWeapons.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedWeapon"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveAICampConfig.AllowedWeapons.Contains(l))
+                        {
+                            ExpansionQuestObjectiveAICampConfig.AllowedWeapons.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedWeapon"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveTargetConfig.AllowedWeapons.Contains(l))
+                        {
+                            ExpansionQuestObjectiveTargetConfig.AllowedWeapons.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedWeapon"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeAllowedWeaponToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+            {
+                ExpansionQuestObjectiveAICampConfig.AllowedWeapons.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+            {
+                ExpansionQuestObjectiveAIPatrolConfig.AllowedWeapons.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+            {
+                ExpansionQuestObjectiveTargetConfig.AllowedWeapons.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+        }
+        private void addAllowedDamageZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveAIPatrolConfig.AllowedDamageZones.Contains(l))
+                        {
+                            ExpansionQuestObjectiveAIPatrolConfig.AllowedDamageZones.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedDamageZone"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveAICampConfig.AllowedDamageZones.Contains(l))
+                        {
+                            ExpansionQuestObjectiveAICampConfig.AllowedDamageZones.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedDamageZone"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveTargetConfig.AllowedDamageZones.Contains(l))
+                        {
+                            ExpansionQuestObjectiveTargetConfig.AllowedDamageZones.Add(l);
+                            currentTreeNode.Nodes.Add(new TreeNode(l)
+                            {
+                                Tag = "ObjectivesAllowedDamageZone"
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeAllowedDamageZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+            {
+                ExpansionQuestObjectiveAICampConfig.AllowedDamageZones.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+            {
+                ExpansionQuestObjectiveAIPatrolConfig.AllowedDamageZones.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveTargetConfig ExpansionQuestObjectiveTargetConfig)
+            {
+                ExpansionQuestObjectiveTargetConfig.AllowedDamageZones.Remove(currentTreeNode.Text);
+                currentTreeNode.Remove();
+            }
+        }
+        private void addCollectionItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromTypes form = new AddItemfromTypes { };
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.AddedTypes.ToList();
+                if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveDeliveryConfig ExpansionQuestObjectiveDeliveryConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveDeliveryConfig.Collections.Any(x => x.ClassName == l))
+                        {
+                            ExpansionQuestObjectiveDelivery ExpansionQuestObjectiveDelivery = new ExpansionQuestObjectiveDelivery()
+                            {
+                                ClassName = l,
+                                Amount = 1,
+                                QuantityPercent = -1,
+                                MinQuantityPercent = -1
+                            };
+                            ExpansionQuestObjectiveDeliveryConfig.Collections.Add(ExpansionQuestObjectiveDelivery);
+                            currentTreeNode.Nodes.Add(new TreeNode(ExpansionQuestObjectiveDelivery.ClassName)
+                            {
+                                Tag = ExpansionQuestObjectiveDelivery
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionQuestObjectiveCollectionConfig ExpansionQuestObjectiveCollectionConfig)
+                {
+                    foreach (string l in addedtypes)
+                    {
+                        if (!ExpansionQuestObjectiveCollectionConfig.Collections.Any(x => x.ClassName == l))
+                        {
+                            ExpansionQuestObjectiveDelivery ExpansionQuestObjectiveDelivery = new ExpansionQuestObjectiveDelivery()
+                            {
+                                ClassName = l,
+                                Amount = 1,
+                                QuantityPercent = -1,
+                                MinQuantityPercent = -1
+                            };
+                            ExpansionQuestObjectiveCollectionConfig.Collections.Add(ExpansionQuestObjectiveDelivery);
+                            currentTreeNode.Nodes.Add(new TreeNode(ExpansionQuestObjectiveDelivery.ClassName)
+                            {
+                                Tag = ExpansionQuestObjectiveDelivery
+                            });
+                        }
+                    }
+                    currentTreeNode.Expand();
+                }
+            }
+        }
+        private void removeCollectionItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Tag is ExpansionQuestObjectiveDelivery ExpansionQuestObjectiveDelivery)
+            {
+                if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveCollectionConfig ExpansionQuestObjectiveCollectionConfig)
+                {
+                    ExpansionQuestObjectiveCollectionConfig.Collections.Remove(ExpansionQuestObjectiveDelivery);
+                    currentTreeNode.Remove();
+                }
+                else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveDeliveryConfig ExpansionQuestObjectiveDeliveryConfig)
+                {
+                    ExpansionQuestObjectiveDeliveryConfig.Collections.Remove(ExpansionQuestObjectiveDelivery);
+                    currentTreeNode.Remove();
+                }
+            }
+        }
+
+
         #endregion right click methods
 
         #region Search Treeview
@@ -13110,17 +13564,6 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
-
-
-
-
-
-
-
-
-
-
-
 
 
     }

@@ -247,6 +247,7 @@ namespace ExpansionPlugin
         }
         internal abstract void createDefault();
 
+        [JsonIgnore]
         public string DisplayText
         {
             get

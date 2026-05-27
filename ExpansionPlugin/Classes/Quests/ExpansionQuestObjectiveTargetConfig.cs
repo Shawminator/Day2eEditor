@@ -225,7 +225,7 @@ namespace ExpansionPlugin
             });
             TreeNode Positionnode = new TreeNode("Position")
             {
-                Tag = "QuestObjectiveTargetPosition"
+                Tag = "ObjectiveTargetPosition"
             };
             Positionnode.Nodes.Add(new TreeNode(Position.ToString())
             {
@@ -235,52 +235,52 @@ namespace ExpansionPlugin
 
             TreeNode ClassNamesNode = new TreeNode("ClassNames")
             {
-                Tag = "ObjectivesTargetClassNames",
+                Tag = "ObjectivesItemNames",
             };
             foreach (string AllowedWeapon in AllowedWeapons)
             {
                 ClassNamesNode.Nodes.Add(new TreeNode(AllowedWeapon)
                 {
-                    Tag = "bjectivesTargetClassName"
+                    Tag = "ObjectivesItemName"
                 });
             }
             categoryNode.Nodes.Add(ClassNamesNode);
 
             TreeNode AllowedWeaponsNode = new TreeNode("Allowed Weapons")
             {
-                Tag = "ObjectivesTargetAllowedWeapons",
+                Tag = "ObjectivesAllowedWeapons",
             };
             foreach (string AllowedWeapon in AllowedWeapons)
             {
                 AllowedWeaponsNode.Nodes.Add(new TreeNode(AllowedWeapon)
                 {
-                    Tag = "bjectivesTargetAllowedWeapon"
+                    Tag = "ObjectivesAllowedWeapon"
                 });
             }
             categoryNode.Nodes.Add(AllowedWeaponsNode);
 
             TreeNode ExcludedClassNamesNode = new TreeNode("Excluded ClassNames")
             {
-                Tag = "ObjectivesTargetExcludedClassNames",
+                Tag = "ObjectivesExcludedClassNames",
             };
             foreach (string AllowedWeapon in AllowedTargetFactions)
             {
                 ExcludedClassNamesNode.Nodes.Add(new TreeNode(AllowedWeapon)
                 {
-                    Tag = "bjectivesTargetExcludedClassName"
+                    Tag = "ObjectivesExcludedClassName"
                 });
             }
             categoryNode.Nodes.Add(ExcludedClassNamesNode);
 
             TreeNode AllowedTargetFactionsNode = new TreeNode("Allowed Target Factions")
             {
-                Tag = "ObjectivesTargetAllowedTargetFactions",
+                Tag = "ObjectivesAllowedTargetFactions",
             };
             foreach (string AllowedWeapon in AllowedTargetFactions)
             {
                 AllowedTargetFactionsNode.Nodes.Add(new TreeNode(AllowedWeapon)
                 {
-                    Tag = "bjectivesTargetAllowedTargetFaction"
+                    Tag = "ObjectivesAllowedTargetFaction"
                 });
             }
             categoryNode.Nodes.Add(AllowedTargetFactionsNode);
@@ -288,13 +288,13 @@ namespace ExpansionPlugin
 
             TreeNode AllowedDamageZonesNode = new TreeNode("Allowed Damage Zones")
             {
-                Tag = "ObjectivesTargetAllowedDamageZones",
+                Tag = "ObjectivesAllowedDamageZones",
             };
             foreach (string AllowedDamageZone in AllowedDamageZones)
             {
                 AllowedDamageZonesNode.Nodes.Add(new TreeNode(AllowedDamageZone)
                 {
-                    Tag = "OjectivesTargetAllowedDamageZone"
+                    Tag = "OjectivesAllowedDamageZone"
                 });
             }
             categoryNode.Nodes.Add(AllowedDamageZonesNode);

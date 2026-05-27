@@ -94,13 +94,13 @@ namespace ExpansionPlugin
             });
             TreeNode collectionNodes = new TreeNode("Item Names")
             {
-                Tag = "QuestObjectivesCraftingItemNames"
+                Tag = "ObjectivesItemNames"
             };
             foreach (string crafting in ItemNames)
             {
                 collectionNodes.Nodes.Add(new TreeNode(crafting)
                 {
-                    Tag = "QuestObjectivesCraftingItemName"
+                    Tag = "ObjectivesItemName"
                 });
             }
             categoryNode.Nodes.Add(collectionNodes);

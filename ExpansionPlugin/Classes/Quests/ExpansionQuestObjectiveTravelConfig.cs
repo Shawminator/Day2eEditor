@@ -109,7 +109,7 @@ namespace ExpansionPlugin
             });
             TreeNode Positionnode = new TreeNode("Position")
             {
-                Tag = "QuestObjectiveTravelPosition"
+                Tag = "ObjectiveTravelPosition"
             };
             Positionnode.Nodes.Add(new TreeNode(Position.ToString())
             {

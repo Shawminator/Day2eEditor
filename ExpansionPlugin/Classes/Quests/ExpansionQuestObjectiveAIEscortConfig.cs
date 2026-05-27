@@ -125,7 +125,7 @@ namespace ExpansionPlugin
             });
             TreeNode Positionnode = new TreeNode("Position")
             {
-                Tag = "QuestObjectiveAIEscortPosition"
+                Tag = "ObjectiveAIEscortPosition"
             };
             Positionnode.Nodes.Add(new TreeNode(Position.ToString())
             {

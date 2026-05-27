@@ -169,25 +169,25 @@ namespace ExpansionPlugin
             categoryNode.Nodes.Add(AIAPatrolsNode);
             TreeNode AllowedWeaponsNode = new TreeNode("Allowed Weapons")
             {
-                Tag = "ObjectivesAICAllowedWeapons",
+                Tag = "ObjectivesAllowedWeapons",
             };
             foreach (string AllowedWeapon in AllowedWeapons)
             {
                 AllowedWeaponsNode.Nodes.Add(new TreeNode(AllowedWeapon)
                 {
-                    Tag = "bjectivesAICAllowedWeapon"
+                    Tag = "ObjectivesAllowedWeapon"
                 });
             }
             categoryNode.Nodes.Add(AllowedWeaponsNode);
             TreeNode AllowedDamageZonesNode = new TreeNode("Allowed Damage Zones")
             {
-                Tag = "ObjectivesAICAllowedDamageZones",
+                Tag = "ObjectivesAllowedDamageZones",
             };
             foreach (string AllowedDamageZone in AllowedDamageZones)
             {
                 AllowedDamageZonesNode.Nodes.Add(new TreeNode(AllowedDamageZone)
                 {
-                    Tag = "bjectivesAICAllowedDamageZone"
+                    Tag = "ObjectivesAllowedDamageZone"
                 });
             }
             categoryNode.Nodes.Add(AllowedDamageZonesNode);

@@ -265,6 +265,18 @@
             ObjectivesCM = new ContextMenuStrip(components);
             addNewObjectiveToolStripMenuItem = new ToolStripMenuItem();
             removeObjectiveToolStripMenuItem1 = new ToolStripMenuItem();
+            addActionNameToolStripMenuItem = new ToolStripMenuItem();
+            removeActionNameToolStripMenuItem = new ToolStripMenuItem();
+            addAllowedClassNamesToolStripMenuItem = new ToolStripMenuItem();
+            removeAllowedClassNameToolStripMenuItem = new ToolStripMenuItem();
+            addExcludedClassNameToolStripMenuItem = new ToolStripMenuItem();
+            removeExcludedClassNameToolStripMenuItem = new ToolStripMenuItem();
+            addAllowedWeaponsToolStripMenuItem = new ToolStripMenuItem();
+            removeAllowedWeaponToolStripMenuItem = new ToolStripMenuItem();
+            addAllowedDamageZoneToolStripMenuItem = new ToolStripMenuItem();
+            removeAllowedDamageZoneToolStripMenuItem = new ToolStripMenuItem();
+            addCollectionItemToolStripMenuItem = new ToolStripMenuItem();
+            removeCollectionItemToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -2181,16 +2193,16 @@
             // ObjectivesCM
             // 
             ObjectivesCM.BackColor = Color.FromArgb(60, 63, 65);
-            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1 });
+            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem });
             ObjectivesCM.Name = "DamageCM";
             ObjectivesCM.ShowImageMargin = false;
-            ObjectivesCM.Size = new Size(156, 70);
+            ObjectivesCM.Size = new Size(216, 334);
             // 
-            // addObjectiveToolStripMenuItem1
+            // addNewObjectiveToolStripMenuItem
             // 
             addNewObjectiveToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewObjectiveToolStripMenuItem.Name = "addObjectiveToolStripMenuItem1";
-            addNewObjectiveToolStripMenuItem.Size = new Size(201, 22);
+            addNewObjectiveToolStripMenuItem.Name = "addNewObjectiveToolStripMenuItem";
+            addNewObjectiveToolStripMenuItem.Size = new Size(215, 22);
             addNewObjectiveToolStripMenuItem.Text = "Add Objective";
             addNewObjectiveToolStripMenuItem.Click += addObjectiveToolStripMenuItem1_Click;
             // 
@@ -2198,9 +2210,105 @@
             // 
             removeObjectiveToolStripMenuItem1.ForeColor = SystemColors.Control;
             removeObjectiveToolStripMenuItem1.Name = "removeObjectiveToolStripMenuItem1";
-            removeObjectiveToolStripMenuItem1.Size = new Size(201, 22);
+            removeObjectiveToolStripMenuItem1.Size = new Size(215, 22);
             removeObjectiveToolStripMenuItem1.Text = "Remove Objective";
             removeObjectiveToolStripMenuItem1.Click += removeObjectiveToolStripMenuItem1_Click;
+            // 
+            // addActionNameToolStripMenuItem
+            // 
+            addActionNameToolStripMenuItem.ForeColor = SystemColors.Control;
+            addActionNameToolStripMenuItem.Name = "addActionNameToolStripMenuItem";
+            addActionNameToolStripMenuItem.Size = new Size(215, 22);
+            addActionNameToolStripMenuItem.Text = "Add Action Name";
+            addActionNameToolStripMenuItem.Click += addActionNameToolStripMenuItem_Click;
+            // 
+            // removeActionNameToolStripMenuItem
+            // 
+            removeActionNameToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeActionNameToolStripMenuItem.Name = "removeActionNameToolStripMenuItem";
+            removeActionNameToolStripMenuItem.Size = new Size(215, 22);
+            removeActionNameToolStripMenuItem.Text = "Remove Action Name";
+            removeActionNameToolStripMenuItem.Click += removeActionNameToolStripMenuItem_Click;
+            // 
+            // addAllowedClassNamesToolStripMenuItem
+            // 
+            addAllowedClassNamesToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAllowedClassNamesToolStripMenuItem.Name = "addAllowedClassNamesToolStripMenuItem";
+            addAllowedClassNamesToolStripMenuItem.Size = new Size(215, 22);
+            addAllowedClassNamesToolStripMenuItem.Text = "Add Allowed ClassNames";
+            addAllowedClassNamesToolStripMenuItem.Click += addAllowedClassNamesToolStripMenuItem_Click;
+            // 
+            // removeAllowedClassNameToolStripMenuItem
+            // 
+            removeAllowedClassNameToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAllowedClassNameToolStripMenuItem.Name = "removeAllowedClassNameToolStripMenuItem";
+            removeAllowedClassNameToolStripMenuItem.Size = new Size(215, 22);
+            removeAllowedClassNameToolStripMenuItem.Text = "Remove Allowed ClassName";
+            removeAllowedClassNameToolStripMenuItem.Click += removeAllowedClassNameToolStripMenuItem_Click;
+            // 
+            // addExcludedClassNameToolStripMenuItem
+            // 
+            addExcludedClassNameToolStripMenuItem.ForeColor = SystemColors.Control;
+            addExcludedClassNameToolStripMenuItem.Name = "addExcludedClassNameToolStripMenuItem";
+            addExcludedClassNameToolStripMenuItem.Size = new Size(215, 22);
+            addExcludedClassNameToolStripMenuItem.Text = "Add Excluded ClassName";
+            addExcludedClassNameToolStripMenuItem.Click += addExcludedClassNameToolStripMenuItem_Click;
+            // 
+            // removeExcludedClassNameToolStripMenuItem
+            // 
+            removeExcludedClassNameToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeExcludedClassNameToolStripMenuItem.Name = "removeExcludedClassNameToolStripMenuItem";
+            removeExcludedClassNameToolStripMenuItem.Size = new Size(215, 22);
+            removeExcludedClassNameToolStripMenuItem.Text = "Remove Excluded ClassName";
+            removeExcludedClassNameToolStripMenuItem.Click += removeExcludedClassNameToolStripMenuItem_Click;
+            // 
+            // addAllowedWeaponsToolStripMenuItem
+            // 
+            addAllowedWeaponsToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAllowedWeaponsToolStripMenuItem.Name = "addAllowedWeaponsToolStripMenuItem";
+            addAllowedWeaponsToolStripMenuItem.Size = new Size(215, 22);
+            addAllowedWeaponsToolStripMenuItem.Text = "Add Allowed Weapons";
+            addAllowedWeaponsToolStripMenuItem.Click += addAllowedWeaponsToolStripMenuItem_Click;
+            // 
+            // removeAllowedWeaponToolStripMenuItem
+            // 
+            removeAllowedWeaponToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAllowedWeaponToolStripMenuItem.Name = "removeAllowedWeaponToolStripMenuItem";
+            removeAllowedWeaponToolStripMenuItem.Size = new Size(215, 22);
+            removeAllowedWeaponToolStripMenuItem.Text = "Remove Allowed Weapon";
+            removeAllowedWeaponToolStripMenuItem.Click += removeAllowedWeaponToolStripMenuItem_Click;
+            // 
+            // addAllowedDamageZoneToolStripMenuItem
+            // 
+            addAllowedDamageZoneToolStripMenuItem.ForeColor = SystemColors.Control;
+            addAllowedDamageZoneToolStripMenuItem.Name = "addAllowedDamageZoneToolStripMenuItem";
+            addAllowedDamageZoneToolStripMenuItem.Size = new Size(215, 22);
+            addAllowedDamageZoneToolStripMenuItem.Text = "Add Allowed Damage Zone";
+            addAllowedDamageZoneToolStripMenuItem.Click += addAllowedDamageZoneToolStripMenuItem_Click;
+            // 
+            // removeAllowedDamageZoneToolStripMenuItem
+            // 
+            removeAllowedDamageZoneToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAllowedDamageZoneToolStripMenuItem.Name = "removeAllowedDamageZoneToolStripMenuItem";
+            removeAllowedDamageZoneToolStripMenuItem.Size = new Size(215, 22);
+            removeAllowedDamageZoneToolStripMenuItem.Text = "Remove Allowed Damage Zone";
+            removeAllowedDamageZoneToolStripMenuItem.Click += removeAllowedDamageZoneToolStripMenuItem_Click;
+            // 
+            // addCollectionItemToolStripMenuItem
+            // 
+            addCollectionItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            addCollectionItemToolStripMenuItem.Name = "addCollectionItemToolStripMenuItem";
+            addCollectionItemToolStripMenuItem.Size = new Size(215, 22);
+            addCollectionItemToolStripMenuItem.Text = "Add Collection Item";
+            addCollectionItemToolStripMenuItem.Click += addCollectionItemToolStripMenuItem_Click;
+            // 
+            // removeCollectionItemToolStripMenuItem
+            // 
+            removeCollectionItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeCollectionItemToolStripMenuItem.Name = "removeCollectionItemToolStripMenuItem";
+            removeCollectionItemToolStripMenuItem.Size = new Size(215, 22);
+            removeCollectionItemToolStripMenuItem.Text = "Remove Collection Item";
+            removeCollectionItemToolStripMenuItem.Click += removeCollectionItemToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2477,5 +2585,17 @@
         private ContextMenuStrip ObjectivesCM;
         private ToolStripMenuItem addNewObjectiveToolStripMenuItem;
         private ToolStripMenuItem removeObjectiveToolStripMenuItem1;
+        private ToolStripMenuItem addActionNameToolStripMenuItem;
+        private ToolStripMenuItem removeActionNameToolStripMenuItem;
+        private ToolStripMenuItem addAllowedClassNamesToolStripMenuItem;
+        private ToolStripMenuItem removeAllowedClassNameToolStripMenuItem;
+        private ToolStripMenuItem addExcludedClassNameToolStripMenuItem;
+        private ToolStripMenuItem removeExcludedClassNameToolStripMenuItem;
+        private ToolStripMenuItem addAllowedWeaponsToolStripMenuItem;
+        private ToolStripMenuItem removeAllowedWeaponToolStripMenuItem;
+        private ToolStripMenuItem addAllowedDamageZoneToolStripMenuItem;
+        private ToolStripMenuItem removeAllowedDamageZoneToolStripMenuItem;
+        private ToolStripMenuItem addCollectionItemToolStripMenuItem;
+        private ToolStripMenuItem removeCollectionItemToolStripMenuItem;
     }
 }
