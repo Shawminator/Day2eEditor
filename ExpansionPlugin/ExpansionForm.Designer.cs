@@ -277,6 +277,8 @@
             removeAllowedDamageZoneToolStripMenuItem = new ToolStripMenuItem();
             addCollectionItemToolStripMenuItem = new ToolStripMenuItem();
             removeCollectionItemToolStripMenuItem = new ToolStripMenuItem();
+            addObjectiveItemToolStripMenuItem = new ToolStripMenuItem();
+            removeItemToolStripMenuItem1 = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -2193,10 +2195,10 @@
             // ObjectivesCM
             // 
             ObjectivesCM.BackColor = Color.FromArgb(60, 63, 65);
-            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem });
+            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem, addObjectiveItemToolStripMenuItem, removeItemToolStripMenuItem1 });
             ObjectivesCM.Name = "DamageCM";
             ObjectivesCM.ShowImageMargin = false;
-            ObjectivesCM.Size = new Size(216, 334);
+            ObjectivesCM.Size = new Size(216, 378);
             // 
             // addNewObjectiveToolStripMenuItem
             // 
@@ -2309,6 +2311,22 @@
             removeCollectionItemToolStripMenuItem.Size = new Size(215, 22);
             removeCollectionItemToolStripMenuItem.Text = "Remove Collection Item";
             removeCollectionItemToolStripMenuItem.Click += removeCollectionItemToolStripMenuItem_Click;
+            // 
+            // addObjectiveItemToolStripMenuItem
+            // 
+            addObjectiveItemToolStripMenuItem.ForeColor = SystemColors.Control;
+            addObjectiveItemToolStripMenuItem.Name = "addObjectiveItemToolStripMenuItem";
+            addObjectiveItemToolStripMenuItem.Size = new Size(215, 22);
+            addObjectiveItemToolStripMenuItem.Text = "Add Objective Item";
+            addObjectiveItemToolStripMenuItem.Click += addObjectiveItemToolStripMenuItem_Click;
+            // 
+            // removeItemToolStripMenuItem1
+            // 
+            removeItemToolStripMenuItem1.ForeColor = SystemColors.Control;
+            removeItemToolStripMenuItem1.Name = "removeItemToolStripMenuItem1";
+            removeItemToolStripMenuItem1.Size = new Size(215, 22);
+            removeItemToolStripMenuItem1.Text = "Remove Item";
+            removeItemToolStripMenuItem1.Click += removeItemToolStripMenuItem1_Click;
             // 
             // ExpansionForm
             // 
@@ -2597,5 +2615,7 @@
         private ToolStripMenuItem removeAllowedDamageZoneToolStripMenuItem;
         private ToolStripMenuItem addCollectionItemToolStripMenuItem;
         private ToolStripMenuItem removeCollectionItemToolStripMenuItem;
+        private ToolStripMenuItem addObjectiveItemToolStripMenuItem;
+        private ToolStripMenuItem removeItemToolStripMenuItem1;
     }
 }
