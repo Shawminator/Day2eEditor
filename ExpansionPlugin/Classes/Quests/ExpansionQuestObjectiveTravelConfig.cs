@@ -120,7 +120,19 @@ namespace ExpansionPlugin
 
         internal override void createDefault()
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "Travel", $"Objective_T_{ID}.json");
+
+            ObjectiveText = "New Travel";
+
+            Position = new Vec3(0m, 0m, 0m);
+            MaxDistance = -1;
+            MarkerName = "";
+            ShowDistance = 0;
+            TriggerOnEnter = 0;
+            TriggerOnExit = 0;
+
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

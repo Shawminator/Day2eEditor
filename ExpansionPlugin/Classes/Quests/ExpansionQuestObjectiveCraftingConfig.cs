@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Day2eEditor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -107,7 +108,15 @@ namespace ExpansionPlugin
 
         internal override void createDefault()
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "Crafting", $"Objective_CR_{ID}.json");
+
+            ObjectiveText = "New Crafting";
+
+            ItemNames = new BindingList<string>();
+            ExecutionAmount = 1;
+
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

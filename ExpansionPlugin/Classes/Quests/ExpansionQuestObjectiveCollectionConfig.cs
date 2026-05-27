@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Day2eEditor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -131,7 +132,17 @@ namespace ExpansionPlugin
 
         internal override void createDefault()
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "Collection", $"Objective_C_{ID}.json");
+
+            ObjectiveText = "New Collection Objective";
+
+            ShowDistance = 0;
+            Collections = new BindingList<ExpansionQuestObjectiveDelivery>();
+            NeedAnyCollection = 0;
+            AddItemsToNearbyMarketZone = 0;
+
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

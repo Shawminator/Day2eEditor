@@ -141,7 +141,18 @@ namespace ExpansionPlugin
 
         internal override void createDefault()
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "Delivery", $"Objective_D_{ID}.json");
+
+            ObjectiveText = "New Delivery";
+
+            Collections = new BindingList<ExpansionQuestObjectiveDelivery>();
+            MaxDistance = 50;
+            MarkerName = "";
+            ShowDistance = 0;
+            AddItemsToNearbyMarketZone = 0;
+
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

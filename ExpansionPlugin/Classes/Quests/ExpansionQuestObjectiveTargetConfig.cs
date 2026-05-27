@@ -302,7 +302,24 @@ namespace ExpansionPlugin
 
         internal override void createDefault()
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "Target", $"Objective_TA_{ID}.json");
+
+            ObjectiveText = "New Target";
+
+            Position = new Vec3(0m, 0m, 0m);
+            MaxDistance = -1;
+            MinDistance = -1;
+            Amount = 0;
+            ClassNames = new BindingList<string>();
+            CountSelfKill = 0;
+            AllowedWeapons = new BindingList<string>();
+            ExcludedClassNames = new BindingList<string>();
+            CountAIPlayers = 0;
+            AllowedDamageZones = new BindingList<string>();
+            AllowedTargetFactions = new BindingList<string>();
+
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }

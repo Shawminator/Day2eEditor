@@ -415,6 +415,7 @@ namespace ExpansionPlugin
             checkExpansionIcons();
             checkExpansionTraderNPCS();
             checkExpansionQuestNPCS();
+            checkExpansionQuestActionNames();
         }
         private void CheckExpansionFactions()
         {
@@ -572,7 +573,37 @@ namespace ExpansionPlugin
                 File.WriteAllLines(filePath, NPCNames);
             }
         }
+        private void checkExpansionQuestActionNames()
+        {
+            string filePath = "Data\\ExpansionQuestActionsNames.txt";
 
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> Actions = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                Actions = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string trader in ActionNames)
+            {
+                if (!Actions.Contains(trader))
+                {
+                    Actions.Add(trader);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, Actions);
+            }
+        }
         static List<string> ExpansionFactions = new List<string>()
         {
             "Brawlers",
@@ -942,6 +973,142 @@ namespace ExpansionPlugin
             "ExpansionQuestNPCAIEva",
             "ExpansionQuestNPCAINaomi",
             "ExpansionQuestNPCAIBaty"
+        };
+
+        public List<string> ActionNames = new List<string>
+        {
+            "ActionAttach",
+            "ActionBandageSelf",
+            "ActionBandageTarget",
+            "ActionBuildPart",
+            "ActionBuildPartSwitch",
+            "ActionBuryAshes",
+            "ActionCheckPulseTarget",
+            "ActionClose",
+            "ActionCloseBarrel",
+            "ActionCloseBarrelHoles",
+            "ActionCloseDoors",
+            "ActionCollectBloodSelf",
+            "ActionCollectBloodTarget",
+            "ActionConsumeSingle",
+            "ActionCookOnStick",
+            "ActionCraftArmband",
+            "ActionCraftBolts",
+            "ActionCraftBoneKnife",
+            "ActionCraftImprovisedBag",
+            "ActionCraftImprovisedFaceCover",
+            "ActionCreateIndoorFireplace",
+            "ActionCreateIndoorOven",
+            "ActionDetach",
+            "ActionDetachFromTarget",
+            "ActionDigGardenPlot",
+            "ActionDigInStash",
+            "ActionDisinfectPlantBit",
+            "ActionDisinfectSelf",
+            "ActionDisinfectTarget",
+            "ActionDrink",
+            "ActionDrinkCan",
+            "ActionDrinkCookingPot",
+            "ActionDrinkPondContinuous",
+            "ActionDrinkThroughContinuous",
+            "ActionDrinkWellContinuous",
+            "ActionDropItem",
+            "ActionEat",
+            "ActionEatCan",
+            "ActionEatCereal",
+            "ActionEatFruit",
+            "ActionEatMeat",
+            "ActionEatSnowContinuous",
+            "ActionEmptyBottleBase",
+            "ActionEmptyCookingPot",
+            "ActionEnterLadder",
+            "ActionExitLadder",
+            "ActionExtinguishFireplace",
+            "ActionFillBottleBase",
+            "ActionFillCoolant",
+            "ActionFillFuel",
+            "ActionFillGeneratorTank",
+            "ActionFishingNew",
+            "ActionFoldObject",
+            "ActionForceConsumeSingle",
+            "ActionForceFeed",
+            "ActionGetInTransport",
+            "ActionGetOutTransport",
+            "ActionGiveBlood",
+            "ActionGiveSalineSelf",
+            "ActionGiveSalineTarget",
+            "ActionHandcuffTarget",
+            "ActionIgniteFireplace",
+            "ActionInjectSelf",
+            "ActionInjectTarget",
+            "ActionInstallSparkplug",
+            "ActionLightItemOnFire",
+            "ActionLightTorch",
+            "ActionLoadMagazine",
+            "ActionLoadMagazineQuick",
+            "ActionLockAttachment",
+            "ActionLockDoors",
+            "ActionMeasureBattery",
+            "ActionMeasureTemperatureSelf",
+            "ActionMeasureTemperatureTarget",
+            "ActionMineRock",
+            "ActionMineTreeBark",
+            "ActionOpen",
+            "ActionOpenBarrel",
+            "ActionOpenBarrelHoles",
+            "ActionOpenDoors",
+            "ActionPackTent",
+            "ActionPin",
+            "ActionPlaceFireplaceIntoBarrel",
+            "ActionPlantSeed",
+            "ActionPlugIn",
+            "ActionPlugIntoFence",
+            "ActionReadPaper",
+            "ActionReloadWeapon",
+            "ActionRepairCarPart",
+            "ActionRepairPart",
+            "ActionRepairTent",
+            "ActionRepairVehiclePart",
+            "ActionRestrainSelf",
+            "ActionRestrainTarget",
+            "ActionSewSelf",
+            "ActionSewTarget",
+            "ActionSkinning",
+            "ActionStartEngine",
+            "ActionStartEngineBoat",
+            "ActionSuicide",
+            "ActionSwapItemToHands",
+            "ActionTakeABite",
+            "ActionTakeFireplaceFromBarrel",
+            "ActionTakeItem",
+            "ActionTakeItemToHands",
+            "ActionTogglePlaceObject",
+            "ActionTurnOffAlarmClock",
+            "ActionTurnOffTransmitter",
+            "ActionTurnOffWhileInHands",
+            "ActionTurnOnAlarmClock",
+            "ActionTurnOnTransmitter",
+            "ActionTurnOnWhileInHands",
+            "ActionUnlockAttachment",
+            "ActionUnlockDoors",
+            "ActionUnfoldObject",
+            "ActionUnpackTent",
+            "ActionUnpin",
+            "ActionUnloadMagazine",
+            "ActionWashHandsItem",
+            "ActionWashHandsSnow",
+            "ActionWashHandsWater",
+            "ActionWashHandsWell",
+
+            // Expansion Actions
+            "ExpansionActionPickVehicleLock",
+            "ExpansionActionPickVehicleLockBase",
+            "ExpansionVehicleActionPickLock",
+            "ExpansionActionOpenGarage",
+            "ExpansionActionCloseGarage",
+            "ExpansionActionOpenCodeLock",
+            "ExpansionActionLockVehicle",
+            "ExpansionActionUnlockVehicle"
         };
 
         public readonly Dictionary<Type, ExpansionQuestObjectiveType> typeMap = new Dictionary<Type, ExpansionQuestObjectiveType>

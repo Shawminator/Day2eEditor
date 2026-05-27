@@ -29,6 +29,8 @@ namespace ExpansionPlugin
         public decimal? MaxDistance { get; set; }
         [JsonPropertyOrder(18)]
         public BindingList<ExpansionLoot> Loot { get; set; }
+
+
         public override ExpansionQuestObjectiveConfig Clone()
         {
             ExpansionQuestObjectiveTreasureHuntConfig clone = new ExpansionQuestObjectiveTreasureHuntConfig
@@ -179,7 +181,22 @@ namespace ExpansionPlugin
 
         internal override void createDefault()
         {
-            throw new NotImplementedException();
+            string path = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestObjectives"], "TreasureHunt", $"Objective_TH_{ID}.json");
+
+            ObjectiveText = "New TreasureHunt";
+
+            ShowDistance = 0;
+            ContainerName = "ExpansionQuestSeaChest";
+            DigInStash = 1;
+            MarkerName = "???";
+            MarkerVisibility = MapMarkerVisibility.Visible_on_the_Map_only;
+            Positions = new BindingList<Vec3>();
+            Loot = new BindingList<ExpansionLoot>();
+            LootItemsAmount = 2;
+            MaxDistance = 10;
+
+            SetPath(path);
+            SetGuid(Guid.NewGuid());
         }
     }
 }
