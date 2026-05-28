@@ -67,6 +67,45 @@ namespace ExpansionPlugin
         {
             return MutableItems.FirstOrDefault(x => x.ID == nPCID);
         }
+        internal ExpansionQuestNPCData AddNewNPC()
+        {
+            var nextId = MutableItems
+               .Select(x => x.ID)
+               .DefaultIfEmpty(0)
+               .Max() + 1;
+
+            string filename = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestNPCData"], $"QuestNPC_{nextId}.json");
+            ExpansionQuestNPCData ExpansionQuestNPCData = new ExpansionQuestNPCData()
+            {
+                ConfigVersion = CurrentVersion,
+                ID = nextId,
+                ClassName = "ExpansionQuestNPCDenis",
+                Position = new Vec3(0m, 0m, 0m),
+                Orientation = new Vec3(0m, 0m, 0m),
+                NPCName = "Phil McCracken",
+                DefaultNPCText = "You Looking at me!!!",
+                Waypoints = new BindingList<Vec3>(),
+                NPCEmoteID = EmoteConstants.Watching,
+                NPCEmoteIsStatic = 0,
+                NPCLoadoutFile = "NBCLoadout",
+                NPCInteractionEmoteID = EmoteConstants.Greeting,
+                NPCQuestCancelEmoteID = EmoteConstants.Shrug,
+                NPCQuestStartEmoteID = EmoteConstants.Nod,
+                NPCQuestCompleteEmoteID = EmoteConstants.Clap,
+                NPCFaction = "InvincibleObservers",
+                NPCType = 0,
+                Active = 1
+            };
+            ExpansionQuestNPCData.SetPath(filename);
+            ExpansionQuestNPCData.SetGuid(Guid.NewGuid());
+            MutableItems.Add(ExpansionQuestNPCData);
+            return ExpansionQuestNPCData;
+
+        }
+        internal void RemoveNPC(ExpansionQuestNPCData ExpansionQuestNPCData)
+        {
+            ExpansionQuestNPCData.ToDelete = true;
+        }
     }
     public class ExpansionQuestNPCData : IDeepCloneable<ExpansionQuestNPCData>, IEquatable<ExpansionQuestNPCData>
     {

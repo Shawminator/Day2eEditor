@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml;
 using System.Xml.Linq;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
@@ -1811,12 +1812,20 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //Quests
+                [typeof(ExpansionQuestQuestConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewQuestToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 [typeof(ExpansionQuestQuest)] = node =>
                 {
                     if (node.Parent.Tag is ExpansionQuestQuestConfig)
                     {
                         ExpansionSettingsCM.Items.Clear();
                         ExpansionSettingsCM.Items.Add(questFlowPreviewToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(removeQuestToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
@@ -1955,6 +1964,21 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeCollectionItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestNPCDataConfig)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addQuestNPCToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionQuestNPCData)] = node =>
+                {
+                    if (node.Parent.Tag is ExpansionQuestNPCDataConfig)
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeQuestNPCToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 }
 
             };
@@ -5061,48 +5085,53 @@ namespace ExpansionPlugin
                .ToList();
             foreach (ExpansionQuestNPCData map in sortedQuests)
             {
-                TreeNode classNameNode = new TreeNode($"ID:{map.ID} {map.NPCName} ({map.ClassName}) {map.GetNPCType()}")
-                {
-                    Tag = map
-                };
-                classNameNode.Nodes.Add(new TreeNode("General")
-                {
-                    Tag = map
-                });
-                classNameNode.Nodes.Add(new TreeNode("Emotes")
-                {
-                    Tag = map
-                });
-                // --- Rotation ---
-                TreeNode rotationNode = new TreeNode("Orientation: " + map.Orientation.GetString())
-                {
-                    Tag = map.Orientation
-                };
-                classNameNode.Nodes.Add(rotationNode);
-
-                // --- Positions / Waypoints ---
-                TreeNode positionsNode = new TreeNode(map.GetISAI() ? "Waypoints" : "Position")
-                {
-                    Tag = "expansionQuestNPCMovement"
-                };
-
-                if (map.GetISAI())
-                {
-                    foreach (Vec3 v3 in map.Waypoints)
-                    {
-                        positionsNode.Nodes.Add(new TreeNode(v3.GetString()) { Tag = v3 });
-                    }
-                }
-                else if (map.Position != null)
-                {
-                    positionsNode.Nodes.Add(new TreeNode(map.Position.GetString()) { Tag = map.Position });
-                }
-
-                classNameNode.Nodes.Add(positionsNode);
-
-                node.Nodes.Add(classNameNode);
+                node.Nodes.Add(CreateNPCNode(map));
             }
         }
+
+        private static TreeNode CreateNPCNode(ExpansionQuestNPCData map)
+        {
+            TreeNode classNameNode = new TreeNode($"ID:{map.ID} {map.NPCName} ({map.ClassName}) {map.GetNPCType()}")
+            {
+                Tag = map
+            };
+            classNameNode.Nodes.Add(new TreeNode("General")
+            {
+                Tag = map
+            });
+            classNameNode.Nodes.Add(new TreeNode("Emotes")
+            {
+                Tag = map
+            });
+            // --- Rotation ---
+            TreeNode rotationNode = new TreeNode("Orientation: " + map.Orientation.GetString())
+            {
+                Tag = map.Orientation
+            };
+            classNameNode.Nodes.Add(rotationNode);
+
+            // --- Positions / Waypoints ---
+            TreeNode positionsNode = new TreeNode(map.GetISAI() ? "Waypoints" : "Position")
+            {
+                Tag = "expansionQuestNPCMovement"
+            };
+
+            if (map.GetISAI())
+            {
+                foreach (Vec3 v3 in map.Waypoints)
+                {
+                    positionsNode.Nodes.Add(new TreeNode(v3.GetString()) { Tag = v3 });
+                }
+            }
+            else if (map.Position != null)
+            {
+                positionsNode.Nodes.Add(new TreeNode(map.Position.GetString()) { Tag = map.Position });
+            }
+
+            classNameNode.Nodes.Add(positionsNode);
+            return classNameNode;
+        }
+
         private TreeNode CreateExpansionQuestQuestConfig(ExpansionQuestQuestConfig ef)
         {
             TreeNode EconomyRootNode = new TreeNode("Quests")
@@ -5120,151 +5149,157 @@ namespace ExpansionPlugin
 
             foreach (ExpansionQuestQuest quest in sortedQuests)
             {
-                TreeNode questNode = new TreeNode($"ID {quest.ID} : {quest.Title}")
-                {
-                    Tag = quest
-                };
-
-                questNode.Nodes.Add(new TreeNode("Basic Info") { Tag = quest });
-                questNode.Nodes.Add(new TreeNode("Advanced") { Tag = quest });
-                questNode.Nodes.Add(new TreeNode("Text / Dialogue") { Tag = quest });
-
-                TreeNode flowNode = new TreeNode("Flow") { Tag = quest };
-
-                TreeNode preQuestNode = new TreeNode($"Pre Quests") { Tag = "PreQuest" };
-                if (quest.PreQuestReferencesList != null && quest.PreQuestReferencesList.Count > 0)
-                {
-                    foreach (QuestReferenceNode preQuestId in quest.PreQuestReferencesList)
-                    {
-                        ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == preQuestId.QuestID);
-
-                        preQuestNode.Nodes.Add(new TreeNode(preQuestId.DisplayText)
-                        {
-                            Tag = preQuestId
-                        });
-                    }
-                }
-
-                TreeNode followUpNode = new TreeNode("Follow Up Quest") { Tag = "FollowUpQuest" };
-                if (quest.FollowUpQuestReference.QuestID != -1)
-                {
-                    ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == quest.FollowUpQuestReference.QuestID);
-
-
-                    followUpNode.Nodes.Add(new TreeNode(quest.FollowUpQuestReference.DisplayText)
-                    {
-                        Tag = quest.FollowUpQuestReference
-                    });
-                }
-
-                flowNode.Nodes.Add(preQuestNode);
-                flowNode.Nodes.Add(followUpNode);
-                questNode.Nodes.Add(flowNode);
-
-                TreeNode npcNode = new TreeNode("NPCs") { Tag = quest };
-
-                TreeNode giverNode = new TreeNode($"Quest Givers") { Tag = "QuestGiverIDs" };
-                if (quest.QuestGiverIDs != null)
-                {
-                    foreach (QuestNPCReferenceNode id in quest.QuestGiverIDsList)
-                        giverNode.Nodes.Add(new TreeNode($"{id.DisplayText}") { Tag = id });
-                }
-
-                TreeNode turnInNode = new TreeNode($"Quest Turn Ins") { Tag = "QuestTurnInIDs" };
-                if (quest.QuestTurnInIDs != null)
-                {
-                    foreach (QuestNPCReferenceNode id in quest.QuestTurnInIDsList)
-                        turnInNode.Nodes.Add(new TreeNode($"{id.DisplayText}") { Tag = id });
-                }
-
-                npcNode.Nodes.Add(giverNode);
-                npcNode.Nodes.Add(turnInNode);
-                questNode.Nodes.Add(npcNode);
-
-                TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = "QuestObjectives" };
-                if (quest.Objectives != null && quest.Objectives.Count > 0)
-                {
-                    foreach (Objectives objective in quest.Objectives)
-                    {
-                        objectivesNode.Nodes.Add(new TreeNode(objective.DisplayText)
-                        {
-                            Tag = objective
-                        });
-                    }
-                }
-
-                questNode.Nodes.Add(objectivesNode);
-
-                TreeNode questItemsNode = new TreeNode($"Quest Items") { Tag = "QuestItems" };
-                if (quest.QuestItems != null)
-                {
-                    foreach (ExpansionQuestItemConfig item in quest.QuestItems)
-                    {
-                        questItemsNode.Nodes.Add(new TreeNode(item.ClassName)
-                        {
-                            Tag = item
-                        });
-                    }
-                }
-                questNode.Nodes.Add(questItemsNode);
-
-                TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = "QuestRewardItems" };
-                if (quest.Rewards != null)
-                {
-                    foreach (ExpansionQuestRewardConfig reward in quest.Rewards)
-                    {
-                        TreeNode rewardnode = new TreeNode(reward.ClassName)
-                        {
-                            Tag = reward
-                        };
-                        TreeNode Attachmentnode = new TreeNode("Attachments")
-                        {
-                            Tag = "QuestRewardAttachments"
-                        };
-                        foreach (string att in reward.Attachments)
-                        {
-                            Attachmentnode.Nodes.Add(new TreeNode(att)
-                            {
-                                Tag = "QuestRewardAttachment"
-                            });
-                        }
-                        rewardnode.Nodes.Add(Attachmentnode);
-                        rewardsNode.Nodes.Add(rewardnode);
-                    }
-                }
-                questNode.Nodes.Add(rewardsNode);
-
-                TreeNode RandFNode = new TreeNode("Reputation / Faction") { Tag = quest };
-                TreeNode FactionReputationRequirementsNode = new TreeNode("Faction Reputation Requirements")
-                {
-                    Tag = "FactionReputationRequirements"
-                };
-                foreach (FactionQuestRep fqr in quest.FactionReputationRequirementsList)
-                {
-                    FactionReputationRequirementsNode.Nodes.Add(new TreeNode($"Faction:{fqr.Faction} Rep:{fqr.Reputation}")
-                    {
-                        Tag = fqr
-                    });
-                }
-                RandFNode.Nodes.Add(FactionReputationRequirementsNode);
-                TreeNode FactionReputationRewardsListNode = new TreeNode("Faction Reputation Rewards")
-                {
-                    Tag = "FactionReputationRewardsList"
-                };
-                foreach (FactionQuestRep fqr in quest.FactionReputationRewardsList)
-                {
-                    FactionReputationRewardsListNode.Nodes.Add(new TreeNode($"Faction:{fqr.Faction} Rep:{fqr.Reputation}")
-                    {
-                        Tag = fqr
-                    });
-                }
-                RandFNode.Nodes.Add(FactionReputationRewardsListNode);
-
-                questNode.Nodes.Add(RandFNode);
+                TreeNode questNode = createquestnode(ef, quest);
 
                 economyRootNode.Nodes.Add(questNode);
 
             }
+        }
+
+        private static TreeNode createquestnode(ExpansionQuestQuestConfig ef, ExpansionQuestQuest quest)
+        {
+            TreeNode questNode = new TreeNode($"ID {quest.ID} : {quest.Title}")
+            {
+                Tag = quest
+            };
+
+            questNode.Nodes.Add(new TreeNode("Basic Info") { Tag = quest });
+            questNode.Nodes.Add(new TreeNode("Advanced") { Tag = quest });
+            questNode.Nodes.Add(new TreeNode("Text / Dialogue") { Tag = quest });
+
+            TreeNode flowNode = new TreeNode("Flow") { Tag = quest };
+
+            TreeNode preQuestNode = new TreeNode($"Pre Quests") { Tag = "PreQuest" };
+            if (quest.PreQuestReferencesList != null && quest.PreQuestReferencesList.Count > 0)
+            {
+                foreach (QuestReferenceNode preQuestId in quest.PreQuestReferencesList)
+                {
+                    ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == preQuestId.QuestID);
+
+                    preQuestNode.Nodes.Add(new TreeNode(preQuestId.DisplayText)
+                    {
+                        Tag = preQuestId
+                    });
+                }
+            }
+
+            TreeNode followUpNode = new TreeNode("Follow Up Quest") { Tag = "FollowUpQuest" };
+            if (quest.FollowUpQuestReference.QuestID != -1)
+            {
+                ExpansionQuestQuest linkedQuest = ef.MutableItems.FirstOrDefault(x => x.ID == quest.FollowUpQuestReference.QuestID);
+
+
+                followUpNode.Nodes.Add(new TreeNode(quest.FollowUpQuestReference.DisplayText)
+                {
+                    Tag = quest.FollowUpQuestReference
+                });
+            }
+
+            flowNode.Nodes.Add(preQuestNode);
+            flowNode.Nodes.Add(followUpNode);
+            questNode.Nodes.Add(flowNode);
+
+            TreeNode npcNode = new TreeNode("NPCs") { Tag = quest };
+
+            TreeNode giverNode = new TreeNode($"Quest Givers") { Tag = "QuestGiverIDs" };
+            if (quest.QuestGiverIDs != null)
+            {
+                foreach (QuestNPCReferenceNode id in quest.QuestGiverIDsList)
+                    giverNode.Nodes.Add(new TreeNode($"{id.DisplayText}") { Tag = id });
+            }
+
+            TreeNode turnInNode = new TreeNode($"Quest Turn Ins") { Tag = "QuestTurnInIDs" };
+            if (quest.QuestTurnInIDs != null)
+            {
+                foreach (QuestNPCReferenceNode id in quest.QuestTurnInIDsList)
+                    turnInNode.Nodes.Add(new TreeNode($"{id.DisplayText}") { Tag = id });
+            }
+
+            npcNode.Nodes.Add(giverNode);
+            npcNode.Nodes.Add(turnInNode);
+            questNode.Nodes.Add(npcNode);
+
+            TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = "QuestObjectives" };
+            if (quest.Objectives != null && quest.Objectives.Count > 0)
+            {
+                foreach (Objectives objective in quest.Objectives)
+                {
+                    objectivesNode.Nodes.Add(new TreeNode(objective.DisplayText)
+                    {
+                        Tag = objective
+                    });
+                }
+            }
+
+            questNode.Nodes.Add(objectivesNode);
+
+            TreeNode questItemsNode = new TreeNode($"Quest Items") { Tag = "QuestItems" };
+            if (quest.QuestItems != null)
+            {
+                foreach (ExpansionQuestItemConfig item in quest.QuestItems)
+                {
+                    questItemsNode.Nodes.Add(new TreeNode(item.ClassName)
+                    {
+                        Tag = item
+                    });
+                }
+            }
+            questNode.Nodes.Add(questItemsNode);
+
+            TreeNode rewardsNode = new TreeNode($"Rewards") { Tag = "QuestRewardItems" };
+            if (quest.Rewards != null)
+            {
+                foreach (ExpansionQuestRewardConfig reward in quest.Rewards)
+                {
+                    TreeNode rewardnode = new TreeNode(reward.ClassName)
+                    {
+                        Tag = reward
+                    };
+                    TreeNode Attachmentnode = new TreeNode("Attachments")
+                    {
+                        Tag = "QuestRewardAttachments"
+                    };
+                    foreach (string att in reward.Attachments)
+                    {
+                        Attachmentnode.Nodes.Add(new TreeNode(att)
+                        {
+                            Tag = "QuestRewardAttachment"
+                        });
+                    }
+                    rewardnode.Nodes.Add(Attachmentnode);
+                    rewardsNode.Nodes.Add(rewardnode);
+                }
+            }
+            questNode.Nodes.Add(rewardsNode);
+
+            TreeNode RandFNode = new TreeNode("Reputation / Faction") { Tag = quest };
+            TreeNode FactionReputationRequirementsNode = new TreeNode("Faction Reputation Requirements")
+            {
+                Tag = "FactionReputationRequirements"
+            };
+            foreach (FactionQuestRep fqr in quest.FactionReputationRequirementsList)
+            {
+                FactionReputationRequirementsNode.Nodes.Add(new TreeNode($"Faction:{fqr.Faction} Rep:{fqr.Reputation}")
+                {
+                    Tag = fqr
+                });
+            }
+            RandFNode.Nodes.Add(FactionReputationRequirementsNode);
+            TreeNode FactionReputationRewardsListNode = new TreeNode("Faction Reputation Rewards")
+            {
+                Tag = "FactionReputationRewardsList"
+            };
+            foreach (FactionQuestRep fqr in quest.FactionReputationRewardsList)
+            {
+                FactionReputationRewardsListNode.Nodes.Add(new TreeNode($"Faction:{fqr.Faction} Rep:{fqr.Reputation}")
+                {
+                    Tag = fqr
+                });
+            }
+            RandFNode.Nodes.Add(FactionReputationRewardsListNode);
+
+            questNode.Nodes.Add(RandFNode);
+            return questNode;
         }
 
         private TreeNode CreateExpansionQuestObjectiveConfigConfig(ExpansionQuestObjectiveConfigConfig ef)
@@ -8448,9 +8483,73 @@ namespace ExpansionPlugin
         }
         private void MapControl_ExpansionQuestNPCDataSingleclicked(object? sender, MapClickEventArgs e)
         {
+            if (currentTreeNode?.Parent.Parent == null)
+                return;
+            TreeNode parentNode = currentTreeNode.Parent.Parent.Parent;
+            object closestPos = null;
+            double closestDistance = double.MaxValue;
+
+            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+            foreach (TreeNode child in parentNode.Nodes)
+            {
+                foreach (TreeNode child2 in child.Nodes[3].Nodes)
+                {
+                    Vec3 pos = child2.Tag as Vec3;
+
+                    // Node position in screen space
+                    PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                    double dx = clickScreen.X - posScreen.X;
+                    double dy = clickScreen.Y - posScreen.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestPos = pos;
+                    }
+                }
+            }
+
+            // Optional: choose only if within some "click radius"
+            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+            {
+                // Select that tree node in the TreeView
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    foreach (TreeNode child2 in child.Nodes[3].Nodes)
+                    {
+                         Vec3 pos = child2.Tag as Vec3;
+
+                            if (pos == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = child2;
+                                break;
+                            }
+                    }
+                }
+
+                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+            }
         }
         private void MapControl_ExpansionQuestNPCDataDoubleclicked(object? sender, MapClickEventArgs e)
         {
+            if (currentTreeNode.Tag is Vec3 v3)
+            {
+                v3.X = (float)e.MapCoordinates.X;
+                v3.Z = (float)e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                }
+                _mapControl.ClearDrawables();
+
+                ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig = currentTreeNode.FindParentOfType<ExpansionQuestNPCDataConfig>();
+                ShowHandler(new Vector3Control(), typeof(ExpansionQuestNPCDataConfig), v3, new List<TreeNode>() { currentTreeNode });
+                DrawQuestNPCPositions(ExpansionQuestNPCDataConfig);
+                currentTreeNode.Text = v3.GetString();
+            }
         }
         #endregion mapstuff
 
@@ -13665,12 +13764,42 @@ namespace ExpansionPlugin
             ExpansionQuestObjectiveTreasureHuntConfig.Positions.Add(newvec3);
             ExpansionTV.SelectedNode = newvec3node;
         }
-
         private void removeTreasureHuntPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestObjectiveTreasureHuntConfig ExpansionQuestObjectiveTreasureHuntConfig = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
             ExpansionQuestObjectiveTreasureHuntConfig.Positions.Remove(currentTreeNode.Tag as Vec3);
             currentTreeNode.Remove();
+        }
+        private void addNewQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuestConfig ExpansionQuestQuestConfig = currentTreeNode.Tag as ExpansionQuestQuestConfig;
+            ExpansionQuestQuest newQuest = ExpansionQuestQuestConfig.AddNewQuest();
+            TreeNode newnpcnode = createquestnode(ExpansionQuestQuestConfig, newQuest);
+            currentTreeNode.Nodes.Add(newnpcnode);
+            currentTreeNode.Expand();
+            ExpansionTV.SelectedNode = newnpcnode;
+        }
+        private void removeQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestQuestConfig ExpansionQuestQuestConfig = currentTreeNode.Parent.Tag as ExpansionQuestQuestConfig;
+            ExpansionQuestQuestConfig.RemoveQuest(currentTreeNode.Tag as ExpansionQuestQuest);
+            currentTreeNode.Remove();
+        }
+        private void addQuestNPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig = currentTreeNode.Tag as ExpansionQuestNPCDataConfig;
+            ExpansionQuestNPCData newNPC = ExpansionQuestNPCDataConfig.AddNewNPC();
+            TreeNode newnpcnode = CreateNPCNode(newNPC);
+            currentTreeNode.Nodes.Add(newnpcnode);
+            currentTreeNode.Expand();
+            ExpansionTV.SelectedNode = newnpcnode;
+        }
+        private void removeQuestNPCToolStripMenuItem_Click(object sender, EventArgs e)
+        { 
+            ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig = currentTreeNode.Parent.Tag as ExpansionQuestNPCDataConfig;
+            ExpansionQuestNPCDataConfig.RemoveNPC(currentTreeNode.Tag as ExpansionQuestNPCData);
+            currentTreeNode.Remove();
+
         }
         #endregion right click methods
 
@@ -13731,6 +13860,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 

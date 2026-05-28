@@ -275,6 +275,74 @@ namespace ExpansionPlugin
         {
             return MutableItems.FirstOrDefault(x => x.ID == ID);
         }
+        internal ExpansionQuestQuest AddNewQuest()
+        {
+            var nextId = MutableItems
+               .Select(x => x.ID)
+               .DefaultIfEmpty(0)
+               .Max() + 1;
+            string[] newdescription = new string[] { "Description on getting quest.", "Description while quest is active.", "Description when take in quest." };
+            string filename = Path.Combine(AppServices.GetRequired<ExpansionManager>()._paths["ExpansionQuestQuests"], $"Quest_{nextId}.json");
+            ExpansionQuestQuest ExpansionQuestQuest = new ExpansionQuestQuest()
+            {
+                ConfigVersion = CurrentVersion,
+                ID = nextId,
+                Type = ExpansionQuestType.NORMAL,
+                Title = "New Quest with id:" + nextId,
+                Descriptions = new BindingList<string>(newdescription.ToList()),
+                ObjectiveText = "Short objective desctiption text.",
+                FollowUpQuest = -1,
+                FollowUpQuestReference = new QuestReferenceNode()
+                {
+                    QuestID = -1
+                },
+                Repeatable = 0,
+                IsDailyQuest = 0,
+                IsWeeklyQuest = 0,
+                CancelQuestOnPlayerDeath = 0,
+                Autocomplete = 0,
+                IsGroupQuest = 0,
+                ObjectSetFileName = "",
+                QuestItems = new BindingList<ExpansionQuestItemConfig>(),
+                Rewards = new BindingList<ExpansionQuestRewardConfig>(),
+                NeedToSelectReward = 0,
+                RandomReward = 0,
+                RandomRewardAmount = -1,
+                RewardsForGroupOwnerOnly = 1,
+                RewardBehavior = 0,
+                QuestGiverIDs = new BindingList<int>(),
+                QuestGiverIDsList = new BindingList<QuestNPCReferenceNode>(),
+                QuestTurnInIDs = new BindingList<int>(),
+                QuestTurnInIDsList = new BindingList<QuestNPCReferenceNode>(),
+                IsAchievement = 0,
+                Objectives = new BindingList<Objectives>(),
+                QuestColor = 0,
+                ReputationReward = 0,
+                ReputationRequirement = -1,
+                PreQuestIDs = new BindingList<int>(),
+                PreQuestReferencesList = new BindingList<QuestReferenceNode>(),
+                RequiredFaction = "",
+                FactionReward = "",
+                PlayerNeedQuestItems = 0,
+                DeleteQuestItems = 0,
+                SequentialObjectives = 0,
+                FactionReputationRequirements = new Dictionary<string, int>(),
+                FactionReputationRewards = new Dictionary<string, int>(),
+                FactionReputationRequirementsList = new BindingList<FactionQuestRep>(),
+                FactionReputationRewardsList = new BindingList<FactionQuestRep>(),
+                SuppressQuestLogOnCompetion = 0,
+                Active = 1
+            };
+            ExpansionQuestQuest.SetPath(filename);
+            ExpansionQuestQuest.SetGuid(Guid.NewGuid());
+            MutableItems.Add(ExpansionQuestQuest);
+            return ExpansionQuestQuest;
+
+        }
+        internal void RemoveQuest(ExpansionQuestQuest ExpansionQuestQuest)
+        {
+            ExpansionQuestQuest.ToDelete = true;
+        }
     }
     public class ExpansionQuestQuest: IDeepCloneable<ExpansionQuestQuest>, IEquatable<ExpansionQuestQuest>
     {

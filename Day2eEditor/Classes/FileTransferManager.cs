@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Day2eEditor
 {
@@ -275,6 +276,20 @@ namespace Day2eEditor
         }
         public void DownloadDirectory(ProjectServerSettings settings, string remoteRoot, string localRoot)
         {
+            string[] excludedFolders =
+            {
+                ".git",
+                "@GameLabsStorage",
+                "@Logging",
+                "BattlEye",
+                "CommunityOnlineTools",
+                "DataCache",
+                "EventManagerLog",
+                "PermissionsFramework",
+                "WebApiLog",
+                "backup",
+
+            };
             string[] excludedExtensions =
             {
                 ".log",
@@ -285,27 +300,27 @@ namespace Day2eEditor
             switch (settings.Protocol)
             {
                 case TransferProtocol.Sftp:
-                    DownloadDirectorySftp(settings, remoteRoot, localRoot, excludedExtensions);
+                    DownloadDirectorySftp(settings, remoteRoot, localRoot, excludedExtensions, excludedFolders);
                     break;
 
                 case TransferProtocol.Ftp:
                 case TransferProtocol.Ftps:
-                    DownloadDirectoryFtp(settings, remoteRoot, localRoot, excludedExtensions);
+                    DownloadDirectoryFtp(settings, remoteRoot, localRoot, excludedExtensions, excludedFolders);
                     break;
             }
         }
-        private void DownloadDirectorySftp(ProjectServerSettings s, string remoteRoot, string localRoot, string[] excludedExtensions)
+        private void DownloadDirectorySftp(ProjectServerSettings s, string remoteRoot, string localRoot, string[] excludedExtensions, string[] excludedFolders)
         {
             using var client = CreateSftp(s);
 
             client.Connect();
 
-            DownloadSftpRecursive(client, remoteRoot, localRoot, excludedExtensions);
+            DownloadSftpRecursive(client, remoteRoot, localRoot, excludedExtensions, excludedFolders);
 
             client.Disconnect();
         }
 
-        private void DownloadSftpRecursive(SftpClient client, string remotePath, string localPath, string[] excludedExtensions)
+        private void DownloadSftpRecursive(SftpClient client, string remotePath, string localPath, string[] excludedExtensions, string[] excludedFolders)
         {
             Directory.CreateDirectory(localPath);
 
@@ -317,10 +332,16 @@ namespace Day2eEditor
                     continue;
 
                 string localFilePath = Path.Combine(localPath, item.Name);
-
+                string name = item.Name;
                 if (item.IsDirectory)
                 {
-                    DownloadSftpRecursive(client, item.FullName, localFilePath, excludedExtensions);
+                    if (excludedFolders.Contains(
+                        name,
+                        StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    DownloadSftpRecursive(client, item.FullName, localFilePath, excludedExtensions, excludedFolders);
                 }
                 else
                 {
@@ -340,18 +361,18 @@ namespace Day2eEditor
                 }
             }
         }
-        private void DownloadDirectoryFtp(ProjectServerSettings s, string remoteRoot, string localRoot, string[] excludedExtensions)
+        private void DownloadDirectoryFtp(ProjectServerSettings s, string remoteRoot, string localRoot, string[] excludedExtensions, string[] excludedFolders)
         {
             using var client = CreateFtp(s);
 
             client.Connect();
 
-            DownloadFtpRecursive(client, remoteRoot, localRoot, excludedExtensions);
+            DownloadFtpRecursive(client, remoteRoot, localRoot, excludedExtensions, excludedFolders);
 
             client.Disconnect();
         }
 
-        private void DownloadFtpRecursive(FtpClient client, string remotePath, string localPath, string[] excludedExtensions)
+        private void DownloadFtpRecursive(FtpClient client, string remotePath, string localPath, string[] excludedExtensions, string[] excludedFolders)
         {
             Directory.CreateDirectory(localPath);
 
@@ -360,10 +381,16 @@ namespace Day2eEditor
             foreach (var item in listing)
             {
                 string localFilePath = Path.Combine(localPath, item.Name);
-
+                string name = item.Name;
                 if (item.Type == FtpObjectType.Directory)
                 {
-                    DownloadFtpRecursive(client, item.FullName, localFilePath, excludedExtensions);
+                    if (excludedFolders.Contains(
+                       name,
+                       StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    DownloadFtpRecursive(client, item.FullName, localFilePath, excludedExtensions, excludedFolders);
                 }
                 else if (item.Type == FtpObjectType.File)
                 {

@@ -95,9 +95,65 @@ namespace DayZFileManagerPlugin
             pendingListView.EndUpdate();
         }
 
-        private void CreateProjectbutton_Click(object sender, EventArgs e)
+        private void UploadAllbutton_Click(object sender, EventArgs e)
         {
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var project = _projectManager.CurrentProject;
 
+            foreach (ListViewItem row in pendingListView.Items)
+            {
+                if (row.Tag is not PendingUploadFile pending)
+                    continue;
+
+                try
+                {
+                    string relativePath = Path.GetRelativePath(
+                        project.ProjectRoot,
+                        pending.FullPath);
+
+                    // Convert windows path to remote unix path
+                    relativePath = relativePath.Replace("\\", "/");
+
+                    string remotePath =
+                        $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
+
+                    switch (pending.Action)
+                    {
+                        case PendingServerAction.Upload:
+
+                            ftp.Upload(
+                                project.ServerSettings,
+                                pending.FullPath,
+                                remotePath);
+                            Console.WriteLine($"UPLOAD OK: {pending.FileName}");
+                            break;
+
+                        case PendingServerAction.Remove:
+
+                            ftp.Delete(
+                                project.ServerSettings,
+                                remotePath);
+                            Console.WriteLine($"DELETE OK: {pending.FileName}");
+                            break;
+                    }
+
+                    // Remove from tracker after success
+                    _uploadTrackerService.MarkUploaded(
+                        project.ProjectName,
+                        pending.FullPath);
+
+                    row.Remove();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[FAIL] {pending.Action}: {pending.FileName} - {ex.Message}");
+                    MessageBox.Show(
+                        $"Failed:\n{pending.FileName}\n\n{ex.Message}",
+                        "Transfer Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -214,6 +270,15 @@ namespace DayZFileManagerPlugin
 
         private void button5_Click(object sender, EventArgs e)
         {
+            var result = MessageBox.Show(
+                "This will overwrite ALL local files in the selected profile and mission folders.\n\nDo you want to continue?",
+                "Confirm Download",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+                return;
+
             var ftp = AppServices.GetRequired<FileTransferManager>();
             string profileDir = _projectManager.CurrentProject.ProfileName;
             string mpMissionDirectory = _projectManager.CurrentProject.MpMissionPath;
@@ -230,6 +295,13 @@ namespace DayZFileManagerPlugin
             ftp.DownloadDirectory(_projectManager.CurrentProject.ServerSettings, remoteProfilePath, localProfilePath);
 
             ftp.DownloadDirectory(_projectManager.CurrentProject.ServerSettings, remoteMissionPath, localMissionPath);
+        }
+
+        private void pendingListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            bool anyChecked = pendingListView.CheckedItems.Count > 0;
+
+            SyncAllButton.Enabled = !anyChecked;
         }
     }
 

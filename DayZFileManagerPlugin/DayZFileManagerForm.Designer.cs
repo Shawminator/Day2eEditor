@@ -30,12 +30,11 @@
         {
             pendingListView = new ListView();
             panel1 = new Panel();
+            button5 = new Button();
             button4 = new Button();
             button3 = new Button();
-            button2 = new Button();
             button1 = new Button();
-            CreateProjectbutton = new Button();
-            button5 = new Button();
+            SyncAllButton = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -49,6 +48,7 @@
             pendingListView.Size = new Size(1038, 602);
             pendingListView.TabIndex = 2;
             pendingListView.UseCompatibleStateImageBehavior = false;
+            pendingListView.ItemChecked += pendingListView_ItemChecked;
             // 
             // panel1
             // 
@@ -56,14 +56,25 @@
             panel1.Controls.Add(button5);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
-            panel1.Controls.Add(button2);
             panel1.Controls.Add(button1);
-            panel1.Controls.Add(CreateProjectbutton);
+            panel1.Controls.Add(SyncAllButton);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(1038, 31);
             panel1.TabIndex = 6;
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(60, 63, 65);
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(259, 5);
+            button5.Name = "button5";
+            button5.Size = new Size(122, 23);
+            button5.TabIndex = 21;
+            button5.Text = "Download All";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
             // 
             // button4
             // 
@@ -89,53 +100,29 @@
             button3.UseVisualStyleBackColor = false;
             button3.Click += button3_Click;
             // 
-            // button2
-            // 
-            button2.BackColor = Color.FromArgb(60, 63, 65);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(691, 5);
-            button2.Name = "button2";
-            button2.Size = new Size(73, 23);
-            button2.TabIndex = 18;
-            button2.Text = "Refresh";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
-            // 
             // button1
             // 
             button1.BackColor = Color.FromArgb(60, 63, 65);
             button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(573, 5);
+            button1.Location = new Point(466, 5);
             button1.Name = "button1";
             button1.Size = new Size(112, 23);
             button1.TabIndex = 17;
-            button1.Text = "Upload Checked";
+            button1.Text = "Sync Checked";
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
-            // CreateProjectbutton
+            // SyncAllButton
             // 
-            CreateProjectbutton.BackColor = Color.FromArgb(60, 63, 65);
-            CreateProjectbutton.FlatStyle = FlatStyle.Flat;
-            CreateProjectbutton.Location = new Point(494, 5);
-            CreateProjectbutton.Name = "CreateProjectbutton";
-            CreateProjectbutton.Size = new Size(73, 23);
-            CreateProjectbutton.TabIndex = 16;
-            CreateProjectbutton.Text = "Upload All";
-            CreateProjectbutton.UseVisualStyleBackColor = false;
-            CreateProjectbutton.Click += CreateProjectbutton_Click;
-            // 
-            // button5
-            // 
-            button5.BackColor = Color.FromArgb(60, 63, 65);
-            button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(259, 5);
-            button5.Name = "button5";
-            button5.Size = new Size(122, 23);
-            button5.TabIndex = 21;
-            button5.Text = "Download All";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
+            SyncAllButton.BackColor = Color.FromArgb(60, 63, 65);
+            SyncAllButton.FlatStyle = FlatStyle.Flat;
+            SyncAllButton.Location = new Point(387, 5);
+            SyncAllButton.Name = "SyncAllButton";
+            SyncAllButton.Size = new Size(73, 23);
+            SyncAllButton.TabIndex = 16;
+            SyncAllButton.Text = "Sync All";
+            SyncAllButton.UseVisualStyleBackColor = false;
+            SyncAllButton.Click += UploadAllbutton_Click;
             // 
             // DayZFileManagerForm
             // 
@@ -158,9 +145,8 @@
 
         private ListView pendingListView;
         private Panel panel1;
-        private Button button2;
         private Button button1;
-        private Button CreateProjectbutton;
+        private Button SyncAllButton;
         private Button button4;
         private Button button3;
         private Button button5;

@@ -281,6 +281,10 @@
             removeItemToolStripMenuItem1 = new ToolStripMenuItem();
             addTreasureHuntPositionToolStripMenuItem = new ToolStripMenuItem();
             removeTreasureHuntPositionToolStripMenuItem = new ToolStripMenuItem();
+            addNewQuestToolStripMenuItem = new ToolStripMenuItem();
+            removeQuestToolStripMenuItem = new ToolStripMenuItem();
+            addQuestNPCToolStripMenuItem = new ToolStripMenuItem();
+            removeQuestNPCToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -2197,10 +2201,10 @@
             // ObjectivesCM
             // 
             ObjectivesCM.BackColor = Color.FromArgb(60, 63, 65);
-            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem, addObjectiveItemToolStripMenuItem, removeItemToolStripMenuItem1, addTreasureHuntPositionToolStripMenuItem, removeTreasureHuntPositionToolStripMenuItem });
+            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem, addObjectiveItemToolStripMenuItem, removeItemToolStripMenuItem1, addTreasureHuntPositionToolStripMenuItem, removeTreasureHuntPositionToolStripMenuItem, addNewQuestToolStripMenuItem, removeQuestToolStripMenuItem, addQuestNPCToolStripMenuItem, removeQuestNPCToolStripMenuItem });
             ObjectivesCM.Name = "DamageCM";
             ObjectivesCM.ShowImageMargin = false;
-            ObjectivesCM.Size = new Size(216, 422);
+            ObjectivesCM.Size = new Size(216, 510);
             // 
             // addNewObjectiveToolStripMenuItem
             // 
@@ -2345,6 +2349,38 @@
             removeTreasureHuntPositionToolStripMenuItem.Size = new Size(215, 22);
             removeTreasureHuntPositionToolStripMenuItem.Text = "Remove Treasure Hunt Position";
             removeTreasureHuntPositionToolStripMenuItem.Click += removeTreasureHuntPositionToolStripMenuItem_Click;
+            // 
+            // addNewQuestToolStripMenuItem
+            // 
+            addNewQuestToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewQuestToolStripMenuItem.Name = "addNewQuestToolStripMenuItem";
+            addNewQuestToolStripMenuItem.Size = new Size(215, 22);
+            addNewQuestToolStripMenuItem.Text = "Add New Quest";
+            addNewQuestToolStripMenuItem.Click += addNewQuestToolStripMenuItem_Click;
+            // 
+            // removeQuestToolStripMenuItem
+            // 
+            removeQuestToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeQuestToolStripMenuItem.Name = "removeQuestToolStripMenuItem";
+            removeQuestToolStripMenuItem.Size = new Size(215, 22);
+            removeQuestToolStripMenuItem.Text = "Remove Quest";
+            removeQuestToolStripMenuItem.Click += removeQuestToolStripMenuItem_Click;
+            // 
+            // addQuestNPCToolStripMenuItem
+            // 
+            addQuestNPCToolStripMenuItem.ForeColor = SystemColors.Control;
+            addQuestNPCToolStripMenuItem.Name = "addQuestNPCToolStripMenuItem";
+            addQuestNPCToolStripMenuItem.Size = new Size(215, 22);
+            addQuestNPCToolStripMenuItem.Text = "Add Quest NPC";
+            addQuestNPCToolStripMenuItem.Click += addQuestNPCToolStripMenuItem_Click;
+            // 
+            // removeQuestNPCToolStripMenuItem
+            // 
+            removeQuestNPCToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeQuestNPCToolStripMenuItem.Name = "removeQuestNPCToolStripMenuItem";
+            removeQuestNPCToolStripMenuItem.Size = new Size(215, 22);
+            removeQuestNPCToolStripMenuItem.Text = "Remove Quest NPC";
+            removeQuestNPCToolStripMenuItem.Click += removeQuestNPCToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2637,5 +2673,9 @@
         private ToolStripMenuItem removeItemToolStripMenuItem1;
         private ToolStripMenuItem addTreasureHuntPositionToolStripMenuItem;
         private ToolStripMenuItem removeTreasureHuntPositionToolStripMenuItem;
+        private ToolStripMenuItem addNewQuestToolStripMenuItem;
+        private ToolStripMenuItem removeQuestToolStripMenuItem;
+        private ToolStripMenuItem addQuestNPCToolStripMenuItem;
+        private ToolStripMenuItem removeQuestNPCToolStripMenuItem;
     }
 }
