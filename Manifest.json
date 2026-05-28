@@ -2,7 +2,7 @@
   "mainApp": {
     "version": "1.0.0",
     "url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/Day2eEditor.zip",
-    "checksum": "sha256:d128784bc47e15693d9e1171c6bbea983b084123fcea092d68231962e9693abb"
+    "checksum": "sha256:eda307e4a5b7b50d4e97573e7e651370c0dfd3ec3244bd5f4c37c804c5dc468f"
   },
   "Core": {
     "Version": "1.0.0",
