@@ -56,6 +56,8 @@
             toolStripMenuItem2 = new ToolStripMenuItem();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
+            ServerRootTN = new TextBox();
+            label12 = new Label();
             PortNUD = new NumericUpDown();
             PasswordTB = new TextBox();
             UsernameTB = new TextBox();
@@ -84,8 +86,6 @@
             MapAddonsLB = new ListView();
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
-            ServerRootTN = new TextBox();
-            label12 = new Label();
             PluginCM.SuspendLayout();
             groupBox1.SuspendLayout();
             ProjectsCM.SuspendLayout();
@@ -178,7 +178,7 @@
             CreateProjectbutton.Location = new Point(615, 167);
             CreateProjectbutton.Name = "CreateProjectbutton";
             CreateProjectbutton.Size = new Size(171, 23);
-            CreateProjectbutton.TabIndex = 15;
+            CreateProjectbutton.TabIndex = 11;
             CreateProjectbutton.Text = "Create Project";
             CreateProjectbutton.UseVisualStyleBackColor = false;
             CreateProjectbutton.Click += CreateProjectbutton_Click;
@@ -191,7 +191,7 @@
             MissionFoldertoUsebutton.Location = new Point(764, 138);
             MissionFoldertoUsebutton.Name = "MissionFoldertoUsebutton";
             MissionFoldertoUsebutton.Size = new Size(23, 23);
-            MissionFoldertoUsebutton.TabIndex = 14;
+            MissionFoldertoUsebutton.TabIndex = 10;
             MissionFoldertoUsebutton.Text = "+";
             MissionFoldertoUsebutton.UseVisualStyleBackColor = false;
             MissionFoldertoUsebutton.Click += MissionFoldertoUsebutton_Click;
@@ -212,7 +212,7 @@
             ProjectMissionFolderTB.Location = new Point(334, 138);
             ProjectMissionFolderTB.Name = "ProjectMissionFolderTB";
             ProjectMissionFolderTB.Size = new Size(452, 23);
-            ProjectMissionFolderTB.TabIndex = 12;
+            ProjectMissionFolderTB.TabIndex = 9;
             // 
             // selectProfilefolderNamebutton
             // 
@@ -222,7 +222,7 @@
             selectProfilefolderNamebutton.Location = new Point(764, 109);
             selectProfilefolderNamebutton.Name = "selectProfilefolderNamebutton";
             selectProfilefolderNamebutton.Size = new Size(23, 23);
-            selectProfilefolderNamebutton.TabIndex = 11;
+            selectProfilefolderNamebutton.TabIndex = 8;
             selectProfilefolderNamebutton.Text = "+";
             selectProfilefolderNamebutton.UseVisualStyleBackColor = false;
             selectProfilefolderNamebutton.Click += selectProfilefolderNamebutton_Click;
@@ -243,7 +243,7 @@
             ProjectProfileTB.Location = new Point(334, 109);
             ProjectProfileTB.Name = "ProjectProfileTB";
             ProjectProfileTB.Size = new Size(452, 23);
-            ProjectProfileTB.TabIndex = 9;
+            ProjectProfileTB.TabIndex = 7;
             // 
             // SelectProjectFolderbutton
             // 
@@ -253,7 +253,7 @@
             SelectProjectFolderbutton.Location = new Point(764, 80);
             SelectProjectFolderbutton.Name = "SelectProjectFolderbutton";
             SelectProjectFolderbutton.Size = new Size(23, 23);
-            SelectProjectFolderbutton.TabIndex = 8;
+            SelectProjectFolderbutton.TabIndex = 6;
             SelectProjectFolderbutton.Text = "+";
             SelectProjectFolderbutton.UseVisualStyleBackColor = false;
             SelectProjectFolderbutton.Click += SelectProjectFolderbutton_Click;
@@ -272,11 +272,12 @@
             ProjectTypeComboBox.BackColor = Color.FromArgb(60, 63, 65);
             ProjectTypeComboBox.ForeColor = SystemColors.Control;
             ProjectTypeComboBox.FormattingEnabled = true;
+            ProjectTypeComboBox.ItemHeight = 15;
             ProjectTypeComboBox.Items.AddRange(new object[] { "Create Blank", "Create Project to Existing Project Files" });
             ProjectTypeComboBox.Location = new Point(334, 22);
             ProjectTypeComboBox.Name = "ProjectTypeComboBox";
             ProjectTypeComboBox.Size = new Size(452, 23);
-            ProjectTypeComboBox.TabIndex = 5;
+            ProjectTypeComboBox.TabIndex = 3;
             ProjectTypeComboBox.SelectedIndexChanged += ProjectTypeComboBox_SelectedIndexChanged;
             // 
             // SelectProjectFolderlabel
@@ -295,7 +296,7 @@
             ProjectFolderTB.Location = new Point(334, 80);
             ProjectFolderTB.Name = "ProjectFolderTB";
             ProjectFolderTB.Size = new Size(424, 23);
-            ProjectFolderTB.TabIndex = 3;
+            ProjectFolderTB.TabIndex = 5;
             // 
             // ProjectNameLabel
             // 
@@ -313,7 +314,7 @@
             ProjectNameTB.Location = new Point(334, 51);
             ProjectNameTB.Name = "ProjectNameTB";
             ProjectNameTB.Size = new Size(452, 23);
-            ProjectNameTB.TabIndex = 1;
+            ProjectNameTB.TabIndex = 4;
             // 
             // listBoxProjects
             // 
@@ -375,6 +376,7 @@
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Highlighted Project";
+            groupBox2.Visible = false;
             // 
             // groupBox3
             // 
@@ -399,6 +401,24 @@
             groupBox3.Text = "Server Connection Settings";
             groupBox3.Enter += groupBox3_Enter;
             // 
+            // ServerRootTN
+            // 
+            ServerRootTN.BackColor = Color.FromArgb(60, 63, 65);
+            ServerRootTN.ForeColor = SystemColors.Control;
+            ServerRootTN.Location = new Point(132, 169);
+            ServerRootTN.Name = "ServerRootTN";
+            ServerRootTN.Size = new Size(452, 23);
+            ServerRootTN.TabIndex = 23;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(12, 172);
+            label12.Name = "label12";
+            label12.Size = new Size(67, 15);
+            label12.TabIndex = 35;
+            label12.Text = "Server Root";
+            // 
             // PortNUD
             // 
             PortNUD.BackColor = Color.FromArgb(60, 63, 65);
@@ -407,7 +427,7 @@
             PortNUD.Maximum = new decimal(new int[] { 50000, 0, 0, 0 });
             PortNUD.Name = "PortNUD";
             PortNUD.Size = new Size(148, 23);
-            PortNUD.TabIndex = 34;
+            PortNUD.TabIndex = 19;
             PortNUD.TextAlign = HorizontalAlignment.Center;
             // 
             // PasswordTB
@@ -417,7 +437,7 @@
             PasswordTB.Location = new Point(132, 140);
             PasswordTB.Name = "PasswordTB";
             PasswordTB.Size = new Size(452, 23);
-            PasswordTB.TabIndex = 33;
+            PasswordTB.TabIndex = 22;
             // 
             // UsernameTB
             // 
@@ -426,7 +446,7 @@
             UsernameTB.Location = new Point(132, 111);
             UsernameTB.Name = "UsernameTB";
             UsernameTB.Size = new Size(452, 23);
-            UsernameTB.TabIndex = 32;
+            UsernameTB.TabIndex = 21;
             // 
             // HostTB
             // 
@@ -435,7 +455,7 @@
             HostTB.Location = new Point(132, 82);
             HostTB.Name = "HostTB";
             HostTB.Size = new Size(452, 23);
-            HostTB.TabIndex = 31;
+            HostTB.TabIndex = 20;
             // 
             // label11
             // 
@@ -491,7 +511,7 @@
             ProtocolCB.Location = new Point(132, 22);
             ProtocolCB.Name = "ProtocolCB";
             ProtocolCB.Size = new Size(452, 23);
-            ProtocolCB.TabIndex = 24;
+            ProtocolCB.TabIndex = 18;
             // 
             // button2
             // 
@@ -500,7 +520,7 @@
             button2.Location = new Point(15, 415);
             button2.Name = "button2";
             button2.Size = new Size(597, 23);
-            button2.TabIndex = 23;
+            button2.TabIndex = 24;
             button2.Text = "Save Changes";
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
@@ -522,7 +542,7 @@
             EditMapSizeNUD.Maximum = new decimal(new int[] { 50000, 0, 0, 0 });
             EditMapSizeNUD.Name = "EditMapSizeNUD";
             EditMapSizeNUD.Size = new Size(148, 23);
-            EditMapSizeNUD.TabIndex = 18;
+            EditMapSizeNUD.TabIndex = 17;
             EditMapSizeNUD.TextAlign = HorizontalAlignment.Center;
             // 
             // label5
@@ -559,7 +579,7 @@
             EditMissionPathTB.Location = new Point(147, 109);
             EditMissionPathTB.Name = "EditMissionPathTB";
             EditMissionPathTB.Size = new Size(452, 23);
-            EditMissionPathTB.TabIndex = 14;
+            EditMissionPathTB.TabIndex = 15;
             // 
             // label3
             // 
@@ -577,7 +597,7 @@
             EditProfilePathTB.Location = new Point(147, 80);
             EditProfilePathTB.Name = "EditProfilePathTB";
             EditProfilePathTB.Size = new Size(452, 23);
-            EditProfilePathTB.TabIndex = 11;
+            EditProfilePathTB.TabIndex = 14;
             // 
             // label2
             // 
@@ -595,7 +615,7 @@
             EditProjectRootTB.Location = new Point(147, 51);
             EditProjectRootTB.Name = "EditProjectRootTB";
             EditProjectRootTB.Size = new Size(424, 23);
-            EditProjectRootTB.TabIndex = 5;
+            EditProjectRootTB.TabIndex = 13;
             // 
             // label1
             // 
@@ -613,7 +633,7 @@
             EditProjectNameTB.Location = new Point(147, 22);
             EditProjectNameTB.Name = "EditProjectNameTB";
             EditProjectNameTB.Size = new Size(452, 23);
-            EditProjectNameTB.TabIndex = 3;
+            EditProjectNameTB.TabIndex = 12;
             // 
             // button1
             // 
@@ -623,7 +643,7 @@
             button1.Location = new Point(12, 12);
             button1.Name = "button1";
             button1.Size = new Size(148, 23);
-            button1.TabIndex = 24;
+            button1.TabIndex = 1;
             button1.Text = "Plugins";
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
@@ -635,7 +655,7 @@
             button3.Location = new Point(171, 12);
             button3.Name = "button3";
             button3.Size = new Size(148, 23);
-            button3.TabIndex = 25;
+            button3.TabIndex = 2;
             button3.Text = "MapAddons";
             button3.UseVisualStyleBackColor = false;
             button3.Click += button3_Click;
@@ -664,24 +684,6 @@
             // 
             columnHeader2.Text = "Installed";
             columnHeader2.Width = 100;
-            // 
-            // ServerRootTN
-            // 
-            ServerRootTN.BackColor = Color.FromArgb(60, 63, 65);
-            ServerRootTN.ForeColor = SystemColors.Control;
-            ServerRootTN.Location = new Point(132, 169);
-            ServerRootTN.Name = "ServerRootTN";
-            ServerRootTN.Size = new Size(452, 23);
-            ServerRootTN.TabIndex = 36;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(12, 172);
-            label12.Name = "label12";
-            label12.Size = new Size(67, 15);
-            label12.TabIndex = 35;
-            label12.Text = "Server Root";
             // 
             // ProjectForm
             // 

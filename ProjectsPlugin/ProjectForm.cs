@@ -1,6 +1,7 @@
 using Day2eEditor;
 using System.Diagnostics;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace ProjectsPlugin
 {
@@ -155,46 +156,39 @@ namespace ProjectsPlugin
         }
         private void PluginLB_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            if (PluginLB.Visible)
             {
-                if (PluginLB.Visible)
+                var item = PluginLB.GetItemAt(e.X, e.Y);
+
+                if (item == null)
+                    return;
+
+                _clickedItem = item;
+
+                if (_clickedItem.Text == "ProjectsPlugin" ||
+                    _clickedItem.Text == "EconomyPlugin" ||
+                    _clickedItem.Text == "DayZFileManagerPlugin")
                 {
-                    var item = PluginLB.GetItemAt(e.X, e.Y);
-                    if (item != null)
-                    {
-                        _clickedItem = item;
-                        if (_clickedItem.Text == "ProjectsPlugin" || _clickedItem.Text == "EconomyPlugin")
-                            return;
-                        PluginLB.ContextMenuStrip = PluginCM;
-                        PluginCM.Show(PluginLB, e.Location);
-                    }
-                    else
-                    {
-                        _clickedItem = null;
-                        PluginLB.ContextMenuStrip = null;
-                    }
+                    return;
                 }
-                else if (MapAddonsLB.Visible)
-                {
-                    var item = MapAddonsLB.GetItemAt(e.X, e.Y);
-                    if (item != null)
-                    {
-                        _clickedItem = item;
-                        if (_clickedItem.Text == "ProjectsPlugin" || _clickedItem.Text == "EconomyPlugin")
-                            return;
-                        MapAddonsLB.ContextMenuStrip = PluginCM;
-                        PluginCM.Show(MapAddonsLB, e.Location);
-                    }
-                    else
-                    {
-                        _clickedItem = null;
-                        MapAddonsLB.ContextMenuStrip = null;
-                    }
-                }
+
+                PluginCM.Show(PluginLB, e.Location);
             }
+            else if (MapAddonsLB.Visible)
+            {
+                var item = MapAddonsLB.GetItemAt(e.X, e.Y);
 
+                if (item == null)
+                    return;
+
+                _clickedItem = item;
+
+                PluginCM.Show(MapAddonsLB, e.Location);
+            }
         }
-
         private void ProjectTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
@@ -271,13 +265,14 @@ namespace ProjectsPlugin
                 ProfileFolderNamelabel.Text = "Profile Path";
                 ProjectProfileTB.Visible = true;
                 ProjectProfileTB.Size = new Size(424, 23);
-                ProjectProfileTB.Text = "";
+                ProjectProfileTB.Text = " <Full Path to Profiles Required> Select using the button to my right";
                 ProjectProfileTB.ReadOnly = true;
                 selectProfilefolderNamebutton.Visible = true;
 
                 MissionFoldertoUselabel.Visible = true;
                 MissionFoldertoUselabel.Text = "Mission Path";
                 ProjectMissionFolderTB.Visible = true;
+                ProjectMissionFolderTB.Text = " <Full Path to Missions folder Required> Select using the button to my right";
                 ProjectMissionFolderTB.Size = new Size(424, 23);
                 ProjectMissionFolderTB.ReadOnly = true;
                 MissionFoldertoUsebutton.Visible = true;
@@ -285,7 +280,6 @@ namespace ProjectsPlugin
                 CreateProjectbutton.Location = new Point(615, 167);
             }
         }
-
         private void CreateProjectbutton_Click(object sender, EventArgs e)
         {
             string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
@@ -458,12 +452,12 @@ namespace ProjectsPlugin
 
             if (this.MdiParent is Form1 mainForm)
             {
-                mainForm.toolStripStatusLabel1.Text = $"Active Project : {selected.ProjectName}";
+                mainForm.toolStripStatusLabel1.Text = $"Active Project:{selected.ProjectName}";
             }
         }
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-
+           
             var selected = listBoxProjects.SelectedItem as Project;
             if (selected != null)
             {
@@ -476,12 +470,24 @@ namespace ProjectsPlugin
                         if (Directory.Exists(selected.ProjectRoot))
                             Directory.Delete(selected.ProjectRoot, true);
                     }
+                    AppServices.GetRequired<UploadTrackerService>().RemoveProject(selected.ProjectName);
                     _ProjectManager.RemoveProject(selected);
+                    groupBox2.Visible = false;
+                    if (this.MdiParent is Form1 mainForm)
+                    {
+                        mainForm.toolStripStatusLabel1.Text = $"Active Project:None Selected";
+                    }
                     MessageBox.Show("Project and files Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
                 else if (result == DialogResult.No)
                 {
+                    AppServices.GetRequired<UploadTrackerService>().RemoveProject(selected.ProjectName);
                     _ProjectManager.RemoveProject(selected);
+                    groupBox2.Visible = false;
+                    if (this.MdiParent is Form1 mainForm)
+                    {
+                        mainForm.toolStripStatusLabel1.Text = $"Active Project:None Selected";
+                    }
                     MessageBox.Show("Project Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
                 else if (result == DialogResult.Cancel)
@@ -490,12 +496,12 @@ namespace ProjectsPlugin
                 }
             }
         }
-
         private void listBoxProjects_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBoxProjects.SelectedItems.Count < 1) return;
             Project p = listBoxProjects.SelectedItem as Project;
             bool isActive = p == _ProjectManager.CurrentProject;
+            groupBox2.Visible = true;
             if (isActive)
             {
                 EditProjectRootTB.Enabled = false;
@@ -521,7 +527,6 @@ namespace ProjectsPlugin
             PasswordTB.Text = Helper.DecryptPassword(p.ServerSettings.EncryptedPassword);
             ServerRootTN.Text = p.ServerSettings.RootPath;
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             Project p = listBoxProjects.SelectedItem as Project;
@@ -544,7 +549,6 @@ namespace ProjectsPlugin
             listBoxProjects.Invalidate();
             MessageBox.Show("Projects Json has now been saved.");
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             MapAddonsLB.Visible = false;
@@ -552,7 +556,6 @@ namespace ProjectsPlugin
             button1.Enabled = false;
             button3.Enabled = true;
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             MapAddonsLB.Visible = true;
@@ -560,7 +563,6 @@ namespace ProjectsPlugin
             button1.Enabled = true;
             button3.Enabled = false;
         }
-
         private void groupBox3_Enter(object sender, EventArgs e)
         {
 

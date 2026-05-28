@@ -30,10 +30,10 @@
         {
             pendingListView = new ListView();
             panel1 = new Panel();
-            button5 = new Button();
-            button4 = new Button();
-            button3 = new Button();
-            button1 = new Button();
+            DownloadAllButton = new Button();
+            SelectRootDieButton = new Button();
+            TestConnectionButton = new Button();
+            SyncCheckedButton = new Button();
             SyncAllButton = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -53,10 +53,10 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(60, 63, 65);
-            panel1.Controls.Add(button5);
-            panel1.Controls.Add(button4);
-            panel1.Controls.Add(button3);
-            panel1.Controls.Add(button1);
+            panel1.Controls.Add(DownloadAllButton);
+            panel1.Controls.Add(SelectRootDieButton);
+            panel1.Controls.Add(TestConnectionButton);
+            panel1.Controls.Add(SyncCheckedButton);
             panel1.Controls.Add(SyncAllButton);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
@@ -64,53 +64,53 @@
             panel1.Size = new Size(1038, 31);
             panel1.TabIndex = 6;
             // 
-            // button5
+            // DownloadAllButton
             // 
-            button5.BackColor = Color.FromArgb(60, 63, 65);
-            button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(259, 5);
-            button5.Name = "button5";
-            button5.Size = new Size(122, 23);
-            button5.TabIndex = 21;
-            button5.Text = "Download All";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
+            DownloadAllButton.BackColor = Color.FromArgb(60, 63, 65);
+            DownloadAllButton.FlatStyle = FlatStyle.Flat;
+            DownloadAllButton.Location = new Point(259, 5);
+            DownloadAllButton.Name = "DownloadAllButton";
+            DownloadAllButton.Size = new Size(122, 23);
+            DownloadAllButton.TabIndex = 21;
+            DownloadAllButton.Text = "Download All";
+            DownloadAllButton.UseVisualStyleBackColor = false;
+            DownloadAllButton.Click += DownloadAllButton_Click;
             // 
-            // button4
+            // SelectRootDieButton
             // 
-            button4.BackColor = Color.FromArgb(60, 63, 65);
-            button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(131, 5);
-            button4.Name = "button4";
-            button4.Size = new Size(122, 23);
-            button4.TabIndex = 20;
-            button4.Text = "Set Root Directory";
-            button4.UseVisualStyleBackColor = false;
-            button4.Click += button4_Click;
+            SelectRootDieButton.BackColor = Color.FromArgb(60, 63, 65);
+            SelectRootDieButton.FlatStyle = FlatStyle.Flat;
+            SelectRootDieButton.Location = new Point(131, 5);
+            SelectRootDieButton.Name = "SelectRootDieButton";
+            SelectRootDieButton.Size = new Size(122, 23);
+            SelectRootDieButton.TabIndex = 20;
+            SelectRootDieButton.Text = "Set Root Directory";
+            SelectRootDieButton.UseVisualStyleBackColor = false;
+            SelectRootDieButton.Click += SelectRootDieButton_Click;
             // 
-            // button3
+            // TestConnectionButton
             // 
-            button3.BackColor = Color.FromArgb(60, 63, 65);
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(3, 5);
-            button3.Name = "button3";
-            button3.Size = new Size(122, 23);
-            button3.TabIndex = 19;
-            button3.Text = "Test Connection";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            TestConnectionButton.BackColor = Color.FromArgb(60, 63, 65);
+            TestConnectionButton.FlatStyle = FlatStyle.Flat;
+            TestConnectionButton.Location = new Point(3, 5);
+            TestConnectionButton.Name = "TestConnectionButton";
+            TestConnectionButton.Size = new Size(122, 23);
+            TestConnectionButton.TabIndex = 19;
+            TestConnectionButton.Text = "Test Connection";
+            TestConnectionButton.UseVisualStyleBackColor = false;
+            TestConnectionButton.Click += TestConnectionButton_Click;
             // 
-            // button1
+            // SyncCheckedButton
             // 
-            button1.BackColor = Color.FromArgb(60, 63, 65);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(466, 5);
-            button1.Name = "button1";
-            button1.Size = new Size(112, 23);
-            button1.TabIndex = 17;
-            button1.Text = "Sync Checked";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            SyncCheckedButton.BackColor = Color.FromArgb(60, 63, 65);
+            SyncCheckedButton.FlatStyle = FlatStyle.Flat;
+            SyncCheckedButton.Location = new Point(466, 5);
+            SyncCheckedButton.Name = "SyncCheckedButton";
+            SyncCheckedButton.Size = new Size(112, 23);
+            SyncCheckedButton.TabIndex = 17;
+            SyncCheckedButton.Text = "Sync Checked";
+            SyncCheckedButton.UseVisualStyleBackColor = false;
+            SyncCheckedButton.Click += SyncCheckedButton_Click;
             // 
             // SyncAllButton
             // 
@@ -122,7 +122,7 @@
             SyncAllButton.TabIndex = 16;
             SyncAllButton.Text = "Sync All";
             SyncAllButton.UseVisualStyleBackColor = false;
-            SyncAllButton.Click += UploadAllbutton_Click;
+            SyncAllButton.Click += SyncAllButton_Click;
             // 
             // DayZFileManagerForm
             // 
@@ -145,10 +145,10 @@
 
         private ListView pendingListView;
         private Panel panel1;
-        private Button button1;
+        private Button SyncCheckedButton;
         private Button SyncAllButton;
-        private Button button4;
-        private Button button3;
-        private Button button5;
+        private Button SelectRootDieButton;
+        private Button TestConnectionButton;
+        private Button DownloadAllButton;
     }
 }

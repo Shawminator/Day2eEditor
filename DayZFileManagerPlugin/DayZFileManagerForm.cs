@@ -26,7 +26,6 @@ namespace DayZFileManagerPlugin
             _uploadTrackerService = AppServices.GetRequired<UploadTrackerService>();
             ConfigurePendingListView();
         }
-
         private void ConfigurePendingListView()
         {
             pendingListView.View = View.Details;
@@ -42,12 +41,10 @@ namespace DayZFileManagerPlugin
             pendingListView.Columns.Add("Relative Path", 350);
             pendingListView.Columns.Add("Last Saved", 150);
         }
-
         private void DayZFileManagerForm_Load(object sender, EventArgs e)
         {
             PopulatePendingListView();
         }
-
         public void PopulatePendingListView()
         {
             pendingListView.BeginUpdate();
@@ -94,8 +91,7 @@ namespace DayZFileManagerPlugin
 
             pendingListView.EndUpdate();
         }
-
-        private void UploadAllbutton_Click(object sender, EventArgs e)
+        private void SyncAllButton_Click(object sender, EventArgs e)
         {
             var ftp = AppServices.GetRequired<FileTransferManager>();
             var project = _projectManager.CurrentProject;
@@ -155,8 +151,7 @@ namespace DayZFileManagerPlugin
                 }
             }
         }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void SyncCheckedButton_Click(object sender, EventArgs e)
         {
             var ftp = AppServices.GetRequired<FileTransferManager>();
             var project = _projectManager.CurrentProject;
@@ -227,12 +222,7 @@ namespace DayZFileManagerPlugin
                 }
             }
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void button3_Click(object sender, EventArgs e)
+        private void TestConnectionButton_Click(object sender, EventArgs e)
         {
 
             var ftp = AppServices.GetRequired<FileTransferManager>();
@@ -255,8 +245,7 @@ namespace DayZFileManagerPlugin
                     MessageBoxIcon.Error);
             }
         }
-
-        private void button4_Click(object sender, EventArgs e)
+        private void SelectRootDieButton_Click(object sender, EventArgs e)
         {
             NewProjectFTP ftpproject = new NewProjectFTP();
             DialogResult result = ftpproject.ShowDialog();
@@ -267,8 +256,7 @@ namespace DayZFileManagerPlugin
                 _projectManager.Save();
             }
         }
-
-        private void button5_Click(object sender, EventArgs e)
+        private void DownloadAllButton_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show(
                 "This will overwrite ALL local files in the selected profile and mission folders.\n\nDo you want to continue?",
@@ -295,8 +283,8 @@ namespace DayZFileManagerPlugin
             ftp.DownloadDirectory(_projectManager.CurrentProject.ServerSettings, remoteProfilePath, localProfilePath);
 
             ftp.DownloadDirectory(_projectManager.CurrentProject.ServerSettings, remoteMissionPath, localMissionPath);
+            AppServices.GetRequired<EconomyManager>().SetProject(_projectManager.CurrentProject);
         }
-
         private void pendingListView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             bool anyChecked = pendingListView.CheckedItems.Count > 0;
@@ -304,7 +292,6 @@ namespace DayZFileManagerPlugin
             SyncAllButton.Enabled = !anyChecked;
         }
     }
-
 
 
     [PluginInfo("DayZ File Manager", "DayZFileManagerPlugin", "DayZFileManagerPlugin.DayZFileManager.png")]

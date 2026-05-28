@@ -235,6 +235,17 @@ namespace Day2eEditor
             }
         }
 
+        public void RemoveProject(string projectName)
+        {
+            if (string.IsNullOrWhiteSpace(projectName))
+                return;
+
+            if (_pendingFiles.Remove(projectName))
+            {
+                Save();
+            }
+        }
+
         private void Save()
         {
             var options = new JsonSerializerOptions
