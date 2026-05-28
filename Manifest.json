@@ -76,6 +76,16 @@
         "mappng": "sakhal_map.png",
         "mapxyz": "sakhal_map.png.xyz"
       }
+    },
+    {
+      "name": "CapareMapAddon",
+      "version": "1.0.0",
+      "url": "https://github.com/Shawminator/Day2eEditor/releases/download/MapAddons/CapareMapAddon.zip",
+      "checksum": "sha256:0b4f26babc36bc493f3960c3ea0f658cc43727d0be14d9f6f1c57cda0fa484db",
+      "mapinfo": {
+        "mappng": "capare_map.png",
+        "mapxyz": "capare_map.png.xyz"
+      }
     }
   ]
 }
