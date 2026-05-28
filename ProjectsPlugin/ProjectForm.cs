@@ -87,14 +87,14 @@ namespace ProjectsPlugin
 
                 _clickedItem.SubItems.Add("Installed");
             }
-            else if(_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
+            else if (_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
             {
                 await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddoninfo);
                 this.Cursor = Cursors.Default;
                 MessageBox.Show($"{mapaddoninfo.Name} Downloaded.", "MapAddon Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 _clickedItem.SubItems.Add("Installed");
             }
-            
+
         }
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -309,8 +309,8 @@ namespace ProjectsPlugin
                 string missionsfolder = ProjectMissionFolderTB.Text;
                 string profilefolder = ProjectProfileTB.Text;
                 string mpmissionpath = Path.GetFileName(missionsfolder);
-                string PmissionFolder = Path.Combine(ProjectFolder, ProjectName, "mpmissions" , Path.GetFileName(missionsfolder));
-                string Pprofilefolder = Path.Combine(ProjectFolder, ProjectName,profilefolder);
+                string PmissionFolder = Path.Combine(ProjectFolder, ProjectName, "mpmissions", Path.GetFileName(missionsfolder));
+                string Pprofilefolder = Path.Combine(ProjectFolder, ProjectName, profilefolder);
 
                 Directory.CreateDirectory(PmissionFolder);
                 Directory.CreateDirectory(Pprofilefolder);
@@ -327,7 +327,7 @@ namespace ProjectsPlugin
                 //MessageBox.Show("Project created, Please Close the editor and populate the missions files before trying to load this project");
                 //Helper.OpenFolderInExplorer(Path.Combine(project.ProjectRoot, project.ProjectName));
                 listBoxProjects.SelectedItem = _ProjectManager.CurrentProject;
-                
+
             }
             else if (projecttype == "Create From SFTP")
             {
@@ -360,7 +360,7 @@ namespace ProjectsPlugin
         private async void CheckMapanddownload(Project project)
         {
             MapAddonInfo mapaddon = _manifest.MapAddons.FirstOrDefault(x => x.MapInfo.MapPng == project.MapPath);
-            if(mapaddon != null)
+            if (mapaddon != null)
             {
                 string imagePath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapPng);
                 string XYZPath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapXYZ);
@@ -473,7 +473,7 @@ namespace ProjectsPlugin
 
                     if (MessageBox.Show("Double checking you want to remove all files\nselecting no will still remove the project from the editor but keep all files in the project folder\nAre you sure you want to do this?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
-                        if(Directory.Exists(selected.ProjectRoot))
+                        if (Directory.Exists(selected.ProjectRoot))
                             Directory.Delete(selected.ProjectRoot, true);
                     }
                     _ProjectManager.RemoveProject(selected);
@@ -514,11 +514,12 @@ namespace ProjectsPlugin
             EditMissionPathTB.Text = p.MpMissionPath;
             EditMapPathTB.Text = p.MapPath;
             EditMapSizeNUD.Value = p.MapSize;
-            ProtocolCB.SelectedItem  = p.ServerSettings.Protocol;
+            ProtocolCB.SelectedItem = p.ServerSettings.Protocol;
             HostTB.Text = p.ServerSettings.Host;
             PortNUD.Value = p.ServerSettings.Port;
             UsernameTB.Text = p.ServerSettings.Username;
             PasswordTB.Text = Helper.DecryptPassword(p.ServerSettings.EncryptedPassword);
+            ServerRootTN.Text = p.ServerSettings.RootPath;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -558,6 +559,11 @@ namespace ProjectsPlugin
             PluginLB.Visible = false;
             button1.Enabled = true;
             button3.Enabled = false;
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
         }
     }
     public sealed class EnumItem<T>

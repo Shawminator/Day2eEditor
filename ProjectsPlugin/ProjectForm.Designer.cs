@@ -84,6 +84,8 @@
             MapAddonsLB = new ListView();
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
+            ServerRootTN = new TextBox();
+            label12 = new Label();
             PluginCM.SuspendLayout();
             groupBox1.SuspendLayout();
             ProjectsCM.SuspendLayout();
@@ -102,7 +104,7 @@
             PluginLB.Location = new Point(12, 41);
             PluginLB.MultiSelect = false;
             PluginLB.Name = "PluginLB";
-            PluginLB.Size = new Size(307, 588);
+            PluginLB.Size = new Size(307, 634);
             PluginLB.TabIndex = 1;
             PluginLB.UseCompatibleStateImageBehavior = false;
             PluginLB.View = View.Details;
@@ -369,13 +371,15 @@
             groupBox2.ForeColor = SystemColors.Control;
             groupBox2.Location = new Point(325, 217);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(623, 412);
+            groupBox2.Size = new Size(623, 458);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Highlighted Project";
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(ServerRootTN);
+            groupBox3.Controls.Add(label12);
             groupBox3.Controls.Add(PortNUD);
             groupBox3.Controls.Add(PasswordTB);
             groupBox3.Controls.Add(UsernameTB);
@@ -389,10 +393,11 @@
             groupBox3.ForeColor = SystemColors.Control;
             groupBox3.Location = new Point(15, 196);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(597, 176);
+            groupBox3.Size = new Size(597, 213);
             groupBox3.TabIndex = 25;
             groupBox3.TabStop = false;
             groupBox3.Text = "Server Connection Settings";
+            groupBox3.Enter += groupBox3_Enter;
             // 
             // PortNUD
             // 
@@ -492,7 +497,7 @@
             // 
             button2.BackColor = Color.FromArgb(60, 63, 65);
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(15, 378);
+            button2.Location = new Point(15, 415);
             button2.Name = "button2";
             button2.Size = new Size(597, 23);
             button2.TabIndex = 23;
@@ -660,12 +665,30 @@
             columnHeader2.Text = "Installed";
             columnHeader2.Width = 100;
             // 
+            // ServerRootTN
+            // 
+            ServerRootTN.BackColor = Color.FromArgb(60, 63, 65);
+            ServerRootTN.ForeColor = SystemColors.Control;
+            ServerRootTN.Location = new Point(132, 169);
+            ServerRootTN.Name = "ServerRootTN";
+            ServerRootTN.Size = new Size(452, 23);
+            ServerRootTN.TabIndex = 36;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(12, 172);
+            label12.Name = "label12";
+            label12.Size = new Size(67, 15);
+            label12.TabIndex = 35;
+            label12.Text = "Server Root";
+            // 
             // ProjectForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
-            ClientSize = new Size(1148, 654);
+            ClientSize = new Size(1148, 713);
             Controls.Add(button3);
             Controls.Add(button1);
             Controls.Add(groupBox2);
@@ -748,5 +771,7 @@
         private Label label9;
         private Label label8;
         private Label label7;
+        private TextBox ServerRootTN;
+        private Label label12;
     }
 }

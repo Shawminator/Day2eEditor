@@ -70,50 +70,64 @@ namespace Day2eEditor
         }
         public float gethieght(float v1, float v2)
         {
+            // Terrain world size
+            float max = (cellcount - 1) * cellsize;
+
+            // Outside bounds handling
+            if (v1 < 0 || v2 < 0 || v1 > max || v2 > max)
+            {
+                return 0f;
+            }
+
+            // Clamp exact edge values
+            if (v1 >= max)
+                v1 = max - 0.001f;
+
+            if (v2 >= max)
+                v2 = max - 0.001f;
+
             int x1 = (int)(v1 / cellsize);
             int y1 = (int)(v2 / cellsize);
-            float start = (cellcount * x1) + y1;
-            using (FileStream fs = new FileStream(FileName, FileMode.Open, FileAccess.Read))
-            using (BinaryReader br = new BinaryReader(fs))
+
+            long start = (cellcount * x1) + y1;
+
+            using FileStream fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+            using BinaryReader br = new BinaryReader(fs);
+
+            long pos = 8 + (start * 12);
+
+            br.BaseStream.Position = pos;
+
+            Vector3 newVec1 = new Vector3(
+                br.ReadSingle(),
+                br.ReadSingle(),
+                br.ReadSingle());
+
+            Vector3 newVec2 = new Vector3(
+                br.ReadSingle(),
+                br.ReadSingle(),
+                br.ReadSingle());
+
+            pos += (cellcount * 12);
+
+            br.BaseStream.Position = pos;
+
+            Vector3 newVec3 = new Vector3(
+                br.ReadSingle(),
+                br.ReadSingle(),
+                br.ReadSingle());
+
+            Vector3 newVec4 = new Vector3(
+                br.ReadSingle(),
+                br.ReadSingle(),
+                br.ReadSingle());
+
+            if (IsPointInTriangle(v1, v2, newVec1, newVec2, newVec3))
             {
-                long pos = 8 + ((long)start * 12);
-                br.BaseStream.Position = pos;
-                Vector3 newVec1 = new Vector3();
-                newVec1.X = br.ReadSingle();
-                newVec1.Y = br.ReadSingle();
-                newVec1.Z = br.ReadSingle();
-
-                Vector3 newVec2 = new Vector3();
-                newVec2.X = br.ReadSingle();
-                newVec2.Y = br.ReadSingle();
-                newVec2.Z = br.ReadSingle();
-   
-                pos = pos + (cellcount * 12);
-                br.BaseStream.Position = pos;
-                Vector3 newVec3 = new Vector3();
-                newVec3.X = br.ReadSingle();
-                newVec3.Y = br.ReadSingle();
-                newVec3.Z = br.ReadSingle();
-
-                Vector3 newVec4 = new Vector3();
-                newVec4.X = br.ReadSingle();
-                newVec4.Y = br.ReadSingle();
-                newVec4.Z = br.ReadSingle();
-
-
-                // Find which triangle the point falls into
-                float Z;
-                if (IsPointInTriangle(v1, v2, newVec1, newVec2, newVec3))
-                {
-                    Z = ComputeZ(v1, v2, newVec1, newVec2, newVec3);
-                }
-                else
-                {
-                    Z = ComputeZ(v1, v2, newVec2, newVec3, newVec4);
-                }
-                return Z;
-
+                return ComputeZ(v1, v2, newVec1, newVec2, newVec3);
             }
+
+            return ComputeZ(v1, v2, newVec2, newVec3, newVec4);
         }
         static bool IsPointInTriangle(float x, float y, Vector3 p1, Vector3 p2, Vector3 p3)
         {

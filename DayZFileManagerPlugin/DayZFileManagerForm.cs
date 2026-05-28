@@ -95,8 +95,6 @@ namespace DayZFileManagerPlugin
             pendingListView.EndUpdate();
         }
 
-
-
         private void CreateProjectbutton_Click(object sender, EventArgs e)
         {
 
@@ -104,7 +102,74 @@ namespace DayZFileManagerPlugin
 
         private void button1_Click(object sender, EventArgs e)
         {
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var project = _projectManager.CurrentProject;
 
+            if (pendingListView.CheckedItems.Count == 0)
+            {
+                MessageBox.Show(
+                    "No files selected.",
+                    "Upload",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            foreach (ListViewItem row in pendingListView.CheckedItems)
+            {
+                if (row.Tag is not PendingUploadFile pending)
+                    continue;
+
+                try
+                {
+                    string relativePath = Path.GetRelativePath(
+                        project.ProjectRoot,
+                        pending.FullPath);
+
+                    // Convert windows path to remote unix path
+                    relativePath = relativePath.Replace("\\", "/");
+
+                    string remotePath =
+                        $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
+
+                    switch (pending.Action)
+                    {
+                        case PendingServerAction.Upload:
+
+                            ftp.Upload(
+                                project.ServerSettings,
+                                pending.FullPath,
+                                remotePath);
+                            Console.WriteLine($"UPLOAD OK: {pending.FileName}");
+                            break;
+
+                        case PendingServerAction.Remove:
+
+                            ftp.Delete(
+                                project.ServerSettings,
+                                remotePath);
+                            Console.WriteLine($"DELETE OK: {pending.FileName}");
+                            break;
+                    }
+
+                    // Remove from tracker after success
+                    _uploadTrackerService.MarkUploaded(
+                        project.ProjectName,
+                        pending.FullPath);
+
+                    row.Remove();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[FAIL] {pending.Action}: {pending.FileName} - {ex.Message}");
+                    MessageBox.Show(
+                        $"Failed:\n{pending.FileName}\n\n{ex.Message}",
+                        "Transfer Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -145,6 +210,26 @@ namespace DayZFileManagerPlugin
                 _projectManager.CurrentProject.ServerSettings.RootPath = serverroot;
                 _projectManager.Save();
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+            string profileDir = _projectManager.CurrentProject.ProfileName;
+            string mpMissionDirectory = _projectManager.CurrentProject.MpMissionPath;
+
+            string mpMissionPath = Path.GetFileName(mpMissionDirectory);
+            string profile = Path.GetFileName(profileDir);
+
+            string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
+            string localMissionPath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, "mpmissions", mpMissionPath);
+
+            string remoteProfilePath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, profile);
+            string remoteMissionPath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, "mpmissions", mpMissionPath);
+
+            ftp.DownloadDirectory(_projectManager.CurrentProject.ServerSettings, remoteProfilePath, localProfilePath);
+
+            ftp.DownloadDirectory(_projectManager.CurrentProject.ServerSettings, remoteMissionPath, localMissionPath);
         }
     }
 

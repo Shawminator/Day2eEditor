@@ -279,6 +279,8 @@
             removeCollectionItemToolStripMenuItem = new ToolStripMenuItem();
             addObjectiveItemToolStripMenuItem = new ToolStripMenuItem();
             removeItemToolStripMenuItem1 = new ToolStripMenuItem();
+            addTreasureHuntPositionToolStripMenuItem = new ToolStripMenuItem();
+            removeTreasureHuntPositionToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -2195,10 +2197,10 @@
             // ObjectivesCM
             // 
             ObjectivesCM.BackColor = Color.FromArgb(60, 63, 65);
-            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem, addObjectiveItemToolStripMenuItem, removeItemToolStripMenuItem1 });
+            ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem, addObjectiveItemToolStripMenuItem, removeItemToolStripMenuItem1, addTreasureHuntPositionToolStripMenuItem, removeTreasureHuntPositionToolStripMenuItem });
             ObjectivesCM.Name = "DamageCM";
             ObjectivesCM.ShowImageMargin = false;
-            ObjectivesCM.Size = new Size(216, 378);
+            ObjectivesCM.Size = new Size(216, 422);
             // 
             // addNewObjectiveToolStripMenuItem
             // 
@@ -2327,6 +2329,22 @@
             removeItemToolStripMenuItem1.Size = new Size(215, 22);
             removeItemToolStripMenuItem1.Text = "Remove Item";
             removeItemToolStripMenuItem1.Click += removeItemToolStripMenuItem1_Click;
+            // 
+            // addTreasureHuntPositionToolStripMenuItem
+            // 
+            addTreasureHuntPositionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addTreasureHuntPositionToolStripMenuItem.Name = "addTreasureHuntPositionToolStripMenuItem";
+            addTreasureHuntPositionToolStripMenuItem.Size = new Size(215, 22);
+            addTreasureHuntPositionToolStripMenuItem.Text = "Add Treasure Hunt Position";
+            addTreasureHuntPositionToolStripMenuItem.Click += addTreasureHuntPositionToolStripMenuItem_Click;
+            // 
+            // removeTreasureHuntPositionToolStripMenuItem
+            // 
+            removeTreasureHuntPositionToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeTreasureHuntPositionToolStripMenuItem.Name = "removeTreasureHuntPositionToolStripMenuItem";
+            removeTreasureHuntPositionToolStripMenuItem.Size = new Size(215, 22);
+            removeTreasureHuntPositionToolStripMenuItem.Text = "Remove Treasure Hunt Position";
+            removeTreasureHuntPositionToolStripMenuItem.Click += removeTreasureHuntPositionToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2617,5 +2635,7 @@
         private ToolStripMenuItem removeCollectionItemToolStripMenuItem;
         private ToolStripMenuItem addObjectiveItemToolStripMenuItem;
         private ToolStripMenuItem removeItemToolStripMenuItem1;
+        private ToolStripMenuItem addTreasureHuntPositionToolStripMenuItem;
+        private ToolStripMenuItem removeTreasureHuntPositionToolStripMenuItem;
     }
 }

@@ -160,10 +160,21 @@ namespace Day2eEditor
         private void UploadSftp(ProjectServerSettings s, string local, string remote)
         {
             using var client = CreateSftp(s);
+
             client.Connect();
 
+            // Ensure remote folder exists
+            string? remoteDir = Path.GetDirectoryName(remote)
+                ?.Replace("\\", "/");
+
+            if (!string.IsNullOrWhiteSpace(remoteDir))
+            {
+                EnsureSftpDirectoryExists(client, remoteDir);
+            }
+
             using var fs = File.OpenRead(local);
-            client.UploadFile(fs, remote);
+
+            client.UploadFile(fs, remote, true);
 
             client.Disconnect();
         }
@@ -227,9 +238,19 @@ namespace Day2eEditor
         private void UploadFtp(ProjectServerSettings s, string local, string remote)
         {
             using var client = CreateFtp(s);
+
             client.Connect();
 
-            client.UploadFile(local, remote);
+            // Ensure remote folder exists
+            string? remoteDir = Path.GetDirectoryName(remote)
+                ?.Replace("\\", "/");
+
+            if (!string.IsNullOrWhiteSpace(remoteDir))
+            {
+                EnsureFtpDirectoryExists(client, remoteDir);
+            }
+
+            client.UploadFile(local, remote, FtpRemoteExists.Overwrite);
 
             client.Disconnect();
         }
@@ -251,6 +272,181 @@ namespace Day2eEditor
         private string Decrypt(string value)
         {
             return Helper.DecryptPassword(value);
+        }
+        public void DownloadDirectory(ProjectServerSettings settings, string remoteRoot, string localRoot)
+        {
+            string[] excludedExtensions =
+            {
+                ".log",
+                ".adm",
+                ".rpt"
+            };
+
+            switch (settings.Protocol)
+            {
+                case TransferProtocol.Sftp:
+                    DownloadDirectorySftp(settings, remoteRoot, localRoot, excludedExtensions);
+                    break;
+
+                case TransferProtocol.Ftp:
+                case TransferProtocol.Ftps:
+                    DownloadDirectoryFtp(settings, remoteRoot, localRoot, excludedExtensions);
+                    break;
+            }
+        }
+        private void DownloadDirectorySftp(ProjectServerSettings s, string remoteRoot, string localRoot, string[] excludedExtensions)
+        {
+            using var client = CreateSftp(s);
+
+            client.Connect();
+
+            DownloadSftpRecursive(client, remoteRoot, localRoot, excludedExtensions);
+
+            client.Disconnect();
+        }
+
+        private void DownloadSftpRecursive(SftpClient client, string remotePath, string localPath, string[] excludedExtensions)
+        {
+            Directory.CreateDirectory(localPath);
+
+            var items = client.ListDirectory(remotePath);
+
+            foreach (var item in items)
+            {
+                if (item.Name == "." || item.Name == "..")
+                    continue;
+
+                string localFilePath = Path.Combine(localPath, item.Name);
+
+                if (item.IsDirectory)
+                {
+                    DownloadSftpRecursive(client, item.FullName, localFilePath, excludedExtensions);
+                }
+                else
+                {
+                    string ext = Path.GetExtension(item.Name);
+
+                    if (excludedExtensions.Any(x =>
+                        x.Equals(ext, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine($"Downloading: {item.FullName}");
+
+                    using var fs = File.Create(localFilePath);
+
+                    client.DownloadFile(item.FullName, fs);
+                }
+            }
+        }
+        private void DownloadDirectoryFtp(ProjectServerSettings s, string remoteRoot, string localRoot, string[] excludedExtensions)
+        {
+            using var client = CreateFtp(s);
+
+            client.Connect();
+
+            DownloadFtpRecursive(client, remoteRoot, localRoot, excludedExtensions);
+
+            client.Disconnect();
+        }
+
+        private void DownloadFtpRecursive(FtpClient client, string remotePath, string localPath, string[] excludedExtensions)
+        {
+            Directory.CreateDirectory(localPath);
+
+            var listing = client.GetListing(remotePath);
+
+            foreach (var item in listing)
+            {
+                string localFilePath = Path.Combine(localPath, item.Name);
+
+                if (item.Type == FtpObjectType.Directory)
+                {
+                    DownloadFtpRecursive(client, item.FullName, localFilePath, excludedExtensions);
+                }
+                else if (item.Type == FtpObjectType.File)
+                {
+                    string ext = Path.GetExtension(item.Name);
+
+                    if (excludedExtensions.Any(x =>
+                        x.Equals(ext, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine($"Downloading: {item.FullName}");
+
+                    client.DownloadFile(localFilePath, item.FullName);
+                }
+            }
+        }
+        public void Delete(ProjectServerSettings settings, string remotePath)
+        {
+            switch (settings.Protocol)
+            {
+                case TransferProtocol.Sftp:
+                    DeleteSftp(settings, remotePath);
+                    break;
+
+                case TransferProtocol.Ftp:
+                case TransferProtocol.Ftps:
+                    DeleteFtp(settings, remotePath);
+                    break;
+            }
+        }
+        private void DeleteSftp(ProjectServerSettings s, string remote)
+        {
+            using var client = CreateSftp(s);
+
+            client.Connect();
+
+            if (client.Exists(remote))
+                client.DeleteFile(remote);
+
+            client.Disconnect();
+        }
+        private void DeleteFtp(ProjectServerSettings s, string remote)
+        {
+            using var client = CreateFtp(s);
+
+            client.Connect();
+
+            if (client.FileExists(remote))
+                client.DeleteFile(remote);
+
+            client.Disconnect();
+        }
+        private void EnsureFtpDirectoryExists(FtpClient client, string remotePath)
+        {
+            string? dir = Path.GetDirectoryName(remotePath);
+
+            if (string.IsNullOrWhiteSpace(dir))
+                return;
+
+            dir = dir.Replace("\\", "/");
+
+            client.CreateDirectory(dir, true);
+        }
+        private void EnsureSftpDirectoryExists(SftpClient client, string path)
+        {
+            path = path.Replace("\\", "/");
+
+            string[] parts = path.Split(
+                '/',
+                StringSplitOptions.RemoveEmptyEntries);
+
+            string current = "";
+
+            foreach (string part in parts)
+            {
+                current += "/" + part;
+
+                if (!client.Exists(current))
+                {
+                    client.CreateDirectory(current);
+                }
+            }
         }
     }
 }

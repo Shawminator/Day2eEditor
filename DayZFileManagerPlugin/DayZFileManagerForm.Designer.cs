@@ -35,6 +35,7 @@
             button2 = new Button();
             button1 = new Button();
             CreateProjectbutton = new Button();
+            button5 = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -52,6 +53,7 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(60, 63, 65);
+            panel1.Controls.Add(button5);
             panel1.Controls.Add(button4);
             panel1.Controls.Add(button3);
             panel1.Controls.Add(button2);
@@ -123,6 +125,18 @@
             CreateProjectbutton.UseVisualStyleBackColor = false;
             CreateProjectbutton.Click += CreateProjectbutton_Click;
             // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(60, 63, 65);
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(259, 5);
+            button5.Name = "button5";
+            button5.Size = new Size(122, 23);
+            button5.TabIndex = 21;
+            button5.Text = "Download All";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
             // DayZFileManagerForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -149,5 +163,6 @@
         private Button CreateProjectbutton;
         private Button button4;
         private Button button3;
+        private Button button5;
     }
 }

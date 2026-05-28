@@ -73,7 +73,10 @@ namespace ExpansionPlugin
                 MaxDistance != o.MaxDistance)
                 return false;
 
-            if(!ListEquals(Loot, o.Loot))
+            if (!ListEquals(Positions, o.Positions))
+                return false;
+
+            if (!ListEquals(Loot, o.Loot))
                 return false;
 
             return true;

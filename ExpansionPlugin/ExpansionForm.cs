@@ -1428,6 +1428,12 @@ namespace ExpansionPlugin
                             }
                         }
                     }
+                    else if (node.Parent.Tag.ToString() == "ObjectivesTreasureHuntPositions")
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeTreasureHuntPositionToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
                 },
                 //AI
                 [typeof(ExpansionAIPatrol)] = node =>
@@ -2873,6 +2879,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeItemToolStripMenuItem1);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["ObjectivesTreasureHuntPositions"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addTreasureHuntPositionToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
 
@@ -13621,7 +13633,45 @@ namespace ExpansionPlugin
                 currentTreeNode.Remove();
             }
         }
+        private void addTreasureHuntPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestObjectiveTreasureHuntConfig ExpansionQuestObjectiveTreasureHuntConfig = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
+            if (ExpansionQuestObjectiveTreasureHuntConfig.Positions.Count == null)
+                ExpansionQuestObjectiveTreasureHuntConfig.Positions = new BindingList<Vec3>();
 
+            Vec3 newvec3 = null;
+            if (ExpansionQuestObjectiveTreasureHuntConfig.Positions.Count == 0)
+            {
+                newvec3 = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2);
+                if (MapData.FileExists)
+                {
+                    newvec3.Y = (MapData.gethieght(newvec3.X, newvec3.Z));
+                }
+            }
+            else
+            {
+                Vec3 vec3 = ExpansionQuestObjectiveTreasureHuntConfig.Positions.Last();
+                newvec3 = new Vec3(vec3.X + 25, 0f, vec3.Z);
+                if (MapData.FileExists)
+                {
+                    newvec3.Y = (MapData.gethieght(newvec3.X, newvec3.Z));
+                }
+            }
+            TreeNode newvec3node = new TreeNode(newvec3.GetString())
+            {
+                Tag = newvec3
+            };
+            currentTreeNode.Nodes.Add(newvec3node);
+            ExpansionQuestObjectiveTreasureHuntConfig.Positions.Add(newvec3);
+            ExpansionTV.SelectedNode = newvec3node;
+        }
+
+        private void removeTreasureHuntPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionQuestObjectiveTreasureHuntConfig ExpansionQuestObjectiveTreasureHuntConfig = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
+            ExpansionQuestObjectiveTreasureHuntConfig.Positions.Remove(currentTreeNode.Tag as Vec3);
+            currentTreeNode.Remove();
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -13681,6 +13731,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
