@@ -6,7 +6,6 @@ namespace Day2eEditor
 {
     public class ProjectStore
     {
-        public bool ShowChangeLog { get; set; } = true;
         public string ActiveProject { get; set; } = string.Empty;
         public BindingList<Project> Projects { get; set; } = new();
     }

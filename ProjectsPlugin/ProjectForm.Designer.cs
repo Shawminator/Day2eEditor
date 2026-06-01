@@ -56,6 +56,7 @@
             toolStripMenuItem2 = new ToolStripMenuItem();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
+            button6 = new Button();
             ServerRootTN = new TextBox();
             label12 = new Label();
             PortNUD = new NumericUpDown();
@@ -382,6 +383,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(button6);
             groupBox3.Controls.Add(ServerRootTN);
             groupBox3.Controls.Add(label12);
             groupBox3.Controls.Add(PortNUD);
@@ -402,6 +404,19 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Server Connection Settings";
             groupBox3.Enter += groupBox3_Enter;
+            // 
+            // button6
+            // 
+            button6.BackColor = SystemColors.Control;
+            button6.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button6.ForeColor = SystemColors.ActiveCaptionText;
+            button6.Location = new Point(561, 140);
+            button6.Name = "button6";
+            button6.Size = new Size(23, 23);
+            button6.TabIndex = 36;
+            button6.Text = "🙈";
+            button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
             // 
             // ServerRootTN
             // 
@@ -438,8 +453,9 @@
             PasswordTB.ForeColor = SystemColors.Control;
             PasswordTB.Location = new Point(132, 140);
             PasswordTB.Name = "PasswordTB";
-            PasswordTB.Size = new Size(452, 23);
+            PasswordTB.Size = new Size(424, 23);
             PasswordTB.TabIndex = 22;
+            PasswordTB.UseSystemPasswordChar = true;
             // 
             // UsernameTB
             // 
@@ -805,5 +821,6 @@
         private Label label12;
         private Button button4;
         private Button button5;
+        private Button button6;
     }
 }

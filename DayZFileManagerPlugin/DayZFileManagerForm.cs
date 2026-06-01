@@ -1,6 +1,7 @@
 using Day2eEditor;
 using Renci.SshNet;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
 
 namespace DayZFileManagerPlugin
 {
@@ -334,6 +335,28 @@ namespace DayZFileManagerPlugin
             string remotemapoutputpath = Path.Combine(remoteProfilePath, "DumpAttatch.json");
 
             ftp.Download(_projectManager.CurrentProject.ServerSettings, remotemapoutputpath, localmapoutputpath);
+        }
+
+        private void pendingListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var project = _projectManager.CurrentProject;
+            foreach (ListViewItem row in pendingListView.Items)
+            {
+                if (row.Tag is not PendingUploadFile pending)
+                    continue;
+
+                // Remove from tracker after success
+               _uploadTrackerService.MarkUploaded(
+                    project.ProjectName,
+                    pending.FullPath);
+
+               row.Remove();
+            }
         }
     }
 

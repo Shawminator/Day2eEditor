@@ -12,7 +12,6 @@ namespace Day2eEditor
         private ProjectStore _store = new();
 
         public BindingList<Project> Projects => _store.Projects;
-        public bool ShowChangeLog => _store.ShowChangeLog;
         public Project? CurrentProject => _store.Projects.FirstOrDefault(p => p.ProjectName == _store.ActiveProject);
 
         public ProjectManager(string projectsFolder)
@@ -60,7 +59,6 @@ namespace Day2eEditor
                 Console.WriteLine("Projects file not found. Creating a new one.");
                 _store = new ProjectStore
                 {
-                    ShowChangeLog = false,
                     ActiveProject = "",
                     Projects = new BindingList<Project>()
                 };

@@ -1,6 +1,7 @@
 using Day2eEditor;
 using System.Diagnostics;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace ProjectsPlugin
@@ -520,7 +521,7 @@ namespace ProjectsPlugin
             EditMissionPathTB.Text = p.MpMissionPath;
             EditMapPathTB.Text = p.MapPath;
             EditMapSizeNUD.Value = p.MapSize;
-            ProtocolCB.SelectedItem = p.ServerSettings.Protocol;
+            ProtocolCB.SelectedValue = p.ServerSettings.Protocol;
             HostTB.Text = p.ServerSettings.Host;
             PortNUD.Value = p.ServerSettings.Port;
             UsernameTB.Text = p.ServerSettings.Username;
@@ -543,6 +544,7 @@ namespace ProjectsPlugin
                 Port = (int)PortNUD.Value,
                 Username = UsernameTB.Text,
                 EncryptedPassword = Helper.EncryptPassword(PasswordTB.Text),
+                RootPath = ServerRootTN.Text,
                 PassiveMode = true
             };
             _ProjectManager.Save();
@@ -570,15 +572,29 @@ namespace ProjectsPlugin
 
         private void button4_Click(object sender, EventArgs e)
         {
+            string sourcefile = Path.Combine(
+                    _ProjectManager.CurrentProject.ProjectRoot,
+                    _ProjectManager.CurrentProject.ProfileName,
+                    "map_output.txt"
+                    );
+
+            if(!File.Exists(sourcefile))
+            {
+
+                Console.WriteLine("[INFO] Map_output.txt doesn not exist for current project");
+                return;
+            }
+
             Cursor.Current = Cursors.WaitCursor;
+            
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             MapData.CreateNewData(
                 Path.Combine(
-                    _ProjectManager.CurrentProject.ProjectRoot, 
+                    _ProjectManager.CurrentProject.ProjectRoot,
                     _ProjectManager.CurrentProject.ProfileName,
                     "map_output.txt"
                     )
-                ,Path.Combine(
+                , Path.Combine(
                     appDirectory,
                     "MapAddons",
                     _ProjectManager.CurrentProject.MapPath + ".xyz"
@@ -624,6 +640,15 @@ namespace ProjectsPlugin
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
+        }
+
+
+        public bool isPasswordVisible = false;
+        private void button6_Click(object sender, EventArgs e)
+        {
+            isPasswordVisible = !isPasswordVisible;
+            button6.Text = isPasswordVisible ? "👁": "🙈" ;
+            PasswordTB.UseSystemPasswordChar = !isPasswordVisible;
         }
     }
     public sealed class EnumItem<T>
