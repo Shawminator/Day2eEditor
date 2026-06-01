@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 
 namespace Day2eEditor
@@ -225,6 +226,53 @@ namespace Day2eEditor
             }
 
             return true;
+        }
+        public static string AddIncludeIfMissing(string content, string includeLine)
+        {
+            if (content.Contains(includeLine))
+                return content;
+
+            return includeLine + Environment.NewLine + content;
+        }
+        public static string InjectIntoMain(string content, string codeToInsert)
+        {
+            var pattern = @"void\s+main\s*\(\s*\)\s*\{";
+
+            var match = Regex.Match(content, pattern);
+            if (!match.Success)
+                return content;
+
+            int startIndex = match.Index + match.Length;
+
+            int braceDepth = 1;
+            int i = startIndex;
+
+            for (; i < content.Length; i++)
+            {
+                if (content[i] == '{') braceDepth++;
+                if (content[i] == '}') braceDepth--;
+
+                if (braceDepth == 0)
+                    break;
+            }
+
+            if (i <= startIndex)
+                return content;
+
+            return content.Insert(i, Environment.NewLine + codeToInsert + Environment.NewLine);
+        }
+        public static string RemoveInclude(string content, string includeLine)
+        {
+            return content.Replace(includeLine + Environment.NewLine, "")
+                  .Replace(includeLine, "");
+        }
+        public static string RemoveBlock(string content, string marker)
+        {
+            return Regex.Replace(
+                content,
+                $@"//\s*<AUTO_{marker}_START>.*?//\s*<AUTO_{marker}_END>\s*\r?\n?",
+                "",
+                RegexOptions.Singleline);
         }
     }
 }

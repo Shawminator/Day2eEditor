@@ -144,16 +144,19 @@ namespace Day2eEditor
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
                 using var client = CreateSftp(s);
                 client.Connect();
 
                 bool ok = client.IsConnected;
 
                 client.Disconnect();
+                Cursor.Current = Cursors.Default;
                 return ok;
             }
             catch
             {
+                Cursor.Current = Cursors.Default;
                 return false;
             }
         }

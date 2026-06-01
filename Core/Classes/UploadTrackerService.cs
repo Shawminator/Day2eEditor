@@ -73,11 +73,14 @@ namespace Day2eEditor
                 var displayFileName = Path.GetFileName(filePath);
 
                 var existing = list.FirstOrDefault(x =>
-                    string.Equals(x.FullPath, filePath, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(x.FullPath, filePath, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(x.FileName, displayFileName, StringComparison.OrdinalIgnoreCase));
 
                 if (existing != null)
                 {
                     existing.FileName = displayFileName;
+                    existing.FullPath = filePath.Replace("File Remove ", "");
+                    existing.ProjectName = projectName;
                     existing.LastSavedAt = DateTime.Now;
                     existing.Action = action;
                 }
@@ -278,13 +281,31 @@ namespace Day2eEditor
                     if (string.IsNullOrWhiteSpace(kvp.Key))
                         continue;
 
-                    _pendingFiles[kvp.Key] = kvp.Value ?? new List<PendingUploadFile>();
+                    var deduped = kvp.Value
+                        .Where(x => x != null && !string.IsNullOrWhiteSpace(x.FullPath))
+                        .GroupBy(x => NormalizePath(x.FullPath))
+                        .Select(g => g
+                            .OrderByDescending(x => x.LastSavedAt)
+                            .First())
+                        .ToList();
+
+                    _pendingFiles[kvp.Key] = deduped;
                 }
             }
             catch
             {
                 _pendingFiles.Clear();
             }
+        }
+        private static string NormalizePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            path = path.Replace("File Remove ", "", StringComparison.OrdinalIgnoreCase);
+            path = path.Replace("\\", "/");
+
+            return path.Trim();
         }
     }
 }

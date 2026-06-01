@@ -1,9 +1,11 @@
+using Core;
 using Day2eEditor;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
@@ -326,6 +328,7 @@ namespace EconomyPlugin
                    ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected),
                 [typeof(prototypeGroupContainer)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new prototypeGroupContainerControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroupContainer, selected)
+               
 
 
 
@@ -460,17 +463,7 @@ namespace EconomyPlugin
                 {
                     var cc = node.FindParentOfType<Complexchildrentype>();
                     ShowHandler(new SpawnGearSimpleChildrenControl(), typeof(SpawnGearPresetFile), cc, selected);
-                },
-                ["INITC"] = (node, selected) =>
-                {
-                    OpenWithExternalEditor frm = new OpenWithExternalEditor();
-                    frm.StartPosition = FormStartPosition.CenterParent;
-                    frm.filePath = Path.Combine(_economyManager.basePath, "init.c");
-                    DialogResult dr = frm.ShowDialog();
-
-                    //ShowOpenWithDialog(Path.Combine(_economyManager.basePath, "init.c"));
                 }
-
             };
         }
         public static void ShowOpenWithDialog(string filePath)
@@ -789,7 +782,28 @@ namespace EconomyPlugin
                     MapGroupPosCM.Items.Add(new ToolStripSeparator());
                     MapGroupPosCM.Items.Add(removeUsableFileToolStripMenuItem);
                     MapGroupPosCM.Show(Cursor.Position);
-                }
+                },
+                [typeof(EnfusionScriptfile)] = node =>
+                {
+                    var item = node.Tag as EnfusionScriptfile;
+
+                    SpawnableTypesCM.Items.Clear();
+                    SpawnableTypesCM.Items.Add(openExternalToolStripMenuItem);
+                    SpawnableTypesCM.Items.Add(new ToolStripSeparator());
+                    if (item.FileName == "init.c")
+                    {
+                        if(!item.HasWeaponAttachInclude)
+                            SpawnableTypesCM.Items.Add(addWeaponAttachmentDumpToolStripMenuItem);
+                        if(!item.HasXYZInclude)
+                            SpawnableTypesCM.Items.Add(addGetXYZToolStripMenuItem);
+                    }
+                    if (item.FileName == "WeaponAttchmentDump.c")
+                        SpawnableTypesCM.Items.Add(removeWeaponAttchmentDumpToolStripMenuItem);
+                    else if (item.FileName == "XYZMapper.c")
+                        SpawnableTypesCM.Items.Add(removeGetXYZToolStripMenuItem);
+
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
             };
 
             // ----------------------
@@ -2263,6 +2277,7 @@ namespace EconomyPlugin
                 rootNode.Nodes.Add(BuildMapPlacementNode());
                 rootNode.Nodes.Add(BuildAreaEffectsNode());
                 rootNode.Nodes.Add(BuildGameplayNode());
+                rootNode.Nodes.Add(BuildScriptNodes());
                 TreeNode warningsNode = BuildWarningsNode();
                 if (warningsNode != null)
                     rootNode.Nodes.Add(warningsNode);
@@ -2391,13 +2406,23 @@ namespace EconomyPlugin
             if (_economyManager.cfgignorelistConfig != null)
                 gameplayNode.Nodes.Add(CreatecfgignorelistNodes(_economyManager.cfgignorelistConfig));
 
-            TreeNode initNode = new TreeNode("init.c")
-            {
-                Tag = "INITC"
-            };
-            gameplayNode.Nodes.Add(initNode);
-
             return gameplayNode;
+        }
+        private TreeNode BuildScriptNodes()
+        {
+            TreeNode ScriptNodesRoot = CreateCategoryNode("Scripts", "Scripts");
+
+            foreach (EnfusionScriptfile sf in _economyManager.scriptfilesConfig.MutableItems)
+            {
+                TreeNode initNode = new TreeNode(sf.FileName)
+                {
+                    Tag = sf
+                };
+                ScriptNodesRoot.Nodes.Add(initNode);
+            }
+
+
+            return ScriptNodesRoot;
         }
         private TreeNode BuildWarningsNode()
         {
@@ -6019,7 +6044,7 @@ namespace EconomyPlugin
 
         private void removeTerritoryPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
+            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
             {
                 territorytypeTerritory ttt = currentTreeNode.Parent.Tag as territorytypeTerritory;
                 ttt.zone.Remove(territoryzone);
@@ -6029,7 +6054,7 @@ namespace EconomyPlugin
 
         private void addNewTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Tag is territorytype territorytype)
+            if (currentTreeNode.Tag is territorytype territorytype)
             {
                 territorytypeTerritory newterritorytypeTerritory = new territorytypeTerritory()
                 {
@@ -6092,6 +6117,112 @@ namespace EconomyPlugin
         private void removeUsableFileToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void openExternalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is EnfusionScriptfile EnfusionScriptfile)
+            {
+                _economyManager.scriptfilesConfig.Save();
+                OpenWithExternalEditor frm = new OpenWithExternalEditor();
+                frm.StartPosition = FormStartPosition.CenterParent;
+                frm.filePath = EnfusionScriptfile._path;
+                DialogResult dr = frm.ShowDialog();
+            }
+        }
+        private void addWeaponAttachmentDumpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var config = _economyManager.scriptfilesConfig;
+
+            string include = config._weaponInclude;
+            string lineToAdd = config.WeaponAttachDump;
+
+            var initFile = config.MutableItems
+                .FirstOrDefault(x => Path.GetFileName(x.FilePath)
+                .Equals("INIT.c", StringComparison.OrdinalIgnoreCase));
+
+            if (initFile == null)
+                return;
+
+            // add include at top
+            initFile.Data = Helper.AddIncludeIfMissing(initFile.Data, include);
+            // add code inside main()
+            initFile.Data = Helper.InjectIntoMain(initFile.Data, lineToAdd);
+
+            initFile.HasWeaponAttachInclude = true;
+
+            EnfusionScriptfile newscriptfile = _economyManager.scriptfilesConfig.addnewScript(Path.Combine(_economyManager._paths["ScriptFilesConfig"], "WeaponAttchmentDump.c"), EconomyManager.DumpAttchScript);
+
+
+            currentTreeNode.Parent.Nodes.Add(new TreeNode(newscriptfile.FileName)
+            {
+                Tag = newscriptfile
+            });
+        }
+        private void addGetXYZToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var config = _economyManager.scriptfilesConfig;
+
+            string include = config._xyzInclude;
+            string lineToAdd = config.GetXYZ;
+
+            var initFile = config.MutableItems
+                .FirstOrDefault(x => Path.GetFileName(x.FilePath)
+                .Equals("INIT.c", StringComparison.OrdinalIgnoreCase));
+
+            if (initFile == null)
+                return;
+
+            // add include at top
+            initFile.Data = Helper.AddIncludeIfMissing(initFile.Data, include);
+            // add code inside main()
+            initFile.Data = Helper.InjectIntoMain(initFile.Data, lineToAdd);
+
+            initFile.HasXYZInclude = true;
+
+            EnfusionScriptfile newscriptfile = _economyManager.scriptfilesConfig.addnewScript(Path.Combine(_economyManager._paths["ScriptFilesConfig"], "XYZMapper.c"), EconomyManager.GetXYZScript);
+
+
+            currentTreeNode.Parent.Nodes.Add(new TreeNode(newscriptfile.FileName)
+            {
+                Tag = newscriptfile
+            });
+        }
+        private void removeWeaponAttchmentDumpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var config = _economyManager.scriptfilesConfig;
+            EnfusionScriptfile script = currentTreeNode.Tag as EnfusionScriptfile;
+            var initFile = config.MutableItems
+                .FirstOrDefault(x => Path.GetFileName(x.FilePath)
+                .Equals("INIT.c", StringComparison.OrdinalIgnoreCase));
+
+            if (initFile == null)
+                return;
+
+            initFile.Data = Helper.RemoveInclude(initFile.Data, config._weaponInclude);
+            initFile.Data = Helper.RemoveBlock(initFile.Data, "DUMP_ATTACH");
+            initFile.HasWeaponAttachInclude = false;
+            _economyManager.scriptfilesConfig.removeScript(script);
+
+            currentTreeNode.Remove();
+        }
+        private void removeGetXYZToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var config = _economyManager.scriptfilesConfig;
+            EnfusionScriptfile script = currentTreeNode.Tag as EnfusionScriptfile;
+            var initFile = config.MutableItems
+                .FirstOrDefault(x => Path.GetFileName(x.FilePath)
+                .Equals("INIT.c", StringComparison.OrdinalIgnoreCase));
+
+            if (initFile == null)
+                return;
+
+            initFile.Data = Helper.RemoveInclude(initFile.Data, config._xyzInclude);
+            initFile.Data = Helper.RemoveBlock(initFile.Data, "GET_XYZ_MAP");
+            initFile.HasXYZInclude = false;
+            _economyManager.scriptfilesConfig.removeScript(script);
+
+            currentTreeNode.Remove();
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿
+using Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static System.Net.Mime.MediaTypeNames;
@@ -7,7 +8,7 @@ namespace Day2eEditor
 {
     public class EconomyManager
     {
-        private readonly Dictionary<string, string> _paths = new();
+        public readonly Dictionary<string, string> _paths = new();
         public string basePath { get; set; }
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
@@ -36,7 +37,8 @@ namespace Day2eEditor
         public mapgroupposConfig mapgroupposConfig { get; set; }
         public TerritoriesConfig territoriesConfig { get; set; }
         public mapgroupprotoConfig mapgroupprotoConfig { get; set; }
-        
+        public scriptfilesConfig scriptfilesConfig { get; set;  }
+
         public EconomyManager() 
         {
         }
@@ -76,6 +78,8 @@ namespace Day2eEditor
             _paths["VanillaGlobals"] = Path.Combine(basePath, "db", "globals.xml");
             _paths["VanillaSpawnableTypes"] = Path.Combine(basePath, "cfgspawnabletypes.xml");
             _paths["VanillaRandomPresets"] = Path.Combine(basePath, "cfgrandompresets.xml");
+
+            _paths["ScriptFilesConfig"] = Path.Combine(basePath, "");
 
             LoadFiles();
         }
@@ -170,6 +174,9 @@ namespace Day2eEditor
             mapgroupprotoConfig = new mapgroupprotoConfig(_paths["mapgroupproto"]);
             LoadConfigWithErrorReport("mapgroupproto", mapgroupprotoConfig);
 
+            scriptfilesConfig = new scriptfilesConfig(_paths["ScriptFilesConfig"]);
+            LoadConfigWithErrorReport("ScriptFilesConfig", scriptfilesConfig);
+
             Console.WriteLine($"\n**** Starting load of EconomyCore Files Including Vanilla ****");
 
             economyConfig = new EconomyConfig(basePath);
@@ -218,7 +225,8 @@ namespace Day2eEditor
                 cfgignorelistConfig,
                 mapgroupposConfig,
                 territoriesConfig,
-                mapgroupprotoConfig
+                mapgroupprotoConfig,
+                scriptfilesConfig
             };
 
             var savedFiles = new List<string>();
@@ -265,7 +273,8 @@ namespace Day2eEditor
                 cfgignorelistConfig,
                 mapgroupposConfig,
                 territoriesConfig,
-                mapgroupprotoConfig
+                mapgroupprotoConfig,
+                scriptfilesConfig
             };
             foreach (var obj in configs)
             {
@@ -944,5 +953,190 @@ namespace Day2eEditor
             "SurvivorM_Seth",
             "SurvivorM_Taiki"
         };
+        public const string GetXYZScript = @"
+void GetXYZMap()
+{
+    const float MAP_X = 20480;
+    const float MAP_Z = 20480;
+    const float RESOLUTION = 7.5;
+
+    DeleteFile(""$profile:map_output.txt"");
+    FileHandle fh = OpenFile(""$profile:map_output.txt"", FileMode.WRITE);
+
+    float x, z;
+    while (x < MAP_X) {
+        while (z < MAP_Z) {
+            vector point = Vector(x, GetGame().SurfaceY(x, z), z);
+            FPrintln(fh, point.ToString(false));
+            z += RESOLUTION;
+        }
+
+        z = 0;
+        x += RESOLUTION;
+    }
+
+    CloseFile(fh);
+}
+";
+        public const string DumpAttchScript = @"
+class DumpWeaponOutputs
+{
+	ref array<ref DumpWeapon> DumpWeapons = {};
+}
+class DumpWeapon
+{
+	string name;
+	ref TStringArray attachments = {};
+	ref TStringArray attachmentsBayonet = {};
+	ref TStringArray attachmentsBipods = {};
+	ref TStringArray attachmentsButtStocks = {};
+	ref TStringArray attachmentsHandguards = {};
+	ref TStringArray attachmentIllumination = {};
+	ref TStringArray attachmentsOpticsAndSights = {};
+	ref TStringArray attachmentsMuzzles = {};
+	ref TStringArray attachmentsWraps = {};
+	ref TStringArray attachmentsAFG = {};
+	ref TStringArray bullets = {};
+	ref TStringArray magazines = {};
+	
+}
+
+bool endsWith(string str, string suffix)
+{
+  if (str.Length() < suffix.Length())
+    return false;
+   
+  return str.Substring(str.Length()-suffix.Length(),suffix.Length()) == suffix;
+} 
+bool startsWith(string str, string suffix)
+{
+  if (str.Length() < suffix.Length())
+    return false;
+   
+  return str.Substring(0,suffix.Length()) == suffix;
+}
+void DumpAttach()
+{
+	DumpWeaponOutputs weapon_outputs = new DumpWeaponOutputs();
+ 
+    map<string, ref TStringArray> attachmentmap = new map<string, ref TStringArray>();
+    for (int j = 0; j < GetGame().ConfigGetChildrenCount(""CfgVehicles""); j++)
+    {
+        string item_name;
+        GetGame().ConfigGetChildName(""CfgVehicles"", j, item_name);
+ 
+        if (item_name == string.Empty)
+            continue;
+        
+        TStringArray inventory_slots = {};
+        switch (GetGame().ConfigGetType(""CfgVehicles "" + item_name + "" inventorySlot""))
+        {
+            case CT_ARRAY:
+            {
+                GetGame().ConfigGetTextArray(""CfgVehicles "" + item_name + "" inventorySlot"", inventory_slots);
+                foreach (string inv : inventory_slots)
+                {
+                    if (inv == string.Empty)
+						{
+							break;
+						}
+ 
+                    if (!attachmentmap[inv])
+                        attachmentmap[inv] = new TStringArray();
+ 					//Print(""inserting Itemname: "" + item_name);
+                    attachmentmap[inv].Insert(item_name);
+                }
+                break;
+            }
+            
+            case CT_STRING:
+            {
+                string attch;
+				//Print(""in CT_STRING case"");
+                GetGame().ConfigGetText(""CfgVehicles "" + item_name + "" inventorySlot"", attch);
+ 
+                if (attch == string.Empty)
+					{
+                    	
+						break;
+					}
+ 
+                if (!attachmentmap[attch])
+                    attachmentmap[attch] = new TStringArray();
+ 
+                attachmentmap[attch].Insert(item_name);
+                break;
+            }
+        }   
+    }
+    for (int i = 0; i < GetGame().ConfigGetChildrenCount(""CfgWeapons""); i++)
+    {
+        string name;
+        GetGame().ConfigGetChildName(""CfgWeapons"", i, name);
+ 
+        if (name == string.Empty)
+            continue;
+        
+        DumpWeapon weapon = new DumpWeapon();
+        weapon.name = name;
+		if (endsWith(name, ""Base"") || name == ""Mode_Single"" || name == ""DamageSystem"" || name == ""access"" || name == ""DefaultWeapon"" ||name == ""PistolCore"" ||name == ""RifleCore"" || name == ""LauncherCore""  || endsWith(name, ""Debug""))
+		{
+			//Print(""We hit a _Base"");
+			continue;
+		}
+		else
+		{
+	        GetGame().ConfigGetTextArray(""CfgWeapons "" + name + "" chamberableFrom"", weapon.bullets);
+	        GetGame().ConfigGetTextArray(""CfgWeapons "" + name + "" magazines"", weapon.magazines);
+	        
+	        TStringArray attachments = {};
+	        GetGame().ConfigGetTextArray(""CfgWeapons "" + name + "" attachments"", attachments);
+	        foreach (string attachment: attachments)
+	        {
+				
+				if (!attachmentmap)
+	                continue;
+	
+	            if (!attachmentmap[attachment])
+	                continue;
+				
+				
+	            foreach (string at: attachmentmap[attachment])
+	            {
+	                if (at == string.Empty || startsWith(at, ""Groza"") || at == ""Magnum_Ejector"" || at == ""Magnum_Cylinder""|| endsWith(at, ""Base"")|| endsWith(at, ""ColorBase"") || startsWith(attachment,""RevolverCylinder"") || startsWith(attachment, ""RevolverEjector""))
+	                    continue;
+					if( attachment == ""weaponBayonetAK"" || attachment == ""weaponBayonetSKS"" || attachment == ""weaponBayonetMosin"" || attachment == ""weaponBayonet"" || attachment == ""expansionWeaponBayonetKar"" || attachment == ""TTCweaponBayonetSVT40"")
+						weapon.attachmentsBayonet.Insert(at);
+					else if( attachment == ""snafuweaponBipod"" || attachment == ""SNAFUM200Bipod"" || attachment == ""SNAFUM249Bipod"" || attachment == ""sr25bipod"" || attachment == ""snafuvsskBipod"" || attachment == ""weaponttcbipod"" || attachment == ""weaponBipod"" || attachment == ""PKPBIPOD"")
+						weapon.attachmentsBipods.Insert(at);
+					else if( attachment == ""weaponButtstockAK"" || attachment ==""weaponButtstockMP5"" || attachment == ""weaponButtstockM4"" || attachment == ""weaponButtstockSaiga"" || attachment == ""weaponButtstockRed9"" || attachment == ""weaponButtstockPP19"" || attachment == ""weaponButtstockFal"" || attachment == ""weaponButtstockMPXMCX"" || attachment == ""weaponButtstockHoney"")
+						weapon.attachmentsButtStocks.Insert(at);
+					else if( attachment == ""WeaponHandguardAK"" || attachment == ""WeaponHandguardMP5"" || attachment == ""weaponHandguardM249"" || attachment == ""TTC_DMR_Hndguard"" || attachment == ""TTCweaponHandguardFAL"" || attachment == ""DMRHndgrd"")
+						weapon.attachmentsHandguards.Insert(at);
+					else if( attachment == ""weaponFlashlight"" || attachment == ""pistolFlashlight"")
+						weapon.attachmentIllumination.Insert(at);
+					else if( attachment == ""WeaponOptics"" || attachment == ""weaponOptics"" || attachment == ""weaponOpticsAK"" || attachment == ""weaponOpticsMosin"" || attachment == ""pistolOptics"" || attachment == ""weaponOpticsHunting"" || attachment == ""ExpansionKar98Optics"" || attachment == ""ExpansionSniperOptics"" || attachment == ""weaponOpticsAug"" || attachment == ""weaponOpticsM200"" || attachment == ""SVT40_Optic"" || attachment == ""weaponOpticsCrossbow"" || attachment == ""G3Optic"" || attachment == ""Expansion_M1AScopeRail"" || attachment == ""Expansion_MP5ScopeRail"")
+						weapon.attachmentsOpticsAndSights.Insert(at);
+					else if( attachment == ""weaponMuzzleAK"" || attachment == ""pistolMuzzle"" || attachment == ""weaponMuzzleMP5"" || attachment == ""weaponMuzzleMosin"" || attachment == ""weaponMuzzleM4"" || attachment == ""suppressorImpro"" || attachment == ""M200Suppressor"" || attachment == ""weaponSuppressorHoney"" || attachment == ""weaponMuzzelSNAFU"")
+						weapon.attachmentsMuzzles.Insert(at);
+					else if( attachment == ""weaponWrap"")
+						weapon.attachmentsWraps.Insert(at);
+					else if ( attachment == ""weaponttcafg"" || attachment == ""AKModttcafg"")
+						weapon.attachmentsAFG.Insert(at);
+					else
+					{
+						Print(attachment + "" : "" + at);
+						weapon.attachments.Insert(at);
+					}
+	            }
+	        }
+	        
+	        weapon_outputs.DumpWeapons.Insert(weapon);
+		}	
+    }
+	
+	JsonFileLoader<DumpWeaponOutputs>.JsonSaveFile(""$profile:\\DumpAttatch.json"", weapon_outputs);
+}
+";
     }
 }
