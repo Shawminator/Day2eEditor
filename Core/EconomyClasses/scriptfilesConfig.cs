@@ -112,7 +112,7 @@ namespace Core
                 {
                     SaveItem(item);
                     _clonedItems[id] = item.Clone();
-                    saved.Add($"External edit;{fullfielName}");
+                    saved.Add(fullfielName);
                 }
             }
             return saved;

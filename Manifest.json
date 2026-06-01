@@ -81,7 +81,7 @@
       "name": "CapareMapAddon",
       "version": "1.0.0",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/MapAddons/CapareMapAddon.zip",
-      "checksum": "sha256:0b4f26babc36bc493f3960c3ea0f658cc43727d0be14d9f6f1c57cda0fa484db",
+      "checksum": "sha256:c8f22d407a74a451ab2216c176acdfb9912005f41f188c3e7ceaed0ce4985b91",
       "mapinfo": {
         "mappng": "capare_map.png",
         "mapxyz": "capare_map.png.xyz"

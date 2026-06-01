@@ -35,6 +35,8 @@
             TestConnectionButton = new Button();
             SyncCheckedButton = new Button();
             SyncAllButton = new Button();
+            button1 = new Button();
+            button2 = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -53,6 +55,8 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(60, 63, 65);
+            panel1.Controls.Add(button2);
+            panel1.Controls.Add(button1);
             panel1.Controls.Add(DownloadAllButton);
             panel1.Controls.Add(SelectRootDieButton);
             panel1.Controls.Add(TestConnectionButton);
@@ -104,7 +108,7 @@
             // 
             SyncCheckedButton.BackColor = Color.FromArgb(60, 63, 65);
             SyncCheckedButton.FlatStyle = FlatStyle.Flat;
-            SyncCheckedButton.Location = new Point(466, 5);
+            SyncCheckedButton.Location = new Point(923, 5);
             SyncCheckedButton.Name = "SyncCheckedButton";
             SyncCheckedButton.Size = new Size(112, 23);
             SyncCheckedButton.TabIndex = 17;
@@ -116,13 +120,37 @@
             // 
             SyncAllButton.BackColor = Color.FromArgb(60, 63, 65);
             SyncAllButton.FlatStyle = FlatStyle.Flat;
-            SyncAllButton.Location = new Point(387, 5);
+            SyncAllButton.Location = new Point(844, 5);
             SyncAllButton.Name = "SyncAllButton";
             SyncAllButton.Size = new Size(73, 23);
             SyncAllButton.TabIndex = 16;
             SyncAllButton.Text = "Sync All";
             SyncAllButton.UseVisualStyleBackColor = false;
             SyncAllButton.Click += SyncAllButton_Click;
+            // 
+            // button1
+            // 
+            button1.BackColor = Color.FromArgb(60, 63, 65);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(387, 5);
+            button1.Name = "button1";
+            button1.Size = new Size(149, 23);
+            button1.TabIndex = 22;
+            button1.Text = "Download Map_Output";
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
+            // button2
+            // 
+            button2.BackColor = Color.FromArgb(60, 63, 65);
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(542, 5);
+            button2.Name = "button2";
+            button2.Size = new Size(149, 23);
+            button2.TabIndex = 23;
+            button2.Text = "Download Dump Attach";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
             // 
             // DayZFileManagerForm
             // 
@@ -150,5 +178,7 @@
         private Button SelectRootDieButton;
         private Button TestConnectionButton;
         private Button DownloadAllButton;
+        private Button button2;
+        private Button button1;
     }
 }

@@ -86,6 +86,8 @@
             MapAddonsLB = new ListView();
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
+            button4 = new Button();
+            button5 = new Button();
             PluginCM.SuspendLayout();
             groupBox1.SuspendLayout();
             ProjectsCM.SuspendLayout();
@@ -104,7 +106,7 @@
             PluginLB.Location = new Point(12, 41);
             PluginLB.MultiSelect = false;
             PluginLB.Name = "PluginLB";
-            PluginLB.Size = new Size(307, 634);
+            PluginLB.Size = new Size(307, 576);
             PluginLB.TabIndex = 1;
             PluginLB.UseCompatibleStateImageBehavior = false;
             PluginLB.View = View.Details;
@@ -685,12 +687,38 @@
             columnHeader2.Text = "Installed";
             columnHeader2.Width = 100;
             // 
+            // button4
+            // 
+            button4.BackColor = Color.FromArgb(60, 63, 65);
+            button4.FlatStyle = FlatStyle.Flat;
+            button4.Location = new Point(12, 652);
+            button4.Name = "button4";
+            button4.Size = new Size(307, 23);
+            button4.TabIndex = 27;
+            button4.Text = "MapOutput to XYZ";
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(60, 63, 65);
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(12, 623);
+            button5.Name = "button5";
+            button5.Size = new Size(307, 23);
+            button5.TabIndex = 28;
+            button5.Text = "Import Map For Current Project";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
             // ProjectForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1148, 713);
+            Controls.Add(button5);
+            Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button1);
             Controls.Add(groupBox2);
@@ -775,5 +803,7 @@
         private Label label7;
         private TextBox ServerRootTN;
         private Label label12;
+        private Button button4;
+        private Button button5;
     }
 }

@@ -291,6 +291,50 @@ namespace DayZFileManagerPlugin
 
             SyncAllButton.Enabled = !anyChecked;
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "This will Download and Overwrite any Map_out.txt thats it currently in the profile dir.\n\nDo you want to continue?",
+                "Confirm Download",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+            string profileDir = _projectManager.CurrentProject.ProfileName;
+            string profile = Path.GetFileName(profileDir);
+            string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
+            string remoteProfilePath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, profile);
+            string localmapoutputpath = Path.Combine(localProfilePath, "map_output.txt");
+            string remotemapoutputpath = Path.Combine(remoteProfilePath, "map_output.txt");
+
+            ftp.Download(_projectManager.CurrentProject.ServerSettings, remotemapoutputpath, localmapoutputpath);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "This will overwrite any DumpAttch.json thats currently in the profile dir.\n\nDo you want to continue?",
+                "Confirm Download",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+            string profileDir = _projectManager.CurrentProject.ProfileName;
+            string profile = Path.GetFileName(profileDir);
+            string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
+            string remoteProfilePath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, profile);
+            string localmapoutputpath = Path.Combine(localProfilePath, "DumpAttatch.json");
+            string remotemapoutputpath = Path.Combine(remoteProfilePath, "DumpAttatch.json");
+
+            ftp.Download(_projectManager.CurrentProject.ServerSettings, remotemapoutputpath, localmapoutputpath);
+        }
     }
 
 

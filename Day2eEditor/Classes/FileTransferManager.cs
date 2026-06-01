@@ -113,6 +113,7 @@ namespace Day2eEditor
 
         public void Download(ProjectServerSettings settings, string remotePath, string localPath)
         {
+            Console.WriteLine($"Downloading: {Path.GetFileName(remotePath)}");
             switch (settings.Protocol)
             {
                 case TransferProtocol.Sftp:
@@ -167,7 +168,6 @@ namespace Day2eEditor
 
             client.Connect();
 
-            // Ensure remote folder exists
             string? remoteDir = Path.GetDirectoryName(remote)
                 ?.Replace("\\", "/");
 
@@ -178,7 +178,27 @@ namespace Day2eEditor
 
             using var fs = File.OpenRead(local);
 
-            client.UploadFile(fs, remote, true);
+            ulong totalBytes = (ulong)fs.Length;
+            int lastReported = -1;
+
+            Console.WriteLine($"Uploading: {Path.GetFileName(local)}");
+
+            client.UploadFile(
+                fs,
+                remote,
+                uploaded =>
+                {
+                    int percent = (int)(uploaded * 100 / totalBytes);
+
+                    if (percent >= lastReported + 5)
+                    {
+                        lastReported = percent;
+                        Console.WriteLine($"  {percent}%");
+                    }
+                });
+
+            Console.WriteLine("  100%");
+            Console.WriteLine("Upload complete.");
 
             client.Disconnect();
         }
@@ -186,10 +206,33 @@ namespace Day2eEditor
         private void DownloadSftp(ProjectServerSettings s, string remote, string local)
         {
             using var client = CreateSftp(s);
+
             client.Connect();
 
+            var attrs = client.GetAttributes(remote);
+            ulong totalBytes = (ulong)attrs.Size;
+            int lastReported = -1;
+
+            Console.WriteLine($"Downloading: {Path.GetFileName(remote)}");
+
             using var fs = File.Create(local);
-            client.DownloadFile(remote, fs);
+
+            client.DownloadFile(
+                remote,
+                fs,
+                downloaded =>
+                {
+                    int percent = (int)(downloaded * 100 / totalBytes);
+
+                    if (percent >= lastReported + 5)
+                    {
+                        lastReported = percent;
+                        Console.WriteLine($"  {percent}%");
+                    }
+                });
+
+            Console.WriteLine("  100%");
+            Console.WriteLine("Download complete.");
 
             client.Disconnect();
         }
@@ -254,7 +297,28 @@ namespace Day2eEditor
                 EnsureFtpDirectoryExists(client, remoteDir);
             }
 
-            client.UploadFile(local, remote, FtpRemoteExists.Overwrite);
+            int lastReported = -1;
+
+            Console.WriteLine($"Uploading: {Path.GetFileName(local)}");
+
+            client.UploadFile(
+                local,
+                remote,
+                FtpRemoteExists.Overwrite,
+                false,
+                FtpVerify.None,
+                progress =>
+                {
+                    int percent = (int)progress.Progress;
+
+                    if (percent >= lastReported + 5)
+                    {
+                        lastReported = percent;
+                        Console.WriteLine($"  {percent}%");
+                    }
+                });
+
+            Console.WriteLine("Upload complete.");
 
             client.Disconnect();
         }
@@ -264,7 +328,27 @@ namespace Day2eEditor
             using var client = CreateFtp(s);
             client.Connect();
 
-            client.DownloadFile(local, remote);
+            int lastReported = -1;
+
+            Console.WriteLine($"Downloading: {Path.GetFileName(remote)}");
+
+            client.DownloadFile(
+                local,
+                remote,
+                FtpLocalExists.Overwrite,
+                FtpVerify.None,
+                progress =>
+                {
+                    int percent = (int)progress.Progress;
+
+                    if (percent >= lastReported + 5)
+                    {
+                        lastReported = percent;
+                        Console.WriteLine($"  {percent}%");
+                    }
+                });
+
+            Console.WriteLine("Download complete.");
 
             client.Disconnect();
         }

@@ -457,7 +457,7 @@ namespace ProjectsPlugin
         }
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-           
+
             var selected = listBoxProjects.SelectedItem as Project;
             if (selected != null)
             {
@@ -566,6 +566,64 @@ namespace ProjectsPlugin
         private void groupBox3_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            MapData.CreateNewData(
+                Path.Combine(
+                    _ProjectManager.CurrentProject.ProjectRoot, 
+                    _ProjectManager.CurrentProject.ProfileName,
+                    "map_output.txt"
+                    )
+                ,Path.Combine(
+                    appDirectory,
+                    "MapAddons",
+                    _ProjectManager.CurrentProject.MapPath + ".xyz"
+                    )
+                );
+            MessageBox.Show(
+                    "XYZ Converted successfully.",
+                    "Import Complete",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            using OpenFileDialog openFile = new OpenFileDialog();
+
+            openFile.Title = "Please select the map you wish to import";
+            openFile.Filter = "PNG Images (*.png)|*.png";
+            openFile.DefaultExt = "png";
+            openFile.CheckFileExists = true;
+            openFile.Multiselect = false;
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                string mapFile = Path.Combine(
+                    "MapAddons",
+                    _ProjectManager.CurrentProject.MapPath);
+
+                // Ensure destination directory exists
+                string? directory = Path.GetDirectoryName(mapFile);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                // Copy the selected PNG to the destination
+                File.Copy(openFile.FileName, mapFile, overwrite: true);
+
+                MessageBox.Show(
+                    "Map imported successfully.",
+                    "Import Complete",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
         }
     }
     public sealed class EnumItem<T>

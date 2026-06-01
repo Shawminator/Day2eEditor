@@ -37,7 +37,7 @@ namespace Day2eEditor
             else
                 FileExists = false;
         }
-        public static void CreateNewData(string FileName)
+        public static void CreateNewData(string FileName, string output)
         {
             List<Vec3> points = new List<Vec3>();
             string[] lines = File.ReadAllLines(FileName);
@@ -50,21 +50,15 @@ namespace Day2eEditor
                 newaary[2] = split[1];
                 points.Add(new Vec3(newaary));
             }
-            OpenFileDialog savefiel = new OpenFileDialog();
-            savefiel.Title = "Please Select the map you are creating the XYZ for?";
-            savefiel.InitialDirectory = Application.StartupPath + "\\Maps";
-            if (savefiel.ShowDialog() == DialogResult.OK)
+            using (FileStream writeStream = new FileStream(output, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (BinaryWriter writeBinay = new BinaryWriter(writeStream))
             {
-                using (FileStream writeStream = new FileStream(savefiel.FileName + ".xyz", FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-                using (BinaryWriter writeBinay = new BinaryWriter(writeStream))
+                writeBinay.Write((long)points.Count());
+                foreach (Vec3 v in points)
                 {
-                    writeBinay.Write((long)points.Count());
-                    foreach (Vec3 v in points)
-                    {
-                        writeBinay.Write(v.X);
-                        writeBinay.Write(v.Y);
-                        writeBinay.Write(v.Z);
-                    }
+                    writeBinay.Write(v.X);
+                    writeBinay.Write(v.Y);
+                    writeBinay.Write(v.Z);
                 }
             }
         }
