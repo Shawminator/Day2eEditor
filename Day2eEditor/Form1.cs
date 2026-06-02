@@ -44,7 +44,7 @@ namespace Day2eEditor
         }
         public Form1(string activeProject)
         {
-
+            AutoScaleMode = AutoScaleMode.Dpi;
             InitializeComponent();
             controller = new FormController(
                 this,

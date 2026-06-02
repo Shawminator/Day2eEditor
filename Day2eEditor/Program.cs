@@ -71,7 +71,9 @@ namespace Day2eEditor
                     return;
                 }
             }
-
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1(activeProject));
         }
     }

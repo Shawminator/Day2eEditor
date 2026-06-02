@@ -328,7 +328,7 @@ namespace EconomyPlugin
                    ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected),
                 [typeof(prototypeGroupContainer)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new prototypeGroupContainerControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroupContainer, selected)
-               
+
 
 
 
@@ -585,6 +585,8 @@ namespace EconomyPlugin
                 },
                 [typeof(SpawnableType)] = node =>
                 {
+                    string DumpAttchFile = Path.Combine(_projectManager.CurrentProject.ProjectRoot, _projectManager.CurrentProject.ProfileName, "DumpAttatch.json");
+
                     var st = node.Tag as SpawnableType;
                     SpawnableTypesCM.Items.Clear();
                     if (!st.Items.OfType<spawnableTypesHoarder>().Any())
@@ -595,6 +597,11 @@ namespace EconomyPlugin
                     SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
                     SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
                     SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    if (File.Exists(DumpAttchFile))
+                    {
+                        SpawnableTypesCM.Items.Add(new ToolStripSeparator());
+                        SpawnableTypesCM.Items.Add(addFromDumpAttachToolStripMenuItem);
+                    }
                     SpawnableTypesCM.Show(Cursor.Position);
                 },
                 [typeof(spawnableTypesHoarder)] = node =>
@@ -792,9 +799,9 @@ namespace EconomyPlugin
                     SpawnableTypesCM.Items.Add(new ToolStripSeparator());
                     if (item.FileName == "init.c")
                     {
-                        if(!item.HasWeaponAttachInclude)
+                        if (!item.HasWeaponAttachInclude)
                             SpawnableTypesCM.Items.Add(addWeaponAttachmentDumpToolStripMenuItem);
-                        if(!item.HasXYZInclude)
+                        if (!item.HasXYZInclude)
                             SpawnableTypesCM.Items.Add(addGetXYZToolStripMenuItem);
                     }
                     if (item.FileName == "WeaponAttchmentDump.c")
@@ -5376,7 +5383,107 @@ namespace EconomyPlugin
                 _spawnabletypesfile.IsDirty = true;
             }
         }
+        private void addFromDumpAttachToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string DumpAttchFile = Path.Combine(_projectManager.CurrentProject.ProjectRoot, _projectManager.CurrentProject.ProfileName, "DumpAttatch.json");
+            WeaponAttachDump attachdump = JsonSerializer.Deserialize<WeaponAttachDump>(File.ReadAllText(DumpAttchFile));
+            SpawnableType currentst = currentTreeNode.Tag as SpawnableType;
 
+            DumpWeapon weapondump = attachdump.DumpWeapons.FirstOrDefault(x => x.name == currentst.name);
+
+            currentst.Items = new BindingList<object>(currentst.Items?
+                .Where(x => x is not spawnableTypeAttachment)
+                .ToList() ?? new List<object>());
+
+            AddAttachmentGroup(currentst, weapondump.attachments);
+            AddAttachmentGroup(currentst, weapondump.attachmentsBayonet);
+            AddAttachmentGroup(currentst, weapondump.attachmentsBipods);
+            AddAttachmentGroup(currentst, weapondump.attachmentsButtStocks);
+            AddAttachmentGroup(currentst, weapondump.attachmentsHandguards);
+            AddAttachmentGroup(currentst, weapondump.attachmentIllumination);
+            AddAttachmentGroup(currentst, weapondump.attachmentsOpticsAndSights);
+            AddAttachmentGroup(currentst, weapondump.attachmentsMuzzles);
+            AddAttachmentGroup(currentst, weapondump.attachmentsWraps);
+            AddAttachmentGroup(currentst, weapondump.attachmentsAFG);
+            AddAttachmentGroup(currentst, weapondump.magazines);
+
+            var keep = currentTreeNode.Nodes
+                .Cast<TreeNode>()
+                .Where(n => n.Tag is not spawnableTypeAttachment)
+                .ToArray();
+
+            currentTreeNode.Nodes.Clear();
+
+            foreach (var item in currentst.Items)
+            {
+                currentTreeNode.Nodes.Add(CrteateSpawnableTypeNodes(item));
+            }
+
+        }
+        private void AddAttachmentGroup(SpawnableType spawnable, IEnumerable<string> names)
+        {
+            if (names == null || !names.Any())
+                return;
+
+            var resolved = names
+                .Select(n => new
+                {
+                    Name = n,
+                    Type = _economyManager.TypesConfig.GetTypeByName(n)
+                })
+                .ToList();
+
+            int totalNominal = resolved.Sum(x => x.Type?.Nominal ?? 0);
+
+            // --- NEW: derive group chance from the same data ---
+            decimal groupChance = CalculateGroupChance(totalNominal, resolved.Count);
+
+            var items = new BindingList<spawnableTypeItem>();
+
+            foreach (var x in resolved)
+            {
+                decimal chance = CalculateChanceFromNominal(x.Type, totalNominal, resolved.Count);
+
+                items.Add(new spawnableTypeItem
+                {
+                    name = x.Name,
+                    chance = Math.Round(chance, 2),
+                    chanceSpecified = true
+                });
+            }
+            var sortedItems = items.OrderByDescending(x => x.chance).ToList();
+            spawnable.Items ??= new BindingList<object>();
+
+            spawnable.Items.Add(new spawnableTypeAttachment
+            {
+                chance = Math.Round(groupChance, 2),
+                chanceSpecified = true,
+                item = new BindingList<spawnableTypeItem>(sortedItems)
+            });
+        }
+        private decimal CalculateChanceFromNominal(TypeEntry te, int totalNominal, int count)
+        {
+            if (te?.Nominal > 0 && totalNominal > 0)
+                return (decimal)te.Nominal / totalNominal;
+
+            // fallback if missing data
+            return count > 0 ? 1m / count : 0m;
+        }
+        private decimal CalculateGroupChance(int totalNominal, int itemCount)
+        {
+            if (itemCount == 0)
+                return 0.1m;
+
+            // no nominal data → treat as mid-common
+            if (totalNominal <= 0)
+                return 0.5m;
+
+            // scale into usable range
+            decimal raw = totalNominal / 1000m;
+
+            // clamp so nothing becomes broken
+            return Math.Clamp(raw, 0.1m, 0.9m);
+        }
         /// <summary>
         /// Spawn Gear Right Click Methods
         /// </summary>
@@ -6224,6 +6331,8 @@ namespace EconomyPlugin
 
             currentTreeNode.Remove();
         }
+
+
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin", "EconomyPlugin.DayzEconomy.png")]

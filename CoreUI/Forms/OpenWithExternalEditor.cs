@@ -27,7 +27,7 @@ namespace Day2eEditor
                null,
                null,
                label1,
-               CloseButton,
+               button2,
                null
            );
             LoadEditors();
@@ -40,7 +40,9 @@ namespace Day2eEditor
             {
                 { "Notepad++", @"C:\Program Files\Notepad++\notepad++.exe" },
                 { "VS Code", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Programs\Microsoft VS Code\Code.exe") },
-                { "Sublime Text", @"C:\Program Files\Sublime Text\sublime_text.exe" }
+                { "Sublime Text", @"C:\Program Files\Sublime Text\sublime_text.exe" },
+                { "Atom", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"atom\atom.exe") },
+                { "Visual Studio 26", @"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\devenv.exe" }
             };
 
             foreach (var editor in possibleEditors)

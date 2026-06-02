@@ -20,6 +20,7 @@ namespace ProjectsPlugin
             _plugin = plugin;
             _manifest = AppServices.GetRequired<Manifest>();
             _ProjectManager = AppServices.GetRequired<ProjectManager>();
+            AutoScaleMode = AutoScaleMode.Dpi;
         }
 
         private void ProjectForm_Load(object sender, EventArgs e)
@@ -557,6 +558,8 @@ namespace ProjectsPlugin
             PluginLB.Visible = true;
             button1.Enabled = false;
             button3.Enabled = true;
+            button4.Visible = false;
+            button5.Visible = false;
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -564,6 +567,8 @@ namespace ProjectsPlugin
             PluginLB.Visible = false;
             button1.Enabled = true;
             button3.Enabled = false;
+            button4.Visible = true;
+            button5.Visible = true;
         }
         private void groupBox3_Enter(object sender, EventArgs e)
         {

@@ -78,6 +78,11 @@ namespace EconomyPlugin
             addNewCargoToolStripMenuItem1 = new ToolStripMenuItem();
             addNewAttachmentToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedToolStripMenuItem1 = new ToolStripMenuItem();
+            openExternalToolStripMenuItem = new ToolStripMenuItem();
+            addWeaponAttachmentDumpToolStripMenuItem = new ToolStripMenuItem();
+            addGetXYZToolStripMenuItem = new ToolStripMenuItem();
+            removeWeaponAttchmentDumpToolStripMenuItem = new ToolStripMenuItem();
+            removeGetXYZToolStripMenuItem = new ToolStripMenuItem();
             SpawnGearPresetCM = new ContextMenuStrip(components);
             addNewSpawnGEarPresetFileToolStripMenuItem = new ToolStripMenuItem();
             addNewAttachmentSlotItemSetToolStripMenuItem = new ToolStripMenuItem();
@@ -120,11 +125,7 @@ namespace EconomyPlugin
             removeEnviromentTerritoryToolStripMenuItem = new ToolStripMenuItem();
             addNewUsableFileToolStripMenuItem = new ToolStripMenuItem();
             removeUsableFileToolStripMenuItem1 = new ToolStripMenuItem();
-            openExternalToolStripMenuItem = new ToolStripMenuItem();
-            addWeaponAttachmentDumpToolStripMenuItem = new ToolStripMenuItem();
-            addGetXYZToolStripMenuItem = new ToolStripMenuItem();
-            removeWeaponAttchmentDumpToolStripMenuItem = new ToolStripMenuItem();
-            removeGetXYZToolStripMenuItem = new ToolStripMenuItem();
+            addFromDumpAttachToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -498,10 +499,10 @@ namespace EconomyPlugin
             // SpawnableTypesCM
             // 
             SpawnableTypesCM.BackColor = Color.FromArgb(60, 63, 65);
-            SpawnableTypesCM.Items.AddRange(new ToolStripItem[] { addNewSpawnableTypesFileToolStripMenuItem, addNewSpawnableTypeToolStripMenuItem, addNewHoarderToolStripMenuItem, addNewTagToolStripMenuItem, addNewDamageToolStripMenuItem, addNewItemToolStripMenuItem1, addNewCargoToolStripMenuItem1, addNewAttachmentToolStripMenuItem, removeSelectedToolStripMenuItem1, openExternalToolStripMenuItem, addWeaponAttachmentDumpToolStripMenuItem, addGetXYZToolStripMenuItem, removeWeaponAttchmentDumpToolStripMenuItem, removeGetXYZToolStripMenuItem });
+            SpawnableTypesCM.Items.AddRange(new ToolStripItem[] { addNewSpawnableTypesFileToolStripMenuItem, addNewSpawnableTypeToolStripMenuItem, addNewHoarderToolStripMenuItem, addNewTagToolStripMenuItem, addNewDamageToolStripMenuItem, addNewItemToolStripMenuItem1, addNewCargoToolStripMenuItem1, addNewAttachmentToolStripMenuItem, removeSelectedToolStripMenuItem1, openExternalToolStripMenuItem, addWeaponAttachmentDumpToolStripMenuItem, addGetXYZToolStripMenuItem, removeWeaponAttchmentDumpToolStripMenuItem, removeGetXYZToolStripMenuItem, addFromDumpAttachToolStripMenuItem });
             SpawnableTypesCM.Name = "TypesCM";
             SpawnableTypesCM.ShowImageMargin = false;
-            SpawnableTypesCM.Size = new Size(233, 334);
+            SpawnableTypesCM.Size = new Size(233, 356);
             // 
             // addNewSpawnableTypesFileToolStripMenuItem
             // 
@@ -574,6 +575,46 @@ namespace EconomyPlugin
             removeSelectedToolStripMenuItem1.Size = new Size(232, 22);
             removeSelectedToolStripMenuItem1.Text = "Remove Selected";
             removeSelectedToolStripMenuItem1.Click += removeSelectedToolStripMenuItem1_Click_1;
+            // 
+            // openExternalToolStripMenuItem
+            // 
+            openExternalToolStripMenuItem.ForeColor = SystemColors.Control;
+            openExternalToolStripMenuItem.Name = "openExternalToolStripMenuItem";
+            openExternalToolStripMenuItem.Size = new Size(232, 22);
+            openExternalToolStripMenuItem.Text = "Open External";
+            openExternalToolStripMenuItem.Click += openExternalToolStripMenuItem_Click;
+            // 
+            // addWeaponAttachmentDumpToolStripMenuItem
+            // 
+            addWeaponAttachmentDumpToolStripMenuItem.ForeColor = SystemColors.Control;
+            addWeaponAttachmentDumpToolStripMenuItem.Name = "addWeaponAttachmentDumpToolStripMenuItem";
+            addWeaponAttachmentDumpToolStripMenuItem.Size = new Size(232, 22);
+            addWeaponAttachmentDumpToolStripMenuItem.Text = "Add WeaponAttachment Dump";
+            addWeaponAttachmentDumpToolStripMenuItem.Click += addWeaponAttachmentDumpToolStripMenuItem_Click;
+            // 
+            // addGetXYZToolStripMenuItem
+            // 
+            addGetXYZToolStripMenuItem.ForeColor = SystemColors.Control;
+            addGetXYZToolStripMenuItem.Name = "addGetXYZToolStripMenuItem";
+            addGetXYZToolStripMenuItem.Size = new Size(232, 22);
+            addGetXYZToolStripMenuItem.Text = "Add GetXYZ";
+            addGetXYZToolStripMenuItem.Click += addGetXYZToolStripMenuItem_Click;
+            // 
+            // removeWeaponAttchmentDumpToolStripMenuItem
+            // 
+            removeWeaponAttchmentDumpToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeWeaponAttchmentDumpToolStripMenuItem.Name = "removeWeaponAttchmentDumpToolStripMenuItem";
+            removeWeaponAttchmentDumpToolStripMenuItem.Size = new Size(232, 22);
+            removeWeaponAttchmentDumpToolStripMenuItem.Text = "Remove WeaponAttchment Dump";
+            removeWeaponAttchmentDumpToolStripMenuItem.Click += removeWeaponAttchmentDumpToolStripMenuItem_Click;
+            // 
+            // removeGetXYZToolStripMenuItem
+            // 
+            removeGetXYZToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeGetXYZToolStripMenuItem.Name = "removeGetXYZToolStripMenuItem";
+            removeGetXYZToolStripMenuItem.Size = new Size(232, 22);
+            removeGetXYZToolStripMenuItem.Text = "Remove GetXYZ";
+            removeGetXYZToolStripMenuItem.Click += removeGetXYZToolStripMenuItem_Click;
             // 
             // SpawnGearPresetCM
             // 
@@ -911,45 +952,13 @@ namespace EconomyPlugin
             removeUsableFileToolStripMenuItem1.Text = "Remove Usable File";
             removeUsableFileToolStripMenuItem1.Click += removeUsableFileToolStripMenuItem1_Click;
             // 
-            // openExternalToolStripMenuItem
+            // addFromDumpAttachToolStripMenuItem
             // 
-            openExternalToolStripMenuItem.ForeColor = SystemColors.Control;
-            openExternalToolStripMenuItem.Name = "openExternalToolStripMenuItem";
-            openExternalToolStripMenuItem.Size = new Size(232, 22);
-            openExternalToolStripMenuItem.Text = "Open External";
-            openExternalToolStripMenuItem.Click += openExternalToolStripMenuItem_Click;
-            // 
-            // addWeaponAttachmentDumpToolStripMenuItem
-            // 
-            addWeaponAttachmentDumpToolStripMenuItem.ForeColor = SystemColors.Control;
-            addWeaponAttachmentDumpToolStripMenuItem.Name = "addWeaponAttachmentDumpToolStripMenuItem";
-            addWeaponAttachmentDumpToolStripMenuItem.Size = new Size(232, 22);
-            addWeaponAttachmentDumpToolStripMenuItem.Text = "Add WeaponAttachment Dump";
-            addWeaponAttachmentDumpToolStripMenuItem.Click += addWeaponAttachmentDumpToolStripMenuItem_Click;
-            // 
-            // addGetXYZToolStripMenuItem
-            // 
-            addGetXYZToolStripMenuItem.ForeColor = SystemColors.Control;
-            addGetXYZToolStripMenuItem.Name = "addGetXYZToolStripMenuItem";
-            addGetXYZToolStripMenuItem.Size = new Size(232, 22);
-            addGetXYZToolStripMenuItem.Text = "Add GetXYZ";
-            addGetXYZToolStripMenuItem.Click += addGetXYZToolStripMenuItem_Click;
-            // 
-            // removeWeaponAttchmentDumpToolStripMenuItem
-            // 
-            removeWeaponAttchmentDumpToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeWeaponAttchmentDumpToolStripMenuItem.Name = "removeWeaponAttchmentDumpToolStripMenuItem";
-            removeWeaponAttchmentDumpToolStripMenuItem.Size = new Size(232, 22);
-            removeWeaponAttchmentDumpToolStripMenuItem.Text = "Remove WeaponAttchment Dump";
-            removeWeaponAttchmentDumpToolStripMenuItem.Click += removeWeaponAttchmentDumpToolStripMenuItem_Click;
-            // 
-            // removeGetXYZToolStripMenuItem
-            // 
-            removeGetXYZToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeGetXYZToolStripMenuItem.Name = "removeGetXYZToolStripMenuItem";
-            removeGetXYZToolStripMenuItem.Size = new Size(232, 22);
-            removeGetXYZToolStripMenuItem.Text = "Remove GetXYZ";
-            removeGetXYZToolStripMenuItem.Click += removeGetXYZToolStripMenuItem_Click;
+            addFromDumpAttachToolStripMenuItem.ForeColor = SystemColors.Control;
+            addFromDumpAttachToolStripMenuItem.Name = "addFromDumpAttachToolStripMenuItem";
+            addFromDumpAttachToolStripMenuItem.Size = new Size(232, 22);
+            addFromDumpAttachToolStripMenuItem.Text = "Add From Dump Attach";
+            addFromDumpAttachToolStripMenuItem.Click += addFromDumpAttachToolStripMenuItem_Click;
             // 
             // EconomyForm
             // 
@@ -1083,5 +1092,6 @@ namespace EconomyPlugin
         private ToolStripMenuItem addGetXYZToolStripMenuItem;
         private ToolStripMenuItem removeWeaponAttchmentDumpToolStripMenuItem;
         private ToolStripMenuItem removeGetXYZToolStripMenuItem;
+        private ToolStripMenuItem addFromDumpAttachToolStripMenuItem;
     }
 }

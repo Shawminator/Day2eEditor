@@ -107,7 +107,7 @@
             PluginLB.Location = new Point(12, 41);
             PluginLB.MultiSelect = false;
             PluginLB.Name = "PluginLB";
-            PluginLB.Size = new Size(307, 576);
+            PluginLB.Size = new Size(307, 634);
             PluginLB.TabIndex = 1;
             PluginLB.UseCompatibleStateImageBehavior = false;
             PluginLB.View = View.Details;
@@ -176,6 +176,7 @@
             // 
             // CreateProjectbutton
             // 
+            CreateProjectbutton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             CreateProjectbutton.BackColor = Color.FromArgb(60, 63, 65);
             CreateProjectbutton.FlatStyle = FlatStyle.Flat;
             CreateProjectbutton.Location = new Point(615, 167);
@@ -210,6 +211,7 @@
             // 
             // ProjectMissionFolderTB
             // 
+            ProjectMissionFolderTB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ProjectMissionFolderTB.BackColor = Color.FromArgb(60, 63, 65);
             ProjectMissionFolderTB.ForeColor = SystemColors.Control;
             ProjectMissionFolderTB.Location = new Point(334, 138);
@@ -241,6 +243,7 @@
             // 
             // ProjectProfileTB
             // 
+            ProjectProfileTB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ProjectProfileTB.BackColor = Color.FromArgb(60, 63, 65);
             ProjectProfileTB.ForeColor = SystemColors.Control;
             ProjectProfileTB.Location = new Point(334, 109);
@@ -250,6 +253,7 @@
             // 
             // SelectProjectFolderbutton
             // 
+            SelectProjectFolderbutton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             SelectProjectFolderbutton.BackColor = SystemColors.Control;
             SelectProjectFolderbutton.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             SelectProjectFolderbutton.ForeColor = SystemColors.ActiveCaptionText;
@@ -272,6 +276,7 @@
             // 
             // ProjectTypeComboBox
             // 
+            ProjectTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ProjectTypeComboBox.BackColor = Color.FromArgb(60, 63, 65);
             ProjectTypeComboBox.ForeColor = SystemColors.Control;
             ProjectTypeComboBox.FormattingEnabled = true;
@@ -294,6 +299,7 @@
             // 
             // ProjectFolderTB
             // 
+            ProjectFolderTB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ProjectFolderTB.BackColor = Color.FromArgb(60, 63, 65);
             ProjectFolderTB.ForeColor = SystemColors.Control;
             ProjectFolderTB.Location = new Point(334, 80);
@@ -312,6 +318,7 @@
             // 
             // ProjectNameTB
             // 
+            ProjectNameTB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ProjectNameTB.BackColor = Color.FromArgb(60, 63, 65);
             ProjectNameTB.ForeColor = SystemColors.Control;
             ProjectNameTB.Location = new Point(334, 51);
@@ -684,10 +691,10 @@
             MapAddonsLB.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             MapAddonsLB.ForeColor = SystemColors.Control;
             MapAddonsLB.FullRowSelect = true;
-            MapAddonsLB.Location = new Point(12, 41);
+            MapAddonsLB.Location = new Point(12, 102);
             MapAddonsLB.MultiSelect = false;
             MapAddonsLB.Name = "MapAddonsLB";
-            MapAddonsLB.Size = new Size(307, 402);
+            MapAddonsLB.Size = new Size(307, 573);
             MapAddonsLB.TabIndex = 26;
             MapAddonsLB.UseCompatibleStateImageBehavior = false;
             MapAddonsLB.View = View.Details;
@@ -707,24 +714,26 @@
             // 
             button4.BackColor = Color.FromArgb(60, 63, 65);
             button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(12, 652);
+            button4.Location = new Point(12, 73);
             button4.Name = "button4";
             button4.Size = new Size(307, 23);
             button4.TabIndex = 27;
             button4.Text = "MapOutput to XYZ";
             button4.UseVisualStyleBackColor = false;
+            button4.Visible = false;
             button4.Click += button4_Click;
             // 
             // button5
             // 
             button5.BackColor = Color.FromArgb(60, 63, 65);
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(12, 623);
+            button5.Location = new Point(12, 44);
             button5.Name = "button5";
             button5.Size = new Size(307, 23);
             button5.TabIndex = 28;
             button5.Text = "Import Map For Current Project";
             button5.UseVisualStyleBackColor = false;
+            button5.Visible = false;
             button5.Click += button5_Click;
             // 
             // ProjectForm
@@ -733,14 +742,14 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1148, 713);
-            Controls.Add(button5);
-            Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(PluginLB);
             Controls.Add(MapAddonsLB);
+            Controls.Add(button4);
+            Controls.Add(button5);
             ForeColor = SystemColors.Control;
             FormBorderStyle = FormBorderStyle.None;
             Name = "ProjectForm";
