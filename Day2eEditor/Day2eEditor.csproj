@@ -63,7 +63,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="MapAddons\Capare_Map.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="MapAddons\Capare_Map.png.xyz">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

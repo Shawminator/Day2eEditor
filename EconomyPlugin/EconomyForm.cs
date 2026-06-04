@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Security.Policy;
@@ -782,12 +783,16 @@ namespace EconomyPlugin
                     MapGroupPosCM.Items.Add(addNewTerritoryToolStripMenuItem);
                     MapGroupPosCM.Show(Cursor.Position);
                 },
-                [typeof(envTerritoriesFile)] = node =>
+                [typeof(envTerritories)] = node =>
                 {
                     MapGroupPosCM.Items.Clear();
-                    MapGroupPosCM.Items.Add(addNewUsableFileToolStripMenuItem);
-                    MapGroupPosCM.Items.Add(new ToolStripSeparator());
-                    MapGroupPosCM.Items.Add(removeUsableFileToolStripMenuItem);
+                    MapGroupPosCM.Items.Add(createNewEnviromentTerritoryToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
+                },
+                [typeof(envTerritoriesTerritory)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(removeEnviromentTerritoryToolStripMenuItem);
                     MapGroupPosCM.Show(Cursor.Position);
                 },
                 [typeof(EnfusionScriptfile)] = node =>
@@ -917,6 +922,18 @@ namespace EconomyPlugin
                         PlayerSpawnsCM.Items.Add(addNewSpawnPositionToolStripMenuItem);
                         PlayerSpawnsCM.Show(Cursor.Position);
                     }
+                },
+                ["EnviromentTerritoryUsableFile"] = node =>
+                {
+                    envTerritoriesTerritory envTerritoriesTerritory = node.Parent.Tag as envTerritoriesTerritory;
+                    envTerritoriesFile usableFile = _economyManager.cfgenvironmentConfig.Data.territories.GetUsableFile(envTerritoriesTerritory.file.usable);
+
+                    MapGroupPosCM.Items.Clear();
+                    if (usableFile == null)
+                    {
+                        MapGroupPosCM.Items.Add(addNewUsableFileToolStripMenuItem);
+                    }
+                    MapGroupPosCM.Show(Cursor.Position);
                 }
             };
         }
@@ -1193,40 +1210,7 @@ namespace EconomyPlugin
 
                 foreach (envTerritoriesTerritory ett in gf.Data.territories.territory)
                 {
-                    TreeNode territoryRefNode = new TreeNode(ett.name)
-                    {
-                        Tag = ett
-                    };
-
-                    envTerritoriesFile usableFile = gf.Data.territories.GetUsableFile(ett.file.usable);
-                    if (usableFile != null)
-                    {
-                        TreeNode usableFileNode = new TreeNode($"Usable File: {Path.GetFileName(usableFile.path)}")
-                        {
-                            Tag = usableFile
-                        };
-
-                        territorytype linkedTerritoryFile = _economyManager.territoriesConfig.MutableItems
-                            .FirstOrDefault(t =>
-                                string.Equals(
-                                    NormalizePath(t.FilePath),
-                                    NormalizePath(Path.Combine(_economyManager.basePath, usableFile.path)),
-                                    StringComparison.OrdinalIgnoreCase) ||
-                                string.Equals(
-                                    NormalizePath(t.FileName),
-                                    NormalizePath(Path.GetFileName(usableFile.path)),
-                                    StringComparison.OrdinalIgnoreCase)
-                            );
-
-                        if (linkedTerritoryFile != null)
-                        {
-                            usableFileNode.Nodes.Add(CreateTerritoryNodes(linkedTerritoryFile));
-                        }
-
-                        territoryRefNode.Nodes.Add(usableFileNode);
-                    }
-
-                    territoriesNode.Nodes.Add(territoryRefNode);
+                    territoriesNode.Nodes.Add(CreatreEnvTerritoryNode(gf, ett));
                 }
 
                 rootNode.Nodes.Add(territoriesNode);
@@ -1234,6 +1218,43 @@ namespace EconomyPlugin
 
             return rootNode;
         }
+
+        private TreeNode CreatreEnvTerritoryNode(CfgenvironmentConfig gf, envTerritoriesTerritory ett)
+        {
+            TreeNode territoryRefNode = new TreeNode(ett.name)
+            {
+                Tag = ett
+            };
+
+            envTerritoriesFile usableFile = gf.Data.territories.GetUsableFile(ett.file.usable);
+            string usablefilepath = usableFile == null ? "No File, Please Add one" : Path.GetFileName(usableFile.path);
+            TreeNode usableFileNode = new TreeNode($"Usable File: {usablefilepath}")
+            {
+                Tag = "EnviromentTerritoryUsableFile"
+            };
+            if (usableFile != null)
+            {
+              territorytype linkedTerritoryFile = _economyManager.territoriesConfig.MutableItems
+                    .FirstOrDefault(t =>
+                        string.Equals(
+                            NormalizePath(t.FilePath),
+                            NormalizePath(Path.Combine(_economyManager.basePath, usableFile.path)),
+                            StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(
+                            NormalizePath(t.FileName),
+                            NormalizePath(Path.GetFileName(usableFile.path)),
+                            StringComparison.OrdinalIgnoreCase)
+                    );
+
+                if (linkedTerritoryFile != null)
+                {
+                    usableFileNode.Nodes.Add(CreateTerritoryNodes(linkedTerritoryFile));
+                }
+            }
+            territoryRefNode.Nodes.Add(usableFileNode);
+            return territoryRefNode;
+        }
+
         // create territory nodes 
         private TreeNode CreateTerritoryNodes(territorytype tf)
         {
@@ -6208,17 +6229,46 @@ namespace EconomyPlugin
 
         private void createNewEnviromentTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            envTerritoriesTerritory envTerritoriesTerritory = _economyManager.cfgenvironmentConfig.Data.territories.AddNewEnvirometTerritory();
+            currentTreeNode.Nodes.Add(CreatreEnvTerritoryNode(_economyManager.cfgenvironmentConfig, envTerritoriesTerritory));
         }
 
         private void removeEnviromentTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            envTerritoriesTerritory envTerritoriesTerritory = currentTreeNode.Tag as envTerritoriesTerritory;
+            envTerritoriesFile usableFile = _economyManager.cfgenvironmentConfig.Data.territories.GetUsableFile(envTerritoriesTerritory.file.usable);
+            territorytype linkedTerritoryFile = _economyManager.territoriesConfig.MutableItems
+                    .FirstOrDefault(t =>
+                        string.Equals(
+                            NormalizePath(t.FilePath),
+                            NormalizePath(Path.Combine(_economyManager.basePath, usableFile.path)),
+                            StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(
+                            NormalizePath(t.FileName),
+                            NormalizePath(Path.GetFileName(usableFile.path)),
+                            StringComparison.OrdinalIgnoreCase)
+                    );
 
+            if (linkedTerritoryFile != null)
+            {
+                _economyManager.territoriesConfig.removeTerritoryFile(linkedTerritoryFile);
+            }
+            _economyManager.cfgenvironmentConfig.Data.territories.file.Remove(usableFile);
+            _economyManager.cfgenvironmentConfig.Data.territories.removeenviromentterritory(envTerritoriesTerritory);
+            currentTreeNode.Remove();
         }
 
         private void addNewUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            envTerritoriesTerritory envTerritoriesTerritory = currentTreeNode.Parent.Tag as envTerritoriesTerritory;
+            envTerritoriesTerritory.file.usable = $"{currentTreeNode.Parent.Text.ToLower()}_territories";
+            _economyManager.cfgenvironmentConfig.Data.territories.file.Add(new envTerritoriesFile()
+            {
+                path = $"env/{currentTreeNode.Parent.Text.ToLower()}_territories.xml"
+            });
+            currentTreeNode.Text = $"Usable File: {currentTreeNode.Parent.Text.ToLower()}_territories.xml";
+            territorytype linkedTerritoryFile = _economyManager.territoriesConfig.Createnewterritorytype($"{_economyManager.territoriesConfig.FilePath}\\env/{currentTreeNode.Parent.Text.ToLower()}_territories.xml");
+            currentTreeNode.Nodes.Add(CreateTerritoryNodes(linkedTerritoryFile));
         }
 
         private void removeUsableFileToolStripMenuItem1_Click(object sender, EventArgs e)

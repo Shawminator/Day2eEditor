@@ -73,6 +73,8 @@ namespace Day2eEditor
         {
             return Enumerable.Empty<string>();
         }
+
+        
     }
 
     [XmlRoot("env")]
@@ -115,6 +117,7 @@ namespace Day2eEditor
 
         public envTerritoriesFile? GetUsableFile(string usable)
         {
+            if(usable == null) return null;
             return file.FirstOrDefault(x => Path.GetFileNameWithoutExtension(x.path) == usable);
         }
 
@@ -136,6 +139,27 @@ namespace Day2eEditor
                 file = new BindingList<envTerritoriesFile>(file.Select(x => x.Clone()).ToList()),
                 territory = new BindingList<envTerritoriesTerritory>(territory.Select(x => x.Clone()).ToList())
             };
+        }
+        public envTerritoriesTerritory AddNewEnvirometTerritory()
+        {
+            envTerritoriesTerritory envTerritoriesTerritory = new envTerritoriesTerritory()
+            {
+                type = "Herd",
+                name = "New Territory",
+                behavior = "DZdomesticGroupBeh",
+                agent = new BindingList<envTerritoriesTerritoryAgent>(),
+                item = new BindingList<envTerritoriesTerritoryItem>(),
+                file = new envTerritoriesTerritoryFile()
+                {
+                    usable = "No File, Please Add one"
+                }
+            };
+            territory.Add(envTerritoriesTerritory);
+            return envTerritoriesTerritory;
+        }
+        public void removeenviromentterritory(envTerritoriesTerritory envTerritoriesTerritory)
+        {
+            territory.Remove(envTerritoriesTerritory);
         }
     }
     public partial class envTerritoriesFile : IEquatable<envTerritoriesFile>, IDeepCloneable<envTerritoriesFile>

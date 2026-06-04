@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
-            label1 = new Label();
-            nameTB = new TextBox();
+            label3 = new Label();
             TypeTB = new TextBox();
             label2 = new Label();
-            BehaviorTB = new TextBox();
-            label3 = new Label();
+            nameTB = new TextBox();
+            label1 = new Label();
+            BehaviorCB = new ComboBox();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(BehaviorTB);
+            groupBox1.Controls.Add(BehaviorCB);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(TypeTB);
             groupBox1.Controls.Add(label2);
@@ -54,24 +54,14 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Territory Info";
             // 
-            // label1
+            // label3
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(19, 34);
-            label1.Name = "label1";
-            label1.Size = new Size(39, 15);
-            label1.TabIndex = 0;
-            label1.Text = "Name";
-            // 
-            // nameTB
-            // 
-            nameTB.BackColor = Color.FromArgb(60, 63, 65);
-            nameTB.ForeColor = SystemColors.Control;
-            nameTB.Location = new Point(96, 31);
-            nameTB.Name = "nameTB";
-            nameTB.Size = new Size(453, 23);
-            nameTB.TabIndex = 1;
-            nameTB.TextChanged += nameTB_TextChanged;
+            label3.AutoSize = true;
+            label3.Location = new Point(19, 92);
+            label3.Name = "label3";
+            label3.Size = new Size(53, 15);
+            label3.TabIndex = 4;
+            label3.Text = "Behavior";
             // 
             // TypeTB
             // 
@@ -88,28 +78,41 @@
             label2.AutoSize = true;
             label2.Location = new Point(19, 63);
             label2.Name = "label2";
-            label2.Size = new Size(31, 15);
+            label2.Size = new Size(32, 15);
             label2.TabIndex = 2;
             label2.Text = "Type";
             // 
-            // BehaviorTB
+            // nameTB
             // 
-            BehaviorTB.BackColor = Color.FromArgb(60, 63, 65);
-            BehaviorTB.ForeColor = SystemColors.Control;
-            BehaviorTB.Location = new Point(96, 89);
-            BehaviorTB.Name = "BehaviorTB";
-            BehaviorTB.Size = new Size(453, 23);
-            BehaviorTB.TabIndex = 5;
-            BehaviorTB.TextChanged += BehaviorTB_TextChanged;
+            nameTB.BackColor = Color.FromArgb(60, 63, 65);
+            nameTB.ForeColor = SystemColors.Control;
+            nameTB.Location = new Point(96, 31);
+            nameTB.Name = "nameTB";
+            nameTB.Size = new Size(453, 23);
+            nameTB.TabIndex = 1;
+            nameTB.TextChanged += nameTB_TextChanged;
             // 
-            // label3
+            // label1
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(19, 92);
-            label3.Name = "label3";
-            label3.Size = new Size(53, 15);
-            label3.TabIndex = 4;
-            label3.Text = "Behavior";
+            label1.AutoSize = true;
+            label1.Location = new Point(19, 34);
+            label1.Name = "label1";
+            label1.Size = new Size(39, 15);
+            label1.TabIndex = 0;
+            label1.Text = "Name";
+            // 
+            // BehaviorCB
+            // 
+            BehaviorCB.BackColor = Color.FromArgb(60, 63, 65);
+            BehaviorCB.ForeColor = SystemColors.Control;
+            BehaviorCB.FormattingEnabled = true;
+            BehaviorCB.Items.AddRange(new object[] { "DZDeerGroupBeh", "DZdomesticGroupBeh", "DZSheepGroupBeh", "DZWolfGroupBeh", "BlissBearGroupBeh", "DZAmbientLifeGroupBeh", "DZdomesticGroupBeh" });
+            BehaviorCB.Location = new Point(96, 89);
+            BehaviorCB.Margin = new Padding(4, 3, 4, 3);
+            BehaviorCB.Name = "BehaviorCB";
+            BehaviorCB.Size = new Size(453, 23);
+            BehaviorCB.TabIndex = 178;
+            BehaviorCB.SelectedIndexChanged += BehaviorCB_SelectedIndexChanged;
             // 
             // envTerritoriesTerritoryControl
             // 
@@ -128,11 +131,11 @@
         #endregion
 
         private GroupBox groupBox1;
-        private TextBox BehaviorTB;
         private Label label3;
         private TextBox TypeTB;
         private Label label2;
         private TextBox nameTB;
         private Label label1;
+        private ComboBox BehaviorCB;
     }
 }

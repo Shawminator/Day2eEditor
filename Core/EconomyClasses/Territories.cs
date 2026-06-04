@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Core;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
@@ -50,14 +51,13 @@ namespace Day2eEditor
                 },
                 configName: "territorytype"
             );
-
             data.SetPath(filePath);
+            data.SetGuid(Guid.NewGuid());
             return data;
         }
         protected override void SaveItem(territorytype item)
         {
             AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item);
-            item.IsDirty = false;
         }
 
         protected override string GetItemFileName(territorytype item) => item.FileName;
@@ -66,16 +66,28 @@ namespace Day2eEditor
         protected override Guid GetID(territorytype item) => item.Id;
 
         protected override bool ShouldDelete(territorytype item) => item.ToDelete;
-
         protected override void DeleteItemFile(territorytype item)
         {
-            if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
+            if (!string.IsNullOrWhiteSpace(item._path) && File.Exists(item._path))
             {
-                File.Delete(item.FilePath);
-                Helper.DeleteEmptyFoldersUpToBase(
-                    Path.GetDirectoryName(item.FilePath),
-                    AppServices.GetRequired<EconomyManager>().basePath);
+                File.Delete(item._path);
             }
+        }
+        public territorytype Createnewterritorytype(string filename)
+        {
+            territorytype territorytype = new territorytype()
+            {
+                Id = Guid.NewGuid(),
+                territory = new BindingList<territorytypeTerritory>()
+                
+            };
+            territorytype.SetPath(filename);
+            MutableItems.Add(territorytype);
+            return territorytype;
+        }
+        public void removeTerritoryFile(territorytype territorytype)
+        {
+            territorytype.ToDelete = true;
         }
     }
 
@@ -86,7 +98,7 @@ namespace Day2eEditor
     public partial class territorytype : IDeepCloneable<territorytype>, IEquatable<territorytype>
     {
         [XmlIgnore]
-        private string _path = string.Empty;
+        public string _path = string.Empty;
 
         [XmlIgnore]
         public string FileName => Path.GetFileName(_path);
@@ -95,7 +107,7 @@ namespace Day2eEditor
         public string FilePath => _path;
 
         [XmlIgnore]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
 
         [XmlIgnore]
         public bool IsDirty { get; set; }
@@ -112,23 +124,17 @@ namespace Day2eEditor
             set => _territory = value;
         }
 
-        public void SetPath(string path)
-        {
-            _path = path;
-        }
+        public void SetPath(string path) => _path = path;
+        internal void SetGuid(Guid guid) => Id = guid;
 
         public territorytype Clone()
         {
             var clone = new territorytype
             {
-                Id = Id,
-                IsDirty = IsDirty,
-                ToDelete = ToDelete,
-                territory = new BindingList<territorytypeTerritory>(
-                    territory.Select(x => x.Clone()).ToList())
+                territory = new BindingList<territorytypeTerritory>(territory.Select(x => x.Clone()).ToList())
             };
-
             clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
 
@@ -136,11 +142,15 @@ namespace Day2eEditor
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
+            if (Id != other.Id) return false;
 
-            return Id == other.Id &&
-                   string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
-                   ToDelete == other.ToDelete &&
-                   territory.SequenceEqual(other.territory);
+            if (_path != other._path)
+                return false;
+            
+            if(!Helper.ListEquals(territory, other.territory)) 
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj) => Equals(obj as territorytype);
@@ -178,7 +188,7 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other)) return true;
 
             return color == other.color &&
-                   zone.SequenceEqual(other.zone);
+                   Helper.ListEquals(zone, other.zone);
         }
 
         public override bool Equals(object? obj) => Equals(obj as territorytypeTerritory);
@@ -246,7 +256,7 @@ namespace Day2eEditor
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return string.Equals(name, other.name, StringComparison.Ordinal) &&
+            return name == other.name &&
                    smin == other.smin &&
                    smax == other.smax &&
                    dmin == other.dmin &&

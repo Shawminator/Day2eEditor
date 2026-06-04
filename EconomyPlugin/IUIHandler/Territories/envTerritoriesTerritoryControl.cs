@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.Design.Behavior;
 
 namespace EconomyPlugin
 {
@@ -34,7 +35,7 @@ namespace EconomyPlugin
 
             nameTB.Text = _data.name;
             TypeTB.Text = _data.type;
-            BehaviorTB.Text = _data.behavior;
+            BehaviorCB.SelectedIndex = BehaviorCB.FindStringExact(_data.behavior);
 
             _suppressEvents = false;
         }
@@ -56,10 +57,11 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.type = TypeTB.Text;
         }
-        private void BehaviorTB_TextChanged(object sender, EventArgs e)
+
+        private void BehaviorCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.behavior = BehaviorTB.Text;
+            _data.behavior = BehaviorCB.GetItemText(BehaviorCB.SelectedItem);
         }
     }
 }
