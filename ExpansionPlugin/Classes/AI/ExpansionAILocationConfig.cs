@@ -107,7 +107,10 @@ namespace ExpansionPlugin
 			    "Land_Ship_Medium2",  //! AI can get stuck
                 "Land_Train_Wagon_Box"//! Inside may not be Reachable
             };
-            foreach(string value in defaults)
+            if (ExcludedRoamingBuildings == null)
+                ExcludedRoamingBuildings = new BindingList<string>();
+
+            foreach (string value in defaults)
             {
                 if(!ExcludedRoamingBuildings.Contains(value))
                 {

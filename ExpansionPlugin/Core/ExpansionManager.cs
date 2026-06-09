@@ -64,6 +64,7 @@ namespace ExpansionPlugin
             basePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, "mpmissions", AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath);
             profilePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName);
 
+
             //Multiple files. not settings files,
             _paths["ExpansionLoadouts"] = Path.Combine(profilePath, "ExpansionMod", "Loadouts");
             _paths["ExpansionLootDrops"] = Path.Combine(profilePath, "ExpansionMod", "AI", "LootDrops");
@@ -120,8 +121,24 @@ namespace ExpansionPlugin
             _paths["ExpansionQuestQuests"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "Quests");
             _paths["ExpansionQuestObjectives"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "Objectives");
 
+            CreateFolders();
+
             LoadFiles();
         }
+
+        private void CreateFolders()
+        {
+            foreach (var path in _paths.Values)
+            {
+                var directory = Path.HasExtension(path) ? Path.GetDirectoryName(path) : path;
+                if (!string.IsNullOrWhiteSpace(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+            }
+
+        }
+
         private void LoadFiles()
         {
             Console.WriteLine($"\n[Expansion Manager] Loading all files associated with the Expansion Mod.");

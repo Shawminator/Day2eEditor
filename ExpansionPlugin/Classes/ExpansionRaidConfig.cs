@@ -139,6 +139,7 @@ namespace ExpansionPlugin
             CanRaidLocksOnFences = 0;
             CanRaidLocksOnTents = 0;
 
+            LockRaidTools = new BindingList<string>();
             LockOnWallRaidToolTimeSeconds = 15 * 60;
             LockOnFenceRaidToolTimeSeconds = 15 * 60;
             LockOnTentRaidToolTimeSeconds = 10 * 60;
@@ -152,13 +153,13 @@ namespace ExpansionPlugin
         {
             Schedule = new BindingList<ExpansionRaidSchedule>()
             {
-                new ExpansionRaidSchedule() { Weekday = "Sunday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
-                new ExpansionRaidSchedule() { Weekday = "Monday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
-                new ExpansionRaidSchedule() { Weekday = "Tuesday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
-                new ExpansionRaidSchedule() { Weekday = "Wednesday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
-                new ExpansionRaidSchedule() { Weekday = "Thursday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
-                new ExpansionRaidSchedule() { Weekday = "friday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
-                new ExpansionRaidSchedule() { Weekday = "Saturday", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 }
+                new ExpansionRaidSchedule() { Weekday = "SUNDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
+                new ExpansionRaidSchedule() { Weekday = "MONDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
+                new ExpansionRaidSchedule() { Weekday = "TUESDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
+                new ExpansionRaidSchedule() { Weekday = "WEDNESDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
+                new ExpansionRaidSchedule() { Weekday = "THURSDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
+                new ExpansionRaidSchedule() { Weekday = "FRIDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 },
+                new ExpansionRaidSchedule() { Weekday = "SATURDAY", StartHour = 0, StartMinute = 0, DurationMinutes = 1440 }
             };
         }
         public List<string> FixMissingOrInvalidFields()
@@ -405,19 +406,19 @@ namespace ExpansionPlugin
             if (LockOnContainerRaidToolCycles != other.LockOnContainerRaidToolCycles) return false;
             if (LockOnContainerRaidToolDamagePercent != other.LockOnContainerRaidToolDamagePercent) return false;
 
-            if (!ExplosiveDamageWhitelist.SequenceEqual(other.ExplosiveDamageWhitelist))
+            if (!Helper.ListEquals(ExplosiveDamageWhitelist, other.ExplosiveDamageWhitelist))
                 return false;
 
-            if (!SafeRaidTools.SequenceEqual(other.SafeRaidTools))
+            if (!Helper.ListEquals(SafeRaidTools, other.SafeRaidTools))
                 return false;
 
-            if (!BarbedWireRaidTools.SequenceEqual(other.BarbedWireRaidTools))
+            if (!Helper.ListEquals(BarbedWireRaidTools, other.BarbedWireRaidTools))
                 return false;
 
-            if (!LockRaidTools.SequenceEqual(other.LockRaidTools))
+            if (!Helper.ListEquals(LockRaidTools, other.LockRaidTools))
                 return false;
 
-            if (!LockOnContainerRaidTools.SequenceEqual(other.LockOnContainerRaidTools))
+            if (!Helper.ListEquals(LockOnContainerRaidTools, other.LockOnContainerRaidTools))
                 return false;
 
             if (Schedule == null && other.Schedule == null)
@@ -482,7 +483,7 @@ namespace ExpansionPlugin
                 CanRaidLocksOnTents = this.CanRaidLocksOnTents,
 
                 LockRaidTools =
-                        new BindingList<string>(this.LockRaidTools.ToList()),
+                        new BindingList<string>(this.LockRaidTools?.ToList() ?? new List<string>()),
 
                 LockOnWallRaidToolTimeSeconds = this.LockOnWallRaidToolTimeSeconds,
                 LockOnFenceRaidToolTimeSeconds = this.LockOnFenceRaidToolTimeSeconds,

@@ -701,7 +701,7 @@ namespace ExpansionPlugin
             Name = "";
             Persist = 0;
             Faction = faction;
-            Formation = "";
+            Formation = "RANDOM";
             FormationScale = (decimal)-1.0;
             FormationLooseness = (decimal)0.0;
             Loadout = loadout;
@@ -743,7 +743,8 @@ namespace ExpansionPlugin
             LoadBalancingCategory = "";
             ObjectClassName = objClassName;
             UseRandomWaypointAsStartPoint = 1;
-            Waypoints = new BindingList<Vec3>(way.ToList());
+            Waypoints = new BindingList<Vec3>(way?.ToList() ?? new List<Vec3>());
+
         }
         public override string ToString()
         {

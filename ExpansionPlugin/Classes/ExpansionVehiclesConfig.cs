@@ -148,6 +148,9 @@ namespace ExpansionPlugin
             VehicleAutoCoverTimeSeconds = 0;  //! Lower than or equal to zero = disabled
             VehicleAutoCoverRequireCamonet = 0;  //! Require camonet attachment on vehicle
 
+            UseVirtualStorageForCoverCargo = 0;
+            EnableAutoCoveringDEVehicles = 0;
+
             //! CFTools icons. Any FontAwesome icon name should work.
             CFToolsHeliCoverIconName = "helicopter";
             CFToolsBoatCoverIconName = "ship";

@@ -93,6 +93,7 @@ namespace ExpansionPlugin
             MaxFlankingDistance = (decimal)200.0;
             EnableFlankingOutsideCombat = 0;
             DamageMultiplier = (decimal)1.0;
+            DamageReceivedMultiplier = 1.0m;
             ShoryukenChance = 0.009999999776482582m;
             ShoryukenDamageMultiplier = 3.0m;
             Admins = new BindingList<string>();

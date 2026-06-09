@@ -96,6 +96,33 @@ namespace ExpansionPlugin
         public ExpansionSpawnSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
+            StartingGear = new ExpansionStartingGear();
+            StartingGear.DefaultStartingGear();
+            StartingClothing = new ExpansionStartingClothing();
+            StartingClothing.DefaultStartingClothing();
+
+            UseLoadouts = 0;
+            MaleLoadouts = new BindingList<ExpansionSpawnGearLoadouts>();
+            FemaleLoadouts = new BindingList<ExpansionSpawnGearLoadouts>();
+            MaleLoadouts.Add(new ExpansionSpawnGearLoadouts("PlayerSurvivorLoadout", 1.0m));
+            FemaleLoadouts.Add(new ExpansionSpawnGearLoadouts("PlayerSurvivorLoadout", 1.0m));
+
+            EnableSpawnSelection = 0;       //! Will be enabled if the map have a configured spawn location on generation
+
+            SpawnHealthValue = 100.0m;   //! 100 is max
+            SpawnEnergyValue = 500.0m;   //! 7500 is max
+            SpawnWaterValue = 500.0m;    //! 5000 is max
+
+            EnableRespawnCooldowns = 1; //! Enable cooldown system for the spawn selection menu
+            RespawnCooldown = 120; //! Respawn delay time in seconds
+            TerritoryRespawnCooldown = 240; //! Respawn delay time for territories in seconds
+            PunishMultispawn = 1; //! If player uses the same spawn point twice or more then punish the player with additonal cooldown time
+            PunishCooldown = 120; // ! If "PunishMultispawn" is enabled and a player uses the same spawn point twice or more then punish the player with additonal cooldown time that is set here.
+            PunishTimeframe = 300; //! If "PunishMultispawn" is enabled and a player respawns twice or more on the same spawn point then he will get a additonal cooldown punishment set in the "PunishCooldown" setting. This setting here will mark the timeframe for when the player gets this punishment or not.
+            CreateDeathMarker = 1; //! Create a marker on the spawn selection map on the players last position where the player died.
+            BackgroundImagePath = "DayZExpansion/SpawnSelection/GUI/textures/wood_background.edds";
+            SpawnLocations = new BindingList<ExpansionSpawnLocation>();
+            SpawnOnTerritory = 0;
         }
 
         public List<string> FixMissingOrInvalidFields()

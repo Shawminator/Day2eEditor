@@ -61,8 +61,10 @@ namespace ExpansionPlugin
             HideCargoWhileParachuteIsDeployed = 1;
             HeightIsRelativeToGroundLevel = 1;
             Height = 450;
+            DropZoneHeight = 250m;
             FollowTerrainFraction = (decimal)0.5;
             Speed = 35;
+            DropZoneSpeed = 25m;
             Radius = 1;
             InfectedSpawnRadius = 50;
             InfectedSpawnInterval = 250;

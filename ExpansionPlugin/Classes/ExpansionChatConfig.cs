@@ -46,6 +46,9 @@ namespace ExpansionPlugin
         }
         private void DefaultColors()
         {
+            if (ChatColors == null)
+                ChatColors = new ExpansionChatColors();
+
             ChatColors.SystemChatColor = "BA45BAFF";
             ChatColors.AdminChatColor = "C0392BFF";
             ChatColors.GlobalChatColor = "58C3F7FF";

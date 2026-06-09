@@ -64,7 +64,15 @@ namespace ExpansionPlugin
             GravecrossTimeThreshold = 1200;
             GravecrossSpawnTimeDelay = 180;
 
-            Mapping = new ExpansionMapping();
+            Mapping = new ExpansionMapping()
+            {
+                UseCustomMappingModule = 0,
+                BuildingInteriors = 0,
+                BuildingIvys = 0,
+                Mapping = new BindingList<string>(),
+                Interiors = new BindingList<string>(),
+
+            };
 
             EnableLamps = (int)LampModeEnum.AlwaysOnEverywhere;
             LampAmount_OneInX = 3;
@@ -87,7 +95,26 @@ namespace ExpansionPlugin
             UseExpansionMainMenuIntroScene = 1;
             UseNewsFeedInGameMenu = 0;
 
-            HUDColors = new ExpansionHudIndicatorColors();
+            UseHUDColors = 1;
+
+            HUDColors = new ExpansionHudIndicatorColors()
+            {
+                StaminaBarColor = "#00FF00",
+                StaminaBarColorHalf = "#FFFF00", 
+                StaminaBarColorLow = "#FF0000", 
+                NotifierDividerColor = "#FFFFFF", 
+                TemperatureBurningColor = "#FF4500", 
+                TemperatureHotColor = "#FFA500", 
+                TemperatureIdealColor = "#00FF00", 
+                TemperatureColdColor = "#00BFFF", 
+                TemperatureFreezingColor = "#1E90FF", 
+                NotifiersIdealColor = "#00FF00", 
+                NotifiersHalfColor = "#FFFF00",
+                NotifiersLowColor = "#FF0000", 
+                ReputationBaseColor = "#808080", 
+                ReputationMedColor = "#00CED1", 
+                ReputationHighColor = "#FFD700"
+            };
 
             EnableEarPlugs = 1;
             InGameMenuLogoPath = "set:expansion_iconset image:logo_expansion_white";

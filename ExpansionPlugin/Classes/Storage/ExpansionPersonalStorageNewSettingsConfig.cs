@@ -161,6 +161,8 @@ namespace ExpansionPlugin
             QuestID = questID;
             if (excludedSlots != null)
                 ExcludedSlots = excludedSlots;
+            else
+                ExcludedSlots = new BindingList<string>();
             AllowAttachmentCargo = allowAttCargo;
         }
 
@@ -171,8 +173,10 @@ namespace ExpansionPlugin
 
             if (ReputationRequirement != other.ReputationRequirement ||
                    QuestID != other.QuestID ||
-                   !ExcludedSlots.SequenceEqual(other.ExcludedSlots) ||
                    AllowAttachmentCargo != other.AllowAttachmentCargo)
+                return false;
+
+            if (!Helper.ListEquals(ExcludedSlots, other.ExcludedSlots))
                 return false;
 
             return true;
@@ -184,7 +188,11 @@ namespace ExpansionPlugin
                 ReputationRequirement = this.ReputationRequirement,
                 QuestID = this.QuestID,
                 AllowAttachmentCargo = this.AllowAttachmentCargo,
-                ExcludedSlots = new BindingList<string>(this.ExcludedSlots.ToList())
+
+
+                ExcludedSlots = new BindingList<string>(this.ExcludedSlots.ToList() ?? new List<string>())
+
+
             };
         }
 

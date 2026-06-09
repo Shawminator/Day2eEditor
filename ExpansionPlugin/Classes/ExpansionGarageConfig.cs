@@ -71,6 +71,7 @@ namespace ExpansionPlugin
             VehicleSearchRadius = (decimal)20.0;
             MaxDistanceFromStoredPosition = (decimal)150.0;
             CanStoreWithCargo = 1;
+            UseVirtualStorageForCargo = 0;
             NeedKeyToStore = 1;
 
             EntityWhitelist = new BindingList<string>() { "ExpansionParkingMeter" };

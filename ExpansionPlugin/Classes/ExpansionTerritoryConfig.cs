@@ -46,6 +46,18 @@ namespace ExpansionPlugin
         public ExpansionTerritorySettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
+            EnableTerritories = 1;
+            UseWholeMapForInviteList = 0;
+            TerritorySize = 150.0m;
+            TerritoryPerimeterSize = 150.0m;
+            MaxMembersInTerritory = 10;
+            MaxTerritoryPerPlayer = 1;
+            TerritoryInviteAcceptRadius = 150.0m;
+            AuthenticateCodeLockIfTerritoryMember = 0;
+            InviteCooldown = 0;
+            OnlyInviteGroupMember = 0;
+            MaxCodeLocksOnBBPerTerritory = -1;
+            MaxCodeLocksOnItemsPerTerritory = -1;
         }
 
         public List<string> FixMissingOrInvalidFields()
