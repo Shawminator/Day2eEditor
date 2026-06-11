@@ -29,143 +29,178 @@
         private void InitializeComponent()
         {
             pendingListView = new ListView();
-            panel1 = new Panel();
-            button2 = new Button();
-            button1 = new Button();
-            DownloadAllButton = new Button();
-            SelectRootDieButton = new Button();
-            TestConnectionButton = new Button();
-            SyncCheckedButton = new Button();
-            SyncAllButton = new Button();
-            button3 = new Button();
-            panel1.SuspendLayout();
+            menuStrip1 = new MenuStrip();
+            connectionToolStripMenuItem = new ToolStripMenuItem();
+            testConnectionToolStripMenuItem = new ToolStripMenuItem();
+            setUpRemoteRootToolStripMenuItem = new ToolStripMenuItem();
+            donwloadToolStripMenuItem = new ToolStripMenuItem();
+            downloadAllToolStripMenuItem = new ToolStripMenuItem();
+            downloadMapOutputToolStripMenuItem = new ToolStripMenuItem();
+            downloadAttachmentDumpToolStripMenuItem = new ToolStripMenuItem();
+            uploadToolStripMenuItem = new ToolStripMenuItem();
+            uploadAllToolStripMenuItem = new ToolStripMenuItem();
+            uploadCheckedToolStripMenuItem = new ToolStripMenuItem();
+            syncToolStripMenuItem = new ToolStripMenuItem();
+            checkForChangesOnServerToolStripMenuItem = new ToolStripMenuItem();
+            filesToolStripMenuItem = new ToolStripMenuItem();
+            clearFilesFromTrackerToolStripMenuItem = new ToolStripMenuItem();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // pendingListView
             // 
+            pendingListView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pendingListView.BackColor = Color.FromArgb(60, 63, 65);
-            pendingListView.Dock = DockStyle.Fill;
             pendingListView.ForeColor = SystemColors.Control;
-            pendingListView.Location = new Point(0, 31);
+            pendingListView.Location = new Point(0, 27);
             pendingListView.Name = "pendingListView";
-            pendingListView.Size = new Size(1038, 602);
+            pendingListView.Size = new Size(1038, 606);
             pendingListView.TabIndex = 2;
             pendingListView.UseCompatibleStateImageBehavior = false;
             pendingListView.ItemChecked += pendingListView_ItemChecked;
             pendingListView.SelectedIndexChanged += pendingListView_SelectedIndexChanged;
             // 
-            // panel1
+            // menuStrip1
             // 
-            panel1.BackColor = Color.FromArgb(60, 63, 65);
-            panel1.Controls.Add(button3);
-            panel1.Controls.Add(button2);
-            panel1.Controls.Add(button1);
-            panel1.Controls.Add(DownloadAllButton);
-            panel1.Controls.Add(SelectRootDieButton);
-            panel1.Controls.Add(TestConnectionButton);
-            panel1.Controls.Add(SyncCheckedButton);
-            panel1.Controls.Add(SyncAllButton);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1038, 31);
-            panel1.TabIndex = 6;
+            menuStrip1.BackColor = Color.FromArgb(40, 40, 40);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { connectionToolStripMenuItem, donwloadToolStripMenuItem, uploadToolStripMenuItem, syncToolStripMenuItem, filesToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(1038, 24);
+            menuStrip1.TabIndex = 8;
+            menuStrip1.Text = "menuStrip1";
             // 
-            // button2
+            // connectionToolStripMenuItem
             // 
-            button2.BackColor = Color.FromArgb(60, 63, 65);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(542, 5);
-            button2.Name = "button2";
-            button2.Size = new Size(149, 23);
-            button2.TabIndex = 23;
-            button2.Text = "Download Dump Attach";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            connectionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { testConnectionToolStripMenuItem, setUpRemoteRootToolStripMenuItem });
+            connectionToolStripMenuItem.ForeColor = SystemColors.Control;
+            connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
+            connectionToolStripMenuItem.Size = new Size(81, 20);
+            connectionToolStripMenuItem.Text = "Connection";
+            connectionToolStripMenuItem.Click += connectionToolStripMenuItem_Click;
             // 
-            // button1
+            // testConnectionToolStripMenuItem
             // 
-            button1.BackColor = Color.FromArgb(60, 63, 65);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(387, 5);
-            button1.Name = "button1";
-            button1.Size = new Size(149, 23);
-            button1.TabIndex = 22;
-            button1.Text = "Download Map_Output";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            testConnectionToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            testConnectionToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            testConnectionToolStripMenuItem.ForeColor = SystemColors.Control;
+            testConnectionToolStripMenuItem.Name = "testConnectionToolStripMenuItem";
+            testConnectionToolStripMenuItem.Size = new Size(180, 22);
+            testConnectionToolStripMenuItem.Text = "Test Connection";
+            testConnectionToolStripMenuItem.Click += TestConnectionButton_Click;
             // 
-            // DownloadAllButton
+            // setUpRemoteRootToolStripMenuItem
             // 
-            DownloadAllButton.BackColor = Color.FromArgb(60, 63, 65);
-            DownloadAllButton.FlatStyle = FlatStyle.Flat;
-            DownloadAllButton.Location = new Point(259, 5);
-            DownloadAllButton.Name = "DownloadAllButton";
-            DownloadAllButton.Size = new Size(122, 23);
-            DownloadAllButton.TabIndex = 21;
-            DownloadAllButton.Text = "Download All";
-            DownloadAllButton.UseVisualStyleBackColor = false;
-            DownloadAllButton.Click += DownloadAllButton_Click;
+            setUpRemoteRootToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            setUpRemoteRootToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            setUpRemoteRootToolStripMenuItem.ForeColor = SystemColors.Control;
+            setUpRemoteRootToolStripMenuItem.Name = "setUpRemoteRootToolStripMenuItem";
+            setUpRemoteRootToolStripMenuItem.Size = new Size(180, 22);
+            setUpRemoteRootToolStripMenuItem.Text = "Set up Remote Root";
+            setUpRemoteRootToolStripMenuItem.Click += SelectRootDieButton_Click;
             // 
-            // SelectRootDieButton
+            // donwloadToolStripMenuItem
             // 
-            SelectRootDieButton.BackColor = Color.FromArgb(60, 63, 65);
-            SelectRootDieButton.FlatStyle = FlatStyle.Flat;
-            SelectRootDieButton.Location = new Point(131, 5);
-            SelectRootDieButton.Name = "SelectRootDieButton";
-            SelectRootDieButton.Size = new Size(122, 23);
-            SelectRootDieButton.TabIndex = 20;
-            SelectRootDieButton.Text = "Set Root Directory";
-            SelectRootDieButton.UseVisualStyleBackColor = false;
-            SelectRootDieButton.Click += SelectRootDieButton_Click;
+            donwloadToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            donwloadToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { downloadAllToolStripMenuItem, downloadMapOutputToolStripMenuItem, downloadAttachmentDumpToolStripMenuItem });
+            donwloadToolStripMenuItem.ForeColor = SystemColors.Control;
+            donwloadToolStripMenuItem.Name = "donwloadToolStripMenuItem";
+            donwloadToolStripMenuItem.Size = new Size(73, 20);
+            donwloadToolStripMenuItem.Text = "Download";
             // 
-            // TestConnectionButton
+            // downloadAllToolStripMenuItem
             // 
-            TestConnectionButton.BackColor = Color.FromArgb(60, 63, 65);
-            TestConnectionButton.FlatStyle = FlatStyle.Flat;
-            TestConnectionButton.Location = new Point(3, 5);
-            TestConnectionButton.Name = "TestConnectionButton";
-            TestConnectionButton.Size = new Size(122, 23);
-            TestConnectionButton.TabIndex = 19;
-            TestConnectionButton.Text = "Test Connection";
-            TestConnectionButton.UseVisualStyleBackColor = false;
-            TestConnectionButton.Click += TestConnectionButton_Click;
+            downloadAllToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            downloadAllToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            downloadAllToolStripMenuItem.ForeColor = SystemColors.Control;
+            downloadAllToolStripMenuItem.Name = "downloadAllToolStripMenuItem";
+            downloadAllToolStripMenuItem.Size = new Size(230, 22);
+            downloadAllToolStripMenuItem.Text = "Download All";
+            downloadAllToolStripMenuItem.Click += DownloadAllButton_Click;
             // 
-            // SyncCheckedButton
+            // downloadMapOutputToolStripMenuItem
             // 
-            SyncCheckedButton.BackColor = Color.FromArgb(60, 63, 65);
-            SyncCheckedButton.FlatStyle = FlatStyle.Flat;
-            SyncCheckedButton.Location = new Point(776, 5);
-            SyncCheckedButton.Name = "SyncCheckedButton";
-            SyncCheckedButton.Size = new Size(112, 23);
-            SyncCheckedButton.TabIndex = 17;
-            SyncCheckedButton.Text = "Sync Checked";
-            SyncCheckedButton.UseVisualStyleBackColor = false;
-            SyncCheckedButton.Click += SyncCheckedButton_Click;
+            downloadMapOutputToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            downloadMapOutputToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            downloadMapOutputToolStripMenuItem.ForeColor = SystemColors.Control;
+            downloadMapOutputToolStripMenuItem.Name = "downloadMapOutputToolStripMenuItem";
+            downloadMapOutputToolStripMenuItem.Size = new Size(230, 22);
+            downloadMapOutputToolStripMenuItem.Text = "Download Map Output";
+            downloadMapOutputToolStripMenuItem.Click += button1_Click;
             // 
-            // SyncAllButton
+            // downloadAttachmentDumpToolStripMenuItem
             // 
-            SyncAllButton.BackColor = Color.FromArgb(60, 63, 65);
-            SyncAllButton.FlatStyle = FlatStyle.Flat;
-            SyncAllButton.Location = new Point(697, 5);
-            SyncAllButton.Name = "SyncAllButton";
-            SyncAllButton.Size = new Size(73, 23);
-            SyncAllButton.TabIndex = 16;
-            SyncAllButton.Text = "Sync All";
-            SyncAllButton.UseVisualStyleBackColor = false;
-            SyncAllButton.Click += SyncAllButton_Click;
+            downloadAttachmentDumpToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            downloadAttachmentDumpToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            downloadAttachmentDumpToolStripMenuItem.ForeColor = SystemColors.Control;
+            downloadAttachmentDumpToolStripMenuItem.Name = "downloadAttachmentDumpToolStripMenuItem";
+            downloadAttachmentDumpToolStripMenuItem.Size = new Size(230, 22);
+            downloadAttachmentDumpToolStripMenuItem.Text = "Download Attachment Dump";
+            downloadAttachmentDumpToolStripMenuItem.Click += button2_Click;
             // 
-            // button3
+            // uploadToolStripMenuItem
             // 
-            button3.BackColor = Color.FromArgb(60, 63, 65);
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(894, 5);
-            button3.Name = "button3";
-            button3.Size = new Size(112, 23);
-            button3.TabIndex = 24;
-            button3.Text = "Clear All";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            uploadToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            uploadToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { uploadAllToolStripMenuItem, uploadCheckedToolStripMenuItem });
+            uploadToolStripMenuItem.ForeColor = SystemColors.Control;
+            uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
+            uploadToolStripMenuItem.Size = new Size(95, 20);
+            uploadToolStripMenuItem.Text = "Sync To Server";
+            uploadToolStripMenuItem.Click += uploadToolStripMenuItem_Click;
+            // 
+            // uploadAllToolStripMenuItem
+            // 
+            uploadAllToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            uploadAllToolStripMenuItem.ForeColor = SystemColors.Control;
+            uploadAllToolStripMenuItem.Name = "uploadAllToolStripMenuItem";
+            uploadAllToolStripMenuItem.Size = new Size(180, 22);
+            uploadAllToolStripMenuItem.Text = "Upload All";
+            uploadAllToolStripMenuItem.Click += uploadAllToolStripMenuItem_Click;
+            // 
+            // uploadCheckedToolStripMenuItem
+            // 
+            uploadCheckedToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            uploadCheckedToolStripMenuItem.ForeColor = SystemColors.Control;
+            uploadCheckedToolStripMenuItem.Name = "uploadCheckedToolStripMenuItem";
+            uploadCheckedToolStripMenuItem.Size = new Size(180, 22);
+            uploadCheckedToolStripMenuItem.Text = "Upload Checked";
+            uploadCheckedToolStripMenuItem.Click += uploadCheckedToolStripMenuItem_Click;
+            // 
+            // syncToolStripMenuItem
+            // 
+            syncToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForChangesOnServerToolStripMenuItem });
+            syncToolStripMenuItem.ForeColor = SystemColors.Control;
+            syncToolStripMenuItem.Name = "syncToolStripMenuItem";
+            syncToolStripMenuItem.Size = new Size(108, 20);
+            syncToolStripMenuItem.Text = "Sync from Server";
+            // 
+            // checkForChangesOnServerToolStripMenuItem
+            // 
+            checkForChangesOnServerToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            checkForChangesOnServerToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            checkForChangesOnServerToolStripMenuItem.ForeColor = SystemColors.Control;
+            checkForChangesOnServerToolStripMenuItem.Name = "checkForChangesOnServerToolStripMenuItem";
+            checkForChangesOnServerToolStripMenuItem.Size = new Size(226, 22);
+            checkForChangesOnServerToolStripMenuItem.Text = "Check for Changes on Server";
+            checkForChangesOnServerToolStripMenuItem.Click += checkForChangesOnServerToolStripMenuItem_Click;
+            // 
+            // filesToolStripMenuItem
+            // 
+            filesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clearFilesFromTrackerToolStripMenuItem });
+            filesToolStripMenuItem.ForeColor = SystemColors.Control;
+            filesToolStripMenuItem.Name = "filesToolStripMenuItem";
+            filesToolStripMenuItem.Size = new Size(83, 20);
+            filesToolStripMenuItem.Text = "Tracker Files";
+            // 
+            // clearFilesFromTrackerToolStripMenuItem
+            // 
+            clearFilesFromTrackerToolStripMenuItem.BackColor = Color.FromArgb(40, 40, 40);
+            clearFilesFromTrackerToolStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            clearFilesFromTrackerToolStripMenuItem.ForeColor = SystemColors.Control;
+            clearFilesFromTrackerToolStripMenuItem.Name = "clearFilesFromTrackerToolStripMenuItem";
+            clearFilesFromTrackerToolStripMenuItem.Size = new Size(199, 22);
+            clearFilesFromTrackerToolStripMenuItem.Text = "Clear Files From Tracker";
+            clearFilesFromTrackerToolStripMenuItem.Click += button3_Click;
             // 
             // DayZFileManagerForm
             // 
@@ -174,27 +209,36 @@
             BackColor = Color.FromArgb(60, 63, 65);
             ClientSize = new Size(1038, 633);
             Controls.Add(pendingListView);
-            Controls.Add(panel1);
+            Controls.Add(menuStrip1);
             ForeColor = SystemColors.Control;
             FormBorderStyle = FormBorderStyle.None;
+            MainMenuStrip = menuStrip1;
             Name = "DayZFileManagerForm";
             Text = "Form1";
             Load += DayZFileManagerForm_Load;
-            panel1.ResumeLayout(false);
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private ListView pendingListView;
-        private Panel panel1;
-        private Button SyncCheckedButton;
-        private Button SyncAllButton;
-        private Button SelectRootDieButton;
-        private Button TestConnectionButton;
-        private Button DownloadAllButton;
-        private Button button2;
-        private Button button1;
-        private Button button3;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem connectionToolStripMenuItem;
+        private ToolStripMenuItem testConnectionToolStripMenuItem;
+        private ToolStripMenuItem setUpRemoteRootToolStripMenuItem;
+        private ToolStripMenuItem donwloadToolStripMenuItem;
+        private ToolStripMenuItem downloadAllToolStripMenuItem;
+        private ToolStripMenuItem downloadMapOutputToolStripMenuItem;
+        private ToolStripMenuItem downloadAttachmentDumpToolStripMenuItem;
+        private ToolStripMenuItem uploadToolStripMenuItem;
+        private ToolStripMenuItem uploadAllToolStripMenuItem;
+        private ToolStripMenuItem uploadCheckedToolStripMenuItem;
+        private ToolStripMenuItem syncToolStripMenuItem;
+        private ToolStripMenuItem checkForChangesOnServerToolStripMenuItem;
+        private ToolStripMenuItem filesToolStripMenuItem;
+        private ToolStripMenuItem clearFilesFromTrackerToolStripMenuItem;
     }
 }

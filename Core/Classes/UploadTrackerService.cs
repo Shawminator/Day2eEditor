@@ -10,7 +10,8 @@ namespace Day2eEditor
     public enum PendingServerAction
     {
         Upload,
-        Remove
+        Remove,
+        Download
     }
     public class PendingUploadFile
     {

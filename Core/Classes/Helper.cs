@@ -274,5 +274,41 @@ namespace Day2eEditor
                 "",
                 RegexOptions.Singleline);
         }
+        public static void ClearDirectory(string path, params string[] excludedFiles)
+        {
+            if (!Directory.Exists(path))
+                return;
+
+            var exclusions = new HashSet<string>(
+                excludedFiles,
+                StringComparer.OrdinalIgnoreCase);
+
+            ClearDirectoryRecursive(path, exclusions);
+        }
+        private static void ClearDirectoryRecursive(string directory, HashSet<string> exclusions)
+        {
+            // Delete files
+            foreach (string file in Directory.GetFiles(directory))
+            {
+                string fileName = Path.GetFileName(file);
+
+                if (exclusions.Contains(fileName))
+                    continue;
+
+                File.Delete(file);
+            }
+
+            // Process subdirectories
+            foreach (string subDir in Directory.GetDirectories(directory))
+            {
+                ClearDirectoryRecursive(subDir, exclusions);
+
+                // Remove directory if now empty
+                if (!Directory.EnumerateFileSystemEntries(subDir).Any())
+                {
+                    Directory.Delete(subDir);
+                }
+            }
+        }
     }
 }

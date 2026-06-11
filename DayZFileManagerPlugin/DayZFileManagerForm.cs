@@ -25,6 +25,11 @@ namespace DayZFileManagerPlugin
             _plugin = plugin;
             _projectManager = AppServices.GetRequired<ProjectManager>();
             _uploadTrackerService = AppServices.GetRequired<UploadTrackerService>();
+            menuStrip1.RenderMode = ToolStripRenderMode.Professional;
+            menuStrip1.Renderer =
+                new ToolStripProfessionalRenderer(new DarkColorTable());
+
+            menuStrip1.ForeColor = SystemColors.Control;
             ConfigurePendingListView();
         }
         private void ConfigurePendingListView()
@@ -46,113 +51,196 @@ namespace DayZFileManagerPlugin
         {
             PopulatePendingListView();
         }
-        public void PopulatePendingListView()
+        public void PopulatePendingListView(List<SyncItem> syncItems = null)
         {
             pendingListView.BeginUpdate();
             pendingListView.Items.Clear();
 
             var project = _projectManager.CurrentProject;
-            var pendingFiles = _uploadTrackerService
-                .GetFilesForProject(project.ProjectName);
+            var pendingFiles = _uploadTrackerService.GetFilesForProject(project.ProjectName);
 
-            if (pendingFiles == null || pendingFiles.Count == 0)
+            
+
+            if (syncItems != null)
             {
-                pendingListView.EndUpdate();
-                return;
+                foreach (var item in syncItems)
+                {
+                    string relativePath = Path.GetRelativePath(
+                            project.ProjectRoot,
+                            item.LocalPath);
+
+                    var listItem = new ListViewItem(item.Action.ToString())
+                    {
+                        Tag = item,
+                        Checked = false
+                    };
+
+                    listItem.SubItems.Add(Path.GetFileName(item.LocalPath));
+                    listItem.SubItems.Add(relativePath);
+                    listItem.SubItems.Add(item.LocalModified.ToString("yyyy-MM-dd HH:mm"));
+                    listItem.ForeColor = item.Action == PendingServerAction.Upload ? UploadRowColor : RemoveRowColor;
+                    pendingListView.Items.Add(listItem);
+                }
             }
-
-            foreach (var item in pendingFiles)
+            else
             {
-                string relativePath;
-
-                try
+                if (pendingFiles == null || pendingFiles.Count == 0)
                 {
-                    relativePath = Path.GetRelativePath(
-                        project.ProjectRoot,
-                        item.FullPath);
+                    pendingListView.EndUpdate();
+                    return;
                 }
-                catch
+                foreach (var item in pendingFiles)
                 {
-                    relativePath = item.FullPath;
+                    string relativePath;
+
+                    try
+                    {
+                        relativePath = Path.GetRelativePath(
+                            project.ProjectRoot,
+                            item.FullPath);
+                    }
+                    catch
+                    {
+                        relativePath = item.FullPath;
+                    }
+                    var listItem = new ListViewItem(item.Action.ToString())
+                    {
+                        Tag = item,
+                        Checked = false
+                    };
+
+                    listItem.SubItems.Add(item.FileName);
+                    listItem.SubItems.Add(relativePath);
+                    listItem.SubItems.Add(item.LastSavedAt.ToString("yyyy-MM-dd HH:mm"));
+                    listItem.ForeColor = item.Action == PendingServerAction.Upload ? UploadRowColor : RemoveRowColor;
+
+                    pendingListView.Items.Add(listItem);
+
                 }
-                var listItem = new ListViewItem(item.Action.ToString())
-                {
-                    Tag = item,
-                    Checked = false
-                };
-
-                listItem.SubItems.Add(item.FileName);
-                listItem.SubItems.Add(relativePath);
-                listItem.SubItems.Add(item.LastSavedAt.ToString("yyyy-MM-dd HH:mm"));
-                listItem.ForeColor = item.Action == PendingServerAction.Upload ? UploadRowColor : RemoveRowColor;
-
-                pendingListView.Items.Add(listItem);
-
             }
 
             pendingListView.EndUpdate();
         }
-        private void SyncAllButton_Click(object sender, EventArgs e)
+        private void uploadAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var ftp = AppServices.GetRequired<FileTransferManager>();
             var project = _projectManager.CurrentProject;
 
+
             foreach (ListViewItem row in pendingListView.Items)
             {
-                if (row.Tag is not PendingUploadFile pending)
-                    continue;
-
-                try
+                if (row.Tag is PendingUploadFile pending)
                 {
-                    string relativePath = Path.GetRelativePath(
-                        project.ProjectRoot,
-                        pending.FullPath);
-
-                    // Convert windows path to remote unix path
-                    relativePath = relativePath.Replace("\\", "/");
-
-                    string remotePath =
-                        $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
-
-                    switch (pending.Action)
+                    try
                     {
-                        case PendingServerAction.Upload:
+                        string relativePath = Path.GetRelativePath(
+                            project.ProjectRoot,
+                            pending.FullPath);
 
-                            ftp.Upload(
-                                project.ServerSettings,
-                                pending.FullPath,
-                                remotePath);
-                            Console.WriteLine($"UPLOAD OK: {pending.FileName}");
-                            break;
+                        // Convert windows path to remote unix path
+                        relativePath = relativePath.Replace("\\", "/");
 
-                        case PendingServerAction.Remove:
+                        string remotePath =
+                            $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
 
-                            ftp.Delete(
-                                project.ServerSettings,
-                                remotePath);
-                            Console.WriteLine($"DELETE OK: {pending.FileName}");
-                            break;
+                        switch (pending.Action)
+                        {
+                            case PendingServerAction.Upload:
+
+                                ftp.Upload(
+                                    project.ServerSettings,
+                                    pending.FullPath,
+                                    remotePath);
+                                Console.WriteLine($"UPLOAD OK: {pending.FileName}");
+                                break;
+
+                            case PendingServerAction.Remove:
+
+                                ftp.Delete(
+                                    project.ServerSettings,
+                                    remotePath);
+                                Console.WriteLine($"DELETE OK: {pending.FileName}");
+                                break;
+                        }
+
+                        // Remove from tracker after success
+                        _uploadTrackerService.MarkUploaded(
+                            project.ProjectName,
+                            pending.FullPath);
+
+                        row.Remove();
                     }
-
-                    // Remove from tracker after success
-                    _uploadTrackerService.MarkUploaded(
-                        project.ProjectName,
-                        pending.FullPath);
-
-                    row.Remove();
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[FAIL] {pending.Action}: {pending.FileName} - {ex.Message}");
+                        MessageBox.Show(
+                            $"Failed:\n{pending.FileName}\n\n{ex.Message}",
+                            "Transfer Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
-                catch (Exception ex)
+                else if (row.Tag is SyncItem syncitem)
                 {
-                    Console.WriteLine($"[FAIL] {pending.Action}: {pending.FileName} - {ex.Message}");
-                    MessageBox.Show(
-                        $"Failed:\n{pending.FileName}\n\n{ex.Message}",
-                        "Transfer Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    try
+                    {
+                        string relativePath = Path.GetRelativePath(
+                            project.ProjectRoot,
+                            syncitem.LocalPath);
+
+                        // Convert windows path to remote unix path
+                        relativePath = relativePath.Replace("\\", "/");
+
+                        string remotePath =
+                            $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
+
+                        switch (syncitem.Action)
+                        {
+                            case PendingServerAction.Upload:
+
+                                ftp.Upload(
+                                    project.ServerSettings,
+                                    syncitem.LocalPath,
+                                    remotePath);
+                                Console.WriteLine($"UPLOAD OK: {Path.GetFileName(syncitem.LocalPath)}");
+                                break;
+
+                            case PendingServerAction.Remove:
+
+                                ftp.Delete(
+                                    project.ServerSettings,
+                                    remotePath);
+                                Console.WriteLine($"DELETE OK: {Path.GetFileName(syncitem.LocalPath)}");
+                                break;
+                            case PendingServerAction.Download:
+                                ftp.Download(
+                                    project.ServerSettings,
+                                    syncitem.RemotePath,
+                                    syncitem.LocalPath);
+                                Console.WriteLine($"DOWNLOADED OK: {Path.GetFileName(syncitem.LocalPath)}");
+                                break;
+                        }
+
+                        // Remove from tracker after success
+                        _uploadTrackerService.MarkUploaded(
+                            project.ProjectName,
+                            syncitem.LocalPath);
+
+                        row.Remove();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[FAIL] {syncitem.Action}: {Path.GetFileName(syncitem.LocalPath)} - {ex.Message}");
+                        MessageBox.Show(
+                            $"Failed:\n{Path.GetFileName(syncitem.LocalPath)}\n\n{ex.Message}",
+                            "Transfer Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
             }
         }
-        private void SyncCheckedButton_Click(object sender, EventArgs e)
+        private void uploadCheckedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var ftp = AppServices.GetRequired<FileTransferManager>();
             var project = _projectManager.CurrentProject;
@@ -170,56 +258,104 @@ namespace DayZFileManagerPlugin
 
             foreach (ListViewItem row in pendingListView.CheckedItems)
             {
-                if (row.Tag is not PendingUploadFile pending)
-                    continue;
-
-                try
+                if (row.Tag is PendingUploadFile pending)
                 {
-                    string relativePath = Path.GetRelativePath(
-                        project.ProjectRoot,
-                        pending.FullPath);
-
-                    // Convert windows path to remote unix path
-                    relativePath = relativePath.Replace("\\", "/");
-
-                    string remotePath =
-                        $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
-
-                    switch (pending.Action)
+                    try
                     {
-                        case PendingServerAction.Upload:
+                        string relativePath = Path.GetRelativePath(
+                            project.ProjectRoot,
+                            pending.FullPath);
 
-                            ftp.Upload(
-                                project.ServerSettings,
-                                pending.FullPath,
-                                remotePath);
-                            Console.WriteLine($"UPLOAD OK: {pending.FileName}");
-                            break;
+                        // Convert windows path to remote unix path
+                        relativePath = relativePath.Replace("\\", "/");
 
-                        case PendingServerAction.Remove:
+                        string remotePath =
+                            $"{project.ServerSettings.RootPath.TrimEnd('/')}/{relativePath}";
 
-                            ftp.Delete(
-                                project.ServerSettings,
-                                remotePath);
-                            Console.WriteLine($"DELETE OK: {pending.FileName}");
-                            break;
+                        switch (pending.Action)
+                        {
+                            case PendingServerAction.Upload:
+
+                                ftp.Upload(
+                                    project.ServerSettings,
+                                    pending.FullPath,
+                                    remotePath);
+                                Console.WriteLine($"UPLOAD OK: {pending.FileName}");
+                                break;
+
+                            case PendingServerAction.Remove:
+
+                                ftp.Delete(
+                                    project.ServerSettings,
+                                    remotePath);
+                                Console.WriteLine($"DELETE OK: {pending.FileName}");
+                                break;
+                        }
+
+                        // Remove from tracker after success
+                        _uploadTrackerService.MarkUploaded(
+                            project.ProjectName,
+                            pending.FullPath);
+
+                        row.Remove();
                     }
-
-                    // Remove from tracker after success
-                    _uploadTrackerService.MarkUploaded(
-                        project.ProjectName,
-                        pending.FullPath);
-
-                    row.Remove();
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[FAIL] {pending.Action}: {pending.FileName} - {ex.Message}");
+                        MessageBox.Show(
+                            $"Failed:\n{pending.FileName}\n\n{ex.Message}",
+                            "Transfer Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
-                catch (Exception ex)
+                else if (row.Tag is SyncItem syncitem)
                 {
-                    Console.WriteLine($"[FAIL] {pending.Action}: {pending.FileName} - {ex.Message}");
-                    MessageBox.Show(
-                        $"Failed:\n{pending.FileName}\n\n{ex.Message}",
-                        "Transfer Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    try
+                    {
+                        string relativePath = syncitem.RelativePath;
+
+                        // Convert windows path to remote unix path
+                        relativePath = relativePath.Replace("\\", "/");
+
+                        string remotePath = syncitem.RemotePath;
+
+                        switch (syncitem.Action)
+                        {
+                            case PendingServerAction.Upload:
+
+                                ftp.Upload(
+                                    project.ServerSettings,
+                                    syncitem.LocalPath,
+                                    remotePath);
+                                Console.WriteLine($"UPLOAD OK: {Path.GetFileName(syncitem.LocalPath)}");
+                                break;
+
+                            case PendingServerAction.Remove:
+
+                                ftp.Delete(
+                                    project.ServerSettings,
+                                    remotePath);
+                                Console.WriteLine($"DELETE OK: {Path.GetFileName(syncitem.LocalPath)}");
+                                break;
+                        }
+
+                        // Remove from tracker after success
+                        _uploadTrackerService.MarkUploaded(
+                            project.ProjectName,
+                            syncitem.LocalPath);
+
+                        row.Remove();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[FAIL] {syncitem.Action}: {Path.GetFileName(syncitem.LocalPath)} - {ex.Message}");
+                        MessageBox.Show(
+                            $"Failed:\n{Path.GetFileName(syncitem.LocalPath)}\n\n{ex.Message}",
+                            "Transfer Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -260,7 +396,7 @@ namespace DayZFileManagerPlugin
         private void DownloadAllButton_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show(
-                "This will overwrite ALL local files in the selected profile and mission folders.\n\nDo you want to continue?",
+                "This will remove ALL local files in the selected profile and mission folders.\n\nDo you want to continue?",
                 "Confirm Download",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -278,6 +414,9 @@ namespace DayZFileManagerPlugin
             string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
             string localMissionPath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, "mpmissions", mpMissionPath);
 
+            Helper.ClearDirectory(localProfilePath, "DumpAttatch.json", "map_output.txt");
+            Helper.ClearDirectory(localMissionPath);
+
             string remoteProfilePath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, profile);
             string remoteMissionPath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, "mpmissions", mpMissionPath);
 
@@ -290,9 +429,18 @@ namespace DayZFileManagerPlugin
         {
             bool anyChecked = pendingListView.CheckedItems.Count > 0;
 
-            SyncAllButton.Enabled = !anyChecked;
+            uploadAllToolStripMenuItem.Enabled = !anyChecked;
         }
+        private void uploadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool noitems = pendingListView.Items.Count == 0;
+            if (noitems)
+            {
+                uploadAllToolStripMenuItem.Enabled = !noitems;
+                uploadCheckedToolStripMenuItem.Enabled = !noitems;
+            }
 
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show(
@@ -314,7 +462,6 @@ namespace DayZFileManagerPlugin
 
             ftp.Download(_projectManager.CurrentProject.ServerSettings, remotemapoutputpath, localmapoutputpath);
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show(
@@ -336,12 +483,10 @@ namespace DayZFileManagerPlugin
 
             ftp.Download(_projectManager.CurrentProject.ServerSettings, remotemapoutputpath, localmapoutputpath);
         }
-
         private void pendingListView_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             var project = _projectManager.CurrentProject;
@@ -351,15 +496,50 @@ namespace DayZFileManagerPlugin
                     continue;
 
                 // Remove from tracker after success
-               _uploadTrackerService.MarkUploaded(
-                    project.ProjectName,
-                    pending.FullPath);
+                _uploadTrackerService.MarkUploaded(
+                     project.ProjectName,
+                     pending.FullPath);
 
-               row.Remove();
+                row.Remove();
             }
         }
-    }
+        private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
+        }
+        private void checkForChangesOnServerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ftp = AppServices.GetRequired<FileTransferManager>();
+            string profileDir = _projectManager.CurrentProject.ProfileName;
+            string mpMissionDirectory = _projectManager.CurrentProject.MpMissionPath;
+
+            string mpMissionPath = Path.GetFileName(mpMissionDirectory);
+            string profile = Path.GetFileName(profileDir);
+
+            string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
+            string localMissionPath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, "mpmissions", mpMissionPath);
+
+            string remoteProfilePath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, profile);
+            string remoteMissionPath = Path.Combine(_projectManager.CurrentProject.ServerSettings.RootPath, "mpmissions", mpMissionPath);
+
+            List<SyncItem> filechanges = ftp.CheckForChanges(_projectManager.CurrentProject.ServerSettings, remoteProfilePath, localProfilePath);
+            filechanges.AddRange(ftp.CheckForChanges(_projectManager.CurrentProject.ServerSettings, remoteMissionPath, localMissionPath));
+
+            PopulatePendingListView(filechanges);
+
+        }
+    }
+    public class DarkColorTable : ProfessionalColorTable
+    {
+        public override Color MenuStripGradientBegin => Color.FromArgb(30, 30, 30);
+        public override Color MenuStripGradientEnd => Color.FromArgb(30, 30, 30);
+        public override Color MenuItemPressedGradientBegin => Color.RoyalBlue;
+        public override Color MenuItemPressedGradientEnd => Color.RoyalBlue;
+        public override Color MenuItemSelected => Color.FromArgb(60, 63, 65);
+        public override Color MenuItemBorder => Color.FromArgb(60, 63, 65);
+
+        public override Color ToolStripDropDownBackground => Color.FromArgb(40, 40, 40);
+    }
 
     [PluginInfo("DayZ File Manager", "DayZFileManagerPlugin", "DayZFileManagerPlugin.DayZFileManager.png")]
     public class PluginDayZFileManager : IPluginForm, IDisposable
