@@ -193,8 +193,8 @@ namespace ProjectsPlugin
         }
         private void ProjectTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);
-            if (projecttype == "Create From SFTP")
+            string projecttype = ProjectTypeComboBox.GetItemText(ProjectTypeComboBox.SelectedItem);         
+            if (projecttype == "Create Blank")
             {
                 ProjectNameLabel.Visible = true;
                 ProjectNameTB.Visible = true;
@@ -203,39 +203,12 @@ namespace ProjectsPlugin
                 SelectProjectFolderlabel.Text = "Select Project Folder";
                 ProjectFolderTB.Visible = true;
                 ProjectFolderTB.ReadOnly = true;
-                ProjectFolderTB.Text = "";
-                ProjectFolderTB.Size = new Size(424, 23);
-                SelectProjectFolderbutton.Visible = true;
-
-                ProfileFolderNamelabel.Visible = false;
-                ProjectProfileTB.Visible = false;
-                selectProfilefolderNamebutton.Visible = false;
-
-                MissionFoldertoUselabel.Visible = false;
-                ProjectMissionFolderTB.Visible = false;
-                ProjectMissionFolderTB.Text = "";
-                ProjectMissionFolderTB.ReadOnly = false;
-                MissionFoldertoUsebutton.Visible = false;
-
-                CreateProjectbutton.Location = new Point(615, 119);
-            }
-            else if (projecttype == "Create Blank")
-            {
-                ProjectNameLabel.Visible = true;
-                ProjectNameTB.Visible = true;
-
-                SelectProjectFolderlabel.Visible = true;
-                SelectProjectFolderlabel.Text = "Select Project Folder";
-                ProjectFolderTB.Visible = true;
-                ProjectFolderTB.ReadOnly = true;
-                ProjectFolderTB.Size = new Size(424, 23);
                 ProjectFolderTB.Text = "";
                 SelectProjectFolderbutton.Visible = true;
 
                 ProfileFolderNamelabel.Visible = true;
                 ProfileFolderNamelabel.Text = "Profile Folder Name";
                 ProjectProfileTB.Visible = true;
-                ProjectProfileTB.Size = new Size(452, 23);
                 ProjectProfileTB.Text = "Profiles";
                 ProjectProfileTB.ReadOnly = false;
                 selectProfilefolderNamebutton.Visible = false;
@@ -243,12 +216,9 @@ namespace ProjectsPlugin
                 MissionFoldertoUselabel.Visible = true;
                 MissionFoldertoUselabel.Text = "Mission Folder to use";
                 ProjectMissionFolderTB.Visible = true;
-                ProjectMissionFolderTB.Size = new Size(452, 23);
                 ProjectMissionFolderTB.Text = "dayzOffline.chernarusplus";
                 ProjectMissionFolderTB.ReadOnly = false;
                 MissionFoldertoUsebutton.Visible = false;
-
-                CreateProjectbutton.Location = new Point(615, 167);
             }
             else if (projecttype == "Create Project to Existing Project Files")
             {
@@ -260,13 +230,11 @@ namespace ProjectsPlugin
                 ProjectFolderTB.Visible = true;
                 ProjectFolderTB.ReadOnly = true;
                 ProjectFolderTB.Text = "Will Be Auto populated....";
-                ProjectFolderTB.Size = new Size(452, 23);
                 SelectProjectFolderbutton.Visible = false;
 
                 ProfileFolderNamelabel.Visible = true;
                 ProfileFolderNamelabel.Text = "Profile Path";
                 ProjectProfileTB.Visible = true;
-                ProjectProfileTB.Size = new Size(424, 23);
                 ProjectProfileTB.Text = " <Full Path to Profiles Required> Select using the button to my right";
                 ProjectProfileTB.ReadOnly = true;
                 selectProfilefolderNamebutton.Visible = true;
@@ -275,11 +243,9 @@ namespace ProjectsPlugin
                 MissionFoldertoUselabel.Text = "Mission Path";
                 ProjectMissionFolderTB.Visible = true;
                 ProjectMissionFolderTB.Text = " <Full Path to Missions folder Required> Select using the button to my right";
-                ProjectMissionFolderTB.Size = new Size(424, 23);
                 ProjectMissionFolderTB.ReadOnly = true;
                 MissionFoldertoUsebutton.Visible = true;
 
-                CreateProjectbutton.Location = new Point(615, 167);
             }
         }
         private void CreateProjectbutton_Click(object sender, EventArgs e)

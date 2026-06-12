@@ -83,6 +83,7 @@ namespace EconomyPlugin
             addGetXYZToolStripMenuItem = new ToolStripMenuItem();
             removeWeaponAttchmentDumpToolStripMenuItem = new ToolStripMenuItem();
             removeGetXYZToolStripMenuItem = new ToolStripMenuItem();
+            addFromDumpAttachToolStripMenuItem = new ToolStripMenuItem();
             SpawnGearPresetCM = new ContextMenuStrip(components);
             addNewSpawnGEarPresetFileToolStripMenuItem = new ToolStripMenuItem();
             addNewAttachmentSlotItemSetToolStripMenuItem = new ToolStripMenuItem();
@@ -125,7 +126,6 @@ namespace EconomyPlugin
             removeEnviromentTerritoryToolStripMenuItem = new ToolStripMenuItem();
             addNewUsableFileToolStripMenuItem = new ToolStripMenuItem();
             removeUsableFileToolStripMenuItem1 = new ToolStripMenuItem();
-            addFromDumpAttachToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -262,6 +262,7 @@ namespace EconomyPlugin
             // button1
             // 
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
+            button1.BackgroundImageLayout = ImageLayout.Stretch;
             button1.FlatStyle = FlatStyle.Flat;
             button1.Location = new Point(58, 3);
             button1.Name = "button1";
@@ -502,7 +503,7 @@ namespace EconomyPlugin
             SpawnableTypesCM.Items.AddRange(new ToolStripItem[] { addNewSpawnableTypesFileToolStripMenuItem, addNewSpawnableTypeToolStripMenuItem, addNewHoarderToolStripMenuItem, addNewTagToolStripMenuItem, addNewDamageToolStripMenuItem, addNewItemToolStripMenuItem1, addNewCargoToolStripMenuItem1, addNewAttachmentToolStripMenuItem, removeSelectedToolStripMenuItem1, openExternalToolStripMenuItem, addWeaponAttachmentDumpToolStripMenuItem, addGetXYZToolStripMenuItem, removeWeaponAttchmentDumpToolStripMenuItem, removeGetXYZToolStripMenuItem, addFromDumpAttachToolStripMenuItem });
             SpawnableTypesCM.Name = "TypesCM";
             SpawnableTypesCM.ShowImageMargin = false;
-            SpawnableTypesCM.Size = new Size(233, 356);
+            SpawnableTypesCM.Size = new Size(233, 334);
             // 
             // addNewSpawnableTypesFileToolStripMenuItem
             // 
@@ -615,6 +616,14 @@ namespace EconomyPlugin
             removeGetXYZToolStripMenuItem.Size = new Size(232, 22);
             removeGetXYZToolStripMenuItem.Text = "Remove GetXYZ";
             removeGetXYZToolStripMenuItem.Click += removeGetXYZToolStripMenuItem_Click;
+            // 
+            // addFromDumpAttachToolStripMenuItem
+            // 
+            addFromDumpAttachToolStripMenuItem.ForeColor = SystemColors.Control;
+            addFromDumpAttachToolStripMenuItem.Name = "addFromDumpAttachToolStripMenuItem";
+            addFromDumpAttachToolStripMenuItem.Size = new Size(232, 22);
+            addFromDumpAttachToolStripMenuItem.Text = "Add From Dump Attach";
+            addFromDumpAttachToolStripMenuItem.Click += addFromDumpAttachToolStripMenuItem_Click;
             // 
             // SpawnGearPresetCM
             // 
@@ -951,14 +960,6 @@ namespace EconomyPlugin
             removeUsableFileToolStripMenuItem1.Size = new Size(221, 22);
             removeUsableFileToolStripMenuItem1.Text = "Remove Usable File";
             removeUsableFileToolStripMenuItem1.Click += removeUsableFileToolStripMenuItem1_Click;
-            // 
-            // addFromDumpAttachToolStripMenuItem
-            // 
-            addFromDumpAttachToolStripMenuItem.ForeColor = SystemColors.Control;
-            addFromDumpAttachToolStripMenuItem.Name = "addFromDumpAttachToolStripMenuItem";
-            addFromDumpAttachToolStripMenuItem.Size = new Size(232, 22);
-            addFromDumpAttachToolStripMenuItem.Text = "Add From Dump Attach";
-            addFromDumpAttachToolStripMenuItem.Click += addFromDumpAttachToolStripMenuItem_Click;
             // 
             // EconomyForm
             // 

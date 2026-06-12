@@ -216,7 +216,7 @@
             ProjectMissionFolderTB.ForeColor = SystemColors.Control;
             ProjectMissionFolderTB.Location = new Point(334, 138);
             ProjectMissionFolderTB.Name = "ProjectMissionFolderTB";
-            ProjectMissionFolderTB.Size = new Size(452, 23);
+            ProjectMissionFolderTB.Size = new Size(424, 23);
             ProjectMissionFolderTB.TabIndex = 9;
             // 
             // selectProfilefolderNamebutton
@@ -248,7 +248,7 @@
             ProjectProfileTB.ForeColor = SystemColors.Control;
             ProjectProfileTB.Location = new Point(334, 109);
             ProjectProfileTB.Name = "ProjectProfileTB";
-            ProjectProfileTB.Size = new Size(452, 23);
+            ProjectProfileTB.Size = new Size(424, 23);
             ProjectProfileTB.TabIndex = 7;
             // 
             // SelectProjectFolderbutton
@@ -323,7 +323,7 @@
             ProjectNameTB.ForeColor = SystemColors.Control;
             ProjectNameTB.Location = new Point(334, 51);
             ProjectNameTB.Name = "ProjectNameTB";
-            ProjectNameTB.Size = new Size(452, 23);
+            ProjectNameTB.Size = new Size(424, 23);
             ProjectNameTB.TabIndex = 4;
             // 
             // listBoxProjects
