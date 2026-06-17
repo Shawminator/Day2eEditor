@@ -328,7 +328,15 @@ namespace EconomyPlugin
                 [typeof(prototypeGroup)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected),
                 [typeof(prototypeGroupContainer)] = (node, selected) =>
-                   ShowHandler<IUIHandler>(new prototypeGroupContainerControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroupContainer, selected)
+                   ShowHandler<IUIHandler>(new prototypeGroupContainerControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroupContainer, selected),
+                [typeof(EnfusionScriptfile)] = (node, selected) =>
+                {
+                    EnfusionScriptfile EnfusionScriptfile = node.Tag as EnfusionScriptfile;
+                    if(EnfusionScriptfile.FileName == "XYZMapper.c")
+                    {
+                        ShowHandler<IUIHandler>(new EnfusionScriptfileXYZMapper(), typeof(scriptfilesConfig), EnfusionScriptfile, selected);
+                    }
+                }
 
 
 

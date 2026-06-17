@@ -506,13 +506,8 @@ namespace ProjectsPlugin
             p.MapSize = (int)EditMapSizeNUD.Value;
             p.ServerSettings = new ProjectServerSettings()
             {
-                Protocol = (TransferProtocol)ProtocolCB.SelectedValue,
-                Host = HostTB.Text,
-                Port = (int)PortNUD.Value,
-                Username = UsernameTB.Text,
-                EncryptedPassword = Helper.EncryptPassword(PasswordTB.Text),
-                RootPath = ServerRootTN.Text,
-                PassiveMode = true
+                Protocol = (TransferProtocol)ProtocolCB.SelectedValue == null ? TransferProtocol.Ftp : (TransferProtocol)ProtocolCB.SelectedValue,
+
             };
             _ProjectManager.Save();
             listBoxProjects.Invalidate();
