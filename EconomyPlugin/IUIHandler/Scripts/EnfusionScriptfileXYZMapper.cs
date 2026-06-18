@@ -68,10 +68,11 @@ namespace EconomyPlugin
             return Regex.Replace(
                 text,
                 $@"({variableName}\s*=\s*)([0-9]+(?:\.[0-9]+)?)",
-                $"$1{newValue}",
+                match => match.Groups[1].Value + newValue,
                 RegexOptions.IgnoreCase
             );
         }
+
 
         private void UpdateTreeNodeText()
         {

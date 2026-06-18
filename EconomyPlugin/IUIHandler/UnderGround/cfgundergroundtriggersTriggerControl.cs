@@ -44,7 +44,7 @@ namespace EconomyPlugin
             CFGUTriggerEyeAccommodationNUD.Value = (decimal)_data.EyeAccommodation;
             if (_data.InterpolationSpeed != null)
             {
-                UseInterpolationSpeedCB.Checked =  CFGUTriggerInterpolationSpeedNUD.Visible = true;
+                UseInterpolationSpeedCB.Checked = CFGUTriggerInterpolationSpeedNUD.Visible = true;
                 CFGUTriggerInterpolationSpeedNUD.Value = (decimal)_data.InterpolationSpeed;
             }
             else
@@ -53,7 +53,7 @@ namespace EconomyPlugin
             }
             if (_data.UseLinePointFade != null)
             {
-                UseUseLinePointFadeCB.Checked =  UseLInePointFadeCB.Visible = true;
+                UseUseLinePointFadeCB.Checked = UseLInePointFadeCB.Visible = true;
                 UseLInePointFadeCB.Checked = _data.UseLinePointFade == 1 ? true : false;
             }
             else
@@ -62,14 +62,14 @@ namespace EconomyPlugin
             }
             if (_data.AmbientSoundType != null)
             {
-                UseAmbientSoundTypeCB.Checked =  AmbientSoundTypeTB.Visible = true;
+                UseAmbientSoundTypeCB.Checked = AmbientSoundTypeTB.Visible = true;
                 AmbientSoundTypeTB.Text = _data.AmbientSoundType;
             }
             else
             {
                 AmbientSoundTypeTB.Visible = false;
             }
-            
+
             _suppressEvents = false;
         }
         private void UpdateTreeNodeText()
@@ -123,6 +123,42 @@ namespace EconomyPlugin
                 AmbientSoundTypeTB.Visible = false;
                 _data.AmbientSoundType = null;
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (checkBox1.Checked)
+            {
+                AmbientSoundSetTB.Visible = true;
+                _data.AmbientSoundSet = "Change Me";
+                AmbientSoundSetTB.Text = _data.AmbientSoundType;
+            }
+            else
+            {
+                AmbientSoundSetTB.Visible = false;
+                _data.AmbientSoundType = null;
+            }
+        }
+
+        private void AmbientSoundSetTB_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AmbientSoundTypeTB_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CFGUTriggerInterpolationSpeedNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CFGUTriggerPositionXNUD_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

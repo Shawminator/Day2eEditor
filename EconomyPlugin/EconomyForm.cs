@@ -1,6 +1,7 @@
 using Core;
 using Day2eEditor;
 using System;
+using System.CodeDom;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -335,6 +336,10 @@ namespace EconomyPlugin
                     if(EnfusionScriptfile.FileName == "XYZMapper.c")
                     {
                         ShowHandler<IUIHandler>(new EnfusionScriptfileXYZMapper(), typeof(scriptfilesConfig), EnfusionScriptfile, selected);
+                    }
+                    else
+                    {
+                        ShowHandler<IUIHandler>(null, null, null, selected);
                     }
                 }
 
@@ -823,6 +828,12 @@ namespace EconomyPlugin
                         SpawnableTypesCM.Items.Add(removeGetXYZToolStripMenuItem);
 
                     SpawnableTypesCM.Show(Cursor.Position);
+                },
+                [typeof(ObjectSpawnerArrFile)] = node =>
+                {
+                    MapGroupPosCM.Items.Clear();
+                    MapGroupPosCM.Items.Add(removeSelectedObjectSpawnerArrToolStripMenuItem);
+                    MapGroupPosCM.Show(Cursor.Position);
                 },
             };
 
@@ -1340,7 +1351,19 @@ namespace EconomyPlugin
             foreach (string objectspawnerarrfile in ganmeplay.Data.WorldsData.objectSpawnersArr)
             {
                 ObjectSpawnerArrFile ObjectSpawnerArr = ganmeplay.GetObjectSpawnerFiles(objectspawnerarrfile);
-                objectspawnerarrfilenodes.Nodes.Add(new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName)) { Tag = ObjectSpawnerArr });
+
+                TreeNode OBjectSPawnerarrNode = new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName))
+                { 
+                    Tag = ObjectSpawnerArr 
+                };
+                foreach(SpawnObjects spawno in ObjectSpawnerArr.Data.Objects)
+                {
+                    OBjectSPawnerarrNode.Nodes.Add(new TreeNode(spawno.name)
+                    {
+                        Tag = spawno
+                    });
+                }
+                objectspawnerarrfilenodes.Nodes.Add(OBjectSPawnerarrNode);
             }
             WorldsDataaNodes.Nodes.Add(playerRestrictedAreaFilesNodes);
             WorldsDataaNodes.Nodes.Add(objectspawnerarrfilenodes);
@@ -5848,9 +5871,7 @@ namespace EconomyPlugin
         {
             ObjectSpawnerArrFile ObjectSpawnerArr = currentTreeNode.FindParentOfType<ObjectSpawnerArrFile>();
             _economyManager.CFGGameplayConfig.RemoveObjectSpawnerArrFile(ObjectSpawnerArr);
-            RemoveTreeNodeAndEmptyParents(currentTreeNode);
-            ObjectSpawnerArr.IsDirty = true;
-            ObjectSpawnerArr.ToDelete = true;
+            currentTreeNode.Remove();
         }
 
         /// <summary>

@@ -179,6 +179,7 @@ namespace Day2eEditor
         public decimal EyeAccommodation { get; set; }
         public int? UseLinePointFade { get; set; }
         public string? AmbientSoundType { get; set; }
+        public string? AmbientSoundSet { get; set; }
         public BindingList<Breadcrumb> Breadcrumbs { get; set; } = new();
         public decimal? InterpolationSpeed { get; set; }
 
@@ -223,6 +224,7 @@ namespace Day2eEditor
                 EyeAccommodation == other.EyeAccommodation &&
                 UseLinePointFade == other.UseLinePointFade &&
                 string.Equals(AmbientSoundType, other.AmbientSoundType, StringComparison.Ordinal) &&
+                string.Equals(AmbientSoundSet, other.AmbientSoundSet, StringComparison.Ordinal) &&
                 BreadcrumbsEqual(Breadcrumbs, other.Breadcrumbs) &&
                 InterpolationSpeed == other.InterpolationSpeed;
         }
@@ -242,6 +244,7 @@ namespace Day2eEditor
                 EyeAccommodation = EyeAccommodation,
                 UseLinePointFade = UseLinePointFade,
                 AmbientSoundType = AmbientSoundType,
+                AmbientSoundSet = AmbientSoundSet,
                 Breadcrumbs = new BindingList<Breadcrumb>(Breadcrumbs.Select(x => x.Clone()).ToList()),
                 InterpolationSpeed = InterpolationSpeed
             };
