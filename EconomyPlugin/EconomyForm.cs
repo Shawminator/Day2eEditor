@@ -1,18 +1,11 @@
 using Core;
 using Day2eEditor;
-using System;
-using System.CodeDom;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
-using System.Windows.Forms;
-using System.Xml.Linq;
+using System.Text.RegularExpressions;
+
 
 namespace EconomyPlugin
 {
@@ -24,6 +17,7 @@ namespace EconomyPlugin
         private readonly ProjectManager _projectManager;
         private IPluginForm _plugin;
         private TreeNode? currentTreeNode;
+        public MapData MapData { get; private set; }
 
         #region Ditionarys
         private Dictionary<Type, Action<TreeNode, List<TreeNode>>> _typeHandlers;
@@ -980,7 +974,7 @@ namespace EconomyPlugin
             }
             Image mapImage = Image.FromFile(imagePath);
             _mapControl.LoadMap(mapImage, _projectManager.CurrentProject.MapSize);
-
+            MapData = new MapData(Path.Combine(appDirectory, "MapAddons", AppServices.GetRequired<ProjectManager>().CurrentProject.MapPath + ".xyz"), AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize);
             LoadTreeview();
         }
         private void SaveButton_Click(object sender, EventArgs e)
@@ -6369,10 +6363,24 @@ namespace EconomyPlugin
             EnfusionScriptfile newscriptfile = _economyManager.scriptfilesConfig.addnewScript(Path.Combine(_economyManager._paths["ScriptFilesConfig"], "XYZMapper.c"), EconomyManager.GetXYZScript);
 
 
+            newscriptfile.Data = newscriptfile.Data.Replace("<MAP_X>", _projectManager.CurrentProject.MapSize.ToString());
+            newscriptfile.Data = newscriptfile.Data.Replace("<MAP_Z>", _projectManager.CurrentProject.MapSize.ToString());
+            float Resolution = MapData.getCellSize;
+            newscriptfile.Data = newscriptfile.Data.Replace("<RESOLUTION>", Resolution.ToString());
+
             currentTreeNode.Parent.Nodes.Add(new TreeNode(newscriptfile.FileName)
             {
                 Tag = newscriptfile
             });
+        }
+        static string SetValue(string text, string variableName, float newValue)
+        {
+            return Regex.Replace(
+                text,
+                $@"({variableName}\s*=\s*)([0-9]+(?:\.[0-9]+)?)",
+                match => match.Groups[1].Value + newValue,
+                RegexOptions.IgnoreCase
+            );
         }
         private void removeWeaponAttchmentDumpToolStripMenuItem_Click(object sender, EventArgs e)
         {

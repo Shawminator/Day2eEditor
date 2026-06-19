@@ -13,6 +13,10 @@ namespace Day2eEditor
     public class MapData
     {
         private long pointCount;
+        public float getCellSize
+        {
+            get { return cellsize; }
+        }
         private float cellsize;
         private int cellcount;
         public bool FileExists { get; set; }

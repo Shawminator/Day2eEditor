@@ -956,9 +956,9 @@ namespace Day2eEditor
         public const string GetXYZScript = @"
 void GetXYZMap()
 {
-    const float MAP_X = 20480;
-    const float MAP_Z = 20480;
-    const float RESOLUTION = 7.5;
+    const float MAP_X = <MAP_X>;
+    const float MAP_Z = <MAP_Z>;
+    const float RESOLUTION = <RESOLUTION>;
 
     DeleteFile(""$profile:map_output.txt"");
     FileHandle fh = OpenFile(""$profile:map_output.txt"", FileMode.WRITE);
