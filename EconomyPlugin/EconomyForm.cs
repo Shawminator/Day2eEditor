@@ -2122,31 +2122,51 @@ namespace EconomyPlugin
             return eventRoot;
         }
         //creating ubergroundnodes
+
         private TreeNode CreatecfgundergroundtriggersConfigUserConfigNodes(cfgundergroundtriggersConfig config)
         {
             TreeNode rootNode = new TreeNode(config.FileName)
             {
                 Tag = config
             };
-            foreach (Trigger t in _economyManager.cfgundergroundtriggersConfig.Data.Triggers)
+
+            foreach (Trigger t in config.Data.Triggers)
             {
-                string triggeryype = t.gettriggertype();
-                TreeNode triggernode = new TreeNode($"{triggeryype}")
+                EUndergroundTriggerType triggerType = t.gettriggertype();
+
+                string label =
+                    $"{triggerType} " +
+                    $"{(string.IsNullOrWhiteSpace(t.Comment) ? "" : $"[{t.Comment}] ")}" +
+                    $"@ ({t.Position.GetString()})";
+
+                TreeNode triggerNode = new TreeNode(label)
                 {
                     Tag = t
                 };
+
                 for (int i = 0; i < t.Breadcrumbs.Count; i++)
                 {
-                    TreeNode bredcrumb = new TreeNode($"BreadCrumb:{i}")
+                    var bc = t.Breadcrumbs[i];
+
+                    string bcLabel =
+                        $"#{i} {bc.getbreadcrumbtype()} " +
+                        $"Eye:{bc.EyeAccommodation} " +
+                        $"@ ({bc.Position.GetString()})";
+
+                    TreeNode breadcrumbNode = new TreeNode(bcLabel)
                     {
-                        Tag = t.Breadcrumbs[i]
+                        Tag = bc
                     };
-                    triggernode.Nodes.Add(bredcrumb);
+
+                    triggerNode.Nodes.Add(breadcrumbNode);
                 }
-                rootNode.Nodes.Add(triggernode);
+
+                rootNode.Nodes.Add(triggerNode);
             }
+
             return rootNode;
         }
+
         //creating trigger effect nodes
         private TreeNode CreatecfgeffectareaConfigConfigNodes(CfgeffectareaConfig config)
         {

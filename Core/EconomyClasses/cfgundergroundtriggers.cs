@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Day2eEditor
 {
@@ -28,7 +29,8 @@ namespace Day2eEditor
                         HandleLoadError(ex);
                     },
                     configName: "cfgundergroundtriggers",
-                    useBoolConvertor: false
+                    useBoolConvertor: false,
+                    useVecConvertor: true
                 );
 
                 var issues = ValidateData();
@@ -58,7 +60,7 @@ namespace Day2eEditor
             if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
                 ClearDirty();
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
                 ClonedData = CloneData(Data);
                 return new[] { _path };
             }
@@ -98,21 +100,21 @@ namespace Day2eEditor
 
                 trigger.Breadcrumbs ??= new BindingList<Breadcrumb>();
 
-                if (trigger.Position == null || trigger.Position.Length != 3)
+                if (trigger.Position == null)
                 {
-                    trigger.Position = new decimal[] { 0m, 0m, 0m };
+                    trigger.Position = new Vec3( 0m, 0m, 0m );
                     issues.Add($"Triggers[{i}] had missing/invalid Position and was reset to [0,0,0].");
                 }
 
-                if (trigger.Orientation == null || trigger.Orientation.Length != 3)
+                if (trigger.Orientation == null)
                 {
-                    trigger.Orientation = new decimal[] { 0m, 0m, 0m };
+                    trigger.Orientation = new Vec3(0m, 0m, 0m);
                     issues.Add($"Triggers[{i}] had missing/invalid Orientation and was reset to [0,0,0].");
                 }
 
-                if (trigger.Size == null || trigger.Size.Length != 3)
+                if (trigger.Size == null)
                 {
-                    trigger.Size = new decimal[] { 0m, 0m, 0m };
+                    trigger.Size = new Vec3(0m, 0m, 0m);
                     issues.Add($"Triggers[{i}] had missing/invalid Size and was reset to [0,0,0].");
                 }
 
@@ -126,12 +128,7 @@ namespace Day2eEditor
                         continue;
                     }
 
-                    if (breadcrumb.Position == null || breadcrumb.Position.Length != 3)
-                    {
-                        trigger.Breadcrumbs.RemoveAt(j);
-                        issues.Add($"Triggers[{i}].Breadcrumbs[{j}] had missing/invalid Position and was removed.");
-                    }
-                }
+               }
             }
 
             return issues;
@@ -173,39 +170,40 @@ namespace Day2eEditor
 
     public class Trigger : IEquatable<Trigger>, IDeepCloneable<Trigger>
     {
-        public decimal[]? Position { get; set; }
-        public decimal[]? Orientation { get; set; }
-        public decimal[]? Size { get; set; }
+        public bool? CustommSpawn { get; set; }
+        public BindingList<int>? ParentNetworkId { get; set; }
+        public string? Comment { get; set; }
+        public Vec3? Position { get; set; }
+        public Vec3? Orientation { get; set; }
+        public Vec3? Size { get; set; }
         public decimal EyeAccommodation { get; set; }
+        public decimal? InterpolationSpeed { get; set; }
         public int? UseLinePointFade { get; set; }
         public string? AmbientSoundType { get; set; }
         public string? AmbientSoundSet { get; set; }
         public BindingList<Breadcrumb> Breadcrumbs { get; set; } = new();
-        public decimal? InterpolationSpeed { get; set; }
 
-        public string gettriggertype()
+
+        public EUndergroundTriggerType gettriggertype()
         {
-            if (EyeAccommodation == 1 && Breadcrumbs.Count == 0)
+            if (Breadcrumbs.Count() > 0) //TODO: simpler check
             {
-                if (InterpolationSpeed == null)
-                    InterpolationSpeed = 1;
-                return "Outer";
-            }
-            else if (EyeAccommodation == 0 && Breadcrumbs.Count == 0)
-            {
-                if (InterpolationSpeed == null)
-                    InterpolationSpeed = 1;
-                return "Inner";
-            }
-            else if (Breadcrumbs.Count == 0)
-            {
-                InterpolationSpeed = 1;
-                return "Transition";
+                if (Breadcrumbs.Count() > 32)
+                {
+                    Console.WriteLine($"[ERROR]max 'Breadcrumb' count is 32, found:{Breadcrumbs.Count()}");
+                }
+                return EUndergroundTriggerType.TRANSITIONING;
             }
             else
             {
-                InterpolationSpeed = null;
-                return "Transition";
+                if (EyeAccommodation == 1.0m)
+                {
+                    return EUndergroundTriggerType.OUTER;
+                }
+                else
+                {
+                    return EUndergroundTriggerType.INNER;
+                }
             }
         }
 
@@ -218,14 +216,17 @@ namespace Day2eEditor
                 return true;
 
             return
-                ((Position?.SequenceEqual(other.Position ?? Array.Empty<decimal>()) ?? other.Position == null)) &&
-                ((Orientation?.SequenceEqual(other.Orientation ?? Array.Empty<decimal>()) ?? other.Orientation == null)) &&
-                ((Size?.SequenceEqual(other.Size ?? Array.Empty<decimal>()) ?? other.Size == null)) &&
+                CustommSpawn == other.CustommSpawn &&
+                Helper.ListEquals(ParentNetworkId, other.ParentNetworkId) &&
+                Comment == other.Comment &&
+                Equals(Position, other.Position) &&
+                Equals(Orientation, other.Orientation) &&
+                Equals(Size, other.Size) &&
                 EyeAccommodation == other.EyeAccommodation &&
                 UseLinePointFade == other.UseLinePointFade &&
                 string.Equals(AmbientSoundType, other.AmbientSoundType, StringComparison.Ordinal) &&
                 string.Equals(AmbientSoundSet, other.AmbientSoundSet, StringComparison.Ordinal) &&
-                BreadcrumbsEqual(Breadcrumbs, other.Breadcrumbs) &&
+                Helper.ListEquals(Breadcrumbs, other.Breadcrumbs) &&
                 InterpolationSpeed == other.InterpolationSpeed;
         }
 
@@ -238,44 +239,30 @@ namespace Day2eEditor
         {
             return new Trigger
             {
-                Position = Position != null ? (decimal[])Position.Clone() : null,
-                Orientation = Orientation != null ? (decimal[])Orientation.Clone() : null,
-                Size = Size != null ? (decimal[])Size.Clone() : null,
+                CustommSpawn = this.CustommSpawn,
+                ParentNetworkId = this.ParentNetworkId,
+                Comment = this.Comment,
+                Position = this.Position.Clone(),
+                Orientation = this.Orientation.Clone(),
+                Size = this.Size.Clone(),
                 EyeAccommodation = EyeAccommodation,
+                InterpolationSpeed = InterpolationSpeed,
                 UseLinePointFade = UseLinePointFade,
                 AmbientSoundType = AmbientSoundType,
                 AmbientSoundSet = AmbientSoundSet,
-                Breadcrumbs = new BindingList<Breadcrumb>(Breadcrumbs.Select(x => x.Clone()).ToList()),
-                InterpolationSpeed = InterpolationSpeed
+                Breadcrumbs = new BindingList<Breadcrumb>(Breadcrumbs.Select(x => x.Clone()).ToList())
             };
-        }
-
-        private static bool BreadcrumbsEqual(IList<Breadcrumb>? a, IList<Breadcrumb>? b)
-        {
-            if (ReferenceEquals(a, b))
-                return true;
-            if (a is null || b is null)
-                return false;
-            if (a.Count != b.Count)
-                return false;
-
-            for (int i = 0; i < a.Count; i++)
-            {
-                if (!Equals(a[i], b[i]))
-                    return false;
-            }
-
-            return true;
         }
     }
 
     public class Breadcrumb : IEquatable<Breadcrumb>, IDeepCloneable<Breadcrumb>
     {
-        public decimal[]? Position { get; set; }
+        public Vec3? Position { get; set; }
         public decimal EyeAccommodation { get; set; }
         public int? UseRaycast { get; set; }
         public decimal? Radius { get; set; }
         public int? LightLerp { get; set; }
+        public BreadcrumbExternalValueController? ExternalValueController { get; set; }
 
         public string getbreadcrumbtype()
         {
@@ -299,11 +286,12 @@ namespace Day2eEditor
                 return true;
 
             return
-                ((Position?.SequenceEqual(other.Position ?? Array.Empty<decimal>()) ?? other.Position == null)) &&
+                Equals(Position, other.Position) &&
                 EyeAccommodation == other.EyeAccommodation &&
                 UseRaycast == other.UseRaycast &&
                 Radius == other.Radius &&
-                LightLerp == other.LightLerp;
+                LightLerp == other.LightLerp &&
+                ExternalValueController == other.ExternalValueController;
         }
 
         public override bool Equals(object? obj)
@@ -315,12 +303,56 @@ namespace Day2eEditor
         {
             return new Breadcrumb
             {
-                Position = Position != null ? (decimal[])Position.Clone() : null,
+                Position = Position.Clone(),
                 EyeAccommodation = EyeAccommodation,
                 UseRaycast = UseRaycast,
                 Radius = Radius,
-                LightLerp = LightLerp
+                LightLerp = LightLerp,
+                ExternalValueController = ExternalValueController?.Clone()
             };
         }
+    }
+    public class BreadcrumbExternalValueController : IEquatable<BreadcrumbExternalValueController>, IDeepCloneable<BreadcrumbExternalValueController>
+    {
+        public string Type { get; set; }
+        public BindingList<string> Params { get; set; }
+        public bool Equals(BreadcrumbExternalValueController? other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return
+                Equals(Params, other.Params) &&
+                Type == other.Type;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as BreadcrumbExternalValueController);
+        }
+
+        public BreadcrumbExternalValueController Clone()
+        {
+            return new BreadcrumbExternalValueController
+            {
+                Type = Type,
+                Params = new BindingList<string>(Params.ToList()),
+            };
+        }
+
+
+    }
+
+
+
+    public enum EUndergroundTriggerType
+    {
+        UNDEFINED,
+        TRANSITIONING,
+        OUTER,
+        INNER
     }
 }

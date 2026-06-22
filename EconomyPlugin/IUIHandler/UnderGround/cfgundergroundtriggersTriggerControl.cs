@@ -32,15 +32,15 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
-            CFGUTriggerPositionXNUD.Value = (decimal)_data.Position[0];
-            CFGUTriggerPositionYNUD.Value = (decimal)_data.Position[1];
-            CFGUTriggerPositionZNUD.Value = (decimal)_data.Position[2];
-            CFGUTriggerOrientationXNUD.Value = (decimal)_data.Orientation[0];
-            CFGUTriggerOrientationYNUD.Value = (decimal)_data.Orientation[1];
-            CFGUTriggerOrientationZNUD.Value = (decimal)_data.Orientation[2];
-            CFGUTriggerSizeXNUD.Value = (decimal)_data.Size[0];
-            CFGUTriggerSizeYNUD.Value = (decimal)_data.Size[1];
-            CFGUTriggerSizeZNUD.Value = (decimal)_data.Size[2];
+            CFGUTriggerPositionXNUD.Value = (decimal)_data.Position.X;
+            CFGUTriggerPositionYNUD.Value = (decimal)_data.Position.Y;
+            CFGUTriggerPositionZNUD.Value = (decimal)_data.Position.Z;
+            CFGUTriggerOrientationXNUD.Value = (decimal)_data.Orientation.X;
+            CFGUTriggerOrientationYNUD.Value = (decimal)_data.Orientation.Y;
+            CFGUTriggerOrientationZNUD.Value = (decimal)_data.Orientation.Z;
+            CFGUTriggerSizeXNUD.Value = (decimal)_data.Size.X;
+            CFGUTriggerSizeYNUD.Value = (decimal)_data.Size.Y;
+            CFGUTriggerSizeZNUD.Value = (decimal)_data.Size.Z;
             CFGUTriggerEyeAccommodationNUD.Value = (decimal)_data.EyeAccommodation;
             if (_data.InterpolationSpeed != null)
             {
@@ -49,7 +49,7 @@ namespace EconomyPlugin
             }
             else
             {
-                CFGUTriggerInterpolationSpeedNUD.Visible = false;
+                UseInterpolationSpeedCB.Checked = CFGUTriggerInterpolationSpeedNUD.Visible = false;
             }
             if (_data.UseLinePointFade != null)
             {
@@ -58,7 +58,7 @@ namespace EconomyPlugin
             }
             else
             {
-                UseLInePointFadeCB.Visible = false;
+                UseUseLinePointFadeCB.Checked = UseLInePointFadeCB.Visible = false;
             }
             if (_data.AmbientSoundType != null)
             {
@@ -69,6 +69,15 @@ namespace EconomyPlugin
             {
                 AmbientSoundTypeTB.Visible = false;
             }
+            if (_data.AmbientSoundSet != null)
+            {
+                checkBox1.Checked = AmbientSoundSetTB.Visible = true;
+                AmbientSoundSetTB.Text = _data.AmbientSoundSet;
+            }
+            else
+            {
+                checkBox1.Checked = AmbientSoundSetTB.Visible = false;
+            }
 
             _suppressEvents = false;
         }
@@ -78,6 +87,55 @@ namespace EconomyPlugin
             {
                 // TODO: Update _nodes.Last().Text based on _data
             }
+        }
+
+        private void CFGUTriggerPositionXNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+        private void CFGUTriggerPositionYNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+        private void CFGUTriggerPositionZNUD_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+        private void CFGUTriggerOrientationXNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Orientation.X = (float)CFGUTriggerOrientationXNUD.Value;
+
+        }
+        private void CFGUTriggerOrientationYNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Orientation.Y = (float)CFGUTriggerOrientationYNUD.Value;
+        }
+        private void CFGUTriggerOrientationZNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Orientation.Z = (float)CFGUTriggerOrientationZNUD.Value;
+        }
+        private void CFGUTriggerSizeXNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Size.X = (float)CFGUTriggerSizeXNUD.Value;
+        }
+        private void CFGUTriggerSizeYNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Size.Y = (float)CFGUTriggerSizeYNUD.Value;
+        }
+        private void CFGUTriggerSizeZNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Size.Z = (float)CFGUTriggerSizeZNUD.Value;
+        }
+        private void CFGUTriggerEyeAccommodationNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.EyeAccommodation = CFGUTriggerEyeAccommodationNUD.Value;
         }
         private void UseInterpolationSpeedCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -94,6 +152,11 @@ namespace EconomyPlugin
                 _data.InterpolationSpeed = null;
             }
         }
+        private void CFGUTriggerInterpolationSpeedNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.InterpolationSpeed = CFGUTriggerInterpolationSpeedNUD.Value;
+        }
         private void UseUseLinePointFadeCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -108,6 +171,11 @@ namespace EconomyPlugin
                 UseLInePointFadeCB.Visible = false;
                 _data.UseLinePointFade = null;
             }
+        }
+        private void UseLInePointFadeCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.UseLinePointFade = UseLInePointFadeCB.Checked == true ? 1 : 0;
         }
         private void UseAmbientSoundTypeCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -124,7 +192,11 @@ namespace EconomyPlugin
                 _data.AmbientSoundType = null;
             }
         }
-
+        private void AmbientSoundTypeTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.AmbientSoundType = AmbientSoundTypeTB.Text;
+        }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
@@ -140,23 +212,28 @@ namespace EconomyPlugin
                 _data.AmbientSoundType = null;
             }
         }
-
         private void AmbientSoundSetTB_TextChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            _data.AmbientSoundSet = AmbientSoundSetTB.Text;
         }
 
-        private void AmbientSoundTypeTB_TextChanged(object sender, EventArgs e)
+        private void UseCustopmSpawnCB_CheckedChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void CFGUTriggerInterpolationSpeedNUD_ValueChanged(object sender, EventArgs e)
+        private void CustomSpawnCB_CheckedChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void CFGUTriggerPositionXNUD_ValueChanged(object sender, EventArgs e)
+        private void UseCommentCB_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CommentTB_TextChanged(object sender, EventArgs e)
         {
 
         }

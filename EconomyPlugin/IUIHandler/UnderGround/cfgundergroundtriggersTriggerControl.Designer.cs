@@ -29,6 +29,12 @@
         private void InitializeComponent()
         {
             CFGUTriggerGB = new GroupBox();
+            CommentTB = new TextBox();
+            label5 = new Label();
+            UseCommentCB = new CheckBox();
+            CustomSpawnCB = new CheckBox();
+            label4 = new Label();
+            UseCustopmSpawnCB = new CheckBox();
             checkBox1 = new CheckBox();
             label3 = new Label();
             AmbientSoundSetTB = new TextBox();
@@ -71,6 +77,12 @@
             // 
             // CFGUTriggerGB
             // 
+            CFGUTriggerGB.Controls.Add(CommentTB);
+            CFGUTriggerGB.Controls.Add(label5);
+            CFGUTriggerGB.Controls.Add(UseCommentCB);
+            CFGUTriggerGB.Controls.Add(CustomSpawnCB);
+            CFGUTriggerGB.Controls.Add(label4);
+            CFGUTriggerGB.Controls.Add(UseCustopmSpawnCB);
             CFGUTriggerGB.Controls.Add(checkBox1);
             CFGUTriggerGB.Controls.Add(label3);
             CFGUTriggerGB.Controls.Add(AmbientSoundSetTB);
@@ -102,15 +114,77 @@
             CFGUTriggerGB.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerGB.Name = "CFGUTriggerGB";
             CFGUTriggerGB.Padding = new Padding(4, 3, 4, 3);
-            CFGUTriggerGB.Size = new Size(600, 291);
+            CFGUTriggerGB.Size = new Size(600, 456);
             CFGUTriggerGB.TabIndex = 223;
             CFGUTriggerGB.TabStop = false;
             CFGUTriggerGB.Text = "Trigger Info";
             // 
+            // CommentTB
+            // 
+            CommentTB.BackColor = Color.FromArgb(60, 63, 65);
+            CommentTB.ForeColor = SystemColors.Control;
+            CommentTB.Location = new Point(207, 51);
+            CommentTB.Name = "CommentTB";
+            CommentTB.Size = new Size(380, 23);
+            CommentTB.TabIndex = 222;
+            CommentTB.TextChanged += CommentTB_TextChanged;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.ForeColor = Color.FromArgb(220, 220, 220);
+            label5.Location = new Point(62, 54);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(61, 15);
+            label5.TabIndex = 221;
+            label5.Text = "Comment";
+            // 
+            // UseCommentCB
+            // 
+            UseCommentCB.AutoSize = true;
+            UseCommentCB.Location = new Point(14, 55);
+            UseCommentCB.Name = "UseCommentCB";
+            UseCommentCB.Size = new Size(15, 14);
+            UseCommentCB.TabIndex = 220;
+            UseCommentCB.UseVisualStyleBackColor = true;
+            UseCommentCB.CheckedChanged += UseCommentCB_CheckedChanged;
+            // 
+            // CustomSpawnCB
+            // 
+            CustomSpawnCB.AutoSize = true;
+            CustomSpawnCB.Location = new Point(207, 25);
+            CustomSpawnCB.Name = "CustomSpawnCB";
+            CustomSpawnCB.Size = new Size(15, 14);
+            CustomSpawnCB.TabIndex = 219;
+            CustomSpawnCB.UseVisualStyleBackColor = true;
+            CustomSpawnCB.CheckedChanged += CustomSpawnCB_CheckedChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.ForeColor = Color.FromArgb(220, 220, 220);
+            label4.Location = new Point(62, 24);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(87, 15);
+            label4.TabIndex = 218;
+            label4.Text = "Custom Spawn";
+            // 
+            // UseCustopmSpawnCB
+            // 
+            UseCustopmSpawnCB.AutoSize = true;
+            UseCustopmSpawnCB.Location = new Point(14, 25);
+            UseCustopmSpawnCB.Name = "UseCustopmSpawnCB";
+            UseCustopmSpawnCB.Size = new Size(15, 14);
+            UseCustopmSpawnCB.TabIndex = 217;
+            UseCustopmSpawnCB.UseVisualStyleBackColor = true;
+            UseCustopmSpawnCB.CheckedChanged += UseCustopmSpawnCB_CheckedChanged;
+            // 
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(32, 226);
+            checkBox1.Location = new Point(14, 287);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(15, 14);
             checkBox1.TabIndex = 216;
@@ -121,7 +195,7 @@
             // 
             label3.AutoSize = true;
             label3.ForeColor = Color.FromArgb(220, 220, 220);
-            label3.Location = new Point(83, 225);
+            label3.Location = new Point(63, 286);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.Size = new Size(109, 15);
@@ -132,7 +206,7 @@
             // 
             AmbientSoundSetTB.BackColor = Color.FromArgb(60, 63, 65);
             AmbientSoundSetTB.ForeColor = SystemColors.Control;
-            AmbientSoundSetTB.Location = new Point(210, 222);
+            AmbientSoundSetTB.Location = new Point(207, 283);
             AmbientSoundSetTB.Name = "AmbientSoundSetTB";
             AmbientSoundSetTB.Size = new Size(380, 23);
             AmbientSoundSetTB.TabIndex = 214;
@@ -141,7 +215,7 @@
             // UseAmbientSoundTypeCB
             // 
             UseAmbientSoundTypeCB.AutoSize = true;
-            UseAmbientSoundTypeCB.Location = new Point(32, 197);
+            UseAmbientSoundTypeCB.Location = new Point(14, 258);
             UseAmbientSoundTypeCB.Name = "UseAmbientSoundTypeCB";
             UseAmbientSoundTypeCB.Size = new Size(15, 14);
             UseAmbientSoundTypeCB.TabIndex = 213;
@@ -151,7 +225,7 @@
             // UseUseLinePointFadeCB
             // 
             UseUseLinePointFadeCB.AutoSize = true;
-            UseUseLinePointFadeCB.Location = new Point(32, 170);
+            UseUseLinePointFadeCB.Location = new Point(14, 231);
             UseUseLinePointFadeCB.Name = "UseUseLinePointFadeCB";
             UseUseLinePointFadeCB.Size = new Size(15, 14);
             UseUseLinePointFadeCB.TabIndex = 212;
@@ -161,7 +235,7 @@
             // UseInterpolationSpeedCB
             // 
             UseInterpolationSpeedCB.AutoSize = true;
-            UseInterpolationSpeedCB.Location = new Point(32, 142);
+            UseInterpolationSpeedCB.Location = new Point(14, 203);
             UseInterpolationSpeedCB.Name = "UseInterpolationSpeedCB";
             UseInterpolationSpeedCB.Size = new Size(15, 14);
             UseInterpolationSpeedCB.TabIndex = 211;
@@ -172,7 +246,7 @@
             // 
             label2.AutoSize = true;
             label2.ForeColor = Color.FromArgb(220, 220, 220);
-            label2.Location = new Point(83, 196);
+            label2.Location = new Point(63, 257);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(118, 15);
@@ -183,7 +257,7 @@
             // 
             label1.AutoSize = true;
             label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(83, 169);
+            label1.Location = new Point(63, 230);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(110, 15);
@@ -194,7 +268,7 @@
             // 
             AmbientSoundTypeTB.BackColor = Color.FromArgb(60, 63, 65);
             AmbientSoundTypeTB.ForeColor = SystemColors.Control;
-            AmbientSoundTypeTB.Location = new Point(210, 193);
+            AmbientSoundTypeTB.Location = new Point(207, 254);
             AmbientSoundTypeTB.Name = "AmbientSoundTypeTB";
             AmbientSoundTypeTB.Size = new Size(380, 23);
             AmbientSoundTypeTB.TabIndex = 208;
@@ -203,18 +277,19 @@
             // UseLInePointFadeCB
             // 
             UseLInePointFadeCB.AutoSize = true;
-            UseLInePointFadeCB.Location = new Point(210, 168);
+            UseLInePointFadeCB.Location = new Point(207, 229);
             UseLInePointFadeCB.Name = "UseLInePointFadeCB";
             UseLInePointFadeCB.Size = new Size(15, 14);
             UseLInePointFadeCB.TabIndex = 207;
             UseLInePointFadeCB.UseVisualStyleBackColor = true;
+            UseLInePointFadeCB.CheckedChanged += UseLInePointFadeCB_CheckedChanged;
             // 
             // CFGUTriggerInterpolationSpeedNUD
             // 
             CFGUTriggerInterpolationSpeedNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerInterpolationSpeedNUD.DecimalPlaces = 1;
             CFGUTriggerInterpolationSpeedNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerInterpolationSpeedNUD.Location = new Point(210, 139);
+            CFGUTriggerInterpolationSpeedNUD.Location = new Point(207, 200);
             CFGUTriggerInterpolationSpeedNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerInterpolationSpeedNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUTriggerInterpolationSpeedNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -228,7 +303,7 @@
             // 
             darkLabel47.AutoSize = true;
             darkLabel47.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel47.Location = new Point(82, 142);
+            darkLabel47.Location = new Point(62, 203);
             darkLabel47.Margin = new Padding(4, 0, 4, 0);
             darkLabel47.Name = "darkLabel47";
             darkLabel47.Size = new Size(110, 15);
@@ -240,7 +315,7 @@
             CFGUTriggerEyeAccommodationNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerEyeAccommodationNUD.DecimalPlaces = 1;
             CFGUTriggerEyeAccommodationNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerEyeAccommodationNUD.Location = new Point(210, 109);
+            CFGUTriggerEyeAccommodationNUD.Location = new Point(207, 170);
             CFGUTriggerEyeAccommodationNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerEyeAccommodationNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUTriggerEyeAccommodationNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -248,13 +323,14 @@
             CFGUTriggerEyeAccommodationNUD.Size = new Size(122, 23);
             CFGUTriggerEyeAccommodationNUD.TabIndex = 204;
             CFGUTriggerEyeAccommodationNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerEyeAccommodationNUD.ValueChanged += CFGUTriggerEyeAccommodationNUD_ValueChanged;
             // 
             // CFGUTriggerSizeZNUD
             // 
             CFGUTriggerSizeZNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerSizeZNUD.DecimalPlaces = 1;
             CFGUTriggerSizeZNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerSizeZNUD.Location = new Point(468, 82);
+            CFGUTriggerSizeZNUD.Location = new Point(465, 143);
             CFGUTriggerSizeZNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerSizeZNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUTriggerSizeZNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -262,13 +338,14 @@
             CFGUTriggerSizeZNUD.Size = new Size(122, 23);
             CFGUTriggerSizeZNUD.TabIndex = 202;
             CFGUTriggerSizeZNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerSizeZNUD.ValueChanged += CFGUTriggerSizeZNUD_ValueChanged;
             // 
             // CFGUTriggerSizeYNUD
             // 
             CFGUTriggerSizeYNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerSizeYNUD.DecimalPlaces = 1;
             CFGUTriggerSizeYNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerSizeYNUD.Location = new Point(339, 79);
+            CFGUTriggerSizeYNUD.Location = new Point(336, 140);
             CFGUTriggerSizeYNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerSizeYNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUTriggerSizeYNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -276,13 +353,14 @@
             CFGUTriggerSizeYNUD.Size = new Size(122, 23);
             CFGUTriggerSizeYNUD.TabIndex = 203;
             CFGUTriggerSizeYNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerSizeYNUD.ValueChanged += CFGUTriggerSizeYNUD_ValueChanged;
             // 
             // CFGUTriggerSizeXNUD
             // 
             CFGUTriggerSizeXNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerSizeXNUD.DecimalPlaces = 1;
             CFGUTriggerSizeXNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerSizeXNUD.Location = new Point(210, 79);
+            CFGUTriggerSizeXNUD.Location = new Point(207, 140);
             CFGUTriggerSizeXNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerSizeXNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUTriggerSizeXNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -290,13 +368,14 @@
             CFGUTriggerSizeXNUD.Size = new Size(122, 23);
             CFGUTriggerSizeXNUD.TabIndex = 201;
             CFGUTriggerSizeXNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerSizeXNUD.ValueChanged += CFGUTriggerSizeXNUD_ValueChanged;
             // 
             // CFGUTriggerPositionZNUD
             // 
             CFGUTriggerPositionZNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerPositionZNUD.DecimalPlaces = 4;
             CFGUTriggerPositionZNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerPositionZNUD.Location = new Point(468, 19);
+            CFGUTriggerPositionZNUD.Location = new Point(465, 80);
             CFGUTriggerPositionZNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerPositionZNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUTriggerPositionZNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -304,13 +383,14 @@
             CFGUTriggerPositionZNUD.Size = new Size(122, 23);
             CFGUTriggerPositionZNUD.TabIndex = 200;
             CFGUTriggerPositionZNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerPositionZNUD.ValueChanged += CFGUTriggerPositionZNUD_ValueChanged;
             // 
             // CFGUTriggerPositionYNUD
             // 
             CFGUTriggerPositionYNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerPositionYNUD.DecimalPlaces = 4;
             CFGUTriggerPositionYNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerPositionYNUD.Location = new Point(339, 19);
+            CFGUTriggerPositionYNUD.Location = new Point(336, 80);
             CFGUTriggerPositionYNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerPositionYNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUTriggerPositionYNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -318,13 +398,14 @@
             CFGUTriggerPositionYNUD.Size = new Size(122, 23);
             CFGUTriggerPositionYNUD.TabIndex = 199;
             CFGUTriggerPositionYNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerPositionYNUD.ValueChanged += CFGUTriggerPositionYNUD_ValueChanged;
             // 
             // CFGUTriggerOrientationZNUD
             // 
             CFGUTriggerOrientationZNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerOrientationZNUD.DecimalPlaces = 4;
             CFGUTriggerOrientationZNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerOrientationZNUD.Location = new Point(468, 52);
+            CFGUTriggerOrientationZNUD.Location = new Point(465, 113);
             CFGUTriggerOrientationZNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerOrientationZNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUTriggerOrientationZNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -332,12 +413,13 @@
             CFGUTriggerOrientationZNUD.Size = new Size(122, 23);
             CFGUTriggerOrientationZNUD.TabIndex = 195;
             CFGUTriggerOrientationZNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerOrientationZNUD.ValueChanged += CFGUTriggerOrientationZNUD_ValueChanged;
             // 
             // darkLabel37
             // 
             darkLabel37.AutoSize = true;
             darkLabel37.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel37.Location = new Point(83, 84);
+            darkLabel37.Location = new Point(63, 145);
             darkLabel37.Margin = new Padding(4, 0, 4, 0);
             darkLabel37.Name = "darkLabel37";
             darkLabel37.Size = new Size(27, 15);
@@ -349,7 +431,7 @@
             CFGUTriggerOrientationYNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerOrientationYNUD.DecimalPlaces = 4;
             CFGUTriggerOrientationYNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerOrientationYNUD.Location = new Point(339, 49);
+            CFGUTriggerOrientationYNUD.Location = new Point(336, 110);
             CFGUTriggerOrientationYNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerOrientationYNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUTriggerOrientationYNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -357,12 +439,13 @@
             CFGUTriggerOrientationYNUD.Size = new Size(122, 23);
             CFGUTriggerOrientationYNUD.TabIndex = 197;
             CFGUTriggerOrientationYNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerOrientationYNUD.ValueChanged += CFGUTriggerOrientationYNUD_ValueChanged;
             // 
             // darkLabel38
             // 
             darkLabel38.AutoSize = true;
             darkLabel38.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel38.Location = new Point(82, 112);
+            darkLabel38.Location = new Point(62, 173);
             darkLabel38.Margin = new Padding(4, 0, 4, 0);
             darkLabel38.Name = "darkLabel38";
             darkLabel38.Size = new Size(118, 15);
@@ -374,7 +457,7 @@
             CFGUTriggerOrientationXNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerOrientationXNUD.DecimalPlaces = 4;
             CFGUTriggerOrientationXNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerOrientationXNUD.Location = new Point(210, 49);
+            CFGUTriggerOrientationXNUD.Location = new Point(207, 110);
             CFGUTriggerOrientationXNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerOrientationXNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUTriggerOrientationXNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -382,12 +465,13 @@
             CFGUTriggerOrientationXNUD.Size = new Size(122, 23);
             CFGUTriggerOrientationXNUD.TabIndex = 191;
             CFGUTriggerOrientationXNUD.TextAlign = HorizontalAlignment.Center;
+            CFGUTriggerOrientationXNUD.ValueChanged += CFGUTriggerOrientationXNUD_ValueChanged;
             // 
             // darkLabel39
             // 
             darkLabel39.AutoSize = true;
             darkLabel39.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel39.Location = new Point(82, 22);
+            darkLabel39.Location = new Point(62, 83);
             darkLabel39.Margin = new Padding(4, 0, 4, 0);
             darkLabel39.Name = "darkLabel39";
             darkLabel39.Size = new Size(50, 15);
@@ -399,7 +483,7 @@
             CFGUTriggerPositionXNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUTriggerPositionXNUD.DecimalPlaces = 4;
             CFGUTriggerPositionXNUD.ForeColor = SystemColors.Control;
-            CFGUTriggerPositionXNUD.Location = new Point(210, 19);
+            CFGUTriggerPositionXNUD.Location = new Point(207, 80);
             CFGUTriggerPositionXNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerPositionXNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUTriggerPositionXNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -413,7 +497,7 @@
             // 
             darkLabel40.AutoSize = true;
             darkLabel40.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel40.Location = new Point(82, 54);
+            darkLabel40.Location = new Point(62, 115);
             darkLabel40.Margin = new Padding(4, 0, 4, 0);
             darkLabel40.Name = "darkLabel40";
             darkLabel40.Size = new Size(67, 15);
@@ -428,7 +512,7 @@
             Controls.Add(CFGUTriggerGB);
             ForeColor = SystemColors.Control;
             Name = "cfgundergroundtriggersTriggerControl";
-            Size = new Size(784, 294);
+            Size = new Size(600, 459);
             CFGUTriggerGB.ResumeLayout(false);
             CFGUTriggerGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)CFGUTriggerInterpolationSpeedNUD).EndInit();
@@ -474,5 +558,11 @@
         private CheckBox checkBox1;
         private Label label3;
         private TextBox AmbientSoundSetTB;
+        private TextBox CommentTB;
+        private Label label5;
+        private CheckBox UseCommentCB;
+        private CheckBox CustomSpawnCB;
+        private Label label4;
+        private CheckBox UseCustopmSpawnCB;
     }
 }

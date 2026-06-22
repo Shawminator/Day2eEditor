@@ -32,9 +32,9 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
-            CFGUBreadCrumbPositionXNUD.Value = (decimal)_data.Position[0];
-            CFGUBreadCrumbPositionYNUD.Value = (decimal)_data.Position[1];
-            CFGUBreadCrumbPositionZNUD.Value = (decimal)_data.Position[2];
+            CFGUBreadCrumbPositionXNUD.Value = (decimal)_data.Position.X;
+            CFGUBreadCrumbPositionYNUD.Value = (decimal)_data.Position.Y;
+            CFGUBreadCrumbPositionZNUD.Value = (decimal)_data.Position.Z;
             CFGUBreadCrumbEyeAccommodationNUD.Value = (decimal)_data.EyeAccommodation;
             if (_data.UseRaycast != null)
             {
@@ -52,7 +52,7 @@ namespace EconomyPlugin
             }
             else
             {
-                UseLightLerpCB.Checked = CFGUBreadCrumbRadiusNUD.Visible = false;
+                UseRadiusCB.Checked = CFGUBreadCrumbRadiusNUD.Visible = false;
             }
             if (_data.LightLerp != null)
             {
@@ -121,17 +121,17 @@ namespace EconomyPlugin
         private void CFGUBreadCrumbPositionXNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.Position[0] = (decimal)CFGUBreadCrumbPositionXNUD.Value;
+            _data.Position.X = (float)CFGUBreadCrumbPositionXNUD.Value;
         }
         private void CFGUBreadCrumbPositionYNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.Position[1] = (decimal)CFGUBreadCrumbPositionYNUD.Value;
+            _data.Position.Y = (float)CFGUBreadCrumbPositionYNUD.Value;
         }
         private void CFGUBreadCrumbPositionZNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.Position[2] = (decimal)CFGUBreadCrumbPositionZNUD.Value;
+            _data.Position.Z = (float)CFGUBreadCrumbPositionZNUD.Value;
         }
         private void CFGUBreadCrumbEyeAccommodationNUD_ValueChanged(object sender, EventArgs e)
         {
