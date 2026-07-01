@@ -35,6 +35,10 @@ namespace EconomyPlugin
             _mapControl = new MapViewerControl();
             splitContainer1 = new SplitContainer();
             EconomyTV = new MultiSelectTreeView();
+            _mapOverlayPanel = new Panel();
+            button6 = new Button();
+            button5 = new Button();
+            button4 = new Button();
             EditPropertyCMS = new ContextMenuStrip(components);
             editPropertyToolStripMenuItem = new ToolStripMenuItem();
             setToDefaultToolStripMenuItem = new ToolStripMenuItem();
@@ -130,6 +134,7 @@ namespace EconomyPlugin
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            _mapOverlayPanel.SuspendLayout();
             EditPropertyCMS.SuspendLayout();
             panel1.SuspendLayout();
             EventSpawnContextMenu.SuspendLayout();
@@ -167,6 +172,7 @@ namespace EconomyPlugin
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(_mapOverlayPanel);
             splitContainer1.Panel2.Controls.Add(_mapControl);
             splitContainer1.Size = new Size(1170, 611);
             splitContainer1.SplitterDistance = 387;
@@ -188,6 +194,51 @@ namespace EconomyPlugin
             EconomyTV.TabIndex = 0;
             EconomyTV.AfterSelect += EconomyTV_AfterSelect;
             EconomyTV.NodeMouseClick += EconomyTV_NodeMouseClick;
+            // 
+            // _mapOverlayPanel
+            // 
+            _mapOverlayPanel.Controls.Add(button6);
+            _mapOverlayPanel.Controls.Add(button5);
+            _mapOverlayPanel.Controls.Add(button4);
+            _mapOverlayPanel.Dock = DockStyle.Bottom;
+            _mapOverlayPanel.Location = new Point(0, 575);
+            _mapOverlayPanel.Name = "_mapOverlayPanel";
+            _mapOverlayPanel.Size = new Size(773, 36);
+            _mapOverlayPanel.TabIndex = 2;
+            _mapOverlayPanel.Visible = false;
+            // 
+            // button6
+            // 
+            button6.FlatStyle = FlatStyle.Flat;
+            button6.Location = new Point(136, 6);
+            button6.Name = "button6";
+            button6.Size = new Size(66, 23);
+            button6.TabIndex = 9;
+            button6.Text = "Remove";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
+            // button5
+            // 
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(73, 6);
+            button5.Name = "button5";
+            button5.Size = new Size(56, 23);
+            button5.TabIndex = 8;
+            button5.Text = "Copy";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
+            // button4
+            // 
+            button4.FlatStyle = FlatStyle.Flat;
+            button4.Location = new Point(11, 6);
+            button4.Name = "button4";
+            button4.Size = new Size(56, 23);
+            button4.TabIndex = 7;
+            button4.Text = "New";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // EditPropertyCMS
             // 
@@ -980,6 +1031,7 @@ namespace EconomyPlugin
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            _mapOverlayPanel.ResumeLayout(false);
             EditPropertyCMS.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -1094,5 +1146,9 @@ namespace EconomyPlugin
         private ToolStripMenuItem removeWeaponAttchmentDumpToolStripMenuItem;
         private ToolStripMenuItem removeGetXYZToolStripMenuItem;
         private ToolStripMenuItem addFromDumpAttachToolStripMenuItem;
+        private Panel _mapOverlayPanel;
+        private Button button6;
+        private Button button5;
+        private Button button4;
     }
 }

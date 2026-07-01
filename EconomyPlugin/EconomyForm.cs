@@ -206,6 +206,7 @@ namespace EconomyPlugin
                 [typeof(territorytypeTerritoryZone)] = (node, selected) =>
                 {
                     var control = new TerritoryZonesControl();
+                    _mapOverlayPanel.Visible = true;
                     control.PositionChanged += (updatedPos) =>
                     {
                         _mapControl.ClearDrawables(); ;
@@ -327,7 +328,7 @@ namespace EconomyPlugin
                 [typeof(EnfusionScriptfile)] = (node, selected) =>
                 {
                     EnfusionScriptfile EnfusionScriptfile = node.Tag as EnfusionScriptfile;
-                    if(EnfusionScriptfile.FileName == "XYZMapper.c")
+                    if (EnfusionScriptfile.FileName == "XYZMapper.c")
                     {
                         ShowHandler<IUIHandler>(new EnfusionScriptfileXYZMapper(), typeof(scriptfilesConfig), EnfusionScriptfile, selected);
                     }
@@ -1247,17 +1248,17 @@ namespace EconomyPlugin
             };
             if (usableFile != null)
             {
-              territorytype linkedTerritoryFile = _economyManager.territoriesConfig.MutableItems
-                    .FirstOrDefault(t =>
-                        string.Equals(
-                            NormalizePath(t.FilePath),
-                            NormalizePath(Path.Combine(_economyManager.basePath, usableFile.path)),
-                            StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(
-                            NormalizePath(t.FileName),
-                            NormalizePath(Path.GetFileName(usableFile.path)),
-                            StringComparison.OrdinalIgnoreCase)
-                    );
+                territorytype linkedTerritoryFile = _economyManager.territoriesConfig.MutableItems
+                      .FirstOrDefault(t =>
+                          string.Equals(
+                              NormalizePath(t.FilePath),
+                              NormalizePath(Path.Combine(_economyManager.basePath, usableFile.path)),
+                              StringComparison.OrdinalIgnoreCase) ||
+                          string.Equals(
+                              NormalizePath(t.FileName),
+                              NormalizePath(Path.GetFileName(usableFile.path)),
+                              StringComparison.OrdinalIgnoreCase)
+                      );
 
                 if (linkedTerritoryFile != null)
                 {
@@ -1278,7 +1279,21 @@ namespace EconomyPlugin
             int name = 1;
             foreach (territorytypeTerritory territorytypeTerritory in tf.territory)
             {
-                TreeNode typeterritorynode = new TreeNode("Territory" + name.ToString())
+                string tername = "Territory" + name.ToString();
+                if(tf.FileName == "zombie_territories.xml")
+                {
+                    tername = territorytypeTerritory.zone
+                    .Select(z => z.name?.Replace("Infected", "", StringComparison.OrdinalIgnoreCase))
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .GroupBy(n => n)
+                    .OrderByDescending(g => g.Count())
+                    .FirstOrDefault()?
+                    .Key
+                    ?? "Empty Zone";
+                }
+
+
+                TreeNode typeterritorynode = new TreeNode(tername)
                 {
                     Tag = territorytypeTerritory
                 };
@@ -1347,10 +1362,10 @@ namespace EconomyPlugin
                 ObjectSpawnerArrFile ObjectSpawnerArr = ganmeplay.GetObjectSpawnerFiles(objectspawnerarrfile);
 
                 TreeNode OBjectSPawnerarrNode = new TreeNode(Path.Combine(ObjectSpawnerArr.ModFolder, ObjectSpawnerArr.FileName))
-                { 
-                    Tag = ObjectSpawnerArr 
+                {
+                    Tag = ObjectSpawnerArr
                 };
-                foreach(SpawnObjects spawno in ObjectSpawnerArr.Data.Objects)
+                foreach (SpawnObjects spawno in ObjectSpawnerArr.Data.Objects)
                 {
                     OBjectSPawnerarrNode.Nodes.Add(new TreeNode(spawno.name)
                     {
@@ -2789,6 +2804,7 @@ namespace EconomyPlugin
         {
             // Hide and clear map until a handler explicitly sets it up
             _mapControl.Visible = false;
+            _mapOverlayPanel.Visible = false;
             _mapControl.ClearDrawables();
 
             // Remove all event subscriptions to avoid duplicates
@@ -4098,7 +4114,25 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-
+            if(TerritoryCopy)
+            {
+                if (currentTreeNode.Parent.Tag is territorytypeTerritory territorytypeTerritory)
+                {
+                    territoryzonecopy.x = (decimal)e.MapCoordinates.X;
+                    territoryzonecopy.z = (decimal)e.MapCoordinates.Y;
+                    territorytypeTerritory.zone.Add(territoryzonecopy);
+                    TreeNode tn = new TreeNode(territoryzonecopy.ToString())
+                    {
+                        Tag = territoryzonecopy
+                    };
+                    currentTreeNode.Parent.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    TerritoryCopy = false;
+                    territoryzonecopy = null;
+                }
+                return;
+            }
+            
             territorytypeTerritoryZone closestPos = null;
             double closestDistance = double.MaxValue;
 
@@ -4146,6 +4180,7 @@ namespace EconomyPlugin
                 }
             }
         }
+
         private void MapControl_TerritoriesDoubleclicked(object? sender, MapClickEventArgs e)
         {
             if (_selectedterritory == null) return;
@@ -6116,6 +6151,8 @@ namespace EconomyPlugin
             }
         }
 
+
+
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
         {
             TerritorieszonesCB.Location = new Point(14 + EconomyTV.Width + 10, 9);
@@ -6187,7 +6224,29 @@ namespace EconomyPlugin
         #endregion search treeview
 
 
+        private void button4_Click(object sender, EventArgs e)
+        {
 
+        }
+        public bool TerritoryCopy = false;
+        public territorytypeTerritoryZone territoryzonecopy = null;
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
+            {
+                TerritoryCopy = true;
+                territoryzonecopy = territoryzone.Clone();
+            }
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
+            {
+                territorytypeTerritory ttt = currentTreeNode.Parent.Tag as territorytypeTerritory;
+                ttt.zone.Remove(territoryzone);
+                currentTreeNode.Remove();
+            }
+        }
         private void addNewTerritoryPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
@@ -6212,7 +6271,6 @@ namespace EconomyPlugin
                 EconomyTV.SelectedNode = tn;
             }
         }
-
         private void removeTerritoryPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
@@ -6222,7 +6280,6 @@ namespace EconomyPlugin
                 currentTreeNode.Remove();
             }
         }
-
         private void addNewTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytype territorytype)
@@ -6249,7 +6306,6 @@ namespace EconomyPlugin
                 EconomyTV.SelectedNode = typeterritorynode;
             }
         }
-
         private void removeTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
@@ -6259,23 +6315,19 @@ namespace EconomyPlugin
                 currentTreeNode.Remove();
             }
         }
-
         private void createUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
-
         private void removeUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
-
         private void createNewEnviromentTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             envTerritoriesTerritory envTerritoriesTerritory = _economyManager.cfgenvironmentConfig.Data.territories.AddNewEnvirometTerritory();
             currentTreeNode.Nodes.Add(CreatreEnvTerritoryNode(_economyManager.cfgenvironmentConfig, envTerritoriesTerritory));
         }
-
         private void removeEnviromentTerritoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             envTerritoriesTerritory envTerritoriesTerritory = currentTreeNode.Tag as envTerritoriesTerritory;
@@ -6300,7 +6352,6 @@ namespace EconomyPlugin
             _economyManager.cfgenvironmentConfig.Data.territories.removeenviromentterritory(envTerritoriesTerritory);
             currentTreeNode.Remove();
         }
-
         private void addNewUsableFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             envTerritoriesTerritory envTerritoriesTerritory = currentTreeNode.Parent.Tag as envTerritoriesTerritory;
@@ -6313,12 +6364,10 @@ namespace EconomyPlugin
             territorytype linkedTerritoryFile = _economyManager.territoriesConfig.Createnewterritorytype($"{_economyManager.territoriesConfig.FilePath}\\env/{currentTreeNode.Parent.Text.ToLower()}_territories.xml");
             currentTreeNode.Nodes.Add(CreateTerritoryNodes(linkedTerritoryFile));
         }
-
         private void removeUsableFileToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
         }
-
         private void openExternalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is EnfusionScriptfile EnfusionScriptfile)
