@@ -507,7 +507,10 @@ namespace ProjectsPlugin
             p.ServerSettings = new ProjectServerSettings()
             {
                 Protocol = (TransferProtocol)ProtocolCB.SelectedValue == null ? TransferProtocol.Ftp : (TransferProtocol)ProtocolCB.SelectedValue,
-
+                Port = (int)PortNUD.Value,
+                Host = HostTB.Text,
+                Username = UsernameTB.Text,
+                EncryptedPassword = Helper.EncryptPassword(PasswordTB.Text)
             };
             _ProjectManager.Save();
             listBoxProjects.Invalidate();
