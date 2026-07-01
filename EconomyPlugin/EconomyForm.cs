@@ -6223,13 +6223,13 @@ namespace EconomyPlugin
         }
         #endregion search treeview
 
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-
-        }
         public bool TerritoryCopy = false;
         public territorytypeTerritoryZone territoryzonecopy = null;
+        private void button4_Click(object sender, EventArgs e)
+        {
+            need to do this, leaving as Error so i remember
+        }
+
         private void button5_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
