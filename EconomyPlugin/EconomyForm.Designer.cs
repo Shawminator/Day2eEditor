@@ -36,7 +36,6 @@ namespace EconomyPlugin
             splitContainer1 = new SplitContainer();
             EconomyTV = new MultiSelectTreeView();
             _mapOverlayPanel = new Panel();
-            groupBox1 = new GroupBox();
             button6 = new Button();
             button5 = new Button();
             EditPropertyCMS = new ContextMenuStrip(components);
@@ -135,7 +134,6 @@ namespace EconomyPlugin
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             _mapOverlayPanel.SuspendLayout();
-            groupBox1.SuspendLayout();
             EditPropertyCMS.SuspendLayout();
             panel1.SuspendLayout();
             EventSpawnContextMenu.SuspendLayout();
@@ -199,29 +197,19 @@ namespace EconomyPlugin
             // _mapOverlayPanel
             // 
             _mapOverlayPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            _mapOverlayPanel.Controls.Add(groupBox1);
-            _mapOverlayPanel.Location = new Point(0, 549);
+            _mapOverlayPanel.BorderStyle = BorderStyle.Fixed3D;
+            _mapOverlayPanel.Controls.Add(button6);
+            _mapOverlayPanel.Controls.Add(button5);
+            _mapOverlayPanel.Location = new Point(0, 576);
             _mapOverlayPanel.Name = "_mapOverlayPanel";
-            _mapOverlayPanel.Size = new Size(280, 62);
+            _mapOverlayPanel.Size = new Size(267, 35);
             _mapOverlayPanel.TabIndex = 2;
             _mapOverlayPanel.Visible = false;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(button6);
-            groupBox1.Controls.Add(button5);
-            groupBox1.Dock = DockStyle.Fill;
-            groupBox1.ForeColor = SystemColors.Control;
-            groupBox1.Location = new Point(0, 0);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(280, 62);
-            groupBox1.TabIndex = 10;
-            groupBox1.TabStop = false;
             // 
             // button6
             // 
             button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(144, 22);
+            button6.Location = new Point(134, 3);
             button6.Name = "button6";
             button6.Size = new Size(125, 23);
             button6.TabIndex = 9;
@@ -232,7 +220,7 @@ namespace EconomyPlugin
             // button5
             // 
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(11, 22);
+            button5.Location = new Point(3, 3);
             button5.Name = "button5";
             button5.Size = new Size(125, 23);
             button5.TabIndex = 8;
@@ -1032,7 +1020,6 @@ namespace EconomyPlugin
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             _mapOverlayPanel.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
             EditPropertyCMS.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -1150,6 +1137,5 @@ namespace EconomyPlugin
         private Panel _mapOverlayPanel;
         private Button button6;
         private Button button5;
-        private GroupBox groupBox1;
     }
 }

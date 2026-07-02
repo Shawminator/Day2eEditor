@@ -151,6 +151,16 @@ namespace EconomyPlugin
                         _mapControl.ClearDrawables(); ;
                         DrawEventSpawns(node.Parent.Parent.Tag as eventposdefEvent);
                     };
+                    control.OrientaionChanged += (updatedOri) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawEventSpawns(node.Parent.Parent.Tag as eventposdefEvent);
+                    };
+                    control.UseOrientaionChanged += (updatedUseOri) =>
+                    {
+                        _mapControl.ClearDrawables(); ;
+                        DrawEventSpawns(node.Parent.Parent.Tag as eventposdefEvent);
+                    };
 
                     ShowHandler<IUIHandler>(control, typeof(cfgeventspawnsConfig), data, selected);
                     SetupEventPosMap(data, node);
@@ -159,6 +169,7 @@ namespace EconomyPlugin
                 [typeof(cfgeffectareaSafePosition)] = (node, selected) =>
                 {
                     cfgeffectareaSafePosition cfgeffectareaSafePosition = node.Tag as cfgeffectareaSafePosition;
+                    _mapOverlayPanel.Visible = true;
                     ShowHandler<IUIHandler>(null, null, null, selected);
                     SetupSafePosMap(cfgeffectareaSafePosition, node);
                     _mapControl.EnsureVisible(new PointF((float)cfgeffectareaSafePosition.X, (float)cfgeffectareaSafePosition.Z));
@@ -3429,17 +3440,34 @@ namespace EconomyPlugin
         {
             foreach (eventposdefEventPos pos in defevent.pos)
             {
-                var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                if (pos.aSpecified == true)
                 {
-                    Color = Color.Red,
-                    Radius = 8,
-                    Scaleradius = false
-                };
-                if (_selectedEventPos == pos)
-                {
-                    marker.Color = Color.LimeGreen;
+                    var marker = new EventDirectionDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        screenRadius = 8,
+                        Orientation = new float[] {(float)pos.a,0f,0f}
+                    };
+                    if (_selectedEventPos == pos)
+                    {
+                        marker.Color = Color.LimeGreen;
+                    }
+                    _mapControl.RegisterDrawable(marker);
                 }
-                _mapControl.RegisterDrawable(marker);
+                else
+                {
+                    var marker = new MarkerDrawable(new PointF((float)pos.x, (float)pos.z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Radius = 8,
+                        Scaleradius = false
+                    };
+                    if (_selectedEventPos == pos)
+                    {
+                        marker.Color = Color.LimeGreen;
+                    }
+                    _mapControl.RegisterDrawable(marker);
+                }
             }
         }
         private void DrawEffectEffectArea(CfgeffectareaConfig cfgeffectareaConfig)
@@ -3557,14 +3585,14 @@ namespace EconomyPlugin
 
             if(EventPosCopy == true)
             {
-                if (currentTreeNode.Parent.Tag is eventposdefEvent eventposdefEvent)
+                if (currentTreeNode.Parent.Parent.Tag is eventposdefEvent eventposdefEvent)
                 {
                     eventposdefEventPoscopy.x = (decimal)e.MapCoordinates.X;
                     eventposdefEventPoscopy.z = (decimal)e.MapCoordinates.Y;
                     eventposdefEvent.pos.Add(eventposdefEventPoscopy);
                     TreeNode tn = new TreeNode(eventposdefEventPoscopy.ToString())
                     {
-                        Tag = playerspawnpointsGroupPoscopy
+                        Tag = eventposdefEventPoscopy
                     };
                     currentTreeNode.Parent.Nodes.Add(tn);
                     EconomyTV.SelectedNode = tn;
@@ -3638,6 +3666,27 @@ namespace EconomyPlugin
         {
             if (currentTreeNode?.Parent == null)
                 return;
+
+            if (safepositioncopy == true)
+            {
+                if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
+                {
+                    cfgeffectareaSafePositioncopy.X = (decimal)e.MapCoordinates.X;
+                    cfgeffectareaSafePositioncopy.Z = (decimal)e.MapCoordinates.Y;
+                    _economyManager.cfgeffectareaConfig.Data._positions.Add(cfgeffectareaSafePositioncopy);
+
+                    TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1} ({cfgeffectareaSafePositioncopy.X}, {cfgeffectareaSafePositioncopy.Z})")
+                    {
+                        Tag = cfgeffectareaSafePositioncopy
+                    };
+                    currentTreeNode.Parent.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    safepositioncopy = false;
+                    cfgeffectareaSafePositioncopy = null;
+                }
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+                return;
+            }
 
             TreeNode parentNode = currentTreeNode.Parent;
 
@@ -6342,9 +6391,11 @@ namespace EconomyPlugin
         public bool TerritoryCopy = false;
         public bool EventPosCopy = false;
         public bool playerspawnCopy = false;
+        public bool safepositioncopy = false;
         public territorytypeTerritoryZone territoryzonecopy = null;
         public eventposdefEventPos eventposdefEventPoscopy = null;
         public playerspawnpointsGroupPos playerspawnpointsGroupPoscopy = null;
+        public cfgeffectareaSafePosition cfgeffectareaSafePositioncopy = null;
         private void button5_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
@@ -6363,6 +6414,12 @@ namespace EconomyPlugin
             {
                 EventPosCopy = true;
                 eventposdefEventPoscopy = eventposdefEventPos.Clone();
+                button5.BackColor = Color.Gray;
+            }
+            else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
+            {
+                safepositioncopy = true;
+                cfgeffectareaSafePositioncopy = cfgeffectareaSafePosition.Clone();
                 button5.BackColor = Color.Gray;
             }
         }
@@ -6391,6 +6448,12 @@ namespace EconomyPlugin
             {
                 eventposdefEvent ttt = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
                 ttt.pos.Remove(eventposdefEventPos);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
+            {
+                CfgeffectareaConfig ttt = currentTreeNode.Parent.Parent.Tag as CfgeffectareaConfig;
+                ttt.Data._positions.Remove(cfgeffectareaSafePosition);
                 currentTreeNode.Remove();
             }
         }

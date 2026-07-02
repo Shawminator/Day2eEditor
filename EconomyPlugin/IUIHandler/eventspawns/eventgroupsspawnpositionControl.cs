@@ -14,6 +14,8 @@ namespace EconomyPlugin
     public partial class eventgroupsspawnpositionControl : UserControl, IUIHandler
     {
         public event Action<eventposdefEventPos> PositionChanged;
+        public event Action<eventposdefEventPos> OrientaionChanged;
+        public event Action<eventposdefEventPos> UseOrientaionChanged;
         private Type _parentType;
         private eventposdefEventPos _data;
         private List<TreeNode> _nodes;
@@ -116,7 +118,8 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             if (checkBox51.Checked)
             {
-                _data.a = 0;
+                if(_data.a == null)
+                    _data.a = 0;
                 _data.aSpecified = true;
                 EventSpawnPosANUD.Value = _data.a;
             }
@@ -124,6 +127,7 @@ namespace EconomyPlugin
             {
                 _data.aSpecified = false;
             }
+            UseOrientaionChanged?.Invoke(_data);
             UpdateTreeNodeText();
         }
         private void EventSpawnPosANUD_ValueChanged(object sender, EventArgs e)
@@ -147,6 +151,7 @@ namespace EconomyPlugin
             }
             _suppressEvents = false;
             _data.a = EventSpawnPosANUD.Value;
+            OrientaionChanged?.Invoke(_data);
             UpdateTreeNodeText();
         }
     }
