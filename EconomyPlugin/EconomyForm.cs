@@ -1,5 +1,6 @@
 using Core;
 using Day2eEditor;
+using Org.BouncyCastle.Pkcs;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
@@ -143,6 +144,7 @@ namespace EconomyPlugin
                 [typeof(eventposdefEventPos)] = (node, selected) =>
                 {
                     var data = node.Tag as eventposdefEventPos;
+                    _mapOverlayPanel.Visible = true;
                     var control = new eventgroupsspawnpositionControl();
                     control.PositionChanged += (updatedPos) =>
                     {
@@ -185,6 +187,7 @@ namespace EconomyPlugin
                 [typeof(playerspawnpointsGroupPos)] = (node, selected) =>
                 {
                     playerspawnpointsGroupPos pos = node.Tag as playerspawnpointsGroupPos;
+                    _mapOverlayPanel.Visible = true;
                     ShowHandler<IUIHandler>(null, null, null, selected);
                     SetupPlayerSpawnPosMap(pos, node);
                     _mapControl.EnsureVisible(new PointF((float)pos.x, (float)pos.z));
@@ -2843,6 +2846,16 @@ namespace EconomyPlugin
             _selectedterritory = null;
 
             TerritorieszonesCB.Visible = false;
+
+            TerritoryCopy = false;
+            EventPosCopy = false;
+            playerspawnCopy = false;
+            territoryzonecopy = null;
+            eventposdefEventPoscopy = null;
+            playerspawnpointsGroupPoscopy = null;
+
+            button5.BackColor = Color.FromArgb(60, 63, 65);
+
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -3542,6 +3555,28 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
+            if(EventPosCopy == true)
+            {
+                if (currentTreeNode.Parent.Tag is eventposdefEvent eventposdefEvent)
+                {
+                    eventposdefEventPoscopy.x = (decimal)e.MapCoordinates.X;
+                    eventposdefEventPoscopy.z = (decimal)e.MapCoordinates.Y;
+                    eventposdefEvent.pos.Add(eventposdefEventPoscopy);
+                    TreeNode tn = new TreeNode(eventposdefEventPoscopy.ToString())
+                    {
+                        Tag = playerspawnpointsGroupPoscopy
+                    };
+                    currentTreeNode.Parent.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    EventPosCopy = false;
+                    eventposdefEventPoscopy = null;
+                }
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+                return;
+            }
+
+
+
             TreeNode parentNode = currentTreeNode.Parent;
 
             eventposdefEventPos closestPos = null;
@@ -3848,6 +3883,40 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
+            if(playerspawnCopy == true)
+            {
+                if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+                {
+                    playerspawnpointsGroupPoscopy.x = (decimal)e.MapCoordinates.X;
+                    playerspawnpointsGroupPoscopy.z = (decimal)e.MapCoordinates.Y;
+
+                    playerspawnpointsGroup.pos.Add(playerspawnpointsGroupPoscopy);
+                    TreeNode tn = new TreeNode(playerspawnpointsGroupPoscopy.ToString())
+                    {
+                        Tag = playerspawnpointsGroupPoscopy
+                    };
+                    currentTreeNode.Parent.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    TerritoryCopy = false;
+                    territoryzonecopy = null;
+                }
+                else if (currentTreeNode.Parent.Parent.Tag is playerspawnpointssection playerspawnpointssection)
+                {
+                    playerspawnpointsGroupPoscopy.x = (decimal)e.MapCoordinates.X;
+                    playerspawnpointsGroupPoscopy.z = (decimal)e.MapCoordinates.Y;
+                    playerspawnpointssection.generator_posbubbles.Add(playerspawnpointsGroupPoscopy);
+                    TreeNode tn = new TreeNode(playerspawnpointsGroupPoscopy.ToString())
+                    {
+                        Tag = playerspawnpointsGroupPoscopy
+                    };
+                    currentTreeNode.Parent.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    TerritoryCopy = false;
+                    territoryzonecopy = null;
+                }
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+                return;
+            }
 
             playerspawnpointsGroupPos closestPos = null;
             double closestDistance = double.MaxValue;
@@ -4116,21 +4185,7 @@ namespace EconomyPlugin
 
             if(TerritoryCopy)
             {
-                if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
-                {
-                    territoryzonecopy.x = (decimal)e.MapCoordinates.X;
-                    territoryzonecopy.z = (decimal)e.MapCoordinates.Y;
-                    territorytypeTerritory.zone.Add(territoryzonecopy);
-                    TreeNode tn = new TreeNode(territoryzonecopy.ToString())
-                    {
-                        Tag = territoryzonecopy
-                    };
-                    currentTreeNode.Nodes.Add(tn);
-                    EconomyTV.SelectedNode = tn;
-                    TerritoryCopy = false;
-                    territoryzonecopy = null;
-                }
-                else if (currentTreeNode.Parent.Tag is territorytypeTerritory pterritorytypeTerritory)
+                if (currentTreeNode.Parent.Tag is territorytypeTerritory pterritorytypeTerritory)
                 {
                     territoryzonecopy.x = (decimal)e.MapCoordinates.X;
                     territoryzonecopy.z = (decimal)e.MapCoordinates.Y;
@@ -6283,14 +6338,31 @@ namespace EconomyPlugin
         }
         #endregion search treeview
 
+        
         public bool TerritoryCopy = false;
+        public bool EventPosCopy = false;
+        public bool playerspawnCopy = false;
         public territorytypeTerritoryZone territoryzonecopy = null;
+        public eventposdefEventPos eventposdefEventPoscopy = null;
+        public playerspawnpointsGroupPos playerspawnpointsGroupPoscopy = null;
         private void button5_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
             {
                 TerritoryCopy = true;
                 territoryzonecopy = territoryzone.Clone();
+                button5.BackColor = Color.Gray;
+            }
+            else if (currentTreeNode.Tag is playerspawnpointsGroupPos playerspawnpointsGroupPos)
+            {
+                playerspawnCopy = true;
+                playerspawnpointsGroupPoscopy = playerspawnpointsGroupPos.Clone();
+                button5.BackColor = Color.Gray;
+            }
+            else if(currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
+            {
+                EventPosCopy = true;
+                eventposdefEventPoscopy = eventposdefEventPos.Clone();
                 button5.BackColor = Color.Gray;
             }
         }
@@ -6300,6 +6372,25 @@ namespace EconomyPlugin
             {
                 territorytypeTerritory ttt = currentTreeNode.Parent.Tag as territorytypeTerritory;
                 ttt.zone.Remove(territoryzone);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Tag is playerspawnpointsGroupPos playerspawnpointsGroupPos)
+            {
+                if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+                {
+                    playerspawnpointsGroup.pos.Remove(playerspawnpointsGroupPos);
+                    currentTreeNode.Remove();
+                }
+                else if (currentTreeNode.Parent.Parent.Tag is playerspawnpointssection playerspawnpointssection)
+                {
+                    playerspawnpointssection.generator_posbubbles.Remove(playerspawnpointsGroupPos);
+                    currentTreeNode.Remove();
+                }
+            }
+            else if (currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
+            {
+                eventposdefEvent ttt = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
+                ttt.pos.Remove(eventposdefEventPos);
                 currentTreeNode.Remove();
             }
         }

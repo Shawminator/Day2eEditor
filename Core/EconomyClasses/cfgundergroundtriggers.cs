@@ -285,13 +285,20 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Equals(Position, other.Position) &&
-                EyeAccommodation == other.EyeAccommodation &&
-                UseRaycast == other.UseRaycast &&
-                Radius == other.Radius &&
-                LightLerp == other.LightLerp &&
-                ExternalValueController == other.ExternalValueController;
+            if (!Equals(Position, other.Position))
+                return false;
+            if (EyeAccommodation != other.EyeAccommodation)
+                return false;
+            if (UseRaycast != other.UseRaycast)
+                return false;
+            if (Radius != other.Radius)
+                return false;
+            if (LightLerp != other.LightLerp)
+                return false;
+            if (!Equals(ExternalValueController, other.ExternalValueController))
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -324,9 +331,12 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Equals(Params, other.Params) &&
-                Type == other.Type;
+            if (!Helper.ListEquals(Params, other.Params))
+                return false;
+            if (Type != other.Type)
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)

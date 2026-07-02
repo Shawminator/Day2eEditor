@@ -217,12 +217,11 @@ namespace EconomyPlugin
             groupBox1.Size = new Size(280, 62);
             groupBox1.TabIndex = 10;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Territory Zone Options";
             // 
             // button6
             // 
             button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(146, 25);
+            button6.Location = new Point(144, 22);
             button6.Name = "button6";
             button6.Size = new Size(125, 23);
             button6.TabIndex = 9;
@@ -233,7 +232,7 @@ namespace EconomyPlugin
             // button5
             // 
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(15, 25);
+            button5.Location = new Point(11, 22);
             button5.Name = "button5";
             button5.Size = new Size(125, 23);
             button5.TabIndex = 8;
