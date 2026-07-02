@@ -4116,11 +4116,25 @@ namespace EconomyPlugin
 
             if(TerritoryCopy)
             {
-                if (currentTreeNode.Parent.Tag is territorytypeTerritory territorytypeTerritory)
+                if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
                 {
                     territoryzonecopy.x = (decimal)e.MapCoordinates.X;
                     territoryzonecopy.z = (decimal)e.MapCoordinates.Y;
                     territorytypeTerritory.zone.Add(territoryzonecopy);
+                    TreeNode tn = new TreeNode(territoryzonecopy.ToString())
+                    {
+                        Tag = territoryzonecopy
+                    };
+                    currentTreeNode.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    TerritoryCopy = false;
+                    territoryzonecopy = null;
+                }
+                else if (currentTreeNode.Parent.Tag is territorytypeTerritory pterritorytypeTerritory)
+                {
+                    territoryzonecopy.x = (decimal)e.MapCoordinates.X;
+                    territoryzonecopy.z = (decimal)e.MapCoordinates.Y;
+                    pterritorytypeTerritory.zone.Add(territoryzonecopy);
                     TreeNode tn = new TreeNode(territoryzonecopy.ToString())
                     {
                         Tag = territoryzonecopy
@@ -4130,6 +4144,7 @@ namespace EconomyPlugin
                     TerritoryCopy = false;
                     territoryzonecopy = null;
                 }
+                button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
             
@@ -4138,11 +4153,56 @@ namespace EconomyPlugin
 
             PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
 
-            if (currentTreeNode.Tag is territorytypeTerritoryZone)
+            if (TerritorieszonesCB.Checked)
             {
-                foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
+                if (currentTreeNode.Tag is territorytypeTerritoryZone)
                 {
-                    foreach (TreeNode child in childp.Nodes)
+                    foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
+                    {
+                        foreach (TreeNode child in childp.Nodes)
+                        {
+                            if (child.Tag is territorytypeTerritoryZone pos)
+                            {
+                                // Node position in screen space
+                                PointF posScreen = _mapControl.MapToScreen(new PointF((float)pos.x, (float)pos.z));
+
+                                double dx = clickScreen.X - posScreen.X;
+                                double dy = clickScreen.Y - posScreen.Y;
+                                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                                if (distance < closestDistance)
+                                {
+                                    closestDistance = distance;
+                                    closestPos = pos;
+                                }
+                            }
+                        }
+                    }
+                    // Optional: choose only if within some "click radius"
+                    if (closestPos != null && closestDistance < (double)closestPos.r) // 10 units tolerance
+                    {
+                        foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
+                        {
+                            foreach (TreeNode child in childp.Nodes)
+                            {
+                                if (child.Tag == closestPos)
+                                {
+                                    EconomyTV.SelectedNode = child;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                    }
+                }
+            }
+            else
+            {
+                if (currentTreeNode.Tag is territorytypeTerritoryZone)
+                {
+
+                    foreach (TreeNode child in currentTreeNode.Parent.Nodes)
                     {
                         if (child.Tag is territorytypeTerritoryZone pos)
                         {
@@ -4160,23 +4220,23 @@ namespace EconomyPlugin
                             }
                         }
                     }
-                }
-                // Optional: choose only if within some "click radius"
-                if (closestPos != null && closestDistance < (double)closestPos.r) // 10 units tolerance
-                {
-                    foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
+                    // Optional: choose only if within some "click radius"
+                    if (closestPos != null && closestDistance < (double)closestPos.r) // 10 units tolerance
                     {
-                        foreach (TreeNode child in childp.Nodes)
+                        foreach (TreeNode childp in currentTreeNode.Parent.Parent.Nodes)
                         {
-                            if (child.Tag == closestPos)
+                            foreach (TreeNode child in childp.Nodes)
                             {
-                                EconomyTV.SelectedNode = child;
-                                break;
+                                if (child.Tag == closestPos)
+                                {
+                                    EconomyTV.SelectedNode = child;
+                                    break;
+                                }
                             }
                         }
-                    }
 
-                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                        //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                    }
                 }
             }
         }
@@ -6225,17 +6285,13 @@ namespace EconomyPlugin
 
         public bool TerritoryCopy = false;
         public territorytypeTerritoryZone territoryzonecopy = null;
-        private void button4_Click(object sender, EventArgs e)
-        {
-            need to do this, leaving as Error so i remember
-        }
-
         private void button5_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
             {
                 TerritoryCopy = true;
                 territoryzonecopy = territoryzone.Clone();
+                button5.BackColor = Color.Gray;
             }
         }
         private void button6_Click(object sender, EventArgs e)
