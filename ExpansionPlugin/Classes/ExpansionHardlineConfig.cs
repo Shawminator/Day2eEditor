@@ -54,7 +54,7 @@ namespace ExpansionPlugin
 
             foreach (var item in Data.ItemRarity)
             {
-                string useItem = item.Key.ToLower();
+                string useItem = item.Key;
                 if (item.Key != useItem) IsDirty = true;
 
                 ExpansionHardlineItemRarity rarity = (ExpansionHardlineItemRarity)item.Value;
@@ -64,11 +64,16 @@ namespace ExpansionPlugin
                 }
             }
 
+            foreach (var rarity in rarityBuckets.Keys)
+            {
+                rarityBuckets[rarity].Sort();
+            }
+
             foreach (TypesFile ft in AppServices.GetRequired<EconomyManager>().TypesConfig.MutableItems)
             {
                 foreach (TypeEntry type in ft.Data.TypeList)
                 {
-                    string itemName = type.Name.ToLower();
+                    string itemName = type.Name;
                     if (!Data.ItemRarity.ContainsKey(itemName))
                     {
                         rarityBuckets[ExpansionHardlineItemRarity.NONE].Add(itemName);
@@ -76,10 +81,7 @@ namespace ExpansionPlugin
                 }
             }
 
-            foreach (var rarity in rarityBuckets.Keys)
-            {
-                rarityBuckets[rarity].Sort();
-            }
+
 
             Data.NoneItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.NONE]);
             Data.PoorItems = new BindingList<string>(rarityBuckets[ExpansionHardlineItemRarity.Poor]);

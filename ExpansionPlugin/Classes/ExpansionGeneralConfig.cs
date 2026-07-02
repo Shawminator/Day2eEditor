@@ -99,21 +99,21 @@ namespace ExpansionPlugin
 
             HUDColors = new ExpansionHudIndicatorColors()
             {
-                StaminaBarColor = "#00FF00",
-                StaminaBarColorHalf = "#FFFF00", 
-                StaminaBarColorLow = "#FF0000", 
-                NotifierDividerColor = "#FFFFFF", 
-                TemperatureBurningColor = "#FF4500", 
-                TemperatureHotColor = "#FFA500", 
-                TemperatureIdealColor = "#00FF00", 
-                TemperatureColdColor = "#00BFFF", 
-                TemperatureFreezingColor = "#1E90FF", 
-                NotifiersIdealColor = "#00FF00", 
-                NotifiersHalfColor = "#FFFF00",
-                NotifiersLowColor = "#FF0000", 
-                ReputationBaseColor = "#808080", 
-                ReputationMedColor = "#00CED1", 
-                ReputationHighColor = "#FFD700"
+                StaminaBarColor = "FFFF80FF",
+                StaminaBarColorHalf = "FFFFFFFF",
+                StaminaBarColorLow = "FFFFFFFF",
+                NotifierDividerColor = "DCDCDCFF",
+                TemperatureBurningColor = "DC0000FF",
+                TemperatureHotColor = "DCDC00FF",
+                TemperatureIdealColor = "DCDCDCFF",
+                TemperatureColdColor = "00CED1FF",
+                TemperatureFreezingColor = "1E90DCFF",
+                NotifiersIdealColor = "DCDCDCFF",
+                NotifiersHalfColor = "DCDC00FF",
+                NotifiersLowColor = "DC0000FF",
+                ReputationBaseColor = "DCDCDCFF",
+                ReputationMedColor = "DCDC00FF",
+                ReputationHighColor = "DC0000FF"
             };
 
             EnableEarPlugs = 1;
@@ -346,21 +346,21 @@ namespace ExpansionPlugin
                 return currentValue;
             }
 
-            HUDColors.StaminaBarColor = SetDefaultColor(HUDColors.StaminaBarColor, "#00FF00", "StaminaBarColor");
-            HUDColors.StaminaBarColorHalf = SetDefaultColor(HUDColors.StaminaBarColorHalf, "#FFFF00", "StaminaBarColorHalf");
-            HUDColors.StaminaBarColorLow = SetDefaultColor(HUDColors.StaminaBarColorLow, "#FF0000", "StaminaBarColorLow");
-            HUDColors.NotifierDividerColor = SetDefaultColor(HUDColors.NotifierDividerColor, "#FFFFFF", "NotifierDividerColor");
-            HUDColors.TemperatureBurningColor = SetDefaultColor(HUDColors.TemperatureBurningColor, "#FF4500", "TemperatureBurningColor");
-            HUDColors.TemperatureHotColor = SetDefaultColor(HUDColors.TemperatureHotColor, "#FFA500", "TemperatureHotColor");
-            HUDColors.TemperatureIdealColor = SetDefaultColor(HUDColors.TemperatureIdealColor, "#00FF00", "TemperatureIdealColor");
-            HUDColors.TemperatureColdColor = SetDefaultColor(HUDColors.TemperatureColdColor, "#00BFFF", "TemperatureColdColor");
-            HUDColors.TemperatureFreezingColor = SetDefaultColor(HUDColors.TemperatureFreezingColor, "#1E90FF", "TemperatureFreezingColor");
-            HUDColors.NotifiersIdealColor = SetDefaultColor(HUDColors.NotifiersIdealColor, "#00FF00", "NotifiersIdealColor");
-            HUDColors.NotifiersHalfColor = SetDefaultColor(HUDColors.NotifiersHalfColor, "#FFFF00", "NotifiersHalfColor");
-            HUDColors.NotifiersLowColor = SetDefaultColor(HUDColors.NotifiersLowColor, "#FF0000", "NotifiersLowColor");
-            HUDColors.ReputationBaseColor = SetDefaultColor(HUDColors.ReputationBaseColor, "#808080", "ReputationBaseColor");
-            HUDColors.ReputationMedColor = SetDefaultColor(HUDColors.ReputationMedColor, "#00CED1", "ReputationMedColor");
-            HUDColors.ReputationHighColor = SetDefaultColor(HUDColors.ReputationHighColor, "#FFD700", "ReputationHighColor");
+            HUDColors.StaminaBarColor = SetDefaultColor(HUDColors.StaminaBarColor, "FFFF80FF", "StaminaBarColor");
+            HUDColors.StaminaBarColorHalf = SetDefaultColor(HUDColors.StaminaBarColorHalf, "FFFFFFFF", "StaminaBarColorHalf");
+            HUDColors.StaminaBarColorLow = SetDefaultColor(HUDColors.StaminaBarColorLow, "FFFFFFFF", "StaminaBarColorLow");
+            HUDColors.NotifierDividerColor = SetDefaultColor(HUDColors.NotifierDividerColor, "DCDCDCFF", "NotifierDividerColor");
+            HUDColors.TemperatureBurningColor = SetDefaultColor(HUDColors.TemperatureBurningColor, "DC0000FF", "TemperatureBurningColor");
+            HUDColors.TemperatureHotColor = SetDefaultColor(HUDColors.TemperatureHotColor, "DCDC00FF", "TemperatureHotColor");
+            HUDColors.TemperatureIdealColor = SetDefaultColor(HUDColors.TemperatureIdealColor, "DCDCDCFF", "TemperatureIdealColor");
+            HUDColors.TemperatureColdColor = SetDefaultColor(HUDColors.TemperatureColdColor, "00CED1FF", "TemperatureColdColor");
+            HUDColors.TemperatureFreezingColor = SetDefaultColor(HUDColors.TemperatureFreezingColor, "1E90DCFF", "TemperatureFreezingColor");
+            HUDColors.NotifiersIdealColor = SetDefaultColor(HUDColors.NotifiersIdealColor, "DCDCDCFF", "NotifiersIdealColor");
+            HUDColors.NotifiersHalfColor = SetDefaultColor(HUDColors.NotifiersHalfColor, "DCDC00FF", "NotifiersHalfColor");
+            HUDColors.NotifiersLowColor = SetDefaultColor(HUDColors.NotifiersLowColor, "DC0000FF", "NotifiersLowColor");
+            HUDColors.ReputationBaseColor = SetDefaultColor(HUDColors.ReputationBaseColor, "DCDCDCFF", "ReputationBaseColor");
+            HUDColors.ReputationMedColor = SetDefaultColor(HUDColors.ReputationMedColor, "DCDC00FF", "ReputationMedColor");
+            HUDColors.ReputationHighColor = SetDefaultColor(HUDColors.ReputationHighColor, "DC0000FF", "ReputationHighColor");
 
 
             if (EnableEarPlugs == null || (EnableEarPlugs != 0 && EnableEarPlugs != 1))
