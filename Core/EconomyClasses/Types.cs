@@ -681,14 +681,28 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Id == other.Id &&
-                string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(FileType, other.FileType, StringComparison.Ordinal) &&
-                IsModded == other.IsModded &&
-                string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase) &&
-                ToDelete == other.ToDelete &&
-                Equals(Data, other.Data);
+            if (Id != other.Id)
+                return false;
+
+            if (!string.Equals(_path, other._path, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (!string.Equals(FileType, other.FileType, StringComparison.Ordinal))
+                return false;
+
+            if (IsModded != other.IsModded)
+                return false;
+
+            if (!string.Equals(ModFolder, other.ModFolder, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (ToDelete != other.ToDelete)
+                return false;
+
+            if (!Equals(Data, other.Data))
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -720,7 +734,10 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return ListsEqual(TypeList, other.TypeList);
+            if (!Helper.ListEquals(TypeList, other.TypeList))
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -735,26 +752,6 @@ namespace Day2eEditor
                 TypeList = new BindingList<TypeEntry>(
                     TypeList?.Select(x => x.Clone()).ToList() ?? new List<TypeEntry>())
             };
-        }
-
-        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
-        {
-            if (ReferenceEquals(a, b))
-                return true;
-
-            if (a is null || b is null)
-                return false;
-
-            if (a.Count != b.Count)
-                return false;
-
-            for (int i = 0; i < a.Count; i++)
-            {
-                if (!Equals(a[i], b[i]))
-                    return false;
-            }
-
-            return true;
         }
     }
 
@@ -951,36 +948,70 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Name == other.Name &&
-                NameSpecified == other.NameSpecified &&
+            if (Name != other.Name)
+                return false;
 
-                Nominal == other.Nominal &&
-                NominalSpecified == other.NominalSpecified &&
+            if (NameSpecified != other.NameSpecified)
+                return false;
 
-                Lifetime == other.Lifetime &&
-                LifetimeSpecified == other.LifetimeSpecified &&
+            if (Nominal != other.Nominal)
+                return false;
 
-                Restock == other.Restock &&
-                RestockSpecified == other.RestockSpecified &&
+            if (NominalSpecified != other.NominalSpecified)
+                return false;
 
-                Min == other.Min &&
-                MinSpecified == other.MinSpecified &&
+            if (Lifetime != other.Lifetime)
+                return false;
 
-                QuantMin == other.QuantMin &&
-                QuantMinSpecified == other.QuantMinSpecified &&
+            if (LifetimeSpecified != other.LifetimeSpecified)
+                return false;
 
-                QuantMax == other.QuantMax &&
-                QuantMaxSpecified == other.QuantMaxSpecified &&
+            if (Restock != other.Restock)
+                return false;
 
-                Cost == other.Cost &&
-                CostSpecified == other.CostSpecified &&
+            if (RestockSpecified != other.RestockSpecified)
+                return false;
 
-                Equals(Flags, other.Flags) &&
-                Equals(Category, other.Category) &&
-                ListsEqual(Usages, other.Usages) &&
-                ListsEqual(Tags, other.Tags) &&
-                ListsEqual(Values, other.Values);
+            if (Min != other.Min)
+                return false;
+
+            if (MinSpecified != other.MinSpecified)
+                return false;
+
+            if (QuantMin != other.QuantMin)
+                return false;
+
+            if (QuantMinSpecified != other.QuantMinSpecified)
+                return false;
+
+            if (QuantMax != other.QuantMax)
+                return false;
+
+            if (QuantMaxSpecified != other.QuantMaxSpecified)
+                return false;
+
+            if (Cost != other.Cost)
+                return false;
+
+            if (CostSpecified != other.CostSpecified)
+                return false;
+
+            if (!Equals(Flags, other.Flags))
+                return false;
+
+            if (!Equals(Category, other.Category))
+                return false;
+
+            if (!ListsEqual(Usages, other.Usages))
+                return false;
+
+            if (!ListsEqual(Tags, other.Tags))
+                return false;
+
+            if (!ListsEqual(Values, other.Values))
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -1182,9 +1213,17 @@ namespace Day2eEditor
                 Flags = Flags?.Clone(),
                 Category = Category?.Clone(),
 
-                Usages = new BindingList<Usage>(Usages?.Select(u => u.Clone()).ToList() ?? new List<Usage>()),
-                Tags = new BindingList<Tag>(Tags?.Select(t => t.Clone()).ToList() ?? new List<Tag>()),
-                Values = new BindingList<Value>(Values?.Select(v => v.Clone()).ToList() ?? new List<Value>())
+                Usages = Usages == null
+                    ? null
+                    : new BindingList<Usage>(Usages.Select(u => u.Clone()).ToList()),
+
+                Tags = Tags == null
+                    ? null
+                    : new BindingList<Tag>(Tags.Select(t => t.Clone()).ToList()),
+
+                Values = Values == null
+                    ? null
+                    : new BindingList<Value>(Values.Select(v => v.Clone()).ToList())
             };
         }
     }
@@ -1248,13 +1287,25 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                count_in_cargo == other.count_in_cargo &&
-                count_in_hoarder == other.count_in_hoarder &&
-                count_in_map == other.count_in_map &&
-                count_in_player == other.count_in_player &&
-                crafted == other.crafted &&
-                deloot == other.deloot;
+            if (count_in_cargo != other.count_in_cargo)
+                return false;
+
+            if (count_in_hoarder != other.count_in_hoarder)
+                return false;
+
+            if (count_in_map != other.count_in_map)
+                return false;
+
+            if (count_in_player != other.count_in_player)
+                return false;
+
+            if (crafted != other.crafted)
+                return false;
+
+            if (deloot != other.deloot)
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -1320,9 +1371,13 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Name == other.Name &&
-                NameSpecified == other.NameSpecified;
+            if (Name != other.Name)
+                return false;
+
+            if (NameSpecified != other.NameSpecified)
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
