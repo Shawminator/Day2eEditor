@@ -1002,13 +1002,13 @@ namespace Day2eEditor
             if (!Equals(Category, other.Category))
                 return false;
 
-            if (!ListsEqual(Usages, other.Usages))
+            if (!Helper.ListEquals(Usages, other.Usages))
                 return false;
 
-            if (!ListsEqual(Tags, other.Tags))
+            if (!Helper.ListEquals(Tags, other.Tags))
                 return false;
 
-            if (!ListsEqual(Values, other.Values))
+            if (!Helper.ListEquals(Values, other.Values))
                 return false;
 
             return true;
@@ -1017,26 +1017,6 @@ namespace Day2eEditor
         public override bool Equals(object? obj)
         {
             return Equals(obj as TypeEntry);
-        }
-
-        private static bool ListsEqual<T>(IList<T>? a, IList<T>? b)
-        {
-            if (ReferenceEquals(a, b))
-                return true;
-
-            if (a is null || b is null)
-                return false;
-
-            if (a.Count != b.Count)
-                return false;
-
-            for (int i = 0; i < a.Count; i++)
-            {
-                if (!Equals(a[i], b[i]))
-                    return false;
-            }
-
-            return true;
         }
 
         public void AddTier(string tier)
@@ -1451,11 +1431,12 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Name == other.Name &&
-                NameSpecified == other.NameSpecified &&
-                User == other.User &&
-                UserSpecified == other.UserSpecified;
+            if (Name != other.Name) return false;
+            if (NameSpecified != other.NameSpecified) return false;
+            if (User != other.User) return false;
+            if (UserSpecified != other.UserSpecified) return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -1504,9 +1485,11 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Name == other.Name &&
-                NameSpecified == other.NameSpecified;
+
+            if (Name != other.Name) return false;
+            if (NameSpecified != other.NameSpecified) return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -1576,11 +1559,12 @@ namespace Day2eEditor
             if (ReferenceEquals(this, other))
                 return true;
 
-            return
-                Name == other.Name &&
-                NameSpecified == other.NameSpecified &&
-                User == other.User &&
-                UserSpecified == other.UserSpecified;
+            if (Name != other.Name) return false;
+            if (NameSpecified != other.NameSpecified) return false;
+            if (User != other.User) return false;
+            if (UserSpecified != other.UserSpecified) return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj)
