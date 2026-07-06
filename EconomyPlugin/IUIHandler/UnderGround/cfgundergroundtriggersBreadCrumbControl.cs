@@ -70,7 +70,13 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                int i = _nodes.Last().Index;
+                string bcLabel =
+                       $"#{i} {_data.getbreadcrumbtype()} " +
+                       $"Eye:{_data.EyeAccommodation} " +
+                       $"@ ({_data.Position.GetString()})";
+                
+                _nodes.Last().Text = bcLabel;
             }
         }
         private void UseRayCastCB_CheckedChanged(object sender, EventArgs e)
@@ -122,21 +128,25 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.Position.X = (float)CFGUBreadCrumbPositionXNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUBreadCrumbPositionYNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Position.Y = (float)CFGUBreadCrumbPositionYNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUBreadCrumbPositionZNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.Position.Z = (float)CFGUBreadCrumbPositionZNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUBreadCrumbEyeAccommodationNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             _data.EyeAccommodation = (decimal)CFGUBreadCrumbEyeAccommodationNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUBreadCrumbUseRayCastCB_CheckedChanged(object sender, EventArgs e)
         {

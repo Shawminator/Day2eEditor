@@ -170,7 +170,7 @@ namespace Day2eEditor
 
     public class Trigger : IEquatable<Trigger>, IDeepCloneable<Trigger>
     {
-        public bool? CustommSpawn { get; set; }
+        public int? CustomSpawn { get; set; }
         public BindingList<int>? ParentNetworkId { get; set; }
         public string? Comment { get; set; }
         public Vec3? Position { get; set; }
@@ -216,7 +216,7 @@ namespace Day2eEditor
                 return true;
 
             return
-                CustommSpawn == other.CustommSpawn &&
+                CustomSpawn == other.CustomSpawn &&
                 Helper.ListEquals(ParentNetworkId, other.ParentNetworkId) &&
                 Comment == other.Comment &&
                 Equals(Position, other.Position) &&
@@ -239,7 +239,7 @@ namespace Day2eEditor
         {
             return new Trigger
             {
-                CustommSpawn = this.CustommSpawn,
+                CustomSpawn = this.CustomSpawn,
                 ParentNetworkId = this.ParentNetworkId,
                 Comment = this.Comment,
                 Position = this.Position.Clone(),

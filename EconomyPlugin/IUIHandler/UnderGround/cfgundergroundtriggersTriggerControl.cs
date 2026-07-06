@@ -32,6 +32,25 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
+            if (_data.CustomSpawn != null)
+            {
+                UseCustopmSpawnCB.Checked = CustomSpawnCB.Visible = true;
+                CustomSpawnCB.Checked = _data.CustomSpawn == 1 ? true : false;
+            }
+            else
+            {
+                UseCustopmSpawnCB.Checked = CustomSpawnCB.Visible = false;
+            }
+            if (_data.Comment != null)
+            {
+                UseCommentCB.Checked = CommentTB.Visible = true;
+                CommentTB.Text = _data.Comment;
+            }
+            else
+            {
+                UseCommentCB.Checked = CommentTB.Visible = false;
+            }
+
             CFGUTriggerPositionXNUD.Value = (decimal)_data.Position.X;
             CFGUTriggerPositionYNUD.Value = (decimal)_data.Position.Y;
             CFGUTriggerPositionZNUD.Value = (decimal)_data.Position.Z;
@@ -67,7 +86,7 @@ namespace EconomyPlugin
             }
             else
             {
-                AmbientSoundTypeTB.Visible = false;
+                UseAmbientSoundTypeCB.Checked = AmbientSoundTypeTB.Visible = false;
             }
             if (_data.AmbientSoundSet != null)
             {
@@ -85,21 +104,80 @@ namespace EconomyPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                EUndergroundTriggerType triggerType = _data.gettriggertype();
+
+                string label =
+                    $"{triggerType} " +
+                    $"{(string.IsNullOrWhiteSpace(_data.Comment) ? "" : $"[{_data.Comment}] ")}" +
+                    $"@ ({_data.Position.GetString()})";
+                _nodes.Last().Text = label;
             }
+        }
+
+
+        private void UseCustopmSpawnCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (UseCustopmSpawnCB.Checked)
+            {
+                CustomSpawnCB.Visible = true;
+                _data.CustomSpawn = 0;
+            }
+            else
+            {
+                CustomSpawnCB.Visible = false;
+                _data.CustomSpawn = null;
+            }
+            
+        }
+
+        private void CustomSpawnCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.CustomSpawn = CustomSpawnCB.Checked == true ? 1 : 0;
+        }
+
+        private void UseCommentCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            if (UseCommentCB.Checked)
+            {
+                CommentTB.Visible = true;
+                _data.Comment = "Change Me";
+                CommentTB.Text = _data.Comment;
+            }
+            else
+            {
+                CommentTB.Visible = false;
+                _data.Comment = null;
+            }
+            UpdateTreeNodeText();
+        }
+
+        private void CommentTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Comment = CommentTB.Text;
+            UpdateTreeNodeText();
         }
 
         private void CFGUTriggerPositionXNUD_ValueChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            _data.Position.X = (float)CFGUTriggerPositionXNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUTriggerPositionYNUD_ValueChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            _data.Position.Y = (float)CFGUTriggerPositionYNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUTriggerPositionZNUD_ValueChanged(object sender, EventArgs e)
         {
-
+            if (_suppressEvents) return;
+            _data.Position.Z = (float)CFGUTriggerPositionZNUD.Value;
+            UpdateTreeNodeText();
         }
         private void CFGUTriggerOrientationXNUD_ValueChanged(object sender, EventArgs e)
         {
@@ -204,7 +282,7 @@ namespace EconomyPlugin
             {
                 AmbientSoundSetTB.Visible = true;
                 _data.AmbientSoundSet = "Change Me";
-                AmbientSoundSetTB.Text = _data.AmbientSoundType;
+                AmbientSoundSetTB.Text = _data.AmbientSoundSet;
             }
             else
             {
@@ -218,24 +296,6 @@ namespace EconomyPlugin
             _data.AmbientSoundSet = AmbientSoundSetTB.Text;
         }
 
-        private void UseCustopmSpawnCB_CheckedChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void CustomSpawnCB_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void UseCommentCB_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CommentTB_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
