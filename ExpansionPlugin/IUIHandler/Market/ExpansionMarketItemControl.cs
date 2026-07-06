@@ -76,7 +76,12 @@ namespace ExpansionPlugin
         private void GetBuyPrice()
         {
             ExpansionMarketTraderZone currentzone = ZoneCB.SelectedItem as ExpansionMarketTraderZone;
-            decimal initialbuyPriceModifier = (decimal)currentzone.BuyPricePercent / 100;
+            decimal buyprecent = 100;
+            if(currentzone != null)
+            {
+                buyprecent = (decimal)currentzone.BuyPricePercent;
+            }
+            decimal initialbuyPriceModifier = buyprecent / 100;
             numericUpDown1.Value = _data.CalculatePrice(trackBar1.Value, (float)initialbuyPriceModifier, true);
         }
         private void GetSellPrince()
@@ -85,10 +90,17 @@ namespace ExpansionPlugin
             if (SellpricePercent == -1)
             {
                 ExpansionMarketTraderZone currentzone = ZoneCB.SelectedItem as ExpansionMarketTraderZone;
-                SellpricePercent = (decimal)currentzone.SellPricePercent;
-                if (SellpricePercent == -1)
+                if (currentzone == null)
                 {
                     SellpricePercent = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionMarketSettingsConfig.Data.SellPricePercent;
+                }
+                else
+                {
+                    SellpricePercent = (decimal)currentzone.SellPricePercent;
+                    if (SellpricePercent == -1)
+                    {
+                        SellpricePercent = (decimal)AppServices.GetRequired<ExpansionManager>().ExpansionMarketSettingsConfig.Data.SellPricePercent;
+                    }
                 }
             }
             decimal initialSellPriceModifier = (SellpricePercent / 100) * (decimal)ConditionCB.SelectedValue;
