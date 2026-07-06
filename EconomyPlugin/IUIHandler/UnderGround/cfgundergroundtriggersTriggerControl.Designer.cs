@@ -114,7 +114,7 @@
             CFGUTriggerGB.Margin = new Padding(4, 3, 4, 3);
             CFGUTriggerGB.Name = "CFGUTriggerGB";
             CFGUTriggerGB.Padding = new Padding(4, 3, 4, 3);
-            CFGUTriggerGB.Size = new Size(600, 456);
+            CFGUTriggerGB.Size = new Size(600, 316);
             CFGUTriggerGB.TabIndex = 223;
             CFGUTriggerGB.TabStop = false;
             CFGUTriggerGB.Text = "Trigger Info";
@@ -512,7 +512,7 @@
             Controls.Add(CFGUTriggerGB);
             ForeColor = SystemColors.Control;
             Name = "cfgundergroundtriggersTriggerControl";
-            Size = new Size(600, 459);
+            Size = new Size(600, 316);
             CFGUTriggerGB.ResumeLayout(false);
             CFGUTriggerGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)CFGUTriggerInterpolationSpeedNUD).EndInit();
