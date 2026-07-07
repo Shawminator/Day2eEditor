@@ -5412,7 +5412,7 @@ namespace EconomyPlugin
             if (!spf.IsModded)
             {
                 var ismoddedresult = MessageBox.Show(
-                                $"This is the Vanilla Spawnable Types file, I suggest you add new Spawnable Types to a custom SpawnableTypes file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Spawnable Types.",
+                                $"This is the Vanilla Spawnable Types file, I suggest you add new Spawnable Types to a custom SpawnableTypes file......\n\nIf you dont have any custom SpawnableTypes yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Spawnable Types.",
                                 "Vanilla Spawnable Types File",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Question
