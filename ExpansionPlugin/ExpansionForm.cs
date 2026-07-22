@@ -6116,6 +6116,7 @@ namespace ExpansionPlugin
                 _mapControl.MapsingleClicked += MapControl_AIPatrolSingleclicked;
 
                 var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
+                var tag2 = node.Parent?.Parent?.Parent?.Tag;
                 if (tag is ExpansionAIPatrolConfig patrolConfig)
                 {
                     DrawbaseAIPatrols(patrolConfig);
@@ -6124,7 +6125,7 @@ namespace ExpansionPlugin
                 {
                     DrawbaseObjectiveAICamp(campConfig);
                 }
-                else if (tag is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+                else if (tag2 is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
                 {
                     DrawbaseObjectiveAIPatrols(questPatrolConfig);
                 }
@@ -7376,51 +7377,99 @@ namespace ExpansionPlugin
 
             TreeNode parentNode = currentTreeNode.Parent.Parent.Parent;
 
-            Vec3 closestPos = null;
-            double closestDistance = double.MaxValue;
+            if (parentNode.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+            { 
+                Vec3 closestPos = null;
+                double closestDistance = double.MaxValue;
 
-            PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+                PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+                parentNode = currentTreeNode.Parent;
 
-            // Loop through all child nodes of the parent
-            foreach (TreeNode child in parentNode.Nodes)
-            {
-                foreach (TreeNode child2 in child.Nodes[1].Nodes)
-                {
-                    if (child2.Tag is Vec3 pos)
-                    {
-                        // Node position in screen space
-                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
 
-                        double dx = clickScreen.X - posScreen.X;
-                        double dy = clickScreen.Y - posScreen.Y;
-                        double distance = Math.Sqrt(dx * dx + dy * dy);
-
-                        if (distance < closestDistance)
-                        {
-                            closestDistance = distance;
-                            closestPos = pos;
-                        }
-                    }
-                }
-            }
-
-            // Optional: choose only if within some "click radius"
-            if (closestPos != null && closestDistance <= 25) // 10 units tolerance
-            {
-                // Select that tree node in the TreeView
+                // Loop through all child nodes of the parent
                 foreach (TreeNode child in parentNode.Nodes)
                 {
-                    foreach (TreeNode child2 in child.Nodes[1].Nodes)
-                    {
-                        if (child2.Tag == closestPos)
+                        if (child.Tag is Vec3 pos)
                         {
-                            ExpansionTV.SelectedNode = child2;
-                            break;
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
+                        }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode child in parentNode.Nodes)
+                    {
+                            if (child.Tag == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = child;
+                                break;
+                            }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+            else
+            {
+                Vec3 closestPos = null;
+                double closestDistance = double.MaxValue;
+
+                PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+
+                // Loop through all child nodes of the parent
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    foreach (TreeNode child2 in child.Nodes[0].Nodes)
+                    {
+                        if (child2.Tag is Vec3 pos)
+                        {
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
                         }
                     }
                 }
 
-                //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode child in parentNode.Nodes)
+                    {
+                        foreach (TreeNode child2 in child.Nodes[0].Nodes)
+                        {
+                            if (child2.Tag == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = child2;
+                                break;
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
             }
         }
         private void MapControl_AIPatrolDoubleclicked(object sender, MapClickEventArgs e)
@@ -7436,6 +7485,7 @@ namespace ExpansionPlugin
                 _mapControl.ClearDrawables();
 
                 var tag = currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag;
+                var tag2 = currentTreeNode.Parent?.Parent?.Parent?.Tag;
                 if (tag is ExpansionAIPatrolConfig patrolConfig)
                 {
                     ShowHandler(new Vector3Control(), typeof(ExpansionAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
@@ -7446,7 +7496,7 @@ namespace ExpansionPlugin
                     ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveAICampConfig), v3, new List<TreeNode>() { currentTreeNode });
                     DrawbaseObjectiveAICamp(campConfig);
                 }
-                else if (tag is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+                else if (tag2 is ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
                 {
                     ShowHandler(new Vector3Control(), typeof(ExpansionQuestObjectiveAIPatrolConfig), v3, new List<TreeNode>() { currentTreeNode });
                     DrawbaseObjectiveAIPatrols(questPatrolConfig);

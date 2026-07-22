@@ -481,7 +481,6 @@ namespace ExpansionPlugin
         private void StaticPatrolNumberOfAINUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            
             _data.NumberOfAI = (int)StaticPatrolNumberOfAINUD.Value;
         }
         private void StaticPatrolNumberOfAIMaxNUD_ValueChanged(object sender, EventArgs e)
