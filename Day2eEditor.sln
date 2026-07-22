@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12009.203 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day2eEditor", "Day2eEditor\Day2eEditor.csproj", "{DC5FC326-989B-41A6-85AF-BC4E51BEBB8E}"
 EndProject
@@ -23,8 +23,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EconomyPlugin", "EconomyPlugin\EconomyPlugin.csproj", "{E00818F0-3C64-4B37-B54E-43D21D42BC75}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreUI", "CoreUI\CoreUI.csproj", "{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicWeatherPlugin", "DynamicWeatherPlugin\DynamicWeatherPlugin.csproj", "{718E14D8-5D54-4F62-A267-E4DC476AE3DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpansionPlugin", "ExpansionPlugin\ExpansionPlugin.csproj", "{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}"
 EndProject
@@ -64,10 +62,6 @@ Global
 		{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BE486B5-CCBD-40FD-B43D-0D953378A8C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{718E14D8-5D54-4F62-A267-E4DC476AE3DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F2482DB-67E6-4E1B-9DF4-EE4B431C92D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
