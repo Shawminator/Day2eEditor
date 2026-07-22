@@ -16,10 +16,12 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using System.Windows.Forms.Design.Behavior;
 using System.Xml;
 using System.Xml.Linq;
+using static FileService;
 using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -291,10 +293,10 @@ namespace ExpansionPlugin
                     SetupAILocationRoamingLocations(ExpansionAIRoamingLocation, node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionAIRoamingLocation.Position.X, (float)ExpansionAIRoamingLocation.Position.Z));
                 },
-                [typeof(ExpansionAIPatrolSettings)] = (node, selected) =>
+                [typeof(ExpansionAIPatrolConfig)] = (node, selected) =>
                 {
-                    ExpansionAIPatrolSettings ExpansionAIPatrolSettings = node.Tag as ExpansionAIPatrolSettings;
-                    ShowHandler(new AIPAtrolGeneralControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrolSettings, selected);
+                    ExpansionAIPatrolConfig ExpansionAIPatrolConfig = node.Tag as ExpansionAIPatrolConfig;
+                    ShowHandler(new AIPAtrolGeneralControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrolConfig.Data, selected);
                 },
                 [typeof(Loadbalancingcategorie)] = (node, selected) =>
                 {
@@ -326,6 +328,25 @@ namespace ExpansionPlugin
                     ShowHandler(control, typeof(ExpansionAILocationConfig), ExpansionAINoGoArea, selected);
                     SetupAILocationNoGoAreas(ExpansionAINoGoArea, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z));
+                },
+                //AI
+                [typeof(ExpansionAIPatrol)] = (node, selected) =>
+                {
+                    if (node.Parent.Parent.Tag is ExpansionAIPatrolConfig)
+                    {
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Tag as ExpansionAIPatrol;
+                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
+                    }
+                    else if (node.Parent.Parent.Tag is ExpansionQuestObjectiveAICampConfig)
+                    {
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Tag as ExpansionAIPatrol;
+                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAICampConfig), ExpansionAIPatrol, selected);
+                    }
+                    else if (node.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                    {
+                        ExpansionAIPatrol ExpansionAIPatrol = node.Tag as ExpansionAIPatrol;
+                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAIPatrolConfig), ExpansionAIPatrol, selected);
+                    }
                 },
                 //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
@@ -1062,25 +1083,7 @@ namespace ExpansionPlugin
                         ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionQuestObjectiveTreasureHuntConfig), ExpansionQuestObjectiveTreasureHuntConfig.Loot, selected);
                     }
                 },
-                //AI
-                ["AIPatrolGeneral"] = (node, selected) =>
-                {
-                    if (node.Parent.Parent.Parent.Tag is ExpansionAIPatrolConfig)
-                    {
-                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
-                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionAIPatrolConfig), ExpansionAIPatrol, selected);
-                    }
-                    else if (node.Parent.Parent.Parent.Tag is ExpansionQuestObjectiveAICampConfig)
-                    {
-                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
-                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAICampConfig), ExpansionAIPatrol, selected);
-                    }
-                    else if (node.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
-                    {
-                        ExpansionAIPatrol ExpansionAIPatrol = node.Parent.Tag as ExpansionAIPatrol;
-                        ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAIPatrolConfig), ExpansionAIPatrol, selected);
-                    }
-                },
+                
                 //Airdrops
                 ["AirdropContainersInfected"] = (node, selected) =>
                 {
@@ -3324,10 +3327,6 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            AIPatrolRootNode.Nodes.Add(new TreeNode("General")
-            {
-                Tag = ef.Data
-            });
             TreeNode AIAPatrolsNode = new TreeNode("Patrols")
             {
                 Tag = "AIPatrols"
@@ -3368,10 +3367,6 @@ namespace ExpansionPlugin
         }
         private void CreatePatrolNodes(ExpansionAIPatrol pat, TreeNode Root)
         {
-            Root.Nodes.Add(new TreeNode("General")
-            {
-                Tag = "AIPatrolGeneral"
-            });
             TreeNode WaypointsNode = new TreeNode("WayPoints")
             {
                 Tag = "AIPatrolWayPoints"
@@ -3493,10 +3488,6 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            AIRootNode.Nodes.Add(new TreeNode("General")
-            {
-                Tag = ef.Data
-            });
             TreeNode AISettingsAdminsNodes = new TreeNode("Admins")
             {
                 Tag = "AISettingsAdmins"
@@ -9200,6 +9191,7 @@ namespace ExpansionPlugin
                         }
                         break;
                     case 2:
+                        
                         ObjectSpawnerArrFile newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrFile>(File.ReadAllText(filePath));
                         foreach (SpawnObjects so in newobjectspawner.Data.Objects)
                         {
@@ -9224,6 +9216,7 @@ namespace ExpansionPlugin
 
             }
         }
+        
         private void exportWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
@@ -10520,7 +10513,7 @@ namespace ExpansionPlugin
             TreeNode parent = currentTreeNode.FindParentNodeOfType<ExpansionMarketCategoryConfig>();
             if (parent == null)
                 return;
-            using (var form = new SelectCategoryFolderForm(parent, SelectCategoryFolderForm.SelectionMode.ExpansionMarketCategoryFile))
+            using (var form = new SelectCategoryFolderForm(parent, SelectCategoryFolderForm.SelectionMode.ExpansionMarketCategoryFile, true))
             {
                 if (form.ShowDialog() != DialogResult.OK)
                     return;
@@ -10761,47 +10754,55 @@ namespace ExpansionPlugin
             if (categoryRootNode == null)
                 return;
 
-            using (var form = new SelectCategoryFolderForm(
-                categoryRootNode,
-                SelectCategoryFolderForm.SelectionMode.ExpansionMarketCategoryFile))
+            using (var form = new SelectCategoryFolderForm(categoryRootNode, SelectCategoryFolderForm.SelectionMode.ExpansionMarketCategoryFile))
             {
-                if (form.ShowDialog() != DialogResult.OK || form.SelectedExpansionMarketCategory == null)
+                if (form.ShowDialog() != DialogResult.OK ||
+                    form.SelectedExpansionMarketCategories.Count == 0)
+                {
                     return;
+                }
 
                 ExpansionMarketTrader trader = currentTreeNode.Parent?.Tag as ExpansionMarketTrader;
                 if (trader == null)
                     return;
 
-                string traderPath = form.SelectedExpansionMarketCategory.GetTraderPath();
+                TreeNode lastAddedNode = null;
 
-                bool alreadyExists = trader.m_Categories.Any(c => string.Equals(c.CategoryPath, traderPath, StringComparison.OrdinalIgnoreCase));
-                if (alreadyExists)
+                foreach (ExpansionMarketCategory category in form.SelectedExpansionMarketCategories)
                 {
-                    string message = $"The category \"{traderPath}\" is already added to this trader.";
+                    string traderPath = category.GetTraderPath();
 
-                    MessageBox.Show(
-                        message,
-                        "Duplicate Category",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
-                    Console.WriteLine($"[INFO] Duplicate category prevented: {traderPath}");
-                    return;
+                    bool alreadyExists = trader.m_Categories.Any(c =>
+                        string.Equals(c.CategoryPath, traderPath, StringComparison.OrdinalIgnoreCase));
+
+                    if (alreadyExists)
+                    {
+                        Console.WriteLine($"[INFO] Duplicate category prevented: {traderPath}");
+                        continue;
+                    }
+
+                    ExpansionMarketTraderCategory newCategory =
+                        new ExpansionMarketTraderCategory(
+                            traderPath,
+                            category,
+                            ExpansionMarketTraderBuySell.CanBuyAndSell);
+
+                    trader.m_Categories.Add(newCategory);
+
+                    TreeNode newCategoryNode = new TreeNode(newCategory.ToString())
+                    {
+                        Tag = newCategory
+                    };
+
+                    Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, newCategoryNode);
+
+                    lastAddedNode = newCategoryNode;
                 }
-                ExpansionMarketTraderCategory newCategory =
-                    new ExpansionMarketTraderCategory(
-                        traderPath,
-                        form.SelectedExpansionMarketCategory,
-                        ExpansionMarketTraderBuySell.CanBuyAndSell);
 
-                trader.m_Categories.Add(newCategory);
-                TreeNode newCategoryNode = new TreeNode(newCategory.ToString())
+                if (lastAddedNode != null)
                 {
-                    Tag = newCategory
-                };
-
-                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, newCategoryNode);
-                ExpansionTV.SelectedNode = newCategoryNode;
+                    ExpansionTV.SelectedNode = lastAddedNode;
+                }
             }
         }
         private void removeCategoryFromTraderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -10823,9 +10824,7 @@ namespace ExpansionPlugin
             if (categoryRootNode == null)
                 return;
 
-            using (var form = new SelectCategoryFolderForm(
-                categoryRootNode,
-                SelectCategoryFolderForm.SelectionMode.ExpansionMarketItem))
+            using (var form = new SelectCategoryFolderForm(categoryRootNode, SelectCategoryFolderForm.SelectionMode.ExpansionMarketItem))
             {
                 if (form.ShowDialog() != DialogResult.OK || form.SelectedExpansionMarketItems == null)
                     return;

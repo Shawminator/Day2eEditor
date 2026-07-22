@@ -210,6 +210,11 @@ public class FileService
         }
         try
         {
+            string? directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
             var json = JsonSerializer.Serialize(data, options);
             File.WriteAllText(path, json);
         }

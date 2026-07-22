@@ -422,13 +422,13 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                if (_nodes.Last().Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                if (_nodes.Last().Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
                 {
-                    _nodes.Last().Parent.Text = $"AI Spawn : {_data.Name}";
+                    _nodes.Last().Text = $"AI Spawn : {_data.Name}";
                 }
                 else
                 {
-                    _nodes.Last().Parent.Text = _data.Name;
+                    _nodes.Last().Text = _data.Name;
                 }
             }
         }

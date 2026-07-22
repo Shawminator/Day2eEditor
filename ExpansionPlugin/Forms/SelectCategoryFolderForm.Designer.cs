@@ -47,12 +47,16 @@ namespace ExpansionPlugin
             // 
             treeViewFolders.BackColor = Color.FromArgb(60, 63, 65);
             treeViewFolders.ForeColor = SystemColors.Control;
+            treeViewFolders.HideSelection = false;
             treeViewFolders.Location = new Point(10, 37);
             treeViewFolders.Margin = new Padding(3, 2, 3, 2);
             treeViewFolders.Name = "treeViewFolders";
             treeViewFolders.Size = new Size(367, 401);
             treeViewFolders.TabIndex = 0;
+            treeViewFolders.AfterCheck += treeViewFolders_AfterCheck;
+            treeViewFolders.BeforeSelect += treeViewFolders_BeforeSelect;
             treeViewFolders.AfterSelect += treeViewFolders_AfterSelect;
+            treeViewFolders.NodeMouseClick += treeViewFolders_NodeMouseClick;
             // 
             // buttonOK
             // 
@@ -131,9 +135,9 @@ namespace ExpansionPlugin
             TitleLabel.Location = new Point(6, 7);
             TitleLabel.Margin = new Padding(4, 0, 4, 0);
             TitleLabel.Name = "TitleLabel";
-            TitleLabel.Size = new Size(86, 15);
+            TitleLabel.Size = new Size(79, 15);
             TitleLabel.TabIndex = 6;
-            TitleLabel.Text = "Selecte Folder";
+            TitleLabel.Text = "Select Folder";
             // 
             // SelectCategoryFolderForm
             // 

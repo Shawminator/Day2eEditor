@@ -318,6 +318,7 @@ namespace Day2eEditor
             if (openfile.ShowDialog() == DialogResult.OK)
             {
                 TypesFile newtypes = new TypesFile(openfile.FileName);
+                newtypes.Data = TypesConfig.LoadTypesXmlCustom(openfile.FileName, newtypes);
                 _entries = newtypes.Data.TypeList;
                 _grid.DataSource = _entries;
             }

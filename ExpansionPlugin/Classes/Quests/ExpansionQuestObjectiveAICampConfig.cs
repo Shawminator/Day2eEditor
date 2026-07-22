@@ -194,10 +194,6 @@ namespace ExpansionPlugin
         }
         private void CreatePatrolNodes(ExpansionAIPatrol pat, TreeNode Root)
         {
-            Root.Nodes.Add(new TreeNode("General")
-            {
-                Tag = "AIPatrolGeneral"
-            });
             TreeNode WaypointsNode = new TreeNode("WayPoints")
             {
                 Tag = "AIPatrolWayPoints"

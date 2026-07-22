@@ -48,7 +48,7 @@ namespace Day2eEditor
                 filePath,
                 createNew: () => new ObjectSpawnerArrData(),
                 configName: "ObjectSpawnerArr",
-                useBoolConvertor: false
+                useBoolConvertor:true
             );
 
             return new ObjectSpawnerArrFile(filePath)

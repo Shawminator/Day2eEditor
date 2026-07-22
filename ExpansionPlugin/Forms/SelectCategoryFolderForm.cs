@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ExpansionPlugin
 {
@@ -16,18 +17,31 @@ namespace ExpansionPlugin
         }
 
         public string SelectedCategoryTag { get; private set; }
-        public ExpansionMarketCategory SelectedExpansionMarketCategory { get; private set; }
-        public List<ExpansionMarketItem> SelectedExpansionMarketItems { get; private set; } = new List<ExpansionMarketItem>();
+        public List<ExpansionMarketCategory> SelectedExpansionMarketCategories { get; private set; } = new();
+        public List<ExpansionMarketItem> SelectedExpansionMarketItems { get; private set; } = new();
+
+        public ExpansionMarketCategory SelectedExpansionMarketCategory { get; private set; } = new();
 
         private readonly SelectionMode _selectionMode;
+        private readonly bool _singleSelect;
         private bool _suppressAfterCheck;
 
-        public SelectCategoryFolderForm(TreeNode sourceRootNode, SelectionMode selectionMode)
+        public SelectCategoryFolderForm(TreeNode sourceRootNode, SelectionMode selectionMode,bool singleSelect = false)
         {
             InitializeComponent();
             _selectionMode = selectionMode;
+            _singleSelect = singleSelect;
+            bool checkBoxMode =
+                _selectionMode == SelectionMode.ExpansionMarketItem ||
+                _selectionMode == SelectionMode.ExpansionMarketCategoryFile;
 
-            treeViewFolders.CheckBoxes = _selectionMode == SelectionMode.ExpansionMarketItem;
+            if (checkBoxMode)
+            {
+                treeViewFolders.HideSelection = true;
+                treeViewFolders.FullRowSelect = false;
+            }
+
+            treeViewFolders.CheckBoxes = checkBoxMode;
 
             CloneTree(sourceRootNode);
         }
@@ -99,6 +113,7 @@ namespace ExpansionPlugin
             {
                 return cloned;
             }
+
 
             foreach (TreeNode child in original.Nodes)
             {
@@ -177,14 +192,19 @@ namespace ExpansionPlugin
                     return;
 
                 case SelectionMode.ExpansionMarketCategoryFile:
-                    if (selectedNode?.Tag is ExpansionMarketCategory expansionMarketCategory)
+
+                    var checkedCategories = GetCheckedCategories();
+
+                    if (checkedCategories.Count > 0)
                     {
-                        SelectedExpansionMarketCategory = expansionMarketCategory;
+                        SelectedExpansionMarketCategories = checkedCategories;
+                        SelectedExpansionMarketCategory = checkedCategories.First();
+
                         DialogResult = DialogResult.OK;
                         return;
                     }
 
-                    MessageBox.Show("Please select an ExpansionMarketCategory file.");
+                    MessageBox.Show("Please select one or more ExpansionMarketCategory files.");
                     return;
 
                 case SelectionMode.ExpansionMarketItem:
@@ -227,20 +247,16 @@ namespace ExpansionPlugin
                     break;
 
                 case SelectionMode.ExpansionMarketCategoryFile:
-                    buttonOK.Enabled = e.Node.Tag is ExpansionMarketCategory;
-                    break;
-
                 case SelectionMode.ExpansionMarketItem:
-                    buttonOK.Enabled =
-                        e.Node.Tag is ExpansionMarketItem ||
-                        GetCheckedMarketItems().Count > 0;
+                    treeViewFolders.SelectedNode = null;
                     break;
             }
         }
 
         private void treeViewFolders_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            if (_selectionMode != SelectionMode.ExpansionMarketItem)
+            if (_selectionMode != SelectionMode.ExpansionMarketItem &&
+                _selectionMode != SelectionMode.ExpansionMarketCategoryFile)
                 return;
 
             if (_suppressAfterCheck)
@@ -250,10 +266,33 @@ namespace ExpansionPlugin
             {
                 _suppressAfterCheck = true;
 
-                // Only allow checking market item nodes
-                if (!(e.Node.Tag is ExpansionMarketItem))
+                switch (_selectionMode)
                 {
-                    e.Node.Checked = false;
+                    case SelectionMode.ExpansionMarketCategoryFile:
+
+                        if (!(e.Node.Tag is ExpansionMarketCategory))
+                        {
+                            e.Node.Checked = false;
+                            return;
+                        }
+
+                        break;
+
+                    case SelectionMode.ExpansionMarketItem:
+
+                        if (!(e.Node.Tag is ExpansionMarketItem))
+                        {
+                            e.Node.Checked = false;
+                            return;
+                        }
+
+                        break;
+                }
+
+                // Single-select mode
+                if (_singleSelect && e.Node.Checked)
+                {
+                    UncheckAllExcept(treeViewFolders.Nodes, e.Node);
                 }
             }
             finally
@@ -261,10 +300,58 @@ namespace ExpansionPlugin
                 _suppressAfterCheck = false;
             }
 
-            buttonOK.Enabled = GetCheckedMarketItems().Count > 0 ||
-                               treeViewFolders.SelectedNode?.Tag is ExpansionMarketItem;
+            UpdateOkButton();
+        }
+        private void UncheckAllExcept(TreeNodeCollection nodes, TreeNode keepNode)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (!ReferenceEquals(node, keepNode))
+                    node.Checked = false;
+
+                UncheckAllExcept(node.Nodes, keepNode);
+            }
         }
 
+        private void UpdateOkButton()
+        {
+            switch (_selectionMode)
+            {
+                case SelectionMode.ExpansionMarketCategoryFile:
+                    buttonOK.Enabled = GetCheckedCategories().Count > 0;
+                    break;
+
+                case SelectionMode.ExpansionMarketItem:
+                    buttonOK.Enabled = GetCheckedMarketItems().Count > 0;
+                    break;
+            }
+        }
+        private List<ExpansionMarketCategory> GetCheckedCategories()
+        {
+            var results = new List<ExpansionMarketCategory>();
+
+            foreach (TreeNode rootNode in treeViewFolders.Nodes)
+            {
+                CollectCheckedCategories(rootNode, results);
+            }
+
+            return results;
+        }
+
+        private void CollectCheckedCategories(
+            TreeNode node,
+            List<ExpansionMarketCategory> results)
+        {
+            if (node.Checked && node.Tag is ExpansionMarketCategory category)
+            {
+                results.Add(category);
+            }
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                CollectCheckedCategories(child, results);
+            }
+        }
         private List<ExpansionMarketItem> GetCheckedMarketItems()
         {
             var results = new List<ExpansionMarketItem>();
@@ -288,6 +375,24 @@ namespace ExpansionPlugin
             {
                 CollectCheckedMarketItems(child, results);
             }
+        }
+
+        private void treeViewFolders_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            TreeViewHitTestInfo hit = treeViewFolders.HitTest(e.Location);
+
+            if (hit.Location != TreeViewHitTestLocations.StateImage)
+            {
+                e.Node.Checked = !e.Node.Checked;
+            }
+        }
+
+        private void treeViewFolders_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            bool checkBoxMode =
+               _selectionMode == SelectionMode.ExpansionMarketItem ||
+               _selectionMode == SelectionMode.ExpansionMarketCategoryFile;
+            if(checkBoxMode) e.Cancel = true;
         }
     }
 }

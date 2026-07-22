@@ -170,10 +170,6 @@ namespace ExpansionPlugin
         }
         private void CreatePatrolNodes(ExpansionAIPatrol pat, TreeNode Root)
         {
-            Root.Nodes.Add(new TreeNode("General")
-            {
-                Tag = "AIPatrolGeneral"
-            });
             TreeNode WaypointsNode = new TreeNode("WayPoints")
             {
                 Tag = "AIPatrolWayPoints"
@@ -211,7 +207,7 @@ namespace ExpansionPlugin
             AllowedDamageZones = new BindingList<string>();
             AISpawn = new ExpansionAIPatrol()
             {
-                Name = "NewAICamp",
+                Name = "NewPatrol",
                 Persist = 0,
                 Faction = "West",
                 Formation = "",

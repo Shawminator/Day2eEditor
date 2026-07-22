@@ -10,7 +10,8 @@ namespace Day2eEditor
     {
         private FormController controller;
         private readonly BindingSource _binding = new();
-        public BindingList<eventsEvent> _entries = new BindingList<eventsEvent>();
+        public BindingList<eventsEvent> _eentries = new BindingList<eventsEvent>();
+        public BindingList<SpawnableType> _stentries = new BindingList<SpawnableType>();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string moddir
         {
@@ -87,10 +88,42 @@ namespace Day2eEditor
             OpenFileDialog openfile = new OpenFileDialog();
             if (openfile.ShowDialog() == DialogResult.OK)
             {
-                EventsFile newevents = new EventsFile(openfile.FileName);
-                _entries = newevents.Data.@event;
-                textBox1.Text = Path.GetFileNameWithoutExtension(openfile.FileName);
-                MessageBox.Show($"{newevents.Data.@event.Count} evenmts loaded,\nplease import once you have set filename and directory");
+                if (label1.Text == "Add New Event File")
+                {
+                    EventsFile newevents = new EventsFile(openfile.FileName);
+                    _eentries = newevents.Data.@event;
+                    textBox1.Text = Path.GetFileNameWithoutExtension(openfile.FileName);
+                    MessageBox.Show($"{newevents.Data.@event.Count} evenmts loaded,\nplease import once you have set filename and directory");
+                }
+                else if (label1.Text == "Add new Spawnable Types")
+                {
+                    var item = new CfgSpawnableTypesFile(openfile.FileName);
+
+                    item.Data = AppServices.GetRequired<FileService>().LoadOrCreateXml(
+                        openfile.FileName,
+                        createNew: () => new SpawnableTypes
+                        {
+                            type = new BindingList<SpawnableType>()
+                        },
+                        onError: ex =>
+                        {
+                            item.HasErrors = true;
+
+                            var message =
+                                $"Error in {Path.GetFileName(openfile.FileName)}\n{ex.Message}\n{ex.InnerException?.Message}";
+
+                            Console.WriteLine(message + "\n");
+                            item.Errors.Add(message);
+                        },
+                        configName: "cfgspawnabletypes"
+                    );
+
+                    item.Data.type ??= new BindingList<SpawnableType>();
+                    _stentries = item.Data.type;
+
+
+                    MessageBox.Show($"{_stentries.Count} spawnabletypes loaded,\nplease import once you have set filename and directory");
+                }
             }
         }
     }

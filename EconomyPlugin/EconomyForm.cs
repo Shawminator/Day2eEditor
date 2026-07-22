@@ -4,8 +4,12 @@ using Org.BouncyCastle.Pkcs;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using static FileService;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace EconomyPlugin
@@ -4629,7 +4633,7 @@ namespace EconomyPlugin
                 if (dr == DialogResult.OK)
                 {
                     string newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname + "_ce_types.xml";
+                    string typesfile = frm.typesname.Replace("_ce_types","") + "_ce_types.xml";
                     string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
                     BindingList<TypeEntry> types = frm._entries;
@@ -4731,12 +4735,10 @@ namespace EconomyPlugin
                         typefile.IsDirty = true;
                         added.Add(te.Name);
                         Console.WriteLine($"\t{te.Name} added to file....");
+                        CreateTyoesNodes(currentTreeNode, te);
                     }
 
 
-                    string relativePath = Path.GetRelativePath(_economyManager.basePath, typefile.FilePath);
-                    EconomyTV.Nodes.Remove(currentTreeNode);
-                    AddFileToTree(EconomyTV.Nodes[0], relativePath, typefile, CreateTypesfileNodes);
                     savefiles();
 
                     if (added.Count > 0)
@@ -4766,6 +4768,22 @@ namespace EconomyPlugin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        private readonly JsonSerializerOptions _defaultOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+        private JsonSerializerOptions BuildOptions(bool useBool, bool useVec)
+        {
+            var options = new JsonSerializerOptions(_defaultOptions);
+
+            if (useBool) options.Converters.Add(new BoolConverter());
+            if (useVec) options.Converters.Add(new Vec3Converter());
+
+            return options;
+        }
         private void importPositionFromdzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
@@ -4841,7 +4859,8 @@ namespace EconomyPlugin
                         }
                         break;
                     case 2:
-                        ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath));
+                        var options = BuildOptions(true, false);
+                        ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath), options);
                         foreach (SpawnObjects so in newobjectspawner.Objects)
                         {
                             eventposdefEventPos newpos = new eventposdefEventPos()
@@ -4972,7 +4991,7 @@ namespace EconomyPlugin
                         ModFolder = newmodPath,
                         Data = new events()
                     };
-                    newEventsfile.Data.@event = frm._entries;
+                    newEventsfile.Data.@event = frm._eentries;
                     _economyManager.eonomyCoreConfig.AddCe(newEventsfile.ModFolder, newEventsfile.FileName, "events");
                     _economyManager.eventsConfig.MutableItems.Add(newEventsfile);
                     AddFileToDBTree(newEventsfile);
@@ -5106,6 +5125,63 @@ namespace EconomyPlugin
         }
         private void exportPositionTodzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
+            eventsEvent eEvent = currentTreeNode.Parent.Tag as eventsEvent;
+            string classname = eEvent.children[0].type;
+            SaveFileDialog save = new SaveFileDialog();
+            save.Title = "Export Event posints";
+            save.Filter = "Expansion Map |*.map|Object Spawner|*.json";
+            save.FileName = eventposdefEvent.name;
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                switch (save.FilterIndex)
+                {
+                    case 1:
+                        StringBuilder SB = new StringBuilder();
+                        foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                        {
+                            var y = pos.ySpecified ? pos.y.ToString() : "0.0";
+                            var a = pos.aSpecified ? pos.a.ToString() : "0.0";
+
+                            SB.AppendLine($"{classname}|{pos.x} {y} {pos.z}|{a} 0.0 0.0");
+                        }
+                        File.WriteAllText(save.FileName, SB.ToString());
+                        break;
+                    case 2:
+                        ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
+                        newobjectspawner.Objects = new BindingList<SpawnObjects>();
+                        foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                        {
+                            SpawnObjects newobject = new SpawnObjects();
+                            newobject.name = classname;
+                            newobject.pos = new float[]
+                            {
+                                (float)pos.x,
+                                pos.ySpecified ? (float)pos.y : 0.0f,
+                                (float)pos.z
+                            };
+
+                            newobject.ypr = new float[]
+                            {
+                                pos.aSpecified ? (float)pos.a : 0.0f,
+                                0.0f,
+                                0.0f
+                            };
+
+                            newobject.scale = 1;
+                            newobject.enableCEPersistency = false;
+
+                            newobjectspawner.Objects.Add(newobject);
+                        }
+                        var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                        string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
+                        File.WriteAllText(save.FileName, jsonString);
+                        break;
+                }
+            }
+
+
+
 
         }
         private void addNewPosirtionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5384,13 +5460,12 @@ namespace EconomyPlugin
         {
             AddEventFile frm = new AddEventFile();
             frm.SetTitle = "Add new Spawnable Types";
-            frm.Button4visable = false;
             frm.StartPosition = FormStartPosition.CenterParent;
             DialogResult dr = frm.ShowDialog();
             if (dr == DialogResult.OK)
             {
                 string newmodPath = frm.moddir.Replace("/", "\\");
-                string typesfile = frm.typesname + "_ce_cfgspawnabletypes.xml";
+                string typesfile = frm.typesname.Replace("_ce_cfgspawnabletype", "") + "_ce_cfgspawnabletype.xml";
                 string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
                 CfgSpawnableTypesFile newpresetfile = new CfgSpawnableTypesFile(newPath)
@@ -5400,6 +5475,7 @@ namespace EconomyPlugin
                     ModFolder = newmodPath,
                     Data = new SpawnableTypes()
                 };
+                newpresetfile.Data.type = frm._stentries;
                 _economyManager.eonomyCoreConfig.AddCe(newpresetfile.ModFolder, newpresetfile.FileName, "spawnabletypes");
                 _economyManager.cfgspawnabletypesConfig.MutableItems.Add(newpresetfile);
                 AddFileToDBTree(newpresetfile);
@@ -6084,6 +6160,7 @@ namespace EconomyPlugin
         /// <summary>
         /// objectspawner arr right click methods
         /// </summary>
+
         private void addNewObjectSpawnerArrFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -6134,6 +6211,7 @@ namespace EconomyPlugin
                             }
                             break;
                         case 2://.Json
+                            
                             ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath));
                             newfile.Data.Objects = new BindingList<SpawnObjects>(newobjectspawner.Objects.Select(obj => new SpawnObjects(obj)).ToList());
 

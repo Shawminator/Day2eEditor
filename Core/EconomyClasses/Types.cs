@@ -127,7 +127,7 @@ namespace Day2eEditor
             return item;
         }
 
-        private Types LoadTypesXmlCustom(string filePath, TypesFile owner)
+        public static Types LoadTypesXmlCustom(string filePath, TypesFile owner)
         {
             if (!File.Exists(filePath))
             {
@@ -174,7 +174,7 @@ namespace Day2eEditor
             return result;
         }
 
-        private TypeEntry ParseTypeEntry(XElement typeElement, TypesFile owner)
+        private static TypeEntry ParseTypeEntry(XElement typeElement, TypesFile owner)
         {
             var entry = new TypeEntry();
 
@@ -218,7 +218,7 @@ namespace Day2eEditor
             return entry;
         }
 
-        private Flags? ParseFlags(XElement? flagsElement, TypesFile owner, string typeName)
+        private static Flags? ParseFlags(XElement? flagsElement, TypesFile owner, string typeName)
         {
             if (flagsElement == null)
                 return null;
@@ -234,7 +234,7 @@ namespace Day2eEditor
             };
         }
 
-        private Category? ParseCategory(XElement? categoryElement, TypesFile owner, string typeName)
+        private static Category? ParseCategory(XElement? categoryElement, TypesFile owner, string typeName)
         {
             if (categoryElement == null)
                 return null;
@@ -254,7 +254,7 @@ namespace Day2eEditor
             };
         }
 
-        private BindingList<Usage> ParseUsages(IEnumerable<XElement> usageElements, TypesFile owner, string typeName)
+        private static BindingList<Usage> ParseUsages(IEnumerable<XElement> usageElements, TypesFile owner, string typeName)
         {
             var list = new BindingList<Usage>();
 
@@ -288,7 +288,7 @@ namespace Day2eEditor
             return list;
         }
 
-        private BindingList<Tag> ParseTags(IEnumerable<XElement> tagElements, TypesFile owner, string typeName)
+        private static BindingList<Tag> ParseTags(IEnumerable<XElement> tagElements, TypesFile owner, string typeName)
         {
             var list = new BindingList<Tag>();
 
@@ -313,7 +313,7 @@ namespace Day2eEditor
             return list;
         }
 
-        private BindingList<Value> ParseValues(IEnumerable<XElement> valueElements, TypesFile owner, string typeName)
+        private static BindingList<Value> ParseValues(IEnumerable<XElement> valueElements, TypesFile owner, string typeName)
         {
             var list = new BindingList<Value>();
 
@@ -347,7 +347,7 @@ namespace Day2eEditor
             return list;
         }
 
-        private int? GetNullableIntElement(XElement parent, string elementName, TypesFile owner, string typeName)
+        private static int? GetNullableIntElement(XElement parent, string elementName, TypesFile owner, string typeName)
         {
             var el = parent.Element(elementName);
             if (el == null)
@@ -370,7 +370,7 @@ namespace Day2eEditor
             return value;
         }
 
-        private int GetIntAttributeOrDefault(XElement element, string attributeName, TypesFile owner, string typeName, int defaultValue = 0)
+        private static int GetIntAttributeOrDefault(XElement element, string attributeName, TypesFile owner, string typeName, int defaultValue = 0)
         {
             var attr = element.Attribute(attributeName);
             if (attr == null)
@@ -398,7 +398,7 @@ namespace Day2eEditor
             return element.Attribute(attributeName)?.Value;
         }
 
-        private void AddTypeError(TypesFile owner, string typeName, string message)
+        private static void AddTypeError(TypesFile owner, string typeName, string message)
         {
             owner.HasErrors = true;
             owner.Errors.Add($"[{typeName}] {message}");
