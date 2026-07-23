@@ -5127,62 +5127,150 @@ namespace EconomyPlugin
         {
             eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
             eventsEvent eEvent = currentTreeNode.Parent.Tag as eventsEvent;
-            string classname = eEvent.children[0].type;
-            SaveFileDialog save = new SaveFileDialog();
-            save.Title = "Export Event posints";
-            save.Filter = "Expansion Map |*.map|Object Spawner|*.json";
-            save.FileName = eventposdefEvent.name;
-            if (save.ShowDialog() == DialogResult.OK)
+            //first find out if its a normal event spawn or a a group event spawn.
+            if(eEvent.children.Count == 0) //assume it a group as no children.
             {
-                switch (save.FilterIndex)
+                //get the positions here
+                eventposdefEvent points = _economyManager.cfgeventspawnsConfig.Findevent(eEvent.name);
+                SaveFileDialog save = new SaveFileDialog();
+                save.Title = "Export Event Group points";
+                save.Filter = "Expansion Map |*.map|Object Spawner|*.json";
+                save.FileName = eventposdefEvent.name;
+                if (save.ShowDialog() == DialogResult.OK)
                 {
-                    case 1:
-                        StringBuilder SB = new StringBuilder();
-                        foreach (eventposdefEventPos pos in eventposdefEvent.pos)
-                        {
-                            var y = pos.ySpecified ? pos.y.ToString() : "0.0";
-                            var a = pos.aSpecified ? pos.a.ToString() : "0.0";
-
-                            SB.AppendLine($"{classname}|{pos.x} {y} {pos.z}|{a} 0.0 0.0");
-                        }
-                        File.WriteAllText(save.FileName, SB.ToString());
-                        break;
-                    case 2:
-                        ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
-                        newobjectspawner.Objects = new BindingList<SpawnObjects>();
-                        foreach (eventposdefEventPos pos in eventposdefEvent.pos)
-                        {
-                            SpawnObjects newobject = new SpawnObjects();
-                            newobject.name = classname;
-                            newobject.pos = new float[]
+                    string directory = Path.GetDirectoryName(save.FileName);
+                    int i = 1;
+                    string filename = "";
+                    string oldfilename = "";
+                    switch (save.FilterIndex)
+                    {
+                        case 1:
+                            StringBuilder SB = new StringBuilder();
+                            foreach (eventposdefEventPos pos in eventposdefEvent.pos)
                             {
+                                filename = pos.group;
+                                eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
+                                foreach (eventgroupdefGroupChild eventgroupdefGroupChild in evg.child)
+                                {
+
+                                    var y = pos.ySpecified ? pos.y.ToString() : "0.0";
+                                    var a = pos.aSpecified ? pos.a.ToString() : "0.0";
+
+                                    SB.AppendLine(eventgroupdefGroupChild.type + "|" + (float)(pos.x + eventgroupdefGroupChild.x) + " " +
+                                                                               (y + eventgroupdefGroupChild.y.ToString()) + " " +
+                                                                               (float)(pos.z + eventgroupdefGroupChild.z) + "|" +
+                                                                               (a + eventgroupdefGroupChild.a.ToString()) + " 0.0 0.0");
+                                }
+                                if (filename == oldfilename)
+                                {
+                                    filename = filename + "_" + i.ToString();
+                                }
+                                File.WriteAllText(Path.Combine(directory, filename + ".map"), SB.ToString());
+                                oldfilename = filename;
+                                i++;
+                            }
+                            break;
+                        case 2:
+                            foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                            {
+                                filename = pos.group;
+                                eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
+                                ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
+                                newobjectspawner.Objects = new BindingList<SpawnObjects>();
+                                foreach (eventgroupdefGroupChild eventgroupdefGroupChild in evg.child)
+                                {
+                                    SpawnObjects newobject = new SpawnObjects();
+                                    newobject.name = eventgroupdefGroupChild.type;
+                                    newobject.pos = new float[]
+                                    {
+                                        (float)(pos.x + eventgroupdefGroupChild.x),
+                                        pos.ySpecified ? (float)(pos.y + eventgroupdefGroupChild.y): 0.0f,
+                                        (float)(pos.z + eventgroupdefGroupChild.z)
+                                    };
+
+                                    newobject.ypr = new float[]
+                                    {
+                                        pos.aSpecified ? (float)(pos.a + eventgroupdefGroupChild.a) : 0.0f,
+                                        0.0f,
+                                        0.0f
+                                    };
+
+                                    newobject.scale = 1;
+                                    newobject.enableCEPersistency = false;
+
+                                    newobjectspawner.Objects.Add(newobject);
+                                }
+                                var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                                string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
+                                if(filename == oldfilename)
+                                {
+                                    filename = filename + "_" + i.ToString();
+                                }
+
+                                File.WriteAllText(Path.Combine(directory, filename + ".json"), jsonString);
+                                oldfilename = filename;
+                                i++;
+                            }
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                SaveFileDialog save = new SaveFileDialog();
+                save.Title = "Export Event posints";
+                save.Filter = "Expansion Map |*.map|Object Spawner|*.json";
+                save.FileName = eventposdefEvent.name;
+                if (save.ShowDialog() == DialogResult.OK)
+                {
+                    switch (save.FilterIndex)
+                    {
+                        case 1:
+                            StringBuilder SB = new StringBuilder();
+                            foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                            {
+                                string classname = eEvent.children[Random.Shared.Next(eEvent.children.Count)].type;
+                                var y = pos.ySpecified ? pos.y.ToString() : "0.0";
+                                var a = pos.aSpecified ? pos.a.ToString() : "0.0";
+
+                                SB.AppendLine($"{classname}|{pos.x} {y} {pos.z}|{a} 0.0 0.0");
+                            }
+                            File.WriteAllText(save.FileName, SB.ToString());
+                            break;
+                        case 2:
+                            ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
+                            newobjectspawner.Objects = new BindingList<SpawnObjects>();
+                            foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                            {
+                                string classname = eEvent.children[Random.Shared.Next(eEvent.children.Count)].type;
+                                SpawnObjects newobject = new SpawnObjects();
+                                newobject.name = classname;
+                                newobject.pos = new float[]
+                                {
                                 (float)pos.x,
                                 pos.ySpecified ? (float)pos.y : 0.0f,
                                 (float)pos.z
-                            };
+                                };
 
-                            newobject.ypr = new float[]
-                            {
+                                newobject.ypr = new float[]
+                                {
                                 pos.aSpecified ? (float)pos.a : 0.0f,
                                 0.0f,
                                 0.0f
-                            };
+                                };
 
-                            newobject.scale = 1;
-                            newobject.enableCEPersistency = false;
+                                newobject.scale = 1;
+                                newobject.enableCEPersistency = false;
 
-                            newobjectspawner.Objects.Add(newobject);
-                        }
-                        var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
-                        string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
-                        File.WriteAllText(save.FileName, jsonString);
-                        break;
+                                newobjectspawner.Objects.Add(newobject);
+                            }
+                            var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                            string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
+                            File.WriteAllText(save.FileName, jsonString);
+                            break;
+                    }
                 }
             }
-
-
-
-
         }
         private void addNewPosirtionToolStripMenuItem_Click(object sender, EventArgs e)
         {
