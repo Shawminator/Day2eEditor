@@ -58,6 +58,8 @@ namespace EconomyPlugin
             removeAllPositionToolStripMenuItem = new ToolStripMenuItem();
             exportGroupSpawnTodzeToolStripMenuItem = new ToolStripMenuItem();
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem = new ToolStripMenuItem();
+            removeAllYFromPositionsToolStripMenuItem = new ToolStripMenuItem();
+            removeAllAFromPositionsToolStripMenuItem = new ToolStripMenuItem();
             TypesCM = new ContextMenuStrip(components);
             addNewTypesToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedToolStripMenuItem = new ToolStripMenuItem();
@@ -337,10 +339,11 @@ namespace EconomyPlugin
             // 
             // EventSpawnContextMenu
             // 
-            EventSpawnContextMenu.Items.AddRange(new ToolStripItem[] { addNewEventSpawnToolStripMenuItem, deleteSelectedEventSpawnToolStripMenuItem, importPositionFromdzeToolStripMenuItem, exportPositionTodzeToolStripMenuItem, addNewPosirtionToolStripMenuItem, removeSelectedPositionToolStripMenuItem, removeAllPositionToolStripMenuItem, exportGroupSpawnTodzeToolStripMenuItem, importPositionAndCreateEventgroupFormdzeToolStripMenuItem });
+            EventSpawnContextMenu.BackColor = Color.FromArgb(60, 63, 65);
+            EventSpawnContextMenu.Items.AddRange(new ToolStripItem[] { addNewEventSpawnToolStripMenuItem, deleteSelectedEventSpawnToolStripMenuItem, importPositionFromdzeToolStripMenuItem, exportPositionTodzeToolStripMenuItem, addNewPosirtionToolStripMenuItem, removeSelectedPositionToolStripMenuItem, removeAllPositionToolStripMenuItem, exportGroupSpawnTodzeToolStripMenuItem, importPositionAndCreateEventgroupFormdzeToolStripMenuItem, removeAllYFromPositionsToolStripMenuItem, removeAllAFromPositionsToolStripMenuItem });
             EventSpawnContextMenu.Name = "EventSpawnContextMenu";
             EventSpawnContextMenu.ShowImageMargin = false;
-            EventSpawnContextMenu.Size = new Size(254, 202);
+            EventSpawnContextMenu.Size = new Size(254, 268);
             // 
             // addNewEventSpawnToolStripMenuItem
             // 
@@ -431,6 +434,24 @@ namespace EconomyPlugin
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Size = new Size(253, 22);
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Text = "Import Position and create Eventgroup";
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Click += importPositionAndCreateEventgroupFormdzeToolStripMenuItem_Click;
+            // 
+            // removeAllYFromPositionsToolStripMenuItem
+            // 
+            removeAllYFromPositionsToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            removeAllYFromPositionsToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAllYFromPositionsToolStripMenuItem.Name = "removeAllYFromPositionsToolStripMenuItem";
+            removeAllYFromPositionsToolStripMenuItem.Size = new Size(253, 22);
+            removeAllYFromPositionsToolStripMenuItem.Text = "Remove All Y from positions";
+            removeAllYFromPositionsToolStripMenuItem.Click += removeAllYFromPositionsToolStripMenuItem_Click;
+            // 
+            // removeAllAFromPositionsToolStripMenuItem
+            // 
+            removeAllAFromPositionsToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            removeAllAFromPositionsToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeAllAFromPositionsToolStripMenuItem.Name = "removeAllAFromPositionsToolStripMenuItem";
+            removeAllAFromPositionsToolStripMenuItem.Size = new Size(253, 22);
+            removeAllAFromPositionsToolStripMenuItem.Text = "Remove All A from positions";
+            removeAllAFromPositionsToolStripMenuItem.Click += removeAllAFromPositionsToolStripMenuItem_Click;
             // 
             // TypesCM
             // 
@@ -1137,5 +1158,7 @@ namespace EconomyPlugin
         private Panel _mapOverlayPanel;
         private Button button6;
         private Button button5;
+        private ToolStripMenuItem removeAllYFromPositionsToolStripMenuItem;
+        private ToolStripMenuItem removeAllAFromPositionsToolStripMenuItem;
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace EconomyPlugin
@@ -52,6 +53,11 @@ namespace EconomyPlugin
 
             _suppressEvents = true;
 
+            cfgeventgroupsConfig egconfig = AppServices.GetRequired<EconomyManager>().cfgeventgroupsConfig;
+            GroupCB.DataSource = egconfig.Data.group;
+            GroupCB.DisplayMember = "name";
+
+
             EventSpawnPosXNUD.Value = _data.x;
             if (EventSpawnPosYNUD.Visible = checkBox50.Checked = _data.ySpecified)
             {
@@ -60,6 +66,11 @@ namespace EconomyPlugin
             EventSpawnPosZNUD.Value = _data.z;
             if (EventSpawnPosANUD.Visible = checkBox51.Checked = _data.aSpecified)
                 EventSpawnPosANUD.Value = _data.a;
+
+            if (GroupCB.Visible = checkBox1.Checked = _data.group != null)
+            {
+                GroupCB.SelectedItem = egconfig.Data.group.FirstOrDefault(g => g.name.Equals(_data.group, StringComparison.OrdinalIgnoreCase));
+            }
 
             _suppressEvents = false;
         }
@@ -118,7 +129,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             if (checkBox51.Checked)
             {
-                if(_data.a == null)
+                if (_data.a == null)
                     _data.a = 0;
                 _data.aSpecified = true;
                 EventSpawnPosANUD.Value = _data.a;
@@ -152,6 +163,33 @@ namespace EconomyPlugin
             _suppressEvents = false;
             _data.a = EventSpawnPosANUD.Value;
             OrientaionChanged?.Invoke(_data);
+            UpdateTreeNodeText();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            GroupCB.Visible = checkBox1.Checked;
+            if (_suppressEvents) return;
+            if (checkBox1.Checked)
+            {
+                if (_data.group == null)
+                {
+                    eventgroupdefGroup selectedGroup = (eventgroupdefGroup)GroupCB.SelectedItem;
+                    _data.group = selectedGroup.name;
+                }
+            }
+            else
+            {
+                _data.group = null;
+            }
+            UpdateTreeNodeText();
+        }
+
+        private void GroupCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            eventgroupdefGroup selectedGroup = (eventgroupdefGroup)GroupCB.SelectedItem;
+            _data.group = selectedGroup.name;
             UpdateTreeNodeText();
         }
     }

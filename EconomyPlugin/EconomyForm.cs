@@ -558,21 +558,23 @@ namespace EconomyPlugin
                 },
                 [typeof(eventposdefEvent)] = node =>
                 {
-                    foreach (ToolStripMenuItem TSMI in EventSpawnContextMenu.Items)
-                        TSMI.Visible = false;
+                    EventSpawnContextMenu.Items.Clear();
 
                     var evt = node.Tag as eventposdefEvent;
-                    addNewPosirtionToolStripMenuItem.Visible = true;
-                    importPositionFromdzeToolStripMenuItem.Visible = true;
-                    importPositionAndCreateEventgroupFormdzeToolStripMenuItem.Visible = true;
-                    deleteSelectedEventSpawnToolStripMenuItem.Visible = true;
-
+                    EventSpawnContextMenu.Items.Add(addNewPosirtionToolStripMenuItem);
+                    EventSpawnContextMenu.Items.Add(importPositionFromdzeToolStripMenuItem);
+                    EventSpawnContextMenu.Items.Add(importPositionAndCreateEventgroupFormdzeToolStripMenuItem);
+                    EventSpawnContextMenu.Items.Add(deleteSelectedEventSpawnToolStripMenuItem);
+                    
                     if (evt.pos != null && evt.pos.Count > 0)
                     {
-                        removeAllPositionToolStripMenuItem.Visible = true;
-                        exportPositionTodzeToolStripMenuItem.Visible = true;
+                        EventSpawnContextMenu.Items.Add(new ToolStripSeparator());
+                        EventSpawnContextMenu.Items.Add(removeAllPositionToolStripMenuItem);
+                        EventSpawnContextMenu.Items.Add(exportPositionTodzeToolStripMenuItem);
                     }
-
+                    EventSpawnContextMenu.Items.Add(new ToolStripSeparator());
+                    EventSpawnContextMenu.Items.Add(removeAllYFromPositionsToolStripMenuItem);
+                    EventSpawnContextMenu.Items.Add(removeAllAFromPositionsToolStripMenuItem);
                     EventSpawnContextMenu.Show(Cursor.Position);
                 },
 
@@ -1301,7 +1303,7 @@ namespace EconomyPlugin
             foreach (territorytypeTerritory territorytypeTerritory in tf.territory)
             {
                 string tername = "Territory" + name.ToString();
-                if(tf.FileName == "zombie_territories.xml")
+                if (tf.FileName == "zombie_territories.xml")
                 {
                     tername = territorytypeTerritory.zone
                     .Select(z => z.name?.Replace("Infected", "", StringComparison.OrdinalIgnoreCase))
@@ -3462,7 +3464,7 @@ namespace EconomyPlugin
                     {
                         Color = Color.Red,
                         screenRadius = 8,
-                        Orientation = new float[] {(float)pos.a,0f,0f}
+                        Orientation = new float[] { (float)pos.a, 0f, 0f }
                     };
                     if (_selectedEventPos == pos)
                     {
@@ -3599,7 +3601,7 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            if(EventPosCopy == true)
+            if (EventPosCopy == true)
             {
                 if (currentTreeNode.Parent.Parent.Tag is eventposdefEvent eventposdefEvent)
                 {
@@ -3766,7 +3768,7 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            if(effectareacopy == true)
+            if (effectareacopy == true)
             {
                 if (currentTreeNode.Tag is Areas areas)
                 {
@@ -3848,9 +3850,9 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            if(PRASafePositioncopy == true)
+            if (PRASafePositioncopy == true)
             {
-                if(currentTreeNode.Tag is PRASafePosition PRASafePosition)
+                if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
                 {
                     PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
 
@@ -4016,7 +4018,7 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            if(playerspawnCopy == true)
+            if (playerspawnCopy == true)
             {
                 if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
                 {
@@ -4316,7 +4318,7 @@ namespace EconomyPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            if(TerritoryCopy)
+            if (TerritoryCopy)
             {
                 if (currentTreeNode.Parent.Tag is territorytypeTerritory pterritorytypeTerritory)
                 {
@@ -4335,7 +4337,7 @@ namespace EconomyPlugin
                 button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
-            
+
             territorytypeTerritoryZone closestPos = null;
             double closestDistance = double.MaxValue;
 
@@ -4633,7 +4635,7 @@ namespace EconomyPlugin
                 if (dr == DialogResult.OK)
                 {
                     string newmodPath = frm.moddir.Replace("/", "\\");
-                    string typesfile = frm.typesname.Replace("_ce_types","") + "_ce_types.xml";
+                    string typesfile = frm.typesname.Replace("_ce_types", "") + "_ce_types.xml";
                     string newPath = EnsureModFolderAndGetPath(newmodPath, typesfile);
 
                     BindingList<TypeEntry> types = frm._entries;
@@ -5128,9 +5130,10 @@ namespace EconomyPlugin
             eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
             eventsEvent eEvent = currentTreeNode.Parent.Tag as eventsEvent;
             //first find out if its a normal event spawn or a a group event spawn.
-            if(eEvent.children.Count == 0) //assume it a group as no children.
+            if (eEvent.children.Count == 0) //assume it a group as no children.
             {
                 //get the positions here
+                HashSet<string> usedNames = new();
                 eventposdefEvent points = _economyManager.cfgeventspawnsConfig.Findevent(eEvent.name);
                 SaveFileDialog save = new SaveFileDialog();
                 save.Title = "Export Event Group points";
@@ -5139,16 +5142,21 @@ namespace EconomyPlugin
                 if (save.ShowDialog() == DialogResult.OK)
                 {
                     string directory = Path.GetDirectoryName(save.FileName);
-                    int i = 1;
-                    string filename = "";
-                    string oldfilename = "";
                     switch (save.FilterIndex)
                     {
                         case 1:
                             StringBuilder SB = new StringBuilder();
                             foreach (eventposdefEventPos pos in eventposdefEvent.pos)
                             {
-                                filename = pos.group;
+
+                                string baseFilename = pos.group;
+                                string filename = baseFilename;
+                                int suffix = 1;
+                                while (usedNames.Contains(filename))
+                                {
+                                    filename = $"{baseFilename}_{suffix++}";
+                                }
+                                usedNames.Add(filename);
                                 eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
                                 foreach (eventgroupdefGroupChild eventgroupdefGroupChild in evg.child)
                                 {
@@ -5161,19 +5169,21 @@ namespace EconomyPlugin
                                                                                (float)(pos.z + eventgroupdefGroupChild.z) + "|" +
                                                                                (a + eventgroupdefGroupChild.a.ToString()) + " 0.0 0.0");
                                 }
-                                if (filename == oldfilename)
-                                {
-                                    filename = filename + "_" + i.ToString();
-                                }
                                 File.WriteAllText(Path.Combine(directory, filename + ".map"), SB.ToString());
-                                oldfilename = filename;
-                                i++;
                             }
                             break;
                         case 2:
                             foreach (eventposdefEventPos pos in eventposdefEvent.pos)
                             {
-                                filename = pos.group;
+                                string baseFilename = pos.group;
+                                string filename = baseFilename;
+                                int suffix = 1;
+                                while (usedNames.Contains(filename))
+                                {
+                                    filename = $"{baseFilename}_{suffix++}";
+                                }
+                                usedNames.Add(filename);
+
                                 eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
                                 ObjectSpawnerArrData newobjectspawner = new ObjectSpawnerArrData();
                                 newobjectspawner.Objects = new BindingList<SpawnObjects>();
@@ -5202,15 +5212,10 @@ namespace EconomyPlugin
                                 }
                                 var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
                                 string jsonString = JsonSerializer.Serialize(newobjectspawner, options);
-                                if(filename == oldfilename)
-                                {
-                                    filename = filename + "_" + i.ToString();
-                                }
 
                                 File.WriteAllText(Path.Combine(directory, filename + ".json"), jsonString);
-                                oldfilename = filename;
-                                i++;
                             }
+
                             break;
                     }
                 }
@@ -5314,7 +5319,265 @@ namespace EconomyPlugin
         }
         private void importPositionAndCreateEventgroupFormdzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Title = "Import Positions";
+            //openFileDialog.Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze";
+            //if (openFileDialog.ShowDialog() == DialogResult.OK)
+            //{
+            //    string filePath = openFileDialog.FileName;
+            //    TreeNode eventposnodes = null;
+            //    if (eventposdefEvent.pos == null || eventposdefEvent.pos.Count == 0)
+            //    {
+            //        eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+            //        if (!EconomyTV.SelectedNode.Nodes.ContainsKey("POS"))
+            //        {
+            //            eventposnodes = new TreeNode("pos");
+            //            eventposnodes.Name = "POS";
+            //            eventposnodes.Tag = "PosParent";
+            //        }
+            //        else
+            //        {
+            //            eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
+            //        }
+            //    }
+            //    else
+            //    {
+            //        eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
+            //        DialogResult dialogResult = MessageBox.Show("Clear Exisitng Positions?", "Clear position", MessageBoxButtons.YesNo);
+            //        if (dialogResult == DialogResult.Yes)
+            //        {
+            //            eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+            //            eventposnodes.Nodes.Clear();
 
+            //        }
+            //        eventposnodes.Remove();
+            //    }
+            //    switch (openFileDialog.FilterIndex)
+            //    {
+            //        case 1:
+            //            foreach (string file in openFileDialog.FileNames)
+            //            {
+            //                string[] fileContent = File.ReadAllLines(file);
+            //                string Groupname = Path.GetFileNameWithoutExtension(file);
+            //                string[] linesplit = fileContent[0].Split('|');
+            //                string[] XYZ = linesplit[1].Split(' ');
+            //                string[] ypr = linesplit[2].Split(' ');
+            //                eventposdefEventPos newpos = new eventposdefEventPos()
+            //                {
+            //                    x = Convert.ToDecimal(XYZ[0]),
+            //                    ySpecified = true,
+            //                    y = Convert.ToDecimal(XYZ[1]),
+            //                    z = Convert.ToDecimal(XYZ[2]),
+            //                    aSpecified = true,
+            //                    a = 0,
+            //                    group = Groupname
+
+            //                };
+            //                eventposdefEvent.pos.Add(newpos);
+            //                TreeNode posnodes = new TreeNode(newpos.ToString());
+            //                posnodes.Tag = newpos;
+            //                eventposnodes.Nodes.Add(posnodes);
+            //                eventgroupdefGroup newvengroup = new eventgroupdefGroup()
+            //                {
+            //                    name = Groupname,
+            //                    child = new BindingList<eventgroupdefGroupChild>()
+            //                };
+
+            //                TreeNode neweventspawn = new TreeNode(Groupname);
+            //                neweventspawn.Tag = newvengroup;
+            //                for (int i = 0; i < fileContent.Length; i++)
+            //                {
+            //                    if (fileContent[i] == "") continue;
+            //                    linesplit = fileContent[0].Split('|');
+            //                    XYZ = linesplit[1].Split(' ');
+            //                    ypr = linesplit[2].Split(' ');
+            //                    eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
+            //                    {
+            //                        type = linesplit[0],
+            //                        x = ((decimal)(Convert.ToDecimal(XYZ[0]))) - newpos.x,
+            //                        ySpecified = true,
+            //                        y = ((decimal)(Convert.ToDecimal(XYZ[1]))) - newpos.y,
+            //                        z = ((decimal)(Convert.ToDecimal(XYZ[2]))) - newpos.z,
+            //                        a = ((decimal)(Convert.ToDecimal(ypr[0]))),
+            //                        delootSpecified = true,
+            //                        deloot = 0,
+            //                        lootminSpecified = true,
+            //                        lootmin = 1,
+            //                        lootmaxSpecified = true,
+            //                        lootmax = 3
+            //                    };
+            //                    if (eventgroupdefGroupChild.a < 0)
+            //                    {
+            //                        while (eventgroupdefGroupChild.a < 0)
+            //                        {
+            //                            eventgroupdefGroupChild.a += 360;
+            //                        }
+            //                    }
+            //                    else if (eventgroupdefGroupChild.a >= 360)
+            //                    {
+            //                        while (eventgroupdefGroupChild.a >= 0)
+            //                        {
+            //                            eventgroupdefGroupChild.a -= 360;
+            //                        }
+            //                    }
+            //                    TreeNode eventgroupchile = new TreeNode(eventgroupdefGroupChild.type);
+            //                    eventgroupchile.Tag = eventgroupdefGroupChild;
+            //                    neweventspawn.Nodes.Add(eventgroupchile);
+            //                    newvengroup.child.Add(eventgroupdefGroupChild);
+            //                }
+            //                eventgroupdef.group.Add(newvengroup);
+            //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
+            //            }
+            //            currentproject.cfgeventgroups.isDirty = true;
+            //            break;
+            //        case 2:
+            //            foreach (string file in openFileDialog.FileNames)
+            //            {
+            //                string Groupname = Path.GetFileNameWithoutExtension(file);
+            //                var options = BuildOptions(true, false);
+            //                ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath), options);
+            //                eventposdefEventPos newpos = new eventposdefEventPos()
+            //                {
+            //                    x = Convert.ToDecimal(newobjectspawner.Objects[0].pos[0]),
+            //                    ySpecified = true,
+            //                    y = Convert.ToDecimal(newobjectspawner.Objects[0].pos[1]),
+            //                    z = Convert.ToDecimal(newobjectspawner.Objects[0].pos[2]),
+            //                    aSpecified = true,
+            //                    a = 0,
+            //                    group = Groupname
+
+            //                };
+
+            //                eventposdefEvent.pos.Add(newpos);
+            //                TreeNode posnodes = new TreeNode(newpos.ToString());
+            //                posnodes.Tag = newpos;
+            //                eventposnodes.Nodes.Add(posnodes);
+            //                eventgroupdefGroup newvengroup = new eventgroupdefGroup()
+            //                {
+            //                    name = Groupname,
+            //                    child = new BindingList<eventgroupdefGroupChild>()
+            //                };
+
+            //                TreeNode neweventspawn = new TreeNode(Groupname);
+            //                neweventspawn.Tag = newvengroup;
+            //                foreach (SpawnObjects so in newobjectspawner.Objects)
+            //                {
+            //                    eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
+            //                    {
+            //                        type = so.name,
+            //                        x = (decimal)(so.pos[0]) - newpos.x,
+            //                        ySpecified = true,
+            //                        y = (decimal)(so.pos[1]) - newpos.y,
+            //                        z = (decimal)(so.pos[2]) - newpos.z,
+            //                        a = (decimal)(so.ypr[0]),
+            //                        delootSpecified = true,
+            //                        deloot = 0,
+            //                        lootminSpecified = true,
+            //                        lootmin = 1,
+            //                        lootmaxSpecified = true,
+            //                        lootmax = 3
+            //                    };
+            //                    if (eventgroupdefGroupChild.a < 0)
+            //                    {
+            //                        while (eventgroupdefGroupChild.a < 0)
+            //                        {
+            //                            eventgroupdefGroupChild.a += 360;
+            //                        }
+            //                    }
+            //                    else if (eventgroupdefGroupChild.a >= 360)
+            //                    {
+            //                        while (eventgroupdefGroupChild.a >= 0)
+            //                        {
+            //                            eventgroupdefGroupChild.a -= 360;
+            //                        }
+            //                    }
+            //                    TreeNode eventgroupchile = new TreeNode(eventgroupdefGroupChild.type);
+            //                    eventgroupchile.Tag = eventgroupdefGroupChild;
+            //                    neweventspawn.Nodes.Add(eventgroupchile);
+            //                    newvengroup.child.Add(eventgroupdefGroupChild);
+            //                }
+            //                eventgroupdef.group.Add(newvengroup);
+            //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
+            //            }
+            //            currentproject.cfgeventgroups.isDirty = true;
+            //            break;
+            //        case 3:
+            //            foreach (string file in openFileDialog.FileNames)
+            //            {
+            //                string filePath = file;
+            //                DZE importfile = DZEHelpers.LoadFile(filePath);
+            //                string Groupname = Path.GetFileNameWithoutExtension(file);
+            //                eventposdefEventPos newpos = new eventposdefEventPos()
+            //                {
+            //                    x = Convert.ToDecimal(importfile.EditorObjects[0].Position[0]),
+            //                    ySpecified = true,
+            //                    y = Convert.ToDecimal(importfile.EditorObjects[0].Position[1]),
+            //                    z = Convert.ToDecimal(importfile.EditorObjects[0].Position[2]),
+            //                    aSpecified = true,
+            //                    a = 0,
+            //                    group = Groupname
+
+            //                };
+
+
+            //                eventposdefEvent.pos.Add(newpos);
+            //                TreeNode posnodes = new TreeNode(newpos.ToString());
+            //                posnodes.Tag = newpos;
+            //                eventposnodes.Nodes.Add(posnodes);
+            //                eventgroupdefGroup newvengroup = new eventgroupdefGroup()
+            //                {
+            //                    name = Groupname,
+            //                    child = new BindingList<eventgroupdefGroupChild>()
+            //                };
+
+            //                TreeNode neweventspawn = new TreeNode(Groupname);
+            //                neweventspawn.Tag = newvengroup;
+            //                foreach (Editorobject eo in importfile.EditorObjects)
+            //                {
+            //                    eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
+            //                    {
+            //                        type = eo.Type,
+            //                        x = (decimal)(eo.Position[0]) - newpos.x,
+            //                        ySpecified = true,
+            //                        y = (decimal)(eo.Position[1]) - newpos.y,
+            //                        z = (decimal)(eo.Position[2]) - newpos.z,
+            //                        a = (decimal)(eo.Orientation[0]),
+            //                        delootSpecified = true,
+            //                        deloot = 0,
+            //                        lootminSpecified = true,
+            //                        lootmin = 1,
+            //                        lootmaxSpecified = true,
+            //                        lootmax = 3
+            //                    };
+            //                    if (eventgroupdefGroupChild.a < 0)
+            //                    {
+            //                        while (eventgroupdefGroupChild.a < 0)
+            //                        {
+            //                            eventgroupdefGroupChild.a += 360;
+            //                        }
+            //                    }
+            //                    else if (eventgroupdefGroupChild.a >= 360)
+            //                    {
+            //                        while (eventgroupdefGroupChild.a >= 0)
+            //                        {
+            //                            eventgroupdefGroupChild.a -= 360;
+            //                        }
+            //                    }
+            //                    TreeNode eventgroupchile = new TreeNode(eventgroupdefGroupChild.type);
+            //                    eventgroupchile.Tag = eventgroupdefGroupChild;
+            //                    neweventspawn.Nodes.Add(eventgroupchile);
+            //                    newvengroup.child.Add(eventgroupdefGroupChild);
+            //                }
+            //                eventgroupdef.group.Add(newvengroup);
+            //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
+            //            }
+            //            currentproject.cfgeventgroups.isDirty = true;
+            //            break;
+            //    }
+            //    EventSpawnTV.SelectedNode.Nodes.Add(eventposnodes);
+            //    currentproject.cfgeventspawns.isDirty = true;
+            //}
         }
 
         /// <summary>
@@ -6242,7 +6505,7 @@ namespace EconomyPlugin
             {
                 _economyManager.CFGGameplayConfig.RemovePlayerRestrictedAreaFile(PlayerRestrictedFiles);
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-             }
+            }
         }
 
         /// <summary>
@@ -6299,7 +6562,7 @@ namespace EconomyPlugin
                             }
                             break;
                         case 2://.Json
-                            
+
                             ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath));
                             newfile.Data.Objects = new BindingList<SpawnObjects>(newobjectspawner.Objects.Select(obj => new SpawnObjects(obj)).ToList());
 
@@ -6629,7 +6892,7 @@ namespace EconomyPlugin
         }
         #endregion search treeview
 
-        
+
         public bool TerritoryCopy = false;
         public bool EventPosCopy = false;
         public bool playerspawnCopy = false;
@@ -6735,7 +6998,7 @@ namespace EconomyPlugin
                 currentPlayerRestrictedFiles.SafePositionsView.Remove(PRASafePosition);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             }
-            else if(currentTreeNode.Tag is PRABoxes PRABoxes)
+            else if (currentTreeNode.Tag is PRABoxes PRABoxes)
             {
                 PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
                 currentPlayerRestrictedFiles.BoxesView.Remove(PRABoxes);
@@ -6983,7 +7246,26 @@ namespace EconomyPlugin
             currentTreeNode.Remove();
         }
 
+        private void removeAllYFromPositionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(currentTreeNode.Tag is eventposdefEvent eventposdefEvent)
+            {
+                TreeNode childNode = currentTreeNode.Nodes.Cast<TreeNode>().FirstOrDefault(n => n.Text.Equals("pos", StringComparison.OrdinalIgnoreCase));
+                foreach (TreeNode tn in childNode.Nodes)
+                {
+                    if(tn.Tag is eventposdefEventPos eventposdefEventPos)
+                    {
+                        eventposdefEventPos.ySpecified = false;
+                        tn.Text = eventposdefEventPos.ToString();
+                    }
+                }
+            }
+        }
 
+        private void removeAllAFromPositionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin", "EconomyPlugin.DayzEconomy.png")]

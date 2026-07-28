@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             EventspawnPositionGB = new GroupBox();
+            GroupCB = new ComboBox();
+            checkBox1 = new CheckBox();
             checkBox51 = new CheckBox();
             checkBox50 = new CheckBox();
             EventSpawnPosXNUD = new NumericUpDown();
@@ -46,6 +48,8 @@
             // 
             // EventspawnPositionGB
             // 
+            EventspawnPositionGB.Controls.Add(GroupCB);
+            EventspawnPositionGB.Controls.Add(checkBox1);
             EventspawnPositionGB.Controls.Add(checkBox51);
             EventspawnPositionGB.Controls.Add(checkBox50);
             EventspawnPositionGB.Controls.Add(EventSpawnPosXNUD);
@@ -59,28 +63,52 @@
             EventspawnPositionGB.Margin = new Padding(4, 3, 4, 3);
             EventspawnPositionGB.Name = "EventspawnPositionGB";
             EventspawnPositionGB.Padding = new Padding(4, 3, 4, 3);
-            EventspawnPositionGB.Size = new Size(312, 115);
+            EventspawnPositionGB.Size = new Size(417, 144);
             EventspawnPositionGB.TabIndex = 5;
             EventspawnPositionGB.TabStop = false;
             EventspawnPositionGB.Text = "Position";
             // 
+            // GroupCB
+            // 
+            GroupCB.BackColor = Color.FromArgb(60, 63, 65);
+            GroupCB.ForeColor = SystemColors.Control;
+            GroupCB.FormattingEnabled = true;
+            GroupCB.Location = new Point(98, 111);
+            GroupCB.Name = "GroupCB";
+            GroupCB.Size = new Size(312, 23);
+            GroupCB.TabIndex = 9;
+            GroupCB.SelectedIndexChanged += GroupCB_SelectedIndexChanged;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(10, 113);
+            checkBox1.Margin = new Padding(4, 3, 4, 3);
+            checkBox1.Name = "checkBox1";
+            checkBox1.RightToLeft = RightToLeft.Yes;
+            checkBox1.Size = new Size(81, 19);
+            checkBox1.TabIndex = 8;
+            checkBox1.Text = "Use Group";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
             // checkBox51
             // 
             checkBox51.AutoSize = true;
-            checkBox51.Location = new Point(87, 83);
+            checkBox51.Location = new Point(31, 83);
             checkBox51.Margin = new Padding(4, 3, 4, 3);
             checkBox51.Name = "checkBox51";
             checkBox51.RightToLeft = RightToLeft.Yes;
-            checkBox51.Size = new Size(56, 19);
+            checkBox51.Size = new Size(59, 19);
             checkBox51.TabIndex = 6;
-            checkBox51.Text = "Use A";
+            checkBox51.Text = "Use A ";
             checkBox51.UseVisualStyleBackColor = true;
             checkBox51.CheckedChanged += checkBox51_CheckedChanged;
             // 
             // checkBox50
             // 
             checkBox50.AutoSize = true;
-            checkBox50.Location = new Point(87, 53);
+            checkBox50.Location = new Point(35, 53);
             checkBox50.Margin = new Padding(4, 3, 4, 3);
             checkBox50.Name = "checkBox50";
             checkBox50.RightToLeft = RightToLeft.Yes;
@@ -180,7 +208,7 @@
             Controls.Add(EventspawnPositionGB);
             ForeColor = SystemColors.Control;
             Name = "eventgroupsspawnpositionControl";
-            Size = new Size(312, 115);
+            Size = new Size(421, 147);
             EventspawnPositionGB.ResumeLayout(false);
             EventspawnPositionGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)EventSpawnPosXNUD).EndInit();
@@ -201,5 +229,7 @@
         private NumericUpDown EventSpawnPosZNUD;
         private Label label118;
         private NumericUpDown EventSpawnPosANUD;
+        private CheckBox checkBox1;
+        private ComboBox GroupCB;
     }
 }
