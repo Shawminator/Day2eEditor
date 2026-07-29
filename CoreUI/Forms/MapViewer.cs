@@ -195,8 +195,10 @@ namespace Day2eEditor
                 var textSize = e.Graphics.MeasureString(coordText, font);
 
                 float padding = 4; // padding from edges
+
                 float textX = Width - textSize.Width - padding * 2; // top-right x-coordinate
-                float textY = padding; // top padding
+                float textY = Height - textSize.Height - padding * 1.5f;
+
                 var textRect = new RectangleF(textX, textY, textSize.Width + padding * 2, textSize.Height + padding);
                 e.Graphics.FillRectangle(backBrush, textRect);
                 e.Graphics.DrawString(coordText, font, brush, new PointF(textX + padding, textY + padding / 2));

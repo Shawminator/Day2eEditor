@@ -1083,7 +1083,7 @@ namespace ExpansionPlugin
                         ShowHandler<IUIHandler>(new ExpansionLootControl(), typeof(ExpansionQuestObjectiveTreasureHuntConfig), ExpansionQuestObjectiveTreasureHuntConfig.Loot, selected);
                     }
                 },
-                
+
                 //Airdrops
                 ["AirdropContainersInfected"] = (node, selected) =>
                 {
@@ -5903,6 +5903,7 @@ namespace ExpansionPlugin
         {
             // Hide and clear map until a handler explicitly sets it up
             _mapControl.Visible = false;
+            _mapOverlayPanel.Visible = false;
             _mapControl.ClearDrawables();
 
 
@@ -5967,6 +5968,9 @@ namespace ExpansionPlugin
             _selectedTravel = null;
             _selectedTreasureHunt = null;
             _selectedExpansionQuestNPCData = null;
+
+            NewTraderVec3 = false;
+            button5.BackColor = Color.FromArgb(60, 63, 65);
         }
 
 
@@ -6357,6 +6361,9 @@ namespace ExpansionPlugin
                 _mapControl.MapsingleClicked += MapControl_ExpansionTraderMapsSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_ExpansionTraderMapsDoubleclicked;
 
+                _mapOverlayPanel.Visible = true;
+                ShowAllTradersCB.Visible = true;
+
                 var ExpansionMarketTraderMapsConfig = node.FindParentOfType<ExpansionMarketTraderMapsConfig>();
                 if (ExpansionMarketTraderMapsConfig != null)
                     DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig);
@@ -6375,7 +6382,12 @@ namespace ExpansionPlugin
                     DrawQuestNPCPositions(ExpansionQuestNPCDataConfig);
             });
         }
-
+        private void TraderNPCCB_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapControl.ClearDrawables();
+            ExpansionMarketTraderMapsConfig ttt = currentTreeNode.FindParentOfType<ExpansionMarketTraderMapsConfig>();
+            DrawTraderNPCPositions(ttt);
+        }
 
 
 
@@ -7076,86 +7088,169 @@ namespace ExpansionPlugin
             }
             TraderSpawnDrawable? selected_marker = null;
             TextMarkerDrawable? selectedtext_marker = null;
-            foreach (ExpansionMarketTraderNpcs tmnpc in ExpansionMarketTraderMapsConfig.MutableItems)
+            if (ShowAllTradersCB.Checked == true)
             {
-                foreach (ExpansionTraderMaps tm in tmnpc.Tradersmaps)
+                foreach (ExpansionMarketTraderNpcs tmnpc in ExpansionMarketTraderMapsConfig.MutableItems)
                 {
-                    PatrolBehaviour behaviour = PatrolBehaviour.LOOP;
-                    if (tm.Positions.Count == 1)
+                    foreach (ExpansionTraderMaps tm in tmnpc.Tradersmaps)
                     {
-                        Vec3 pos = tm.Positions[0];
-                        var marker = new TraderSpawnDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                        PatrolBehaviour behaviour = PatrolBehaviour.LOOP;
+                        if (tm.Positions.Count == 1)
                         {
-                            Color = Color.Red,
-                            Orientation = tm.Rotation.getfloatarray(),
-                            Text = $"{tm.TraderName}",
-                            TextPlacement = MarkerLabelPlacement.Top,
-                            TextBackground = true,
-                            TextBackgroundColor = Color.BlueViolet
-                        };
-                        Vec3 v3 = currentTreeNode.Tag as Vec3;
-
-                        if (_selectedExpansionTraderMaps == tm)
-                        {
-                            if (v3 == pos)
+                            Vec3 pos = tm.Positions[0];
+                            var marker = new TraderSpawnDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
                             {
-                                marker.Color = Color.LimeGreen;
-                                selected_marker = marker;
+                                Color = Color.Red,
+                                Orientation = tm.Rotation.getfloatarray(),
+                                Text = $"{tm.TraderName}",
+                                TextPlacement = MarkerLabelPlacement.Top,
+                                TextBackground = true,
+                                TextBackgroundColor = Color.BlueViolet
+                            };
+                            Vec3 v3 = currentTreeNode.Tag as Vec3;
+
+                            if (_selectedExpansionTraderMaps == tm)
+                            {
+                                if (v3 == pos)
+                                {
+                                    marker.Color = Color.LimeGreen;
+                                    selected_marker = marker;
+                                }
+                                else
+                                {
+                                    marker.Color = Color.Yellow;
+                                    _mapControl.RegisterDrawable(marker);
+                                }
                             }
                             else
                             {
-                                marker.Color = Color.Yellow;
                                 _mapControl.RegisterDrawable(marker);
                             }
                         }
                         else
                         {
+                            for (int i = 0; i < tm.Positions.Count; i++)
+                            {
+                                Vec3 waypoints = tm.Positions[i];
+
+                                // Determine next waypoint index
+                                bool isLast = i == tm.Positions.Count - 1;
+                                Vec3 nextWaypoint;
+
+                                if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                                {
+                                    // Don't connect last to first for ALTERNATE
+                                    nextWaypoint = waypoints;
+                                }
+                                else
+                                {
+                                    nextWaypoint = tm.Positions[(i + 1) % tm.Positions.Count];
+                                }
+
+                                var marker = new AIPatrolDrawable(
+                                    new PointF(waypoints.X, waypoints.Z),
+                                    new PointF(nextWaypoint.X, nextWaypoint.Z),
+                                    _mapControl.MapSize,
+                                    behaviour)
+                                {
+                                    Color = Color.Red,
+                                    WriteString = true
+                                };
+
+                                if (_selectedExpansionTraderMaps == tm)
+                                    marker.Color = Color.Yellow;
+
+                                Vec3 v3 = currentTreeNode.Tag as Vec3;
+                                if (v3 == waypoints)
+                                    marker.Color = Color.LimeGreen;
+
+                                marker.text = (i == 0 ? tm.TraderName + "\n" : "") + (i + 1).ToString();
+
+                                _mapControl.RegisterDrawable(marker);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ExpansionTraderMaps tm = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
+                PatrolBehaviour behaviour = PatrolBehaviour.LOOP;
+                if (tm.Positions.Count == 1)
+                {
+                    Vec3 pos = tm.Positions[0];
+                    var marker = new TraderSpawnDrawable(new PointF((float)pos.X, (float)pos.Z), _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Orientation = tm.Rotation.getfloatarray(),
+                        Text = $"{tm.TraderName}",
+                        TextPlacement = MarkerLabelPlacement.Top,
+                        TextBackground = true,
+                        TextBackgroundColor = Color.BlueViolet
+                    };
+                    Vec3 v3 = currentTreeNode.Tag as Vec3;
+
+                    if (_selectedExpansionTraderMaps == tm)
+                    {
+                        if (v3 == pos)
+                        {
+                            marker.Color = Color.LimeGreen;
+                            selected_marker = marker;
+                        }
+                        else
+                        {
+                            marker.Color = Color.Yellow;
                             _mapControl.RegisterDrawable(marker);
                         }
                     }
                     else
                     {
-                        for (int i = 0; i < tm.Positions.Count; i++)
-                        {
-                            Vec3 waypoints = tm.Positions[i];
-
-                            // Determine next waypoint index
-                            bool isLast = i == tm.Positions.Count - 1;
-                            Vec3 nextWaypoint;
-
-                            if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
-                            {
-                                // Don't connect last to first for ALTERNATE
-                                nextWaypoint = waypoints;
-                            }
-                            else
-                            {
-                                nextWaypoint = tm.Positions[(i + 1) % tm.Positions.Count];
-                            }
-
-                            var marker = new AIPatrolDrawable(
-                                new PointF(waypoints.X, waypoints.Z),
-                                new PointF(nextWaypoint.X, nextWaypoint.Z),
-                                _mapControl.MapSize,
-                                behaviour)
-                            {
-                                Color = Color.Red,
-                                WriteString = true
-                            };
-
-                            if (_selectedExpansionTraderMaps == tm)
-                                marker.Color = Color.LimeGreen;
-
-                            Vec3 v3 = currentTreeNode.Tag as Vec3;
-                            if (v3 == waypoints)
-                                marker.Color = Color.Yellow;
-
-                            marker.text = (i == 0 ? tm.TraderName + "\n" : "") + (i + 1).ToString();
-
-                            _mapControl.RegisterDrawable(marker);
-                        }
+                        _mapControl.RegisterDrawable(marker);
                     }
                 }
+                else
+                {
+                    for (int i = 0; i < tm.Positions.Count; i++)
+                    {
+                        Vec3 waypoints = tm.Positions[i];
+
+                        // Determine next waypoint index
+                        bool isLast = i == tm.Positions.Count - 1;
+                        Vec3 nextWaypoint;
+
+                        if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                        {
+                            // Don't connect last to first for ALTERNATE
+                            nextWaypoint = waypoints;
+                        }
+                        else
+                        {
+                            nextWaypoint = tm.Positions[(i + 1) % tm.Positions.Count];
+                        }
+
+                        var marker = new AIPatrolDrawable(
+                            new PointF(waypoints.X, waypoints.Z),
+                            new PointF(nextWaypoint.X, nextWaypoint.Z),
+                            _mapControl.MapSize,
+                            behaviour)
+                        {
+                            Color = Color.Red,
+                            WriteString = true
+                        };
+
+                        if (_selectedExpansionTraderMaps == tm)
+                            marker.Color = Color.Yellow;
+
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        if (v3 == waypoints)
+                            marker.Color = Color.LimeGreen;
+
+                        marker.text = (i == 0 ? tm.TraderName + "\n" : "") + (i + 1).ToString();
+
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+
             }
 
             if (selected_marker != null)
@@ -7378,7 +7473,7 @@ namespace ExpansionPlugin
             TreeNode parentNode = currentTreeNode.Parent.Parent.Parent;
 
             if (parentNode.Tag is ExpansionQuestObjectiveAIPatrolConfig)
-            { 
+            {
                 Vec3 closestPos = null;
                 double closestDistance = double.MaxValue;
 
@@ -7389,21 +7484,21 @@ namespace ExpansionPlugin
                 // Loop through all child nodes of the parent
                 foreach (TreeNode child in parentNode.Nodes)
                 {
-                        if (child.Tag is Vec3 pos)
+                    if (child.Tag is Vec3 pos)
+                    {
+                        // Node position in screen space
+                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                        double dx = clickScreen.X - posScreen.X;
+                        double dy = clickScreen.Y - posScreen.Y;
+                        double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
                         {
-                            // Node position in screen space
-                            PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
-
-                            double dx = clickScreen.X - posScreen.X;
-                            double dy = clickScreen.Y - posScreen.Y;
-                            double distance = Math.Sqrt(dx * dx + dy * dy);
-
-                            if (distance < closestDistance)
-                            {
-                                closestDistance = distance;
-                                closestPos = pos;
-                            }
+                            closestDistance = distance;
+                            closestPos = pos;
                         }
+                    }
                 }
 
                 // Optional: choose only if within some "click radius"
@@ -7412,11 +7507,11 @@ namespace ExpansionPlugin
                     // Select that tree node in the TreeView
                     foreach (TreeNode child in parentNode.Nodes)
                     {
-                            if (child.Tag == closestPos)
-                            {
-                                ExpansionTV.SelectedNode = child;
-                                break;
-                            }
+                        if (child.Tag == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child;
+                            break;
+                        }
                     }
 
                     //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
@@ -8450,6 +8545,55 @@ namespace ExpansionPlugin
         {
             if (currentTreeNode?.Parent.Parent == null)
                 return;
+
+            if (NewTraderVec3 == true)
+            {
+                if (currentTreeNode.Tag is Vec3 vec3)
+                {
+                    ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
+                    Vec3 lastpos = ExpansionTraderMaps.Positions.Last();
+                    Vec3 newpos = new Vec3()
+                    {
+                        X = lastpos.X + 25,
+                        Y = lastpos.Y,
+                        Z = lastpos.Z + 10
+                    };
+                    if (MapData.FileExists)
+                    {
+                        newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
+                    }
+                    ExpansionTraderMaps.Positions.Add(newpos);
+
+
+                    string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
+                    currentTreeNode.Text = posLabel;
+                    currentTreeNode.Nodes.Add(new TreeNode(newpos.GetString()) { Tag = newpos });
+
+
+
+
+                    PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
+
+                    PRASafePositionposcopy.Position.X = e.MapCoordinates.X;
+                    PRASafePositionposcopy.Position.Z = e.MapCoordinates.Y;
+
+                    currentPlayerRestrictedFiles.SafePositionsView.Add(PRASafePositionposcopy);
+
+                    TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1}: {PRASafePositionposcopy.Position.GetString()}")
+                    {
+                        Tag = PRASafePositionposcopy
+                    };
+                    currentTreeNode.Parent.Nodes.Add(tn);
+                    EconomyTV.SelectedNode = tn;
+                    effectareacopy = false;
+                    Areascopy = null;
+                }
+
+
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+                return;
+            }
+
             TreeNode parentNode = currentTreeNode.Parent.Parent.Parent.Parent;
             object closestPos = null;
             double closestDistance = double.MaxValue;
@@ -8561,13 +8705,13 @@ namespace ExpansionPlugin
                 {
                     foreach (TreeNode child2 in child.Nodes[3].Nodes)
                     {
-                         Vec3 pos = child2.Tag as Vec3;
+                        Vec3 pos = child2.Tag as Vec3;
 
-                            if (pos == closestPos)
-                            {
-                                ExpansionTV.SelectedNode = child2;
-                                break;
-                            }
+                        if (pos == closestPos)
+                        {
+                            ExpansionTV.SelectedNode = child2;
+                            break;
+                        }
                     }
                 }
 
@@ -9241,7 +9385,7 @@ namespace ExpansionPlugin
                         }
                         break;
                     case 2:
-                        
+
                         ObjectSpawnerArrFile newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrFile>(File.ReadAllText(filePath));
                         foreach (SpawnObjects so in newobjectspawner.Data.Objects)
                         {
@@ -9266,7 +9410,7 @@ namespace ExpansionPlugin
 
             }
         }
-        
+
         private void exportWaypointsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
@@ -11455,6 +11599,20 @@ namespace ExpansionPlugin
                         break;
                 }
             }
+        }
+        public bool NewTraderVec3 = false;
+        private void button5_Click(object sender, EventArgs e)
+        {
+            NewTraderVec3 = true;
+            button5.BackColor = Color.Gray;
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
+            ExpansionTraderMaps.Positions.Remove(currentTreeNode.Tag as Vec3);
+            string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
+            currentTreeNode.Parent.Text = posLabel;
+            currentTreeNode.Remove();
         }
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -13844,7 +14002,7 @@ namespace ExpansionPlugin
             ExpansionTV.SelectedNode = newnpcnode;
         }
         private void removeQuestNPCToolStripMenuItem_Click(object sender, EventArgs e)
-        { 
+        {
             ExpansionQuestNPCDataConfig ExpansionQuestNPCDataConfig = currentTreeNode.Parent.Tag as ExpansionQuestNPCDataConfig;
             ExpansionQuestNPCDataConfig.RemoveNPC(currentTreeNode.Tag as ExpansionQuestNPCData);
             currentTreeNode.Remove();
@@ -13909,6 +14067,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
 
 
 

@@ -38,6 +38,10 @@
             SaveButton = new Button();
             splitContainer1 = new SplitContainer();
             ExpansionTV = new Day2eEditor.MultiSelectTreeView();
+            _mapOverlayPanel = new Panel();
+            ShowAllTradersCB = new CheckBox();
+            button6 = new Button();
+            button5 = new Button();
             _mapControl = new Day2eEditor.MapViewerControl();
             ExpansionSettingsCM = new ContextMenuStrip(components);
             addNewAirdropContainerToolStripMenuItem = new ToolStripMenuItem();
@@ -290,6 +294,7 @@
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            _mapOverlayPanel.SuspendLayout();
             ExpansionSettingsCM.SuspendLayout();
             LoadoutsCM.SuspendLayout();
             ExpansionAICM.SuspendLayout();
@@ -388,6 +393,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(_mapOverlayPanel);
             splitContainer1.Panel2.Controls.Add(_mapControl);
             splitContainer1.Size = new Size(1192, 657);
             splitContainer1.SplitterDistance = 394;
@@ -408,6 +414,53 @@
             ExpansionTV.TabIndex = 0;
             ExpansionTV.AfterSelect += ExpansionTV_AfterSelect;
             ExpansionTV.NodeMouseClick += ExpansionTV_NodeMouseClick;
+            // 
+            // _mapOverlayPanel
+            // 
+            _mapOverlayPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            _mapOverlayPanel.BorderStyle = BorderStyle.Fixed3D;
+            _mapOverlayPanel.Controls.Add(ShowAllTradersCB);
+            _mapOverlayPanel.Controls.Add(button6);
+            _mapOverlayPanel.Controls.Add(button5);
+            _mapOverlayPanel.Location = new Point(0, 598);
+            _mapOverlayPanel.Name = "_mapOverlayPanel";
+            _mapOverlayPanel.Size = new Size(267, 58);
+            _mapOverlayPanel.TabIndex = 3;
+            _mapOverlayPanel.Visible = false;
+            // 
+            // ShowAllTradersCB
+            // 
+            ShowAllTradersCB.AutoSize = true;
+            ShowAllTradersCB.Location = new Point(3, 3);
+            ShowAllTradersCB.Name = "ShowAllTradersCB";
+            ShowAllTradersCB.Size = new Size(113, 19);
+            ShowAllTradersCB.TabIndex = 10;
+            ShowAllTradersCB.Text = "Show All Traders";
+            ShowAllTradersCB.UseVisualStyleBackColor = true;
+            ShowAllTradersCB.Visible = false;
+            ShowAllTradersCB.CheckedChanged += TraderNPCCB_CheckedChanged;
+            // 
+            // button6
+            // 
+            button6.FlatStyle = FlatStyle.Flat;
+            button6.Location = new Point(134, 27);
+            button6.Name = "button6";
+            button6.Size = new Size(125, 23);
+            button6.TabIndex = 9;
+            button6.Text = "Remove";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
+            // button5
+            // 
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(3, 27);
+            button5.Name = "button5";
+            button5.Size = new Size(125, 23);
+            button5.TabIndex = 8;
+            button5.Text = "New Vec3";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // _mapControl
             // 
@@ -2204,7 +2257,7 @@
             ObjectivesCM.Items.AddRange(new ToolStripItem[] { addNewObjectiveToolStripMenuItem, removeObjectiveToolStripMenuItem1, addActionNameToolStripMenuItem, removeActionNameToolStripMenuItem, addAllowedClassNamesToolStripMenuItem, removeAllowedClassNameToolStripMenuItem, addExcludedClassNameToolStripMenuItem, removeExcludedClassNameToolStripMenuItem, addAllowedWeaponsToolStripMenuItem, removeAllowedWeaponToolStripMenuItem, addAllowedDamageZoneToolStripMenuItem, removeAllowedDamageZoneToolStripMenuItem, addCollectionItemToolStripMenuItem, removeCollectionItemToolStripMenuItem, addObjectiveItemToolStripMenuItem, removeItemToolStripMenuItem1, addTreasureHuntPositionToolStripMenuItem, removeTreasureHuntPositionToolStripMenuItem, addNewQuestToolStripMenuItem, removeQuestToolStripMenuItem, addQuestNPCToolStripMenuItem, removeQuestNPCToolStripMenuItem });
             ObjectivesCM.Name = "DamageCM";
             ObjectivesCM.ShowImageMargin = false;
-            ObjectivesCM.Size = new Size(216, 510);
+            ObjectivesCM.Size = new Size(216, 488);
             // 
             // addNewObjectiveToolStripMenuItem
             // 
@@ -2403,6 +2456,8 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            _mapOverlayPanel.ResumeLayout(false);
+            _mapOverlayPanel.PerformLayout();
             ExpansionSettingsCM.ResumeLayout(false);
             LoadoutsCM.ResumeLayout(false);
             ExpansionAICM.ResumeLayout(false);
@@ -2422,7 +2477,7 @@
         #endregion
 
         private Panel panel1;
-        private CheckBox TerritorieszonesCB;
+        private CheckBox ShowAllTradersCB;
         private Button SaveButton;
         private SplitContainer splitContainer1;
         private Day2eEditor.MultiSelectTreeView ExpansionTV;
@@ -2677,5 +2732,8 @@
         private ToolStripMenuItem removeQuestToolStripMenuItem;
         private ToolStripMenuItem addQuestNPCToolStripMenuItem;
         private ToolStripMenuItem removeQuestNPCToolStripMenuItem;
+        private Panel _mapOverlayPanel;
+        private Button button6;
+        private Button button5;
     }
 }
