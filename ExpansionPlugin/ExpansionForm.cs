@@ -5969,8 +5969,6 @@ namespace ExpansionPlugin
             _selectedTreasureHunt = null;
             _selectedExpansionQuestNPCData = null;
 
-            NewTraderVec3 = false;
-            button5.BackColor = Color.FromArgb(60, 63, 65);
         }
 
 
@@ -6270,6 +6268,9 @@ namespace ExpansionPlugin
                 _mapControl.MapsingleClicked += MapControl_SpawnLocationPositionSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_SpawnLocationPositionDoubleclicked;
 
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = true;
+
                 var ExpansionSpawnConfig = node.FindParentOfType<ExpansionSpawnConfig>();
                 if (ExpansionSpawnConfig != null)
                     DrawbaseSpawnLocationData(ExpansionSpawnConfig);
@@ -6362,7 +6363,7 @@ namespace ExpansionPlugin
                 _mapControl.MapDoubleClicked += MapControl_ExpansionTraderMapsDoubleclicked;
 
                 _mapOverlayPanel.Visible = true;
-                ShowAllTradersCB.Visible = true;
+                ShowAllCB.Visible = true;
 
                 var ExpansionMarketTraderMapsConfig = node.FindParentOfType<ExpansionMarketTraderMapsConfig>();
                 if (ExpansionMarketTraderMapsConfig != null)
@@ -6382,12 +6383,7 @@ namespace ExpansionPlugin
                     DrawQuestNPCPositions(ExpansionQuestNPCDataConfig);
             });
         }
-        private void TraderNPCCB_CheckedChanged(object sender, EventArgs e)
-        {
-            _mapControl.ClearDrawables();
-            ExpansionMarketTraderMapsConfig ttt = currentTreeNode.FindParentOfType<ExpansionMarketTraderMapsConfig>();
-            DrawTraderNPCPositions(ttt);
-        }
+
 
 
 
@@ -6790,52 +6786,59 @@ namespace ExpansionPlugin
         }
         private void DrawbaseSpawnLocationData(ExpansionSpawnConfig ExpansionSpawnConfig)
         {
-            foreach (ExpansionSpawnLocation ExpansionSpawnLocation in ExpansionSpawnConfig.Data.SpawnLocations)
+            if (ShowAllCB.Checked == true)
             {
-                if (_selectedSpawnLocation == ExpansionSpawnLocation)
+                foreach (ExpansionSpawnLocation ExpansionSpawnLocation in ExpansionSpawnConfig.Data.SpawnLocations)
                 {
-                    foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
+                    if (_selectedSpawnLocation == ExpansionSpawnLocation)
                     {
-                        if (currentTreeNode.Tag == vec3)
+                        foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
                         {
-                            var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                            if (currentTreeNode.Tag == vec3)
                             {
-                                Color = Color.Yellow,
-                                Radius = 8,
-                                Scaleradius = false
-                            };
-                            _mapControl.RegisterDrawable(marker);
+                                var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                                {
+                                    Color = Color.LimeGreen,
+                                    Radius = 8,
+                                    Scaleradius = false
+                                };
+                                _mapControl.RegisterDrawable(marker);
+                            }
+                            else
+                            {
+                                var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                                {
+                                    Color = Color.Yellow,
+                                    Radius = 8,
+                                    Scaleradius = false
+                                };
+                                _mapControl.RegisterDrawable(marker);
+                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
                         {
                             var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
                             {
-                                Color = Color.LimeGreen,
+                                Color = Color.Red,
                                 Radius = 8,
                                 Scaleradius = false
                             };
                             _mapControl.RegisterDrawable(marker);
                         }
                     }
-                }
-                else
-                {
-                    foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
+                    var outline = new OutlineDrawable(ExpansionSpawnLocation.Positions, _mapControl.MapSize)
                     {
-                        var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
-                        {
-                            Color = Color.Red,
-                            Radius = 8,
-                            Scaleradius = false
-                        };
-                        _mapControl.RegisterDrawable(marker);
-                    }
-                }
-                var outline = new OutlineDrawable(ExpansionSpawnLocation.Positions, _mapControl.MapSize)
-                {
 
-                };
-                _mapControl.RegisterDrawable(outline);
+                    };
+                    _mapControl.RegisterDrawable(outline);
+                }
+            }
+            else
+            {
+
             }
         }
         private void DrawbaseMissionMarkerData(ExpansionMissionsConfig ExpansionMissionsConfig)
@@ -7088,7 +7091,7 @@ namespace ExpansionPlugin
             }
             TraderSpawnDrawable? selected_marker = null;
             TextMarkerDrawable? selectedtext_marker = null;
-            if (ShowAllTradersCB.Checked == true)
+            if (ShowAllCB.Checked == true)
             {
                 foreach (ExpansionMarketTraderNpcs tmnpc in ExpansionMarketTraderMapsConfig.MutableItems)
                 {
@@ -8088,6 +8091,38 @@ namespace ExpansionPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
+            if (NewSpawnPoint == true)
+            {
+                ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.FindParentOfType<ExpansionSpawnLocation>();
+                Vec3 newpos = new Vec3()
+                {
+                    X = (float)e.MapCoordinates.X,
+                    Y = 0f,
+                    Z = (float)e.MapCoordinates.Y,
+                };
+                if (MapData.FileExists)
+                {
+                    newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
+                }
+
+                ExpansionSpawnLocation.Positions.Add(newpos);
+
+                TreeNode currentnode = currentTreeNode;
+                if (currentTreeNode.Tag is Vec3)
+                {
+                    currentnode = currentTreeNode.Parent;
+                }
+
+
+                currentnode.Nodes.Add(new TreeNode(newpos.ToString())
+                {
+                    Tag = newpos
+                });
+                ExpansionTV.SelectedNode = currentnode.LastNode;
+            }
+
+
+
             TreeNode parentNode = currentTreeNode.Parent.Parent;
             if (currentTreeNode.Tag is Vec3)
             {
@@ -8551,46 +8586,46 @@ namespace ExpansionPlugin
                 if (currentTreeNode.Tag is Vec3 vec3)
                 {
                     ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
-                    Vec3 lastpos = ExpansionTraderMaps.Positions.Last();
+                    int insertIndex = ExpansionTraderMaps.Positions.Count;
                     Vec3 newpos = new Vec3()
                     {
-                        X = lastpos.X + 25,
-                        Y = lastpos.Y,
-                        Z = lastpos.Z + 10
+                        X = (float)e.MapCoordinates.X,
+                        Y = 0f,
+                        Z = (float)e.MapCoordinates.Y,
                     };
                     if (MapData.FileExists)
                     {
                         newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
                     }
-                    ExpansionTraderMaps.Positions.Add(newpos);
+
+                    if (ExpansionTraderMaps.Positions.Count > 1)
+                    {
+                        double minDistance = double.MaxValue;
+
+                        for (int i = 0; i < ExpansionTraderMaps.Positions.Count - 1; i++)
+                        {
+                            double dist = Helper.DistanceToSegment(
+                            newpos,
+                            ExpansionTraderMaps.Positions[i],
+                            ExpansionTraderMaps.Positions[i + 1]);
+                            if (dist < minDistance)
+                            {
+                                minDistance = dist;
+                                insertIndex = i + 1;
+                            }
+                        }
+                    }
+
+                    ExpansionTraderMaps.Positions.Insert(insertIndex,newpos);
 
 
                     string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
-                    currentTreeNode.Text = posLabel;
-                    currentTreeNode.Nodes.Add(new TreeNode(newpos.GetString()) { Tag = newpos });
-
-
-
-
-                    PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
-
-                    PRASafePositionposcopy.Position.X = e.MapCoordinates.X;
-                    PRASafePositionposcopy.Position.Z = e.MapCoordinates.Y;
-
-                    currentPlayerRestrictedFiles.SafePositionsView.Add(PRASafePositionposcopy);
-
-                    TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1}: {PRASafePositionposcopy.Position.GetString()}")
-                    {
-                        Tag = PRASafePositionposcopy
-                    };
-                    currentTreeNode.Parent.Nodes.Add(tn);
-                    EconomyTV.SelectedNode = tn;
-                    effectareacopy = false;
-                    Areascopy = null;
+                    currentTreeNode.Parent.Text = posLabel;
+                    TreeNode newwaypointnode = new TreeNode(newpos.GetString()) { Tag = newpos };
+                    currentTreeNode.Parent.Nodes.Insert(insertIndex,newwaypointnode);
+                    ExpansionTV.SelectedNode = newwaypointnode;
+                    //NewTraderVec3 = false;
                 }
-
-
-                button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
 
@@ -8734,6 +8769,73 @@ namespace ExpansionPlugin
                 ShowHandler(new Vector3Control(), typeof(ExpansionQuestNPCDataConfig), v3, new List<TreeNode>() { currentTreeNode });
                 DrawQuestNPCPositions(ExpansionQuestNPCDataConfig);
                 currentTreeNode.Text = v3.GetString();
+            }
+        }
+        public bool NewTraderVec3 = false;
+        public bool NewSpawnPoint = false;
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps)
+            {
+                if (NewTraderVec3 == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    NewTraderVec3 = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    NewTraderVec3 = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionSpawnLocation ||
+                    currentTreeNode.Tag is ExpansionSpawnLocation)
+            {
+                if (NewSpawnPoint == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    NewSpawnPoint = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    NewSpawnPoint = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps ExpansionTraderMaps)
+            {
+                ExpansionTraderMaps.Positions.Remove(currentTreeNode.Tag as Vec3);
+                string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
+                currentTreeNode.Parent.Text = posLabel;
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionSpawnLocation ExpansionSpawnLocation)
+            {
+                ExpansionSpawnLocation.Positions.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Remove();
+            }
+        }
+        private void ShowAllCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps)
+            {
+                _mapControl.ClearDrawables();
+                ExpansionMarketTraderMapsConfig ttt = currentTreeNode.FindParentOfType<ExpansionMarketTraderMapsConfig>();
+                DrawTraderNPCPositions(ttt);
+            }
+            else if (currentTreeNode.Parent.Tag is ExpansionSpawnLocation ||
+                    currentTreeNode.Tag is ExpansionSpawnLocation)
+            {
+                _mapControl.ClearDrawables();
+                ExpansionSpawnConfig ExpansionSpawnConfig = currentTreeNode.FindParentOfType<ExpansionSpawnConfig>();
+                DrawbaseSpawnLocationData(ExpansionSpawnConfig);
             }
         }
         #endregion mapstuff
@@ -11600,20 +11702,7 @@ namespace ExpansionPlugin
                 }
             }
         }
-        public bool NewTraderVec3 = false;
-        private void button5_Click(object sender, EventArgs e)
-        {
-            NewTraderVec3 = true;
-            button5.BackColor = Color.Gray;
-        }
-        private void button6_Click(object sender, EventArgs e)
-        {
-            ExpansionTraderMaps ExpansionTraderMaps = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
-            ExpansionTraderMaps.Positions.Remove(currentTreeNode.Tag as Vec3);
-            string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
-            currentTreeNode.Parent.Text = posLabel;
-            currentTreeNode.Remove();
-        }
+
         //MIssions
         private void addNewAirdropMissionToolStripMenuItem_Click(object sender, EventArgs e)
         {

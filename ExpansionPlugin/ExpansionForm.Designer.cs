@@ -39,7 +39,7 @@
             splitContainer1 = new SplitContainer();
             ExpansionTV = new Day2eEditor.MultiSelectTreeView();
             _mapOverlayPanel = new Panel();
-            ShowAllTradersCB = new CheckBox();
+            ShowAllCB = new CheckBox();
             button6 = new Button();
             button5 = new Button();
             _mapControl = new Day2eEditor.MapViewerControl();
@@ -419,7 +419,7 @@
             // 
             _mapOverlayPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             _mapOverlayPanel.BorderStyle = BorderStyle.Fixed3D;
-            _mapOverlayPanel.Controls.Add(ShowAllTradersCB);
+            _mapOverlayPanel.Controls.Add(ShowAllCB);
             _mapOverlayPanel.Controls.Add(button6);
             _mapOverlayPanel.Controls.Add(button5);
             _mapOverlayPanel.Location = new Point(0, 598);
@@ -428,17 +428,17 @@
             _mapOverlayPanel.TabIndex = 3;
             _mapOverlayPanel.Visible = false;
             // 
-            // ShowAllTradersCB
+            // ShowAllCB
             // 
-            ShowAllTradersCB.AutoSize = true;
-            ShowAllTradersCB.Location = new Point(3, 3);
-            ShowAllTradersCB.Name = "ShowAllTradersCB";
-            ShowAllTradersCB.Size = new Size(113, 19);
-            ShowAllTradersCB.TabIndex = 10;
-            ShowAllTradersCB.Text = "Show All Traders";
-            ShowAllTradersCB.UseVisualStyleBackColor = true;
-            ShowAllTradersCB.Visible = false;
-            ShowAllTradersCB.CheckedChanged += TraderNPCCB_CheckedChanged;
+            ShowAllCB.AutoSize = true;
+            ShowAllCB.Location = new Point(3, 3);
+            ShowAllCB.Name = "ShowAllCB";
+            ShowAllCB.Size = new Size(72, 19);
+            ShowAllCB.TabIndex = 10;
+            ShowAllCB.Text = "Show All";
+            ShowAllCB.UseVisualStyleBackColor = true;
+            ShowAllCB.Visible = false;
+            ShowAllCB.CheckedChanged += ShowAllCB_CheckedChanged;
             // 
             // button6
             // 
@@ -2477,7 +2477,7 @@
         #endregion
 
         private Panel panel1;
-        private CheckBox ShowAllTradersCB;
+        private CheckBox ShowAllCB;
         private Button SaveButton;
         private SplitContainer splitContainer1;
         private Day2eEditor.MultiSelectTreeView ExpansionTV;

@@ -310,5 +310,25 @@ namespace Day2eEditor
                 }
             }
         }
+        public static double DistanceToSegment(Vec3 p, Vec3 a, Vec3 b)
+        {
+            double dx = b.X - a.X;
+            double dz = b.Z - a.Z;
+
+            if (dx == 0 && dz == 0)
+
+                return Math.Sqrt(Math.Pow(p.X - a.X, 2) + Math.Pow(p.Z - a.Z, 2));
+
+            double t = ((p.X - a.X) * dx + (p.Z - a.Z) * dz) / (dx * dx + dz * dz);
+
+            t = Math.Max(0, Math.Min(1, t));
+
+            double closestX = a.X + t * dx;
+            double closestZ = a.Z + t * dz;
+            return Math.Sqrt(
+            Math.Pow(p.X - closestX, 2) +
+            Math.Pow(p.Z - closestZ, 2));
+        }
+
     }
 }
