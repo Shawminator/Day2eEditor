@@ -6117,6 +6117,9 @@ namespace ExpansionPlugin
                 _mapControl.MapDoubleClicked += MapControl_AIPatrolDoubleclicked;
                 _mapControl.MapsingleClicked += MapControl_AIPatrolSingleclicked;
 
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = true;
+
                 var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
                 var tag2 = node.Parent?.Parent?.Parent?.Tag;
                 if (tag is ExpansionAIPatrolConfig patrolConfig)
@@ -6392,12 +6395,16 @@ namespace ExpansionPlugin
         {
             foreach (ExpansionBuildNoBuildZone pos in ExpansionBaseBuildingConfig.Data.Zones)
             {
-                var marker = new MarkerDrawable(new PointF((float)pos.Center[0], (float)pos.Center[2]), _mapControl.MapSize)
+                var marker = new TextMarkerDrawable(new PointF((float)pos.Center[0], (float)pos.Center[2]), _mapControl.MapSize)
                 {
                     Color = Color.Red,
                     Radius = pos.Radius,
                     Scaleradius = true,
-                    Shade = true
+                    Shade = true,
+                    Text = $"No Build Zone - {pos.Name}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.Blue
                 };
                 if (_selectedNoBuildZonePos == pos)
                 {
@@ -6426,9 +6433,69 @@ namespace ExpansionPlugin
         }
         private void DrawbaseAIPatrols(ExpansionAIPatrolConfig ExpansionAIPatrolConfig)
         {
-            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
-            foreach (ExpansionAIPatrol patrol in ExpansionAIPatrolConfig.Data.Patrols)
+            if (button5.BackColor == Color.LimeGreen &&
+                NewAIVec3 == false)
             {
+                NewTraderVec3 = false;
+                NewSpawnPoint = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
+            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
+            if (ShowAllCB.Checked == true)
+            {
+                foreach (ExpansionAIPatrol patrol in ExpansionAIPatrolConfig.Data.Patrols)
+                {
+                    PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                    if (!string.IsNullOrEmpty(patrol.Behaviour))
+                    {
+                        Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
+                    }
+
+                    for (int i = 0; i < patrol.Waypoints.Count; i++)
+                    {
+                        Vec3 waypoints = patrol.Waypoints[i];
+
+                        // Determine next waypoint index
+                        bool isLast = i == patrol.Waypoints.Count - 1;
+                        Vec3 nextWaypoint;
+
+                        if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                        {
+                            // Don't connect last to first for ALTERNATE
+                            nextWaypoint = waypoints;
+                        }
+                        else
+                        {
+                            nextWaypoint = patrol.Waypoints[(i + 1) % patrol.Waypoints.Count];
+                        }
+
+                        var marker = new AIPatrolDrawable(
+                            new PointF(waypoints.X, waypoints.Z),
+                            new PointF(nextWaypoint.X, nextWaypoint.Z),
+                            _mapControl.MapSize,
+                            behaviour)
+                        {
+                            Color = Color.Red,
+                            WriteString = true
+                        };
+
+                        if (_selectedAIPatrol == patrol)
+                            marker.Color = Color.Yellow;
+
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        if (v3 == waypoints)
+                            marker.Color = Color.LimeGreen;
+
+                        marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
+
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+            }
+            else
+            {
+                ExpansionAIPatrol patrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
                 PatrolBehaviour behaviour = PatrolBehaviour.HALT;
                 if (!string.IsNullOrEmpty(patrol.Behaviour))
                 {
@@ -6464,11 +6531,11 @@ namespace ExpansionPlugin
                     };
 
                     if (_selectedAIPatrol == patrol)
-                        marker.Color = Color.LimeGreen;
+                        marker.Color = Color.Yellow;
 
                     Vec3 v3 = currentTreeNode.Tag as Vec3;
                     if (v3 == waypoints)
-                        marker.Color = Color.Yellow;
+                        marker.Color = Color.LimeGreen;
 
                     marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
 
@@ -6478,21 +6545,96 @@ namespace ExpansionPlugin
         }
         private void DrawbaseObjectiveAICamp(ExpansionQuestObjectiveAICampConfig campConfig)
         {
-            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
-            foreach (ExpansionAIPatrol patrol in campConfig.AISpawns)
+            if (button5.BackColor == Color.LimeGreen &&
+                NewAIVec3 == false)
             {
-                PatrolBehaviour behaviour = PatrolBehaviour.HALT;
-                if (!string.IsNullOrEmpty(patrol.Behaviour))
+                NewTraderVec3 = false;
+                NewSpawnPoint = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
+            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
+            if (ShowAllCB.Checked == true)
+            {
+                foreach (ExpansionAIPatrol patrol in campConfig.AISpawns)
                 {
-                    Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
+                    PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                    if (!string.IsNullOrEmpty(patrol.Behaviour))
+                    {
+                        Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
+                    }
+
+                    for (int i = 0; i < patrol.Waypoints.Count; i++)
+                    {
+                        Vec3 waypoints = patrol.Waypoints[i];
+
+                        // Determine next waypoint index
+                        bool isLast = i == patrol.Waypoints.Count - 1;
+                        Vec3 nextWaypoint;
+
+                        if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                        {
+                            // Don't connect last to first for ALTERNATE
+                            nextWaypoint = waypoints;
+                        }
+                        else
+                        {
+                            nextWaypoint = patrol.Waypoints[(i + 1) % patrol.Waypoints.Count];
+                        }
+
+                        var marker = new AIPatrolDrawable(
+                            new PointF(waypoints.X, waypoints.Z),
+                            new PointF(nextWaypoint.X, nextWaypoint.Z),
+                            _mapControl.MapSize,
+                            behaviour)
+                        {
+                            Color = Color.Red,
+                            WriteString = true
+                        };
+
+                        if (_selectedAIPatrol == patrol)
+                            marker.Color = Color.Yellow;
+
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        if (v3 == waypoints)
+                            marker.Color = Color.LimeGreen;
+
+                        marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
+
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+            }
+
+        }
+        private void DrawbaseObjectiveAIPatrols(ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
+        {
+            if (button5.BackColor == Color.LimeGreen &&
+                NewAIVec3 == false)
+            {
+                NewTraderVec3 = false;
+                NewSpawnPoint = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
+            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
+            if (ShowAllCB.Checked == true)
+            {
+            }
+            else 
+            { 
+                PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                if (!string.IsNullOrEmpty(questPatrolConfig.AISpawn.Behaviour))
+                {
+                    Enum.TryParse(questPatrolConfig.AISpawn.Behaviour.Replace("-", "_"), true, out behaviour);
                 }
 
-                for (int i = 0; i < patrol.Waypoints.Count; i++)
+                for (int i = 0; i < questPatrolConfig.AISpawn.Waypoints.Count; i++)
                 {
-                    Vec3 waypoints = patrol.Waypoints[i];
+                    Vec3 waypoints = questPatrolConfig.AISpawn.Waypoints[i];
 
                     // Determine next waypoint index
-                    bool isLast = i == patrol.Waypoints.Count - 1;
+                    bool isLast = i == questPatrolConfig.AISpawn.Waypoints.Count - 1;
                     Vec3 nextWaypoint;
 
                     if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
@@ -6502,7 +6644,7 @@ namespace ExpansionPlugin
                     }
                     else
                     {
-                        nextWaypoint = patrol.Waypoints[(i + 1) % patrol.Waypoints.Count];
+                        nextWaypoint = questPatrolConfig.AISpawn.Waypoints[(i + 1) % questPatrolConfig.AISpawn.Waypoints.Count];
                     }
 
                     var marker = new AIPatrolDrawable(
@@ -6515,67 +6657,17 @@ namespace ExpansionPlugin
                         WriteString = true
                     };
 
-                    if (_selectedAIPatrol == patrol)
-                        marker.Color = Color.LimeGreen;
+                    if (_selectedAIPatrol == questPatrolConfig.AISpawn)
+                        marker.Color = Color.Yellow;
 
                     Vec3 v3 = currentTreeNode.Tag as Vec3;
                     if (v3 == waypoints)
-                        marker.Color = Color.Yellow;
+                        marker.Color = Color.LimeGreen;
 
-                    marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
+                    marker.text = (i == 0 ? questPatrolConfig.AISpawn.Name + "\n" : "") + (i + 1).ToString();
 
                     _mapControl.RegisterDrawable(marker);
                 }
-            }
-
-        }
-        private void DrawbaseObjectiveAIPatrols(ExpansionQuestObjectiveAIPatrolConfig questPatrolConfig)
-        {
-            _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
-            PatrolBehaviour behaviour = PatrolBehaviour.HALT;
-            if (!string.IsNullOrEmpty(questPatrolConfig.AISpawn.Behaviour))
-            {
-                Enum.TryParse(questPatrolConfig.AISpawn.Behaviour.Replace("-", "_"), true, out behaviour);
-            }
-
-            for (int i = 0; i < questPatrolConfig.AISpawn.Waypoints.Count; i++)
-            {
-                Vec3 waypoints = questPatrolConfig.AISpawn.Waypoints[i];
-
-                // Determine next waypoint index
-                bool isLast = i == questPatrolConfig.AISpawn.Waypoints.Count - 1;
-                Vec3 nextWaypoint;
-
-                if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
-                {
-                    // Don't connect last to first for ALTERNATE
-                    nextWaypoint = waypoints;
-                }
-                else
-                {
-                    nextWaypoint = questPatrolConfig.AISpawn.Waypoints[(i + 1) % questPatrolConfig.AISpawn.Waypoints.Count];
-                }
-
-                var marker = new AIPatrolDrawable(
-                    new PointF(waypoints.X, waypoints.Z),
-                    new PointF(nextWaypoint.X, nextWaypoint.Z),
-                    _mapControl.MapSize,
-                    behaviour)
-                {
-                    Color = Color.Red,
-                    WriteString = true
-                };
-
-                if (_selectedAIPatrol == questPatrolConfig.AISpawn)
-                    marker.Color = Color.LimeGreen;
-
-                Vec3 v3 = currentTreeNode.Tag as Vec3;
-                if (v3 == waypoints)
-                    marker.Color = Color.Yellow;
-
-                marker.text = (i == 0 ? questPatrolConfig.AISpawn.Name + "\n" : "") + (i + 1).ToString();
-
-                _mapControl.RegisterDrawable(marker);
             }
         }
         private void DrawbaseAIEscort(ExpansionQuestObjectiveAIEscortConfig expansionQuestObjectiveAIEscortConfig)
@@ -6786,6 +6878,18 @@ namespace ExpansionPlugin
         }
         private void DrawbaseSpawnLocationData(ExpansionSpawnConfig ExpansionSpawnConfig)
         {
+            if (button5.BackColor == Color.LimeGreen &&
+                NewSpawnPoint == false)
+            {
+                NewAIVec3 = false;
+                NewTraderVec3 = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
+            else
+            {
+                _mapControl.Cursor = Cursors.Cross;
+            }
             if (ShowAllCB.Checked == true)
             {
                 foreach (ExpansionSpawnLocation ExpansionSpawnLocation in ExpansionSpawnConfig.Data.SpawnLocations)
@@ -6839,6 +6943,36 @@ namespace ExpansionPlugin
             else
             {
 
+                ExpansionSpawnLocation ExpansionSpawnLocation = currentTreeNode.FindParentOfType<ExpansionSpawnLocation>();
+                foreach (Vec3 vec3 in ExpansionSpawnLocation.Positions)
+                {
+                    if (currentTreeNode.Tag == vec3)
+                    {
+                        var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                        {
+                            Color = Color.LimeGreen,
+                            Radius = 8,
+                            Scaleradius = false
+                        };
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                    else
+                    {
+                        var marker = new MarkerDrawable(new PointF(vec3.X, vec3.Z), _mapControl.MapSize)
+                        {
+                            Color = Color.Yellow,
+                            Radius = 8,
+                            Scaleradius = false
+                        };
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+
+                var outline = new OutlineDrawable(ExpansionSpawnLocation.Positions, _mapControl.MapSize)
+                {
+
+                };
+                _mapControl.RegisterDrawable(outline);
             }
         }
         private void DrawbaseMissionMarkerData(ExpansionMissionsConfig ExpansionMissionsConfig)
@@ -7073,6 +7207,14 @@ namespace ExpansionPlugin
         }
         private void DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig ExpansionMarketTraderMapsConfig)
         {
+            if (button5.BackColor == Color.LimeGreen &&
+                NewTraderVec3 == false)
+            {
+                NewAIVec3 = false;
+                NewSpawnPoint = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
             foreach (ExpansionMarketTraderZone ExpansionMarketTraderZone in _expansionManager.ExpansionMarketTraderZoneConfig.MutableItems)
             {
                 var marker = new TextMarkerDrawable(new PointF((float)ExpansionMarketTraderZone.Position.X, (float)ExpansionMarketTraderZone.Position.Z), _mapControl.MapSize)
@@ -7177,6 +7319,7 @@ namespace ExpansionPlugin
             }
             else
             {
+                
                 ExpansionTraderMaps tm = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
                 PatrolBehaviour behaviour = PatrolBehaviour.LOOP;
                 if (tm.Positions.Count == 1)
@@ -8771,6 +8914,7 @@ namespace ExpansionPlugin
                 currentTreeNode.Text = v3.GetString();
             }
         }
+        public bool NewAIVec3 = false;
         public bool NewTraderVec3 = false;
         public bool NewSpawnPoint = false;
         private void button5_Click(object sender, EventArgs e)
@@ -8821,9 +8965,27 @@ namespace ExpansionPlugin
                 ExpansionSpawnLocation.Positions.Remove(currentTreeNode.Tag as Vec3);
                 currentTreeNode.Remove();
             }
+            else if (currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag is ExpansionAIPatrolConfig ExpansionAIPatrolConfig)
+            {
+                ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+                ExpansionAIPatrol.Waypoints.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+            {
+                ExpansionAIPatrol ExpansionAIPatrol = currentTreeNode.FindParentOfType<ExpansionAIPatrol>();
+                ExpansionAIPatrol.Waypoints.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Parent?.Parent?.Parent?.Tag is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+            {
+                ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Remove();
+            }
         }
         private void ShowAllCB_CheckedChanged(object sender, EventArgs e)
         {
+
             if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps)
             {
                 _mapControl.ClearDrawables();
@@ -8836,6 +8998,21 @@ namespace ExpansionPlugin
                 _mapControl.ClearDrawables();
                 ExpansionSpawnConfig ExpansionSpawnConfig = currentTreeNode.FindParentOfType<ExpansionSpawnConfig>();
                 DrawbaseSpawnLocationData(ExpansionSpawnConfig);
+            }
+            else if (currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag is ExpansionAIPatrolConfig ExpansionAIPatrolConfig)
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseAIPatrols(ExpansionAIPatrolConfig);
+            }
+            else if (currentTreeNode.Parent?.Parent?.Parent?.Parent?.Tag is ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig)
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseObjectiveAICamp(ExpansionQuestObjectiveAICampConfig);
+            }
+            else if (currentTreeNode.Parent?.Parent?.Parent?.Tag is ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig)
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseObjectiveAIPatrols(ExpansionQuestObjectiveAIPatrolConfig);
             }
         }
         #endregion mapstuff

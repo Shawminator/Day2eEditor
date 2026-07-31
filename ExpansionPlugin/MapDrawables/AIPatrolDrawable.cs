@@ -69,9 +69,6 @@ namespace ExpansionPlugin
                             ? ((Radius / _mapSize.Width * drawBounds.Width) + (Radius / _mapSize.Height * drawBounds.Height)) / 2f
                             : Radius;
 
-
-            
-
             PointF center = new PointF(screenX, screenY);
             PointF center2 = new PointF(screenX2, screenY2);
 
