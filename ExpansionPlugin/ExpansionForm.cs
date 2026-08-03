@@ -348,6 +348,16 @@ namespace ExpansionPlugin
                         ShowHandler<IUIHandler>(new AIPatrolControl(), typeof(ExpansionQuestObjectiveAIPatrolConfig), ExpansionAIPatrol, selected);
                     }
                 },
+                [typeof(ExpansionAISettings)] = (node, selected) =>
+                {
+                    ExpansionAISettings ExpansionAISettings = node.Tag as ExpansionAISettings;
+                    ShowHandler(new AISettingsConfigControl(), typeof(ExpansionAIConfig), ExpansionAISettings, selected);
+                },
+                [typeof(AILightEntries)] = (node, selected) =>
+                {
+                    AILightEntries AILightEntries = node.Tag as AILightEntries;
+                    ShowHandler(new AILightControl(), typeof(ExpansionAIConfig), AILightEntries, selected);
+                },
                 //BaseBuilding
                 [typeof(ExpansionBuildNoBuildZone)] = (node, selected) =>
                 {
@@ -364,18 +374,8 @@ namespace ExpansionPlugin
                         DrawbasebuildingNoBuildZones(node.FindParentOfType<ExpansionBaseBuildingConfig>());
                     };
                     ShowHandler(control, typeof(ExpansionBaseBuildingConfig), ExpansionBuildNoBuildZone, selected);
-                    SetupBaseBuildingNoBuildZone(ExpansionBuildNoBuildZone, node);
+                    SetupBaseBuildingNoBuildZone(node.FindParentOfType<ExpansionBaseBuildingConfig>(), node);
                     _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
-                },
-                [typeof(ExpansionAISettings)] = (node, selected) =>
-                {
-                    ExpansionAISettings ExpansionAISettings = node.Tag as ExpansionAISettings;
-                    ShowHandler(new AISettingsConfigControl(), typeof(ExpansionAIConfig), ExpansionAISettings, selected);
-                },
-                [typeof(AILightEntries)] = (node, selected) =>
-                {
-                    AILightEntries AILightEntries = node.Tag as AILightEntries;
-                    ShowHandler(new AILightControl(), typeof(ExpansionAIConfig), AILightEntries, selected);
                 },
                 //Book 
                 [typeof(ExpansionBookCraftingCategory)] = (node, selected) =>
@@ -1103,6 +1103,7 @@ namespace ExpansionPlugin
                 {
                     ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
                     ShowHandler<IUIHandler>(new ExpansionBuildNoBuildZonesControl(), typeof(ExpansionBaseBuildingConfig), cfg.Data, selected);
+                    SetupBaseBuildingNoBuildZone(cfg, node);
                 },
                 ["BaseBuildingTerritory"] = (node, selected) =>
                 {
@@ -6107,15 +6108,17 @@ namespace ExpansionPlugin
             config?.Invoke();
         }
         // Specific helpers for different map cases
-        private void SetupBaseBuildingNoBuildZone(ExpansionBuildNoBuildZone pos, TreeNode node)
+        private void SetupBaseBuildingNoBuildZone(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig, TreeNode node)
         {
             SetupMap(() =>
             {
-                _selectedNoBuildZonePos = pos;
+                _selectedNoBuildZonePos = currentTreeNode.Tag as ExpansionBuildNoBuildZone;
                 _mapControl.MapDoubleClicked += MapControl_BuildZoneDoubleclicked;
                 _mapControl.MapsingleClicked += MapControl_BuildZoneSingleclicked;
 
-                var ExpansionBaseBuildingConfig = node.Parent?.Parent?.Tag as ExpansionBaseBuildingConfig;
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = false;
+
                 if (ExpansionBaseBuildingConfig != null)
                     DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig);
             });
@@ -6414,8 +6417,26 @@ namespace ExpansionPlugin
 
 
         //Draw Methods
+        private void TogglePlacementMode(bool VecActive)
+        {
+            if (button5.BackColor == Color.LimeGreen && 
+                VecActive == false)
+            {
+                NewNoBuildZone = false;
+                NewAIVec3 = false;
+                NewTraderVec3 = false;
+                NewSpawnPoint = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
+            else if (button5.BackColor == Color.LimeGreen)
+            {
+                _mapControl.Cursor = Cursors.Cross;
+            }
+        }
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
         {
+            TogglePlacementMode(NewNoBuildZone);
             foreach (ExpansionBuildNoBuildZone pos in ExpansionBaseBuildingConfig.Data.Zones)
             {
                 var marker = new TextMarkerDrawable(new PointF((float)pos.Center[0], (float)pos.Center[2]), _mapControl.MapSize)
@@ -6440,12 +6461,16 @@ namespace ExpansionPlugin
         {
             foreach (ExpansionAIRoamingLocation pos in ExpansionAILocationConfig.Data.RoamingLocations)
             {
-                var marker = new MarkerDrawable(new PointF((float)pos.Position.X, (float)pos.Position.Z), _mapControl.MapSize)
+                var marker = new TextMarkerDrawable(new PointF((float)pos.Position.X, (float)pos.Position.Z), _mapControl.MapSize)
                 {
                     Color = Color.Red,
                     Radius = (float)pos.Radius,
                     Scaleradius = true,
-                    Shade = true
+                    Shade = true,
+                    Text = $"AI Roaming Location\n{pos.Name}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.Blue
                 };
                 if (_selectedAIRoamingLocations == pos)
                 {
@@ -6454,16 +6479,31 @@ namespace ExpansionPlugin
                 _mapControl.RegisterDrawable(marker);
             }
         }
+        private void DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig ExpansionAILocationConfig)
+        {
+            foreach (ExpansionAINoGoArea ExpansionAINoGoArea in ExpansionAILocationConfig.Data.NoGoAreas)
+            {
+                var marker = new TextMarkerDrawable(new PointF(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z), _mapControl.MapSize)
+                {
+                    Color = Color.Red,
+                    Radius = (float)ExpansionAINoGoArea.Radius,
+                    Scaleradius = true,
+                    Shade = true,
+                    Text = $"AI No Go Area - {ExpansionAINoGoArea.Name}",
+                    TextPlacement = MarkerLabelPlacement.Top,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.Blue
+                };
+                if (_selectedAINOGoArea == ExpansionAINoGoArea)
+                {
+                    marker.Color = Color.LimeGreen;
+                }
+                _mapControl.RegisterDrawable(marker);
+            }
+        }
         private void DrawbaseAIPatrols(ExpansionAIPatrolConfig ExpansionAIPatrolConfig)
         {
-            if (button5.BackColor == Color.LimeGreen &&
-                NewAIVec3 == false)
-            {
-                NewTraderVec3 = false;
-                NewSpawnPoint = false;
-                _mapControl.Cursor = Cursors.Hand;
-                button5.BackColor = Color.FromArgb(60, 63, 65);
-            }
+            TogglePlacementMode(NewAIVec3);
             _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
             if (ShowAllCB.Checked == true)
             {
@@ -6856,24 +6896,7 @@ namespace ExpansionPlugin
                 _mapControl.RegisterDrawable(selectedMarker);
             }
         }
-        private void DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig ExpansionAILocationConfig)
-        {
-            foreach (ExpansionAINoGoArea ExpansionAINoGoArea in ExpansionAILocationConfig.Data.NoGoAreas)
-            {
-                var marker = new MarkerDrawable(new PointF(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z), _mapControl.MapSize)
-                {
-                    Color = Color.Red,
-                    Radius = (float)ExpansionAINoGoArea.Radius,
-                    Scaleradius = true,
-                    Shade = true
-                };
-                if (_selectedAINOGoArea == ExpansionAINoGoArea)
-                {
-                    marker.Color = Color.LimeGreen;
-                }
-                _mapControl.RegisterDrawable(marker);
-            }
-        }
+
         private void DrawbaseServerMarkerData(ExpansionMapConfig ExpansionMapConfig)
         {
             foreach (ExpansionServerMarkerData ExpansionServerMarkerData in ExpansionMapConfig.Data.ServerMarkers)
@@ -7007,18 +7030,7 @@ namespace ExpansionPlugin
         }
         private void DrawbaseSpawnLocationData(ExpansionSpawnConfig ExpansionSpawnConfig)
         {
-            if (button5.BackColor == Color.LimeGreen &&
-                NewSpawnPoint == false)
-            {
-                NewAIVec3 = false;
-                NewTraderVec3 = false;
-                _mapControl.Cursor = Cursors.Hand;
-                button5.BackColor = Color.FromArgb(60, 63, 65);
-            }
-            else
-            {
-                _mapControl.Cursor = Cursors.Cross;
-            }
+            TogglePlacementMode(NewSpawnPoint);
             if (ShowAllCB.Checked == true)
             {
                 foreach (ExpansionSpawnLocation ExpansionSpawnLocation in ExpansionSpawnConfig.Data.SpawnLocations)
@@ -7336,14 +7348,7 @@ namespace ExpansionPlugin
         }
         private void DrawTraderNPCPositions(ExpansionMarketTraderMapsConfig ExpansionMarketTraderMapsConfig)
         {
-            if (button5.BackColor == Color.LimeGreen &&
-                NewTraderVec3 == false)
-            {
-                NewAIVec3 = false;
-                NewSpawnPoint = false;
-                _mapControl.Cursor = Cursors.Hand;
-                button5.BackColor = Color.FromArgb(60, 63, 65);
-            }
+            TogglePlacementMode(NewTraderVec3);
             foreach (ExpansionMarketTraderZone ExpansionMarketTraderZone in _expansionManager.ExpansionMarketTraderZoneConfig.MutableItems)
             {
                 var marker = new TextMarkerDrawable(new PointF((float)ExpansionMarketTraderZone.Position.X, (float)ExpansionMarketTraderZone.Position.Z), _mapControl.MapSize)
@@ -7630,7 +7635,49 @@ namespace ExpansionPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            TreeNode parentNode = currentTreeNode.Parent;
+            TreeNode parentNode = currentTreeNode.FindParentNodeOfType<ExpansionBaseBuildingConfig>();
+            parentNode = parentNode.Nodes[4];
+            if (NewNoBuildZone == true)
+            {
+                ExpansionBuildNoBuildZone nbz = new ExpansionBuildNoBuildZone()
+                {
+                    Name = "New No Build Zone",
+                    CustomMessage = "",
+                    Radius = 100,
+                    Center = new float[] { (float)e.MapCoordinates.X, 0, (float)e.MapCoordinates.Y },
+                    IsWhitelist = 0,
+                    Items = new BindingList<string>()
+                };
+                if (MapData.FileExists)
+                {
+                    nbz.Center[1] = MapData.gethieght(nbz.Center[0], nbz.Center[2]);
+                }
+                _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Add(nbz);
+                TreeNode nbznode = new TreeNode(nbz.Name)
+                {
+                    Tag = nbz
+                };
+                TreeNode nbzinodes = new TreeNode("Items")
+                {
+                    Tag = "BaseBuildingNoBuldZoneItems"
+                };
+                foreach (string s in nbz.Items)
+                {
+                    nbzinodes.Nodes.Add(new TreeNode($"Item: {s}")
+                    {
+                        Tag = "BaseBuildingNoBuldZoneItem"
+                    });
+                }
+                nbznode.Nodes.Add(nbzinodes);
+                parentNode.Nodes.Add(nbznode);
+                parentNode.Expand();
+                ExpansionTV.SelectedNode = nbznode;
+
+
+                return;
+            }
+
+
 
             ExpansionBuildNoBuildZone closestPos = null;
             double closestDistance = double.MaxValue;
@@ -9140,6 +9187,7 @@ namespace ExpansionPlugin
             }
         }
         public bool NewAIVec3 = false;
+        public bool NewNoBuildZone = false;
         public bool NewTraderVec3 = false;
         public bool NewSpawnPoint = false;
         private void button5_Click(object sender, EventArgs e)
@@ -9190,6 +9238,22 @@ namespace ExpansionPlugin
                     button5.BackColor = Color.FromArgb(60, 63, 65);
                 }
             }
+            else if (currentTreeNode.Parent.Parent.Tag.ToString() == "BaseBuildingrootNode" ||
+                    currentTreeNode.Parent.Parent.Tag is ExpansionBaseBuildingConfig)
+            {
+                if (NewNoBuildZone == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    NewNoBuildZone = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    NewNoBuildZone = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
         }
         private void button6_Click(object sender, EventArgs e)
         {
@@ -9222,10 +9286,14 @@ namespace ExpansionPlugin
                 ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints.Remove(currentTreeNode.Tag as Vec3);
                 currentTreeNode.Remove();
             }
+            else if (currentTreeNode.Tag is ExpansionBuildNoBuildZone ExpansionBuildNoBuildZone)
+            {
+                _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Remove(ExpansionBuildNoBuildZone);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
         }
         private void ShowAllCB_CheckedChanged(object sender, EventArgs e)
         {
-
             if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps)
             {
                 _mapControl.ClearDrawables();
