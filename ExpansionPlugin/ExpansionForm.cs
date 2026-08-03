@@ -1365,8 +1365,6 @@ namespace ExpansionPlugin
             };
         }
 
-
-
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -2913,8 +2911,20 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addTreasureHuntPositionToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                // social media settings
+                ["NewsFeedTexts"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addTreasureHuntPositionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["NewsFeedLinks"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addTreasureHuntPositionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
-
             };
         }
 
@@ -6556,6 +6566,62 @@ namespace ExpansionPlugin
             _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
             if (ShowAllCB.Checked == true)
             {
+                TreeNode Parentrootnode = currentTreeNode.Parent.Parent.Parent.Parent.Parent;
+                foreach (TreeNode node in Parentrootnode.Nodes)
+                {
+                    ExpansionQuestObjectiveAICampConfig ExpansionQuestObjectiveAICampConfig = node.Tag as ExpansionQuestObjectiveAICampConfig;
+                    foreach (ExpansionAIPatrol patrol in ExpansionQuestObjectiveAICampConfig.AISpawns)
+                    {
+                        PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                        if (!string.IsNullOrEmpty(patrol.Behaviour))
+                        {
+                            Enum.TryParse(patrol.Behaviour.Replace("-", "_"), true, out behaviour);
+                        }
+
+                        for (int i = 0; i < patrol.Waypoints.Count; i++)
+                        {
+                            Vec3 waypoints = patrol.Waypoints[i];
+
+                            // Determine next waypoint index
+                            bool isLast = i == patrol.Waypoints.Count - 1;
+                            Vec3 nextWaypoint;
+
+                            if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                            {
+                                // Don't connect last to first for ALTERNATE
+                                nextWaypoint = waypoints;
+                            }
+                            else
+                            {
+                                nextWaypoint = patrol.Waypoints[(i + 1) % patrol.Waypoints.Count];
+                            }
+
+                            var marker = new AIPatrolDrawable(
+                                new PointF(waypoints.X, waypoints.Z),
+                                new PointF(nextWaypoint.X, nextWaypoint.Z),
+                                _mapControl.MapSize,
+                                behaviour)
+                            {
+                                Color = Color.Red,
+                                WriteString = true
+                            };
+
+                            if (_selectedAIPatrol == patrol)
+                                marker.Color = Color.Yellow;
+
+                            Vec3 v3 = currentTreeNode.Tag as Vec3;
+                            if (v3 == waypoints)
+                                marker.Color = Color.LimeGreen;
+
+                            marker.text = (i == 0 ? patrol.Name + "\n" : "") + (i + 1).ToString();
+
+                            _mapControl.RegisterDrawable(marker);
+                        }
+                    }
+                }
+            }
+            else
+            {
                 foreach (ExpansionAIPatrol patrol in campConfig.AISpawns)
                 {
                     PatrolBehaviour behaviour = PatrolBehaviour.HALT;
@@ -6620,6 +6686,56 @@ namespace ExpansionPlugin
             _mapControl.RegisterDrawable(new AiPAtrolLegendDrawable(_mapControl.Size));
             if (ShowAllCB.Checked == true)
             {
+                TreeNode Parentrootnode = currentTreeNode.Parent.Parent.Parent.Parent;
+                foreach(TreeNode node in Parentrootnode.Nodes)
+                {
+                    ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig = node.Tag as ExpansionQuestObjectiveAIPatrolConfig;
+                    PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+                    if (!string.IsNullOrEmpty(ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Behaviour))
+                    {
+                        Enum.TryParse(ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Behaviour.Replace("-", "_"), true, out behaviour);
+                    }
+
+                    for (int i = 0; i < ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints.Count; i++)
+                    {
+                        Vec3 waypoints = ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints[i];
+
+                        // Determine next waypoint index
+                        bool isLast = i == ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints.Count - 1;
+                        Vec3 nextWaypoint;
+
+                        if ((behaviour == PatrolBehaviour.ALTERNATE || behaviour == PatrolBehaviour.HALT_OR_ALTERNATE || behaviour == PatrolBehaviour.ONCE) && isLast)
+                        {
+                            // Don't connect last to first for ALTERNATE
+                            nextWaypoint = waypoints;
+                        }
+                        else
+                        {
+                            nextWaypoint = ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints[(i + 1) % ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Waypoints.Count];
+                        }
+
+                        var marker = new AIPatrolDrawable(
+                            new PointF(waypoints.X, waypoints.Z),
+                            new PointF(nextWaypoint.X, nextWaypoint.Z),
+                            _mapControl.MapSize,
+                            behaviour)
+                        {
+                            Color = Color.Red,
+                            WriteString = true
+                        };
+
+                        if (_selectedAIPatrol == ExpansionQuestObjectiveAIPatrolConfig.AISpawn)
+                            marker.Color = Color.Yellow;
+
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        if (v3 == waypoints)
+                            marker.Color = Color.LimeGreen;
+
+                        marker.text = (i == 0 ? ExpansionQuestObjectiveAIPatrolConfig.AISpawn.Name + "\n" : "") + (i + 1).ToString();
+
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
             }
             else 
             { 
@@ -6674,7 +6790,7 @@ namespace ExpansionPlugin
         {
             var marker = new TextMarkerDrawable(new PointF((float)expansionQuestObjectiveAIEscortConfig.Position.X, (float)expansionQuestObjectiveAIEscortConfig.Position.Z), _mapControl.MapSize)
             {
-                Color = Color.Red,
+                Color = Color.LimeGreen,
                 Text = $"VIP Name - {expansionQuestObjectiveAIEscortConfig.NPCName}",
                 TextPlacement = MarkerLabelPlacement.Top,
                 TextBackground = true,
@@ -7616,33 +7732,69 @@ namespace ExpansionPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            TreeNode parentNode = currentTreeNode.Parent.Parent.Parent;
+            if (NewAIVec3)
+            {
+                ExpansionAIPatrol patrol =
+                    currentTreeNode.Parent.Parent.Tag as ExpansionAIPatrol;
 
-            if (parentNode.Tag is ExpansionQuestObjectiveAIPatrolConfig)
+                Vec3 newPos = new Vec3
+                {
+                    X = (float)e.MapCoordinates.X,
+                    Y = 0f,
+                    Z = (float)e.MapCoordinates.Y
+                };
+
+                if (MapData.FileExists)
+                {
+                    newPos.Y = MapData.gethieght(newPos.X, newPos.Z);
+                }
+
+                int insertIndex = Helpers.GetWaypointInsertIndex(patrol, newPos);
+
+                patrol.Waypoints.Insert(insertIndex, newPos);
+
+                TreeNode newWaypointNode =
+                    new TreeNode(newPos.GetString())
+                    {
+                        Tag = newPos
+                    };
+
+                currentTreeNode.Parent.Nodes.Insert(insertIndex, newWaypointNode);
+
+                ExpansionTV.SelectedNode = newWaypointNode;
+
+                return;
+            }
+
+
+            if (currentTreeNode.Parent.Parent.Parent.Tag is ExpansionQuestObjectiveAIPatrolConfig)
             {
                 Vec3 closestPos = null;
                 double closestDistance = double.MaxValue;
 
                 PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
-                parentNode = currentTreeNode.Parent;
+                TreeNode parentNode = currentTreeNode.Parent.Parent.Parent.Parent;
 
 
                 // Loop through all child nodes of the parent
                 foreach (TreeNode child in parentNode.Nodes)
                 {
-                    if (child.Tag is Vec3 pos)
+                    foreach (TreeNode child2 in child.Nodes[2].Nodes[0].Nodes)
                     {
-                        // Node position in screen space
-                        PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
-
-                        double dx = clickScreen.X - posScreen.X;
-                        double dy = clickScreen.Y - posScreen.Y;
-                        double distance = Math.Sqrt(dx * dx + dy * dy);
-
-                        if (distance < closestDistance)
+                        if (child2.Tag is Vec3 pos)
                         {
-                            closestDistance = distance;
-                            closestPos = pos;
+                            // Node position in screen space
+                            PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                            double dx = clickScreen.X - posScreen.X;
+                            double dy = clickScreen.Y - posScreen.Y;
+                            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPos = pos;
+                            }
                         }
                     }
                 }
@@ -7653,10 +7805,69 @@ namespace ExpansionPlugin
                     // Select that tree node in the TreeView
                     foreach (TreeNode child in parentNode.Nodes)
                     {
-                        if (child.Tag == closestPos)
+                        foreach (TreeNode child2 in child.Nodes[2].Nodes[0].Nodes)
                         {
-                            ExpansionTV.SelectedNode = child;
-                            break;
+                            if (child2.Tag == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = child2;
+                                break;
+                            }
+                        }
+                    }
+
+                    //MessageBox.Show($"Selected closest node at X:{closestPos.x:0.##}, Z:{closestPos.z:0.##}");
+                }
+            }
+            else if (currentTreeNode.Parent.Parent.Parent.Parent.Tag is ExpansionPlugin.ExpansionQuestObjectiveAICampConfig)
+            {
+                Vec3 closestPos = null;
+                double closestDistance = double.MaxValue;
+
+                PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
+                TreeNode parentNode = currentTreeNode.Parent.Parent.Parent.Parent.Parent;
+
+                // Loop through all child nodes of the parent
+                foreach (TreeNode child in parentNode.Nodes)
+                {
+                    foreach (TreeNode child2 in child.Nodes[2].Nodes)
+                    {
+                        foreach (TreeNode child3 in child2.Nodes[0].Nodes)
+                        {
+                            if (child3.Tag is Vec3 pos)
+                            {
+                                // Node position in screen space
+                                PointF posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                                double dx = clickScreen.X - posScreen.X;
+                                double dy = clickScreen.Y - posScreen.Y;
+                                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                                if (distance < closestDistance)
+                                {
+                                    closestDistance = distance;
+                                    closestPos = pos;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Optional: choose only if within some "click radius"
+                if (closestPos != null && closestDistance <= 25) // 10 units tolerance
+                {
+                    // Select that tree node in the TreeView
+                    foreach (TreeNode child in parentNode.Nodes)
+                    {
+                        foreach (TreeNode child2 in child.Nodes[2].Nodes)
+                        {
+                            foreach (TreeNode child3 in child2.Nodes[0].Nodes)
+                            {
+                                if (child3.Tag == closestPos)
+                                {
+                                    ExpansionTV.SelectedNode = child3;
+                                    break;
+                                }
+                            }
                         }
                     }
 
@@ -7669,7 +7880,7 @@ namespace ExpansionPlugin
                 double closestDistance = double.MaxValue;
 
                 PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
-
+                TreeNode parentNode = currentTreeNode.Parent.Parent.Parent;
                 // Loop through all child nodes of the parent
                 foreach (TreeNode child in parentNode.Nodes)
                 {
@@ -8262,6 +8473,7 @@ namespace ExpansionPlugin
                     Tag = newpos
                 });
                 ExpansionTV.SelectedNode = currentnode.LastNode;
+                return;
             }
 
 
@@ -8947,6 +9159,21 @@ namespace ExpansionPlugin
                 {
                     _mapControl.Cursor = Cursors.Hand;
                     NewSpawnPoint = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionAIPatrol)
+            {
+                if (NewAIVec3 == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    NewAIVec3 = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    NewAIVec3 = false;
                     button5.BackColor = Color.FromArgb(60, 63, 65);
                 }
             }

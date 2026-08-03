@@ -344,5 +344,96 @@ namespace ExpansionPlugin
 
             return string.Join("|", parts);
         }
+        public static int GetWaypointInsertIndex(ExpansionAIPatrol patrol, Vec3 newPos)
+        {
+            if (patrol.Waypoints.Count == 0)
+                return 0;
+
+            PatrolBehaviour behaviour = PatrolBehaviour.HALT;
+
+            if (!string.IsNullOrEmpty(patrol.Behaviour))
+            {
+                Enum.TryParse(
+                    patrol.Behaviour.Replace("-", "_"),
+                    true,
+                    out behaviour);
+            }
+
+            // Roaming waypoints are always appended
+            switch (behaviour)
+            {
+                case PatrolBehaviour.ROAMING:
+                case PatrolBehaviour.ROAMING_LOCAL:
+                    return patrol.Waypoints.Count;
+            }
+
+            if (patrol.Waypoints.Count == 1)
+                return 1;
+
+            bool isLooping = behaviour switch
+            {
+                PatrolBehaviour.LOOP => true,
+                PatrolBehaviour.LOOP_OR_ALTERNATE => true,
+                PatrolBehaviour.HALT_OR_LOOP => true,
+                _ => false
+            };
+
+            int insertIndex = patrol.Waypoints.Count;
+            double minDistance = double.MaxValue;
+
+            int bestSegment = -1;
+            double bestT = 0;
+
+            // Check normal segments
+            for (int i = 0; i < patrol.Waypoints.Count - 1; i++)
+            {
+                double t;
+
+                double dist = Helper.DistanceToSegment(
+                    newPos,
+                    patrol.Waypoints[i],
+                    patrol.Waypoints[i + 1],
+                    out t);
+
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    insertIndex = i + 1;
+
+                    bestSegment = i;
+                    bestT = t;
+                }
+            }
+
+            // Check closing segment for looping patrols
+            if (isLooping && patrol.Waypoints.Count > 2)
+            {
+                double t;
+
+                double dist = Helper.DistanceToSegment(
+                    newPos,
+                    patrol.Waypoints[patrol.Waypoints.Count - 1],
+                    patrol.Waypoints[0],
+                    out t);
+
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    insertIndex = patrol.Waypoints.Count;
+                }
+            }
+            else
+            {
+                // For non-looping patrols, allow insertion before first
+                // or after last waypoint.
+                if (bestSegment == 0 && bestT < 0)
+                    return 0;
+
+                if (bestSegment == patrol.Waypoints.Count - 2 && bestT > 1)
+                    return patrol.Waypoints.Count;
+            }
+
+            return insertIndex;
+        }
     }
 }

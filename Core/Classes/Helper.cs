@@ -329,6 +329,35 @@ namespace Day2eEditor
             Math.Pow(p.X - closestX, 2) +
             Math.Pow(p.Z - closestZ, 2));
         }
+        public static double DistanceToSegment(
+            Vec3 p,
+            Vec3 a,
+            Vec3 b,
+            out double t)
+        {
+            double dx = b.X - a.X;
+            double dz = b.Z - a.Z;
 
+            if (dx == 0 && dz == 0)
+            {
+                t = 0;
+
+                return Math.Sqrt(
+                    Math.Pow(p.X - a.X, 2) +
+                    Math.Pow(p.Z - a.Z, 2));
+            }
+
+            t = ((p.X - a.X) * dx + (p.Z - a.Z) * dz)
+                / (dx * dx + dz * dz);
+
+            double clampedT = Math.Max(0, Math.Min(1, t));
+
+            double closestX = a.X + clampedT * dx;
+            double closestZ = a.Z + clampedT * dz;
+
+            return Math.Sqrt(
+                Math.Pow(p.X - closestX, 2) +
+                Math.Pow(p.Z - closestZ, 2));
+        }
     }
 }
