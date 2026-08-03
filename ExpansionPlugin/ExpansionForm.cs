@@ -6313,6 +6313,9 @@ namespace ExpansionPlugin
                 _mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
 
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = true;
+
                 var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
                 if (ExpansionMissionsConfig != null)
                     DrawbaseMissionMarkerData(ExpansionMissionsConfig);
@@ -6325,6 +6328,9 @@ namespace ExpansionPlugin
                 _selectedExpansionMissionEventContaminatedArea = ExpansionMissionEventContaminatedArea;
                 _mapControl.MapsingleClicked += MapControl_MissionLocationPositionSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
+
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = true;
 
                 var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
                 if (ExpansionMissionsConfig != null)
@@ -6424,6 +6430,7 @@ namespace ExpansionPlugin
             {
                 NewNoBuildZone = false;
                 NewAIVec3 = false;
+                NewMissionPoint = false;
                 NewTraderVec3 = false;
                 NewSpawnPoint = false;
                 _mapControl.Cursor = Cursors.Hand;
@@ -7118,9 +7125,73 @@ namespace ExpansionPlugin
         }
         private void DrawbaseMissionMarkerData(ExpansionMissionsConfig ExpansionMissionsConfig)
         {
-            foreach (ExpansionMissionEventBase mb in ExpansionMissionsConfig.Items)
+            TogglePlacementMode(NewSpawnPoint);
+            if (ShowAllCB.Checked == true)
             {
-                if (mb is ExpansionMissionEventAirdrop airdrop)
+                foreach (ExpansionMissionEventBase mb in ExpansionMissionsConfig.Items)
+                {
+                    if (mb is ExpansionMissionEventAirdrop airdrop)
+                    {
+                        var marker = new TextMarkerDrawable(new PointF((float)airdrop.DropLocation.x, (float)airdrop.DropLocation.z), _mapControl.MapSize)
+                        {
+                            Color = Color.Red,
+                            Radius = (float)airdrop.DropLocation.Radius,
+                            Scaleradius = true,
+                            Shade = true,
+                            Text = $"Airdrop - {airdrop.DropLocation.Name}",
+                            TextPlacement = MarkerLabelPlacement.Top,
+                            TextBackground = true,
+                            TextBackgroundColor = Color.Blue
+                        };
+                        if (_selectedAirdropLocation == airdrop.DropLocation)
+                        {
+                            marker.Color = Color.LimeGreen;
+                        }
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                    else if (mb is ExpansionMissionEventContaminatedArea contamiatedarea)
+                    {
+                        var marker = new TextMarkerDrawable(new PointF((float)contamiatedarea.Data.Pos[0], (float)contamiatedarea.Data.Pos[2]), _mapControl.MapSize)
+                        {
+                            Color = Color.Red,
+                            Radius = (float)contamiatedarea.Data.Radius,
+                            Scaleradius = true,
+                            Shade = true,
+                            Text = $"Contaminated Area - {contamiatedarea.MissionName}",
+                            TextPlacement = MarkerLabelPlacement.Top,
+                            TextBackground = true,
+                            TextBackgroundColor = Color.Aqua
+                        };
+                        if (_selectedExpansionMissionEventContaminatedArea == contamiatedarea)
+                        {
+                            marker.Color = Color.LimeGreen;
+                        }
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                    else if (mb is ExpansionMissionEventHeliCrash ExpansionMissionEventHeliCrash)
+                    {
+                        var marker = new TextMarkerDrawable(new PointF((float)ExpansionMissionEventHeliCrash.CrashLocation.x, (float)ExpansionMissionEventHeliCrash.CrashLocation.z), _mapControl.MapSize)
+                        {
+                            Color = Color.Red,
+                            Radius = (float)ExpansionMissionEventHeliCrash.CrashLocation.Radius,
+                            Scaleradius = true,
+                            Shade = true,
+                            Text = $"Crash Location - {ExpansionMissionEventHeliCrash.CrashLocation.Name}",
+                            TextPlacement = MarkerLabelPlacement.Top,
+                            TextBackground = true,
+                            TextBackgroundColor = Color.BlueViolet
+                        };
+                        if (_selectedAirdropLocation == ExpansionMissionEventHeliCrash.CrashLocation)
+                        {
+                            marker.Color = Color.LimeGreen;
+                        }
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                }
+            }
+            else
+            {
+                if (currentTreeNode.Parent.Tag is ExpansionMissionEventAirdrop airdrop)
                 {
                     var marker = new TextMarkerDrawable(new PointF((float)airdrop.DropLocation.x, (float)airdrop.DropLocation.z), _mapControl.MapSize)
                     {
@@ -7139,7 +7210,7 @@ namespace ExpansionPlugin
                     }
                     _mapControl.RegisterDrawable(marker);
                 }
-                else if (mb is ExpansionMissionEventContaminatedArea contamiatedarea)
+                else if (currentTreeNode.Parent.Tag is ExpansionMissionEventContaminatedArea contamiatedarea)
                 {
                     var marker = new TextMarkerDrawable(new PointF((float)contamiatedarea.Data.Pos[0], (float)contamiatedarea.Data.Pos[2]), _mapControl.MapSize)
                     {
@@ -7158,7 +7229,7 @@ namespace ExpansionPlugin
                     }
                     _mapControl.RegisterDrawable(marker);
                 }
-                else if (mb is ExpansionMissionEventHeliCrash ExpansionMissionEventHeliCrash)
+                else if (currentTreeNode.Parent.Tag is ExpansionMissionEventHeliCrash ExpansionMissionEventHeliCrash)
                 {
                     var marker = new TextMarkerDrawable(new PointF((float)ExpansionMissionEventHeliCrash.CrashLocation.x, (float)ExpansionMissionEventHeliCrash.CrashLocation.z), _mapControl.MapSize)
                     {
@@ -9188,6 +9259,7 @@ namespace ExpansionPlugin
         }
         public bool NewAIVec3 = false;
         public bool NewNoBuildZone = false;
+        public bool NewMissionPoint = false;
         public bool NewTraderVec3 = false;
         public bool NewSpawnPoint = false;
         private void button5_Click(object sender, EventArgs e)
@@ -9254,6 +9326,10 @@ namespace ExpansionPlugin
                     button5.BackColor = Color.FromArgb(60, 63, 65);
                 }
             }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionMissionsConfig)
+            {
+                MessageBox.Show("Please use the right click method on the mission node.\nYou need to select which kind of mission to add.");
+            }
         }
         private void button6_Click(object sender, EventArgs e)
         {
@@ -9291,6 +9367,22 @@ namespace ExpansionPlugin
                 _expansionManager.ExpansionBaseBuildingConfig.Data.Zones.Remove(ExpansionBuildNoBuildZone);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionMissionsConfig)
+            {
+                if (currentTreeNode.Parent.Tag is ExpansionMissionEventAirdrop ExpansionMissionEventAirdrop)
+                {
+                    _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventAirdrop);
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionMissionEventContaminatedArea ExpansionMissionEventContaminatedArea)
+                {
+                    _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventContaminatedArea);
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionMissionEventHeliCrash ExpansionMissionEventHeliCrash)
+                {
+                    _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHeliCrash);
+                }
+                currentTreeNode.Parent.Remove();
+            }
         }
         private void ShowAllCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -9321,6 +9413,11 @@ namespace ExpansionPlugin
             {
                 _mapControl.ClearDrawables();
                 DrawbaseObjectiveAIPatrols(ExpansionQuestObjectiveAIPatrolConfig);
+            }
+            else if (currentTreeNode.Parent?.Parent?.Tag is ExpansionMissionsConfig ExpansionMissionsConfig)
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseMissionMarkerData(ExpansionMissionsConfig);
             }
         }
         #endregion mapstuff
