@@ -289,6 +289,10 @@
             removeQuestToolStripMenuItem = new ToolStripMenuItem();
             addQuestNPCToolStripMenuItem = new ToolStripMenuItem();
             removeQuestNPCToolStripMenuItem = new ToolStripMenuItem();
+            addNewsFeedTextToolStripMenuItem = new ToolStripMenuItem();
+            addNewsFeedLinkToolStripMenuItem = new ToolStripMenuItem();
+            removeNewsFeedTextToolStripMenuItem = new ToolStripMenuItem();
+            removeNewsFeedLinkToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -1066,10 +1070,10 @@
             // DamageCM
             // 
             DamageCM.BackColor = Color.FromArgb(60, 63, 65);
-            DamageCM.Items.AddRange(new ToolStripItem[] { addNewExplosionTargetToolStripMenuItem, removeExplosionTargetToolStripMenuItem, addNewExplosiveProjectileToolStripMenuItem, removeExplosiveProjectileToolStripMenuItem });
+            DamageCM.Items.AddRange(new ToolStripItem[] { addNewExplosionTargetToolStripMenuItem, removeExplosionTargetToolStripMenuItem, addNewExplosiveProjectileToolStripMenuItem, removeExplosiveProjectileToolStripMenuItem, addNewsFeedTextToolStripMenuItem, addNewsFeedLinkToolStripMenuItem, removeNewsFeedTextToolStripMenuItem, removeNewsFeedLinkToolStripMenuItem });
             DamageCM.Name = "DamageCM";
             DamageCM.ShowImageMargin = false;
-            DamageCM.Size = new Size(202, 92);
+            DamageCM.Size = new Size(202, 202);
             // 
             // addNewExplosionTargetToolStripMenuItem
             // 
@@ -2435,6 +2439,38 @@
             removeQuestNPCToolStripMenuItem.Text = "Remove Quest NPC";
             removeQuestNPCToolStripMenuItem.Click += removeQuestNPCToolStripMenuItem_Click;
             // 
+            // addNewsFeedTextToolStripMenuItem
+            // 
+            addNewsFeedTextToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewsFeedTextToolStripMenuItem.Name = "addNewsFeedTextToolStripMenuItem";
+            addNewsFeedTextToolStripMenuItem.Size = new Size(201, 22);
+            addNewsFeedTextToolStripMenuItem.Text = "Add News Feed Text";
+            addNewsFeedTextToolStripMenuItem.Click += addNewsFeedTextToolStripMenuItem_Click;
+            // 
+            // addNewsFeedLinkToolStripMenuItem
+            // 
+            addNewsFeedLinkToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewsFeedLinkToolStripMenuItem.Name = "addNewsFeedLinkToolStripMenuItem";
+            addNewsFeedLinkToolStripMenuItem.Size = new Size(201, 22);
+            addNewsFeedLinkToolStripMenuItem.Text = "Add News Feed Link";
+            addNewsFeedLinkToolStripMenuItem.Click += addNewsFeedLinkToolStripMenuItem_Click;
+            // 
+            // removeNewsFeedTextToolStripMenuItem
+            // 
+            removeNewsFeedTextToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNewsFeedTextToolStripMenuItem.Name = "removeNewsFeedTextToolStripMenuItem";
+            removeNewsFeedTextToolStripMenuItem.Size = new Size(201, 22);
+            removeNewsFeedTextToolStripMenuItem.Text = "Remove News Feed Text";
+            removeNewsFeedTextToolStripMenuItem.Click += removeNewsFeedTextToolStripMenuItem_Click;
+            // 
+            // removeNewsFeedLinkToolStripMenuItem
+            // 
+            removeNewsFeedLinkToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNewsFeedLinkToolStripMenuItem.Name = "removeNewsFeedLinkToolStripMenuItem";
+            removeNewsFeedLinkToolStripMenuItem.Size = new Size(201, 22);
+            removeNewsFeedLinkToolStripMenuItem.Text = "Remove News Feed Link";
+            removeNewsFeedLinkToolStripMenuItem.Click += removeNewsFeedLinkToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2735,5 +2771,9 @@
         private Panel _mapOverlayPanel;
         private Button button6;
         private Button button5;
+        private ToolStripMenuItem addNewsFeedTextToolStripMenuItem;
+        private ToolStripMenuItem addNewsFeedLinkToolStripMenuItem;
+        private ToolStripMenuItem removeNewsFeedTextToolStripMenuItem;
+        private ToolStripMenuItem removeNewsFeedLinkToolStripMenuItem;
     }
 }

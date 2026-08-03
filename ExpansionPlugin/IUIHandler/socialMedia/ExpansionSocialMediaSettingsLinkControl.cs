@@ -53,7 +53,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                // TODO: Update _nodes.Last().Text based on _data
+                _nodes.Last().Text = _data.ToString();
             }
         }
 
@@ -63,6 +63,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) { return; }
             _data.m_Label = ExpansionNewsFeedLinkSettingLabelTB.Text;
+            UpdateTreeNodeText();
         }
 
         private void ExpansionNewsFeedLinkSettingIconTB_TextChanged(object sender, EventArgs e)

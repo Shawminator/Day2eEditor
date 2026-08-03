@@ -31,12 +31,6 @@ namespace ExpansionPlugin
         public BindingList<ExpansionNewsFeedTextSetting> NewsFeedTexts { get; set; }
         public BindingList<ExpansionNewsFeedLinkSetting> NewsFeedLinks { get; set; }
 
-
-        [JsonIgnore]
-        public string Filename { get; set; }
-        [JsonIgnore]
-        public bool IsDirty { get; set; }
-
         public ExpansionSocialMediaSettings()
         {
         }

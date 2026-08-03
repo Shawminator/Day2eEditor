@@ -1980,6 +1980,19 @@ namespace ExpansionPlugin
                         ExpansionSettingsCM.Items.Add(removeQuestNPCToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
+                },
+                //social media settings
+                [typeof(ExpansionNewsFeedTextSetting)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeNewsFeedTextToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionNewsFeedLinkSetting)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeNewsFeedLinkToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
                 }
 
             };
@@ -2916,13 +2929,13 @@ namespace ExpansionPlugin
                 ["NewsFeedTexts"] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
-                    ExpansionSettingsCM.Items.Add(addTreasureHuntPositionToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(addNewsFeedTextToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 ["NewsFeedLinks"] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
-                    ExpansionSettingsCM.Items.Add(addTreasureHuntPositionToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(addNewsFeedLinkToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 }
             };
@@ -6687,7 +6700,7 @@ namespace ExpansionPlugin
             if (ShowAllCB.Checked == true)
             {
                 TreeNode Parentrootnode = currentTreeNode.Parent.Parent.Parent.Parent;
-                foreach(TreeNode node in Parentrootnode.Nodes)
+                foreach (TreeNode node in Parentrootnode.Nodes)
                 {
                     ExpansionQuestObjectiveAIPatrolConfig ExpansionQuestObjectiveAIPatrolConfig = node.Tag as ExpansionQuestObjectiveAIPatrolConfig;
                     PatrolBehaviour behaviour = PatrolBehaviour.HALT;
@@ -6737,8 +6750,8 @@ namespace ExpansionPlugin
                     }
                 }
             }
-            else 
-            { 
+            else
+            {
                 PatrolBehaviour behaviour = PatrolBehaviour.HALT;
                 if (!string.IsNullOrEmpty(questPatrolConfig.AISpawn.Behaviour))
                 {
@@ -7435,7 +7448,7 @@ namespace ExpansionPlugin
             }
             else
             {
-                
+
                 ExpansionTraderMaps tm = currentTreeNode.Parent.Parent.Tag as ExpansionTraderMaps;
                 PatrolBehaviour behaviour = PatrolBehaviour.LOOP;
                 if (tm.Positions.Count == 1)
@@ -8971,13 +8984,13 @@ namespace ExpansionPlugin
                         }
                     }
 
-                    ExpansionTraderMaps.Positions.Insert(insertIndex,newpos);
+                    ExpansionTraderMaps.Positions.Insert(insertIndex, newpos);
 
 
                     string posLabel = ExpansionTraderMaps.Positions.Count == 1 ? "Position" : "Waypoints";
                     currentTreeNode.Parent.Text = posLabel;
                     TreeNode newwaypointnode = new TreeNode(newpos.GetString()) { Tag = newpos };
-                    currentTreeNode.Parent.Nodes.Insert(insertIndex,newwaypointnode);
+                    currentTreeNode.Parent.Nodes.Insert(insertIndex, newwaypointnode);
                     ExpansionTV.SelectedNode = newwaypointnode;
                     //NewTraderVec3 = false;
                 }
@@ -14501,6 +14514,60 @@ namespace ExpansionPlugin
             currentTreeNode.Remove();
 
         }
+
+        //social media
+        private void addNewsFeedTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSocialMediaSettings ExpansionSocialMediaSettings = _expansionManager.ExpansionSocialMediaConfig.Data;
+            ExpansionNewsFeedTextSetting ExpansionNewsFeedTextSetting = new ExpansionNewsFeedTextSetting()
+            {
+                m_Title = "CHANGE ME",
+                m_Text = "THIS IS A PLACEHOLDER TEXT"
+            };
+            ExpansionSocialMediaSettings.NewsFeedTexts.Add(ExpansionNewsFeedTextSetting);
+            TreeNode newnode = new TreeNode(ExpansionNewsFeedTextSetting.ToString())
+            {
+                Tag = ExpansionNewsFeedTextSetting
+            };
+            currentTreeNode.Nodes.Add(newnode);
+            currentTreeNode.Expand();
+            ExpansionTV.SelectedNode = newnode;
+        }
+
+        private void addNewsFeedLinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSocialMediaSettings ExpansionSocialMediaSettings = _expansionManager.ExpansionSocialMediaConfig.Data;
+            ExpansionNewsFeedLinkSetting ExpansionNewsFeedLinkSetting = new ExpansionNewsFeedLinkSetting()
+            {
+                m_Label = "Placeholder",
+                m_Icon = "Placeholder",
+                m_URL = "https://www.google.com/"
+            };
+            ExpansionSocialMediaSettings.NewsFeedLinks.Add(ExpansionNewsFeedLinkSetting);
+            TreeNode newnode = new TreeNode(ExpansionNewsFeedLinkSetting.ToString())
+            {
+                Tag = ExpansionNewsFeedLinkSetting
+            };
+            currentTreeNode.Nodes.Add(newnode);
+            currentTreeNode.Expand();
+            ExpansionTV.SelectedNode = newnode;
+        }
+
+        private void removeNewsFeedTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSocialMediaSettings ExpansionSocialMediaSettings = _expansionManager.ExpansionSocialMediaConfig.Data;
+            ExpansionNewsFeedTextSetting ExpansionNewsFeedTextSetting = currentTreeNode.Tag as ExpansionNewsFeedTextSetting;
+            ExpansionSocialMediaSettings.NewsFeedTexts.Remove(ExpansionNewsFeedTextSetting);
+            currentTreeNode.Remove();
+        }
+
+        private void removeNewsFeedLinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionSocialMediaSettings ExpansionSocialMediaSettings = _expansionManager.ExpansionSocialMediaConfig.Data;
+            ExpansionNewsFeedLinkSetting ExpansionNewsFeedLinkSetting = currentTreeNode.Tag as ExpansionNewsFeedLinkSetting;
+            ExpansionSocialMediaSettings.NewsFeedLinks.Remove(ExpansionNewsFeedLinkSetting);
+            currentTreeNode.Remove();
+        }
         #endregion right click methods
 
         #region Search Treeview
@@ -14560,6 +14627,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
