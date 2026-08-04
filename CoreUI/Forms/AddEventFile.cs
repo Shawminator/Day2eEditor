@@ -93,7 +93,7 @@ namespace Day2eEditor
                     EventsFile newevents = new EventsFile(openfile.FileName);
                     _eentries = newevents.Data.@event;
                     textBox1.Text = Path.GetFileNameWithoutExtension(openfile.FileName);
-                    MessageBox.Show($"{newevents.Data.@event.Count} evenmts loaded,\nplease import once you have set filename and directory");
+                    MessageBoxAtCursor.Show("Events",$"{newevents.Data.@event.Count} evenmts loaded,\nplease import once you have set filename and directory");
                 }
                 else if (label1.Text == "Add new Spawnable Types")
                 {
@@ -122,7 +122,7 @@ namespace Day2eEditor
                     _stentries = item.Data.type;
 
 
-                    MessageBox.Show($"{_stentries.Count} spawnabletypes loaded,\nplease import once you have set filename and directory");
+                    MessageBoxAtCursor.Show("Spawnable Types",$"{_stentries.Count} spawnabletypes loaded,\nplease import once you have set filename and directory");
                 }
             }
         }

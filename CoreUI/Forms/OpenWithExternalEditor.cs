@@ -64,13 +64,13 @@ namespace Day2eEditor
         {
             if (comboBoxEditors.SelectedItem == null || !editors.ContainsKey(comboBoxEditors.SelectedItem.ToString()))
             {
-                MessageBox.Show("Please select a valid editor.");
+                MessageBoxAtCursor.Show("Warning","Please select a valid editor.");
                 return;
             }
 
             if (!File.Exists(filePath))
             {
-                MessageBox.Show("Please select a valid file.");
+                MessageBoxAtCursor.Show("Warning","Please select a valid file.");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Day2eEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open file: {ex.Message}");
+                MessageBoxAtCursor.Show("Warning",$"Failed to open file: {ex.Message}");
             }
 
         }

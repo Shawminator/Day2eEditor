@@ -90,6 +90,11 @@ namespace ExpansionPlugin
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if(SpawnLoadoutsLB.SelectedItem == null)
+            {
+                MessageBoxAtCursor.Show("Warning","No Loadout Selected");
+                return;
+            }
             String LoadoutName = Path.GetFileNameWithoutExtension(SpawnLoadoutsLB.GetItemText(SpawnLoadoutsLB.SelectedItem));
             ExpansionSpawnGearLoadouts newExpansionSpawnGearLoadouts = new ExpansionSpawnGearLoadouts()
             {

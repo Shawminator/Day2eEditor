@@ -359,7 +359,7 @@ namespace Day2eEditor
                             }
                             else
                             {
-                                MessageBox.Show($"Failed to load plugin: {selectedEntry.Name}");
+                                MessageBoxAtCursor.Show("Warning",$"Failed to load plugin: {selectedEntry.Name}");
                             }
                         }
                         break;

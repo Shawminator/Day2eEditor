@@ -1105,6 +1105,22 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionBuildNoBuildZonesControl(), typeof(ExpansionBaseBuildingConfig), cfg.Data, selected);
                     SetupBaseBuildingNoBuildZone(cfg, node);
                 },
+                ["BaseBuildingNoBuldZoneItems"] = (node, selected) =>
+                {
+                    ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupBaseBuildingNoBuildZone(cfg, node);
+                    ExpansionBuildNoBuildZone ExpansionBuildNoBuildZone = node.FindParentOfType<ExpansionBuildNoBuildZone>();
+                    _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
+                },
+                ["BaseBuildingNoBuldZoneItem"] = (node, selected) =>
+                {
+                    ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupBaseBuildingNoBuildZone(cfg, node);
+                    ExpansionBuildNoBuildZone ExpansionBuildNoBuildZone = node.FindParentOfType<ExpansionBuildNoBuildZone>();
+                    _mapControl.EnsureVisible(new PointF((float)ExpansionBuildNoBuildZone.Center[0], (float)ExpansionBuildNoBuildZone.Center[2]));
+                },
                 ["BaseBuildingTerritory"] = (node, selected) =>
                 {
                     ExpansionBaseBuildingConfig cfg = node.FindParentOfType<ExpansionBaseBuildingConfig>();
@@ -6112,7 +6128,7 @@ namespace ExpansionPlugin
         {
             SetupMap(() =>
             {
-                _selectedNoBuildZonePos = currentTreeNode.Tag as ExpansionBuildNoBuildZone;
+                _selectedNoBuildZonePos = currentTreeNode.FindParentOfType<ExpansionBuildNoBuildZone>();
                 _mapControl.MapDoubleClicked += MapControl_BuildZoneDoubleclicked;
                 _mapControl.MapsingleClicked += MapControl_BuildZoneSingleclicked;
 
@@ -9310,8 +9326,8 @@ namespace ExpansionPlugin
                     button5.BackColor = Color.FromArgb(60, 63, 65);
                 }
             }
-            else if (currentTreeNode.Parent.Parent.Tag.ToString() == "BaseBuildingrootNode" ||
-                    currentTreeNode.Parent.Parent.Tag is ExpansionBaseBuildingConfig)
+            else if (currentTreeNode.Tag.ToString() == "BaseBuildingNoBuldZones" ||
+                    currentTreeNode.FindParentOfType<ExpansionBuildNoBuildZone>() != null )
             {
                 if (NewNoBuildZone == false)
                 {

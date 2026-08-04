@@ -378,7 +378,7 @@ namespace Day2eEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to import clipboard data.\r\n\r\n{ex.Message}");
+                MessageBoxAtCursor.Show("Warning",$"Failed to import clipboard data.\r\n\r\n{ex.Message}");
             }
 
         }

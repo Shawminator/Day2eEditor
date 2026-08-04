@@ -167,7 +167,7 @@ namespace Day2eEditor
             if (UseMultipleOfSameItem || !AddedTypes.Contains(value))
                 AddedTypes.Add(value);
             else
-                MessageBox.Show($"{value} already in the list");
+                MessageBoxAtCursor.Show("Warning",$"{value} already in the list");
         }
 
         private void RemoveItemsButton_Click(object sender, EventArgs e)
@@ -225,7 +225,7 @@ namespace Day2eEditor
         {
             if (searchIndex >= searchResults.Count)
             {
-                MessageBox.Show("No more items found");
+                MessageBoxAtCursor.Show("Warning", "No more items found");
                 darkButton7.Visible = false;
                 return;
             }
