@@ -122,6 +122,10 @@
             removeExplosionTargetToolStripMenuItem = new ToolStripMenuItem();
             addNewExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
             removeExplosiveProjectileToolStripMenuItem = new ToolStripMenuItem();
+            addNewsFeedTextToolStripMenuItem = new ToolStripMenuItem();
+            addNewsFeedLinkToolStripMenuItem = new ToolStripMenuItem();
+            removeNewsFeedTextToolStripMenuItem = new ToolStripMenuItem();
+            removeNewsFeedLinkToolStripMenuItem = new ToolStripMenuItem();
             MarketSettingsCM = new ContextMenuStrip(components);
             addNewLargeVehicleToolStripMenuItem = new ToolStripMenuItem();
             removeLargeVehicleToolStripMenuItem = new ToolStripMenuItem();
@@ -289,10 +293,7 @@
             removeQuestToolStripMenuItem = new ToolStripMenuItem();
             addQuestNPCToolStripMenuItem = new ToolStripMenuItem();
             removeQuestNPCToolStripMenuItem = new ToolStripMenuItem();
-            addNewsFeedTextToolStripMenuItem = new ToolStripMenuItem();
-            addNewsFeedLinkToolStripMenuItem = new ToolStripMenuItem();
-            removeNewsFeedTextToolStripMenuItem = new ToolStripMenuItem();
-            removeNewsFeedLinkToolStripMenuItem = new ToolStripMenuItem();
+            createDefaultLoadoutsToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -782,10 +783,10 @@
             // ExpansionAICM
             // 
             ExpansionAICM.BackColor = Color.FromArgb(60, 63, 65);
-            ExpansionAICM.Items.AddRange(new ToolStripItem[] { addNewPatrolToolStripMenuItem, removePatrolToolStripMenuItem, addWaypointToolStripMenuItem, removeWaypointToolStripMenuItem, importWaypointsToolStripMenuItem, exportWaypointsToolStripMenuItem, moveWaypointUpToolStripMenuItem, moveWaypointDownToolStripMenuItem, addUnitToolStripMenuItem, removeUnitToolStripMenuItem, addNewLoadBalancingCategoryToolStripMenuItem, removeCategoryToolStripMenuItem, addNewLoadBalancingCountsToolStripMenuItem, removeCountsToolStripMenuItem, addAiNoGoAreaToolStripMenuItem, removeAINoGoAreaToolStripMenuItem, addAIExcludedBuildingsToolStripMenuItem, removeAIExludedBuildingsToolStripMenuItem });
+            ExpansionAICM.Items.AddRange(new ToolStripItem[] { addNewPatrolToolStripMenuItem, removePatrolToolStripMenuItem, addWaypointToolStripMenuItem, removeWaypointToolStripMenuItem, importWaypointsToolStripMenuItem, exportWaypointsToolStripMenuItem, moveWaypointUpToolStripMenuItem, moveWaypointDownToolStripMenuItem, addUnitToolStripMenuItem, removeUnitToolStripMenuItem, addNewLoadBalancingCategoryToolStripMenuItem, removeCategoryToolStripMenuItem, addNewLoadBalancingCountsToolStripMenuItem, removeCountsToolStripMenuItem, addAiNoGoAreaToolStripMenuItem, removeAINoGoAreaToolStripMenuItem, addAIExcludedBuildingsToolStripMenuItem, removeAIExludedBuildingsToolStripMenuItem, createDefaultLoadoutsToolStripMenuItem });
             ExpansionAICM.Name = "ExpansionAICM";
             ExpansionAICM.ShowImageMargin = false;
-            ExpansionAICM.Size = new Size(224, 400);
+            ExpansionAICM.Size = new Size(224, 444);
             // 
             // addNewPatrolToolStripMenuItem
             // 
@@ -1073,7 +1074,7 @@
             DamageCM.Items.AddRange(new ToolStripItem[] { addNewExplosionTargetToolStripMenuItem, removeExplosionTargetToolStripMenuItem, addNewExplosiveProjectileToolStripMenuItem, removeExplosiveProjectileToolStripMenuItem, addNewsFeedTextToolStripMenuItem, addNewsFeedLinkToolStripMenuItem, removeNewsFeedTextToolStripMenuItem, removeNewsFeedLinkToolStripMenuItem });
             DamageCM.Name = "DamageCM";
             DamageCM.ShowImageMargin = false;
-            DamageCM.Size = new Size(202, 202);
+            DamageCM.Size = new Size(202, 180);
             // 
             // addNewExplosionTargetToolStripMenuItem
             // 
@@ -1106,6 +1107,38 @@
             removeExplosiveProjectileToolStripMenuItem.Size = new Size(201, 22);
             removeExplosiveProjectileToolStripMenuItem.Text = "Remove Explosive Projectile";
             removeExplosiveProjectileToolStripMenuItem.Click += removeExplosiveProjectileToolStripMenuItem_Click;
+            // 
+            // addNewsFeedTextToolStripMenuItem
+            // 
+            addNewsFeedTextToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewsFeedTextToolStripMenuItem.Name = "addNewsFeedTextToolStripMenuItem";
+            addNewsFeedTextToolStripMenuItem.Size = new Size(201, 22);
+            addNewsFeedTextToolStripMenuItem.Text = "Add News Feed Text";
+            addNewsFeedTextToolStripMenuItem.Click += addNewsFeedTextToolStripMenuItem_Click;
+            // 
+            // addNewsFeedLinkToolStripMenuItem
+            // 
+            addNewsFeedLinkToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewsFeedLinkToolStripMenuItem.Name = "addNewsFeedLinkToolStripMenuItem";
+            addNewsFeedLinkToolStripMenuItem.Size = new Size(201, 22);
+            addNewsFeedLinkToolStripMenuItem.Text = "Add News Feed Link";
+            addNewsFeedLinkToolStripMenuItem.Click += addNewsFeedLinkToolStripMenuItem_Click;
+            // 
+            // removeNewsFeedTextToolStripMenuItem
+            // 
+            removeNewsFeedTextToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNewsFeedTextToolStripMenuItem.Name = "removeNewsFeedTextToolStripMenuItem";
+            removeNewsFeedTextToolStripMenuItem.Size = new Size(201, 22);
+            removeNewsFeedTextToolStripMenuItem.Text = "Remove News Feed Text";
+            removeNewsFeedTextToolStripMenuItem.Click += removeNewsFeedTextToolStripMenuItem_Click;
+            // 
+            // removeNewsFeedLinkToolStripMenuItem
+            // 
+            removeNewsFeedLinkToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeNewsFeedLinkToolStripMenuItem.Name = "removeNewsFeedLinkToolStripMenuItem";
+            removeNewsFeedLinkToolStripMenuItem.Size = new Size(201, 22);
+            removeNewsFeedLinkToolStripMenuItem.Text = "Remove News Feed Link";
+            removeNewsFeedLinkToolStripMenuItem.Click += removeNewsFeedLinkToolStripMenuItem_Click;
             // 
             // MarketSettingsCM
             // 
@@ -2439,37 +2472,13 @@
             removeQuestNPCToolStripMenuItem.Text = "Remove Quest NPC";
             removeQuestNPCToolStripMenuItem.Click += removeQuestNPCToolStripMenuItem_Click;
             // 
-            // addNewsFeedTextToolStripMenuItem
+            // createDefaultLoadoutsToolStripMenuItem
             // 
-            addNewsFeedTextToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewsFeedTextToolStripMenuItem.Name = "addNewsFeedTextToolStripMenuItem";
-            addNewsFeedTextToolStripMenuItem.Size = new Size(201, 22);
-            addNewsFeedTextToolStripMenuItem.Text = "Add News Feed Text";
-            addNewsFeedTextToolStripMenuItem.Click += addNewsFeedTextToolStripMenuItem_Click;
-            // 
-            // addNewsFeedLinkToolStripMenuItem
-            // 
-            addNewsFeedLinkToolStripMenuItem.ForeColor = SystemColors.Control;
-            addNewsFeedLinkToolStripMenuItem.Name = "addNewsFeedLinkToolStripMenuItem";
-            addNewsFeedLinkToolStripMenuItem.Size = new Size(201, 22);
-            addNewsFeedLinkToolStripMenuItem.Text = "Add News Feed Link";
-            addNewsFeedLinkToolStripMenuItem.Click += addNewsFeedLinkToolStripMenuItem_Click;
-            // 
-            // removeNewsFeedTextToolStripMenuItem
-            // 
-            removeNewsFeedTextToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeNewsFeedTextToolStripMenuItem.Name = "removeNewsFeedTextToolStripMenuItem";
-            removeNewsFeedTextToolStripMenuItem.Size = new Size(201, 22);
-            removeNewsFeedTextToolStripMenuItem.Text = "Remove News Feed Text";
-            removeNewsFeedTextToolStripMenuItem.Click += removeNewsFeedTextToolStripMenuItem_Click;
-            // 
-            // removeNewsFeedLinkToolStripMenuItem
-            // 
-            removeNewsFeedLinkToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeNewsFeedLinkToolStripMenuItem.Name = "removeNewsFeedLinkToolStripMenuItem";
-            removeNewsFeedLinkToolStripMenuItem.Size = new Size(201, 22);
-            removeNewsFeedLinkToolStripMenuItem.Text = "Remove News Feed Link";
-            removeNewsFeedLinkToolStripMenuItem.Click += removeNewsFeedLinkToolStripMenuItem_Click;
+            createDefaultLoadoutsToolStripMenuItem.ForeColor = SystemColors.Control;
+            createDefaultLoadoutsToolStripMenuItem.Name = "createDefaultLoadoutsToolStripMenuItem";
+            createDefaultLoadoutsToolStripMenuItem.Size = new Size(223, 22);
+            createDefaultLoadoutsToolStripMenuItem.Text = "Create Default Loadouts";
+            createDefaultLoadoutsToolStripMenuItem.Click += createDefaultLoadoutsToolStripMenuItem_Click;
             // 
             // ExpansionForm
             // 
@@ -2775,5 +2784,6 @@
         private ToolStripMenuItem addNewsFeedLinkToolStripMenuItem;
         private ToolStripMenuItem removeNewsFeedTextToolStripMenuItem;
         private ToolStripMenuItem removeNewsFeedLinkToolStripMenuItem;
+        private ToolStripMenuItem createDefaultLoadoutsToolStripMenuItem;
     }
 }

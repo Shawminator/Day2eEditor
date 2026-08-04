@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -31,6 +32,135 @@ namespace ExpansionPlugin
             item.SetGuid(Guid.NewGuid());
             return item;
         }
+        protected override void OnAfterLoadAll()
+        {
+            //! Always create default loadouts if they don't exist
+
+            // Armed Loadouts
+            DefaultHumanLoadout();
+            //DefaultPoliceLoadout();
+            //DefaultFireFighterLoadout();
+            //DefaultTTsKOLoadout();
+            //DefaultGorkaLoadout();
+            //DefaultNBCLoadout();
+
+            //// Default faction loadouts
+            //DefaultEastLoadout();
+            //DefaultWestLoadout();
+            //DefaultSurvivorLoadout();
+            //DefaultBanditLoadout();
+
+            //// Unnarmed Loadouts
+            //DefaultPlayerSurviorLoadout();
+            //DefaultPlayerMaleSuitLoadout();
+            //DefaultPlayerFemaleSuitLoadout();
+
+            ////! Misc Loadouts
+            //DefaultYellowKingLoadout();
+            //DefaultYeetBrigadeLoadout();
+        }
+        private void DefaultHumanLoadout()
+        {
+            if (MutableItems.Any(x => x.FileName == "HumanLoadout.json"))
+                return;
+
+            string moddir = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName, "ExpansionMod", "Loadouts");
+            string newmodPath = moddir.Replace("/", "\\");
+            string typesfile = "HumanLoadout.json";
+            string newPath = Path.Combine(newmodPath, typesfile);
+            AILoadouts newAILoadouts = new AILoadouts()
+            {
+                // default constructor already initializes lists
+                ClassName = "",
+                Chance = (decimal)1.0,
+                Quantity = new Quantity()
+            };
+            newAILoadouts.SetPath(newPath);
+            newAILoadouts.SetGuid(Guid.NewGuid());
+
+            newAILoadouts.InventoryAttachments.Add(new Inventoryattachment()
+            {
+                SlotName = "Body",
+                Items = new BindingList<AILoadouts>()
+                {
+                    new AILoadouts()
+                    {
+                        ClassName = "HikingJacket_Blue",
+                    }
+                }
+            });
+
+        }
+        private void DefaultPoliceLoadout()
+        {
+            throw new NotImplementedException();
+        }
+        private void DefaultFireFighterLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultTTsKOLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultGorkaLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultNBCLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultEastLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultWestLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultSurvivorLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultBanditLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultPlayerSurviorLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultPlayerMaleSuitLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultPlayerFemaleSuitLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultYellowKingLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DefaultYeetBrigadeLoadout()
+        {
+            throw new NotImplementedException();
+        }
+
+
         protected override void SaveItem(AILoadouts item)
         {
             AppServices.GetRequired<FileService>().SaveJson(item._path, item);

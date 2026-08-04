@@ -145,6 +145,19 @@ namespace ExpansionPlugin
                 StartingClothing = new ExpansionStartingClothing();
                 StartingClothing.DefaultStartingClothing();
             }
+            else
+            {
+                if (StartingClothing.EnableCustomClothing is null or < 0 or > 1)
+                {
+                    fixes.Add("(StartingClothing EnableCustomClothing was null — set to 0.");
+                    StartingClothing.EnableCustomClothing = 0;
+                }
+                if (StartingClothing.SetRandomHealth is null or < 0 or > 1)
+                {
+                    fixes.Add("StartingClothing SetRandomHealth was null — set to 0.");
+                    StartingClothing.SetRandomHealth = 0;
+                }
+            }
             if (UseLoadouts is null or < 0 or > 1)
             {
                 fixes.Add("UseLoadouts was null — set to 0.");
@@ -232,7 +245,24 @@ namespace ExpansionPlugin
                 StartingGear = new ExpansionStartingGear();
                 StartingGear.DefaultStartingGear();
                 fixes.Add("StartingGear was null — using default.");
-                
+            }
+            else
+            {
+                if (StartingGear.EnableStartingGear is null or < 0 or > 1)
+                {
+                    fixes.Add("StartingGear ApplyEnergySources was null — set to 0.");
+                    StartingGear.EnableStartingGear = 0;
+                }
+                if (StartingGear.ApplyEnergySources is null or < 0 or > 1)
+                {
+                    fixes.Add("StartingGear ApplyEnergySources was null — set to 0.");
+                    StartingGear.ApplyEnergySources = 0;
+                }
+                if (StartingGear.SetRandomHealth is null or < 0 or > 1)
+                {
+                    fixes.Add("StartingGear SetRandomHealth was null — set to 0.");
+                    StartingGear.SetRandomHealth = 1;
+                }
             }
             return fixes;
         }
@@ -393,6 +423,9 @@ namespace ExpansionPlugin
         public ExpansionStartingClothing() { }
         public void DefaultStartingClothing()
         {
+            EnableCustomClothing = 1;
+            SetRandomHealth = 1;
+
             Headgear = new BindingList<string>();
             Glasses = new BindingList<string>();
             Masks = new BindingList<string>();
@@ -550,6 +583,9 @@ namespace ExpansionPlugin
         }
         public void DefaultStartingGear()
         {
+            EnableStartingGear = 1;
+            ApplyEnergySources = 1;
+            SetRandomHealth = 1;
             UpperGear = new BindingList<ExpansionStartingGearItem>();
             PantsGear = new BindingList<ExpansionStartingGearItem>();
             BackpackGear = new BindingList<ExpansionStartingGearItem>();

@@ -1485,6 +1485,8 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewLoadoutFileToolStripMenuItem);
+                    //ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    //ExpansionSettingsCM.Items.Add(createDefaultLoadoutsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 [typeof(Loadbalancingcategorie)] = node =>
@@ -6441,7 +6443,7 @@ namespace ExpansionPlugin
         //Draw Methods
         private void TogglePlacementMode(bool VecActive)
         {
-            if (button5.BackColor == Color.LimeGreen && 
+            if (button5.BackColor == Color.LimeGreen &&
                 VecActive == false)
             {
                 NewNoBuildZone = false;
@@ -9327,7 +9329,7 @@ namespace ExpansionPlugin
                 }
             }
             else if (currentTreeNode.Tag.ToString() == "BaseBuildingNoBuldZones" ||
-                    currentTreeNode.FindParentOfType<ExpansionBuildNoBuildZone>() != null )
+                    currentTreeNode.FindParentOfType<ExpansionBuildNoBuildZone>() != null)
             {
                 if (NewNoBuildZone == false)
                 {
@@ -9694,6 +9696,7 @@ namespace ExpansionPlugin
                     Quantity = new Quantity()
                 };
                 newAILoadouts.SetPath(newPath);
+                newAILoadouts.SetGuid(Guid.NewGuid());
                 bool added = _expansionManager.ExpansionLoadoutConfig.AddNewLoadoutFile(newAILoadouts);
                 if (added)
                 {
@@ -9720,7 +9723,10 @@ namespace ExpansionPlugin
                 }
             }
         }
+        private void createDefaultLoadoutsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
+        }
         private void addNewLootDropFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddEventFile frm = new AddEventFile();
@@ -14808,6 +14814,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
