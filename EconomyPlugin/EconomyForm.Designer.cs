@@ -226,7 +226,7 @@ namespace EconomyPlugin
             button5.Name = "button5";
             button5.Size = new Size(125, 23);
             button5.TabIndex = 8;
-            button5.Text = "Copy";
+            button5.Text = "New";
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
@@ -343,7 +343,7 @@ namespace EconomyPlugin
             EventSpawnContextMenu.Items.AddRange(new ToolStripItem[] { addNewEventSpawnToolStripMenuItem, deleteSelectedEventSpawnToolStripMenuItem, importPositionFromdzeToolStripMenuItem, exportPositionTodzeToolStripMenuItem, addNewPosirtionToolStripMenuItem, removeSelectedPositionToolStripMenuItem, removeAllPositionToolStripMenuItem, exportGroupSpawnTodzeToolStripMenuItem, importPositionAndCreateEventgroupFormdzeToolStripMenuItem, removeAllYFromPositionsToolStripMenuItem, removeAllAFromPositionsToolStripMenuItem });
             EventSpawnContextMenu.Name = "EventSpawnContextMenu";
             EventSpawnContextMenu.ShowImageMargin = false;
-            EventSpawnContextMenu.Size = new Size(254, 268);
+            EventSpawnContextMenu.Size = new Size(254, 246);
             // 
             // addNewEventSpawnToolStripMenuItem
             // 

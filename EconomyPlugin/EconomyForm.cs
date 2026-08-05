@@ -2867,24 +2867,6 @@ namespace EconomyPlugin
 
             TerritorieszonesCB.Visible = false;
 
-            TerritoryCopy = false;
-            EventPosCopy = false;
-            playerspawnCopy = false;
-            safepositioncopy = false;
-            effectareacopy = false;
-            PRASafePositioncopy = false;
-            PRABoxescopy = false;
-            territoryzonecopy = null;
-            eventposdefEventPoscopy = null;
-            playerspawnpointsGroupPoscopy = null;
-            cfgeffectareaSafePositioncopy = null;
-            Areascopy = null;
-            PRASafePositionposcopy = null;
-            PRABoxesposcopy = null;
-
-
-            button5.BackColor = Color.FromArgb(60, 63, 65);
-
         }
         private void EconomyTV_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -3327,8 +3309,36 @@ namespace EconomyPlugin
             });
         }
         //Draw Methods
+        public bool TerritoryCopy = false;
+        public bool EventPosCopy = false;
+        public bool playerspawnCopy = false;
+        public bool safepositioncopy = false;
+        public bool effectareacopy = false;
+        public bool PRASafePositioncopy = false;
+        public bool PRABoxescopy = false;
+        private void TogglePlacementMode(bool VecActive)
+        {
+            if (button5.BackColor == Color.LimeGreen &&
+                VecActive == false)
+            {
+                TerritoryCopy = false;
+                EventPosCopy = false;
+                playerspawnCopy = false;
+                safepositioncopy = false;
+                effectareacopy = false;
+                PRASafePositioncopy = false;
+                PRABoxescopy = false;
+                _mapControl.Cursor = Cursors.Hand;
+                button5.BackColor = Color.FromArgb(60, 63, 65);
+            }
+            else if (button5.BackColor == Color.LimeGreen)
+            {
+                _mapControl.Cursor = Cursors.Cross;
+            }
+        }
         private void DrawPlayerSpawnPointPositions(playerspawnpointssection playerspawnpointssection)
         {
+            TogglePlacementMode(playerspawnCopy);
             foreach (playerspawnpointsGroupPos pos in playerspawnpointssection.Positions)
             {
                 if (_selectedSpawnpointPosition == pos)
@@ -3381,6 +3391,7 @@ namespace EconomyPlugin
         }
         private void DrawPRABoxesPOsitions(PlayerRestrictedFile PlayerRestrictedFiles)
         {
+            TogglePlacementMode(PRABoxescopy);
             foreach (PRABoxes pos in PlayerRestrictedFiles.BoxesView)
             {
                 if (_selectedRPABox == pos)
@@ -3404,6 +3415,7 @@ namespace EconomyPlugin
         }
         private void DrawEffectPRASafePositions(PlayerRestrictedFile PlayerRestrictedFiles)
         {
+            TogglePlacementMode(PRASafePositioncopy);
             foreach (PRASafePosition safeposition in PlayerRestrictedFiles.SafePositionsView)
             {
                 if (_selectedRPASafePosition == safeposition)
@@ -3430,6 +3442,7 @@ namespace EconomyPlugin
         }
         private void DrawEffectSafePositions(CfgeffectareaConfig cfgeffectareaConfig)
         {
+            TogglePlacementMode(safepositioncopy);
             foreach (cfgeffectareaSafePosition pos in cfgeffectareaConfig.Data._positions)
             {
                 if (_selectedSafePosition == pos)
@@ -3456,6 +3469,7 @@ namespace EconomyPlugin
         }
         private void DrawEventSpawns(eventposdefEvent defevent)
         {
+            TogglePlacementMode(EventPosCopy);
             foreach (eventposdefEventPos pos in defevent.pos)
             {
                 if (pos.aSpecified == true)
@@ -3490,6 +3504,7 @@ namespace EconomyPlugin
         }
         private void DrawEffectEffectArea(CfgeffectareaConfig cfgeffectareaConfig)
         {
+            TogglePlacementMode(effectareacopy);
             foreach (Areas area in cfgeffectareaConfig.Data.Areas)
             {
                 if (_selectedeffectarea == area)
@@ -3538,6 +3553,7 @@ namespace EconomyPlugin
         }
         private void DrawTerritoriesPositions(territorytypeTerritory territorytypeTerritory)
         {
+            TogglePlacementMode(TerritoryCopy);
             _mapControl.ClearDrawables();
             if (TerritorieszonesCB.Checked)
             {
@@ -3605,19 +3621,22 @@ namespace EconomyPlugin
             {
                 if (currentTreeNode.Parent.Parent.Tag is eventposdefEvent eventposdefEvent)
                 {
-                    eventposdefEventPoscopy.x = (decimal)e.MapCoordinates.X;
-                    eventposdefEventPoscopy.z = (decimal)e.MapCoordinates.Y;
-                    eventposdefEvent.pos.Add(eventposdefEventPoscopy);
-                    TreeNode tn = new TreeNode(eventposdefEventPoscopy.ToString())
+                    eventposdefEventPos newpos = new eventposdefEventPos()
                     {
-                        Tag = eventposdefEventPoscopy
+                        x = (decimal)e.MapCoordinates.X,
+                        z = (decimal)e.MapCoordinates.Y,
+                    };
+                    if (eventposdefEvent.pos == null)
+                        eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+                    eventposdefEvent.pos.Add(newpos);
+
+                    TreeNode tn = new TreeNode(newpos.ToString())
+                    {
+                        Tag = newpos
                     };
                     currentTreeNode.Parent.Nodes.Add(tn);
                     EconomyTV.SelectedNode = tn;
-                    EventPosCopy = false;
-                    eventposdefEventPoscopy = null;
                 }
-                button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
 
@@ -3689,20 +3708,20 @@ namespace EconomyPlugin
             {
                 if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
                 {
-                    cfgeffectareaSafePositioncopy.X = (decimal)e.MapCoordinates.X;
-                    cfgeffectareaSafePositioncopy.Z = (decimal)e.MapCoordinates.Y;
-                    _economyManager.cfgeffectareaConfig.Data._positions.Add(cfgeffectareaSafePositioncopy);
-
-                    TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1} ({cfgeffectareaSafePositioncopy.X}, {cfgeffectareaSafePositioncopy.Z})")
+                    cfgeffectareaSafePosition newpos = new cfgeffectareaSafePosition()
                     {
-                        Tag = cfgeffectareaSafePositioncopy
+                        Name = $"{e.MapCoordinates.X.ToString()},{e.MapCoordinates.Y.ToString()}",
+                        X = (decimal)e.MapCoordinates.X,
+                        Z = (decimal)e.MapCoordinates.Y
+                    };
+                    _economyManager.cfgeffectareaConfig.Data._positions.Add(newpos);
+                    TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1} ({newpos.X}, {newpos.Z})")
+                    {
+                        Tag = newpos
                     };
                     currentTreeNode.Parent.Nodes.Add(tn);
                     EconomyTV.SelectedNode = tn;
-                    safepositioncopy = false;
-                    cfgeffectareaSafePositioncopy = null;
                 }
-                button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
 
@@ -3772,20 +3791,15 @@ namespace EconomyPlugin
             {
                 if (currentTreeNode.Tag is Areas areas)
                 {
-                    Areascopy.Data.Pos[0] = (decimal)e.MapCoordinates.X;
-                    Areascopy.Data.Pos[2] = (decimal)e.MapCoordinates.Y;
+                    Areas newArea = (currentTreeNode.Tag as Areas).Clone();
+                    newArea.AreaName = "New-Trigger-Area";
+                    newArea.Data.Pos = new decimal[] { (decimal)e.MapCoordinates.X, 0, (decimal)e.MapCoordinates.Y };
 
-                    _economyManager.cfgeffectareaConfig.Data.Areas.Add(Areascopy);
-
-                    TreeNode tn = createeffectareanodes(Areascopy);
+                    _economyManager.cfgeffectareaConfig.Data.Areas.Add(newArea);
+                    TreeNode tn = createeffectareanodes(newArea);
                     currentTreeNode.Parent.Nodes.Add(tn);
                     EconomyTV.SelectedNode = tn;
-                    effectareacopy = false;
-                    Areascopy = null;
                 }
-
-
-                button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
 
@@ -3852,27 +3866,31 @@ namespace EconomyPlugin
 
             if (PRASafePositioncopy == true)
             {
-                if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
+                Vec3 newpos = new Vec3()
                 {
-                    PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
-
-                    PRASafePositionposcopy.Position.X = e.MapCoordinates.X;
-                    PRASafePositionposcopy.Position.Z = e.MapCoordinates.Y;
-
-                    currentPlayerRestrictedFiles.SafePositionsView.Add(PRASafePositionposcopy);
-
-                    TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1}: {PRASafePositionposcopy.Position.GetString()}")
-                    {
-                        Tag = PRASafePositionposcopy
-                    };
-                    currentTreeNode.Parent.Nodes.Add(tn);
-                    EconomyTV.SelectedNode = tn;
-                    effectareacopy = false;
-                    Areascopy = null;
+                    X = (float)e.MapCoordinates.X,
+                    Y = 0f,
+                    Z = (float)e.MapCoordinates.Y,
+                };
+                if (MapData.FileExists)
+                {
+                    newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
                 }
 
+                PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
+                PRASafePosition newsafeposition = new PRASafePosition()
+                {
+                    Position = newpos
+                };
 
-                button5.BackColor = Color.FromArgb(60, 63, 65);
+                currentPlayerRestrictedFiles.SafePositionsView.Add(newsafeposition);
+
+                TreeNode tn = new TreeNode($"Position {currentTreeNode.Parent.Nodes.Count + 1}: {newsafeposition.Position.GetString()}")
+                {
+                    Tag = newsafeposition
+                };
+                currentTreeNode.Parent.Nodes.Add(tn);
+                EconomyTV.SelectedNode = tn;
                 return;
             }
 
@@ -3939,21 +3957,27 @@ namespace EconomyPlugin
 
             if (PRABoxescopy == true)
             {
-                if (currentTreeNode.Tag is PRABoxes PRABoxes)
+                PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
+                Vec3 newpos = new Vec3()
                 {
-                    PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
-                    PRABoxesposcopy.Position.X = e.MapCoordinates.X;
-                    PRABoxesposcopy.Position.Z = e.MapCoordinates.Y;
-                    currentPlayerRestrictedFiles.BoxesView.Add(PRABoxesposcopy);
-
-                    TreeNode tn = CreatePRABoxesNodes(currentPlayerRestrictedFiles.BoxesView.Count() - 1, PRABoxesposcopy);
-                    currentTreeNode.Parent.Nodes.Add(tn);
-                    EconomyTV.SelectedNode = tn;
-                    PRABoxescopy = false;
-                    PRABoxesposcopy = null;
+                    X = (float)e.MapCoordinates.X,
+                    Y = 0f,
+                    Z = (float)e.MapCoordinates.Y,
+                };
+                if (MapData.FileExists)
+                {
+                    newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
                 }
-
-                button5.BackColor = Color.FromArgb(60, 63, 65);
+                PRABoxes newbox = new PRABoxes()
+                {
+                    HalfExtents = new Vec3(20f, 20f, 20f),
+                    Orientation = new Vec3(0m, 0m, 0m),
+                    Position = newpos
+                };
+                currentPlayerRestrictedFiles.BoxesView.Add(newbox);
+                TreeNode tn = CreatePRABoxesNodes(currentPlayerRestrictedFiles.BoxesView.Count() - 1, newbox);
+                currentTreeNode.Parent.Nodes.Add(tn);
+                EconomyTV.SelectedNode = tn;
                 return;
             }
 
@@ -4020,36 +4044,32 @@ namespace EconomyPlugin
 
             if (playerspawnCopy == true)
             {
+                playerspawnpointsGroupPos newpos = new playerspawnpointsGroupPos()
+                {
+                    x = (decimal)e.MapCoordinates.X,
+                    z = (decimal)e.MapCoordinates.Y
+                };
                 if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
                 {
-                    playerspawnpointsGroupPoscopy.x = (decimal)e.MapCoordinates.X;
-                    playerspawnpointsGroupPoscopy.z = (decimal)e.MapCoordinates.Y;
-
-                    playerspawnpointsGroup.pos.Add(playerspawnpointsGroupPoscopy);
-                    TreeNode tn = new TreeNode(playerspawnpointsGroupPoscopy.ToString())
-                    {
-                        Tag = playerspawnpointsGroupPoscopy
-                    };
-                    currentTreeNode.Parent.Nodes.Add(tn);
-                    EconomyTV.SelectedNode = tn;
-                    TerritoryCopy = false;
-                    territoryzonecopy = null;
+                    playerspawnpointsGroup.pos.Add(newpos);
                 }
                 else if (currentTreeNode.Parent.Parent.Tag is playerspawnpointssection playerspawnpointssection)
                 {
-                    playerspawnpointsGroupPoscopy.x = (decimal)e.MapCoordinates.X;
-                    playerspawnpointsGroupPoscopy.z = (decimal)e.MapCoordinates.Y;
-                    playerspawnpointssection.generator_posbubbles.Add(playerspawnpointsGroupPoscopy);
-                    TreeNode tn = new TreeNode(playerspawnpointsGroupPoscopy.ToString())
+                    if (playerspawnpointssection.generator_posbubbles.Count == 0)
                     {
-                        Tag = playerspawnpointsGroupPoscopy
-                    };
-                    currentTreeNode.Parent.Nodes.Add(tn);
-                    EconomyTV.SelectedNode = tn;
-                    TerritoryCopy = false;
-                    territoryzonecopy = null;
+                        playerspawnpointssection.group_params.enablegroups = false;
+                        playerspawnpointssection.group_params.lifetime = 0;
+                        playerspawnpointssection.group_params.counter = 0;
+                    }
+                    playerspawnpointssection.generator_posbubbles.Add(newpos);
+
                 }
-                button5.BackColor = Color.FromArgb(60, 63, 65);
+                TreeNode tn = new TreeNode(newpos.ToString())
+                {
+                    Tag = newpos
+                };
+                currentTreeNode.Parent.Nodes.Add(tn);
+                EconomyTV.SelectedNode = tn;
                 return;
             }
 
@@ -4322,19 +4342,17 @@ namespace EconomyPlugin
             {
                 if (currentTreeNode.Parent.Tag is territorytypeTerritory pterritorytypeTerritory)
                 {
-                    territoryzonecopy.x = (decimal)e.MapCoordinates.X;
-                    territoryzonecopy.z = (decimal)e.MapCoordinates.Y;
-                    pterritorytypeTerritory.zone.Add(territoryzonecopy);
-                    TreeNode tn = new TreeNode(territoryzonecopy.ToString())
+                    territorytypeTerritoryZone newzone = (currentTreeNode.Tag as territorytypeTerritoryZone).Clone();
+                    newzone.x = (decimal)e.MapCoordinates.X;
+                    newzone.z = (decimal)e.MapCoordinates.Y;
+                    pterritorytypeTerritory.zone.Add(newzone);
+                    TreeNode tn = new TreeNode(newzone.ToString())
                     {
-                        Tag = territoryzonecopy
+                        Tag = newzone
                     };
                     currentTreeNode.Parent.Nodes.Add(tn);
                     EconomyTV.SelectedNode = tn;
-                    TerritoryCopy = false;
-                    territoryzonecopy = null;
                 }
-                button5.BackColor = Color.FromArgb(60, 63, 65);
                 return;
             }
 
@@ -4430,7 +4448,6 @@ namespace EconomyPlugin
                 }
             }
         }
-
         private void MapControl_TerritoriesDoubleclicked(object? sender, MapClickEventArgs e)
         {
             if (_selectedterritory == null) return;
@@ -4445,6 +4462,166 @@ namespace EconomyPlugin
             territorytypeTerritory territorytypeTerritory = currentTreeNode.FindParentOfType<territorytypeTerritory>();
             DrawTerritoriesPositions(territorytypeTerritory);
             currentTreeNode.Text = _selectedterritory.ToString();
+        }
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
+            {
+                if (TerritoryCopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    TerritoryCopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    TerritoryCopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Tag is playerspawnpointsGroupPos playerspawnpointsGroupPos)
+            {
+                if (playerspawnCopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    playerspawnCopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    playerspawnCopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
+            {
+                if (EventPosCopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    EventPosCopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    EventPosCopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
+            {
+                if (safepositioncopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    safepositioncopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    safepositioncopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Tag is Areas area)
+            {
+                if (effectareacopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    effectareacopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    effectareacopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
+            {
+                if (PRASafePositioncopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    PRASafePositioncopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    PRASafePositioncopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+            else if (currentTreeNode.Tag is PRABoxes PRABoxes)
+            {
+                if (PRABoxescopy == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    PRABoxescopy = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    PRABoxescopy = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
+            {
+                territorytypeTerritory ttt = currentTreeNode.Parent.Tag as territorytypeTerritory;
+                ttt.zone.Remove(territoryzone);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Tag is playerspawnpointsGroupPos playerspawnpointsGroupPos)
+            {
+                if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
+                {
+                    playerspawnpointsGroup.pos.Remove(playerspawnpointsGroupPos);
+                    currentTreeNode.Remove();
+                }
+                else if (currentTreeNode.Parent.Parent.Tag is playerspawnpointssection playerspawnpointssection)
+                {
+                    playerspawnpointssection.generator_posbubbles.Remove(playerspawnpointsGroupPos);
+                    currentTreeNode.Remove();
+                }
+            }
+            else if (currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
+            {
+                eventposdefEvent ttt = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
+                ttt.pos.Remove(eventposdefEventPos);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
+            {
+                CfgeffectareaConfig ttt = currentTreeNode.Parent.Parent.Tag as CfgeffectareaConfig;
+                ttt.Data._positions.Remove(cfgeffectareaSafePosition);
+                currentTreeNode.Remove();
+            }
+            else if (currentTreeNode.Tag is Areas area)
+            {
+                _economyManager.cfgeffectareaConfig.Data.Areas.Remove(area);
+
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
+            else if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
+            {
+                PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
+                currentPlayerRestrictedFiles.SafePositionsView.Remove(PRASafePosition);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
+            else if (currentTreeNode.Tag is PRABoxes PRABoxes)
+            {
+                PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
+                currentPlayerRestrictedFiles.BoxesView.Remove(PRABoxes);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
         }
 
         /// <summary>
@@ -6486,7 +6663,6 @@ namespace EconomyPlugin
             };
             currentTreeNode.Nodes.Add(CreatePRASafePositionNodes(newsafeposition, currentPlayerRestrictedFiles.SafePositionsView.Count()));
             currentPlayerRestrictedFiles.SafePositionsView.Add(newsafeposition);
-            currentPlayerRestrictedFiles.IsDirty = true;
         }
         private void removePRASelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -6504,7 +6680,7 @@ namespace EconomyPlugin
             else if (currentTreeNode.Tag is PlayerRestrictedFile PlayerRestrictedFiles)
             {
                 _economyManager.CFGGameplayConfig.RemovePlayerRestrictedAreaFile(PlayerRestrictedFiles);
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
+                currentTreeNode.Remove();
             }
         }
 
@@ -6893,118 +7069,8 @@ namespace EconomyPlugin
         #endregion search treeview
 
 
-        public bool TerritoryCopy = false;
-        public bool EventPosCopy = false;
-        public bool playerspawnCopy = false;
-        public bool safepositioncopy = false;
-        public bool effectareacopy = false;
-        public bool PRASafePositioncopy = false;
-        public bool PRABoxescopy = false;
-        public territorytypeTerritoryZone territoryzonecopy = null;
-        public eventposdefEventPos eventposdefEventPoscopy = null;
-        public playerspawnpointsGroupPos playerspawnpointsGroupPoscopy = null;
-        public cfgeffectareaSafePosition cfgeffectareaSafePositioncopy = null;
-        public Areas Areascopy = null;
-        public PRASafePosition PRASafePositionposcopy = null;
-        public PRABoxes PRABoxesposcopy = null;
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
-            {
-                TerritoryCopy = true;
-                territoryzonecopy = territoryzone.Clone();
-                button5.BackColor = Color.Gray;
-            }
-            else if (currentTreeNode.Tag is playerspawnpointsGroupPos playerspawnpointsGroupPos)
-            {
-                playerspawnCopy = true;
-                playerspawnpointsGroupPoscopy = playerspawnpointsGroupPos.Clone();
-                button5.BackColor = Color.Gray;
-            }
-            else if (currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
-            {
-                EventPosCopy = true;
-                eventposdefEventPoscopy = eventposdefEventPos.Clone();
-                button5.BackColor = Color.Gray;
-            }
-            else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
-            {
-                safepositioncopy = true;
-                cfgeffectareaSafePositioncopy = cfgeffectareaSafePosition.Clone();
-                button5.BackColor = Color.Gray;
-            }
-            else if (currentTreeNode.Tag is Areas area)
-            {
-                effectareacopy = true;
-                Areascopy = area.Clone();
-                Areascopy.AreaName = "New Area, Change Me.....";
-                button5.BackColor = Color.Gray;
-            }
-            else if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
-            {
-                PRASafePositioncopy = true;
-                PRASafePositionposcopy = PRASafePosition.Clone();
-                button5.BackColor = Color.Gray;
-            }
-            else if (currentTreeNode.Tag is PRABoxes PRABoxes)
-            {
-                PRABoxescopy = true;
-                PRABoxesposcopy = PRABoxes.Clone();
-                button5.BackColor = Color.Gray;
-            }
-        }
-        private void button6_Click(object sender, EventArgs e)
-        {
-            if (currentTreeNode.Tag is territorytypeTerritoryZone territoryzone)
-            {
-                territorytypeTerritory ttt = currentTreeNode.Parent.Tag as territorytypeTerritory;
-                ttt.zone.Remove(territoryzone);
-                currentTreeNode.Remove();
-            }
-            else if (currentTreeNode.Tag is playerspawnpointsGroupPos playerspawnpointsGroupPos)
-            {
-                if (currentTreeNode.Parent.Tag is playerspawnpointsGroup playerspawnpointsGroup)
-                {
-                    playerspawnpointsGroup.pos.Remove(playerspawnpointsGroupPos);
-                    currentTreeNode.Remove();
-                }
-                else if (currentTreeNode.Parent.Parent.Tag is playerspawnpointssection playerspawnpointssection)
-                {
-                    playerspawnpointssection.generator_posbubbles.Remove(playerspawnpointsGroupPos);
-                    currentTreeNode.Remove();
-                }
-            }
-            else if (currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
-            {
-                eventposdefEvent ttt = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
-                ttt.pos.Remove(eventposdefEventPos);
-                currentTreeNode.Remove();
-            }
-            else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
-            {
-                CfgeffectareaConfig ttt = currentTreeNode.Parent.Parent.Tag as CfgeffectareaConfig;
-                ttt.Data._positions.Remove(cfgeffectareaSafePosition);
-                currentTreeNode.Remove();
-            }
-            else if (currentTreeNode.Tag is Areas area)
-            {
-                _economyManager.cfgeffectareaConfig.Data.Areas.Remove(area);
 
-                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            }
-            else if (currentTreeNode.Tag is PRASafePosition PRASafePosition)
-            {
-                PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
-                currentPlayerRestrictedFiles.SafePositionsView.Remove(PRASafePosition);
-                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            }
-            else if (currentTreeNode.Tag is PRABoxes PRABoxes)
-            {
-                PlayerRestrictedFile currentPlayerRestrictedFiles = currentTreeNode.FindParentOfType<PlayerRestrictedFile>();
-                currentPlayerRestrictedFiles.BoxesView.Remove(PRABoxes);
-                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-            }
-        }
+
         private void addNewTerritoryPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Tag is territorytypeTerritory territorytypeTerritory)
