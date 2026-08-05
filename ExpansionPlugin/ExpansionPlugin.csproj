@@ -77,10 +77,33 @@
     <None Remove="Icons\Trader.png" />
     <None Remove="Icons\Twitter.png" />
     <None Remove="Icons\YouTube.png" />
+    <None Remove="Images\BanditLoadout.json" />
+    <None Remove="Images\EastLoadout.json" />
+    <None Remove="Images\FireFighterLoadout.json" />
+    <None Remove="Images\FreshSpawnLoadout.json" />
+    <None Remove="Images\GorkaLoadout.json" />
+    <None Remove="Images\HumanLoadout.json" />
+    <None Remove="Images\NBCLoadout.json" />
+    <None Remove="Images\PlayerFemaleSuitLoadout.json" />
+    <None Remove="Images\PlayerMaleSuitLoadout.json" />
+    <None Remove="Images\PlayerSurvivorLoadout.json" />
+    <None Remove="Images\PoliceLoadout.json" />
+    <None Remove="Images\SurvivorLoadout.json" />
+    <None Remove="Images\TTSKOLoadout.json" />
+    <None Remove="Images\WestLoadout.json" />
+    <None Remove="Images\YeetBrigadeLoadout.json" />
+    <None Remove="Images\YellowKingLoadout.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Expansion.png" />
+    <EmbeddedResource Include="Images\BanditLoadout.json" />
+    <EmbeddedResource Include="Images\EastLoadout.json" />
+    <EmbeddedResource Include="Images\Example.json" />
+    <EmbeddedResource Include="Images\FireFighterLoadout.json" />
+    <EmbeddedResource Include="Images\FreshSpawnLoadout.json" />
+    <EmbeddedResource Include="Images\GorkaLoadout.json" />
+    <EmbeddedResource Include="Images\HumanLoadout.json" />
     <EmbeddedResource Include="Images\market_background.png" />
     <EmbeddedResource Include="Icons\Airdrop.png" />
     <EmbeddedResource Include="Icons\Ambush.png" />
@@ -137,6 +160,16 @@
     <EmbeddedResource Include="Icons\Trader.png" />
     <EmbeddedResource Include="Icons\Twitter.png" />
     <EmbeddedResource Include="Icons\YouTube.png" />
+    <EmbeddedResource Include="Images\NBCLoadout.json" />
+    <EmbeddedResource Include="Images\PlayerFemaleSuitLoadout.json" />
+    <EmbeddedResource Include="Images\PlayerMaleSuitLoadout.json" />
+    <EmbeddedResource Include="Images\PlayerSurvivorLoadout.json" />
+    <EmbeddedResource Include="Images\PoliceLoadout.json" />
+    <EmbeddedResource Include="Images\SurvivorLoadout.json" />
+    <EmbeddedResource Include="Images\TTSKOLoadout.json" />
+    <EmbeddedResource Include="Images\WestLoadout.json" />
+    <EmbeddedResource Include="Images\YeetBrigadeLoadout.json" />
+    <EmbeddedResource Include="Images\YellowKingLoadout.json" />
   </ItemGroup>
 
   <ItemGroup>

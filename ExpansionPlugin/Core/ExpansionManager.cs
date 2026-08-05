@@ -122,21 +122,73 @@ namespace ExpansionPlugin
             _paths["ExpansionQuestObjectives"] = Path.Combine(profilePath, "ExpansionMod", "Quests", "Objectives");
 
             CreateFolders();
-
+            CheckDefaultLoadoutFiles();
             LoadFiles();
         }
 
+        private void CheckDefaultLoadoutFiles()
+        {
+            Console.WriteLine($"\n[Expansion Manager] Checking and Creating all default Loadouts if they do not Exist.");
+
+            string loadoutsPath = _paths["ExpansionLoadouts"];
+            string loodropsPath = _paths["ExpansionLootDrops"];
+
+            EnsureLoadoutExists(loadoutsPath, "BanditLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "EastLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "FireFighterLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "FreshSpawnLoadout.json");
+
+            EnsureLoadoutExists(loadoutsPath, "GorkaLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "HumanLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "NBCLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "PlayerFemaleSuitLoadout.json");
+
+            EnsureLoadoutExists(loadoutsPath, "PlayerMaleSuitLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "PlayerSurvivorLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "PoliceLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "SurvivorLoadout.json");
+
+            EnsureLoadoutExists(loadoutsPath, "TTSKOLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "WestLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "YeetBrigadeLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "YellowKingLoadout.json");
+
+            EnsureLoadoutExists(loodropsPath, "Example.json");
+        }
+        private void EnsureLoadoutExists(string folder, string fileName)
+        {
+            
+            string path = Path.Combine(folder, fileName);
+
+            if (File.Exists(path))
+                return;
+
+            string resourceName =
+                $"ExpansionPlugin.Images.{fileName}";
+
+            File.WriteAllText(path, ResourceHelper.ReadText(resourceName));
+            Console.WriteLine($"[INFO] Default Loadout Created - {fileName}.");
+        }
         private void CreateFolders()
         {
+            Console.WriteLine("\n[Expansion Manager] Checking and creating folders associated with the Expansion Mod.");
+
             foreach (var path in _paths.Values)
             {
-                var directory = Path.HasExtension(path) ? Path.GetDirectoryName(path) : path;
-                if (!string.IsNullOrWhiteSpace(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-            }
+                var directory = Path.HasExtension(path)
+                    ? Path.GetDirectoryName(path)
+                    : path;
 
+                if (string.IsNullOrWhiteSpace(directory))
+                    continue;
+
+                bool existed = Directory.Exists(directory);
+
+                Directory.CreateDirectory(directory);
+
+                if (!existed)
+                    Console.WriteLine($"[INFO] Folder Created - {directory}");
+            }
         }
 
         private void LoadFiles()
@@ -1145,6 +1197,17 @@ namespace ExpansionPlugin
     }
     public static class ResourceHelper
     {
+        public static string ReadText(string resourceName)
+        {
+            var assembly = typeof(ResourceHelper).Assembly;
+
+            using Stream stream = assembly.GetManifestResourceStream(resourceName)
+                ?? throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
+
+            using StreamReader reader = new StreamReader(stream);
+
+            return reader.ReadToEnd();
+        }
         public static Stream? OpenEmbeddedStream(string resourceName)
         {
             // Typically: "{DefaultNamespace}.{Folder}.{FileName}"
