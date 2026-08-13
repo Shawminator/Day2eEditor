@@ -15,7 +15,7 @@ namespace ExpansionPlugin
         private bool _suppressEvents;
         private TreeNode? currentTreeNode;
         public ExpansionLoot currentExpanionLootItem;
-        public ExpansionLootVariant CurrentLootVArient;
+        public ExpansionLootVariant CurrentLootVariant;
 
         public ExpansionLootControl()
         {
@@ -34,7 +34,7 @@ namespace ExpansionPlugin
             };
             foreach (ExpansionLootVariant elv in eL.Attachments)
             {
-                AttachmentTN.Nodes.Add(getLootVarients(elv));
+                AttachmentTN.Nodes.Add(getLootVariants(elv));
             }
             TreeNode VariantsTN = new TreeNode("Variants")
             {
@@ -42,15 +42,15 @@ namespace ExpansionPlugin
             };
             foreach (ExpansionLootVariant elv in eL.Variants)
             {
-                VariantsTN.Nodes.Add(getLootVarients(elv));
+                VariantsTN.Nodes.Add(getLootVariants(elv));
             }
             ExpansionLootTN.Nodes.Add(AttachmentTN);
             ExpansionLootTN.Nodes.Add(VariantsTN);
             return ExpansionLootTN;
         }
-        private TreeNode getLootVarients(ExpansionLootVariant elv)
+        private TreeNode getLootVariants(ExpansionLootVariant elv)
         {
-            TreeNode ExpansionLootVarientTN = new TreeNode(elv.Name)
+            TreeNode ExpansionLootVariantTN = new TreeNode(elv.Name)
             {
                 Tag = elv
             };
@@ -60,10 +60,10 @@ namespace ExpansionPlugin
             };
             foreach (ExpansionLootVariant elv2 in elv.Attachments)
             {
-                AttachmentTN.Nodes.Add(getLootVarients(elv2));
+                AttachmentTN.Nodes.Add(getLootVariants(elv2));
             }
-            ExpansionLootVarientTN.Nodes.Add(AttachmentTN);
-            return ExpansionLootVarientTN;
+            ExpansionLootVariantTN.Nodes.Add(AttachmentTN);
+            return ExpansionLootVariantTN;
         }
         /// <summary>
         /// Returns the UserControl instance
@@ -140,17 +140,17 @@ namespace ExpansionPlugin
         {
             currentTreeNode = e.Node;
             expansionLootItemGB.Visible = false;
-            expansionLootVarientGB.Visible = false;
+            expansionLootVariantGB.Visible = false;
             ExpansionLootitemSetAllChanceButton.Visible = false;
             ExpansionLootitemSetAllRandomChanceButton.Visible = false;
             currentExpanionLootItem = null;
-            CurrentLootVArient = null;
+            CurrentLootVariant = null;
             if (e.Node.Tag is string)
             {
                 if (e.Node.Tag.ToString() == "LootParent")
                 {
-                    expansionLootVarientGB.Visible = true;
-                    expansionLootVarientGB.Text = "Set All Chance";
+                    expansionLootVariantGB.Visible = true;
+                    expansionLootVariantGB.Text = "Set All Chance";
                     ExpansionLootitemSetAllChanceButton.Visible = true;
                     ExpansionLootitemSetAllRandomChanceButton.Visible = true;
                 }
@@ -159,7 +159,7 @@ namespace ExpansionPlugin
                     if (e.Node.Parent.Tag is ExpansionLoot)
                         currentExpanionLootItem = e.Node.Parent.Tag as ExpansionLoot;
                     else if (e.Node.Parent.Tag is ExpansionLootVariant)
-                        CurrentLootVArient = e.Node.Parent.Tag as ExpansionLootVariant;
+                        CurrentLootVariant = e.Node.Parent.Tag as ExpansionLootVariant;
                 }
                 if (e.Node.Tag.ToString() == "Variants")
                 {
@@ -174,16 +174,16 @@ namespace ExpansionPlugin
             }
             else if (e.Node.Tag is ExpansionLootVariant)
             {
-                expansionLootVarientGB.Visible = true;
-                CurrentLootVArient = e.Node.Tag as ExpansionLootVariant;
-                setvarient();
+                expansionLootVariantGB.Visible = true;
+                CurrentLootVariant = e.Node.Tag as ExpansionLootVariant;
+                setvariant();
                 if (e.Node.Parent.Tag.ToString() == "Attachments")
                 {
-                    expansionLootVarientGB.Text = "Expansion Loot Attachment";
+                    expansionLootVariantGB.Text = "Expansion Loot Attachment";
                 }
                 else if (e.Node.Parent.Tag.ToString() == "Variants")
                 {
-                    expansionLootVarientGB.Text = "Expansion Loot Variant";
+                    expansionLootVariantGB.Text = "Expansion Loot Variant";
                 }
             }
         }
@@ -201,12 +201,12 @@ namespace ExpansionPlugin
 
             _suppressEvents = false;
         }
-        private void setvarient()
+        private void setvariant()
         {
             _suppressEvents = true;
-            if (CurrentLootVArient.Chance > 1)
-                CurrentLootVArient.Chance = 1;
-            trackBar2.Value = (int)(CurrentLootVArient.Chance * 100);
+            if (CurrentLootVariant.Chance > 1)
+                CurrentLootVariant.Chance = 1;
+            trackBar2.Value = (int)(CurrentLootVariant.Chance * 100);
 
 
             _suppressEvents = false;
@@ -238,7 +238,7 @@ namespace ExpansionPlugin
                 if (e.Button == MouseButtons.Right)
                 {
                     ExpansionLootCM.Items.Clear();
-                    ExpansionLootCM.Items.Add(addLootVarientsToolStripMenuItem);
+                    ExpansionLootCM.Items.Add(addLootVariantsToolStripMenuItem);
                     ExpansionLootCM.Show(Cursor.Position);
                 }
             }
@@ -279,8 +279,8 @@ namespace ExpansionPlugin
         }
         private void trackBar2_MouseUp(object sender, MouseEventArgs e)
         {
-            if (CurrentLootVArient == null) return;
-            CurrentLootVArient.Chance = ((decimal)trackBar2.Value) / 100;
+            if (CurrentLootVariant == null) return;
+            CurrentLootVariant.Chance = ((decimal)trackBar2.Value) / 100;
             
         }
 
@@ -389,7 +389,7 @@ namespace ExpansionPlugin
             }
         }
 
-        private void addLootVarientsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void addLootVariantsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddItemfromTypes form = new AddItemfromTypes
             {
@@ -404,23 +404,23 @@ namespace ExpansionPlugin
                     ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
                     ExpansionLoot loot = currentTreeNode.Parent.Tag as ExpansionLoot;
                     loot.Variants.Add(Newloot);
-                    TreeNode tn = getLootVarients(Newloot);
+                    TreeNode tn = getLootVariants(Newloot);
                     ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                     FocusNode = tn;
                     
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
-                expansionLootVarientGB.Visible = true;
-                CurrentLootVArient = currentTreeNode.Tag as ExpansionLootVariant;
-                setvarient();
+                expansionLootVariantGB.Visible = true;
+                CurrentLootVariant = currentTreeNode.Tag as ExpansionLootVariant;
+                setvariant();
                 if (currentTreeNode.Parent.Tag.ToString() == "Attachments")
                 {
-                    expansionLootVarientGB.Text = "Expansion Loot Attachment";
+                    expansionLootVariantGB.Text = "Expansion Loot Attachment";
                 }
                 else if (currentTreeNode.Parent.Tag.ToString() == "Variants")
                 {
-                    expansionLootVarientGB.Text = "Expansion Loot Variant";
+                    expansionLootVariantGB.Text = "Expansion Loot Variant";
                 }
             }
         }
@@ -442,7 +442,7 @@ namespace ExpansionPlugin
                         ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
                         ExpansionLoot loot = currentTreeNode.Parent.Tag as ExpansionLoot;
                         loot.Attachments.Add(Newloot);
-                        TreeNode tn = getLootVarients(Newloot);
+                        TreeNode tn = getLootVariants(Newloot);
                         ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                         FocusNode = tn;
                     }
@@ -451,7 +451,7 @@ namespace ExpansionPlugin
                         ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
                         ExpansionLootVariant loot = currentTreeNode.Parent.Tag as ExpansionLootVariant;
                         loot.Attachments.Add(Newloot);
-                        TreeNode tn = getLootVarients(Newloot);
+                        TreeNode tn = getLootVariants(Newloot);
                         ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                         FocusNode = tn;
                     }
@@ -459,16 +459,16 @@ namespace ExpansionPlugin
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
-                expansionLootVarientGB.Visible = true;
-                CurrentLootVArient = ExpansionLootTV.SelectedNode.Tag as ExpansionLootVariant;
-                setvarient();
+                expansionLootVariantGB.Visible = true;
+                CurrentLootVariant = ExpansionLootTV.SelectedNode.Tag as ExpansionLootVariant;
+                setvariant();
                 if (currentTreeNode.Parent.Tag.ToString() == "Attachments")
                 {
-                    expansionLootVarientGB.Text = "Expansion Loot Attachment";
+                    expansionLootVariantGB.Text = "Expansion Loot Attachment";
                 }
                 else if (currentTreeNode.Parent.Tag.ToString() == "Variants")
                 {
-                    expansionLootVarientGB.Text = "Expansion Loot Variant";
+                    expansionLootVariantGB.Text = "Expansion Loot Variant";
                 }
             }
         }
@@ -483,7 +483,7 @@ namespace ExpansionPlugin
             else if (currentTreeNode.Parent.Tag.ToString() == "Variants")
             {
                 ExpansionLoot loot = currentTreeNode.Parent.Parent.Tag as ExpansionLoot;
-                loot.Variants.Remove(CurrentLootVArient);
+                loot.Variants.Remove(CurrentLootVariant);
                 ExpansionLootTV.SelectedNode.Remove();
             }
             else if (currentTreeNode.Parent.Tag.ToString() == "Attachments")
@@ -491,13 +491,13 @@ namespace ExpansionPlugin
                 if (currentTreeNode.Parent.Parent.Tag is ExpansionLoot)
                 {
                     ExpansionLoot loot = currentTreeNode.Parent.Parent.Tag as ExpansionLoot;
-                    loot.Attachments.Remove(CurrentLootVArient);
+                    loot.Attachments.Remove(CurrentLootVariant);
                     ExpansionLootTV.SelectedNode.Remove();
                 }
                 else if (currentTreeNode.Parent.Parent.Tag is ExpansionLootVariant)
                 {
                     ExpansionLootVariant loot = currentTreeNode.Parent.Parent.Tag as ExpansionLootVariant;
-                    loot.Attachments.Remove(CurrentLootVArient);
+                    loot.Attachments.Remove(CurrentLootVariant);
                     ExpansionLootTV.SelectedNode.Remove();
                 }
             }

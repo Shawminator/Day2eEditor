@@ -205,7 +205,7 @@ namespace ExpansionPlugin
                         SetupSpawnLocationMarkers(ExpansionSpawnLocation, node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
-                    else if (node.Parent.Nodes[0].Tag is ExpansionP2PMarketTraderConfig)
+                    else if (node.Parent.Tag is ExpansionP2PMarketTraderConfig)
                     {
                         Vec3 v3 = node.Tag as Vec3;
                         var control = new Vector3Control();
@@ -1251,7 +1251,7 @@ namespace ExpansionPlugin
                 //P2P Market
                 ["P2PMarketTraderPOSandOri"] = (node, selected) =>
                 {
-                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Nodes[0].Tag as ExpansionP2PMarketTraderConfig;
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Tag as ExpansionP2PMarketTraderConfig;
                     var control = new ExpasnionP2PMarksetTraderSpawnInfoControl();
                     control.PositionChanged += (updatedPos) =>
                     {
@@ -1378,6 +1378,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
                     ShowHandler<IUIHandler>(new ExpansionQuestSettingsResetScheduleControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
+                },
+                ["ObjectivesTreasureHuntPositions"] = (node,selected) =>
+                {
+                    ExpansionQuestObjectiveTreasureHuntConfig cfg = node.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupTreasureHunt(cfg, node);
                 }
             };
         }
@@ -1394,10 +1400,10 @@ namespace ExpansionPlugin
                     Vec3 v3 = node.Tag as Vec3;
                     if (node.Parent.Tag.ToString() == "AIPatrolWayPoints")
                     {
-                        if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
-                        {
-                            return;
-                        }
+                        //if (currentTreeNode.FindParentOfType<ExpansionQuestObjectiveAICampConfig>() != null)
+                        //{
+                        //    return;
+                        //}
                         ExpansionSettingsCM.Items.Clear();
                         ExpansionSettingsCM.Items.Add(removeWaypointToolStripMenuItem);
                         ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
@@ -2363,7 +2369,7 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeItemAttachmentToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                ["MarketItemVarients"] = node =>
+                ["MarketItemVariants"] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addItemVariantToolStripMenuItem);
@@ -2371,7 +2377,7 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addItemVariantAutoSearchToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                ["MarketItemVarient"] = node =>
+                ["MarketItemVariant"] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeItemVariantToolStripMenuItem);
@@ -4217,16 +4223,16 @@ namespace ExpansionPlugin
             }
             itemNode.Nodes.Add(attachmentNode);
 
-            TreeNode variantNode = new TreeNode("Varients")
+            TreeNode variantNode = new TreeNode("Variants")
             {
-                Tag = "MarketItemVarients"
+                Tag = "MarketItemVariants"
             };
 
-            foreach (string varient in item.Variants)
+            foreach (string variant in item.Variants)
             {
-                variantNode.Nodes.Add(new TreeNode(varient)
+                variantNode.Nodes.Add(new TreeNode(variant)
                 {
-                    Tag = "MarketItemVarient"
+                    Tag = "MarketItemVariant"
                 });
             }
             itemNode.Nodes.Add(variantNode);
@@ -4769,12 +4775,8 @@ namespace ExpansionPlugin
         {
             TreeNode P2PTraderRootNode = new TreeNode(ef.FileName)
             {
-                Tag = "P2PTraderFile"
-            };
-            P2PTraderRootNode.Nodes.Add(new TreeNode("General")
-            {
                 Tag = ef
-            });
+            };
             P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
             {
                 Tag = "P2PMarketTraderPOSandOri"
@@ -6226,6 +6228,9 @@ namespace ExpansionPlugin
                 _mapControl.MapDoubleClicked += MapControl_TreasureHuntDoubleclicked;
                 _mapControl.MapsingleClicked += MapControl_TreasureHuntSingleclicked;
 
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = false;
+
                 DrawbaseTreasureHunt(tresure);
             });
         }
@@ -6451,6 +6456,7 @@ namespace ExpansionPlugin
                 NewMissionPoint = false;
                 NewTraderVec3 = false;
                 NewSpawnPoint = false;
+                NewTreasurehunPoint = false;
                 _mapControl.Cursor = Cursors.Hand;
                 button5.BackColor = Color.FromArgb(60, 63, 65);
             }
@@ -6898,6 +6904,7 @@ namespace ExpansionPlugin
         }
         private void DrawbaseTreasureHunt(ExpansionQuestObjectiveTreasureHuntConfig tresure)
         {
+            TogglePlacementMode(NewTreasurehunPoint);
             MarkerDrawable? selectedMarker = null;
             foreach (Vec3 pos in tresure.Positions)
             {
@@ -8172,6 +8179,39 @@ namespace ExpansionPlugin
         {
             if (currentTreeNode?.Parent == null)
                 return;
+
+            if(NewTreasurehunPoint == true)
+            {
+                ExpansionQuestObjectiveTreasureHuntConfig thc = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
+
+                Vec3 newPos = new Vec3
+                {
+                    X = (float)e.MapCoordinates.X,
+                    Y = 0f,
+                    Z = (float)e.MapCoordinates.Y
+                };
+
+                if (MapData.FileExists)
+                {
+                    newPos.Y = MapData.gethieght(newPos.X, newPos.Z);
+                }
+
+                thc.Positions.Add(newPos);
+
+                TreeNode node = new TreeNode(newPos.ToString())
+                {
+                    Tag = newPos
+                };
+                if (currentTreeNode.Tag is Vec3)
+                    currentTreeNode.Parent.Nodes.Add(node);
+                else if (currentTreeNode.Tag.ToString() == "ObjectivesTreasureHuntPositions")
+                    currentTreeNode.Nodes.Add(node);
+                
+                ExpansionTV.SelectedNode = node;
+                return;
+            }
+
+
             TreeNode parentNode = currentTreeNode.Parent;
             Vec3 closestPos = null;
             double closestDistance = double.MaxValue;
@@ -9280,6 +9320,7 @@ namespace ExpansionPlugin
         public bool NewMissionPoint = false;
         public bool NewTraderVec3 = false;
         public bool NewSpawnPoint = false;
+        public bool NewTreasurehunPoint = false;
         private void button5_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps)
@@ -9348,6 +9389,22 @@ namespace ExpansionPlugin
             {
                 MessageBox.Show("Please use the right click method on the mission node.\nYou need to select which kind of mission to add.");
             }
+            else if(currentTreeNode.Tag.ToString() == "ObjectivesTreasureHuntPositions" ||
+                currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveTreasureHuntConfig)
+            {
+                if (NewTreasurehunPoint == false)
+                {
+                    _mapControl.Cursor = Cursors.Cross;
+                    NewTreasurehunPoint = true;
+                    button5.BackColor = Color.LimeGreen;
+                }
+                else
+                {
+                    _mapControl.Cursor = Cursors.Hand;
+                    NewTreasurehunPoint = false;
+                    button5.BackColor = Color.FromArgb(60, 63, 65);
+                }
+            }
         }
         private void button6_Click(object sender, EventArgs e)
         {
@@ -9400,6 +9457,11 @@ namespace ExpansionPlugin
                     _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHeliCrash);
                 }
                 currentTreeNode.Parent.Remove();
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveTreasureHuntConfig ExpansionQuestObjectiveTreasureHuntConfig)
+            {
+                ExpansionQuestObjectiveTreasureHuntConfig.Positions.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             }
         }
         private void ShowAllCB_CheckedChanged(object sender, EventArgs e)
@@ -11503,7 +11565,7 @@ namespace ExpansionPlugin
                 ExpansionMarketItem.Variants.Add(l);
                 currentTreeNode.Nodes.Add(new TreeNode(l)
                 {
-                    Tag = "MarketItemVarient"
+                    Tag = "MarketItemVariant"
                 });
             }
         }
@@ -11549,7 +11611,7 @@ namespace ExpansionPlugin
                         ExpansionMarketItem.Variants.Add(l);
                         currentTreeNode.Nodes.Add(new TreeNode(l)
                         {
-                            Tag = "MarketItemVarient"
+                            Tag = "MarketItemVariant"
                         });
                     }
                 }
@@ -11557,7 +11619,7 @@ namespace ExpansionPlugin
         }
         private void createItemFromItemVariantToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (currentTreeNode?.Tag.ToString() != "MarketItemVarient")
+            if (currentTreeNode?.Tag.ToString() != "MarketItemVariant")
                 return;
 
             string variantClassName = currentTreeNode.Text;

@@ -41,7 +41,7 @@
             darkLabel12 = new Label();
             numericUpDown12 = new NumericUpDown();
             darkLabel251 = new Label();
-            expansionLootVarientGB = new GroupBox();
+            expansionLootVariantGB = new GroupBox();
             ExpansionLootitemSetAllRandomChanceButton = new Button();
             ExpansionLootitemSetAllChanceButton = new Button();
             darkLabel1 = new Label();
@@ -49,7 +49,7 @@
             trackBar2 = new TrackBar();
             ExpansionLootCM = new ContextMenuStrip(components);
             addLootItemsToolStripMenuItem = new ToolStripMenuItem();
-            addLootVarientsToolStripMenuItem = new ToolStripMenuItem();
+            addLootVariantsToolStripMenuItem = new ToolStripMenuItem();
             addAttachmentToolStripMenuItem = new ToolStripMenuItem();
             removeToolStripMenuItem = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
@@ -58,7 +58,7 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown33).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown12).BeginInit();
-            expansionLootVarientGB.SuspendLayout();
+            expansionLootVariantGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBar2).BeginInit();
             ExpansionLootCM.SuspendLayout();
             SuspendLayout();
@@ -66,7 +66,7 @@
             // groupBox1
             // 
             groupBox1.Controls.Add(ExpansionLootTV);
-            groupBox1.Controls.Add(expansionLootVarientGB);
+            groupBox1.Controls.Add(expansionLootVariantGB);
             groupBox1.Controls.Add(expansionLootItemGB);
             groupBox1.ForeColor = SystemColors.Control;
             groupBox1.Location = new Point(0, 0);
@@ -222,23 +222,23 @@
             darkLabel251.TabIndex = 219;
             darkLabel251.Text = "Quantity Percent";
             // 
-            // expansionLootVarientGB
+            // expansionLootVariantGB
             // 
-            expansionLootVarientGB.Controls.Add(ExpansionLootitemSetAllRandomChanceButton);
-            expansionLootVarientGB.Controls.Add(ExpansionLootitemSetAllChanceButton);
-            expansionLootVarientGB.Controls.Add(darkLabel1);
-            expansionLootVarientGB.Controls.Add(darkLabel2);
-            expansionLootVarientGB.Controls.Add(trackBar2);
-            expansionLootVarientGB.ForeColor = SystemColors.Control;
-            expansionLootVarientGB.Location = new Point(323, 22);
-            expansionLootVarientGB.Margin = new Padding(4, 3, 4, 3);
-            expansionLootVarientGB.Name = "expansionLootVarientGB";
-            expansionLootVarientGB.Padding = new Padding(4, 3, 4, 3);
-            expansionLootVarientGB.Size = new Size(322, 178);
-            expansionLootVarientGB.TabIndex = 225;
-            expansionLootVarientGB.TabStop = false;
-            expansionLootVarientGB.Text = "Expansion Loot Varient";
-            expansionLootVarientGB.Visible = false;
+            expansionLootVariantGB.Controls.Add(ExpansionLootitemSetAllRandomChanceButton);
+            expansionLootVariantGB.Controls.Add(ExpansionLootitemSetAllChanceButton);
+            expansionLootVariantGB.Controls.Add(darkLabel1);
+            expansionLootVariantGB.Controls.Add(darkLabel2);
+            expansionLootVariantGB.Controls.Add(trackBar2);
+            expansionLootVariantGB.ForeColor = SystemColors.Control;
+            expansionLootVariantGB.Location = new Point(323, 22);
+            expansionLootVariantGB.Margin = new Padding(4, 3, 4, 3);
+            expansionLootVariantGB.Name = "expansionLootVariantGB";
+            expansionLootVariantGB.Padding = new Padding(4, 3, 4, 3);
+            expansionLootVariantGB.Size = new Size(322, 178);
+            expansionLootVariantGB.TabIndex = 225;
+            expansionLootVariantGB.TabStop = false;
+            expansionLootVariantGB.Text = "Expansion Loot Variant";
+            expansionLootVariantGB.Visible = false;
             // 
             // ExpansionLootitemSetAllRandomChanceButton
             // 
@@ -300,7 +300,7 @@
             // ExpansionLootCM
             // 
             ExpansionLootCM.BackColor = Color.FromArgb(60, 63, 65);
-            ExpansionLootCM.Items.AddRange(new ToolStripItem[] { addLootItemsToolStripMenuItem, addLootVarientsToolStripMenuItem, addAttachmentToolStripMenuItem, removeToolStripMenuItem });
+            ExpansionLootCM.Items.AddRange(new ToolStripItem[] { addLootItemsToolStripMenuItem, addLootVariantsToolStripMenuItem, addAttachmentToolStripMenuItem, removeToolStripMenuItem });
             ExpansionLootCM.Name = "TypesCM";
             ExpansionLootCM.ShowImageMargin = false;
             ExpansionLootCM.Size = new Size(138, 92);
@@ -313,13 +313,13 @@
             addLootItemsToolStripMenuItem.Text = "Add Items";
             addLootItemsToolStripMenuItem.Click += addLootItemsToolStripMenuItem_Click;
             // 
-            // addLootVarientsToolStripMenuItem
+            // addLootVariantsToolStripMenuItem
             // 
-            addLootVarientsToolStripMenuItem.ForeColor = SystemColors.Control;
-            addLootVarientsToolStripMenuItem.Name = "addLootVarientsToolStripMenuItem";
-            addLootVarientsToolStripMenuItem.Size = new Size(137, 22);
-            addLootVarientsToolStripMenuItem.Text = "Add Varients";
-            addLootVarientsToolStripMenuItem.Click += addLootVarientsToolStripMenuItem_Click;
+            addLootVariantsToolStripMenuItem.ForeColor = SystemColors.Control;
+            addLootVariantsToolStripMenuItem.Name = "addLootVariantsToolStripMenuItem";
+            addLootVariantsToolStripMenuItem.Size = new Size(137, 22);
+            addLootVariantsToolStripMenuItem.Text = "Add Variants";
+            addLootVariantsToolStripMenuItem.Click += addLootVariantsToolStripMenuItem_Click;
             // 
             // addAttachmentToolStripMenuItem
             // 
@@ -353,8 +353,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown33).EndInit();
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown12).EndInit();
-            expansionLootVarientGB.ResumeLayout(false);
-            expansionLootVarientGB.PerformLayout();
+            expansionLootVariantGB.ResumeLayout(false);
+            expansionLootVariantGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trackBar2).EndInit();
             ExpansionLootCM.ResumeLayout(false);
             ResumeLayout(false);
@@ -374,7 +374,7 @@
         private Label darkLabel12;
         private NumericUpDown numericUpDown12;
         private Label darkLabel251;
-        private GroupBox expansionLootVarientGB;
+        private GroupBox expansionLootVariantGB;
         private Button ExpansionLootitemSetAllRandomChanceButton;
         private Button ExpansionLootitemSetAllChanceButton;
         private Label darkLabel1;
@@ -382,7 +382,7 @@
         private TrackBar trackBar2;
         private ContextMenuStrip ExpansionLootCM;
         private ToolStripMenuItem addLootItemsToolStripMenuItem;
-        private ToolStripMenuItem addLootVarientsToolStripMenuItem;
+        private ToolStripMenuItem addLootVariantsToolStripMenuItem;
         private ToolStripMenuItem addAttachmentToolStripMenuItem;
         private ToolStripMenuItem removeToolStripMenuItem;
     }

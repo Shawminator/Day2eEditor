@@ -125,6 +125,8 @@ namespace ExpansionPlugin
         public bool ToDelete { get; set; }
         [JsonIgnore]
         public Guid Id { get; set; }
+        [JsonIgnore]
+        public bool IsAI => m_ClassName.StartsWith("ExpansionTraderAI");
 
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;

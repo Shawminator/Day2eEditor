@@ -48,12 +48,13 @@ namespace ExpansionPlugin
                 LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
             }
             ObjectivesAIVIPNPCLoadoutFileCB.DataSource = new BindingList<string>(LoadoutNameList);
+            ObjectivesAIVIPNPCNPCClassnameCB.DataSource = new BindingList<string>(NPCClassnames);
             ObjectivesAIVIPMaxDistanceNUD.Value = (decimal)_data.MaxDistance;
             ObjectivesAIVIPNPCLoadoutFileCB.SelectedIndex = ObjectivesAIVIPNPCLoadoutFileCB.FindStringExact(_data.NPCLoadoutFile);
             ObjectivesAIVIPMarkerNameTB.Text = _data.MarkerName;
             QuestObjectivesAIVIPShowDistanceCB.Checked = _data.ShowDistance == 1 ? true : false;
             QuestObjectivesAIVIPCanLootAICB.Checked = _data.CanLootAI == 1 ? true : false;
-            ObjectivesAIVIPNPCNPCClassnameTB.Text = _data.NPCClassName;
+            ObjectivesAIVIPNPCNPCClassnameCB.SelectedIndex = ObjectivesAIVIPNPCNPCClassnameCB.FindStringExact(_data.NPCClassName);
             ObjectivesAIVIPNPCNameTB.Text = _data.NPCName;
             _suppressEvents = false;
         }
@@ -90,10 +91,10 @@ namespace ExpansionPlugin
             _data.NPCLoadoutFile = ObjectivesAIVIPNPCLoadoutFileCB.GetItemText(ObjectivesAIVIPNPCLoadoutFileCB.SelectedItem);
         }
 
-        private void ObjectivesAIVIPNPCNPCClassnameTB_TextChanged(object sender, EventArgs e)
+        private void ObjectivesAIVIPNPCNPCClassnameCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.NPCClassName = ObjectivesAIVIPNPCNPCClassnameTB.Text;
+            _data.NPCClassName = ObjectivesAIVIPNPCNPCClassnameCB.GetItemText(ObjectivesAIVIPNPCNPCClassnameCB.SelectedItem);
         }
 
         private void ObjectivesAIVIPMarkerNameTB_TextChanged(object sender, EventArgs e)
@@ -113,5 +114,40 @@ namespace ExpansionPlugin
             if (_suppressEvents) return;
             _data.CanLootAI = QuestObjectivesAIVIPCanLootAICB.Checked == true ? 1 : 0;
         }
+        List<string> NPCClassnames = new List<string>
+            {
+                "eAI_SurvivorM_Mirek",
+                "eAI_SurvivorM_Denis",
+                "eAI_SurvivorM_Boris",
+                "eAI_SurvivorM_Cyril",
+                "eAI_SurvivorM_Elias",
+                "eAI_SurvivorM_Francis",
+                "eAI_SurvivorM_Guo",
+                "eAI_SurvivorM_Hassan",
+                "eAI_SurvivorM_Indar",
+                "eAI_SurvivorM_Jose",
+                "eAI_SurvivorM_Kaito",
+                "eAI_SurvivorM_Lewis",
+                "eAI_SurvivorM_Manua",
+                "eAI_SurvivorM_Niki",
+                "eAI_SurvivorM_Oliver",
+                "eAI_SurvivorM_Peter",
+                "eAI_SurvivorM_Quinn",
+                "eAI_SurvivorM_Rolf",
+                "eAI_SurvivorM_Seth",
+                "eAI_SurvivorM_Taiki",
+                "eAI_SurvivorF_Linda",
+                "eAI_SurvivorF_Maria",
+                "eAI_SurvivorF_Frida",
+                "eAI_SurvivorF_Gabi",
+                "eAI_SurvivorF_Helga",
+                "eAI_SurvivorF_Irena",
+                "eAI_SurvivorF_Judy",
+                "eAI_SurvivorF_Keiko",
+                "eAI_SurvivorF_Eva",
+                "eAI_SurvivorF_Naomi",
+                "eAI_SurvivorF_Baty"
+            };
+
     }
 }

@@ -102,7 +102,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Parent.Text = _data.FileName;
+                _nodes.Last().Text = _data.FileName;
             }
         }
 

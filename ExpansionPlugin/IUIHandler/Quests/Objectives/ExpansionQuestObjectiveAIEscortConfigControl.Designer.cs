@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             ObjectivesAIVIPGB = new GroupBox();
+            ObjectivesAIVIPNPCNPCClassnameCB = new ComboBox();
             label2 = new Label();
             label1 = new Label();
             ObjectivesAIVIPNPCNameTB = new TextBox();
             darkLabel191 = new Label();
-            ObjectivesAIVIPNPCNPCClassnameTB = new TextBox();
             darkLabel160 = new Label();
             QuestObjectivesAIVIPCanLootAICB = new CheckBox();
             QuestObjectivesAIVIPShowDistanceCB = new CheckBox();
@@ -49,11 +49,11 @@
             // 
             // ObjectivesAIVIPGB
             // 
+            ObjectivesAIVIPGB.Controls.Add(ObjectivesAIVIPNPCNPCClassnameCB);
             ObjectivesAIVIPGB.Controls.Add(label2);
             ObjectivesAIVIPGB.Controls.Add(label1);
             ObjectivesAIVIPGB.Controls.Add(ObjectivesAIVIPNPCNameTB);
             ObjectivesAIVIPGB.Controls.Add(darkLabel191);
-            ObjectivesAIVIPGB.Controls.Add(ObjectivesAIVIPNPCNPCClassnameTB);
             ObjectivesAIVIPGB.Controls.Add(darkLabel160);
             ObjectivesAIVIPGB.Controls.Add(QuestObjectivesAIVIPCanLootAICB);
             ObjectivesAIVIPGB.Controls.Add(QuestObjectivesAIVIPShowDistanceCB);
@@ -72,6 +72,18 @@
             ObjectivesAIVIPGB.TabIndex = 289;
             ObjectivesAIVIPGB.TabStop = false;
             ObjectivesAIVIPGB.Text = "AI VIP";
+            // 
+            // ObjectivesAIVIPNPCNPCClassnameCB
+            // 
+            ObjectivesAIVIPNPCNPCClassnameCB.BackColor = Color.FromArgb(60, 63, 65);
+            ObjectivesAIVIPNPCNPCClassnameCB.ForeColor = SystemColors.Control;
+            ObjectivesAIVIPNPCNPCClassnameCB.FormattingEnabled = true;
+            ObjectivesAIVIPNPCNPCClassnameCB.Location = new Point(135, 112);
+            ObjectivesAIVIPNPCNPCClassnameCB.Margin = new Padding(4, 3, 4, 3);
+            ObjectivesAIVIPNPCNPCClassnameCB.Name = "ObjectivesAIVIPNPCNPCClassnameCB";
+            ObjectivesAIVIPNPCNPCClassnameCB.Size = new Size(257, 23);
+            ObjectivesAIVIPNPCNPCClassnameCB.TabIndex = 343;
+            ObjectivesAIVIPNPCNPCClassnameCB.SelectedIndexChanged += ObjectivesAIVIPNPCNPCClassnameCB_SelectedIndexChanged;
             // 
             // label2
             // 
@@ -116,17 +128,6 @@
             darkLabel191.Size = new Size(66, 15);
             darkLabel191.TabIndex = 339;
             darkLabel191.Text = "NPC Name";
-            // 
-            // ObjectivesAIVIPNPCNPCClassnameTB
-            // 
-            ObjectivesAIVIPNPCNPCClassnameTB.BackColor = Color.FromArgb(60, 63, 65);
-            ObjectivesAIVIPNPCNPCClassnameTB.ForeColor = SystemColors.Control;
-            ObjectivesAIVIPNPCNPCClassnameTB.Location = new Point(135, 112);
-            ObjectivesAIVIPNPCNPCClassnameTB.Margin = new Padding(4, 3, 4, 3);
-            ObjectivesAIVIPNPCNPCClassnameTB.Name = "ObjectivesAIVIPNPCNPCClassnameTB";
-            ObjectivesAIVIPNPCNPCClassnameTB.Size = new Size(257, 23);
-            ObjectivesAIVIPNPCNPCClassnameTB.TabIndex = 338;
-            ObjectivesAIVIPNPCNPCClassnameTB.TextChanged += ObjectivesAIVIPNPCNPCClassnameTB_TextChanged;
             // 
             // darkLabel160
             // 
@@ -256,7 +257,6 @@
         private Label label1;
         private TextBox ObjectivesAIVIPNPCNameTB;
         private Label darkLabel191;
-        private TextBox ObjectivesAIVIPNPCNPCClassnameTB;
         private Label darkLabel160;
         private CheckBox QuestObjectivesAIVIPCanLootAICB;
         private CheckBox QuestObjectivesAIVIPShowDistanceCB;
@@ -266,5 +266,6 @@
         private Label darkLabel103;
         private ComboBox ObjectivesAIVIPNPCLoadoutFileCB;
         private Label darkLabel98;
+        private ComboBox ObjectivesAIVIPNPCNPCClassnameCB;
     }
 }
