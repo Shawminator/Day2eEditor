@@ -126,7 +126,7 @@ namespace ExpansionPlugin
         [JsonIgnore]
         public Guid Id { get; set; }
         [JsonIgnore]
-        public bool IsAI => m_ClassName.StartsWith("ExpansionTraderAI");
+        public bool IsAI => m_ClassName.StartsWith("ExpansionP2PTraderAI");
 
         public void SetPath(string path) => _path = path;
         internal void SetGuid(Guid guid) => Id = guid;
@@ -284,6 +284,11 @@ namespace ExpansionPlugin
                 m_Position = new Vec3("0, 0, 0");
                 fixes.Add("Set default m_Position to 0,0,0");
             }
+            if (m_Waypoints == null)
+            {
+                fixes.Add($"Initilized m_Waypoints");
+                m_Waypoints = new BindingList<Vec3>();
+            }
             if (m_Orientation == null)
             {
                 m_Orientation = new Vec3("0, 0, 0");
@@ -323,11 +328,6 @@ namespace ExpansionPlugin
             {
                 fixes.Add($"Updated m_Faction to InvincibleObservers");
                 m_Faction = "InvincibleObservers";
-            }
-            if(m_Waypoints == null)
-            {
-                fixes.Add($"Initilized m_Waypoints");
-                m_Waypoints = new BindingList<Vec3>();
             }
             if (m_EmoteID == null)
             {

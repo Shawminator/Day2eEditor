@@ -483,6 +483,7 @@ namespace ExpansionPlugin
             CheckExpansionFactions();
             checkExpansionIcons();
             checkExpansionTraderNPCS();
+            checkExpansionP2PTraderNPCS();
             checkExpansionQuestNPCS();
             checkExpansionQuestActionNames();
         }
@@ -611,6 +612,37 @@ namespace ExpansionPlugin
                 File.WriteAllLines(filePath, TraderNames);
             }
         }
+        private void checkExpansionP2PTraderNPCS()
+        {
+            string filePath = "Data\\ExpansionP2PTradernames.txt";
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            List<string> TraderNames = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                TraderNames = File.ReadAllLines(filePath).ToList();
+            }
+
+            // Add any missing entries from the static list
+            bool updated = false;
+            foreach (string trader in ExpansionP2PMarketTrader)
+            {
+                if (!TraderNames.Contains(trader))
+                {
+                    TraderNames.Add(trader);
+                    updated = true;
+                }
+            }
+
+            // If there were updates, write back to the file
+            if (updated || !File.Exists(filePath))
+            {
+                File.WriteAllLines(filePath, TraderNames);
+            }
+        }
         private void checkExpansionQuestNPCS()
         {
             string filePath = "Data\\ExpansionQuestNPCnames.txt";
@@ -627,7 +659,7 @@ namespace ExpansionPlugin
 
             // Add any missing entries from the static list
             bool updated = false;
-            foreach (string trader in ExpansionNPCS)
+            foreach (string trader in ExpansionQuestNPCS)
             {
                 if (!NPCNames.Contains(trader))
                 {
@@ -974,7 +1006,71 @@ namespace ExpansionPlugin
             "ExpansionTraderAINaomi",
             "ExpansionTraderAIBaty"
         };
-        public static List<string> ExpansionNPCS = new List<string>()
+        public static List<string> ExpansionP2PMarketTrader = new List<string>()
+        {
+            "ExpansionP2PMarketTraderLockerClosedBlueV1",
+            "ExpansionP2PTraderMirek",
+            "ExpansionP2PTraderDenis",
+            "ExpansionP2PTraderBoris",
+            "ExpansionP2PTraderCyril",
+            "ExpansionP2PTraderElias",
+            "ExpansionP2PTraderFrancis",
+            "ExpansionP2PTraderGuo",
+            "ExpansionP2PTraderHassan",
+            "ExpansionP2PTraderIndar",
+            "ExpansionP2PTraderJose",
+            "ExpansionP2PTraderKaito",
+            "ExpansionP2PTraderLewis",
+            "ExpansionP2PTraderManua",
+            "ExpansionP2PTraderNiki",
+            "ExpansionP2PTraderOliver",
+            "ExpansionP2PTraderPeter",
+            "ExpansionP2PTraderQuinn",
+            "ExpansionP2PTraderRolf",
+            "ExpansionP2PTraderSeth",
+            "ExpansionP2PTraderTaiki",
+            "ExpansionP2PTraderLinda",
+            "ExpansionP2PTraderMaria",
+            "ExpansionP2PTraderFrida",
+            "ExpansionP2PTraderGabi",
+            "ExpansionP2PTraderHelga",
+            "ExpansionP2PTraderIrena",
+            "ExpansionP2PTraderJudy",
+            "ExpansionP2PTraderKeiko",
+            "ExpansionP2PTraderEva",
+            "ExpansionP2PTraderNaomi",
+            "ExpansionP2PTraderAIMirek",
+            "ExpansionP2PTraderAIDenis",
+            "ExpansionP2PTraderAIBoris",
+            "ExpansionP2PTraderAICyril",
+            "ExpansionP2PTraderAIElias",
+            "ExpansionP2PTraderAIFrancis",
+            "ExpansionP2PTraderAIGuo",
+            "ExpansionP2PTraderAIHassan",
+            "ExpansionP2PTraderAIIndar",
+            "ExpansionP2PTraderAIJose",
+            "ExpansionP2PTraderAIKaito",
+            "ExpansionP2PTraderAILewis",
+            "ExpansionP2PTraderAIManua",
+            "ExpansionP2PTraderAINiki",
+            "ExpansionP2PTraderAIOliver",
+            "ExpansionP2PTraderAIPeter",
+            "ExpansionP2PTraderAIQuinn",
+            "ExpansionP2PTraderAIRolf",
+            "ExpansionP2PTraderAISeth",
+            "ExpansionP2PTraderAITaiki",
+            "ExpansionP2PTraderAILinda",
+            "ExpansionP2PTraderAIMaria",
+            "ExpansionP2PTraderAIFrida",
+            "ExpansionP2PTraderAIGabi",
+            "ExpansionP2PTraderAIHelga",
+            "ExpansionP2PTraderAIIrena",
+            "ExpansionP2PTraderAIJudy",
+            "ExpansionP2PTraderAIKeiko",
+            "ExpansionP2PTraderAIEva",
+            "ExpansionP2PTraderAINaomi"
+        };
+        public static List<string> ExpansionQuestNPCS = new List<string>()
         {
             "ExpansionQuestObjectBoard",
             "ExpansionQuestBoardSmall",

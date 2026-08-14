@@ -44,9 +44,8 @@ namespace ExpansionPlugin
 
             string filePath = "Data\\ExpansionTradernames.txt";
             NPCNames = File.ReadAllLines(filePath).ToList();
-            TraderNames = AppServices.GetRequired<ExpansionManager>().ExpansionMarketTraderConfig.MutableItems.ToList();
-
             NpcClassNameCB.DataSource = NPCNames;
+            TraderNames = AppServices.GetRequired<ExpansionManager>().ExpansionMarketTraderConfig.MutableItems.ToList();
             TraderNameCB.DataSource = TraderNames;
             TraderNameCB.DisplayMember = "FileName";
 

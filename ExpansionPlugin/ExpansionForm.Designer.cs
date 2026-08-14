@@ -100,6 +100,7 @@
             removeAINoGoAreaToolStripMenuItem = new ToolStripMenuItem();
             addAIExcludedBuildingsToolStripMenuItem = new ToolStripMenuItem();
             removeAIExludedBuildingsToolStripMenuItem = new ToolStripMenuItem();
+            createDefaultLoadoutsToolStripMenuItem = new ToolStripMenuItem();
             ChatCM = new ContextMenuStrip(components);
             addNewBlacklistedWordToolStripMenuItem = new ToolStripMenuItem();
             removeBlacklistedWordToolStripMenuItem = new ToolStripMenuItem();
@@ -108,6 +109,8 @@
             addNewAirdropMissionToolStripMenuItem = new ToolStripMenuItem();
             addNewContaminatedMissionToolStripMenuItem = new ToolStripMenuItem();
             removeMissionToolStripMenuItem = new ToolStripMenuItem();
+            addP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
+            removeP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
             GarageCM = new ContextMenuStrip(components);
             addNewEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
             removeEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
@@ -293,7 +296,6 @@
             removeQuestToolStripMenuItem = new ToolStripMenuItem();
             addQuestNPCToolStripMenuItem = new ToolStripMenuItem();
             removeQuestNPCToolStripMenuItem = new ToolStripMenuItem();
-            createDefaultLoadoutsToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -786,7 +788,7 @@
             ExpansionAICM.Items.AddRange(new ToolStripItem[] { addNewPatrolToolStripMenuItem, removePatrolToolStripMenuItem, addWaypointToolStripMenuItem, removeWaypointToolStripMenuItem, importWaypointsToolStripMenuItem, exportWaypointsToolStripMenuItem, moveWaypointUpToolStripMenuItem, moveWaypointDownToolStripMenuItem, addUnitToolStripMenuItem, removeUnitToolStripMenuItem, addNewLoadBalancingCategoryToolStripMenuItem, removeCategoryToolStripMenuItem, addNewLoadBalancingCountsToolStripMenuItem, removeCountsToolStripMenuItem, addAiNoGoAreaToolStripMenuItem, removeAINoGoAreaToolStripMenuItem, addAIExcludedBuildingsToolStripMenuItem, removeAIExludedBuildingsToolStripMenuItem, createDefaultLoadoutsToolStripMenuItem });
             ExpansionAICM.Name = "ExpansionAICM";
             ExpansionAICM.ShowImageMargin = false;
-            ExpansionAICM.Size = new Size(224, 444);
+            ExpansionAICM.Size = new Size(224, 422);
             // 
             // addNewPatrolToolStripMenuItem
             // 
@@ -932,13 +934,21 @@
             removeAIExludedBuildingsToolStripMenuItem.Text = "Remove AI Exluded Buildings";
             removeAIExludedBuildingsToolStripMenuItem.Click += removeAIExlusdedBuildingsToolStripMenuItem_Click;
             // 
+            // createDefaultLoadoutsToolStripMenuItem
+            // 
+            createDefaultLoadoutsToolStripMenuItem.ForeColor = SystemColors.Control;
+            createDefaultLoadoutsToolStripMenuItem.Name = "createDefaultLoadoutsToolStripMenuItem";
+            createDefaultLoadoutsToolStripMenuItem.Size = new Size(223, 22);
+            createDefaultLoadoutsToolStripMenuItem.Text = "Create Default Loadouts";
+            createDefaultLoadoutsToolStripMenuItem.Click += createDefaultLoadoutsToolStripMenuItem_Click;
+            // 
             // ChatCM
             // 
             ChatCM.BackColor = Color.FromArgb(60, 63, 65);
-            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem });
+            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(222, 158);
+            ChatCM.Size = new Size(222, 224);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -995,6 +1005,22 @@
             removeMissionToolStripMenuItem.Size = new Size(221, 22);
             removeMissionToolStripMenuItem.Text = "Remove Mission";
             removeMissionToolStripMenuItem.Click += removeMissionToolStripMenuItem_Click;
+            // 
+            // addP2PWaypointToolStripMenuItem
+            // 
+            addP2PWaypointToolStripMenuItem.ForeColor = SystemColors.Control;
+            addP2PWaypointToolStripMenuItem.Name = "addP2PWaypointToolStripMenuItem";
+            addP2PWaypointToolStripMenuItem.Size = new Size(221, 22);
+            addP2PWaypointToolStripMenuItem.Text = "Add P2P Waypoint";
+            addP2PWaypointToolStripMenuItem.Click += addP2PWaypointToolStripMenuItem_Click;
+            // 
+            // removeP2PWaypointToolStripMenuItem
+            // 
+            removeP2PWaypointToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeP2PWaypointToolStripMenuItem.Name = "removeP2PWaypointToolStripMenuItem";
+            removeP2PWaypointToolStripMenuItem.Size = new Size(221, 22);
+            removeP2PWaypointToolStripMenuItem.Text = "Remove P2P Waypoint";
+            removeP2PWaypointToolStripMenuItem.Click += removeP2PWaypointToolStripMenuItem_Click;
             // 
             // GarageCM
             // 
@@ -2472,14 +2498,6 @@
             removeQuestNPCToolStripMenuItem.Text = "Remove Quest NPC";
             removeQuestNPCToolStripMenuItem.Click += removeQuestNPCToolStripMenuItem_Click;
             // 
-            // createDefaultLoadoutsToolStripMenuItem
-            // 
-            createDefaultLoadoutsToolStripMenuItem.ForeColor = SystemColors.Control;
-            createDefaultLoadoutsToolStripMenuItem.Name = "createDefaultLoadoutsToolStripMenuItem";
-            createDefaultLoadoutsToolStripMenuItem.Size = new Size(223, 22);
-            createDefaultLoadoutsToolStripMenuItem.Text = "Create Default Loadouts";
-            createDefaultLoadoutsToolStripMenuItem.Click += createDefaultLoadoutsToolStripMenuItem_Click;
-            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2785,5 +2803,7 @@
         private ToolStripMenuItem removeNewsFeedTextToolStripMenuItem;
         private ToolStripMenuItem removeNewsFeedLinkToolStripMenuItem;
         private ToolStripMenuItem createDefaultLoadoutsToolStripMenuItem;
+        private ToolStripMenuItem addP2PWaypointToolStripMenuItem;
+        private ToolStripMenuItem removeP2PWaypointToolStripMenuItem;
     }
 }

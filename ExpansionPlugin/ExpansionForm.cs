@@ -1379,7 +1379,7 @@ namespace ExpansionPlugin
                     ExpansionQuestConfig ExpansionQuestConfig = node.Parent.Tag as ExpansionQuestConfig;
                     ShowHandler<IUIHandler>(new ExpansionQuestSettingsResetScheduleControl(), typeof(ExpansionQuestConfig), ExpansionQuestConfig.Data, selected);
                 },
-                ["ObjectivesTreasureHuntPositions"] = (node,selected) =>
+                ["ObjectivesTreasureHuntPositions"] = (node, selected) =>
                 {
                     ExpansionQuestObjectiveTreasureHuntConfig cfg = node.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
                     ShowHandler<IUIHandler>(null, null, null, selected);
@@ -1387,7 +1387,6 @@ namespace ExpansionPlugin
                 }
             };
         }
-
         private void InitializeContextMenuHandlers()
         {
             // ----------------------
@@ -4773,14 +4772,29 @@ namespace ExpansionPlugin
         }
         private static void CreateExpansionP2PMarketTraderNodes(ExpansionP2PMarketTraderConfig ef, TreeNode EconomyRootNode)
         {
-            TreeNode P2PTraderRootNode = new TreeNode(ef.FileName)
+            string typeLabel = ef.IsAI ? "[NPC AI]" : "[Static]";
+            TreeNode P2PTraderRootNode = new TreeNode($"({ef.m_TraderID}){ef.m_ClassName} {typeLabel}")
             {
                 Tag = ef
             };
+
             P2PTraderRootNode.Nodes.Add(new TreeNode("Position and Orientation")
             {
                 Tag = "P2PMarketTraderPOSandOri"
             });
+            if (ef.IsAI)
+            {
+                TreeNode Waypointnode = new TreeNode("Waypoints")
+                {
+                    Tag = "ExpansionMarketP2PWaypoints"
+                };
+                foreach (Vec3 v3 in ef.m_Waypoints)
+                {
+                    Waypointnode.Nodes.Add(new TreeNode(v3.GetString()) { Tag = v3 });
+                }
+                P2PTraderRootNode.Nodes.Add(Waypointnode);
+            }
+
             P2PTraderRootNode.Nodes.Add(new TreeNode("Vehicle Spawn")
             {
                 Tag = ef.m_VehicleSpawnPosition
@@ -4793,30 +4807,18 @@ namespace ExpansionPlugin
             {
                 Tag = ef.m_AircraftSpawnPosition
             });
-            TreeNode WaypointNodes = new TreeNode("Roaming Waypoints")
+            TreeNode Currenciesnodes = new TreeNode("Currencies")
             {
-                Tag = "P2PMarketTraderRoamingWaypoints"
+                Tag = "Currencies"
             };
-            foreach (Vec3 v3 in ef.m_Waypoints)
+            foreach (string position in ef.m_Currencies)
             {
-                WaypointNodes.Nodes.Add(new TreeNode(v3.ToString())
+                Currenciesnodes.Nodes.Add(new TreeNode(position)
                 {
-                    Tag = v3
+                    Tag = "Currency"
                 });
             }
-            P2PTraderRootNode.Nodes.Add(WaypointNodes);
-            TreeNode CurrenciesNodes = new TreeNode("Currencies")
-            {
-                Tag = "P2PMarketTraderCurrencies"
-            };
-            foreach (string cur in ef.m_Currencies)
-            {
-                CurrenciesNodes.Nodes.Add(new TreeNode(cur)
-                {
-                    Tag = "P2PMarketTraderCurrency"
-                });
-            }
-            P2PTraderRootNode.Nodes.Add(CurrenciesNodes);
+            P2PTraderRootNode.Nodes.Add(Currenciesnodes);
             EconomyRootNode.Nodes.Add(P2PTraderRootNode);
         }
         //Personal Storage New
@@ -8180,7 +8182,7 @@ namespace ExpansionPlugin
             if (currentTreeNode?.Parent == null)
                 return;
 
-            if(NewTreasurehunPoint == true)
+            if (NewTreasurehunPoint == true)
             {
                 ExpansionQuestObjectiveTreasureHuntConfig thc = currentTreeNode.FindParentOfType<ExpansionQuestObjectiveTreasureHuntConfig>();
 
@@ -8206,7 +8208,7 @@ namespace ExpansionPlugin
                     currentTreeNode.Parent.Nodes.Add(node);
                 else if (currentTreeNode.Tag.ToString() == "ObjectivesTreasureHuntPositions")
                     currentTreeNode.Nodes.Add(node);
-                
+
                 ExpansionTV.SelectedNode = node;
                 return;
             }
@@ -9389,7 +9391,7 @@ namespace ExpansionPlugin
             {
                 MessageBox.Show("Please use the right click method on the mission node.\nYou need to select which kind of mission to add.");
             }
-            else if(currentTreeNode.Tag.ToString() == "ObjectivesTreasureHuntPositions" ||
+            else if (currentTreeNode.Tag.ToString() == "ObjectivesTreasureHuntPositions" ||
                 currentTreeNode.Parent.Parent.Tag is ExpansionQuestObjectiveTreasureHuntConfig)
             {
                 if (NewTreasurehunPoint == false)
@@ -10931,6 +10933,10 @@ namespace ExpansionPlugin
             {
                 currencies = settings.Data.Currencies;
             }
+            else if (currentTreeNode.Parent.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                currencies = ExpansionP2PMarketTraderConfig.m_Currencies;
+            }
 
             if (currencies == null)
                 return;
@@ -10953,6 +10959,10 @@ namespace ExpansionPlugin
             else if (currentTreeNode.Parent.Parent.Tag is ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig)
             {
                 ExpansionMarketSettingsConfig.Data.Currencies.Remove(currentTreeNode.Text);
+            }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                ExpansionP2PMarketTraderConfig.m_Currencies.Remove(currentTreeNode.Text);
             }
             currentTreeNode.Remove();
         }
@@ -12981,6 +12991,14 @@ namespace ExpansionPlugin
             ExpansionPersonalStorageLevel.ExcludedSlots.Remove(currentTreeNode.Text);
             currentTreeNode.Remove();
         }
+        private void addP2PWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void removeP2PWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
         //Personal Storage
         private void addNewPersonalStorageConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -14876,6 +14894,8 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
+
 
 
 

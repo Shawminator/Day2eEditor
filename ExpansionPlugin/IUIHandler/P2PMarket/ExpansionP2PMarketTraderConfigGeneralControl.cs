@@ -71,7 +71,9 @@ namespace ExpansionPlugin
             BindingList<string> Icons = new BindingList<string>(File.ReadAllLines("Data\\ExpansionIconnames.txt").ToList());
             m_DisplayIconCB.DataSource = Icons;
 
-
+            string filePath = "Data\\ExpansionP2PTradernames.txt";
+            List<string> NPCNames = File.ReadAllLines(filePath).ToList();
+            m_ClassNameCB.DataSource = NPCNames;
 
             FilenameTB.Text = Path.GetFileNameWithoutExtension(_data.FileName);
             m_TraderIDNUD.Value = (int)_data.m_TraderID;
@@ -102,7 +104,36 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = _data.FileName;
+                bool isAI = _data.IsAI;
+                string typeLabel = isAI ? "[NPC AI]" : "[Static]";
+                _nodes.Last().Text = $"({_data.m_TraderID}){_data.m_ClassName} {typeLabel}";
+                // Add or remove the waypoints depending what is returned from isAI
+                if(isAI)
+                {
+                    if (_nodes.Last().Nodes[1].Text == "Waypoints") // waypoints exists so nothing needed
+                    {
+                        return;
+                    }
+                    else //we need to add the nodes
+                    {
+                        TreeNode Waypointnode = new TreeNode("Waypoints")
+                        {
+                            Tag = "ExpansionMarketP2PWaypoints"
+                        };
+                        foreach (Vec3 v3 in _data.m_Waypoints)
+                        {
+                            Waypointnode.Nodes.Add(new TreeNode(v3.GetString()) { Tag = v3 });
+                        }
+                        _nodes.Last().Nodes.Insert(1, Waypointnode);
+                    }
+                }
+                else
+                {
+                    if (_nodes.Last().Nodes[1].Text == "Waypoints") // waypoints exists so we remove the nodes
+                    {
+                        _nodes.Last().Nodes[1].Remove();
+                    }
+                }
             }
         }
 
@@ -114,7 +145,7 @@ namespace ExpansionPlugin
             string dirName = Path.GetDirectoryName(_data._path);
             string newFilename = FilenameTB.Text + ".json";
             _data.SetPath(Path.Combine(dirName, newFilename));
-            UpdateTreeNodeText();
+            //UpdateTreeNodeText();
         }
 
         private void m_TraderIDNUD_ValueChanged(object sender, EventArgs e)
@@ -160,13 +191,14 @@ namespace ExpansionPlugin
         private void m_ClassNameCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.m_ClassName = m_ClassNameCB.GetItemText(m_ClassNameCB.SelectedIndex);
+            _data.m_ClassName = m_ClassNameCB.GetItemText(m_ClassNameCB.SelectedItem);
+            UpdateTreeNodeText();
         }
 
         private void m_LoadoutFileCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.m_LoadoutFile = m_LoadoutFileCB.GetItemText(m_LoadoutFileCB.SelectedIndex);
+            _data.m_LoadoutFile = m_LoadoutFileCB.GetItemText(m_LoadoutFileCB.SelectedItem);
         }
 
         private void m_DisplayNameTB_TextChanged(object sender, EventArgs e)
@@ -185,7 +217,7 @@ namespace ExpansionPlugin
         private void m_FactionCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.m_Faction = m_FactionCB.GetItemText(m_FactionCB.SelectedIndex);
+            _data.m_Faction = m_FactionCB.GetItemText(m_FactionCB.SelectedItem);
         }
 
         private void m_EmoteIDNUD_ValueChanged(object sender, EventArgs e)

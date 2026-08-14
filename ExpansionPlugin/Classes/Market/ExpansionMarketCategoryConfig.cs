@@ -117,7 +117,7 @@ namespace ExpansionPlugin
             ExpansionMarketCategory ExpansionMarketCategory = new ExpansionMarketCategory()
             {
                 m_Version = CurrentVersion,
-                DisplayName = filename,
+                DisplayName = fileName,
                 Icon = "Deliver",
                 Color = "FBFCFEFF",
                 InitStockPercent = (decimal)75.0,
