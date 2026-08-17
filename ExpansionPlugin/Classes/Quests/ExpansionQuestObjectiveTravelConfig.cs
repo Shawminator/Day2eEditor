@@ -79,9 +79,9 @@ namespace ExpansionPlugin
                 MaxDistance = 10;
                 fixes.Add("Clamped MaxDistance to 10");
             }
-            if (string.IsNullOrWhiteSpace(MarkerName))
+            if (MarkerName == null)
             {
-                MarkerName = string.Empty;
+                MarkerName = "";
                 fixes.Add("Defaulted MarkerName to empty string");
             }
             if (ShowDistance is null || (ShowDistance != 0 && ShowDistance != 1))

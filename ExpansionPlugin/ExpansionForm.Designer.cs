@@ -296,6 +296,8 @@
             removeQuestToolStripMenuItem = new ToolStripMenuItem();
             addQuestNPCToolStripMenuItem = new ToolStripMenuItem();
             removeQuestNPCToolStripMenuItem = new ToolStripMenuItem();
+            moveP2PWaypointUpToolStripMenuItem = new ToolStripMenuItem();
+            moveP2PWaypointDownToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -945,10 +947,10 @@
             // ChatCM
             // 
             ChatCM.BackColor = Color.FromArgb(60, 63, 65);
-            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem });
+            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem, moveP2PWaypointUpToolStripMenuItem, moveP2PWaypointDownToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(222, 224);
+            ChatCM.Size = new Size(222, 268);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -2498,6 +2500,22 @@
             removeQuestNPCToolStripMenuItem.Text = "Remove Quest NPC";
             removeQuestNPCToolStripMenuItem.Click += removeQuestNPCToolStripMenuItem_Click;
             // 
+            // moveP2PWaypointUpToolStripMenuItem
+            // 
+            moveP2PWaypointUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveP2PWaypointUpToolStripMenuItem.Name = "moveP2PWaypointUpToolStripMenuItem";
+            moveP2PWaypointUpToolStripMenuItem.Size = new Size(221, 22);
+            moveP2PWaypointUpToolStripMenuItem.Text = "Move P2P Waypoint Up";
+            moveP2PWaypointUpToolStripMenuItem.Click += moveP2PWaypointUpToolStripMenuItem_Click;
+            // 
+            // moveP2PWaypointDownToolStripMenuItem
+            // 
+            moveP2PWaypointDownToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveP2PWaypointDownToolStripMenuItem.Name = "moveP2PWaypointDownToolStripMenuItem";
+            moveP2PWaypointDownToolStripMenuItem.Size = new Size(221, 22);
+            moveP2PWaypointDownToolStripMenuItem.Text = "Move P2P Waypoint Down";
+            moveP2PWaypointDownToolStripMenuItem.Click += moveP2PWaypointDownToolStripMenuItem_Click;
+            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2805,5 +2823,7 @@
         private ToolStripMenuItem createDefaultLoadoutsToolStripMenuItem;
         private ToolStripMenuItem addP2PWaypointToolStripMenuItem;
         private ToolStripMenuItem removeP2PWaypointToolStripMenuItem;
+        private ToolStripMenuItem moveP2PWaypointUpToolStripMenuItem;
+        private ToolStripMenuItem moveP2PWaypointDownToolStripMenuItem;
     }
 }

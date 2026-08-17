@@ -65,6 +65,33 @@ namespace Day2eEditor
                 float.Parse(parts[2], CultureInfo.InvariantCulture)
             );
         }
+        public static Vec3 operator +(Vec3 a, Vec3 b)
+        {
+            return new Vec3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+        }
+
+        public static Vec3 operator -(Vec3 a, Vec3 b)
+        {
+            return new Vec3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static Vec3 operator *(Vec3 v, float scalar)
+        {
+            return new Vec3(v.X * scalar, v.Y * scalar, v.Z * scalar);
+        }
+        public static float Dot(Vec3 a, Vec3 b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        }
+
+        public static float DistanceSquared(Vec3 a, Vec3 b)
+        {
+            float dx = a.X - b.X;
+            float dy = a.Y - b.Y;
+            float dz = a.Z - b.Z;
+
+            return dx * dx + dy * dy + dz * dz;
+        }
         public override string ToString()
         {
             return X.ToString() + "," + Y.ToString() + "," + Z.ToString();
@@ -97,7 +124,7 @@ namespace Day2eEditor
                 Z = this.Z
             };
         }
-  
+        
     }
 
     public class Vec3PandR

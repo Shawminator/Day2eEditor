@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
@@ -216,6 +217,19 @@ namespace ExpansionPlugin
                         };
                         ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), v3, selected);
                         SetupP2PTraderVehicleSpawnMarkers(v3, node);
+                        _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
+                    }
+                    else if (node.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig)
+                    {
+                        Vec3 v3 = node.Tag as Vec3;
+                        var control = new Vector3Control();
+                        control.PositionChanged += (updatedPos) =>
+                        {
+                            _mapControl.ClearDrawables();
+                            DrawbaseP2PTraderSpawnPositions(node.FindParentOfType<ExpansionP2pMarketTradersConfig>());
+                        };
+                        ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), v3, selected);
+                        SetupP2PTraderSpawnPositions(node.FindParentOfType<ExpansionP2PMarketTraderConfig>(), node);
                         _mapControl.EnsureVisible(new PointF(v3.X, v3.Z));
                     }
                     else if (node.Parent.Tag is ExpansionTraderMaps ExpansionTraderMaps)
@@ -1267,6 +1281,13 @@ namespace ExpansionPlugin
                     SetupP2PTraderSpawnPositions(ExpansionP2PMarketTraderConfig, node);
                     _mapControl.EnsureVisible(new PointF(ExpansionP2PMarketTraderConfig.m_Position.X, ExpansionP2PMarketTraderConfig.m_Position.Z));
                 },
+                ["ExpansionMarketP2PWaypoints"] = (node, selected) =>
+                {
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = node.Parent.Tag as ExpansionP2PMarketTraderConfig;
+                    var control = new ExpasnionP2PMarksetTraderSpawnInfoControl();
+                    ShowHandler(control, typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, selected);
+                    SetupP2PTraderSpawnPositions(ExpansionP2PMarketTraderConfig, node);
+                },
                 //Personal Storage
                 ["ExpansionPersonalStorageConfigPOSandOri"] = (node, selected) =>
                 {
@@ -1456,6 +1477,15 @@ namespace ExpansionPlugin
                     {
                         ExpansionSettingsCM.Items.Clear();
                         ExpansionSettingsCM.Items.Add(removeTreasureHuntPositionToolStripMenuItem);
+                        ExpansionSettingsCM.Show(Cursor.Position);
+                    }
+                    else if (node.Parent.Tag.ToString() == "ExpansionMarketP2PWaypoints")
+                    {
+                        ExpansionSettingsCM.Items.Clear();
+                        ExpansionSettingsCM.Items.Add(removeP2PWaypointToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                        ExpansionSettingsCM.Items.Add(moveP2PWaypointUpToolStripMenuItem);
+                        ExpansionSettingsCM.Items.Add(moveP2PWaypointDownToolStripMenuItem);
                         ExpansionSettingsCM.Show(Cursor.Position);
                     }
                 },
@@ -6140,6 +6170,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = false;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 if (ExpansionBaseBuildingConfig != null)
                     DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig);
@@ -6167,6 +6199,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = true;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 var tag = node.Parent?.Parent?.Parent?.Parent?.Tag;
                 var tag2 = node.Parent?.Parent?.Parent?.Tag;
@@ -6232,6 +6266,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = false;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 DrawbaseTreasureHunt(tresure);
             });
@@ -6324,6 +6360,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = true;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 var ExpansionSpawnConfig = node.FindParentOfType<ExpansionSpawnConfig>();
                 if (ExpansionSpawnConfig != null)
@@ -6340,6 +6378,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = true;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
                 if (ExpansionMissionsConfig != null)
@@ -6356,6 +6396,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = true;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
                 if (ExpansionMissionsConfig != null)
@@ -6382,6 +6424,22 @@ namespace ExpansionPlugin
                 _selectedP2PMarketTrader = expansionP2PMarketTraderConfig;
                 _mapControl.MapsingleClicked += MapControl_P2PTraderSpawnPositionsSingleclicked;
                 _mapControl.MapDoubleClicked += MapControl_P2PTraderSpawnPositionsDoubleclicked;
+
+                if (expansionP2PMarketTraderConfig.IsAI)
+                {
+                    _mapOverlayPanel.Visible = true;
+                    ShowAllCB.Visible = true;
+                    button6.Enabled = true;
+                    button5.Enabled = true;
+                }
+                else
+                {
+                    NewP2pTraderwaypoiny = false;
+                    _mapOverlayPanel.Visible = true;
+                    ShowAllCB.Visible = true;
+                    button6.Enabled = false;
+                    button5.Enabled = false;
+                }
 
                 var ExpansionP2pMarketTradersConfig = node.FindParentOfType<ExpansionP2pMarketTradersConfig>();
                 if (ExpansionP2pMarketTradersConfig != null)
@@ -6424,6 +6482,8 @@ namespace ExpansionPlugin
 
                 _mapOverlayPanel.Visible = true;
                 ShowAllCB.Visible = true;
+                button6.Enabled = true;
+                button5.Enabled = true;
 
                 var ExpansionMarketTraderMapsConfig = node.FindParentOfType<ExpansionMarketTraderMapsConfig>();
                 if (ExpansionMarketTraderMapsConfig != null)
@@ -6459,6 +6519,7 @@ namespace ExpansionPlugin
                 NewTraderVec3 = false;
                 NewSpawnPoint = false;
                 NewTreasurehunPoint = false;
+                NewP2pTraderwaypoiny = false;
                 _mapControl.Cursor = Cursors.Hand;
                 button5.BackColor = Color.FromArgb(60, 63, 65);
             }
@@ -6466,6 +6527,7 @@ namespace ExpansionPlugin
             {
                 _mapControl.Cursor = Cursors.Cross;
             }
+
         }
         private void DrawbasebuildingNoBuildZones(ExpansionBaseBuildingConfig ExpansionBaseBuildingConfig)
         {
@@ -7350,12 +7412,88 @@ namespace ExpansionPlugin
         }
         private void DrawbaseP2PTraderSpawnPositions(ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig)
         {
+            TogglePlacementMode(NewP2pTraderwaypoiny);
+            //Draw Main P2P Trader position
             TraderSpawnDrawable? selectedMarker = null;
-            foreach (ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig in ExpansionP2pMarketTradersConfig.Items)
+            AIPatrolDrawable? selectedwaypoint = null;
+            if (ShowAllCB.Checked == true)
             {
+                foreach (ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig in ExpansionP2pMarketTradersConfig.Items)
+                {
+                    var marker = new TraderSpawnDrawable(
+                            new PointF((float)ExpansionP2PMarketTraderConfig.m_Position.X, (float)ExpansionP2PMarketTraderConfig.m_Position.Z),
+                            _mapControl.MapSize)
+                    {
+                        Color = Color.Red,
+                        Orientation = ExpansionP2PMarketTraderConfig.m_Orientation.getfloatarray(),
+                        Text = $"{ExpansionP2PMarketTraderConfig.FileName}",
+                        TextPlacement = MarkerLabelPlacement.Top,
+                        TextBackground = true,
+                        TextBackgroundColor = Color.BlueViolet
+                    };
+
+                    if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig)
+                    {
+                        marker.Color = Color.LimeGreen;
+                        // Defer registering; draw this one last
+                        selectedMarker = marker;
+                    }
+                    else
+                    {
+                        _mapControl.RegisterDrawable(marker);
+                    }
+                    //Draw P2P Waypoints if AI
+                    if (ExpansionP2PMarketTraderConfig.IsAI)
+                    {
+                        PatrolBehaviour behaviour = PatrolBehaviour.ALTERNATE;
+                        for (int i = 0; i < ExpansionP2PMarketTraderConfig.m_Waypoints.Count; i++)
+                        {
+                            Vec3 waypoints = ExpansionP2PMarketTraderConfig.m_Waypoints[i];
+                            // Determine next waypoint index
+                            bool isLast = i == ExpansionP2PMarketTraderConfig.m_Waypoints.Count - 1;
+                            Vec3 nextWaypoint;
+                            if (isLast)
+                            {
+                                // Don't connect last to first for ALTERNATE
+                                nextWaypoint = waypoints;
+                            }
+                            else
+                            {
+                                nextWaypoint = ExpansionP2PMarketTraderConfig.m_Waypoints[(i + 1) % ExpansionP2PMarketTraderConfig.m_Waypoints.Count];
+                            }
+                            var waypoint = new AIPatrolDrawable(
+                            new PointF(waypoints.X, waypoints.Z),
+                            new PointF(nextWaypoint.X, nextWaypoint.Z),
+                            _mapControl.MapSize,
+                            behaviour)
+                            {
+                                Color = Color.Red,
+                                WriteString = true
+                            };
+
+                            if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig && currentTreeNode.Tag is Vec3)
+                                marker.Color = Color.Yellow;
+
+                            if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig)
+                                waypoint.Color = Color.Yellow;
+
+                            Vec3 v3 = currentTreeNode.Tag as Vec3;
+                            if (v3 == waypoints)
+                                waypoint.Color = Color.LimeGreen;
+
+                            waypoint.text = (i == 0 ? ExpansionP2PMarketTraderConfig.m_ClassName + "\n" : "") + (i + 1).ToString();
+
+                            _mapControl.RegisterDrawable(waypoint);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = currentTreeNode.FindParentOfType<ExpansionP2PMarketTraderConfig>();
                 var marker = new TraderSpawnDrawable(
-                        new PointF((float)ExpansionP2PMarketTraderConfig.m_Position.X, (float)ExpansionP2PMarketTraderConfig.m_Position.Z),
-                        _mapControl.MapSize)
+                            new PointF((float)ExpansionP2PMarketTraderConfig.m_Position.X, (float)ExpansionP2PMarketTraderConfig.m_Position.Z),
+                            _mapControl.MapSize)
                 {
                     Color = Color.Red,
                     Orientation = ExpansionP2PMarketTraderConfig.m_Orientation.getfloatarray(),
@@ -7375,10 +7513,55 @@ namespace ExpansionPlugin
                 {
                     _mapControl.RegisterDrawable(marker);
                 }
+                //Draw P2P Waypoints if AI
+                if (ExpansionP2PMarketTraderConfig.IsAI)
+                {
+                    PatrolBehaviour behaviour = PatrolBehaviour.ALTERNATE;
+                    for (int i = 0; i < ExpansionP2PMarketTraderConfig.m_Waypoints.Count; i++)
+                    {
+                        Vec3 waypoints = ExpansionP2PMarketTraderConfig.m_Waypoints[i];
+                        // Determine next waypoint index
+                        bool isLast = i == ExpansionP2PMarketTraderConfig.m_Waypoints.Count - 1;
+                        Vec3 nextWaypoint;
+                        if (isLast)
+                        {
+                            // Don't connect last to first for ALTERNATE
+                            nextWaypoint = waypoints;
+                        }
+                        else
+                        {
+                            nextWaypoint = ExpansionP2PMarketTraderConfig.m_Waypoints[(i + 1) % ExpansionP2PMarketTraderConfig.m_Waypoints.Count];
+                        }
+                        var waypoint = new AIPatrolDrawable(
+                        new PointF(waypoints.X, waypoints.Z),
+                        new PointF(nextWaypoint.X, nextWaypoint.Z),
+                        _mapControl.MapSize,
+                        behaviour)
+                        {
+                            Color = Color.Red,
+                            WriteString = true
+                        };
+
+                        if (_selectedP2PMarketTrader == ExpansionP2PMarketTraderConfig && currentTreeNode.Tag is Vec3)
+                            marker.Color = Color.Yellow;
+
+                        Vec3 v3 = currentTreeNode.Tag as Vec3;
+                        if (v3 == waypoints)
+                            waypoint.Color = Color.LimeGreen;
+
+                        waypoint.text = (i == 0 ? ExpansionP2PMarketTraderConfig.m_ClassName + "\n" : "") + (i + 1).ToString();
+
+                        _mapControl.RegisterDrawable(waypoint);
+                    }
+                }
             }
             if (selectedMarker != null)
             {
                 _mapControl.RegisterDrawable(selectedMarker);
+            }
+            if (selectedwaypoint != null)
+            {
+                _mapControl.RegisterDrawable(selectedwaypoint);
             }
         }
         private void DrawbaseExpansionPersonalStoragePositions(ExpansionPersonalStorageContainersConfig ExpansionPersonalStorageContainersConfig)
@@ -8925,7 +9108,98 @@ namespace ExpansionPlugin
         {
             if (currentTreeNode?.Parent.Parent == null)
                 return;
-            TreeNode parentNode = currentTreeNode.Parent.Parent;
+
+            if (NewP2pTraderwaypoiny == true)
+            {
+                ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = currentTreeNode.FindParentOfType<ExpansionP2PMarketTraderConfig>();
+                //int insertIndex = ExpansionP2PMarketTraderConfig.m_Waypoints.Count;
+                Vec3 newpos = new Vec3()
+                {
+                    X = (float)e.MapCoordinates.X,
+                    Y = 0f,
+                    Z = (float)e.MapCoordinates.Y,
+                };
+                if (MapData.FileExists)
+                {
+                    newpos.Y = (MapData.gethieght(newpos.X, newpos.Z));
+                }
+
+                int insertIndex = 0;
+                float bestDistSq = float.MaxValue;
+
+                Vec3[] waypoints = ExpansionP2PMarketTraderConfig.m_Waypoints.ToArray();
+                if (waypoints.Length == 1)
+                {
+                    insertIndex = 1;
+                }
+                else if (waypoints.Count() >= 2)
+                {
+                    bool beforeStart = false;
+                    bool afterEnd = false;
+
+                    for (int i = 0; i < waypoints.Count() - 1; i++)
+                    {
+                        Vec3 a = waypoints[i];
+                        Vec3 b = waypoints[i + 1];
+
+                        Vec3 ab = b - a;
+                        Vec3 ap = newpos - a;
+
+
+                        float abLenSq = Vec3.Dot(ab, ab);
+                        if (abLenSq <= 0)
+                            continue;
+
+                        float t = Vec3.Dot(ap, ab) / abLenSq;
+
+                        // First segment
+                        if (i == 0 && t < 0)
+                        {
+                            beforeStart = true;
+                            break;
+                        }
+
+                        // Last segment
+                        if (i == waypoints.Count() - 2 && t > 1)
+                        {
+                            afterEnd = true;
+                            break;
+                        }
+
+                        // Clamp to segment
+                        float clampedT = (float)(Math.Clamp(t, 0.0, 1.0));
+
+                        Vec3 closestPoint = a + ab * clampedT;
+                        float distSq = Vec3.DistanceSquared(newpos, closestPoint);
+
+                        if (distSq < bestDistSq)
+                        {
+                            bestDistSq = distSq;
+                            insertIndex = i + 1;
+                        }
+                    }
+
+                    if (beforeStart)
+                        insertIndex = 0;
+                    else if (afterEnd)
+                        insertIndex = waypoints.Count();
+                }
+
+                ExpansionP2PMarketTraderConfig.m_Waypoints.Insert(insertIndex, newpos);
+                TreeNode newWaypointNode = new TreeNode(newpos.GetString())
+                {
+                    Tag = newpos
+                };
+                if (currentTreeNode.Tag.ToString() == "ExpansionMarketP2PWaypoints" ||
+                    currentTreeNode.Tag.ToString() == "P2PMarketTraderPOSandOri")
+                    currentTreeNode.Parent.Nodes[1].Nodes.Insert(insertIndex, newWaypointNode);
+                else if (currentTreeNode.Tag is Vec3)
+                    currentTreeNode.Parent.Nodes.Insert(insertIndex, newWaypointNode);
+
+                ExpansionTV.SelectedNode = newWaypointNode;
+                return;
+            }
+            TreeNode parentNode = currentTreeNode.FindParentNodeOfType<ExpansionP2pMarketTradersConfig>();
             object closestPos = null;
             double closestDistance = double.MaxValue;
 
@@ -8948,6 +9222,27 @@ namespace ExpansionPlugin
                     closestDistance = distance;
                     closestPos = pos;
                 }
+                if (ExpansionP2PMarketTraderConfig.IsAI)
+                {
+                    foreach (TreeNode child1 in child.Nodes[1].Nodes)
+                    {
+                        pos = child1.Tag as Vec3;
+
+                        // Node position in screen space
+                        posScreen = _mapControl.MapToScreen(new PointF(pos.X, pos.Z));
+
+                        dx = clickScreen.X - posScreen.X;
+                        dy = clickScreen.Y - posScreen.Y;
+                        distance = Math.Sqrt(dx * dx + dy * dy);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestPos = pos;
+                        }
+                    }
+
+                }
             }
 
             // Optional: choose only if within some "click radius"
@@ -8958,11 +9253,25 @@ namespace ExpansionPlugin
                 {
                     ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = child.Tag as ExpansionP2PMarketTraderConfig;
                     Vec3 pos = ExpansionP2PMarketTraderConfig.m_Position;
-
                     if (pos == closestPos)
                     {
                         ExpansionTV.SelectedNode = child.Nodes[0];
                         break;
+                    }
+
+
+                    if (ExpansionP2PMarketTraderConfig.IsAI)
+                    {
+                        foreach (TreeNode child1 in child.Nodes[1].Nodes)
+                        {
+                            pos = child1.Tag as Vec3;
+                            if (pos == closestPos)
+                            {
+                                ExpansionTV.SelectedNode = child1;
+                                break;
+                            }
+
+                        }
                     }
                 }
 
@@ -8986,6 +9295,23 @@ namespace ExpansionPlugin
                 ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = currentTreeNode.FindParentOfType<ExpansionP2PMarketTraderConfig>();
                 ShowHandler(new ExpasnionP2PMarksetTraderSpawnInfoControl(), typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, new List<TreeNode>() { currentTreeNode });
                 DrawbaseP2PTraderSpawnPositions(currentTreeNode.FindParentOfType<ExpansionP2pMarketTradersConfig>());
+            }
+            else if (currentTreeNode.Parent.Tag.ToString() == "ExpansionMarketP2PWaypoints")
+            {
+                if (currentTreeNode.Tag is Vec3 v3)
+                {
+                    v3.X = (float)e.MapCoordinates.X;
+                    v3.Z = (float)e.MapCoordinates.Y;
+                    if (MapData.FileExists)
+                    {
+                        v3.Y = (MapData.gethieght(v3.X, v3.Z));
+                    }
+                    _mapControl.ClearDrawables();
+
+                    ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig = currentTreeNode.FindParentOfType<ExpansionP2PMarketTraderConfig>();
+                    ShowHandler(new ExpasnionP2PMarksetTraderSpawnInfoControl(), typeof(ExpansionP2pMarketTradersConfig), ExpansionP2PMarketTraderConfig, new List<TreeNode>() { currentTreeNode });
+                    DrawbaseP2PTraderSpawnPositions(currentTreeNode.FindParentOfType<ExpansionP2pMarketTradersConfig>());
+                }
             }
         }
         private void MapControl_ExpansionPersonalStorageSpawnPositionsDoubleclicked(object sender, MapClickEventArgs e)
@@ -9323,6 +9649,7 @@ namespace ExpansionPlugin
         public bool NewTraderVec3 = false;
         public bool NewSpawnPoint = false;
         public bool NewTreasurehunPoint = false;
+        public bool NewP2pTraderwaypoiny = false;
         private void button5_Click(object sender, EventArgs e)
         {
             if (currentTreeNode.Parent.Parent.Tag is ExpansionTraderMaps)
@@ -9407,6 +9734,27 @@ namespace ExpansionPlugin
                     button5.BackColor = Color.FromArgb(60, 63, 65);
                 }
             }
+            else if (currentTreeNode.Tag.ToString() == "P2PMarketTraderPOSandOri" ||
+                    currentTreeNode.Tag.ToString() == "ExpansionMarketP2PWaypoints" ||
+                    (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig &&
+                    currentTreeNode.Tag is Vec3))
+            {
+                if (currentTreeNode.FindParentOfType<ExpansionP2PMarketTraderConfig>().IsAI)
+                {
+                    if (NewP2pTraderwaypoiny == false)
+                    {
+                        _mapControl.Cursor = Cursors.Cross;
+                        NewP2pTraderwaypoiny = true;
+                        button5.BackColor = Color.LimeGreen;
+                    }
+                    else
+                    {
+                        _mapControl.Cursor = Cursors.Hand;
+                        NewP2pTraderwaypoiny = false;
+                        button5.BackColor = Color.FromArgb(60, 63, 65);
+                    }
+                }
+            }
         }
         private void button6_Click(object sender, EventArgs e)
         {
@@ -9465,6 +9813,11 @@ namespace ExpansionPlugin
                 ExpansionQuestObjectiveTreasureHuntConfig.Positions.Remove(currentTreeNode.Tag as Vec3);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
             }
+            else if (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                ExpansionP2PMarketTraderConfig.m_Waypoints.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
         }
         private void ShowAllCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -9500,6 +9853,14 @@ namespace ExpansionPlugin
             {
                 _mapControl.ClearDrawables();
                 DrawbaseMissionMarkerData(ExpansionMissionsConfig);
+            }
+            else if (currentTreeNode.FindParentOfType<ExpansionP2pMarketTradersConfig>() is ExpansionP2pMarketTradersConfig ExpansionP2pMarketTradersConfig &&
+                (currentTreeNode.Parent.Tag.ToString() == "ExpansionMarketP2PWaypoints" ||
+                currentTreeNode.Tag.ToString() == "ExpansionMarketP2PWaypoints" ||
+                currentTreeNode.Tag.ToString() == "P2PMarketTraderPOSandOri"))
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseP2PTraderSpawnPositions(ExpansionP2pMarketTradersConfig);
             }
         }
         #endregion mapstuff
@@ -12997,7 +13358,64 @@ namespace ExpansionPlugin
         }
         private void removeP2PWaypointToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                ExpansionP2PMarketTraderConfig.m_Waypoints.Remove(currentTreeNode.Tag as Vec3);
+                currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+            }
+        }
+        private void moveP2PWaypointUpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                Vec3 waypoint = currentTreeNode.Tag as Vec3;
+                TreeNodeCollection siblings;
+                if (currentTreeNode.Parent != null)
+                {
+                    siblings = currentTreeNode.Parent.Nodes;
+                }
+                else
+                {
+                    siblings = ExpansionTV.Nodes;
+                }
 
+                int index = siblings.IndexOf(currentTreeNode);
+                if (index > 0)
+                {
+                    siblings.RemoveAt(index);
+                    ExpansionP2PMarketTraderConfig.m_Waypoints.RemoveAt(index);
+                    ExpansionP2PMarketTraderConfig.m_Waypoints.Insert(index - 1, waypoint);
+                    siblings.Insert(index - 1, currentTreeNode);
+                    ExpansionTV.SelectedNode = currentTreeNode;
+                }
+            }
+        }
+
+        private void moveP2PWaypointDownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Parent.Parent.Tag is ExpansionP2PMarketTraderConfig ExpansionP2PMarketTraderConfig)
+            {
+                Vec3 waypoint = currentTreeNode.Tag as Vec3;
+                TreeNodeCollection siblings;
+                if (currentTreeNode.Parent != null)
+                {
+                    siblings = currentTreeNode.Parent.Nodes;
+                }
+                else
+                {
+                    siblings = ExpansionTV.Nodes;
+                }
+
+                int index = siblings.IndexOf(currentTreeNode);
+                if (index < siblings.Count - 1)
+                {
+                    siblings.RemoveAt(index);
+                    ExpansionP2PMarketTraderConfig.m_Waypoints.RemoveAt(index);
+                    ExpansionP2PMarketTraderConfig.m_Waypoints.Insert(index + 1, waypoint);
+                    siblings.Insert(index + 1, currentTreeNode);
+                    ExpansionTV.SelectedNode = currentTreeNode;
+                }
+            }
         }
         //Personal Storage
         private void addNewPersonalStorageConfigToolStripMenuItem_Click(object sender, EventArgs e)
@@ -14894,6 +15312,7 @@ namespace ExpansionPlugin
         }
 
         #endregion search treeview
+
 
 
 
