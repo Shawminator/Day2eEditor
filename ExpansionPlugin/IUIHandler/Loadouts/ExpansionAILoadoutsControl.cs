@@ -82,7 +82,7 @@ namespace ExpansionPlugin
         {
             if (_nodes?.Any() == true)
             {
-                _nodes.Last().Text = _data.ClassName;
+                _nodes.Last().Text = $"{_data.ClassName}  -  {_data.Chance*100}%";
             }
         }
 
@@ -92,7 +92,7 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) return;
             _data.Chance = numericUpDown1.Value;
-            
+            UpdateTreeNodeText();
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)

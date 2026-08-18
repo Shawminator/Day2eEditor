@@ -156,6 +156,7 @@
             numericUpDown1.BackColor = Color.FromArgb(60, 63, 65);
             numericUpDown1.DecimalPlaces = 3;
             numericUpDown1.ForeColor = SystemColors.Control;
+            numericUpDown1.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             numericUpDown1.Location = new Point(102, 52);
             numericUpDown1.Margin = new Padding(4, 3, 4, 3);
             numericUpDown1.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -186,6 +187,7 @@
             numericUpDown2.BackColor = Color.FromArgb(60, 63, 65);
             numericUpDown2.DecimalPlaces = 3;
             numericUpDown2.ForeColor = SystemColors.Control;
+            numericUpDown2.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             numericUpDown2.Location = new Point(102, 22);
             numericUpDown2.Margin = new Padding(4, 3, 4, 3);
             numericUpDown2.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
@@ -203,7 +205,7 @@
             darkLabel41.Location = new Point(15, 54);
             darkLabel41.Margin = new Padding(4, 0, 4, 0);
             darkLabel41.Name = "darkLabel41";
-            darkLabel41.Size = new Size(79, 15);
+            darkLabel41.Size = new Size(78, 15);
             darkLabel41.TabIndex = 185;
             darkLabel41.Text = "Quantity Max";
             // 
@@ -223,6 +225,7 @@
             numericUpDown3.BackColor = Color.FromArgb(60, 63, 65);
             numericUpDown3.DecimalPlaces = 3;
             numericUpDown3.ForeColor = SystemColors.Control;
+            numericUpDown3.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             numericUpDown3.Location = new Point(102, 51);
             numericUpDown3.Margin = new Padding(4, 3, 4, 3);
             numericUpDown3.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
@@ -307,7 +310,7 @@
             darkLabel44.Location = new Point(13, 48);
             darkLabel44.Margin = new Padding(4, 0, 4, 0);
             darkLabel44.Name = "darkLabel44";
-            darkLabel44.Size = new Size(68, 15);
+            darkLabel44.Size = new Size(67, 15);
             darkLabel44.TabIndex = 194;
             darkLabel44.Text = "Health Max";
             // 
@@ -316,10 +319,10 @@
             numericUpDown5.BackColor = Color.FromArgb(60, 63, 65);
             numericUpDown5.DecimalPlaces = 3;
             numericUpDown5.ForeColor = SystemColors.Control;
+            numericUpDown5.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             numericUpDown5.Location = new Point(148, 46);
             numericUpDown5.Margin = new Padding(4, 3, 4, 3);
-            numericUpDown5.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
-            numericUpDown5.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
+            numericUpDown5.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown5.Name = "numericUpDown5";
             numericUpDown5.Size = new Size(122, 23);
             numericUpDown5.TabIndex = 191;
@@ -331,14 +334,15 @@
             numericUpDown4.BackColor = Color.FromArgb(60, 63, 65);
             numericUpDown4.DecimalPlaces = 3;
             numericUpDown4.ForeColor = SystemColors.Control;
+            numericUpDown4.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             numericUpDown4.Location = new Point(149, 16);
             numericUpDown4.Margin = new Padding(4, 3, 4, 3);
-            numericUpDown4.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            numericUpDown4.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            numericUpDown4.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown4.Name = "numericUpDown4";
             numericUpDown4.Size = new Size(122, 23);
             numericUpDown4.TabIndex = 193;
             numericUpDown4.TextAlign = HorizontalAlignment.Center;
+            numericUpDown4.Value = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown4.ValueChanged += numericUpDown4_ValueChanged;
             // 
             // darkButton8

@@ -1520,8 +1520,8 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewLoadoutFileToolStripMenuItem);
-                    //ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
-                    //ExpansionSettingsCM.Items.Add(createDefaultLoadoutsToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(createFromTemplateToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 [typeof(Loadbalancingcategorie)] = node =>
@@ -3358,7 +3358,7 @@ namespace ExpansionPlugin
         }
         private TreeNode BuildAILoadoutsNode(AILoadouts a)
         {
-            string label = string.IsNullOrWhiteSpace(a.ClassName) ? "Set" : a.ClassName;
+            string label = string.IsNullOrWhiteSpace(a.ClassName) ? "Set" : $"{a.ClassName}  -  {a.Chance*100}%";
             TreeNode tn = new TreeNode(label) { Tag = a };
 
             foreach (Inventoryattachment ia in a.InventoryAttachments ?? new BindingList<Inventoryattachment>())
@@ -10202,6 +10202,53 @@ namespace ExpansionPlugin
                 }
             }
         }
+        private void CreateLoadoutFromTemplate_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem btn = (ToolStripMenuItem)sender;
+            string itemText = btn.Text;
+            ToolStripMenuItem parentBtn = btn.OwnerItem as ToolStripMenuItem;
+            string parentText = parentBtn?.Text;
+
+            string loadoutsPath = _expansionManager._paths["ExpansionLoadouts"];
+            bool exists = _expansionManager.EnsureLoadoutExists(loadoutsPath, $"ExpansionPlugin.Loadouts.{parentText}", $"{itemText}.json");
+            if (exists == true) return;
+
+            string newPath = Path.Combine(loadoutsPath, $"{itemText}.json");
+            AILoadouts newAILoadouts = AppServices.GetRequired<FileService>().LoadOrCreateJson(
+                    newPath,
+                    createNew: () => new AILoadouts(),
+                    configName: "Loadout",
+                    useBoolConvertor: true
+                );
+
+            newAILoadouts.SetPath(newPath);
+            newAILoadouts.SetGuid(Guid.NewGuid());
+            bool added = _expansionManager.ExpansionLoadoutConfig.AddNewLoadoutFile(newAILoadouts);
+            if (added)
+            {
+                TreeNode newNode = SetupLoadoutTreeView(newAILoadouts);
+                string newNodeText = newNode.Text.ToLowerInvariant();
+
+                int insertIndex = 0;
+                foreach (TreeNode node in currentTreeNode.Nodes)
+                {
+                    if (string.Compare(newNodeText, node.Text.ToLowerInvariant()) < 0)
+                    {
+                        break;
+                    }
+                    insertIndex++;
+                }
+
+                currentTreeNode.Nodes.Insert(insertIndex, newNode);
+                ExpansionTV.SelectedNode = newNode;
+                newNode.Expand();
+            }
+            else
+            {
+                MessageBox.Show($"File with the same filename allready exist.\nYou chose... poorly.");
+            }
+
+        }
         // Airdrops 
         private void addNewAirdropContainerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -15324,6 +15371,11 @@ namespace ExpansionPlugin
 
 
 
+
+        private void createFromTemplateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]

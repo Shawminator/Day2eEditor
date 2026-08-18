@@ -93,6 +93,14 @@
     <None Remove="Images\WestLoadout.json" />
     <None Remove="Images\YeetBrigadeLoadout.json" />
     <None Remove="Images\YellowKingLoadout.json" />
+    <None Remove="Loadouts\Civilian\biker.json" />
+    <None Remove="Loadouts\Civilian\civilian.json" />
+    <None Remove="Loadouts\Civilian\farmer.json" />
+    <None Remove="Loadouts\Civilian\fisherman.json" />
+    <None Remove="Loadouts\Civilian\freshie.json" />
+    <None Remove="Loadouts\Civilian\hunter.json" />
+    <None Remove="Loadouts\Civilian\lumberjack.json" />
+    <None Remove="Loadouts\Civilian\suit.json" />
     <None Remove="Loadouts\Default\BanditLoadout.json" />
     <None Remove="Loadouts\Default\EastLoadout.json" />
     <None Remove="Loadouts\Default\Example.json" />
@@ -110,6 +118,30 @@
     <None Remove="Loadouts\Default\WestLoadout.json" />
     <None Remove="Loadouts\Default\YeetBrigadeLoadout.json" />
     <None Remove="Loadouts\Default\YellowKingLoadout.json" />
+    <None Remove="Loadouts\Military\CUU.json" />
+    <None Remove="Loadouts\Military\Ghillie.json" />
+    <None Remove="Loadouts\Military\Gorka.json" />
+    <None Remove="Loadouts\Military\Nato.json" />
+    <None Remove="Loadouts\Military\OMK.json" />
+    <None Remove="Loadouts\Military\Pilot.json" />
+    <None Remove="Loadouts\Military\Sniper.json" />
+    <None Remove="Loadouts\Military\TTSKO.json" />
+    <None Remove="Loadouts\Military\USMC.json" />
+    <None Remove="Loadouts\Public_Services\Construction-Worker.json" />
+    <None Remove="Loadouts\Public_Services\Firefighter.json" />
+    <None Remove="Loadouts\Public_Services\Mechanic.json" />
+    <None Remove="Loadouts\Public_Services\Medic.json" />
+    <None Remove="Loadouts\Public_Services\NBC.json" />
+    <None Remove="Loadouts\Public_Services\Nurse.json" />
+    <None Remove="Loadouts\Public_Services\Paramedic.json" />
+    <None Remove="Loadouts\Public_Services\Police.json" />
+    <None Remove="Loadouts\Special\Bandit.json" />
+    <None Remove="Loadouts\Special\Cowboy.json" />
+    <None Remove="Loadouts\Special\Medieval.json" />
+    <None Remove="Loadouts\Special\Prisoner.json" />
+    <None Remove="Loadouts\Special\Spec-Ops.json" />
+    <None Remove="Loadouts\Special\Survivalist.json" />
+    <None Remove="Loadouts\Special\Witch.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -170,6 +202,38 @@
     <EmbeddedResource Include="Icons\Trader.png" />
     <EmbeddedResource Include="Icons\Twitter.png" />
     <EmbeddedResource Include="Icons\YouTube.png" />
+    <EmbeddedResource Include="Loadouts\Civilian\Biker.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Civilian.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Farmer.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Fisherman.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Freshie.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Hunter.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Lumberjack.json" />
+    <EmbeddedResource Include="Loadouts\Civilian\Suit.json" />
+    <EmbeddedResource Include="Loadouts\Military\CUU.json" />
+    <EmbeddedResource Include="Loadouts\Military\Ghillie.json" />
+    <EmbeddedResource Include="Loadouts\Military\Gorka.json" />
+    <EmbeddedResource Include="Loadouts\Military\Nato.json" />
+    <EmbeddedResource Include="Loadouts\Military\OMK.json" />
+    <EmbeddedResource Include="Loadouts\Military\Pilot.json" />
+    <EmbeddedResource Include="Loadouts\Military\Sniper.json" />
+    <EmbeddedResource Include="Loadouts\Military\TTSKO.json" />
+    <EmbeddedResource Include="Loadouts\Military\USMC.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Construction-Worker.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Firefighter.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Mechanic.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Medic.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\NBC.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Nurse.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Paramedic.json" />
+    <EmbeddedResource Include="Loadouts\Public_Services\Police.json" />
+    <EmbeddedResource Include="Loadouts\Special\Bandit.json" />
+    <EmbeddedResource Include="Loadouts\Special\Cowboy.json" />
+    <EmbeddedResource Include="Loadouts\Special\Medieval.json" />
+    <EmbeddedResource Include="Loadouts\Special\Prisoner.json" />
+    <EmbeddedResource Include="Loadouts\Special\Spec-Ops.json" />
+    <EmbeddedResource Include="Loadouts\Special\Survivalist.json" />
+    <EmbeddedResource Include="Loadouts\Special\Witch.json" />
   </ItemGroup>
 
   <ItemGroup>

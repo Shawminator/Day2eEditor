@@ -1,4 +1,5 @@
 ﻿using Day2eEditor;
+using System.Diagnostics;
 using System.Reflection;
 
 
@@ -153,19 +154,20 @@ namespace ExpansionPlugin
 
             EnsureLoadoutExists(loodropsPath, "ExpansionPlugin.Loadouts.Default", "Example.json");
         }
-        private void EnsureLoadoutExists(string folder, string ResourcePath, string fileName)
+        public bool EnsureLoadoutExists(string folder, string ResourcePath, string fileName)
         {
            
             string path = Path.Combine(folder, fileName);
 
             if (File.Exists(path))
-                return;
+                return true;
 
             string resourceName =
                 $"{ResourcePath}.{fileName}";
 
             File.WriteAllText(path, ResourceHelper.ReadText(resourceName));
             Console.WriteLine($"[INFO] {ResourcePath.Split('.').Last()} Loadout Created - {fileName}.");
+            return false;
         }
         private void CreateFolders()
         {
@@ -1290,6 +1292,11 @@ namespace ExpansionPlugin
         public static string ReadText(string resourceName)
         {
             var assembly = typeof(ResourceHelper).Assembly;
+
+            foreach (var resource in assembly.GetManifestResourceNames())
+            {
+            Debug.WriteLine(resource);
+            }
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName)
                 ?? throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");

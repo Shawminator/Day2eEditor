@@ -81,6 +81,42 @@
             addNewLoadoutFileToolStripMenuItem = new ToolStripMenuItem();
             addNewLootDropFileToolStripMenuItem = new ToolStripMenuItem();
             RemoveItemToolStripMenuItem = new ToolStripMenuItem();
+            createFromTemplateToolStripMenuItem = new ToolStripMenuItem();
+            civilianToolStripMenuItem = new ToolStripMenuItem();
+            bikerToolStripMenuItem = new ToolStripMenuItem();
+            civilianToolStripMenuItem1 = new ToolStripMenuItem();
+            farmerToolStripMenuItem = new ToolStripMenuItem();
+            fisherManToolStripMenuItem = new ToolStripMenuItem();
+            freshieToolStripMenuItem = new ToolStripMenuItem();
+            hunterToolStripMenuItem = new ToolStripMenuItem();
+            lumberjackToolStripMenuItem = new ToolStripMenuItem();
+            publicservicesToolStripMenuItem = new ToolStripMenuItem();
+            constructionworkerToolStripMenuItem = new ToolStripMenuItem();
+            firefighterToolStripMenuItem = new ToolStripMenuItem();
+            mechanicToolStripMenuItem = new ToolStripMenuItem();
+            medicToolStripMenuItem = new ToolStripMenuItem();
+            nbcToolStripMenuItem = new ToolStripMenuItem();
+            nurseToolStripMenuItem = new ToolStripMenuItem();
+            paramedicToolStripMenuItem = new ToolStripMenuItem();
+            policeToolStripMenuItem = new ToolStripMenuItem();
+            militaryToolStripMenuItem = new ToolStripMenuItem();
+            ghillieToolStripMenuItem = new ToolStripMenuItem();
+            gorkaToolStripMenuItem = new ToolStripMenuItem();
+            natoToolStripMenuItem = new ToolStripMenuItem();
+            omkToolStripMenuItem = new ToolStripMenuItem();
+            pilotToolStripMenuItem = new ToolStripMenuItem();
+            sniperToolStripMenuItem = new ToolStripMenuItem();
+            ttskoToolStripMenuItem = new ToolStripMenuItem();
+            usmcToolStripMenuItem = new ToolStripMenuItem();
+            specialToolStripMenuItem = new ToolStripMenuItem();
+            banditToolStripMenuItem = new ToolStripMenuItem();
+            cowboyToolStripMenuItem = new ToolStripMenuItem();
+            medievalToolStripMenuItem = new ToolStripMenuItem();
+            prisonerToolStripMenuItem = new ToolStripMenuItem();
+            specOpsToolStripMenuItem = new ToolStripMenuItem();
+            survivalistToolStripMenuItem = new ToolStripMenuItem();
+            witchToolStripMenuItem = new ToolStripMenuItem();
+            cuuToolStripMenuItem = new ToolStripMenuItem();
             ExpansionAICM = new ContextMenuStrip(components);
             addNewPatrolToolStripMenuItem = new ToolStripMenuItem();
             removePatrolToolStripMenuItem = new ToolStripMenuItem();
@@ -111,6 +147,8 @@
             removeMissionToolStripMenuItem = new ToolStripMenuItem();
             addP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
             removeP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
+            moveP2PWaypointUpToolStripMenuItem = new ToolStripMenuItem();
+            moveP2PWaypointDownToolStripMenuItem = new ToolStripMenuItem();
             GarageCM = new ContextMenuStrip(components);
             addNewEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
             removeEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
@@ -296,8 +334,6 @@
             removeQuestToolStripMenuItem = new ToolStripMenuItem();
             addQuestNPCToolStripMenuItem = new ToolStripMenuItem();
             removeQuestNPCToolStripMenuItem = new ToolStripMenuItem();
-            moveP2PWaypointUpToolStripMenuItem = new ToolStripMenuItem();
-            moveP2PWaypointDownToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -715,10 +751,10 @@
             // LoadoutsCM
             // 
             LoadoutsCM.BackColor = Color.FromArgb(60, 63, 65);
-            LoadoutsCM.Items.AddRange(new ToolStripItem[] { AddNewAttachmentItemToolStripMenuItem, RemoveAttachemtItemToolStripMenuItem, addNewItemToolStripMenuItem, AddNewCargoItemToolStripMenuItem, addNewSetToolStripMenuItem, addNewLoadoutFileToolStripMenuItem, addNewLootDropFileToolStripMenuItem, RemoveItemToolStripMenuItem });
+            LoadoutsCM.Items.AddRange(new ToolStripItem[] { AddNewAttachmentItemToolStripMenuItem, RemoveAttachemtItemToolStripMenuItem, addNewItemToolStripMenuItem, AddNewCargoItemToolStripMenuItem, addNewSetToolStripMenuItem, addNewLoadoutFileToolStripMenuItem, addNewLootDropFileToolStripMenuItem, RemoveItemToolStripMenuItem, createFromTemplateToolStripMenuItem });
             LoadoutsCM.Name = "LoadoutsCM";
             LoadoutsCM.ShowImageMargin = false;
-            LoadoutsCM.Size = new Size(192, 180);
+            LoadoutsCM.Size = new Size(192, 202);
             // 
             // AddNewAttachmentItemToolStripMenuItem
             // 
@@ -783,6 +819,326 @@
             RemoveItemToolStripMenuItem.Size = new Size(191, 22);
             RemoveItemToolStripMenuItem.Text = "Remove";
             RemoveItemToolStripMenuItem.Click += removeItemToolStripMenuItem_Click;
+            // 
+            // createFromTemplateToolStripMenuItem
+            // 
+            createFromTemplateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { civilianToolStripMenuItem, publicservicesToolStripMenuItem, militaryToolStripMenuItem, specialToolStripMenuItem });
+            createFromTemplateToolStripMenuItem.ForeColor = SystemColors.Control;
+            createFromTemplateToolStripMenuItem.Name = "createFromTemplateToolStripMenuItem";
+            createFromTemplateToolStripMenuItem.Size = new Size(191, 22);
+            createFromTemplateToolStripMenuItem.Text = "Create From Template";
+            createFromTemplateToolStripMenuItem.Click += createFromTemplateToolStripMenuItem_Click;
+            // 
+            // civilianToolStripMenuItem
+            // 
+            civilianToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            civilianToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { bikerToolStripMenuItem, civilianToolStripMenuItem1, farmerToolStripMenuItem, fisherManToolStripMenuItem, freshieToolStripMenuItem, hunterToolStripMenuItem, lumberjackToolStripMenuItem });
+            civilianToolStripMenuItem.ForeColor = SystemColors.Control;
+            civilianToolStripMenuItem.Name = "civilianToolStripMenuItem";
+            civilianToolStripMenuItem.Size = new Size(180, 22);
+            civilianToolStripMenuItem.Text = "Civilian";
+            // 
+            // bikerToolStripMenuItem
+            // 
+            bikerToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            bikerToolStripMenuItem.ForeColor = SystemColors.Control;
+            bikerToolStripMenuItem.Name = "bikerToolStripMenuItem";
+            bikerToolStripMenuItem.Size = new Size(136, 22);
+            bikerToolStripMenuItem.Text = "Biker";
+            bikerToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // civilianToolStripMenuItem1
+            // 
+            civilianToolStripMenuItem1.BackColor = Color.FromArgb(60, 63, 65);
+            civilianToolStripMenuItem1.ForeColor = SystemColors.Control;
+            civilianToolStripMenuItem1.Name = "civilianToolStripMenuItem1";
+            civilianToolStripMenuItem1.Size = new Size(136, 22);
+            civilianToolStripMenuItem1.Text = "Civilian";
+            civilianToolStripMenuItem1.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // farmerToolStripMenuItem
+            // 
+            farmerToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            farmerToolStripMenuItem.ForeColor = SystemColors.Control;
+            farmerToolStripMenuItem.Name = "farmerToolStripMenuItem";
+            farmerToolStripMenuItem.Size = new Size(136, 22);
+            farmerToolStripMenuItem.Text = "Farmer";
+            farmerToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // fisherManToolStripMenuItem
+            // 
+            fisherManToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            fisherManToolStripMenuItem.ForeColor = SystemColors.Control;
+            fisherManToolStripMenuItem.Name = "fisherManToolStripMenuItem";
+            fisherManToolStripMenuItem.Size = new Size(136, 22);
+            fisherManToolStripMenuItem.Text = "Fisherman";
+            fisherManToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // freshieToolStripMenuItem
+            // 
+            freshieToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            freshieToolStripMenuItem.ForeColor = SystemColors.Control;
+            freshieToolStripMenuItem.Name = "freshieToolStripMenuItem";
+            freshieToolStripMenuItem.Size = new Size(136, 22);
+            freshieToolStripMenuItem.Text = "Freshie";
+            freshieToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // hunterToolStripMenuItem
+            // 
+            hunterToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            hunterToolStripMenuItem.ForeColor = SystemColors.Control;
+            hunterToolStripMenuItem.Name = "hunterToolStripMenuItem";
+            hunterToolStripMenuItem.Size = new Size(136, 22);
+            hunterToolStripMenuItem.Text = "Hunter";
+            hunterToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // lumberjackToolStripMenuItem
+            // 
+            lumberjackToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            lumberjackToolStripMenuItem.ForeColor = SystemColors.Control;
+            lumberjackToolStripMenuItem.Name = "lumberjackToolStripMenuItem";
+            lumberjackToolStripMenuItem.Size = new Size(136, 22);
+            lumberjackToolStripMenuItem.Text = "Lumberjack";
+            lumberjackToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // publicservicesToolStripMenuItem
+            // 
+            publicservicesToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            publicservicesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { constructionworkerToolStripMenuItem, firefighterToolStripMenuItem, mechanicToolStripMenuItem, medicToolStripMenuItem, nbcToolStripMenuItem, nurseToolStripMenuItem, paramedicToolStripMenuItem, policeToolStripMenuItem });
+            publicservicesToolStripMenuItem.ForeColor = SystemColors.Control;
+            publicservicesToolStripMenuItem.Name = "publicservicesToolStripMenuItem";
+            publicservicesToolStripMenuItem.Size = new Size(180, 22);
+            publicservicesToolStripMenuItem.Text = "Public_Services";
+            // 
+            // constructionworkerToolStripMenuItem
+            // 
+            constructionworkerToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            constructionworkerToolStripMenuItem.ForeColor = SystemColors.Control;
+            constructionworkerToolStripMenuItem.Name = "constructionworkerToolStripMenuItem";
+            constructionworkerToolStripMenuItem.Size = new Size(186, 22);
+            constructionworkerToolStripMenuItem.Text = "Construction-Worker";
+            constructionworkerToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // firefighterToolStripMenuItem
+            // 
+            firefighterToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            firefighterToolStripMenuItem.ForeColor = SystemColors.Control;
+            firefighterToolStripMenuItem.Name = "firefighterToolStripMenuItem";
+            firefighterToolStripMenuItem.Size = new Size(186, 22);
+            firefighterToolStripMenuItem.Text = "Firefighter";
+            firefighterToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // mechanicToolStripMenuItem
+            // 
+            mechanicToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            mechanicToolStripMenuItem.ForeColor = SystemColors.Control;
+            mechanicToolStripMenuItem.Name = "mechanicToolStripMenuItem";
+            mechanicToolStripMenuItem.Size = new Size(186, 22);
+            mechanicToolStripMenuItem.Text = "Mechanic";
+            mechanicToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // medicToolStripMenuItem
+            // 
+            medicToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            medicToolStripMenuItem.ForeColor = SystemColors.Control;
+            medicToolStripMenuItem.Name = "medicToolStripMenuItem";
+            medicToolStripMenuItem.Size = new Size(186, 22);
+            medicToolStripMenuItem.Text = "Medic";
+            medicToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // nbcToolStripMenuItem
+            // 
+            nbcToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            nbcToolStripMenuItem.ForeColor = SystemColors.Control;
+            nbcToolStripMenuItem.Name = "nbcToolStripMenuItem";
+            nbcToolStripMenuItem.Size = new Size(186, 22);
+            nbcToolStripMenuItem.Text = "NBC";
+            nbcToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // nurseToolStripMenuItem
+            // 
+            nurseToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            nurseToolStripMenuItem.ForeColor = SystemColors.Control;
+            nurseToolStripMenuItem.Name = "nurseToolStripMenuItem";
+            nurseToolStripMenuItem.Size = new Size(186, 22);
+            nurseToolStripMenuItem.Text = "Nurse";
+            nurseToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // paramedicToolStripMenuItem
+            // 
+            paramedicToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            paramedicToolStripMenuItem.ForeColor = SystemColors.Control;
+            paramedicToolStripMenuItem.Name = "paramedicToolStripMenuItem";
+            paramedicToolStripMenuItem.Size = new Size(186, 22);
+            paramedicToolStripMenuItem.Text = "Paramedic";
+            paramedicToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // policeToolStripMenuItem
+            // 
+            policeToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            policeToolStripMenuItem.ForeColor = SystemColors.Control;
+            policeToolStripMenuItem.Name = "policeToolStripMenuItem";
+            policeToolStripMenuItem.Size = new Size(186, 22);
+            policeToolStripMenuItem.Text = "Police";
+            policeToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // militaryToolStripMenuItem
+            // 
+            militaryToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            militaryToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ghillieToolStripMenuItem, gorkaToolStripMenuItem, natoToolStripMenuItem, omkToolStripMenuItem, pilotToolStripMenuItem, sniperToolStripMenuItem, ttskoToolStripMenuItem, usmcToolStripMenuItem });
+            militaryToolStripMenuItem.ForeColor = SystemColors.Control;
+            militaryToolStripMenuItem.Name = "militaryToolStripMenuItem";
+            militaryToolStripMenuItem.Size = new Size(180, 22);
+            militaryToolStripMenuItem.Text = "Military";
+            // 
+            // ghillieToolStripMenuItem
+            // 
+            ghillieToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            ghillieToolStripMenuItem.ForeColor = SystemColors.Control;
+            ghillieToolStripMenuItem.Name = "ghillieToolStripMenuItem";
+            ghillieToolStripMenuItem.Size = new Size(109, 22);
+            ghillieToolStripMenuItem.Text = "Ghillie";
+            ghillieToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // gorkaToolStripMenuItem
+            // 
+            gorkaToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            gorkaToolStripMenuItem.ForeColor = SystemColors.Control;
+            gorkaToolStripMenuItem.Name = "gorkaToolStripMenuItem";
+            gorkaToolStripMenuItem.Size = new Size(109, 22);
+            gorkaToolStripMenuItem.Text = "Gorka";
+            gorkaToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // natoToolStripMenuItem
+            // 
+            natoToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            natoToolStripMenuItem.ForeColor = SystemColors.Control;
+            natoToolStripMenuItem.Name = "natoToolStripMenuItem";
+            natoToolStripMenuItem.Size = new Size(109, 22);
+            natoToolStripMenuItem.Text = "Nato";
+            natoToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // omkToolStripMenuItem
+            // 
+            omkToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            omkToolStripMenuItem.ForeColor = SystemColors.Control;
+            omkToolStripMenuItem.Name = "omkToolStripMenuItem";
+            omkToolStripMenuItem.Size = new Size(109, 22);
+            omkToolStripMenuItem.Text = "OMK";
+            omkToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // pilotToolStripMenuItem
+            // 
+            pilotToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            pilotToolStripMenuItem.ForeColor = SystemColors.Control;
+            pilotToolStripMenuItem.Name = "pilotToolStripMenuItem";
+            pilotToolStripMenuItem.Size = new Size(109, 22);
+            pilotToolStripMenuItem.Text = "Pilot";
+            pilotToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // sniperToolStripMenuItem
+            // 
+            sniperToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            sniperToolStripMenuItem.ForeColor = SystemColors.Control;
+            sniperToolStripMenuItem.Name = "sniperToolStripMenuItem";
+            sniperToolStripMenuItem.Size = new Size(109, 22);
+            sniperToolStripMenuItem.Text = "Sniper";
+            sniperToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // ttskoToolStripMenuItem
+            // 
+            ttskoToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            ttskoToolStripMenuItem.ForeColor = SystemColors.Control;
+            ttskoToolStripMenuItem.Name = "ttskoToolStripMenuItem";
+            ttskoToolStripMenuItem.Size = new Size(109, 22);
+            ttskoToolStripMenuItem.Text = "TTSKO";
+            ttskoToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // usmcToolStripMenuItem
+            // 
+            usmcToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            usmcToolStripMenuItem.ForeColor = SystemColors.Control;
+            usmcToolStripMenuItem.Name = "usmcToolStripMenuItem";
+            usmcToolStripMenuItem.Size = new Size(109, 22);
+            usmcToolStripMenuItem.Text = "USMC";
+            usmcToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // specialToolStripMenuItem
+            // 
+            specialToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            specialToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { banditToolStripMenuItem, cowboyToolStripMenuItem, medievalToolStripMenuItem, prisonerToolStripMenuItem, specOpsToolStripMenuItem, survivalistToolStripMenuItem, witchToolStripMenuItem });
+            specialToolStripMenuItem.ForeColor = SystemColors.Control;
+            specialToolStripMenuItem.Name = "specialToolStripMenuItem";
+            specialToolStripMenuItem.Size = new Size(180, 22);
+            specialToolStripMenuItem.Text = "Special";
+            // 
+            // banditToolStripMenuItem
+            // 
+            banditToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            banditToolStripMenuItem.ForeColor = SystemColors.Control;
+            banditToolStripMenuItem.Name = "banditToolStripMenuItem";
+            banditToolStripMenuItem.Size = new Size(127, 22);
+            banditToolStripMenuItem.Text = "Bandit";
+            banditToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // cowboyToolStripMenuItem
+            // 
+            cowboyToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            cowboyToolStripMenuItem.ForeColor = SystemColors.Control;
+            cowboyToolStripMenuItem.Name = "cowboyToolStripMenuItem";
+            cowboyToolStripMenuItem.Size = new Size(127, 22);
+            cowboyToolStripMenuItem.Text = "Cowboy";
+            cowboyToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // medievalToolStripMenuItem
+            // 
+            medievalToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            medievalToolStripMenuItem.ForeColor = SystemColors.Control;
+            medievalToolStripMenuItem.Name = "medievalToolStripMenuItem";
+            medievalToolStripMenuItem.Size = new Size(127, 22);
+            medievalToolStripMenuItem.Text = "Medieval";
+            medievalToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // prisonerToolStripMenuItem
+            // 
+            prisonerToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            prisonerToolStripMenuItem.ForeColor = SystemColors.Control;
+            prisonerToolStripMenuItem.Name = "prisonerToolStripMenuItem";
+            prisonerToolStripMenuItem.Size = new Size(127, 22);
+            prisonerToolStripMenuItem.Text = "Prisoner";
+            prisonerToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // specOpsToolStripMenuItem
+            // 
+            specOpsToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            specOpsToolStripMenuItem.ForeColor = SystemColors.Control;
+            specOpsToolStripMenuItem.Name = "specOpsToolStripMenuItem";
+            specOpsToolStripMenuItem.Size = new Size(127, 22);
+            specOpsToolStripMenuItem.Text = "Spec-Ops";
+            specOpsToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // survivalistToolStripMenuItem
+            // 
+            survivalistToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            survivalistToolStripMenuItem.ForeColor = SystemColors.Control;
+            survivalistToolStripMenuItem.Name = "survivalistToolStripMenuItem";
+            survivalistToolStripMenuItem.Size = new Size(127, 22);
+            survivalistToolStripMenuItem.Text = "Survivalist";
+            survivalistToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // witchToolStripMenuItem
+            // 
+            witchToolStripMenuItem.BackColor = Color.FromArgb(60, 63, 65);
+            witchToolStripMenuItem.ForeColor = SystemColors.Control;
+            witchToolStripMenuItem.Name = "witchToolStripMenuItem";
+            witchToolStripMenuItem.Size = new Size(127, 22);
+            witchToolStripMenuItem.Text = "Witch";
+            witchToolStripMenuItem.Click += CreateLoadoutFromTemplate_Click;
+            // 
+            // cuuToolStripMenuItem
+            // 
+            cuuToolStripMenuItem.Name = "cuuToolStripMenuItem";
+            cuuToolStripMenuItem.Size = new Size(32, 19);
             // 
             // ExpansionAICM
             // 
@@ -950,7 +1306,7 @@
             ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem, moveP2PWaypointUpToolStripMenuItem, moveP2PWaypointDownToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(222, 268);
+            ChatCM.Size = new Size(222, 246);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -1023,6 +1379,22 @@
             removeP2PWaypointToolStripMenuItem.Size = new Size(221, 22);
             removeP2PWaypointToolStripMenuItem.Text = "Remove P2P Waypoint";
             removeP2PWaypointToolStripMenuItem.Click += removeP2PWaypointToolStripMenuItem_Click;
+            // 
+            // moveP2PWaypointUpToolStripMenuItem
+            // 
+            moveP2PWaypointUpToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveP2PWaypointUpToolStripMenuItem.Name = "moveP2PWaypointUpToolStripMenuItem";
+            moveP2PWaypointUpToolStripMenuItem.Size = new Size(221, 22);
+            moveP2PWaypointUpToolStripMenuItem.Text = "Move P2P Waypoint Up";
+            moveP2PWaypointUpToolStripMenuItem.Click += moveP2PWaypointUpToolStripMenuItem_Click;
+            // 
+            // moveP2PWaypointDownToolStripMenuItem
+            // 
+            moveP2PWaypointDownToolStripMenuItem.ForeColor = SystemColors.Control;
+            moveP2PWaypointDownToolStripMenuItem.Name = "moveP2PWaypointDownToolStripMenuItem";
+            moveP2PWaypointDownToolStripMenuItem.Size = new Size(221, 22);
+            moveP2PWaypointDownToolStripMenuItem.Text = "Move P2P Waypoint Down";
+            moveP2PWaypointDownToolStripMenuItem.Click += moveP2PWaypointDownToolStripMenuItem_Click;
             // 
             // GarageCM
             // 
@@ -2500,22 +2872,6 @@
             removeQuestNPCToolStripMenuItem.Text = "Remove Quest NPC";
             removeQuestNPCToolStripMenuItem.Click += removeQuestNPCToolStripMenuItem_Click;
             // 
-            // moveP2PWaypointUpToolStripMenuItem
-            // 
-            moveP2PWaypointUpToolStripMenuItem.ForeColor = SystemColors.Control;
-            moveP2PWaypointUpToolStripMenuItem.Name = "moveP2PWaypointUpToolStripMenuItem";
-            moveP2PWaypointUpToolStripMenuItem.Size = new Size(221, 22);
-            moveP2PWaypointUpToolStripMenuItem.Text = "Move P2P Waypoint Up";
-            moveP2PWaypointUpToolStripMenuItem.Click += moveP2PWaypointUpToolStripMenuItem_Click;
-            // 
-            // moveP2PWaypointDownToolStripMenuItem
-            // 
-            moveP2PWaypointDownToolStripMenuItem.ForeColor = SystemColors.Control;
-            moveP2PWaypointDownToolStripMenuItem.Name = "moveP2PWaypointDownToolStripMenuItem";
-            moveP2PWaypointDownToolStripMenuItem.Size = new Size(221, 22);
-            moveP2PWaypointDownToolStripMenuItem.Text = "Move P2P Waypoint Down";
-            moveP2PWaypointDownToolStripMenuItem.Click += moveP2PWaypointDownToolStripMenuItem_Click;
-            // 
             // ExpansionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2825,5 +3181,41 @@
         private ToolStripMenuItem removeP2PWaypointToolStripMenuItem;
         private ToolStripMenuItem moveP2PWaypointUpToolStripMenuItem;
         private ToolStripMenuItem moveP2PWaypointDownToolStripMenuItem;
+        private ToolStripMenuItem createFromTemplateToolStripMenuItem;
+        private ToolStripMenuItem civilianToolStripMenuItem;
+        private ToolStripMenuItem bikerToolStripMenuItem;
+        private ToolStripMenuItem civilianToolStripMenuItem1;
+        private ToolStripMenuItem farmerToolStripMenuItem;
+        private ToolStripMenuItem fisherManToolStripMenuItem;
+        private ToolStripMenuItem freshieToolStripMenuItem;
+        private ToolStripMenuItem hunterToolStripMenuItem;
+        private ToolStripMenuItem lumberjackToolStripMenuItem;
+        private ToolStripMenuItem publicservicesToolStripMenuItem;
+        private ToolStripMenuItem constructionworkerToolStripMenuItem;
+        private ToolStripMenuItem firefighterToolStripMenuItem;
+        private ToolStripMenuItem mechanicToolStripMenuItem;
+        private ToolStripMenuItem medicToolStripMenuItem;
+        private ToolStripMenuItem nbcToolStripMenuItem;
+        private ToolStripMenuItem nurseToolStripMenuItem;
+        private ToolStripMenuItem paramedicToolStripMenuItem;
+        private ToolStripMenuItem policeToolStripMenuItem;
+        private ToolStripMenuItem militaryToolStripMenuItem;
+        private ToolStripMenuItem cuuToolStripMenuItem;
+        private ToolStripMenuItem ghillieToolStripMenuItem;
+        private ToolStripMenuItem gorkaToolStripMenuItem;
+        private ToolStripMenuItem natoToolStripMenuItem;
+        private ToolStripMenuItem omkToolStripMenuItem;
+        private ToolStripMenuItem pilotToolStripMenuItem;
+        private ToolStripMenuItem sniperToolStripMenuItem;
+        private ToolStripMenuItem ttskoToolStripMenuItem;
+        private ToolStripMenuItem usmcToolStripMenuItem;
+        private ToolStripMenuItem specialToolStripMenuItem;
+        private ToolStripMenuItem banditToolStripMenuItem;
+        private ToolStripMenuItem cowboyToolStripMenuItem;
+        private ToolStripMenuItem medievalToolStripMenuItem;
+        private ToolStripMenuItem prisonerToolStripMenuItem;
+        private ToolStripMenuItem specOpsToolStripMenuItem;
+        private ToolStripMenuItem survivalistToolStripMenuItem;
+        private ToolStripMenuItem witchToolStripMenuItem;
     }
 }
