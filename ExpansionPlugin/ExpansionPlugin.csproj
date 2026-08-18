@@ -114,13 +114,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Expansion.png" />
-    <EmbeddedResource Include="Images\BanditLoadout.json" />
-    <EmbeddedResource Include="Images\EastLoadout.json" />
-    <EmbeddedResource Include="Images\Example.json" />
-    <EmbeddedResource Include="Images\FireFighterLoadout.json" />
-    <EmbeddedResource Include="Images\FreshSpawnLoadout.json" />
-    <EmbeddedResource Include="Images\GorkaLoadout.json" />
-    <EmbeddedResource Include="Images\HumanLoadout.json" />
     <EmbeddedResource Include="Images\market_background.png" />
     <EmbeddedResource Include="Icons\Airdrop.png" />
     <EmbeddedResource Include="Icons\Ambush.png" />
@@ -177,16 +170,6 @@
     <EmbeddedResource Include="Icons\Trader.png" />
     <EmbeddedResource Include="Icons\Twitter.png" />
     <EmbeddedResource Include="Icons\YouTube.png" />
-    <EmbeddedResource Include="Images\NBCLoadout.json" />
-    <EmbeddedResource Include="Images\PlayerFemaleSuitLoadout.json" />
-    <EmbeddedResource Include="Images\PlayerMaleSuitLoadout.json" />
-    <EmbeddedResource Include="Images\PlayerSurvivorLoadout.json" />
-    <EmbeddedResource Include="Images\PoliceLoadout.json" />
-    <EmbeddedResource Include="Images\SurvivorLoadout.json" />
-    <EmbeddedResource Include="Images\TTSKOLoadout.json" />
-    <EmbeddedResource Include="Images\WestLoadout.json" />
-    <EmbeddedResource Include="Images\YeetBrigadeLoadout.json" />
-    <EmbeddedResource Include="Images\YellowKingLoadout.json" />
   </ItemGroup>
 
   <ItemGroup>
