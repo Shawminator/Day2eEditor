@@ -647,30 +647,11 @@ namespace ExpansionPlugin
                 QuantityPercent != other.QuantityPercent)
                 return false;
 
-            if (!ListEquals(SpawnAttachments, other.SpawnAttachments))
+            if (!Helper.ListEquals(SpawnAttachments, other.SpawnAttachments))
                 return false;
 
-            if (!ListEquals(Variants, other.Variants))
+            if (!Helper.ListEquals(Variants, other.Variants))
                 return false;
-
-            return true;
-        }
-        private static bool ListEquals<T>(IList<T> a, IList<T> b)
-        {
-            if (ReferenceEquals(a, b))
-                return true;
-
-            if (a is null || b is null)
-                return false;
-
-            if (a.Count != b.Count)
-                return false;
-
-            for (int i = 0; i < a.Count; i++)
-            {
-                if (!Equals(a[i], b[i]))
-                    return false;
-            }
 
             return true;
         }
