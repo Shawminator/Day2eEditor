@@ -137,22 +137,21 @@ namespace ExpansionPlugin
             EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "FireFighterLoadout.json");
             EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "FreshSpawnLoadout.json");
 
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "GorkaLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "HumanLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "NBCLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "PlayerFemaleSuitLoadout.json");
+
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "PlayerMaleSuitLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "PlayerSurvivorLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "PoliceLoadout.json");
+
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "TTSKOLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "WestLoadout.json");
+            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "YeetBrigadeLoadout.json");
             EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
 
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-            EnsureLoadoutExists(loadoutsPath, "ExpansionPlugin.Loadouts.Default", "BanditLoadout.json");
-
-            EnsureLoadoutExists(loodropsPath, "ExpansionPlugin.Loadouts.Default", "FireFighterLoadout.json");
+            EnsureLoadoutExists(loodropsPath, "ExpansionPlugin.Loadouts.Default", "Example.json");
         }
         private void EnsureLoadoutExists(string folder, string ResourcePath, string fileName)
         {
