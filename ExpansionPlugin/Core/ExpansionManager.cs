@@ -125,7 +125,6 @@ namespace ExpansionPlugin
             CheckDefaultLoadoutFiles();
             LoadFiles();
         }
-
         private void CheckDefaultLoadoutFiles()
         {
             Console.WriteLine($"\n[Expansion Manager] Checking and Creating all default Loadouts if they do not Exist.");
@@ -157,7 +156,7 @@ namespace ExpansionPlugin
         }
         private void EnsureLoadoutExists(string folder, string fileName)
         {
-            
+           
             string path = Path.Combine(folder, fileName);
 
             if (File.Exists(path))
@@ -190,7 +189,6 @@ namespace ExpansionPlugin
                     Console.WriteLine($"[INFO] Folder Created - {directory}");
             }
         }
-
         private void LoadFiles()
         {
             Console.WriteLine($"\n[Expansion Manager] Loading all files associated with the Expansion Mod.");
@@ -1139,7 +1137,6 @@ namespace ExpansionPlugin
             "ExpansionQuestNPCAINaomi",
             "ExpansionQuestNPCAIBaty"
         };
-
         public List<string> ActionNames = new List<string>
         {
             "ActionAttach",
@@ -1275,7 +1272,6 @@ namespace ExpansionPlugin
             "ExpansionActionLockVehicle",
             "ExpansionActionUnlockVehicle"
         };
-
         public readonly Dictionary<Type, ExpansionQuestObjectiveType> typeMap = new Dictionary<Type, ExpansionQuestObjectiveType>
         {
             { typeof(ExpansionQuestObjectiveActionConfig), ExpansionQuestObjectiveType.ACTION },
@@ -1289,7 +1285,6 @@ namespace ExpansionPlugin
             { typeof(ExpansionQuestObjectiveTravelConfig), ExpansionQuestObjectiveType.TRAVEL },
             { typeof(ExpansionQuestObjectiveTreasureHuntConfig), ExpansionQuestObjectiveType.TREASUREHUNT }
         };
-
     }
     public static class ResourceHelper
     {

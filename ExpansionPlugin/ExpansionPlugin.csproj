@@ -93,6 +93,23 @@
     <None Remove="Images\WestLoadout.json" />
     <None Remove="Images\YeetBrigadeLoadout.json" />
     <None Remove="Images\YellowKingLoadout.json" />
+    <None Remove="Loadouts\Default\BanditLoadout.json" />
+    <None Remove="Loadouts\Default\EastLoadout.json" />
+    <None Remove="Loadouts\Default\Example.json" />
+    <None Remove="Loadouts\Default\FireFighterLoadout.json" />
+    <None Remove="Loadouts\Default\FreshSpawnLoadout.json" />
+    <None Remove="Loadouts\Default\GorkaLoadout.json" />
+    <None Remove="Loadouts\Default\HumanLoadout.json" />
+    <None Remove="Loadouts\Default\NBCLoadout.json" />
+    <None Remove="Loadouts\Default\PlayerFemaleSuitLoadout.json" />
+    <None Remove="Loadouts\Default\PlayerMaleSuitLoadout.json" />
+    <None Remove="Loadouts\Default\PlayerSurvivorLoadout.json" />
+    <None Remove="Loadouts\Default\PoliceLoadout.json" />
+    <None Remove="Loadouts\Default\SurvivorLoadout.json" />
+    <None Remove="Loadouts\Default\TTSKOLoadout.json" />
+    <None Remove="Loadouts\Default\WestLoadout.json" />
+    <None Remove="Loadouts\Default\YeetBrigadeLoadout.json" />
+    <None Remove="Loadouts\Default\YellowKingLoadout.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -230,6 +247,26 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Loadouts\Default\BanditLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\EastLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\Example.json" />
+    <EmbeddedResource Include="Loadouts\Default\FireFighterLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\FreshSpawnLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\GorkaLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\HumanLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\NBCLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\PlayerFemaleSuitLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\PlayerMaleSuitLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\PlayerSurvivorLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\PoliceLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\SurvivorLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\TTSKOLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\WestLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\YeetBrigadeLoadout.json" />
+    <EmbeddedResource Include="Loadouts\Default\YellowKingLoadout.json" />
   </ItemGroup>
 
   <Target Name="copyToPluginsFolder" AfterTargets="Build">
