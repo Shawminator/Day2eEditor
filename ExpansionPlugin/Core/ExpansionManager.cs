@@ -30,6 +30,7 @@ namespace ExpansionPlugin
         public ExpansionGarageConfig ExpansionGarageConfig { get; set; }
         public ExpansionGeneralConfig ExpansionGeneralConfig { get; set; }
         public ExpansionHardlineConfig ExpansionHardlineConfig { get; set; }
+        public ExpansionHardlinePlayerDataConfig ExpansionHardlinePlayerDataConfig { get; set;  }
         public ExpansionLogsConfig ExpansionLogsConfig { get; set; }
         public ExpansionMapConfig ExpansionMapConfig { get; set; }
         public ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig { get; set; }
@@ -72,6 +73,7 @@ namespace ExpansionPlugin
             _paths["ExpansionMissions"] = Path.Combine(basePath, "expansion", "missions");
             _paths["ExpansionP2PTraders"] = Path.Combine(basePath, "expansion", "p2pmarket");
             _paths["ExpansionPSContainers"] = Path.Combine(basePath, "expansion", "personalstorage");
+            _paths["ExpansionHardline"] = Path.Combine(profilePath, "ExpansionMod", "Hardline", "PlayerData");
 
 
             //Settings files in profiles
@@ -245,6 +247,9 @@ namespace ExpansionPlugin
             ExpansionHardlineConfig = new ExpansionHardlineConfig(_paths["HardlineSettings"]);
             LoadConfigWithErrorReport("HardlineSettings", ExpansionHardlineConfig);
 
+            ExpansionHardlinePlayerDataConfig = new ExpansionHardlinePlayerDataConfig(_paths["ExpansionHardline"]);
+            LoadConfigWithErrorReport("ExpansionHardline", ExpansionHardlinePlayerDataConfig);
+
             ExpansionLogsConfig = new ExpansionLogsConfig(_paths["LogsSettings"]);
             LoadConfigWithErrorReport("LogsSettings", ExpansionLogsConfig);
 
@@ -365,6 +370,7 @@ namespace ExpansionPlugin
                 ExpansionGarageConfig,
                 ExpansionGeneralConfig,
                 ExpansionHardlineConfig,
+                ExpansionHardlinePlayerDataConfig,
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
                 ExpansionMarketSettingsConfig,
@@ -438,6 +444,7 @@ namespace ExpansionPlugin
                 ExpansionGarageConfig,
                 ExpansionGeneralConfig,
                 ExpansionHardlineConfig,
+                ExpansionHardlinePlayerDataConfig,
                 ExpansionLogsConfig,
                 ExpansionMapConfig,
                 ExpansionMarketSettingsConfig,

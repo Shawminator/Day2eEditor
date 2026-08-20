@@ -463,6 +463,16 @@ namespace ExpansionPlugin
                     ExpansionHardlineSettings ExpansionHardlineSettings = node.Tag as ExpansionHardlineSettings;
                     ShowHandler(new ExpansionHardlineGneralControl(), typeof(ExpansionHardlineConfig), ExpansionHardlineSettings, selected);
                 },
+                [typeof(ExpansionHardlinePlayerData)] = (node, selected) =>
+                {
+                    ExpansionHardlinePlayerData ExpansionHardlinePlayerData = node.Tag as ExpansionHardlinePlayerData;
+                    ShowHandler(new ExpansionHardlinePlayerDataControl(), typeof(ExpansionHardlinePlayerDataConfig), ExpansionHardlinePlayerData, selected);
+                },
+                [typeof(FactionReps)] = (node, selected) =>
+                {
+                    FactionReps FactionReps = node.Tag as FactionReps;
+                    ShowHandler(new ExpansionHardlineFactionRepsControl(), typeof(ExpansionHardlinePlayerDataConfig), FactionReps, selected);
+                },
                 //Logs
                 [typeof(ExpansionLogsSettings)] = (node, selected) =>
                 {
@@ -3228,6 +3238,7 @@ namespace ExpansionPlugin
                 Tag = "HardlinerootNode"
             };
             AddFileToTree(HardlinerootNode, null, _expansionManager.ExpansionHardlineConfig, CreateExpansionHardlineConfigNodes);
+            AddFileToTree(HardlinerootNode, null, _expansionManager.ExpansionHardlinePlayerDataConfig, CreateExpansionHardlinePlayerDataConfigNodes);
             rootNode.Nodes.Add(HardlinerootNode);
 
             TreeNode MarketrootNode = new TreeNode("Market")
@@ -3997,6 +4008,33 @@ namespace ExpansionPlugin
             {
                 Tag = "RequirementsandItemRarity"
             });
+        }
+        private TreeNode CreateExpansionHardlinePlayerDataConfigNodes(ExpansionHardlinePlayerDataConfig ef)
+        {
+            TreeNode EconomyRootNode = new TreeNode("Hardline Player Data")
+            {
+                Tag = ef
+            };
+            foreach (ExpansionHardlinePlayerData ExpansionHardlinePlayerData in ef.MutableItems)
+            {
+                CreateHardlinePlayerDataNodes(ExpansionHardlinePlayerData, EconomyRootNode);
+            }
+            return EconomyRootNode;
+        }
+        public static void CreateHardlinePlayerDataNodes(ExpansionHardlinePlayerData ExpansionHardlinePlayerData, TreeNode EconomyRootNode)
+        {
+            TreeNode Playerdata = new TreeNode(ExpansionHardlinePlayerData.FileName)
+            {
+                Tag = ExpansionHardlinePlayerData
+            };
+            foreach(FactionReps FactionReps in ExpansionHardlinePlayerData.FactionReputation)
+            {
+                Playerdata.Nodes.Add(new TreeNode($"Faction Id : {FactionReps.FactionID}")
+                {
+                    Tag = FactionReps
+                });
+            }
+            EconomyRootNode.Nodes.Add(Playerdata);
         }
         //Logs
         private TreeNode CreateExpansionLogsConfigConfigNodes(ExpansionLogsConfig ef)

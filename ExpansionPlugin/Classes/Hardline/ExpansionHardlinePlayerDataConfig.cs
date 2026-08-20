@@ -43,7 +43,8 @@ namespace ExpansionPlugin
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (BinaryReader br = new BinaryReader(fs))
             {
-                if (br.ReadInt32() != CurrentVersion) return null;
+                if (br.ReadInt32() != CurrentVersion) 
+                    return null;
                 item.Reputation = br.ReadInt32();
                 item.factionRepCount = br.ReadInt32();
                 item.FactionReputation = new BindingList<FactionReps>();
@@ -54,6 +55,8 @@ namespace ExpansionPlugin
                 item.FactionID = br.ReadInt32();
                 item.PersonalStorageLevel = br.ReadInt32();
             }
+            item.SetPath(filePath);
+            item.SetGuid(Guid.NewGuid());
             return item;
         }
         public override IEnumerable<string> Save()
@@ -152,6 +155,8 @@ namespace ExpansionPlugin
                 FactionID = this.FactionID,
                 PersonalStorageLevel = this.PersonalStorageLevel
             };
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
             return clone;
         }
         public override bool Equals(object? obj) => Equals(obj as ExpansionHardlinePlayerData);
