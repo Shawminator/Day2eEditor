@@ -2853,7 +2853,7 @@ namespace EconomyPlugin
             _mapControl.MapsingleClicked -= MapControl_MapGroupPosSingleclicked;
 
             _mapControl.MapDoubleClicked -= MapControl_TerritoriesDoubleclicked;
-            _mapControl.MapDoubleClicked -= MapControl_TerritoriesSingleclicked;
+            _mapControl.MapsingleClicked -= MapControl_TerritoriesSingleclicked;
 
             // Reset "selected" state objects
             _selectedEventPos = null;
