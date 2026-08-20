@@ -1,43 +1,43 @@
 {
   "mainApp": {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/Day2eEditor.zip",
-    "checksum": "sha256:79452b95e07869d8e293f0d0b9c32421ac7e5055d1baaa4da2bf36c372e81446"
+    "checksum": "sha256:0ae649108a24fea5f2aa7e0423f56b92e23bf0808e05037742e4b4e9c7dec700"
   },
   "Core": {
-    "Version": "1.0.2",
+    "Version": "1.0.3",
     "Url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/Core.dll",
-    "Checksum": "sha256:cadfbd7e66c51f3a024b3b473a0dc26712fbd04242df2ba7d8ef9c1dc06be45d"
+    "Checksum": "sha256:1834d17bac28b3d3d7006e61fc79e25728fce48a012278990d9310ac4d063f0d"
   },
   "CoreUI": {
-    "Version": "1.0.2",
+    "Version": "1.0.3",
     "Url": "https://github.com/Shawminator/Day2eEditor/releases/download/Day2eEditor/CoreUI.dll",
-    "Checksum": "sha256:2985ed171d84a4cfd17ca9884627461cde2e337b4439efe53c1a72f9b48e701c"
+    "Checksum": "sha256:80c071d222284bbe6f41d4fa9da957eca468b47619c4713b480f5a0dc9921ecc"
   },
   "plugins": [
     {
       "name": "ProjectsPlugin",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ProjectsPlugin.dll",
-      "checksum": "sha256:49c157a2d6df1305e588f14ed36e77149d40b7d80266e425acf26a9b751d56f7"
+      "checksum": "sha256:9bc314b76c67e67ce211672b7b97dd2addbeb6646d7760d0f7073430e98be0fa"
     },
     {
       "name": "EconomyPlugin",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/EconomyPlugin.dll",
-      "checksum": "sha256:a363ad24b63c54bed55d47a6d4ca5351bef8f94f12f2e94cb9b0d1ebb9b1e5b3"
+      "checksum": "sha256:6846451745ee6c65e066d897807bfc858a7b49a02539959f7e8618449bfe385c"
     },
     {
       "name": "DayZFileManagerPlugin",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/DayZFileManagerPlugin.dll",
-      "checksum": "sha256:53ca72e8737d7b155f36659549e589ba48e2cb65d12da046fffd8f82b4705155"
+      "checksum": "sha256:033a168d64d7ce19e8e1e1816edae6b9c94d92155bb711081a847e6893d803d0"
     },
     {
       "name": "ExpansionPlugin",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "url": "https://github.com/Shawminator/Day2eEditor/releases/download/plugins/ExpansionPlugin.dll",
-      "checksum": "sha256:4d6ce0ab20c34fc8493737a2900488756f6e469c93a372eb2277f13393fee993"
+      "checksum": "sha256:1865c466cab83c47ee08fd3a3596ba42ce30198ea1296cc5e108f7bb60b77143"
     }
   ],
   "mapaddons": [
