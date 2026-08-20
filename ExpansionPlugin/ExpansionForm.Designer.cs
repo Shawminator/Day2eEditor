@@ -149,6 +149,7 @@
             removeP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
             moveP2PWaypointUpToolStripMenuItem = new ToolStripMenuItem();
             moveP2PWaypointDownToolStripMenuItem = new ToolStripMenuItem();
+            removeHardlinePlayerFactionRepToolStripMenuItem = new ToolStripMenuItem();
             GarageCM = new ContextMenuStrip(components);
             addNewEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
             removeEntityWhitelistToolStripMenuItem = new ToolStripMenuItem();
@@ -835,7 +836,7 @@
             civilianToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { bikerToolStripMenuItem, civilianToolStripMenuItem1, farmerToolStripMenuItem, fisherManToolStripMenuItem, freshieToolStripMenuItem, hunterToolStripMenuItem, lumberjackToolStripMenuItem });
             civilianToolStripMenuItem.ForeColor = SystemColors.Control;
             civilianToolStripMenuItem.Name = "civilianToolStripMenuItem";
-            civilianToolStripMenuItem.Size = new Size(180, 22);
+            civilianToolStripMenuItem.Size = new Size(154, 22);
             civilianToolStripMenuItem.Text = "Civilian";
             // 
             // bikerToolStripMenuItem
@@ -907,7 +908,7 @@
             publicservicesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { constructionworkerToolStripMenuItem, firefighterToolStripMenuItem, mechanicToolStripMenuItem, medicToolStripMenuItem, nbcToolStripMenuItem, nurseToolStripMenuItem, paramedicToolStripMenuItem, policeToolStripMenuItem });
             publicservicesToolStripMenuItem.ForeColor = SystemColors.Control;
             publicservicesToolStripMenuItem.Name = "publicservicesToolStripMenuItem";
-            publicservicesToolStripMenuItem.Size = new Size(180, 22);
+            publicservicesToolStripMenuItem.Size = new Size(154, 22);
             publicservicesToolStripMenuItem.Text = "Public_Services";
             // 
             // constructionworkerToolStripMenuItem
@@ -988,7 +989,7 @@
             militaryToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ghillieToolStripMenuItem, gorkaToolStripMenuItem, natoToolStripMenuItem, omkToolStripMenuItem, pilotToolStripMenuItem, sniperToolStripMenuItem, ttskoToolStripMenuItem, usmcToolStripMenuItem });
             militaryToolStripMenuItem.ForeColor = SystemColors.Control;
             militaryToolStripMenuItem.Name = "militaryToolStripMenuItem";
-            militaryToolStripMenuItem.Size = new Size(180, 22);
+            militaryToolStripMenuItem.Size = new Size(154, 22);
             militaryToolStripMenuItem.Text = "Military";
             // 
             // ghillieToolStripMenuItem
@@ -1069,7 +1070,7 @@
             specialToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { banditToolStripMenuItem, cowboyToolStripMenuItem, medievalToolStripMenuItem, prisonerToolStripMenuItem, specOpsToolStripMenuItem, survivalistToolStripMenuItem, witchToolStripMenuItem });
             specialToolStripMenuItem.ForeColor = SystemColors.Control;
             specialToolStripMenuItem.Name = "specialToolStripMenuItem";
-            specialToolStripMenuItem.Size = new Size(180, 22);
+            specialToolStripMenuItem.Size = new Size(154, 22);
             specialToolStripMenuItem.Text = "Special";
             // 
             // banditToolStripMenuItem
@@ -1303,10 +1304,10 @@
             // ChatCM
             // 
             ChatCM.BackColor = Color.FromArgb(60, 63, 65);
-            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem, moveP2PWaypointUpToolStripMenuItem, moveP2PWaypointDownToolStripMenuItem });
+            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem, moveP2PWaypointUpToolStripMenuItem, moveP2PWaypointDownToolStripMenuItem, removeHardlinePlayerFactionRepToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
-            ChatCM.Size = new Size(222, 246);
+            ChatCM.Size = new Size(222, 290);
             // 
             // addNewBlacklistedWordToolStripMenuItem
             // 
@@ -1395,6 +1396,14 @@
             moveP2PWaypointDownToolStripMenuItem.Size = new Size(221, 22);
             moveP2PWaypointDownToolStripMenuItem.Text = "Move P2P Waypoint Down";
             moveP2PWaypointDownToolStripMenuItem.Click += moveP2PWaypointDownToolStripMenuItem_Click;
+            // 
+            // removeHardlinePlayerFactionRepToolStripMenuItem
+            // 
+            removeHardlinePlayerFactionRepToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeHardlinePlayerFactionRepToolStripMenuItem.Name = "removeHardlinePlayerFactionRepToolStripMenuItem";
+            removeHardlinePlayerFactionRepToolStripMenuItem.Size = new Size(221, 22);
+            removeHardlinePlayerFactionRepToolStripMenuItem.Text = "Remove Faction Rep";
+            removeHardlinePlayerFactionRepToolStripMenuItem.Click += removeHardlinePlayerFactionRepToolStripMenuItem_Click;
             // 
             // GarageCM
             // 
@@ -3217,5 +3226,6 @@
         private ToolStripMenuItem specOpsToolStripMenuItem;
         private ToolStripMenuItem survivalistToolStripMenuItem;
         private ToolStripMenuItem witchToolStripMenuItem;
+        private ToolStripMenuItem removeHardlinePlayerFactionRepToolStripMenuItem;
     }
 }

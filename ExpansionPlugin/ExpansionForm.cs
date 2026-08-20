@@ -1623,6 +1623,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeExplosiveProjectileToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                //Hardline
+                [typeof(FactionReps)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeHardlinePlayerFactionRepToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 //Map
                 [typeof(ExpansionServerMarkerData)] = node =>
                 {
@@ -3369,7 +3376,7 @@ namespace ExpansionPlugin
         }
         private TreeNode BuildAILoadoutsNode(AILoadouts a)
         {
-            string label = string.IsNullOrWhiteSpace(a.ClassName) ? "Set" : $"{a.ClassName}  -  {a.Chance*100}%";
+            string label = string.IsNullOrWhiteSpace(a.ClassName) ? "Set" : $"{a.ClassName}  -  {a.Chance * 100}%";
             TreeNode tn = new TreeNode(label) { Tag = a };
 
             foreach (Inventoryattachment ia in a.InventoryAttachments ?? new BindingList<Inventoryattachment>())
@@ -4027,7 +4034,7 @@ namespace ExpansionPlugin
             {
                 Tag = ExpansionHardlinePlayerData
             };
-            foreach(FactionReps FactionReps in ExpansionHardlinePlayerData.FactionReputation)
+            foreach (FactionReps FactionReps in ExpansionHardlinePlayerData.FactionReputation)
             {
                 Playerdata.Nodes.Add(new TreeNode($"Faction Id : {FactionReps.FactionID}")
                 {
@@ -11269,6 +11276,30 @@ namespace ExpansionPlugin
             currentTreeNode.Remove();
 
         }
+        //hardline
+        private void removeHardlinePlayerFactionRepToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FactionReps currentFactionReps = currentTreeNode.Tag as FactionReps;
+            ExpansionHardlinePlayerData currentExpansionHardlinePlayerData = currentTreeNode.Parent.Tag as ExpansionHardlinePlayerData;
+            bool needtosetmostrecent = false;
+            if (currentFactionReps.FactionID == currentExpansionHardlinePlayerData.FactionID)
+            {
+                needtosetmostrecent = true;
+            }
+            currentExpansionHardlinePlayerData.FactionReputation.Remove(currentFactionReps);
+            currentTreeNode.Remove();
+            if (needtosetmostrecent == true)
+            {
+                if (currentExpansionHardlinePlayerData.FactionReputation.Count == 0)
+                {
+                    currentExpansionHardlinePlayerData.FactionID = -1;
+                }
+                else
+                {
+                    currentExpansionHardlinePlayerData.FactionID = currentExpansionHardlinePlayerData.FactionReputation[0].FactionID;
+                }
+            }
+        }
         //Map
         private void addNewServerMarkerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -15414,6 +15445,8 @@ namespace ExpansionPlugin
         {
 
         }
+
+
     }
 
     [PluginInfo("Expansion Manager", "ExpansionPlugin", "ExpansionPlugin.Expansion.png")]
