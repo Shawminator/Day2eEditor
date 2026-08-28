@@ -642,6 +642,12 @@ namespace EconomyPlugin
                     SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
                     SpawnableTypesCM.Show(Cursor.Position);
                 },
+                [typeof(spawnableTypeTag)] = node =>
+                {
+                    SpawnableTypesCM.Items.Clear();
+                    SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
+                    SpawnableTypesCM.Show(Cursor.Position);
+                },
                 [typeof(spawnableTypeDamage)] = node =>
                 {
                     SpawnableTypesCM.Items.Clear();
@@ -3081,8 +3087,6 @@ namespace EconomyPlugin
 
                     if (removed)
                     {
-                        file.IsDirty = true;
-
                         TreeNode fileNode = currentTreeNode.Parent; // file node in tree
 
                         // Check if there are no sections left in the file
@@ -3132,8 +3136,6 @@ namespace EconomyPlugin
 
                     if (removed)
                     {
-                        file.IsDirty = true;
-
                         TreeNode fileNode = currentTreeNode.Parent; // file node in tree
 
                         if (!file.Data.var.Any())
@@ -4458,7 +4460,6 @@ namespace EconomyPlugin
             _mapControl.ClearDrawables();
 
             territorytype territorytype = currentTreeNode.FindParentOfType<territorytype>();
-            territorytype.IsDirty = true;
             territorytypeTerritory territorytypeTerritory = currentTreeNode.FindParentOfType<territorytypeTerritory>();
             DrawTerritoriesPositions(territorytypeTerritory);
             currentTreeNode.Text = _selectedterritory.ToString();
@@ -4668,8 +4669,6 @@ namespace EconomyPlugin
                     case "Building": newFile.Data.building = cloned; break;
                     case "Player": newFile.Data.player = cloned; break;
                 }
-
-                newFile.IsDirty = true;
             }
             _economyManager.economyConfig.Save();
             HandleTreeViewSelection(newFile, sectionName, f => GetSectionByName(f.Data, sectionName), EconomyTV);
@@ -4733,7 +4732,6 @@ namespace EconomyPlugin
             if (GetVariableByName(newFile.Data, sectionName) == null)
             {
                 newFile.Data.var.Add(CloneVariable(section));
-                newFile.IsDirty = true;
             }
 
             _economyManager.globalsConfig.Save();
@@ -4776,7 +4774,7 @@ namespace EconomyPlugin
         {
             if (currentTreeNode.Tag is TypesFile typefile)
             {
-                if (!typefile.IsModded)
+                if (!typefile.IsModded && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"This is the Vanilla types file, I suggest you add new types to a custom type file......\n\nIf you dont have any custom types yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new types.",
@@ -4800,7 +4798,6 @@ namespace EconomyPlugin
                         typefile.Data.TypeList.Add(te);
                         CreateTyoesNodes(currentTreeNode, te);
                     }
-                    typefile.IsDirty = true;
                     savefiles();
                 }
             }
@@ -4866,13 +4863,12 @@ namespace EconomyPlugin
                     out deleteDirectory
                 );
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                typefile.IsDirty = true;
                 typefile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is TypeEntry typeentry)
             {
                 TypesFile _typefile = currentTreeNode.Parent.Parent.Tag as TypesFile;
-                if (_typefile.IsModded == false)
+                if (_typefile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"Type entry(s) is in the vanilla types file, are you sure you want to delete it?",
@@ -4890,7 +4886,6 @@ namespace EconomyPlugin
                     var parent = node.Parent;
                     RemoveTreeNodeAndEmptyParents(node);
                 }
-                _typefile.IsDirty = true;
             }
         }
         private void updateTypesFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4911,7 +4906,6 @@ namespace EconomyPlugin
                         if (typefile.Data.TypeList.Any(x => x.Name == te.Name))
                             continue;
                         typefile.Data.TypeList.Add(te);
-                        typefile.IsDirty = true;
                         added.Add(te.Name);
                         Console.WriteLine($"\t{te.Name} added to file....");
                         CreateTyoesNodes(currentTreeNode, te);
@@ -5116,7 +5110,7 @@ namespace EconomyPlugin
         {
             if (currentTreeNode.Tag is EventsFile eventfile)
             {
-                if (!eventfile.IsModded)
+                if (!eventfile.IsModded && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"This is the Vanilla Events file, I suggest you add new Events to a custom Event file......\n\nIf you dont have any custom Events files yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new events.",
@@ -5244,13 +5238,12 @@ namespace EconomyPlugin
                     out deleteDirectory
                 );
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                eventfile.IsDirty = true;
                 eventfile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is eventsEvent _event)
             {
                 EventsFile _eventfile = currentTreeNode.Parent.Tag as EventsFile;
-                if (_eventfile.IsModded == false)
+                if (_eventfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"Event entry(s) is in the vanilla types file, are you sure you want to delete it?\n perhaps just disabling would be better....",
@@ -5291,7 +5284,6 @@ namespace EconomyPlugin
                     }
                 }
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _eventfile.IsDirty = true;
             }
         }
         private void addNewEventSpawnToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5606,7 +5598,6 @@ namespace EconomyPlugin
             //                eventgroupdef.group.Add(newvengroup);
             //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
             //            }
-            //            currentproject.cfgeventgroups.isDirty = true;
             //            break;
             //        case 2:
             //            foreach (string file in openFileDialog.FileNames)
@@ -5677,7 +5668,6 @@ namespace EconomyPlugin
             //                eventgroupdef.group.Add(newvengroup);
             //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
             //            }
-            //            currentproject.cfgeventgroups.isDirty = true;
             //            break;
             //        case 3:
             //            foreach (string file in openFileDialog.FileNames)
@@ -5749,11 +5739,9 @@ namespace EconomyPlugin
             //                eventgroupdef.group.Add(newvengroup);
             //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
             //            }
-            //            currentproject.cfgeventgroups.isDirty = true;
             //            break;
             //    }
             //    EventSpawnTV.SelectedNode.Nodes.Add(eventposnodes);
-            //    currentproject.cfgeventspawns.isDirty = true;
             //}
         }
 
@@ -5789,7 +5777,7 @@ namespace EconomyPlugin
         private void addNewAttchementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
-            if (!rpf.IsModded)
+            if (!rpf.IsModded && !_projectManager.CurrentProject.CanEditVanillaFiles)
             {
                 var ismoddedresult = MessageBox.Show(
                                 $"This is the Vanilla Random Preset file, I suggest you add new Attchemnts to a custom Random Preset file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Random Preset.",
@@ -5819,7 +5807,7 @@ namespace EconomyPlugin
             CfgrandompresetsFile rpf = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
             if (rpf != null)
             {
-                if (!rpf.IsModded)
+                if (!rpf.IsModded && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var ismoddedresult = MessageBox.Show(
                                     $"This is the Vanilla Random Preset file, I suggest you add new Cargo items to a custom Random Preset file......\n\nIf you dont have any custom Random Presets yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Random Preset.",
@@ -5843,7 +5831,6 @@ namespace EconomyPlugin
                 rpf.Data.Items.Add(newcargo);
                 currentTreeNode.Nodes.Add(IN);
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-                rpf.IsDirty = true;
             }
         }
         private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5872,8 +5859,6 @@ namespace EconomyPlugin
                     currentTreeNode.Nodes.Add(CreateRPItem(newitem));
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-
-                rpf.IsDirty = true;
             }
             else if (result == DialogResult.Cancel)
             {
@@ -5915,13 +5900,12 @@ namespace EconomyPlugin
                     out deleteDirectory
                 );
                 currentTreeNode.Remove();
-                randompresetsfile.IsDirty = true;
                 randompresetsfile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is randompresetsAttachments randompresetsAttachments)
             {
                 CfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
-                if (_randompresetsfile.IsModded == false)
+                if (_randompresetsfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"Preset Attchment is in the vanilla Random Preset file, are you sure you want to delete it?",
@@ -5934,12 +5918,11 @@ namespace EconomyPlugin
                 _randompresetsfile.Data.Items.Remove(randompresetsAttachments);
                 var parent = currentTreeNode.Parent;
                 currentTreeNode.Remove();
-                _randompresetsfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is randompresetsCargo randompresetsCargo)
             {
                 CfgrandompresetsFile _randompresetsfile = currentTreeNode.FindParentOfType<CfgrandompresetsFile>();
-                if (_randompresetsfile.IsModded == false)
+                if (_randompresetsfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"Preset Cargo is in the vanilla Random Preset file, are you sure you want to delete it?",
@@ -5952,7 +5935,6 @@ namespace EconomyPlugin
                 _randompresetsfile.Data.Items.Remove(randompresetsCargo);
                 var parent = currentTreeNode.Parent;
                 currentTreeNode.Remove();
-                _randompresetsfile.IsDirty = true;
             }
             else if (currentTreeNode.Tag is randompresetsItem randompresetsItem)
             {
@@ -5976,7 +5958,6 @@ namespace EconomyPlugin
                     currentcargo.item.Remove(randompresetsItem);
                 }
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                _randompresetsfile.IsDirty = true;
             }
 
         }
@@ -6013,7 +5994,7 @@ namespace EconomyPlugin
         private void addNewSpawnableTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CfgSpawnableTypesFile spf = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
-            if (!spf.IsModded)
+            if (!spf.IsModded && !_projectManager.CurrentProject.CanEditVanillaFiles)
             {
                 var ismoddedresult = MessageBox.Show(
                                 $"This is the Vanilla Spawnable Types file, I suggest you add new Spawnable Types to a custom SpawnableTypes file......\n\nIf you dont have any custom SpawnableTypes yet you can create one by right clicking on {Path.GetFileName(_economyManager.basePath)} and selecting add new Spawnable Types.",
@@ -6043,7 +6024,6 @@ namespace EconomyPlugin
                     currentTreeNode.Nodes.Add(IN);
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-                spf.IsDirty = true;
             }
             else if (result == DialogResult.Cancel)
             {
@@ -6061,7 +6041,6 @@ namespace EconomyPlugin
                 {
                     Tag = newhoarder
                 });
-                spf.IsDirty = true;
             }
         }
         private void addNewTagToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6076,7 +6055,6 @@ namespace EconomyPlugin
                     Tag = newtag
                 };
                 currentTreeNode.Nodes.Add(newTagNode);
-                spf.IsDirty = true;
             }
         }
         private void addNewDamageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6105,7 +6083,6 @@ namespace EconomyPlugin
             }
             TreeNode newdamageNode = CreateDamageNode(newdamage);
             currentTreeNode.Nodes.Insert(0, newdamageNode);
-            spf.IsDirty = true;
         }
         private void addNewItemToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -6135,8 +6112,6 @@ namespace EconomyPlugin
                     currentTreeNode.Nodes.Add(CreateItemNode(newitem));
                 }
                 EconomyTV.SelectedNode = currentTreeNode.LastNode;
-
-                spf.IsDirty = true;
             }
             else if (result == DialogResult.Cancel)
             {
@@ -6159,7 +6134,6 @@ namespace EconomyPlugin
                 item.cargo.Add(newcargo);
             }
             currentTreeNode.Nodes.Add(createCargoNopdes(newcargo));
-            spf.IsDirty = true;
         }
         private void addNewAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -6177,7 +6151,6 @@ namespace EconomyPlugin
                 item.attachments.Add(newattchemnts);
             }
             currentTreeNode.Nodes.Add(createattachmentnodes(newattchemnts));
-            spf.IsDirty = true;
         }
         private void removeSelectedToolStripMenuItem1_Click_1(object sender, EventArgs e)
         {
@@ -6214,14 +6187,13 @@ namespace EconomyPlugin
                     out fileName,
                     out deleteDirectory
                 );
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                spawnabletypesfile.IsDirty = true;
+                currentTreeNode.Remove();
                 spawnabletypesfile.ToDelete = true;
             }
             else if (currentTreeNode.Tag is SpawnableType type)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
-                if (_spawnabletypesfile.IsModded == false)
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
@@ -6232,13 +6204,12 @@ namespace EconomyPlugin
                     if (result == DialogResult.No) { return; }
                 }
                 _spawnabletypesfile.Data.type.Remove(type);
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.IsDirty = true;
+                currentTreeNode.Remove();
             }
             else if (currentTreeNode.Tag is spawnableTypesHoarder Hoarder)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
-                if (_spawnabletypesfile.IsModded == false)
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
                 {
                     var result = MessageBox.Show(
                                 $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
@@ -6249,23 +6220,40 @@ namespace EconomyPlugin
                     if (result == DialogResult.No) { return; }
                 }
                 SpawnableType _type = currentTreeNode.Parent.Tag as SpawnableType;
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.IsDirty = true;
-
+                currentTreeNode.Remove();
             }
             else if (currentTreeNode.Tag is spawnableTypeTag Tag)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
+                {
+                    var result = MessageBox.Show(
+                                $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
+                                "Vanilla Spawnable Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
                 if (currentTreeNode.Parent.Tag is SpawnableType _type)
                 {
                     _type.Items.Remove(Tag);
-                    RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                    _spawnabletypesfile.IsDirty = true;
+                    currentTreeNode.Remove();
                 }
             }
             else if (currentTreeNode.Tag is spawnableTypeDamage damage)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
+                {
+                    var result = MessageBox.Show(
+                                $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
+                                "Vanilla Spawnable Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
                 if (currentTreeNode.Parent.Tag is CfgSpawnableTypesFile typefile)
                 {
                     typefile.Data.damage = null;
@@ -6286,12 +6274,21 @@ namespace EconomyPlugin
                 {
                     _attachment.damage = null;
                 }
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.IsDirty = true;
+                currentTreeNode.Remove();
             }
             else if (currentTreeNode.Tag is spawnableTypeCargo cargo)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
+                {
+                    var result = MessageBox.Show(
+                                $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
+                                "Vanilla Spawnable Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
                 if (currentTreeNode.Parent.Tag is SpawnableType _type)
                 {
                     _type.Items.Remove(cargo);
@@ -6300,12 +6297,21 @@ namespace EconomyPlugin
                 {
                     _Item.cargo.Remove(cargo);
                 }
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.IsDirty = true;
+                currentTreeNode.Remove();
             }
             else if (currentTreeNode.Tag is spawnableTypeAttachment attachment)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
+                {
+                    var result = MessageBox.Show(
+                                $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
+                                "Vanilla Spawnable Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
                 if (currentTreeNode.Parent.Tag is SpawnableType _type)
                 {
                     _type.Items.Remove(attachment);
@@ -6314,12 +6320,21 @@ namespace EconomyPlugin
                 {
                     _Item.attachments.Remove(attachment);
                 }
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.IsDirty = true;
+                currentTreeNode.Remove();
             }
             else if (currentTreeNode.Tag is spawnableTypeItem Item)
             {
                 CfgSpawnableTypesFile _spawnabletypesfile = currentTreeNode.FindParentOfType<CfgSpawnableTypesFile>();
+                if (_spawnabletypesfile.IsModded == false && !_projectManager.CurrentProject.CanEditVanillaFiles)
+                {
+                    var result = MessageBox.Show(
+                                $"Spawnable Type is in the vanilla Spawnable Types file, are you sure you want to delete it?",
+                                "Vanilla Spawnable Types File",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question
+                            );
+                    if (result == DialogResult.No) { return; }
+                }
                 if (currentTreeNode.Parent.Tag is spawnableTypeCargo _cargo)
                 {
                     _cargo.item.Remove(Item);
@@ -6328,8 +6343,7 @@ namespace EconomyPlugin
                 {
                     _attachment.item.Remove(Item);
                 }
-                RemoveTreeNodeAndEmptyParents(currentTreeNode);
-                _spawnabletypesfile.IsDirty = true;
+                currentTreeNode.Remove();
             }
         }
         private void addFromDumpAttachToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6473,7 +6487,6 @@ namespace EconomyPlugin
             };
             currentspawnGearPresetFiles.Data.attachmentSlotItemSets.Add(newASIS);
             currentTreeNode.Nodes.Add(AttachmentslotitemsetNodeTN(newASIS));
-            currentspawnGearPresetFiles.IsDirty = true;
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewDisctreetItemSetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6498,7 +6511,6 @@ namespace EconomyPlugin
             };
             Attachmentslotitemset.discreteItemSets.Add(newDIS);
             currentTreeNode.Nodes.Add(DiscreetItemSetsTN(newDIS));
-            currentspawnGearPresetFiles.IsDirty = true;
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void addNewComplexChildSetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -6522,14 +6534,11 @@ namespace EconomyPlugin
             {
                 Discreteunsorteditemset.complexChildrenTypes.Add(newCCIS);
                 currentTreeNode.Nodes.Add(ComplexChildrenTypesNodeTN(newCCIS));
-                currentspawnGearPresetFiles.IsDirty = true;
-
             }
             else if (currentTreeNode.Parent.Tag is Discreteitemset Discreteitemset)
             {
                 Discreteitemset.complexChildrenTypes.Add(newCCIS);
                 currentTreeNode.Nodes.Add(ComplexChildrenTypesNodeTN(newCCIS));
-                currentspawnGearPresetFiles.IsDirty = true;
             }
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
@@ -6553,7 +6562,6 @@ namespace EconomyPlugin
             };
             currentspawnGearPresetFiles.Data.discreteUnsortedItemSets.Add(newDUIS);
             currentTreeNode.Nodes.Add(DiscreteunsorteditemsetTN(newDUIS));
-            currentspawnGearPresetFiles.IsDirty = true;
             EconomyTV.SelectedNode = currentTreeNode.LastNode;
         }
         private void SpawnGearremoveSelectedToolStripMenuItem2_Click(object sender, EventArgs e)
@@ -6563,7 +6571,6 @@ namespace EconomyPlugin
             {
                 _economyManager.CFGGameplayConfig.RemoveSpawnGearPreset(SpawnGearPresetFiles);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                SpawnGearPresetFiles.IsDirty = true;
                 SpawnGearPresetFiles.ToDelete = true;
             }
             else if (currentTreeNode.Tag is Complexchildrentype complexchildrentype)
@@ -6573,13 +6580,11 @@ namespace EconomyPlugin
                 {
                     CurrentDiscreteunsorteditemset.complexChildrenTypes.Remove(complexchildrentype);
                     currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                    currentspawnGearPresetFiles.IsDirty = true;
                 }
                 else if (currentTreeNode.Parent.Parent.Tag is Discreteitemset CurrentDiscreteitemset)
                 {
                     CurrentDiscreteitemset.complexChildrenTypes.Remove(complexchildrentype);
                     currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                    currentspawnGearPresetFiles.IsDirty = true;
                 }
             }
             else if (currentTreeNode.Tag is Discreteitemset Discreteitemset)
@@ -6588,21 +6593,18 @@ namespace EconomyPlugin
                 Attachmentslotitemset Attachmentslotitemset = currentTreeNode.FindParentOfType<Attachmentslotitemset>();
                 Attachmentslotitemset.discreteItemSets.Remove(Discreteitemset);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                currentspawnGearPresetFiles.IsDirty = true;
             }
             else if (currentTreeNode.Tag is Discreteunsorteditemset Discreteunsorteditemset)
             {
                 SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
                 currentspawnGearPresetFiles.Data.discreteUnsortedItemSets.Remove(Discreteunsorteditemset);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                currentspawnGearPresetFiles.IsDirty = true;
             }
             else if (currentTreeNode.Tag is Attachmentslotitemset Attachmentslotitemset)
             {
                 SpawnGearPresetFile currentspawnGearPresetFiles = currentTreeNode.FindParentOfType<SpawnGearPresetFile>();
                 currentspawnGearPresetFiles.Data.attachmentSlotItemSets.Remove(Attachmentslotitemset);
                 currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
-                currentspawnGearPresetFiles.IsDirty = true;
             }
         }
 

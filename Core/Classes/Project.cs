@@ -16,6 +16,7 @@ namespace Day2eEditor
         public string ProfileName { get; set; }
         public string MpMissionPath { get; set; }
         public string MapPath { get; set; }
+        public bool CanEditVanillaFiles { get; set; }
         public int MapSize { get; set; }
         public ProjectServerSettings ServerSettings { get; set; }
                 = new ProjectServerSettings();
