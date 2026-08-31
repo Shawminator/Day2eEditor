@@ -132,10 +132,17 @@ namespace Day2eEditor
         {
             if (other is null) return false;
 
-            return
-                string.Equals(name, other.name, StringComparison.Ordinal) &&
-                Equals(zone, other.zone) &&
-                pos.SequenceEqual(other.pos);
+
+            if (!string.Equals(name, other.name, StringComparison.Ordinal))
+                return false;
+            
+            if (!Equals(zone, other.zone))
+                return false;
+            
+            if (!Helper.ListEquals(pos, other.pos))
+                return false;
+
+            return true;
         }
 
         public override bool Equals(object? obj) => Equals(obj as eventposdefEvent);
