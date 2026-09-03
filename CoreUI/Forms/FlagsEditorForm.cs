@@ -12,6 +12,8 @@ public partial class FlagsEditorForm : Form
 
     public FlagsEditorForm(List<string> flagslist, Flags flags, Action<Flags> onFlagsUpdated)
     {
+        if (flags == null) flags = new Flags();
+        
         _flagslist = flagslist;
         _flags = flags;
         _onFlagsUpdated = onFlagsUpdated;
@@ -113,6 +115,7 @@ public partial class FlagsEditorForm : Form
 
     private void CloseAndApply()
     {
+
         // Final update before closing
         _flags.count_in_cargo = _tempFlags.count_in_cargo;
         _flags.count_in_hoarder = _tempFlags.count_in_hoarder;

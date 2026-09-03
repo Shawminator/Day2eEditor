@@ -192,19 +192,19 @@ namespace EconomyPlugin
         private void PopulateCounts()
         {
             if (typeNomCountNUD.Visible = NomCountCB.Checked = _currentdata.NominalSpecified)
-                typeNomCountNUD.Value = (decimal)_currentdata.Nominal;
+                typeNomCountNUD.Value = (decimal)(_currentdata.Nominal ?? 0);
             if (typeMinCountNUD.Visible = MinCountCB.Checked = _currentdata.MinSpecified)
-                typeMinCountNUD.Value = (decimal)_currentdata.Min;
+                typeMinCountNUD.Value = (decimal)(_currentdata.Min ?? 0);
             typeLifetimeNUD.Visible = true;
-            typeLifetimeNUD.Value = (decimal)_currentdata.Lifetime;
+            typeLifetimeNUD.Value = (decimal)(_currentdata.Lifetime ?? 0);
             if (typeRestockNUD.Visible = RestockCB.Checked = _currentdata.RestockSpecified)
-                typeRestockNUD.Value = (decimal)_currentdata.Restock;
+                typeRestockNUD.Value = (decimal)(_currentdata.Restock ?? 0);
             if (typeQuantMINNUD.Visible = QuanMinCB.Checked = _currentdata.QuantMinSpecified)
-                typeQuantMINNUD.Value = (decimal)_currentdata.QuantMin;
+                typeQuantMINNUD.Value = (decimal)(_currentdata.QuantMin ?? 0);
             if (typeQuantMAXNUD.Visible = QuanMaxCB.Checked = _currentdata.QuantMaxSpecified)
-                typeQuantMAXNUD.Value = (decimal)_currentdata.QuantMax;
+                typeQuantMAXNUD.Value = (decimal)(_currentdata.QuantMax ?? 0);
             if (typeCostNUD.Visible = costCB.Checked = _currentdata.CostSpecified)
-                    typeCostNUD.Value = (decimal)_currentdata.Cost;
+                    typeCostNUD.Value = (decimal)(_currentdata.Cost ?? 0);
         }
         private void populateUsage()
         {
@@ -310,7 +310,7 @@ namespace EconomyPlugin
 
                 typeRestockNUD.Visible = typeentry.RestockSpecified = RestockCB.Checked;
                 typeRestockNUD.Value = 0;
-                typeentry.Min = (int)typeRestockNUD.Value;
+                typeentry.Restock = (int)typeRestockNUD.Value;
             }
             
         }
