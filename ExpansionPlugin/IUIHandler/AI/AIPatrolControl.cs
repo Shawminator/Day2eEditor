@@ -407,7 +407,7 @@ namespace ExpansionPlugin
             }
             foreach (string s in _data.LootingBehaviour.Split('|'))
             {
-                if (s == "") continue;
+                if (s == "NONE") continue;
                 StaticPatrolLootingBehaviousCLB.SetItemChecked(StaticPatrolLootingBehaviousCLB.Items.IndexOf(s.Trim()), true);
             }
 
@@ -757,6 +757,11 @@ namespace ExpansionPlugin
                 {
                     selected.Add(list.Items[i].ToString());
                 }
+            }
+            // Nothing selected -> return NONE
+            if (selected.Count == 0)
+            {
+                return "NONE";
             }
             return string.Join(" | ", selected);
         }
