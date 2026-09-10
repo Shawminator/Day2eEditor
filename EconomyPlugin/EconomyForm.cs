@@ -3,6 +3,7 @@ using Day2eEditor;
 using Org.BouncyCastle.Pkcs;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -39,6 +40,22 @@ namespace EconomyPlugin
                 cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
                 return cp;
             }
+        }
+        private readonly JsonSerializerOptions _defaultOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+        private JsonSerializerOptions BuildOptions(bool useBool, bool useVec)
+        {
+            var options = new JsonSerializerOptions(_defaultOptions);
+
+            if (useBool) options.Converters.Add(new BoolConverter());
+            if (useVec) options.Converters.Add(new Vec3Converter());
+
+            return options;
         }
         public EconomyForm(IPluginForm plugin)
         {
@@ -554,6 +571,7 @@ namespace EconomyPlugin
                 {
                     EventsCM.Items.Clear();
                     EventsCM.Items.Add(RemoveEventsToolStripMenuItem);
+                    EventsCM.Items.Add(addNewEventSpawnToolStripMenuItem);
                     EventsCM.Show(Cursor.Position);
                 },
                 [typeof(eventposdefEvent)] = node =>
@@ -565,19 +583,29 @@ namespace EconomyPlugin
                     EventSpawnContextMenu.Items.Add(importPositionFromdzeToolStripMenuItem);
                     EventSpawnContextMenu.Items.Add(importPositionAndCreateEventgroupFormdzeToolStripMenuItem);
                     EventSpawnContextMenu.Items.Add(deleteSelectedEventSpawnToolStripMenuItem);
-                    
+
                     if (evt.pos != null && evt.pos.Count > 0)
                     {
                         EventSpawnContextMenu.Items.Add(new ToolStripSeparator());
                         EventSpawnContextMenu.Items.Add(removeAllPositionToolStripMenuItem);
                         EventSpawnContextMenu.Items.Add(exportPositionTodzeToolStripMenuItem);
                     }
+                    if( evt.zone == null)
+                    {
+                        EventSpawnContextMenu.Items.Add(new ToolStripSeparator());
+                        EventSpawnContextMenu.Items.Add(addZoneToolStripMenuItem);
+                    }
                     EventSpawnContextMenu.Items.Add(new ToolStripSeparator());
                     EventSpawnContextMenu.Items.Add(removeAllYFromPositionsToolStripMenuItem);
                     EventSpawnContextMenu.Items.Add(removeAllAFromPositionsToolStripMenuItem);
                     EventSpawnContextMenu.Show(Cursor.Position);
                 },
-
+                [typeof(eventposdefEventZone)] = node =>
+                {
+                    EventSpawnContextMenu.Items.Clear();
+                    EventSpawnContextMenu.Items.Add(removeZoneToolStripMenuItem);
+                    EventSpawnContextMenu.Show(Cursor.Position);
+                },
                 // Random Presets
                 [typeof(CfgrandompresetsFile)] = node =>
                 {
@@ -1946,10 +1974,10 @@ namespace EconomyPlugin
                 {
                     Tag = _event
                 };
-                eventposdefEvent points = _economyManager.cfgeventspawnsConfig.Findevent(_event.name);
-                if (points != null)
+                eventposdefEvent EventSpawn = _economyManager.cfgeventspawnsConfig.Findevent(_event.name);
+                if (EventSpawn != null)
                 {
-                    ev.Nodes.Add(CreateeventSpawnsNodes(points));
+                    ev.Nodes.Add(CreateeventSpawnsNodes(EventSpawn));
                 }
                 eventRoot.Nodes.Add(ev);
             }
@@ -1975,7 +2003,6 @@ namespace EconomyPlugin
             }
             return eventspawnroot;
         }
-
         private TreeNode CreateEventposnodes(eventposdefEvent? eventspawns)
         {
 
@@ -1988,7 +2015,6 @@ namespace EconomyPlugin
             }
             return eventposnodes;
         }
-
         private TreeNode CreateEventPositionNode(eventposdefEventPos pos)
         {
             TreeNode posnodes = new TreeNode(pos.ToString());
@@ -4597,13 +4623,20 @@ namespace EconomyPlugin
             {
                 eventposdefEvent ttt = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
                 ttt.pos.Remove(eventposdefEventPos);
+                TreeNode Parent = currentTreeNode.Parent;
                 currentTreeNode.Remove();
+                if (Parent.Nodes.Count == 0)
+                {
+                    Parent.Remove();
+                }
             }
             else if (currentTreeNode.Tag is cfgeffectareaSafePosition cfgeffectareaSafePosition)
             {
                 CfgeffectareaConfig ttt = currentTreeNode.Parent.Parent.Tag as CfgeffectareaConfig;
                 ttt.Data._positions.Remove(cfgeffectareaSafePosition);
+                
                 currentTreeNode.Remove();
+                
             }
             else if (currentTreeNode.Tag is Areas area)
             {
@@ -4941,22 +4974,6 @@ namespace EconomyPlugin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private readonly JsonSerializerOptions _defaultOptions = new()
-        {
-            WriteIndented = true,
-            PropertyNameCaseInsensitive = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
-        private JsonSerializerOptions BuildOptions(bool useBool, bool useVec)
-        {
-            var options = new JsonSerializerOptions(_defaultOptions);
-
-            if (useBool) options.Converters.Add(new BoolConverter());
-            if (useVec) options.Converters.Add(new Vec3Converter());
-
-            return options;
-        }
         private void importPositionFromdzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
@@ -5140,10 +5157,12 @@ namespace EconomyPlugin
                         children = new BindingList<eventsEventChild>()
                     };
                     eventfile.Data.AddNewEvent(neweventEvent);
-                    currentTreeNode.Nodes.Add(new TreeNode(neweventEvent.name)
+                    TreeNode neweventnode = new TreeNode(neweventEvent.name)
                     {
                         Tag = neweventEvent
-                    });
+                    };
+                    currentTreeNode.Nodes.Add(neweventnode);
+                    EconomyTV.SelectedNode = neweventnode;
                 }
             }
             else
@@ -5288,11 +5307,46 @@ namespace EconomyPlugin
         }
         private void addNewEventSpawnToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (currentTreeNode.Tag is eventsEvent eventsEvent)
+            {
+                eventposdefEvent neweventspawn = new eventposdefEvent()
+                {
+                    name = eventsEvent.name
+                };
+                _economyManager.cfgeventspawnsConfig.AddNewEventSpawn(neweventspawn);
+                currentTreeNode.Nodes.Add(CreateeventSpawnsNodes(neweventspawn));
+            }
         }
         private void deleteSelectedEventSpawnToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (currentTreeNode.Tag is eventposdefEvent eventposdefEvent)
+            {
+                _economyManager.cfgeventspawnsConfig.RemoveEventSpawn(eventposdefEvent);
+                currentTreeNode.Remove();
+            }
+        }
+        private void addZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is eventposdefEvent eventposdefEvent)
+            {
+                eventposdefEventZone newzone = new eventposdefEventZone();
+                TreeNode zonenode = new TreeNode("zone");
+                zonenode.Name = "ZONE";
+                zonenode.Tag = newzone;
+                eventposdefEvent.zone = newzone;
+                currentTreeNode.Nodes.Insert(0, zonenode);
+                EconomyTV.SelectedNode = zonenode;
+            }
+        }
 
+        private void removeZoneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentTreeNode.Tag is eventposdefEventZone eventposdefEventZone)
+            {
+                eventposdefEvent eventposdefEvent = currentTreeNode.Parent.Tag as eventposdefEvent;
+                eventposdefEvent.zone = null;
+                currentTreeNode.Remove();
+            }
         }
         private void exportPositionTodzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -7316,12 +7370,12 @@ namespace EconomyPlugin
 
         private void removeAllYFromPositionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Tag is eventposdefEvent eventposdefEvent)
+            if (currentTreeNode.Tag is eventposdefEvent eventposdefEvent)
             {
                 TreeNode childNode = currentTreeNode.Nodes.Cast<TreeNode>().FirstOrDefault(n => n.Text.Equals("pos", StringComparison.OrdinalIgnoreCase));
                 foreach (TreeNode tn in childNode.Nodes)
                 {
-                    if(tn.Tag is eventposdefEventPos eventposdefEventPos)
+                    if (tn.Tag is eventposdefEventPos eventposdefEventPos)
                     {
                         eventposdefEventPos.ySpecified = false;
                         tn.Text = eventposdefEventPos.ToString();
@@ -7334,6 +7388,8 @@ namespace EconomyPlugin
         {
 
         }
+
+
     }
 
     [PluginInfo("Economy Manager", "EconomyPlugin", "EconomyPlugin.DayzEconomy.png")]

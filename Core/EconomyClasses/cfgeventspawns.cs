@@ -36,7 +36,6 @@ namespace Day2eEditor
                     foreach (var msg in issues)
                         Console.WriteLine("- " + msg);
 
-                    MarkDirty();
                 }
 
                 OnAfterLoad(Data);
@@ -86,7 +85,11 @@ namespace Day2eEditor
         {
             Data.@event ??= new BindingList<eventposdefEvent>();
             Data.@event.Add(newvenspawn);
-            MarkDirty();
+        }
+
+        public void RemoveEventSpawn(eventposdefEvent eventposdefEvent)
+        {
+            Data.@event.Remove(eventposdefEvent);
         }
     }
 
