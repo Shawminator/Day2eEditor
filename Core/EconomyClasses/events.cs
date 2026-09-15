@@ -92,7 +92,6 @@ namespace Day2eEditor
 
             OnAfterLoadAll();
         }
-
         protected override EventsFile LoadItem(string filePath)
         {
             var item = new EventsFile(filePath);
@@ -129,12 +128,10 @@ namespace Day2eEditor
 
             return item;
         }
-
         protected override IEnumerable<string> ValidateItem(EventsFile item)
         {
             return item.Errors;
         }
-
         public override bool NeedToSave()
         {
             foreach (var item in Items)
@@ -153,23 +150,19 @@ namespace Day2eEditor
 
             return false;
         }
-
         protected override void SaveItem(EventsFile item)
         {
             AppServices.GetRequired<FileService>().SaveXml(item.FilePath, item.Data);
             item.IsDirty = false;
         }
-
         protected override string GetItemFileName(EventsFile item)
             => item.FileName;
         protected override string GetItemFilePath(EventsFile EventsFile)
             => EventsFile.FilePath;
         protected override Guid GetID(EventsFile item)
             => item.Id;
-
         protected override bool ShouldDelete(EventsFile item)
             => item.ToDelete;
-
         protected override void DeleteItemFile(EventsFile item)
         {
             if (!string.IsNullOrWhiteSpace(item.FilePath) && File.Exists(item.FilePath))
@@ -177,14 +170,12 @@ namespace Day2eEditor
                 File.Delete(item.FilePath);
             }
         }
-
         protected override void HandleItemError(string path, Exception ex)
         {
             var msg = $"Error in {Path.GetFileName(path)}: {ex.Message}";
             _errors.Add(msg);
             Console.WriteLine(msg);
         }
-
         private void ValidateLoadedEvents(EventsFile owner, events cfg)
         {
             cfg.@event ??= new BindingList<eventsEvent>();
@@ -194,7 +185,6 @@ namespace Day2eEditor
                 CheckPropertiesRecursively(owner, ev, ev?.name ?? "UnknownEntry");
             }
         }
-
         private void CheckPropertiesRecursively(EventsFile owner, object obj, string topTypeName)
         {
             if (obj == null)
@@ -249,31 +239,14 @@ namespace Day2eEditor
                 }
             }
         }
-
-        private List<string> DeleteEmptyDirectoriesFromPath(string rootPath)
+        public List<eventsEvent> getalleventsfromgroup(eventgroupdefGroup? evg)
         {
-            var removedFolders = new List<string>();
-
-            if (!Directory.Exists(rootPath))
-                return removedFolders;
-
-            var directories = Directory
-                .GetDirectories(rootPath, "*", SearchOption.AllDirectories)
-                .OrderByDescending(d => d.Count(c =>
-                    c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar))
-                .ToList();
-
-            foreach (var dir in directories)
+            List<eventsEvent> events = new List<eventsEvent>();
+            foreach(EventsFile ef in MutableItems)
             {
-                if (!Directory.EnumerateFileSystemEntries(dir).Any())
-                {
-                    Directory.Delete(dir);
-                    var relativePath = Path.GetRelativePath(rootPath, dir);
-                    removedFolders.Add("Empty Folder Removed " + relativePath);
-                }
+                events.AddRange(ef.GetEventsfromgroup(evg));
             }
-
-            return removedFolders;
+            return events;
         }
     }
     public class EventsFile : IDeepCloneable<EventsFile>, IEquatable<EventsFile>
@@ -350,6 +323,33 @@ namespace Day2eEditor
         public override bool Equals(object? obj)
         {
             return Equals(obj as EventsFile);
+        }
+
+        internal IEnumerable<eventsEvent> GetEventsfromgroup(eventgroupdefGroup? evg)
+        {
+            List<eventsEvent> eventlist = new List<eventsEvent>();
+            foreach (eventsEvent ee in Data.@event)
+            {
+                eventposdefEvent eventspawns = AppServices.GetRequired<EconomyManager>().cfgeventspawnsConfig.Findevent(ee.name);
+                if (eventspawns != null)
+                { 
+                    if (eventspawns.pos != null && eventspawns.pos.Count > 0)
+                    {
+                        foreach (eventposdefEventPos pos in eventspawns.pos)
+                        {
+                            if (pos.group != null)
+                            {
+                                if (evg == AppServices.GetRequired<EconomyManager>().cfgeventgroupsConfig.getassociatedgroup(pos.group))
+                                {
+                                    if (!eventlist.Contains(ee))
+                                        eventlist.Add(ee);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return eventlist;
         }
     }
     #region Events

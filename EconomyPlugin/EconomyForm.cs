@@ -600,6 +600,12 @@ namespace EconomyPlugin
                     EventSpawnContextMenu.Items.Add(removeAllAFromPositionsToolStripMenuItem);
                     EventSpawnContextMenu.Show(Cursor.Position);
                 },
+                [typeof(eventposdefEventPos)] = node =>
+                {
+                    EventSpawnContextMenu.Items.Clear();
+                    EventSpawnContextMenu.Items.Add(removeSelectedPositionToolStripMenuItem);
+                    EventSpawnContextMenu.Show(Cursor.Position);
+                },
                 [typeof(eventposdefEventZone)] = node =>
                 {
                     EventSpawnContextMenu.Items.Clear();
@@ -5272,12 +5278,31 @@ namespace EconomyPlugin
                             );
                     if (result == DialogResult.No) { return; }
                 }
-                var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
-                _eventfile.Data.@event.Remove(_event);
-                var parent = currentTreeNode.Parent;
+                
+                
                 eventposdefEvent points = _economyManager.cfgeventspawnsConfig.Findevent(_event.name);
                 if (points != null)
                 {
+                    List<eventgroupdefGroup> eventgroups = new List<eventgroupdefGroup>();
+                    foreach (eventposdefEventPos pos in points.pos)
+                    {
+                        eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
+                        List<eventsEvent> events = _economyManager.eventsConfig.getalleventsfromgroup(evg);
+                        if (events.Count() == 1)
+                        {
+                            var result = MessageBox.Show(
+                                    $"i have found an associated event Group spawn, do you want me to remove that as well?",
+                                    "Event Group Spawn Found.",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question
+                                );
+                            if (result == DialogResult.Yes)
+                            {
+                                _economyManager.cfgeventgroupsConfig.Data.group.Remove(evg);
+                            }
+                            
+                        }
+                    }
                     int count = 0;
                     foreach (EventsFile evfile in _economyManager.eventsConfig.MutableItems)
                     {
@@ -5288,7 +5313,7 @@ namespace EconomyPlugin
                                 count++;
                         }
                     }
-                    if (count == 0)
+                    if (count == 1)
                     {
                         var result = MessageBox.Show(
                                     $"i have found an associated event spawn, do yo uwant me to remove that as well?",
@@ -5302,6 +5327,9 @@ namespace EconomyPlugin
                         }
                     }
                 }
+                var parent = currentTreeNode.Parent;
+                var selectedNodes = EconomyTV.SelectedNodes.Cast<TreeNode>().ToList();
+                _eventfile.Data.@event.Remove(_event);
                 RemoveTreeNodeAndEmptyParents(currentTreeNode);
             }
         }
@@ -5321,6 +5349,26 @@ namespace EconomyPlugin
         {
             if (currentTreeNode.Tag is eventposdefEvent eventposdefEvent)
             {
+                //check for group events before deleteing
+                foreach (eventposdefEventPos pos in eventposdefEvent.pos)
+                {
+                    eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(pos.group);
+                    List<eventsEvent> events = _economyManager.eventsConfig.getalleventsfromgroup(evg);
+                    if (events.Count() == 1)
+                    {
+                        var result = MessageBox.Show(
+                                    $"i have found an associated event Group spawn, do you want me to remove that as well?",
+                                    "Event Group Spawn Found.",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question
+                                );
+                        if (result == DialogResult.Yes)
+                        {
+                            _economyManager.cfgeventgroupsConfig.Data.group.Remove(evg);
+                        }
+                        
+                    }
+                }
                 _economyManager.cfgeventspawnsConfig.RemoveEventSpawn(eventposdefEvent);
                 currentTreeNode.Remove();
             }
@@ -5368,10 +5416,9 @@ namespace EconomyPlugin
                     switch (save.FilterIndex)
                     {
                         case 1:
-                            StringBuilder SB = new StringBuilder();
                             foreach (eventposdefEventPos pos in eventposdefEvent.pos)
                             {
-
+                                StringBuilder SB = new StringBuilder();
                                 string baseFilename = pos.group;
                                 string filename = baseFilename;
                                 int suffix = 1;
@@ -5384,13 +5431,13 @@ namespace EconomyPlugin
                                 foreach (eventgroupdefGroupChild eventgroupdefGroupChild in evg.child)
                                 {
 
-                                    var y = pos.ySpecified ? pos.y.ToString() : "0.0";
-                                    var a = pos.aSpecified ? pos.a.ToString() : "0.0";
+                                    decimal y = pos.ySpecified ? pos.y : 0.0m;
+                                    decimal a = pos.aSpecified ? pos.a : 0.0m;
 
                                     SB.AppendLine(eventgroupdefGroupChild.type + "|" + (float)(pos.x + eventgroupdefGroupChild.x) + " " +
-                                                                               (y + eventgroupdefGroupChild.y.ToString()) + " " +
+                                                                               (y + eventgroupdefGroupChild.y) + " " +
                                                                                (float)(pos.z + eventgroupdefGroupChild.z) + "|" +
-                                                                               (a + eventgroupdefGroupChild.a.ToString()) + " 0.0 0.0");
+                                                                               (a + eventgroupdefGroupChild.a) + " 0.0 0.0");
                                 }
                                 File.WriteAllText(Path.Combine(directory, filename + ".map"), SB.ToString());
                             }
@@ -5526,7 +5573,33 @@ namespace EconomyPlugin
         }
         private void removeSelectedPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if(currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
+            {
+                eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(eventposdefEventPos.group);
+                if(evg != null)
+                {
+                    List<eventsEvent> events = _economyManager.eventsConfig.getalleventsfromgroup(evg);
+                    if (events.Count() == 1)
+                    {
+                        var result = MessageBox.Show(
+                                    $"i have found an associated event Group spawn, do you want me to remove that as well?",
+                                    "Event Group Spawn Found.",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Question
+                                );
+                        if (result == DialogResult.Yes)
+                        {
+                            _economyManager.cfgeventgroupsConfig.Data.group.Remove(evg);
+                        }
+                    }
+                    eventposdefEvent ParenteventposdefEventPos = currentTreeNode.Parent.Parent.Tag as eventposdefEvent;
+                    ParenteventposdefEventPos.pos.Remove(eventposdefEventPos);
+                    TreeNode posparent = currentTreeNode.Parent;
+                    currentTreeNode.Remove();
+                    if (posparent.Nodes.Count == 0)
+                        posparent.Remove();
+                }
+            }
         }
 
         private void removeAllPositionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5542,261 +5615,301 @@ namespace EconomyPlugin
         }
         private void importPositionAndCreateEventgroupFormdzeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
-            //OpenFileDialog openFileDialog = new OpenFileDialog();
-            //openFileDialog.Title = "Import Positions";
-            //openFileDialog.Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze";
-            //if (openFileDialog.ShowDialog() == DialogResult.OK)
-            //{
-            //    string filePath = openFileDialog.FileName;
-            //    TreeNode eventposnodes = null;
-            //    if (eventposdefEvent.pos == null || eventposdefEvent.pos.Count == 0)
-            //    {
-            //        eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
-            //        if (!EconomyTV.SelectedNode.Nodes.ContainsKey("POS"))
-            //        {
-            //            eventposnodes = new TreeNode("pos");
-            //            eventposnodes.Name = "POS";
-            //            eventposnodes.Tag = "PosParent";
-            //        }
-            //        else
-            //        {
-            //            eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
-            //        }
-            //    }
-            //    else
-            //    {
-            //        eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
-            //        DialogResult dialogResult = MessageBox.Show("Clear Exisitng Positions?", "Clear position", MessageBoxButtons.YesNo);
-            //        if (dialogResult == DialogResult.Yes)
-            //        {
-            //            eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
-            //            eventposnodes.Nodes.Clear();
+            eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Import Group Positions",
+                Filter = "Expansion Map|*.map|Object Spawner|*.json|DayZ Editor|*.dze",
+                Multiselect = true
+            };
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                TreeNode eventposnodes = null;
+                if (eventposdefEvent.pos == null || eventposdefEvent.pos.Count == 0)
+                {
+                    eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+                    if (!EconomyTV.SelectedNode.Nodes.ContainsKey("POS"))
+                    {
+                        eventposnodes = new TreeNode("pos");
+                        eventposnodes.Name = "POS";
+                        eventposnodes.Tag = "PosParent";
+                        currentTreeNode.Nodes.Add(eventposnodes);
+                    }
+                    else
+                    {
+                        eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
+                    }
+                }
+                else
+                {
+                    eventposnodes = EconomyTV.SelectedNode.Nodes.Find("POS", false)[0];
+                    DialogResult dialogResult = MessageBox.Show("Clear Exisitng Positions?", "Clear position", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        eventposdefEvent.pos = new BindingList<eventposdefEventPos>();
+                        eventposnodes.Nodes.Clear();
 
-            //        }
-            //        eventposnodes.Remove();
-            //    }
-            //    switch (openFileDialog.FilterIndex)
-            //    {
-            //        case 1:
-            //            foreach (string file in openFileDialog.FileNames)
-            //            {
-            //                string[] fileContent = File.ReadAllLines(file);
-            //                string Groupname = Path.GetFileNameWithoutExtension(file);
-            //                string[] linesplit = fileContent[0].Split('|');
-            //                string[] XYZ = linesplit[1].Split(' ');
-            //                string[] ypr = linesplit[2].Split(' ');
-            //                eventposdefEventPos newpos = new eventposdefEventPos()
-            //                {
-            //                    x = Convert.ToDecimal(XYZ[0]),
-            //                    ySpecified = true,
-            //                    y = Convert.ToDecimal(XYZ[1]),
-            //                    z = Convert.ToDecimal(XYZ[2]),
-            //                    aSpecified = true,
-            //                    a = 0,
-            //                    group = Groupname
+                    }
+                }
+                switch (openFileDialog.FilterIndex)
+                {
+                    case 1:
+                        foreach (string file in openFileDialog.FileNames)
+                        {
+                            string[] fileContent = File.ReadAllLines(file);
+                            string Groupname = Path.GetFileNameWithoutExtension(file);
+                            string[] linesplit = fileContent[0].Split('|');
+                            string[] XYZ = linesplit[1].Split(' ');
+                            string[] ypr = linesplit[2].Split(' ');
 
-            //                };
-            //                eventposdefEvent.pos.Add(newpos);
-            //                TreeNode posnodes = new TreeNode(newpos.ToString());
-            //                posnodes.Tag = newpos;
-            //                eventposnodes.Nodes.Add(posnodes);
-            //                eventgroupdefGroup newvengroup = new eventgroupdefGroup()
-            //                {
-            //                    name = Groupname,
-            //                    child = new BindingList<eventgroupdefGroupChild>()
-            //                };
+                            string originalGroupName = Groupname;
+                            eventgroupdefGroup existingGroup = _economyManager.cfgeventgroupsConfig.getassociatedgroup(Groupname);
+                            while (existingGroup != null)
+                            {
+                                var match = System.Text.RegularExpressions.Regex.Match(
+                                    Groupname,
+                                    @"^(.*)_(\d+)$");
 
-            //                TreeNode neweventspawn = new TreeNode(Groupname);
-            //                neweventspawn.Tag = newvengroup;
-            //                for (int i = 0; i < fileContent.Length; i++)
-            //                {
-            //                    if (fileContent[i] == "") continue;
-            //                    linesplit = fileContent[0].Split('|');
-            //                    XYZ = linesplit[1].Split(' ');
-            //                    ypr = linesplit[2].Split(' ');
-            //                    eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
-            //                    {
-            //                        type = linesplit[0],
-            //                        x = ((decimal)(Convert.ToDecimal(XYZ[0]))) - newpos.x,
-            //                        ySpecified = true,
-            //                        y = ((decimal)(Convert.ToDecimal(XYZ[1]))) - newpos.y,
-            //                        z = ((decimal)(Convert.ToDecimal(XYZ[2]))) - newpos.z,
-            //                        a = ((decimal)(Convert.ToDecimal(ypr[0]))),
-            //                        delootSpecified = true,
-            //                        deloot = 0,
-            //                        lootminSpecified = true,
-            //                        lootmin = 1,
-            //                        lootmaxSpecified = true,
-            //                        lootmax = 3
-            //                    };
-            //                    if (eventgroupdefGroupChild.a < 0)
-            //                    {
-            //                        while (eventgroupdefGroupChild.a < 0)
-            //                        {
-            //                            eventgroupdefGroupChild.a += 360;
-            //                        }
-            //                    }
-            //                    else if (eventgroupdefGroupChild.a >= 360)
-            //                    {
-            //                        while (eventgroupdefGroupChild.a >= 0)
-            //                        {
-            //                            eventgroupdefGroupChild.a -= 360;
-            //                        }
-            //                    }
-            //                    TreeNode eventgroupchile = new TreeNode(eventgroupdefGroupChild.type);
-            //                    eventgroupchile.Tag = eventgroupdefGroupChild;
-            //                    neweventspawn.Nodes.Add(eventgroupchile);
-            //                    newvengroup.child.Add(eventgroupdefGroupChild);
-            //                }
-            //                eventgroupdef.group.Add(newvengroup);
-            //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
-            //            }
-            //            break;
-            //        case 2:
-            //            foreach (string file in openFileDialog.FileNames)
-            //            {
-            //                string Groupname = Path.GetFileNameWithoutExtension(file);
-            //                var options = BuildOptions(true, false);
-            //                ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(filePath), options);
-            //                eventposdefEventPos newpos = new eventposdefEventPos()
-            //                {
-            //                    x = Convert.ToDecimal(newobjectspawner.Objects[0].pos[0]),
-            //                    ySpecified = true,
-            //                    y = Convert.ToDecimal(newobjectspawner.Objects[0].pos[1]),
-            //                    z = Convert.ToDecimal(newobjectspawner.Objects[0].pos[2]),
-            //                    aSpecified = true,
-            //                    a = 0,
-            //                    group = Groupname
+                                if (match.Success)
+                                {
+                                    string baseName = match.Groups[1].Value;
+                                    int number = int.Parse(match.Groups[2].Value);
+                                    Groupname = $"{baseName}_{number + 1}";
+                                }
+                                else
+                                {
+                                    Groupname = $"{Groupname}_1";
+                                }
 
-            //                };
+                                existingGroup = _economyManager.cfgeventgroupsConfig.getassociatedgroup(Groupname);
+                            }
 
-            //                eventposdefEvent.pos.Add(newpos);
-            //                TreeNode posnodes = new TreeNode(newpos.ToString());
-            //                posnodes.Tag = newpos;
-            //                eventposnodes.Nodes.Add(posnodes);
-            //                eventgroupdefGroup newvengroup = new eventgroupdefGroup()
-            //                {
-            //                    name = Groupname,
-            //                    child = new BindingList<eventgroupdefGroupChild>()
-            //                };
+                            eventposdefEventPos newpos = new eventposdefEventPos()
+                            {
+                                x = Convert.ToDecimal(XYZ[0]),
+                                ySpecified = true,
+                                y = Convert.ToDecimal(XYZ[1]),
+                                z = Convert.ToDecimal(XYZ[2]),
+                                aSpecified = true,
+                                a = 0,
+                                group = Groupname
 
-            //                TreeNode neweventspawn = new TreeNode(Groupname);
-            //                neweventspawn.Tag = newvengroup;
-            //                foreach (SpawnObjects so in newobjectspawner.Objects)
-            //                {
-            //                    eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
-            //                    {
-            //                        type = so.name,
-            //                        x = (decimal)(so.pos[0]) - newpos.x,
-            //                        ySpecified = true,
-            //                        y = (decimal)(so.pos[1]) - newpos.y,
-            //                        z = (decimal)(so.pos[2]) - newpos.z,
-            //                        a = (decimal)(so.ypr[0]),
-            //                        delootSpecified = true,
-            //                        deloot = 0,
-            //                        lootminSpecified = true,
-            //                        lootmin = 1,
-            //                        lootmaxSpecified = true,
-            //                        lootmax = 3
-            //                    };
-            //                    if (eventgroupdefGroupChild.a < 0)
-            //                    {
-            //                        while (eventgroupdefGroupChild.a < 0)
-            //                        {
-            //                            eventgroupdefGroupChild.a += 360;
-            //                        }
-            //                    }
-            //                    else if (eventgroupdefGroupChild.a >= 360)
-            //                    {
-            //                        while (eventgroupdefGroupChild.a >= 0)
-            //                        {
-            //                            eventgroupdefGroupChild.a -= 360;
-            //                        }
-            //                    }
-            //                    TreeNode eventgroupchile = new TreeNode(eventgroupdefGroupChild.type);
-            //                    eventgroupchile.Tag = eventgroupdefGroupChild;
-            //                    neweventspawn.Nodes.Add(eventgroupchile);
-            //                    newvengroup.child.Add(eventgroupdefGroupChild);
-            //                }
-            //                eventgroupdef.group.Add(newvengroup);
-            //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
-            //            }
-            //            break;
-            //        case 3:
-            //            foreach (string file in openFileDialog.FileNames)
-            //            {
-            //                string filePath = file;
-            //                DZE importfile = DZEHelpers.LoadFile(filePath);
-            //                string Groupname = Path.GetFileNameWithoutExtension(file);
-            //                eventposdefEventPos newpos = new eventposdefEventPos()
-            //                {
-            //                    x = Convert.ToDecimal(importfile.EditorObjects[0].Position[0]),
-            //                    ySpecified = true,
-            //                    y = Convert.ToDecimal(importfile.EditorObjects[0].Position[1]),
-            //                    z = Convert.ToDecimal(importfile.EditorObjects[0].Position[2]),
-            //                    aSpecified = true,
-            //                    a = 0,
-            //                    group = Groupname
+                            };
+                            eventposdefEvent.pos.Add(newpos);
 
-            //                };
+                            eventgroupdefGroup newvengroup = new eventgroupdefGroup()
+                            {
+                                name = Groupname,
+                                child = new BindingList<eventgroupdefGroupChild>()
+                            };
+                            for (int i = 0; i < fileContent.Length; i++)
+                            {
+                                if (fileContent[i] == "") continue;
+                                linesplit = fileContent[i].Split('|');
+                                XYZ = linesplit[1].Split(' ');
+                                ypr = linesplit[2].Split(' ');
+                                eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
+                                {
+                                    type = linesplit[0],
+                                    x = ((decimal)(Convert.ToDecimal(XYZ[0]))) - newpos.x,
+                                    ySpecified = true,
+                                    y = ((decimal)(Convert.ToDecimal(XYZ[1]))) - newpos.y,
+                                    z = ((decimal)(Convert.ToDecimal(XYZ[2]))) - newpos.z,
+                                    a = ((decimal)(Convert.ToDecimal(ypr[0]))),
+                                    delootSpecified = true,
+                                    deloot = 0,
+                                    lootminSpecified = true,
+                                    lootmin = 1,
+                                    lootmaxSpecified = true,
+                                    lootmax = 3
+                                };
+                                if (eventgroupdefGroupChild.a < 0)
+                                {
+                                    while (eventgroupdefGroupChild.a < 0)
+                                    {
+                                        eventgroupdefGroupChild.a += 360;
+                                    }
+                                }
+                                else if (eventgroupdefGroupChild.a >= 360)
+                                {
+                                    while (eventgroupdefGroupChild.a >= 0)
+                                    {
+                                        eventgroupdefGroupChild.a -= 360;
+                                    }
+                                }
+                                newvengroup.child.Add(eventgroupdefGroupChild);
+                            }
+                            _economyManager.cfgeventgroupsConfig.Data.group.Add(newvengroup);
+                            eventposnodes.Nodes.Add(CreateEventPositionNode(newpos));
+                        }
+                        break;
+                    case 2:
+                        foreach (string file in openFileDialog.FileNames)
+                        {
+                            string Groupname = Path.GetFileNameWithoutExtension(file);
+                            string originalGroupName = Groupname;
+                            eventgroupdefGroup existingGroup = _economyManager.cfgeventgroupsConfig.getassociatedgroup(Groupname);
+                            while (existingGroup != null)
+                            {
+                                var match = System.Text.RegularExpressions.Regex.Match(
+                                    Groupname,
+                                    @"^(.*)_(\d+)$");
+
+                                if (match.Success)
+                                {
+                                    string baseName = match.Groups[1].Value;
+                                    int number = int.Parse(match.Groups[2].Value);
+                                    Groupname = $"{baseName}_{number + 1}";
+                                }
+                                else
+                                {
+                                    Groupname = $"{Groupname}_1";
+                                }
+
+                                existingGroup = _economyManager.cfgeventgroupsConfig.getassociatedgroup(Groupname);
+                            }
+                            var options = BuildOptions(true, false);
+                            ObjectSpawnerArrData newobjectspawner = JsonSerializer.Deserialize<ObjectSpawnerArrData>(File.ReadAllText(file), options);
+                            eventposdefEventPos newpos = new eventposdefEventPos()
+                            {
+                                x = Convert.ToDecimal(newobjectspawner.Objects[0].pos[0]),
+                                ySpecified = true,
+                                y = Convert.ToDecimal(newobjectspawner.Objects[0].pos[1]),
+                                z = Convert.ToDecimal(newobjectspawner.Objects[0].pos[2]),
+                                aSpecified = true,
+                                a = 0,
+                                group = Groupname
+
+                            };
+
+                            eventposdefEvent.pos.Add(newpos);
+                            eventgroupdefGroup newvengroup = new eventgroupdefGroup()
+                            {
+                                name = Groupname,
+                                child = new BindingList<eventgroupdefGroupChild>()
+                            };
+                            foreach (SpawnObjects so in newobjectspawner.Objects)
+                            {
+                                eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
+                                {
+                                    type = so.name,
+                                    x = (decimal)(so.pos[0]) - newpos.x,
+                                    ySpecified = true,
+                                    y = (decimal)(so.pos[1]) - newpos.y,
+                                    z = (decimal)(so.pos[2]) - newpos.z,
+                                    a = (decimal)(so.ypr[0]),
+                                    delootSpecified = true,
+                                    deloot = 0,
+                                    lootminSpecified = true,
+                                    lootmin = 1,
+                                    lootmaxSpecified = true,
+                                    lootmax = 3
+                                };
+                                if (eventgroupdefGroupChild.a < 0)
+                                {
+                                    while (eventgroupdefGroupChild.a < 0)
+                                    {
+                                        eventgroupdefGroupChild.a += 360;
+                                    }
+                                }
+                                else if (eventgroupdefGroupChild.a >= 360)
+                                {
+                                    while (eventgroupdefGroupChild.a >= 0)
+                                    {
+                                        eventgroupdefGroupChild.a -= 360;
+                                    }
+                                }
+                                newvengroup.child.Add(eventgroupdefGroupChild);
+                            }
+                            _economyManager.cfgeventgroupsConfig.Data.group.Add(newvengroup);
+                            eventposnodes.Nodes.Add(CreateEventPositionNode(newpos));
+                        }
+                        break;
+                    case 3:
+                        foreach (string file in openFileDialog.FileNames)
+                        {
+                            DZE importfile = DZEHelpers.LoadFile(file);
+                            string Groupname = Path.GetFileNameWithoutExtension(file);
+                            string originalGroupName = Groupname;
+                            eventgroupdefGroup existingGroup = _economyManager.cfgeventgroupsConfig.getassociatedgroup(Groupname);
+                            while (existingGroup != null)
+                            {
+                                var match = System.Text.RegularExpressions.Regex.Match(
+                                    Groupname,
+                                    @"^(.*)_(\d+)$");
+
+                                if (match.Success)
+                                {
+                                    string baseName = match.Groups[1].Value;
+                                    int number = int.Parse(match.Groups[2].Value);
+                                    Groupname = $"{baseName}_{number + 1}";
+                                }
+                                else
+                                {
+                                    Groupname = $"{Groupname}_1";
+                                }
+
+                                existingGroup = _economyManager.cfgeventgroupsConfig.getassociatedgroup(Groupname);
+                            }
+                            eventposdefEventPos newpos = new eventposdefEventPos()
+                            {
+                                x = Convert.ToDecimal(importfile.EditorObjects[0].Position[0]),
+                                ySpecified = true,
+                                y = Convert.ToDecimal(importfile.EditorObjects[0].Position[1]),
+                                z = Convert.ToDecimal(importfile.EditorObjects[0].Position[2]),
+                                aSpecified = true,
+                                a = 0,
+                                group = Groupname
+
+                            };
 
 
-            //                eventposdefEvent.pos.Add(newpos);
-            //                TreeNode posnodes = new TreeNode(newpos.ToString());
-            //                posnodes.Tag = newpos;
-            //                eventposnodes.Nodes.Add(posnodes);
-            //                eventgroupdefGroup newvengroup = new eventgroupdefGroup()
-            //                {
-            //                    name = Groupname,
-            //                    child = new BindingList<eventgroupdefGroupChild>()
-            //                };
-
-            //                TreeNode neweventspawn = new TreeNode(Groupname);
-            //                neweventspawn.Tag = newvengroup;
-            //                foreach (Editorobject eo in importfile.EditorObjects)
-            //                {
-            //                    eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
-            //                    {
-            //                        type = eo.Type,
-            //                        x = (decimal)(eo.Position[0]) - newpos.x,
-            //                        ySpecified = true,
-            //                        y = (decimal)(eo.Position[1]) - newpos.y,
-            //                        z = (decimal)(eo.Position[2]) - newpos.z,
-            //                        a = (decimal)(eo.Orientation[0]),
-            //                        delootSpecified = true,
-            //                        deloot = 0,
-            //                        lootminSpecified = true,
-            //                        lootmin = 1,
-            //                        lootmaxSpecified = true,
-            //                        lootmax = 3
-            //                    };
-            //                    if (eventgroupdefGroupChild.a < 0)
-            //                    {
-            //                        while (eventgroupdefGroupChild.a < 0)
-            //                        {
-            //                            eventgroupdefGroupChild.a += 360;
-            //                        }
-            //                    }
-            //                    else if (eventgroupdefGroupChild.a >= 360)
-            //                    {
-            //                        while (eventgroupdefGroupChild.a >= 0)
-            //                        {
-            //                            eventgroupdefGroupChild.a -= 360;
-            //                        }
-            //                    }
-            //                    TreeNode eventgroupchile = new TreeNode(eventgroupdefGroupChild.type);
-            //                    eventgroupchile.Tag = eventgroupdefGroupChild;
-            //                    neweventspawn.Nodes.Add(eventgroupchile);
-            //                    newvengroup.child.Add(eventgroupdefGroupChild);
-            //                }
-            //                eventgroupdef.group.Add(newvengroup);
-            //                eventspawngroupTV.Nodes[0].Nodes.Add(neweventspawn);
-            //            }
-            //            break;
-            //    }
-            //    EventSpawnTV.SelectedNode.Nodes.Add(eventposnodes);
-            //}
+                            eventposdefEvent.pos.Add(newpos);
+                            eventgroupdefGroup newvengroup = new eventgroupdefGroup()
+                            {
+                                name = Groupname,
+                                child = new BindingList<eventgroupdefGroupChild>()
+                            };
+                            foreach (Editorobject eo in importfile.EditorObjects)
+                            {
+                                eventgroupdefGroupChild eventgroupdefGroupChild = new eventgroupdefGroupChild()
+                                {
+                                    type = eo.Type,
+                                    x = (decimal)(eo.Position[0]) - newpos.x,
+                                    ySpecified = true,
+                                    y = (decimal)(eo.Position[1]) - newpos.y,
+                                    z = (decimal)(eo.Position[2]) - newpos.z,
+                                    a = (decimal)(eo.Orientation[0]),
+                                    delootSpecified = true,
+                                    deloot = 0,
+                                    lootminSpecified = true,
+                                    lootmin = 1,
+                                    lootmaxSpecified = true,
+                                    lootmax = 3
+                                };
+                                if (eventgroupdefGroupChild.a < 0)
+                                {
+                                    while (eventgroupdefGroupChild.a < 0)
+                                    {
+                                        eventgroupdefGroupChild.a += 360;
+                                    }
+                                }
+                                else if (eventgroupdefGroupChild.a >= 360)
+                                {
+                                    while (eventgroupdefGroupChild.a >= 0)
+                                    {
+                                        eventgroupdefGroupChild.a -= 360;
+                                    }
+                                }
+                                newvengroup.child.Add(eventgroupdefGroupChild);
+                            }
+                            _economyManager.cfgeventgroupsConfig.Data.group.Add(newvengroup);
+                            eventposnodes.Nodes.Add(CreateEventPositionNode(newpos));
+                        }
+                        break;
+                }
+            }
         }
 
         /// <summary>
