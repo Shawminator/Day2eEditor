@@ -979,26 +979,32 @@ void GetXYZMap()
 }
 ";
         public const string DumpAttchScript = @"
-class DumpWeaponOutputs
+public class UniversalAttachmentDump
 {
-	ref array<ref DumpWeapon> DumpWeapons = {};
+    public BindingList<DumpItem> Items { get; set; } = new();
 }
-class DumpWeapon
+
+public class DumpItem
 {
-	string name;
-	ref TStringArray attachments = {};
-	ref TStringArray attachmentsBayonet = {};
-	ref TStringArray attachmentsBipods = {};
-	ref TStringArray attachmentsButtStocks = {};
-	ref TStringArray attachmentsHandguards = {};
-	ref TStringArray attachmentIllumination = {};
-	ref TStringArray attachmentsOpticsAndSights = {};
-	ref TStringArray attachmentsMuzzles = {};
-	ref TStringArray attachmentsWraps = {};
-	ref TStringArray attachmentsAFG = {};
-	ref TStringArray bullets = {};
-	ref TStringArray magazines = {};
-	
+    public string name { get; set; }
+    public string configRoot { get; set; }
+    public string displayName { get; set; }
+    public string description { get; set; }
+    public string model { get; set; }
+    public string parentClass { get; set; }
+    public int sizeX { get; set; }
+    public int sizeY { get; set; }
+    public float weight { get; set; }
+    // These will be populated for weapons and empty for most other items
+    public BindingList<string> bullets { get; set; } = new();
+    public BindingList<string> magazines { get; set; } = new();
+    public BindingList<DumpSlot> attachmentSlots { get; set; } = new();
+}
+
+public class DumpSlot
+{
+    public string slotName { get; set; }
+    public BindingList<string> compatibleItems { get; set; } = new();
 }
 
 bool endsWith(string str, string suffix)
@@ -1006,7 +1012,7 @@ bool endsWith(string str, string suffix)
   if (str.Length() < suffix.Length())
     return false;
    
-  return str.Substring(str.Length()-suffix.Length(),suffix.Length()) == suffix;
+  return str.Substring(str.Length()- suffix.Length(), suffix.Length()) == suffix;
 } 
 bool startsWith(string str, string suffix)
 {
@@ -1015,127 +1021,139 @@ bool startsWith(string str, string suffix)
    
   return str.Substring(0,suffix.Length()) == suffix;
 }
-void DumpAttach()
+bool SkipClass(string className)
 {
-	DumpWeaponOutputs weapon_outputs = new DumpWeaponOutputs();
- 
-    map<string, ref TStringArray> attachmentmap = new map<string, ref TStringArray>();
-    for (int j = 0; j < GetGame().ConfigGetChildrenCount(""CfgVehicles""); j++)
-    {
-        string item_name;
-        GetGame().ConfigGetChildName(""CfgVehicles"", j, item_name);
- 
-        if (item_name == string.Empty)
-            continue;
-        
-        TStringArray inventory_slots = {};
-        switch (GetGame().ConfigGetType(""CfgVehicles "" + item_name + "" inventorySlot""))
-        {
-            case CT_ARRAY:
-            {
-                GetGame().ConfigGetTextArray(""CfgVehicles "" + item_name + "" inventorySlot"", inventory_slots);
-                foreach (string inv : inventory_slots)
-                {
-                    if (inv == string.Empty)
-						{
-							break;
-						}
- 
-                    if (!attachmentmap[inv])
-                        attachmentmap[inv] = new TStringArray();
- 					//Print(""inserting Itemname: "" + item_name);
-                    attachmentmap[inv].Insert(item_name);
-                }
-                break;
-            }
-            
-            case CT_STRING:
-            {
-                string attch;
-				//Print(""in CT_STRING case"");
-                GetGame().ConfigGetText(""CfgVehicles "" + item_name + "" inventorySlot"", attch);
- 
-                if (attch == string.Empty)
-					{
-                    	
-						break;
-					}
- 
-                if (!attachmentmap[attch])
-                    attachmentmap[attch] = new TStringArray();
- 
-                attachmentmap[attch].Insert(item_name);
-                break;
-            }
-        }   
-    }
-    for (int i = 0; i < GetGame().ConfigGetChildrenCount(""CfgWeapons""); i++)
-    {
-        string name;
-        GetGame().ConfigGetChildName(""CfgWeapons"", i, name);
- 
-        if (name == string.Empty)
-            continue;
-        
-        DumpWeapon weapon = new DumpWeapon();
-        weapon.name = name;
-		if (endsWith(name, ""Base"") || name == ""Mode_Single"" || name == ""DamageSystem"" || name == ""access"" || name == ""DefaultWeapon"" ||name == ""PistolCore"" ||name == ""RifleCore"" || name == ""LauncherCore""  || endsWith(name, ""Debug""))
+	return EndsWith(className, ""Base"") ||
+			EndsWith(className, ""ColorBase"") ||
+			EndsWith(className, ""Debug"") ||
+			className == ""Mode_Single"" ||
+			className == ""DamageSystem"" ||
+			className == ""access"" ||
+			className == ""DefaultWeapon"" ||
+			className == ""PistolCore"" ||
+			className == ""RifleCore"" ||
+			className == ""LauncherCore"";
+}
+void DumpUniversalAttachments()
+{
+	Print(""Building Universal Attachment Dump..."");
+	DumpItemOutputs output = new DumpItemOutputs();
+	map<string, ref TStringArray> attachmentMap = new map<string, ref TStringArray>();
+	BuildAttachmentMap(attachmentMap);
+	DumpConfigRoot(""CfgWeapons"",attachmentMap, output);
+	DumpConfigRoot(""CfgVehicles"",attachmentMap, output);
+	JsonFileLoader<DumpItemOutputs>.JsonSaveFile(""$profile:\\UniversalAttachments.json"", output);
+	Print(""Dump Complete. Total Items: "" + output.Items.Count());
+}
+void BuildAttachmentMap(map<string, ref TStringArray> attachmentMap)
+{
+	for (int i = 0; i < GetGame().ConfigGetChildrenCount(""CfgVehicles""); i++)
+	{
+		string className;
+		GetGame().ConfigGetChildName(""CfgVehicles"", i, className);
+
+		if (className == string.Empty)
+			continue;
+
+		TStringArray slots = {};
+
+		switch (GetGame().ConfigGetType(""CfgVehicles "" + className + "" inventorySlot""))
 		{
-			//Print(""We hit a _Base"");
+			case CT_ARRAY:
+			{
+				GetGame().ConfigGetTextArray(""CfgVehicles "" + className + "" inventorySlot"", slots);
+
+				foreach (string slot : slots)
+				{
+					if (slot == string.Empty)
+						continue;
+
+					if (!attachmentMap[slot])
+						attachmentMap[slot] = new TStringArray();
+
+					if (attachmentMap[slot].Find(className) == -1)
+						attachmentMap[slot].Insert(className);
+				}
+				break;
+			}
+
+			case CT_STRING:
+			{
+				string slot;
+
+				GetGame().ConfigGetText(""CfgVehicles "" + className + "" inventorySlot"", slot);
+
+				if (slot == string.Empty)
+					continue;
+
+				if (!attachmentMap[slot])
+					attachmentMap[slot] = new TStringArray();
+
+				if (attachmentMap[slot].Find(className) == -1)
+					attachmentMap[slot].Insert(className);
+
+				break;
+			}
+		}
+	}
+}
+void DumpConfigRoot(string root,map<string, ref TStringArray> attachmentMap,DumpItemOutputs output)
+{
+	for (int i = 0; i < GetGame().ConfigGetChildrenCount(root); i++)
+	{
+		string className;
+		GetGame().ConfigGetChildName(root, i, className);
+
+		if (className == string.Empty)
+			continue;
+
+		if (SkipClass(className))
+			continue;
+
+		DumpItem item = new DumpItem();
+
+		item.name = className;
+		item.configRoot = root;
+		item.displayName = className;
+		GetGame().ConfigGetText(root + "" "" + className + "" displayName"", item.displayName);
+		item.description = """";
+		GetGame().ConfigGetText(root + "" "" + className + "" descriptionShort"", item.description);
+		GetGame().ConfigGetBaseName(root + "" "" + className, item.parentClass);
+		// Weapons only
+		GetGame().ConfigGetTextArray(root + "" "" + className + "" chamberableFrom"", item.bullets);
+		GetGame().ConfigGetTextArray(root + "" "" + className + "" magazines"", item.magazines);
+
+		TStringArray slots = {};
+		GetGame().ConfigGetTextArray(root + "" "" + className + "" attachments"", slots);
+
+		foreach (string slot : slots)
+		{
+			DumpSlot slotDump = new DumpSlot();
+			slotDump.slotName = slot;
+
+			if (attachmentMap[slot])
+			{
+				foreach (string attachment : attachmentMap[slot])
+				{
+					if (SkipClass(attachment))
+						continue;
+
+					if (slotDump.compatibleItems.Find(attachment) == -1)
+						slotDump.compatibleItems.Insert(attachment);
+				}
+			}
+			slotDump.compatibleItems.Sort();
+			item.attachmentSlots.Insert(slotDump);
+		}
+
+		// Skip empty entries
+		if (item.attachmentSlots.Count() == 0 &&item.bullets.Count() == 0 &&item.magazines.Count() == 0)
+		{
 			continue;
 		}
-		else
-		{
-	        GetGame().ConfigGetTextArray(""CfgWeapons "" + name + "" chamberableFrom"", weapon.bullets);
-	        GetGame().ConfigGetTextArray(""CfgWeapons "" + name + "" magazines"", weapon.magazines);
-	        
-	        TStringArray attachments = {};
-	        GetGame().ConfigGetTextArray(""CfgWeapons "" + name + "" attachments"", attachments);
-	        foreach (string attachment: attachments)
-	        {
-				
-				if (!attachmentmap)
-	                continue;
-	
-	            if (!attachmentmap[attachment])
-	                continue;
-				
-				
-	            foreach (string at: attachmentmap[attachment])
-	            {
-	                if (at == string.Empty || startsWith(at, ""Groza"") || at == ""Magnum_Ejector"" || at == ""Magnum_Cylinder""|| endsWith(at, ""Base"")|| endsWith(at, ""ColorBase"") || startsWith(attachment,""RevolverCylinder"") || startsWith(attachment, ""RevolverEjector""))
-	                    continue;
-					if( attachment == ""weaponBayonetAK"" || attachment == ""weaponBayonetSKS"" || attachment == ""weaponBayonetMosin"" || attachment == ""weaponBayonet"" || attachment == ""expansionWeaponBayonetKar"" || attachment == ""TTCweaponBayonetSVT40"")
-						weapon.attachmentsBayonet.Insert(at);
-					else if( attachment == ""snafuweaponBipod"" || attachment == ""SNAFUM200Bipod"" || attachment == ""SNAFUM249Bipod"" || attachment == ""sr25bipod"" || attachment == ""snafuvsskBipod"" || attachment == ""weaponttcbipod"" || attachment == ""weaponBipod"" || attachment == ""PKPBIPOD"")
-						weapon.attachmentsBipods.Insert(at);
-					else if( attachment == ""weaponButtstockAK"" || attachment ==""weaponButtstockMP5"" || attachment == ""weaponButtstockM4"" || attachment == ""weaponButtstockSaiga"" || attachment == ""weaponButtstockRed9"" || attachment == ""weaponButtstockPP19"" || attachment == ""weaponButtstockFal"" || attachment == ""weaponButtstockMPXMCX"" || attachment == ""weaponButtstockHoney"")
-						weapon.attachmentsButtStocks.Insert(at);
-					else if( attachment == ""WeaponHandguardAK"" || attachment == ""WeaponHandguardMP5"" || attachment == ""weaponHandguardM249"" || attachment == ""TTC_DMR_Hndguard"" || attachment == ""TTCweaponHandguardFAL"" || attachment == ""DMRHndgrd"")
-						weapon.attachmentsHandguards.Insert(at);
-					else if( attachment == ""weaponFlashlight"" || attachment == ""pistolFlashlight"")
-						weapon.attachmentIllumination.Insert(at);
-					else if( attachment == ""WeaponOptics"" || attachment == ""weaponOptics"" || attachment == ""weaponOpticsAK"" || attachment == ""weaponOpticsMosin"" || attachment == ""pistolOptics"" || attachment == ""weaponOpticsHunting"" || attachment == ""ExpansionKar98Optics"" || attachment == ""ExpansionSniperOptics"" || attachment == ""weaponOpticsAug"" || attachment == ""weaponOpticsM200"" || attachment == ""SVT40_Optic"" || attachment == ""weaponOpticsCrossbow"" || attachment == ""G3Optic"" || attachment == ""Expansion_M1AScopeRail"" || attachment == ""Expansion_MP5ScopeRail"")
-						weapon.attachmentsOpticsAndSights.Insert(at);
-					else if( attachment == ""weaponMuzzleAK"" || attachment == ""pistolMuzzle"" || attachment == ""weaponMuzzleMP5"" || attachment == ""weaponMuzzleMosin"" || attachment == ""weaponMuzzleM4"" || attachment == ""suppressorImpro"" || attachment == ""M200Suppressor"" || attachment == ""weaponSuppressorHoney"" || attachment == ""weaponMuzzelSNAFU"")
-						weapon.attachmentsMuzzles.Insert(at);
-					else if( attachment == ""weaponWrap"")
-						weapon.attachmentsWraps.Insert(at);
-					else if ( attachment == ""weaponttcafg"" || attachment == ""AKModttcafg"")
-						weapon.attachmentsAFG.Insert(at);
-					else
-					{
-						Print(attachment + "" : "" + at);
-						weapon.attachments.Insert(at);
-					}
-	            }
-	        }
-	        
-	        weapon_outputs.DumpWeapons.Insert(weapon);
-		}	
-    }
-	
-	JsonFileLoader<DumpWeaponOutputs>.JsonSaveFile(""$profile:\\DumpAttatch.json"", weapon_outputs);
+
+		output.Items.Insert(item);
+	}
 }
 ";
     }

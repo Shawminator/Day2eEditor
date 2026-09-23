@@ -19,7 +19,7 @@ namespace Core
         {
             var missionPath = AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath;
 
-            _weaponInclude = $"#include \"$CurrentDir:mpmissions\\\\{missionPath}\\\\WeaponAttchmentDump.c\"";
+            _weaponInclude = $"#include \"$CurrentDir:mpmissions\\\\{missionPath}\\\\UniversalAttchmentDump.c\"";
             _xyzInclude = $"#include \"$CurrentDir:mpmissions\\\\{missionPath}\\\\XYZMapper.c\"";
         }
         public override void Load()

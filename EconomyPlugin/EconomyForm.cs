@@ -6602,27 +6602,21 @@ namespace EconomyPlugin
         }
         private void addFromDumpAttachToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string DumpAttchFile = Path.Combine(_projectManager.CurrentProject.ProjectRoot, _projectManager.CurrentProject.ProfileName, "DumpAttatch.json");
-            WeaponAttachDump attachdump = JsonSerializer.Deserialize<WeaponAttachDump>(File.ReadAllText(DumpAttchFile));
+            string DumpAttchFile = Path.Combine(_projectManager.CurrentProject.ProjectRoot, _projectManager.CurrentProject.ProfileName, "UniversalAttachments.json");
+            UniversalAttachmentDump attachdump = JsonSerializer.Deserialize<UniversalAttachmentDump>(File.ReadAllText(DumpAttchFile));
             SpawnableType currentst = currentTreeNode.Tag as SpawnableType;
 
-            DumpWeapon weapondump = attachdump.DumpWeapons.FirstOrDefault(x => x.name == currentst.name);
+            DumpItem itemDump = attachdump.Items.FirstOrDefault(x => x.name == currentst.name);
 
             currentst.Items = new BindingList<object>(currentst.Items?
                 .Where(x => x is not spawnableTypeAttachment)
                 .ToList() ?? new List<object>());
 
-            AddAttachmentGroup(currentst, weapondump.attachments);
-            AddAttachmentGroup(currentst, weapondump.attachmentsBayonet);
-            AddAttachmentGroup(currentst, weapondump.attachmentsBipods);
-            AddAttachmentGroup(currentst, weapondump.attachmentsButtStocks);
-            AddAttachmentGroup(currentst, weapondump.attachmentsHandguards);
-            AddAttachmentGroup(currentst, weapondump.attachmentIllumination);
-            AddAttachmentGroup(currentst, weapondump.attachmentsOpticsAndSights);
-            AddAttachmentGroup(currentst, weapondump.attachmentsMuzzles);
-            AddAttachmentGroup(currentst, weapondump.attachmentsWraps);
-            AddAttachmentGroup(currentst, weapondump.attachmentsAFG);
-            AddAttachmentGroup(currentst, weapondump.magazines);
+            AddAttachmentGroup(currentst, itemDump.magazines);
+            foreach(DumpSlot dSlot in itemDump.attachmentSlots)
+            {
+                AddAttachmentGroup(currentst, dSlot.compatibleItems);
+            }
 
             var keep = currentTreeNode.Nodes
                 .Cast<TreeNode>()
@@ -7480,7 +7474,7 @@ namespace EconomyPlugin
 
             initFile.HasWeaponAttachInclude = true;
 
-            EnfusionScriptfile newscriptfile = _economyManager.scriptfilesConfig.addnewScript(Path.Combine(_economyManager._paths["ScriptFilesConfig"], "WeaponAttchmentDump.c"), EconomyManager.DumpAttchScript);
+            EnfusionScriptfile newscriptfile = _economyManager.scriptfilesConfig.addnewScript(Path.Combine(_economyManager._paths["ScriptFilesConfig"], "UniversalAttchmentDump.c"), EconomyManager.DumpAttchScript);
 
 
             currentTreeNode.Parent.Nodes.Add(new TreeNode(newscriptfile.FileName)
