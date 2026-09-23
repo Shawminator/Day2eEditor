@@ -60,6 +60,8 @@ namespace EconomyPlugin
             importPositionAndCreateEventgroupFormdzeToolStripMenuItem = new ToolStripMenuItem();
             removeAllYFromPositionsToolStripMenuItem = new ToolStripMenuItem();
             removeAllAFromPositionsToolStripMenuItem = new ToolStripMenuItem();
+            addZoneToolStripMenuItem = new ToolStripMenuItem();
+            removeZoneToolStripMenuItem = new ToolStripMenuItem();
             TypesCM = new ContextMenuStrip(components);
             addNewTypesToolStripMenuItem = new ToolStripMenuItem();
             removeSelectedToolStripMenuItem = new ToolStripMenuItem();
@@ -131,8 +133,8 @@ namespace EconomyPlugin
             removeEnviromentTerritoryToolStripMenuItem = new ToolStripMenuItem();
             addNewUsableFileToolStripMenuItem = new ToolStripMenuItem();
             removeUsableFileToolStripMenuItem1 = new ToolStripMenuItem();
-            addZoneToolStripMenuItem = new ToolStripMenuItem();
-            removeZoneToolStripMenuItem = new ToolStripMenuItem();
+            removeUnusedEventSpawnsToolStripMenuItem = new ToolStripMenuItem();
+            removeUnusedGroupSpawnsToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -342,10 +344,10 @@ namespace EconomyPlugin
             // EventSpawnContextMenu
             // 
             EventSpawnContextMenu.BackColor = Color.FromArgb(60, 63, 65);
-            EventSpawnContextMenu.Items.AddRange(new ToolStripItem[] { addNewEventSpawnToolStripMenuItem, deleteSelectedEventSpawnToolStripMenuItem, importPositionFromdzeToolStripMenuItem, exportPositionTodzeToolStripMenuItem, addNewPosirtionToolStripMenuItem, removeSelectedPositionToolStripMenuItem, removeAllPositionToolStripMenuItem, exportGroupSpawnTodzeToolStripMenuItem, importPositionAndCreateEventgroupFormdzeToolStripMenuItem, removeAllYFromPositionsToolStripMenuItem, removeAllAFromPositionsToolStripMenuItem, addZoneToolStripMenuItem, removeZoneToolStripMenuItem });
+            EventSpawnContextMenu.Items.AddRange(new ToolStripItem[] { addNewEventSpawnToolStripMenuItem, deleteSelectedEventSpawnToolStripMenuItem, importPositionFromdzeToolStripMenuItem, exportPositionTodzeToolStripMenuItem, addNewPosirtionToolStripMenuItem, removeSelectedPositionToolStripMenuItem, removeAllPositionToolStripMenuItem, exportGroupSpawnTodzeToolStripMenuItem, importPositionAndCreateEventgroupFormdzeToolStripMenuItem, removeAllYFromPositionsToolStripMenuItem, removeAllAFromPositionsToolStripMenuItem, addZoneToolStripMenuItem, removeZoneToolStripMenuItem, removeUnusedEventSpawnsToolStripMenuItem, removeUnusedGroupSpawnsToolStripMenuItem });
             EventSpawnContextMenu.Name = "EventSpawnContextMenu";
             EventSpawnContextMenu.ShowImageMargin = false;
-            EventSpawnContextMenu.Size = new Size(254, 312);
+            EventSpawnContextMenu.Size = new Size(254, 356);
             // 
             // addNewEventSpawnToolStripMenuItem
             // 
@@ -454,6 +456,22 @@ namespace EconomyPlugin
             removeAllAFromPositionsToolStripMenuItem.Size = new Size(253, 22);
             removeAllAFromPositionsToolStripMenuItem.Text = "Remove All A from positions";
             removeAllAFromPositionsToolStripMenuItem.Click += removeAllAFromPositionsToolStripMenuItem_Click;
+            // 
+            // addZoneToolStripMenuItem
+            // 
+            addZoneToolStripMenuItem.ForeColor = SystemColors.Control;
+            addZoneToolStripMenuItem.Name = "addZoneToolStripMenuItem";
+            addZoneToolStripMenuItem.Size = new Size(253, 22);
+            addZoneToolStripMenuItem.Text = "Add Zone";
+            addZoneToolStripMenuItem.Click += addZoneToolStripMenuItem_Click;
+            // 
+            // removeZoneToolStripMenuItem
+            // 
+            removeZoneToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeZoneToolStripMenuItem.Name = "removeZoneToolStripMenuItem";
+            removeZoneToolStripMenuItem.Size = new Size(253, 22);
+            removeZoneToolStripMenuItem.Text = "Remove Zone";
+            removeZoneToolStripMenuItem.Click += removeZoneToolStripMenuItem_Click;
             // 
             // TypesCM
             // 
@@ -1023,21 +1041,21 @@ namespace EconomyPlugin
             removeUsableFileToolStripMenuItem1.Text = "Remove Usable File";
             removeUsableFileToolStripMenuItem1.Click += removeUsableFileToolStripMenuItem1_Click;
             // 
-            // addZoneToolStripMenuItem
+            // removeUnusedEventSpawnsToolStripMenuItem
             // 
-            addZoneToolStripMenuItem.ForeColor = SystemColors.Control;
-            addZoneToolStripMenuItem.Name = "addZoneToolStripMenuItem";
-            addZoneToolStripMenuItem.Size = new Size(253, 22);
-            addZoneToolStripMenuItem.Text = "Add Zone";
-            addZoneToolStripMenuItem.Click += addZoneToolStripMenuItem_Click;
+            removeUnusedEventSpawnsToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeUnusedEventSpawnsToolStripMenuItem.Name = "removeUnusedEventSpawnsToolStripMenuItem";
+            removeUnusedEventSpawnsToolStripMenuItem.Size = new Size(253, 22);
+            removeUnusedEventSpawnsToolStripMenuItem.Text = "Remove Unused Event Spawns";
+            removeUnusedEventSpawnsToolStripMenuItem.Click += removeUnusedEventSpawnsToolStripMenuItem_Click;
             // 
-            // removeZoneToolStripMenuItem
+            // removeUnusedGroupSpawnsToolStripMenuItem
             // 
-            removeZoneToolStripMenuItem.ForeColor = SystemColors.Control;
-            removeZoneToolStripMenuItem.Name = "removeZoneToolStripMenuItem";
-            removeZoneToolStripMenuItem.Size = new Size(253, 22);
-            removeZoneToolStripMenuItem.Text = "Remove Zone";
-            removeZoneToolStripMenuItem.Click += removeZoneToolStripMenuItem_Click;
+            removeUnusedGroupSpawnsToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeUnusedGroupSpawnsToolStripMenuItem.Name = "removeUnusedGroupSpawnsToolStripMenuItem";
+            removeUnusedGroupSpawnsToolStripMenuItem.Size = new Size(253, 22);
+            removeUnusedGroupSpawnsToolStripMenuItem.Text = "Remove Unused Group Spawns";
+            removeUnusedGroupSpawnsToolStripMenuItem.Click += removeUnusedGroupSpawnsToolStripMenuItem_Click;
             // 
             // EconomyForm
             // 
@@ -1180,5 +1198,7 @@ namespace EconomyPlugin
         private ToolStripMenuItem removeAllAFromPositionsToolStripMenuItem;
         private ToolStripMenuItem addZoneToolStripMenuItem;
         private ToolStripMenuItem removeZoneToolStripMenuItem;
+        private ToolStripMenuItem removeUnusedEventSpawnsToolStripMenuItem;
+        private ToolStripMenuItem removeUnusedGroupSpawnsToolStripMenuItem;
     }
 }

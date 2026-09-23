@@ -590,7 +590,7 @@ namespace EconomyPlugin
                         EventSpawnContextMenu.Items.Add(removeAllPositionToolStripMenuItem);
                         EventSpawnContextMenu.Items.Add(exportPositionTodzeToolStripMenuItem);
                     }
-                    if( evt.zone == null)
+                    if (evt.zone == null)
                     {
                         EventSpawnContextMenu.Items.Add(new ToolStripSeparator());
                         EventSpawnContextMenu.Items.Add(addZoneToolStripMenuItem);
@@ -1011,7 +1011,14 @@ namespace EconomyPlugin
                         MapGroupPosCM.Items.Add(addNewUsableFileToolStripMenuItem);
                     }
                     MapGroupPosCM.Show(Cursor.Position);
-                }
+                },
+                ["EventsCategory"] = node =>
+                {
+                    PlayerSpawnsCM.Items.Clear();
+                    PlayerSpawnsCM.Items.Add(removeUnusedEventSpawnsToolStripMenuItem);
+                    PlayerSpawnsCM.Items.Add(removeUnusedGroupSpawnsToolStripMenuItem);
+                    PlayerSpawnsCM.Show(Cursor.Position);
+                },
             };
         }
         public bool NodeHasChildOfType<T>(TreeNode node)
@@ -4640,9 +4647,9 @@ namespace EconomyPlugin
             {
                 CfgeffectareaConfig ttt = currentTreeNode.Parent.Parent.Tag as CfgeffectareaConfig;
                 ttt.Data._positions.Remove(cfgeffectareaSafePosition);
-                
+
                 currentTreeNode.Remove();
-                
+
             }
             else if (currentTreeNode.Tag is Areas area)
             {
@@ -5278,8 +5285,8 @@ namespace EconomyPlugin
                             );
                     if (result == DialogResult.No) { return; }
                 }
-                
-                
+
+
                 eventposdefEvent points = _economyManager.cfgeventspawnsConfig.Findevent(_event.name);
                 if (points != null)
                 {
@@ -5300,7 +5307,7 @@ namespace EconomyPlugin
                             {
                                 _economyManager.cfgeventgroupsConfig.Data.group.Remove(evg);
                             }
-                            
+
                         }
                     }
                     int count = 0;
@@ -5366,7 +5373,7 @@ namespace EconomyPlugin
                         {
                             _economyManager.cfgeventgroupsConfig.Data.group.Remove(evg);
                         }
-                        
+
                     }
                 }
                 _economyManager.cfgeventspawnsConfig.RemoveEventSpawn(eventposdefEvent);
@@ -5573,10 +5580,10 @@ namespace EconomyPlugin
         }
         private void removeSelectedPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
+            if (currentTreeNode.Tag is eventposdefEventPos eventposdefEventPos)
             {
                 eventgroupdefGroup evg = _economyManager.cfgeventgroupsConfig.getassociatedgroup(eventposdefEventPos.group);
-                if(evg != null)
+                if (evg != null)
                 {
                     List<eventsEvent> events = _economyManager.eventsConfig.getalleventsfromgroup(evg);
                     if (events.Count() == 1)
@@ -5601,7 +5608,6 @@ namespace EconomyPlugin
                 }
             }
         }
-
         private void removeAllPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             eventposdefEvent eventposdefEvent = currentTreeNode.Tag as eventposdefEvent;
@@ -5911,7 +5917,88 @@ namespace EconomyPlugin
                 }
             }
         }
+        private void removeUnusedEventSpawnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<eventposdefEvent> usedeventpos = new List<eventposdefEvent>();
+            foreach (eventposdefEvent eventpos in _economyManager.cfgeventspawnsConfig.Data.@event)
+            {
+                foreach(EventsFile ef in _economyManager.eventsConfig.MutableItems)
+                {
+                    foreach(eventsEvent ev in ef.Data.@event)
+                    {
+                        foreach(eventposdefEvent pos in _economyManager.cfgeventspawnsConfig.Data.@event)
+                        {
+                            if (ev.name == pos.name && !usedeventpos.Contains(pos))
+                                usedeventpos.Add(pos);
+                        }
+                    }
+                }
+            }
+            List<eventposdefEvent> unusedeventpos = new List<eventposdefEvent>();
+            unusedeventpos = _economyManager.cfgeventspawnsConfig.Data.@event
+            .Where(x => !usedeventpos.Contains(x))
+            .ToList();
+            foreach (var group in unusedeventpos)
+            {
+                _economyManager.cfgeventspawnsConfig.Data.@event.Remove(group);
+            }
 
+            Console.WriteLine($"Removed {unusedeventpos.Count} unused group spawns.");
+        }
+        private void removeUnusedGroupSpawnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            HashSet<string> usedGroups = new();
+
+            foreach (var ev in _economyManager.cfgeventspawnsConfig.Data.@event)
+            {
+                if (ev == null)
+                {
+                    Console.WriteLine("Null event");
+                    continue;
+                }
+
+                if (ev.pos == null)
+                {
+                    Console.WriteLine($"Event '{ev.name}' has null pos collection");
+                    continue;
+                }
+
+                foreach (var pos in ev.pos)
+                {
+                    if (pos == null)
+                    {
+                        Console.WriteLine($"Event '{ev.name}' contains null pos");
+                        continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(pos.group))
+                        usedGroups.Add(pos.group);
+                }
+            }
+
+            List<eventgroupdefGroup> unusedGroups = new();
+
+            foreach (var group in _economyManager.cfgeventgroupsConfig.Data.group)
+            {
+                if (group == null)
+                {
+                    Debug.WriteLine("Null group");
+                    continue;
+                }
+
+                if (!usedGroups.Contains(group.name))
+                    unusedGroups.Add(group);
+            }
+
+            foreach (var group in unusedGroups)
+            {
+                _economyManager.cfgeventgroupsConfig.Data.group.Remove(group);
+            }
+
+            Console.WriteLine($"Removed {unusedGroups.Count} unused group spawns.");
+
+        }
         /// <summary>
         /// Random Preset Right click methods
         /// </summary>
