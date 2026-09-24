@@ -2,6 +2,7 @@
 using Core;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Day2eEditor
@@ -10,9 +11,14 @@ namespace Day2eEditor
     {
         public readonly Dictionary<string, string> _paths = new();
         public string basePath { get; set; }
+        public string profilePath { get; set; }
         public bool HasErrors { get; set; }
         public List<string> Errors = new List<string>();
         public BindingList<EconomyWarning> WarningList { get; } = new();
+
+        public UniversalAttachmentDump? AttachmentDatabase { get; private set; }
+        private readonly Dictionary<string, DumpItem> _attachmentLookup = new(StringComparer.OrdinalIgnoreCase);
+        public bool UniversalAttchmentDatabaseLoaded => AttachmentDatabase?.Items?.Count > 0;
 
         public economyCoreConfig eonomyCoreConfig { get; set; }
         public cfglimitsdefinitionConfig cfglimitsdefinitionConfig { get; set; }
@@ -49,8 +55,9 @@ namespace Day2eEditor
         public void SetProject(Project project)
         {
             basePath = Path.Combine(project.ProjectRoot, "mpmissions", project.MpMissionPath);
+            profilePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName);
 
-            if(IsDirectoryEmpty(basePath))
+            if (IsDirectoryEmpty(basePath))
             {
                 return;
             }
@@ -80,6 +87,7 @@ namespace Day2eEditor
             _paths["VanillaRandomPresets"] = Path.Combine(basePath, "cfgrandompresets.xml");
 
             _paths["ScriptFilesConfig"] = Path.Combine(basePath, "");
+            _paths["UniversalAttachmentDatabase"] = Path.Combine(profilePath, "UniversalAttachments.json");
 
             LoadFiles();
         }
@@ -197,10 +205,53 @@ namespace Day2eEditor
             cfgrandompresetsConfig = new CfgrandompresetsConfig(basePath);
             LoadConfigWithErrorReport("RandomPresets", cfgrandompresetsConfig);
 
+            Console.WriteLine($"\n**** Starting load of Universal Attachment Database If Available ****");
+            LoadUniversalAttachmentDatabase();
+
             Save();
 
             RebuildWarnings();
         }
+
+        private void LoadUniversalAttachmentDatabase()
+        {
+            _attachmentLookup.Clear();
+            AttachmentDatabase = null;
+
+            if (!_paths.TryGetValue("UniversalAttachmentDatabase", out string filePath))
+                return;
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine(
+                $"[Economy Manager] Universal Attachment Database not found: {filePath}");
+                return;
+            }
+
+            try
+            {
+                AttachmentDatabase = JsonSerializer.Deserialize<UniversalAttachmentDump>(File.ReadAllText(filePath));
+
+                if (AttachmentDatabase?.Items == null)
+                    return;
+
+                foreach (DumpItem item in AttachmentDatabase.Items)
+                {
+                    if (!string.IsNullOrWhiteSpace(item.name))
+                        _attachmentLookup[item.name] = item;
+                }
+
+                Console.WriteLine( $"[Economy Manager] Loaded {AttachmentDatabase.Items.Count} attachment definitions.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Economy Manager] Failed to load attachment database: {ex.Message}");
+
+                HasErrors = true;
+                Errors.Add($"[UniversalAttachmentDatabase] {ex.Message}");
+            }
+        }
+
         public IEnumerable<string> Save()
         {
             var configs = new object[]
@@ -531,12 +582,12 @@ namespace Day2eEditor
             }
         }
         private void CheckSingleTypeEntry(
-    TypesFile file,
-    TypeEntry type,
-    HashSet<string> validCategories,
-    HashSet<string> validUsageFlags,
-    HashSet<string> validValueFlags,
-    HashSet<string> validTagNames)
+            TypesFile file,
+            TypeEntry type,
+            HashSet<string> validCategories,
+            HashSet<string> validUsageFlags,
+            HashSet<string> validValueFlags,
+            HashSet<string> validTagNames)
         {
             if (type == null)
                 return;
@@ -835,6 +886,10 @@ namespace Day2eEditor
 
             return combined;
         }
+        public DumpItem? GetAttachmentItem(string className)
+        {
+            return _attachmentLookup.GetValueOrDefault(className);
+        }
         #endregion
 
         private void checkVanillaCharacterClassnames()
@@ -979,60 +1034,53 @@ void GetXYZMap()
 }
 ";
         public const string DumpAttchScript = @"
-public class UniversalAttachmentDump
+class DumpItemOutputs
 {
-    public BindingList<DumpItem> Items { get; set; } = new();
+	ref array<ref DumpItem> Items = {};
 }
 
-public class DumpItem
+class DumpItem
 {
-    public string name { get; set; }
-    public string configRoot { get; set; }
-    public string displayName { get; set; }
-    public string description { get; set; }
-    public string model { get; set; }
-    public string parentClass { get; set; }
-    public int sizeX { get; set; }
-    public int sizeY { get; set; }
-    public float weight { get; set; }
-    // These will be populated for weapons and empty for most other items
-    public BindingList<string> bullets { get; set; } = new();
-    public BindingList<string> magazines { get; set; } = new();
-    public BindingList<DumpSlot> attachmentSlots { get; set; } = new();
+	string name;
+	string configRoot;
+
+	string displayName;
+	string description;
+	string parentClass;
+
+	ref TStringArray bullets = {};
+	ref TStringArray magazines = {};
+
+	ref array<ref DumpSlot> attachmentSlots = {};
 }
 
-public class DumpSlot
+class DumpSlot
 {
-    public string slotName { get; set; }
-    public BindingList<string> compatibleItems { get; set; } = new();
+	string slotName;
+	ref TStringArray compatibleItems = {};
 }
 
-bool endsWith(string str, string suffix)
+//Helper classes
+bool EndsWith(string str, string suffix)
 {
-  if (str.Length() < suffix.Length())
-    return false;
-   
-  return str.Substring(str.Length()- suffix.Length(), suffix.Length()) == suffix;
-} 
-bool startsWith(string str, string suffix)
-{
-  if (str.Length() < suffix.Length())
-    return false;
-   
-  return str.Substring(0,suffix.Length()) == suffix;
+	if (str.Length() < suffix.Length())
+		return false;
+
+	return str.Substring(str.Length() - suffix.Length(), suffix.Length()) == suffix;
 }
 bool SkipClass(string className)
 {
-	return EndsWith(className, ""Base"") ||
-			EndsWith(className, ""ColorBase"") ||
-			EndsWith(className, ""Debug"") ||
-			className == ""Mode_Single"" ||
-			className == ""DamageSystem"" ||
-			className == ""access"" ||
-			className == ""DefaultWeapon"" ||
-			className == ""PistolCore"" ||
-			className == ""RifleCore"" ||
-			className == ""LauncherCore"";
+	return
+		EndsWith(className, ""Base"") ||
+		EndsWith(className, ""ColorBase"") ||
+		EndsWith(className, ""Debug"") ||
+		className == ""Mode_Single"" ||
+		className == ""DamageSystem"" ||
+		className == ""access"" ||
+		className == ""DefaultWeapon"" ||
+		className == ""PistolCore"" ||
+		className == ""RifleCore"" ||
+		className == ""LauncherCore"";
 }
 void DumpUniversalAttachments()
 {
@@ -1040,28 +1088,33 @@ void DumpUniversalAttachments()
 	DumpItemOutputs output = new DumpItemOutputs();
 	map<string, ref TStringArray> attachmentMap = new map<string, ref TStringArray>();
 	BuildAttachmentMap(attachmentMap);
-	DumpConfigRoot(""CfgWeapons"",attachmentMap, output);
-	DumpConfigRoot(""CfgVehicles"",attachmentMap, output);
+	DumpConfigRoot(""CfgWeapons"", attachmentMap, output);
+	DumpConfigRoot(""CfgVehicles"", attachmentMap, output);
 	JsonFileLoader<DumpItemOutputs>.JsonSaveFile(""$profile:\\UniversalAttachments.json"", output);
-	Print(""Dump Complete. Total Items: "" + output.Items.Count());
+	Print(""Universal Attachment Dump Complete. Items: ""+ output.Items.Count());
 }
 void BuildAttachmentMap(map<string, ref TStringArray> attachmentMap)
 {
-	for (int i = 0; i < GetGame().ConfigGetChildrenCount(""CfgVehicles""); i++)
+	BuildAttachmentMapRoot(""CfgVehicles"", attachmentMap);
+	BuildAttachmentMapRoot(""CfgWeapons"", attachmentMap);
+}
+void BuildAttachmentMapRoot(string root,map<string, ref TStringArray> attachmentMap)
+{
+	for (int i = 0; i < GetGame().ConfigGetChildrenCount(root); i++)
 	{
 		string className;
-		GetGame().ConfigGetChildName(""CfgVehicles"", i, className);
+		GetGame().ConfigGetChildName(root, i, className);
 
-		if (className == string.Empty)
+		if (className == string.Empty || SkipClass(className))
 			continue;
 
 		TStringArray slots = {};
 
-		switch (GetGame().ConfigGetType(""CfgVehicles "" + className + "" inventorySlot""))
+		switch (GetGame().ConfigGetType(root + "" "" + className + "" inventorySlot""))
 		{
 			case CT_ARRAY:
 			{
-				GetGame().ConfigGetTextArray(""CfgVehicles "" + className + "" inventorySlot"", slots);
+				GetGame().ConfigGetTextArray(root + "" "" + className + "" inventorySlot"", slots);
 
 				foreach (string slot : slots)
 				{
@@ -1081,7 +1134,7 @@ void BuildAttachmentMap(map<string, ref TStringArray> attachmentMap)
 			{
 				string slot;
 
-				GetGame().ConfigGetText(""CfgVehicles "" + className + "" inventorySlot"", slot);
+				GetGame().ConfigGetText(root + "" "" + className + "" inventorySlot"", slot);
 
 				if (slot == string.Empty)
 					continue;
@@ -1097,37 +1150,36 @@ void BuildAttachmentMap(map<string, ref TStringArray> attachmentMap)
 		}
 	}
 }
-void DumpConfigRoot(string root,map<string, ref TStringArray> attachmentMap,DumpItemOutputs output)
+void DumpConfigRoot(string root,map<string, ref TStringArray> attachmentMap, DumpItemOutputs output)
 {
 	for (int i = 0; i < GetGame().ConfigGetChildrenCount(root); i++)
 	{
 		string className;
 		GetGame().ConfigGetChildName(root, i, className);
 
-		if (className == string.Empty)
-			continue;
-
-		if (SkipClass(className))
+		if (className == string.Empty || SkipClass(className))
 			continue;
 
 		DumpItem item = new DumpItem();
 
 		item.name = className;
 		item.configRoot = root;
-		item.displayName = className;
-		GetGame().ConfigGetText(root + "" "" + className + "" displayName"", item.displayName);
-		item.description = """";
-		GetGame().ConfigGetText(root + "" "" + className + "" descriptionShort"", item.description);
-		GetGame().ConfigGetBaseName(root + "" "" + className, item.parentClass);
-		// Weapons only
-		GetGame().ConfigGetTextArray(root + "" "" + className + "" chamberableFrom"", item.bullets);
-		GetGame().ConfigGetTextArray(root + "" "" + className + "" magazines"", item.magazines);
 
+		item.displayName = className;
+		GetGame().ConfigGetText(root + "" "" + className + "" displayName"",item.displayName);
+		item.description = """";
+		GetGame().ConfigGetText(root + "" "" + className + "" descriptionShort"",item.description);
+		GetGame().ConfigGetBaseName(root + "" "" + className,item.parentClass);
+		GetGame().ConfigGetTextArray(root + "" "" + className + "" chamberableFrom"",item.bullets);
+		GetGame().ConfigGetTextArray(root + "" "" + className + "" magazines"",item.magazines);
 		TStringArray slots = {};
-		GetGame().ConfigGetTextArray(root + "" "" + className + "" attachments"", slots);
+		GetGame().ConfigGetTextArray(root + "" "" + className + "" attachments"",slots);
 
 		foreach (string slot : slots)
 		{
+			if (slot == string.Empty)
+				continue;
+
 			DumpSlot slotDump = new DumpSlot();
 			slotDump.slotName = slot;
 
@@ -1142,16 +1194,15 @@ void DumpConfigRoot(string root,map<string, ref TStringArray> attachmentMap,Dump
 						slotDump.compatibleItems.Insert(attachment);
 				}
 			}
+
 			slotDump.compatibleItems.Sort();
 			item.attachmentSlots.Insert(slotDump);
 		}
 
-		// Skip empty entries
 		if (item.attachmentSlots.Count() == 0 &&item.bullets.Count() == 0 &&item.magazines.Count() == 0)
 		{
 			continue;
 		}
-
 		output.Items.Insert(item);
 	}
 }

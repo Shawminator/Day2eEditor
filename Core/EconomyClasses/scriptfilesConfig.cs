@@ -13,7 +13,7 @@ namespace Core
     {
         public readonly string _weaponInclude;
         public readonly string _xyzInclude;
-        public readonly string WeaponAttachDump = $"\t//<AUTO_DUMP_ATTACH_START>\r\n\tDumpAttach();\r\n\t//<AUTO_DUMP_ATTACH_END>";
+        public readonly string WeaponAttachDump = $"\t//<AUTO_DUMP_ATTACH_START>\r\n\tDumpUniversalAttachments();\r\n\t//<AUTO_DUMP_ATTACH_END>";
         public readonly string GetXYZ = $"\t//<AUTO_GET_XYZ_MAP_START>\r\n\tGetXYZMap();\r\n\t//<AUTO_GET_XYZ_MAP_END>";
         public scriptfilesConfig(string basePath) : base(basePath)
         {

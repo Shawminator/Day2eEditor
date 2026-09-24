@@ -651,8 +651,6 @@ namespace EconomyPlugin
                 },
                 [typeof(SpawnableType)] = node =>
                 {
-                    string DumpAttchFile = Path.Combine(_projectManager.CurrentProject.ProjectRoot, _projectManager.CurrentProject.ProfileName, "DumpAttatch.json");
-
                     var st = node.Tag as SpawnableType;
                     SpawnableTypesCM.Items.Clear();
                     if (!st.Items.OfType<spawnableTypesHoarder>().Any())
@@ -663,7 +661,7 @@ namespace EconomyPlugin
                     SpawnableTypesCM.Items.Add(addNewCargoToolStripMenuItem1);
                     SpawnableTypesCM.Items.Add(addNewAttachmentToolStripMenuItem);
                     SpawnableTypesCM.Items.Add(removeSelectedToolStripMenuItem1);
-                    if (File.Exists(DumpAttchFile))
+                    if (_economyManager.UniversalAttchmentDatabaseLoaded)
                     {
                         SpawnableTypesCM.Items.Add(new ToolStripSeparator());
                         SpawnableTypesCM.Items.Add(addFromDumpAttachToolStripMenuItem);
@@ -880,7 +878,7 @@ namespace EconomyPlugin
                         if (!item.HasXYZInclude)
                             SpawnableTypesCM.Items.Add(addGetXYZToolStripMenuItem);
                     }
-                    if (item.FileName == "WeaponAttchmentDump.c")
+                    if (item.FileName == "UniversalAttchmentDump.c")
                         SpawnableTypesCM.Items.Add(removeWeaponAttchmentDumpToolStripMenuItem);
                     else if (item.FileName == "XYZMapper.c")
                         SpawnableTypesCM.Items.Add(removeGetXYZToolStripMenuItem);
@@ -6602,11 +6600,12 @@ namespace EconomyPlugin
         }
         private void addFromDumpAttachToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string DumpAttchFile = Path.Combine(_projectManager.CurrentProject.ProjectRoot, _projectManager.CurrentProject.ProfileName, "UniversalAttachments.json");
-            UniversalAttachmentDump attachdump = JsonSerializer.Deserialize<UniversalAttachmentDump>(File.ReadAllText(DumpAttchFile));
             SpawnableType currentst = currentTreeNode.Tag as SpawnableType;
 
-            DumpItem itemDump = attachdump.Items.FirstOrDefault(x => x.name == currentst.name);
+            DumpItem itemDump = _economyManager.GetAttachmentItem(currentst.name);
+
+            if (itemDump == null)
+                return;
 
             currentst.Items = new BindingList<object>(currentst.Items?
                 .Where(x => x is not spawnableTypeAttachment)
@@ -6618,18 +6617,23 @@ namespace EconomyPlugin
                 AddAttachmentGroup(currentst, dSlot.compatibleItems);
             }
 
-            var keep = currentTreeNode.Nodes
+            UniversalAttachmentPreview newform = new UniversalAttachmentPreview();
+            newform.SpawnableType = currentst;
+            DialogResult result = newform.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                var keep = currentTreeNode.Nodes
                 .Cast<TreeNode>()
                 .Where(n => n.Tag is not spawnableTypeAttachment)
                 .ToArray();
 
-            currentTreeNode.Nodes.Clear();
+                currentTreeNode.Nodes.Clear();
 
-            foreach (var item in currentst.Items)
-            {
-                currentTreeNode.Nodes.Add(CrteateSpawnableTypeNodes(item));
+                foreach (var item in currentst.Items)
+                {
+                    currentTreeNode.Nodes.Add(CrteateSpawnableTypeNodes(item));
+                }
             }
-
         }
         private void AddAttachmentGroup(SpawnableType spawnable, IEnumerable<string> names)
         {
@@ -6641,6 +6645,12 @@ namespace EconomyPlugin
                 {
                     Name = n,
                     Type = _economyManager.TypesConfig.GetTypeByName(n)
+                })
+                .Where(x => x.Type is not null)
+                .Select(x => new
+                {
+                    x.Name,
+                    Type = x.Type!
                 })
                 .ToList();
 
@@ -6654,13 +6664,22 @@ namespace EconomyPlugin
             foreach (var x in resolved)
             {
                 decimal chance = CalculateChanceFromNominal(x.Type, totalNominal, resolved.Count);
-
-                items.Add(new spawnableTypeItem
+                spawnableTypeItem newitem = new spawnableTypeItem
                 {
                     name = x.Name,
                     chance = Math.Round(chance, 2),
                     chanceSpecified = true
-                });
+                };
+                DumpItem itemDump = _economyManager.GetAttachmentItem(x.Type.Name);
+                if (itemDump != null)
+                {
+                    newitem.attachments = new BindingList<spawnableTypeAttachment>();
+                    foreach (DumpSlot slot in itemDump.attachmentSlots)
+                    {
+                        newitem.attachments.Add(Createattchment(slot));
+                    }
+                }
+                items.Add(newitem);
             }
             var sortedItems = items.OrderByDescending(x => x.chance).ToList();
             spawnable.Items ??= new BindingList<object>();
@@ -6671,6 +6690,33 @@ namespace EconomyPlugin
                 chanceSpecified = true,
                 item = new BindingList<spawnableTypeItem>(sortedItems)
             });
+        }
+        private spawnableTypeAttachment Createattchment(DumpSlot dsitem)
+        {
+            spawnableTypeAttachment newatt = new spawnableTypeAttachment()
+            {
+                chance = 1.0m,
+                chanceSpecified = true,
+                item = new BindingList<spawnableTypeItem>() 
+            };
+            foreach(string dscitem in dsitem.compatibleItems)
+            {
+                spawnableTypeItem newstitem = new spawnableTypeItem()
+                {
+                    name = dscitem
+                };
+                DumpItem itemDump = _economyManager.GetAttachmentItem(dscitem);
+                if (itemDump != null)
+                {
+                    newstitem.attachments = new BindingList<spawnableTypeAttachment>();
+                    foreach (DumpSlot slot in itemDump.attachmentSlots)
+                    {
+                        newstitem.attachments.Add(Createattchment(slot));
+                    }
+                }
+                newatt.item.Add(newstitem);
+            }
+            return newatt;
         }
         private decimal CalculateChanceFromNominal(TypeEntry te, int totalNominal, int count)
         {
@@ -6690,7 +6736,7 @@ namespace EconomyPlugin
                 return 0.5m;
 
             // scale into usable range
-            decimal raw = totalNominal / 1000m;
+            decimal raw = totalNominal / 100m;
 
             // clamp so nothing becomes broken
             return Math.Clamp(raw, 0.1m, 0.9m);

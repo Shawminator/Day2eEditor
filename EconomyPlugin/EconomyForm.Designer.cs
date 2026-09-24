@@ -670,7 +670,7 @@ namespace EconomyPlugin
             addWeaponAttachmentDumpToolStripMenuItem.ForeColor = SystemColors.Control;
             addWeaponAttachmentDumpToolStripMenuItem.Name = "addWeaponAttachmentDumpToolStripMenuItem";
             addWeaponAttachmentDumpToolStripMenuItem.Size = new Size(232, 22);
-            addWeaponAttachmentDumpToolStripMenuItem.Text = "Add WeaponAttachment Dump";
+            addWeaponAttachmentDumpToolStripMenuItem.Text = "Add Universal Attachment Dump";
             addWeaponAttachmentDumpToolStripMenuItem.Click += addWeaponAttachmentDumpToolStripMenuItem_Click;
             // 
             // addGetXYZToolStripMenuItem
