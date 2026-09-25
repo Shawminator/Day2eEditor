@@ -1034,6 +1034,7 @@ void GetXYZMap()
 }
 ";
         public const string DumpAttchScript = @"
+
 class DumpItemOutputs
 {
 	ref array<ref DumpItem> Items = {};
@@ -1068,19 +1069,36 @@ bool EndsWith(string str, string suffix)
 
 	return str.Substring(str.Length() - suffix.Length(), suffix.Length()) == suffix;
 }
+bool StartsWith(string str, string suffix)
+{
+  if (str.Length() < suffix.Length())
+    return false;
+   
+  return str.Substring(0,suffix.Length()) == suffix;
+}
 bool SkipClass(string className)
 {
-	return
-		EndsWith(className, ""Base"") ||
-		EndsWith(className, ""ColorBase"") ||
-		EndsWith(className, ""Debug"") ||
-		className == ""Mode_Single"" ||
-		className == ""DamageSystem"" ||
-		className == ""access"" ||
-		className == ""DefaultWeapon"" ||
-		className == ""PistolCore"" ||
-		className == ""RifleCore"" ||
-		className == ""LauncherCore"";
+	if (className == string.Empty) return true;
+
+	string exactMatches[] = { ""Magnum_Ejector"", ""Magnum_Cylinder"", ""Mode_Single"", ""DamageSystem"", ""access"", ""DefaultWeapon"", ""PistolCore"", ""RifleCore"", ""LauncherCore"" };
+	foreach (string m : exactMatches)
+	{
+		if (className == m) return true;
+	}
+
+	string prefixes[] = { ""SurvivorM"", ""SurvivorF"", ""ZmbM"", ""ZmbF"", ""Groza"", ""RevolverCylinder"", ""RevolverEjector"" };
+	foreach (string p : prefixes)
+	{
+		if (StartsWith(className, p)) return true;
+	}
+
+	string suffixes[] = { ""Base"", ""ColorBase"", ""Debug"", ""TESTBED"" };
+	foreach (string s : suffixes)
+	{
+		if (EndsWith(className, s)) return true;
+	}
+
+	return false;
 }
 void DumpUniversalAttachments()
 {
@@ -1116,16 +1134,16 @@ void BuildAttachmentMapRoot(string root,map<string, ref TStringArray> attachment
 			{
 				GetGame().ConfigGetTextArray(root + "" "" + className + "" inventorySlot"", slots);
 
-				foreach (string slot : slots)
+				foreach (string slot1 : slots)
 				{
-					if (slot == string.Empty)
+					if (slot1 == string.Empty)
 						continue;
 
-					if (!attachmentMap[slot])
-						attachmentMap[slot] = new TStringArray();
+					if (!attachmentMap[slot1])
+						attachmentMap[slot1] = new TStringArray();
 
-					if (attachmentMap[slot].Find(className) == -1)
-						attachmentMap[slot].Insert(className);
+					if (attachmentMap[slot1].Find(className) == -1)
+						attachmentMap[slot1].Insert(className);
 				}
 				break;
 			}
