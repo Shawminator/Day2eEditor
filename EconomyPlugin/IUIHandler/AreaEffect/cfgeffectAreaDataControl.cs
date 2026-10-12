@@ -188,7 +188,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             NumericUpDown nud = sender as NumericUpDown;
             if (nud.DecimalPlaces > 0)
-               _data.SetDecimalValue(nud.Name.Substring(0, nud.Name.Length - 3), (decimal)nud.Value);
+                _data.SetDecimalValue(nud.Name.Substring(0, nud.Name.Length - 3), (decimal)nud.Value);
             else
                 _data.SetIntValue(nud.Name.Substring(0, nud.Name.Length - 3), (int)nud.Value);
         }

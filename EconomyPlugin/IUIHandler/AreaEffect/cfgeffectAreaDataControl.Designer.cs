@@ -249,6 +249,7 @@
             EffectModifierCB.TabIndex = 155;
             EffectModifierCB.UseVisualStyleBackColor = true;
             EffectModifierCB.Visible = false;
+            EffectModifierCB.CheckedChanged += EffectModifierCB_CheckedChanged;
             // 
             // EffectIntervalNUD
             // 
@@ -369,6 +370,7 @@
             ParticleNameTB.Size = new Size(520, 23);
             ParticleNameTB.TabIndex = 127;
             ParticleNameTB.Visible = false;
+            ParticleNameTB.TextChanged += ParticleNameTB_TextChanged;
             // 
             // UseOuterRingToggleCB
             // 
@@ -393,6 +395,7 @@
             OuterRingToggleCB.TabIndex = 144;
             OuterRingToggleCB.UseVisualStyleBackColor = true;
             OuterRingToggleCB.Visible = false;
+            OuterRingToggleCB.CheckedChanged += OuterRingToggleCB_CheckedChanged;
             // 
             // UseInnerPartDistCB
             // 

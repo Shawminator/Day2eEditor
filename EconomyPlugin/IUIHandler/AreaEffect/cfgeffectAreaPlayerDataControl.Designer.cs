@@ -75,6 +75,7 @@
             PPERequesterTypeTB.Name = "PPERequesterTypeTB";
             PPERequesterTypeTB.Size = new Size(520, 23);
             PPERequesterTypeTB.TabIndex = 133;
+            PPERequesterTypeTB.TextChanged += PPERequesterTypeTB_TextChanged;
             // 
             // darkLabel15
             // 
@@ -96,6 +97,7 @@
             TinyPartNameTB.Name = "TinyPartNameTB";
             TinyPartNameTB.Size = new Size(520, 23);
             TinyPartNameTB.TabIndex = 131;
+            TinyPartNameTB.TextChanged += TinyPartNameTB_TextChanged;
             // 
             // darkLabel14
             // 
@@ -117,6 +119,7 @@
             AroundPartNameTB.Name = "AroundPartNameTB";
             AroundPartNameTB.Size = new Size(520, 23);
             AroundPartNameTB.TabIndex = 129;
+            AroundPartNameTB.TextChanged += AroundPartNameTB_TextChanged;
             // 
             // cfgeffectAreaPlayerDataControl
             // 
