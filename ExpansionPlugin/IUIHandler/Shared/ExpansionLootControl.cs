@@ -230,10 +230,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionLootCM.Items.Clear();
                     ExpansionLootCM.Items.Add(addAttachmentToolStripMenuItem);
+                    ExpansionLootCM.Items.Add(new ToolStripSeparator());
+                    ExpansionLootCM.Items.Add(addAttchemntsFromUniversalAttachmentToolStripMenuItem);
                     ExpansionLootCM.Show(Cursor.Position);
                 }
             }
-            else  if (e.Node.Tag.ToString() == "Variants")
+            else if (e.Node.Tag.ToString() == "Variants")
             {
                 if (e.Button == MouseButtons.Right)
                 {
@@ -267,7 +269,7 @@ namespace ExpansionPlugin
         {
             if (currentExpanionLootItem == null) return;
             currentExpanionLootItem.Chance = ((decimal)trackBar1.Value) / 100;
-            
+
         }
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
@@ -281,7 +283,7 @@ namespace ExpansionPlugin
         {
             if (CurrentLootVariant == null) return;
             CurrentLootVariant.Chance = ((decimal)trackBar2.Value) / 100;
-            
+
         }
 
         private void ExpansionLootitemSetAllChanceButton_Click(object sender, EventArgs e)
@@ -290,7 +292,7 @@ namespace ExpansionPlugin
             {
                 el.Chance = ((decimal)trackBar2.Value) / 100;
             }
-            
+
         }
 
         private void ExpansionLootitemSetAllRandomChanceButton_Click(object sender, EventArgs e)
@@ -330,28 +332,28 @@ namespace ExpansionPlugin
 
                 el.Chance = (decimal)rnd.Next(chancemin, chancemax) / 100;
             }
-            
+
         }
 
         private void numericUpDown31_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentExpanionLootItem.QuantityPercent = (int)numericUpDown31.Value;
-            
+
         }
 
         private void numericUpDown12_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentExpanionLootItem.Max = (int)numericUpDown12.Value;
-            
+
         }
 
         private void numericUpDown33_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
             currentExpanionLootItem.Min = (int)numericUpDown33.Value;
-            
+
         }
 
         private void addLootItemsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -380,7 +382,7 @@ namespace ExpansionPlugin
                     TreeNode tn = CreateLootNode(Newloot);
                     ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                     FocusNode = tn;
-                    
+
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
@@ -407,7 +409,7 @@ namespace ExpansionPlugin
                     TreeNode tn = getLootVariants(Newloot);
                     ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                     FocusNode = tn;
-                    
+
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
@@ -455,7 +457,7 @@ namespace ExpansionPlugin
                         ExpansionLootTV.SelectedNode.Nodes.Add(tn);
                         FocusNode = tn;
                     }
-                    
+
                 }
                 ExpansionLootTV.SelectedNode = FocusNode;
                 ExpansionLootTV.Focus();
@@ -502,7 +504,40 @@ namespace ExpansionPlugin
                 }
             }
 
-            
+
+        }
+
+        private void addAttchemntsFromUniversalAttachmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DumpItem itemDump = AppServices.GetRequired<EconomyManager>().GetAttachmentItem(currentExpanionLootItem.Name);
+
+            if (itemDump == null)
+                return;
+
+            currentExpanionLootItem.Attachments = new BindingList<ExpansionLootVariant>();
+            foreach(DumpSlot slot in itemDump.attachmentSlots)
+            {
+                foreach (string l in slot.compatibleItems)
+                {
+                    ExpansionLootVariant Newloot = new ExpansionLootVariant(l);
+                    currentExpanionLootItem.Attachments.Add(Newloot);
+                }
+            }
+
+
+            ExpansionLootUniversalAttachmentPreview newform = new ExpansionLootUniversalAttachmentPreview();
+            newform.ExpansionLoot = currentExpanionLootItem;
+            DialogResult result = newform.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                var keep = currentTreeNode.Nodes
+                .Cast<TreeNode>()
+                .Where(n => n.Tag is not spawnableTypeAttachment)
+                .ToArray();
+
+                currentTreeNode.Nodes.Clear();
+                //getLootVariants(Newloot);
+            }
         }
     }
 }
