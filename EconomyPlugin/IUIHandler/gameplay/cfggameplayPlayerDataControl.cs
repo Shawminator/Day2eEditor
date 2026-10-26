@@ -1,8 +1,10 @@
 ﻿using Day2eEditor;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace EconomyPlugin
 {
@@ -13,7 +15,7 @@ namespace EconomyPlugin
     public partial class cfggameplayPlayerDataControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private Playerdata _data;
+        private ITEM_PlayerData _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -33,7 +35,7 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as Playerdata ?? throw new InvalidCastException();
+            _data = data as ITEM_PlayerData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
@@ -66,10 +68,43 @@ namespace EconomyPlugin
             healthDepletionSpeedNUD.Value = _data.DrowningData.healthDepletionSpeed;
             shockDepletionSpeedNUD.Value = _data.DrowningData.shockDepletionSpeed;
 
-            staticModeCB.SelectedIndex = _data.WeaponObstructionData.staticMode;
-            dynamicModeCB.SelectedIndex = _data.WeaponObstructionData.dynamicMode;
+            staticModeCB.DataSource = Enum.GetValues<EWeaponObstructionMode>()
+                .Select(x => new
+                {
+                    Value = x,
+                    Text = GetDescription(x)
+                })
+                .ToList();
+
+            staticModeCB.DisplayMember = "Text";
+            staticModeCB.ValueMember = "Value";
+
+            dynamicModeCB.DataSource = Enum.GetValues<EWeaponObstructionMode>()
+                .Select(x => new
+                {
+                    Value = x,
+                    Text = GetDescription(x)
+                })
+                .ToList();
+
+            dynamicModeCB.DisplayMember = "Text";
+            dynamicModeCB.ValueMember = "Value";
+
+            staticModeCB.SelectedValue = _data.WeaponObstructionData.staticMode;
+            dynamicModeCB.SelectedValue = _data.WeaponObstructionData.dynamicMode;
 
             _suppressEvents = false;
+        }
+        public static string GetDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+
+            var attribute = field?
+                .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                .Cast<DescriptionAttribute>()
+                .FirstOrDefault();
+
+            return attribute?.Description ?? value.ToString();
         }
         private void disablePersonalLightCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -194,12 +229,12 @@ namespace EconomyPlugin
         private void staticModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.WeaponObstructionData.staticMode = staticModeCB.SelectedIndex;
+            _data.WeaponObstructionData.staticMode = (EWeaponObstructionMode)staticModeCB.SelectedValue;
         }
         private void dynamicModeCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.WeaponObstructionData.dynamicMode = dynamicModeCB.SelectedIndex;
+            _data.WeaponObstructionData.dynamicMode = (EWeaponObstructionMode)dynamicModeCB.SelectedValue;
         }
     }
 }

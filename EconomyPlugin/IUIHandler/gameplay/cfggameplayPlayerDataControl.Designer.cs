@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             groupBox25 = new GroupBox();
+            groupBox96 = new GroupBox();
+            dynamicModeCB = new ComboBox();
+            label201 = new Label();
+            staticModeCB = new ComboBox();
+            label200 = new Label();
             allowStaminaAffectInertiaCB = new CheckBox();
             groupBox61 = new GroupBox();
             shockDepletionSpeedNUD = new NumericUpDown();
@@ -79,12 +84,8 @@
             sprintStaminaModifierErcNUD = new NumericUpDown();
             label46 = new Label();
             disablePersonalLightCB = new CheckBox();
-            groupBox96 = new GroupBox();
-            dynamicModeCB = new ComboBox();
-            label201 = new Label();
-            staticModeCB = new ComboBox();
-            label200 = new Label();
             groupBox25.SuspendLayout();
+            groupBox96.SuspendLayout();
             groupBox61.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)shockDepletionSpeedNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)healthDepletionSpeedNUD).BeginInit();
@@ -110,7 +111,6 @@
             ((System.ComponentModel.ISupportInitialize)staminaWeightLimitThresholdNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)sprintStaminaModifierCroNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)sprintStaminaModifierErcNUD).BeginInit();
-            groupBox96.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox25
@@ -131,6 +131,66 @@
             groupBox25.TabIndex = 83;
             groupBox25.TabStop = false;
             groupBox25.Text = "Player Data";
+            // 
+            // groupBox96
+            // 
+            groupBox96.Controls.Add(dynamicModeCB);
+            groupBox96.Controls.Add(label201);
+            groupBox96.Controls.Add(staticModeCB);
+            groupBox96.Controls.Add(label200);
+            groupBox96.ForeColor = SystemColors.Control;
+            groupBox96.Location = new Point(7, 490);
+            groupBox96.Margin = new Padding(4, 3, 4, 3);
+            groupBox96.Name = "groupBox96";
+            groupBox96.Padding = new Padding(4, 3, 4, 3);
+            groupBox96.Size = new Size(682, 99);
+            groupBox96.TabIndex = 79;
+            groupBox96.TabStop = false;
+            groupBox96.Text = "Weapon Obstruction Data";
+            // 
+            // dynamicModeCB
+            // 
+            dynamicModeCB.BackColor = Color.FromArgb(60, 63, 65);
+            dynamicModeCB.ForeColor = SystemColors.Control;
+            dynamicModeCB.FormattingEnabled = true;
+            dynamicModeCB.Location = new Point(102, 55);
+            dynamicModeCB.Margin = new Padding(4, 3, 4, 3);
+            dynamicModeCB.Name = "dynamicModeCB";
+            dynamicModeCB.Size = new Size(568, 23);
+            dynamicModeCB.TabIndex = 7;
+            dynamicModeCB.SelectedIndexChanged += dynamicModeCB_SelectedIndexChanged;
+            // 
+            // label201
+            // 
+            label201.AutoSize = true;
+            label201.Location = new Point(10, 59);
+            label201.Margin = new Padding(4, 0, 4, 0);
+            label201.Name = "label201";
+            label201.Size = new Size(88, 15);
+            label201.TabIndex = 6;
+            label201.Text = "Dynamic Mode";
+            // 
+            // staticModeCB
+            // 
+            staticModeCB.BackColor = Color.FromArgb(60, 63, 65);
+            staticModeCB.ForeColor = SystemColors.Control;
+            staticModeCB.FormattingEnabled = true;
+            staticModeCB.Location = new Point(102, 24);
+            staticModeCB.Margin = new Padding(4, 3, 4, 3);
+            staticModeCB.Name = "staticModeCB";
+            staticModeCB.Size = new Size(568, 23);
+            staticModeCB.TabIndex = 5;
+            staticModeCB.SelectedIndexChanged += staticModeCB_SelectedIndexChanged;
+            // 
+            // label200
+            // 
+            label200.AutoSize = true;
+            label200.Location = new Point(10, 28);
+            label200.Margin = new Padding(4, 0, 4, 0);
+            label200.Name = "label200";
+            label200.Size = new Size(70, 15);
+            label200.TabIndex = 4;
+            label200.Text = "Static Mode";
             // 
             // allowStaminaAffectInertiaCB
             // 
@@ -316,7 +376,7 @@
             label134.Location = new Point(7, 117);
             label134.Margin = new Padding(4, 0, 4, 0);
             label134.Name = "label134";
-            label134.Size = new Size(113, 15);
+            label134.Size = new Size(114, 15);
             label134.TabIndex = 73;
             label134.Text = "time To Strafe Sprint";
             // 
@@ -341,7 +401,7 @@
             label135.Location = new Point(7, 87);
             label135.Margin = new Padding(4, 0, 4, 0);
             label135.Name = "label135";
-            label135.Size = new Size(80, 15);
+            label135.Size = new Size(81, 15);
             label135.TabIndex = 71;
             label135.Text = "time To Sprint";
             // 
@@ -391,7 +451,7 @@
             label137.Location = new Point(7, 27);
             label137.Margin = new Padding(4, 0, 4, 0);
             label137.Name = "label137";
-            label137.Size = new Size(100, 15);
+            label137.Size = new Size(101, 15);
             label137.TabIndex = 67;
             label137.Text = "time To Strafe Jog";
             // 
@@ -515,7 +575,7 @@
             label145.Location = new Point(349, 114);
             label145.Margin = new Padding(4, 0, 4, 0);
             label145.Name = "label145";
-            label145.Size = new Size(195, 15);
+            label145.Size = new Size(196, 15);
             label145.TabIndex = 86;
             label145.Text = "Obstacle Traversal Stamina Modifier";
             // 
@@ -679,7 +739,7 @@
             label50.Location = new Point(7, 144);
             label50.Margin = new Padding(4, 0, 4, 0);
             label50.Name = "label50";
-            label50.Size = new Size(206, 15);
+            label50.Size = new Size(207, 15);
             label50.TabIndex = 75;
             label50.Text = "Stamina Kg To Stamia Percent Penalty";
             // 
@@ -704,7 +764,7 @@
             label49.Location = new Point(7, 117);
             label49.Margin = new Padding(4, 0, 4, 0);
             label49.Name = "label49";
-            label49.Size = new Size(76, 15);
+            label49.Size = new Size(75, 15);
             label49.TabIndex = 73;
             label49.Text = "Stamina Max";
             // 
@@ -729,7 +789,7 @@
             label48.Location = new Point(7, 87);
             label48.Margin = new Padding(4, 0, 4, 0);
             label48.Name = "label48";
-            label48.Size = new Size(176, 15);
+            label48.Size = new Size(177, 15);
             label48.TabIndex = 71;
             label48.Text = "Stamina Weight Limit Threshold";
             // 
@@ -795,68 +855,6 @@
             disablePersonalLightCB.UseVisualStyleBackColor = true;
             disablePersonalLightCB.CheckedChanged += disablePersonalLightCB_CheckedChanged;
             // 
-            // groupBox96
-            // 
-            groupBox96.Controls.Add(dynamicModeCB);
-            groupBox96.Controls.Add(label201);
-            groupBox96.Controls.Add(staticModeCB);
-            groupBox96.Controls.Add(label200);
-            groupBox96.ForeColor = SystemColors.Control;
-            groupBox96.Location = new Point(7, 490);
-            groupBox96.Margin = new Padding(4, 3, 4, 3);
-            groupBox96.Name = "groupBox96";
-            groupBox96.Padding = new Padding(4, 3, 4, 3);
-            groupBox96.Size = new Size(344, 99);
-            groupBox96.TabIndex = 79;
-            groupBox96.TabStop = false;
-            groupBox96.Text = "Weapon Obstruction Data";
-            // 
-            // dynamicModeCB
-            // 
-            dynamicModeCB.BackColor = Color.FromArgb(60, 63, 65);
-            dynamicModeCB.ForeColor = SystemColors.Control;
-            dynamicModeCB.FormattingEnabled = true;
-            dynamicModeCB.Items.AddRange(new object[] { "Never Obstruct", "Obstruct, Then Lift", "Obstruct, Dont Lift" });
-            dynamicModeCB.Location = new Point(102, 55);
-            dynamicModeCB.Margin = new Padding(4, 3, 4, 3);
-            dynamicModeCB.Name = "dynamicModeCB";
-            dynamicModeCB.Size = new Size(231, 23);
-            dynamicModeCB.TabIndex = 7;
-            dynamicModeCB.SelectedIndexChanged += dynamicModeCB_SelectedIndexChanged;
-            // 
-            // label201
-            // 
-            label201.AutoSize = true;
-            label201.Location = new Point(10, 59);
-            label201.Margin = new Padding(4, 0, 4, 0);
-            label201.Name = "label201";
-            label201.Size = new Size(88, 15);
-            label201.TabIndex = 6;
-            label201.Text = "Dynamic Mode";
-            // 
-            // staticModeCB
-            // 
-            staticModeCB.BackColor = Color.FromArgb(60, 63, 65);
-            staticModeCB.ForeColor = SystemColors.Control;
-            staticModeCB.FormattingEnabled = true;
-            staticModeCB.Items.AddRange(new object[] { "Never Obstruct", "Obstruct, Then Lift", "Obstruct, Dont Lift" });
-            staticModeCB.Location = new Point(102, 24);
-            staticModeCB.Margin = new Padding(4, 3, 4, 3);
-            staticModeCB.Name = "staticModeCB";
-            staticModeCB.Size = new Size(231, 23);
-            staticModeCB.TabIndex = 5;
-            staticModeCB.SelectedIndexChanged += staticModeCB_SelectedIndexChanged;
-            // 
-            // label200
-            // 
-            label200.AutoSize = true;
-            label200.Location = new Point(10, 28);
-            label200.Margin = new Padding(4, 0, 4, 0);
-            label200.Name = "label200";
-            label200.Size = new Size(70, 15);
-            label200.TabIndex = 4;
-            label200.Text = "Static Mode";
-            // 
             // cfggameplayPlayerDataControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -868,6 +866,8 @@
             Size = new Size(713, 607);
             groupBox25.ResumeLayout(false);
             groupBox25.PerformLayout();
+            groupBox96.ResumeLayout(false);
+            groupBox96.PerformLayout();
             groupBox61.ResumeLayout(false);
             groupBox61.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)shockDepletionSpeedNUD).EndInit();
@@ -897,8 +897,6 @@
             ((System.ComponentModel.ISupportInitialize)staminaWeightLimitThresholdNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)sprintStaminaModifierCroNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)sprintStaminaModifierErcNUD).EndInit();
-            groupBox96.ResumeLayout(false);
-            groupBox96.PerformLayout();
             ResumeLayout(false);
         }
 

@@ -13,7 +13,7 @@ namespace EconomyPlugin
     public partial class cfggameplayVehicleDataControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private VehicleData _data;
+        private ITEM_VehicleData _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -33,12 +33,16 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as VehicleData ?? throw new InvalidCastException();
+            _data = data as ITEM_VehicleData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
 
             boatDecayMultiplierNUD.Value = _data.boatDecayMultiplier;
+            canDetachAttachedCarWheelsCB.Checked = _data.canDetachAttachedCarWheels;
+            canDamageAttachedCarWheelsCB.Checked = _data.canDamageAttachedCarWheels;
+            canDetachAttachedBikeWheelsCB.Checked = _data.canDetachAttachedBikeWheels;
+            canDamageAttachedBikeWheelsCB.Checked = _data.canDamageAttachedBikeWheels;
 
             _suppressEvents = false;
         }
@@ -46,6 +50,29 @@ namespace EconomyPlugin
         {
             if (_suppressEvents) return;
             _data.boatDecayMultiplier = boatDecayMultiplierNUD.Value;
+        }
+
+        private void canDetachAttachedCarWheelsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.canDetachAttachedCarWheels = canDetachAttachedCarWheelsCB.Checked;
+        }
+        private void canDamageAttachedCarWheelsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.canDamageAttachedCarWheels = canDamageAttachedCarWheelsCB.Checked;
+        }
+
+        private void canDetachAttachedBikeWheelsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.canDetachAttachedBikeWheels = canDetachAttachedBikeWheelsCB.Checked;
+        }
+
+        private void canDamageAttachedBikeWheelsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.canDamageAttachedBikeWheels = canDamageAttachedBikeWheelsCB.Checked;
         }
     }
 }

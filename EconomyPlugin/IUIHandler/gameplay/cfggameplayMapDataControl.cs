@@ -13,7 +13,7 @@ namespace EconomyPlugin
     public partial class cfggameplayMapDataControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private CFGGameplayMapData _data;
+        private ITEM_MapData _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -33,7 +33,7 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as CFGGameplayMapData ?? throw new InvalidCastException();
+            _data = data as ITEM_MapData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

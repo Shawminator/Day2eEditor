@@ -291,20 +291,24 @@ namespace EconomyPlugin
                     ShowHandler(new SpawnabletypesTagsControl(), typeof(CfgSpawnableTypesFile), node.Tag as spawnableTypeTag, selected),
 
                 // CFG Gameplay
-                [typeof(Generaldata)] = (node, selected) =>
-                    ShowHandler(new cfggameplayGeneralDataControl(), typeof(CFGGameplayConfig), node.Tag as Generaldata, selected),
-                [typeof(Playerdata)] = (node, selected) =>
-                    ShowHandler(new cfggameplayPlayerDataControl(), typeof(CFGGameplayConfig), node.Tag as Playerdata, selected),
-                [typeof(Worldsdata)] = (node, selected) =>
-                    ShowHandler(new cfggameplayWordlsDataControl(), typeof(CFGGameplayConfig), node.Tag as Worldsdata, selected),
-                [typeof(Basebuildingdata)] = (node, selected) =>
-                    ShowHandler(new cfggameplayBaseBuildingDataControl(), typeof(CFGGameplayConfig), node.Tag as Basebuildingdata, selected),
-                [typeof(Uidata)] = (node, selected) =>
-                    ShowHandler(new cfggameplayUIDataControl(), typeof(CFGGameplayConfig), node.Tag as Uidata, selected),
-                [typeof(CFGGameplayMapData)] = (node, selected) =>
-                    ShowHandler(new cfggameplayMapDataControl(), typeof(CFGGameplayConfig), node.Tag as CFGGameplayMapData, selected),
-                [typeof(VehicleData)] = (node, selected) =>
-                    ShowHandler(new cfggameplayVehicleDataControl(), typeof(CFGGameplayConfig), node.Tag as VehicleData, selected),
+                [typeof(ITEM_GeneralData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayGeneralDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_GeneralData, selected),
+                [typeof(ITEM_PlayerData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayPlayerDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_PlayerData, selected),
+                [typeof(ITEM_WorldData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayWordlsDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_WorldData, selected),
+                [typeof(ITEM_BaseBuildingData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayBaseBuildingDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_BaseBuildingData, selected),
+                [typeof(ITEM_UIData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayUIDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_UIData, selected),
+                [typeof(ITEM_MapData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayMapDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_MapData, selected),
+                [typeof(ITEM_VehicleData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayVehicleDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_VehicleData, selected),
+                [typeof(ITEM_ExternalLockData)] = (node, selected) =>
+                    ShowHandler(new cfggameplayExternalLockDataControl(), typeof(CFGGameplayConfig), node.Tag as ITEM_ExternalLockData, selected),
+                [typeof(ITEM_SandstormData)] = (node, selected) =>
+                    ShowHandler(new cfggameplaySandstorm(), typeof(CFGGameplayConfig), node.Tag as ITEM_SandstormData, selected),
 
                 // Random Presets
                 [typeof(randompresetsAttachments)] = (node, selected) =>
@@ -1461,7 +1465,14 @@ namespace EconomyPlugin
             {
                 Tag = ganmeplay.Data.VehicleData
             });
-
+            GameplayRootNode.Nodes.Add(new TreeNode($"ExternalLockData")
+            {
+                Tag = ganmeplay.Data.ExternalLockData
+            });
+            GameplayRootNode.Nodes.Add(new TreeNode($"SandstormData")
+            {
+                Tag = ganmeplay.Data.SandstormData
+            });
             return GameplayRootNode;
         }
         private TreeNode CreateSpawnGearFilesNodes(SpawnGearPresetFile spawnGearPresetFiles)

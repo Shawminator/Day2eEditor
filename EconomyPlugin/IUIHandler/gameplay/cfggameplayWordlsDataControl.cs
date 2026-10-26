@@ -14,7 +14,7 @@ namespace EconomyPlugin
     public partial class cfggameplayWordlsDataControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private Worldsdata _data;
+        private ITEM_WorldData _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -34,7 +34,7 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as Worldsdata ?? throw new InvalidCastException();
+            _data = data as ITEM_WorldData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

@@ -14,7 +14,7 @@ namespace EconomyPlugin
     public partial class cfggameplayBaseBuildingDataControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private Basebuildingdata _data;
+        private ITEM_BaseBuildingData _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -34,7 +34,7 @@ namespace EconomyPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as Basebuildingdata ?? throw new InvalidCastException();
+            _data = data as ITEM_BaseBuildingData ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

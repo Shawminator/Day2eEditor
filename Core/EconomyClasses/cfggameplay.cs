@@ -5,6 +5,17 @@ using System.Xml.Linq;
 
 namespace Day2eEditor
 {
+    public enum EWeaponObstructionMode
+    {
+        [Description("Obstruction disallowed. Weapon doesn't obstruct, but still lifts.")]
+        DISABLED = 0,
+
+        [Description("Obstruction allowed. Weapon first obstructs and then lifts.")]
+        ENABLED = 1,
+
+        [Description("Obstruction always. Weapon obstructs and never lifts.")]
+        ALWAYS = 2
+    }
     public class CFGGameplayConfig : SingleFileConfigLoaderBase<cfggameplay>
     {
         public SpawnGearPresetsConfig SpawnGearPresetconfigs { get; private set; }
@@ -253,27 +264,29 @@ namespace Day2eEditor
     public class cfggameplay : IDeepCloneable<cfggameplay>, IEquatable<cfggameplay>
     {
         public int version { get; set; }
-        public Generaldata GeneralData { get; set; }
-        public Playerdata PlayerData { get; set; }
-        public Worldsdata WorldsData { get; set; }
-        public Basebuildingdata BaseBuildingData { get; set; }
-        public Uidata UIData { get; set; }
-        public CFGGameplayMapData MapData { get; set; }
-        public VehicleData VehicleData { get; set; }
+        public ITEM_GeneralData GeneralData { get; set; }
+        public ITEM_PlayerData PlayerData { get; set; }
+        public ITEM_WorldData WorldsData { get; set; }
+        public ITEM_BaseBuildingData BaseBuildingData { get; set; }
+        public ITEM_UIData UIData { get; set; }
+        public ITEM_MapData MapData { get; set; }
+        public ITEM_VehicleData VehicleData { get; set; }
+        public ITEM_ExternalLockData ExternalLockData { get; set; }
+        public ITEM_SandstormData SandstormData { get; set; }
 
         [JsonIgnore]
-        private const int currentversion = 123;
+        private const int currentversion = 130;
 
         public cfggameplay()
         {
             version = currentversion;
-            GeneralData = new Generaldata();
-            PlayerData = new Playerdata();
-            WorldsData = new Worldsdata();
-            BaseBuildingData = new Basebuildingdata();
-            UIData = new Uidata();
-            MapData = new CFGGameplayMapData();
-            VehicleData = new VehicleData();
+            GeneralData = new ITEM_GeneralData();
+            PlayerData = new ITEM_PlayerData();
+            WorldsData = new ITEM_WorldData();
+            BaseBuildingData = new ITEM_BaseBuildingData();
+            UIData = new ITEM_UIData();
+            MapData = new ITEM_MapData();
+            VehicleData = new ITEM_VehicleData();
         }
 
         internal bool checkver()
@@ -291,13 +304,13 @@ namespace Day2eEditor
             return new cfggameplay
             {
                 version = version,
-                GeneralData = GeneralData?.Clone() ?? new Generaldata(),
-                PlayerData = PlayerData?.Clone() ?? new Playerdata(),
-                WorldsData = WorldsData?.Clone() ?? new Worldsdata(),
-                BaseBuildingData = BaseBuildingData?.Clone() ?? new Basebuildingdata(),
-                UIData = UIData?.Clone() ?? new Uidata(),
-                MapData = MapData?.Clone() ?? new CFGGameplayMapData(),
-                VehicleData = VehicleData?.Clone() ?? new VehicleData()
+                GeneralData = GeneralData?.Clone() ?? new ITEM_GeneralData(),
+                PlayerData = PlayerData?.Clone() ?? new ITEM_PlayerData(),
+                WorldsData = WorldsData?.Clone() ?? new ITEM_WorldData(),
+                BaseBuildingData = BaseBuildingData?.Clone() ?? new ITEM_BaseBuildingData(),
+                UIData = UIData?.Clone() ?? new ITEM_UIData(),
+                MapData = MapData?.Clone() ?? new ITEM_MapData(),
+                VehicleData = VehicleData?.Clone() ?? new ITEM_VehicleData()
             };
         }
 
@@ -334,82 +347,86 @@ namespace Day2eEditor
         }
     }
 
-    public class Generaldata : IDeepCloneable<Generaldata>, IEquatable<Generaldata>
+    public class ITEM_GeneralData : IDeepCloneable<ITEM_GeneralData>, IEquatable<ITEM_GeneralData>
     {
         public bool disableBaseDamage { get; set; }
+        public bool disableBaseDecay { get; set; }
         public bool disableContainerDamage { get; set; }
         public bool disableRespawnDialog { get; set; }
         public bool disableRespawnInUnconsciousness { get; set; }
 
-        public Generaldata()
+        public ITEM_GeneralData()
         {
             disableBaseDamage = false;
+            disableBaseDecay = false;
             disableContainerDamage = false;
             disableRespawnDialog = false;
             disableRespawnInUnconsciousness = false;
         }
 
-        public Generaldata Clone()
+        public ITEM_GeneralData Clone()
         {
-            return new Generaldata
+            return new ITEM_GeneralData
             {
                 disableBaseDamage = disableBaseDamage,
+                disableBaseDecay = disableBaseDecay,
                 disableContainerDamage = disableContainerDamage,
                 disableRespawnDialog = disableRespawnDialog,
                 disableRespawnInUnconsciousness = disableRespawnInUnconsciousness
             };
         }
 
-        public bool Equals(Generaldata? other)
+        public bool Equals(ITEM_GeneralData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return disableBaseDamage == other.disableBaseDamage &&
+                    disableBaseDecay == other.disableBaseDecay &&
                    disableContainerDamage == other.disableContainerDamage &&
                    disableRespawnDialog == other.disableRespawnDialog &&
                    disableRespawnInUnconsciousness == other.disableRespawnInUnconsciousness;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Generaldata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_GeneralData);
     }
 
-    public class Playerdata : IDeepCloneable<Playerdata>, IEquatable<Playerdata>
+    public class ITEM_PlayerData : IDeepCloneable<ITEM_PlayerData>, IEquatable<ITEM_PlayerData>
     {
         public bool disablePersonalLight { get; set; }
         public BindingList<string> spawnGearPresetFiles { get; set; }
-        public Staminadata StaminaData { get; set; }
-        public Shockhandlingdata ShockHandlingData { get; set; }
-        public MovementData MovementData { get; set; }
-        public DrowningData DrowningData { get; set; }
-        public WeaponObstructionData WeaponObstructionData { get; set; }
+        public ITEM_StaminaData StaminaData { get; set; }
+        public ITEM_ShockHandlingData ShockHandlingData { get; set; }
+        public ITEM_MovementData MovementData { get; set; }
+        public ITEM_DrowningData DrowningData { get; set; }
+        public ITEM_WeaponObstructionData WeaponObstructionData { get; set; }
 
-        public Playerdata()
+        public ITEM_PlayerData()
         {
             disablePersonalLight = true;
             spawnGearPresetFiles = new BindingList<string>();
-            StaminaData = new Staminadata();
-            ShockHandlingData = new Shockhandlingdata();
-            MovementData = new MovementData();
-            DrowningData = new DrowningData();
-            WeaponObstructionData = new WeaponObstructionData();
+            StaminaData = new ITEM_StaminaData();
+            ShockHandlingData = new ITEM_ShockHandlingData();
+            MovementData = new ITEM_MovementData();
+            DrowningData = new ITEM_DrowningData();
+            WeaponObstructionData = new ITEM_WeaponObstructionData();
         }
 
-        public Playerdata Clone()
+        public ITEM_PlayerData Clone()
         {
-            return new Playerdata
+            return new ITEM_PlayerData
             {
                 disablePersonalLight = disablePersonalLight,
                 spawnGearPresetFiles = new BindingList<string>(spawnGearPresetFiles?.ToList() ?? new List<string>()),
-                StaminaData = StaminaData?.Clone() ?? new Staminadata(),
-                ShockHandlingData = ShockHandlingData?.Clone() ?? new Shockhandlingdata(),
-                MovementData = MovementData?.Clone() ?? new MovementData(),
-                DrowningData = DrowningData?.Clone() ?? new DrowningData(),
-                WeaponObstructionData = WeaponObstructionData?.Clone() ?? new WeaponObstructionData()
+                StaminaData = StaminaData?.Clone() ?? new ITEM_StaminaData(),
+                ShockHandlingData = ShockHandlingData?.Clone() ?? new ITEM_ShockHandlingData(),
+                MovementData = MovementData?.Clone() ?? new ITEM_MovementData(),
+                DrowningData = DrowningData?.Clone() ?? new ITEM_DrowningData(),
+                WeaponObstructionData = WeaponObstructionData?.Clone() ?? new ITEM_WeaponObstructionData()
             };
         }
 
-        public bool Equals(Playerdata? other)
+        public bool Equals(ITEM_PlayerData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -423,10 +440,10 @@ namespace Day2eEditor
                    Equals(WeaponObstructionData, other.WeaponObstructionData);
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Playerdata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_PlayerData);
     }
 
-    public class Staminadata : IDeepCloneable<Staminadata>, IEquatable<Staminadata>
+    public class ITEM_StaminaData : IDeepCloneable<ITEM_StaminaData>, IEquatable<ITEM_StaminaData>
     {
         public decimal sprintStaminaModifierErc { get; set; }
         public decimal sprintStaminaModifierCro { get; set; }
@@ -440,7 +457,7 @@ namespace Day2eEditor
         public decimal obstacleTraversalStaminaModifier { get; set; }
         public decimal holdBreathStaminaModifier { get; set; }
 
-        public Staminadata()
+        public ITEM_StaminaData()
         {
             sprintStaminaModifierErc = 1.0m;
             sprintStaminaModifierCro = 1.0m;
@@ -455,9 +472,9 @@ namespace Day2eEditor
             holdBreathStaminaModifier = 1;
         }
 
-        public Staminadata Clone()
+        public ITEM_StaminaData Clone()
         {
-            return new Staminadata
+            return new ITEM_StaminaData
             {
                 sprintStaminaModifierErc = sprintStaminaModifierErc,
                 sprintStaminaModifierCro = sprintStaminaModifierCro,
@@ -473,7 +490,7 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(Staminadata? other)
+        public bool Equals(ITEM_StaminaData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -491,25 +508,25 @@ namespace Day2eEditor
                    holdBreathStaminaModifier == other.holdBreathStaminaModifier;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Staminadata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_StaminaData);
     }
 
-    public class Shockhandlingdata : IDeepCloneable<Shockhandlingdata>, IEquatable<Shockhandlingdata>
+    public class ITEM_ShockHandlingData : IDeepCloneable<ITEM_ShockHandlingData>, IEquatable<ITEM_ShockHandlingData>
     {
         public decimal shockRefillSpeedConscious { get; set; }
         public decimal shockRefillSpeedUnconscious { get; set; }
         public bool allowRefillSpeedModifier { get; set; }
 
-        public Shockhandlingdata()
+        public ITEM_ShockHandlingData()
         {
             shockRefillSpeedConscious = 5.0m;
             shockRefillSpeedUnconscious = 1.0m;
             allowRefillSpeedModifier = true;
         }
 
-        public Shockhandlingdata Clone()
+        public ITEM_ShockHandlingData Clone()
         {
-            return new Shockhandlingdata
+            return new ITEM_ShockHandlingData
             {
                 shockRefillSpeedConscious = shockRefillSpeedConscious,
                 shockRefillSpeedUnconscious = shockRefillSpeedUnconscious,
@@ -517,7 +534,7 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(Shockhandlingdata? other)
+        public bool Equals(ITEM_ShockHandlingData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -527,10 +544,10 @@ namespace Day2eEditor
                    allowRefillSpeedModifier == other.allowRefillSpeedModifier;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Shockhandlingdata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_ShockHandlingData);
     }
 
-    public class MovementData : IDeepCloneable<MovementData>, IEquatable<MovementData>
+    public class ITEM_MovementData : IDeepCloneable<ITEM_MovementData>, IEquatable<ITEM_MovementData>
     {
         public decimal timeToStrafeJog { get; set; }
         public decimal rotationSpeedJog { get; set; }
@@ -539,7 +556,7 @@ namespace Day2eEditor
         public decimal rotationSpeedSprint { get; set; }
         public bool allowStaminaAffectInertia { get; set; }
 
-        public MovementData()
+        public ITEM_MovementData()
         {
             timeToStrafeJog = 0.1m;
             rotationSpeedJog = 0.3m;
@@ -549,9 +566,9 @@ namespace Day2eEditor
             allowStaminaAffectInertia = true;
         }
 
-        public MovementData Clone()
+        public ITEM_MovementData Clone()
         {
-            return new MovementData
+            return new ITEM_MovementData
             {
                 timeToStrafeJog = timeToStrafeJog,
                 rotationSpeedJog = rotationSpeedJog,
@@ -562,7 +579,7 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(MovementData? other)
+        public bool Equals(ITEM_MovementData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -575,25 +592,25 @@ namespace Day2eEditor
                    allowStaminaAffectInertia == other.allowStaminaAffectInertia;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as MovementData);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_MovementData);
     }
 
-    public class DrowningData : IDeepCloneable<DrowningData>, IEquatable<DrowningData>
+    public class ITEM_DrowningData : IDeepCloneable<ITEM_DrowningData>, IEquatable<ITEM_DrowningData>
     {
         public decimal staminaDepletionSpeed { get; set; }
         public decimal healthDepletionSpeed { get; set; }
         public decimal shockDepletionSpeed { get; set; }
 
-        public DrowningData()
+        public ITEM_DrowningData()
         {
             staminaDepletionSpeed = 10.0m;
             healthDepletionSpeed = 10.0m;
             shockDepletionSpeed = 10.0m;
         }
 
-        public DrowningData Clone()
+        public ITEM_DrowningData Clone()
         {
-            return new DrowningData
+            return new ITEM_DrowningData
             {
                 staminaDepletionSpeed = staminaDepletionSpeed,
                 healthDepletionSpeed = healthDepletionSpeed,
@@ -601,7 +618,7 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(DrowningData? other)
+        public bool Equals(ITEM_DrowningData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -611,30 +628,30 @@ namespace Day2eEditor
                    shockDepletionSpeed == other.shockDepletionSpeed;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as DrowningData);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_DrowningData);
     }
 
-    public class WeaponObstructionData : IDeepCloneable<WeaponObstructionData>, IEquatable<WeaponObstructionData>
+    public class ITEM_WeaponObstructionData : IDeepCloneable<ITEM_WeaponObstructionData>, IEquatable<ITEM_WeaponObstructionData>
     {
-        public int staticMode { get; set; }
-        public int dynamicMode { get; set; }
+        public EWeaponObstructionMode staticMode { get; set; }
+        public EWeaponObstructionMode dynamicMode { get; set; }
 
-        public WeaponObstructionData()
+        public ITEM_WeaponObstructionData()
         {
-            staticMode = 1;
-            dynamicMode = 1;
+            staticMode = EWeaponObstructionMode.ENABLED;
+            dynamicMode = EWeaponObstructionMode.ENABLED;
         }
 
-        public WeaponObstructionData Clone()
+        public ITEM_WeaponObstructionData Clone()
         {
-            return new WeaponObstructionData
+            return new ITEM_WeaponObstructionData
             {
                 staticMode = staticMode,
                 dynamicMode = dynamicMode
             };
         }
 
-        public bool Equals(WeaponObstructionData? other)
+        public bool Equals(ITEM_WeaponObstructionData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -643,19 +660,20 @@ namespace Day2eEditor
                    dynamicMode == other.dynamicMode;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as WeaponObstructionData);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_WeaponObstructionData);
     }
 
-    public class Worldsdata : IDeepCloneable<Worldsdata>, IEquatable<Worldsdata>
+    public class ITEM_WorldData : IDeepCloneable<ITEM_WorldData>, IEquatable<ITEM_WorldData>
     {
         public int lightingConfig { get; set; }
+        public bool bunkerBroadcastEnabled { get; set; }
         public BindingList<string> objectSpawnersArr { get; set; }
         public BindingList<decimal> environmentMinTemps { get; set; }
         public BindingList<decimal> environmentMaxTemps { get; set; }
         public BindingList<decimal> wetnessWeightModifiers { get; set; }
         public BindingList<string> playerRestrictedAreaFiles { get; set; }
 
-        public Worldsdata()
+        public ITEM_WorldData()
         {
             lightingConfig = 1;
             objectSpawnersArr = new BindingList<string>();
@@ -668,11 +686,12 @@ namespace Day2eEditor
             playerRestrictedAreaFiles = new BindingList<string>();
         }
 
-        public Worldsdata Clone()
+        public ITEM_WorldData Clone()
         {
-            return new Worldsdata
+            return new ITEM_WorldData
             {
                 lightingConfig = lightingConfig,
+                bunkerBroadcastEnabled = bunkerBroadcastEnabled,
                 objectSpawnersArr = new BindingList<string>(objectSpawnersArr?.ToList() ?? new List<string>()),
                 environmentMinTemps = new BindingList<decimal>(environmentMinTemps?.ToList() ?? new List<decimal>()),
                 environmentMaxTemps = new BindingList<decimal>(environmentMaxTemps?.ToList() ?? new List<decimal>()),
@@ -681,12 +700,13 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(Worldsdata? other)
+        public bool Equals(ITEM_WorldData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return lightingConfig == other.lightingConfig &&
+                   bunkerBroadcastEnabled == other.bunkerBroadcastEnabled &&
                    objectSpawnersArr.SequenceEqual(other.objectSpawnersArr) &&
                    environmentMinTemps.SequenceEqual(other.environmentMinTemps) &&
                    environmentMaxTemps.SequenceEqual(other.environmentMaxTemps) &&
@@ -694,30 +714,30 @@ namespace Day2eEditor
                    playerRestrictedAreaFiles.SequenceEqual(other.playerRestrictedAreaFiles);
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Worldsdata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_WorldData);
     }
 
-    public class Basebuildingdata : IDeepCloneable<Basebuildingdata>, IEquatable<Basebuildingdata>
+    public class ITEM_BaseBuildingData : IDeepCloneable<ITEM_BaseBuildingData>, IEquatable<ITEM_BaseBuildingData>
     {
         public Hologramdata HologramData { get; set; }
         public Constructiondata ConstructionData { get; set; }
 
-        public Basebuildingdata()
+        public ITEM_BaseBuildingData()
         {
             HologramData = new Hologramdata();
             ConstructionData = new Constructiondata();
         }
 
-        public Basebuildingdata Clone()
+        public ITEM_BaseBuildingData Clone()
         {
-            return new Basebuildingdata
+            return new ITEM_BaseBuildingData
             {
                 HologramData = HologramData?.Clone() ?? new Hologramdata(),
                 ConstructionData = ConstructionData?.Clone() ?? new Constructiondata()
             };
         }
 
-        public bool Equals(Basebuildingdata? other)
+        public bool Equals(ITEM_BaseBuildingData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -726,7 +746,7 @@ namespace Day2eEditor
                    Equals(ConstructionData, other.ConstructionData);
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Basebuildingdata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_BaseBuildingData);
     }
 
     public class Hologramdata : IDeepCloneable<Hologramdata>, IEquatable<Hologramdata>
@@ -807,6 +827,9 @@ namespace Day2eEditor
         public bool disablePerformRoofCheck { get; set; }
         public bool disableIsCollidingCheck { get; set; }
         public bool disableDistanceCheck { get; set; }
+        public bool disableItemFalling {  get; set; }
+        public bool disableDropAttachmentsOnFall { get; set; }
+        public bool disableRefundMaterialsOnFall { get; set; }
 
         public Constructiondata()
         {
@@ -821,7 +844,10 @@ namespace Day2eEditor
             {
                 disablePerformRoofCheck = disablePerformRoofCheck,
                 disableIsCollidingCheck = disableIsCollidingCheck,
-                disableDistanceCheck = disableDistanceCheck
+                disableDistanceCheck = disableDistanceCheck,
+                disableItemFalling = disableItemFalling,
+                disableDropAttachmentsOnFall = disableDropAttachmentsOnFall,
+                disableRefundMaterialsOnFall = disableRefundMaterialsOnFall
             };
         }
 
@@ -832,33 +858,37 @@ namespace Day2eEditor
 
             return disablePerformRoofCheck == other.disablePerformRoofCheck &&
                    disableIsCollidingCheck == other.disableIsCollidingCheck &&
-                   disableDistanceCheck == other.disableDistanceCheck;
+                   disableDistanceCheck == other.disableDistanceCheck &&
+                   disableItemFalling == other.disableItemFalling &&
+                   disableDropAttachmentsOnFall == other.disableDropAttachmentsOnFall &&
+                   disableRefundMaterialsOnFall == other.disableRefundMaterialsOnFall;
+
         }
 
         public override bool Equals(object? obj) => Equals(obj as Constructiondata);
     }
 
-    public class Uidata : IDeepCloneable<Uidata>, IEquatable<Uidata>
+    public class ITEM_UIData : IDeepCloneable<ITEM_UIData>, IEquatable<ITEM_UIData>
     {
         public bool use3DMap { get; set; }
-        public Hitindicationdata HitIndicationData { get; set; }
+        public ITEM_HitIndicationData HitIndicationData { get; set; }
 
-        public Uidata()
+        public ITEM_UIData()
         {
             use3DMap = false;
-            HitIndicationData = new Hitindicationdata();
+            HitIndicationData = new ITEM_HitIndicationData();
         }
 
-        public Uidata Clone()
+        public ITEM_UIData Clone()
         {
-            return new Uidata
+            return new ITEM_UIData
             {
                 use3DMap = use3DMap,
-                HitIndicationData = HitIndicationData?.Clone() ?? new Hitindicationdata()
+                HitIndicationData = HitIndicationData?.Clone() ?? new ITEM_HitIndicationData()
             };
         }
 
-        public bool Equals(Uidata? other)
+        public bool Equals(ITEM_UIData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -867,10 +897,10 @@ namespace Day2eEditor
                    Equals(HitIndicationData, other.HitIndicationData);
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Uidata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_UIData);
     }
 
-    public class Hitindicationdata : IDeepCloneable<Hitindicationdata>, IEquatable<Hitindicationdata>
+    public class ITEM_HitIndicationData : IDeepCloneable<ITEM_HitIndicationData>, IEquatable<ITEM_HitIndicationData>
     {
         public bool hitDirectionOverrideEnabled { get; set; }
         public int hitDirectionBehaviour { get; set; }
@@ -881,7 +911,7 @@ namespace Day2eEditor
         public decimal hitDirectionScatter { get; set; }
         public bool hitIndicationPostProcessEnabled { get; set; }
 
-        public Hitindicationdata()
+        public ITEM_HitIndicationData()
         {
             hitDirectionOverrideEnabled = false;
             hitDirectionBehaviour = 1;
@@ -893,9 +923,9 @@ namespace Day2eEditor
             hitIndicationPostProcessEnabled = true;
         }
 
-        public Hitindicationdata Clone()
+        public ITEM_HitIndicationData Clone()
         {
-            return new Hitindicationdata
+            return new ITEM_HitIndicationData
             {
                 hitDirectionOverrideEnabled = hitDirectionOverrideEnabled,
                 hitDirectionBehaviour = hitDirectionBehaviour,
@@ -908,7 +938,7 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(Hitindicationdata? other)
+        public bool Equals(ITEM_HitIndicationData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -923,17 +953,17 @@ namespace Day2eEditor
                    hitIndicationPostProcessEnabled == other.hitIndicationPostProcessEnabled;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as Hitindicationdata);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_HitIndicationData);
     }
 
-    public class CFGGameplayMapData : IDeepCloneable<CFGGameplayMapData>, IEquatable<CFGGameplayMapData>
+    public class ITEM_MapData : IDeepCloneable<ITEM_MapData>, IEquatable<ITEM_MapData>
     {
         public bool ignoreMapOwnership { get; set; }
         public bool ignoreNavItemsOwnership { get; set; }
         public bool displayPlayerPosition { get; set; }
         public bool displayNavInfo { get; set; }
 
-        public CFGGameplayMapData()
+        public ITEM_MapData()
         {
             ignoreMapOwnership = false;
             ignoreNavItemsOwnership = false;
@@ -941,9 +971,9 @@ namespace Day2eEditor
             displayNavInfo = true;
         }
 
-        public CFGGameplayMapData Clone()
+        public ITEM_MapData Clone()
         {
-            return new CFGGameplayMapData
+            return new ITEM_MapData
             {
                 ignoreMapOwnership = ignoreMapOwnership,
                 ignoreNavItemsOwnership = ignoreNavItemsOwnership,
@@ -952,7 +982,7 @@ namespace Day2eEditor
             };
         }
 
-        public bool Equals(CFGGameplayMapData? other)
+        public bool Equals(ITEM_MapData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -963,34 +993,121 @@ namespace Day2eEditor
                    displayNavInfo == other.displayNavInfo;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as CFGGameplayMapData);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_MapData);
     }
 
-    public class VehicleData : IDeepCloneable<VehicleData>, IEquatable<VehicleData>
+    public class ITEM_VehicleData : IDeepCloneable<ITEM_VehicleData>, IEquatable<ITEM_VehicleData>
     {
         public decimal boatDecayMultiplier { get; set; }
+        public bool canDetachAttachedCarWheels { get; set; }
+        public bool canDamageAttachedCarWheels { get; set; }
+        public bool canDetachAttachedBikeWheels { get; set; }
+        public bool canDamageAttachedBikeWheels { get; set; }
 
-        public VehicleData()
+        public ITEM_VehicleData()
         {
             boatDecayMultiplier = 1;
+            canDetachAttachedCarWheels = true;
+            canDamageAttachedCarWheels = true;
+            canDetachAttachedBikeWheels = true;
+            canDamageAttachedBikeWheels = true;
         }
 
-        public VehicleData Clone()
+        public ITEM_VehicleData Clone()
         {
-            return new VehicleData
+            return new ITEM_VehicleData
             {
-                boatDecayMultiplier = boatDecayMultiplier
+                boatDecayMultiplier = boatDecayMultiplier,
+                canDetachAttachedCarWheels = canDetachAttachedCarWheels,
+                canDamageAttachedCarWheels = canDamageAttachedCarWheels,
+                canDetachAttachedBikeWheels = canDetachAttachedBikeWheels,
+                canDamageAttachedBikeWheels = canDamageAttachedBikeWheels
             };
         }
 
-        public bool Equals(VehicleData? other)
+        public bool Equals(ITEM_VehicleData? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return boatDecayMultiplier == other.boatDecayMultiplier;
+            if (boatDecayMultiplier != other.boatDecayMultiplier ||
+                canDetachAttachedCarWheels != other.canDetachAttachedCarWheels ||
+                canDamageAttachedCarWheels != other.canDamageAttachedCarWheels ||
+                canDetachAttachedBikeWheels != other.canDetachAttachedBikeWheels ||
+                canDamageAttachedBikeWheels != other.canDamageAttachedBikeWheels)
+                return false;
+
+            return true;
         }
 
-        public override bool Equals(object? obj) => Equals(obj as VehicleData);
+        public override bool Equals(object? obj) => Equals(obj as ITEM_VehicleData);
+    }
+
+    public class ITEM_ExternalLockData : IDeepCloneable<ITEM_ExternalLockData>, IEquatable<ITEM_ExternalLockData>
+    {
+        public int protectionCountStageOne { get; set; }
+        public int protectionCountStageTwo { get; set; }
+        public decimal protectionTime { get; set; }
+        public decimal protectionResetTime { get; set; }
+
+        public ITEM_ExternalLockData()
+        {
+            protectionCountStageOne = 3;
+            protectionCountStageTwo = 1;
+            protectionTime = 30.0m;
+            protectionResetTime = 3600.0m;
+        }
+
+        public ITEM_ExternalLockData Clone()
+        {
+            return new ITEM_ExternalLockData
+            {
+                protectionCountStageOne = protectionCountStageOne,
+                protectionCountStageTwo = protectionCountStageTwo,
+                protectionTime = protectionTime,
+                protectionResetTime = protectionResetTime
+            };
+        }
+        public bool Equals(ITEM_ExternalLockData? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            if (protectionCountStageOne != other.protectionCountStageTwo ||
+                protectionCountStageTwo != other.protectionCountStageTwo ||
+                protectionTime != other.protectionTime ||
+                protectionResetTime != other.protectionResetTime)
+                return false;
+
+            return true;
+        }
+        public override bool Equals(object? obj) => Equals(obj as ITEM_ExternalLockData);
+    }
+    public class ITEM_SandstormData : IDeepCloneable<ITEM_SandstormData>, IEquatable<ITEM_SandstormData>
+    {
+        public decimal sandstormFrequency { get; set; }
+
+        public ITEM_SandstormData()
+        {
+            sandstormFrequency = 1.0m;
+        }
+        public ITEM_SandstormData Clone()
+        {
+            return new ITEM_SandstormData
+            {
+                sandstormFrequency = sandstormFrequency
+            };
+        }
+        public bool Equals(ITEM_SandstormData? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            if (sandstormFrequency != other.sandstormFrequency)
+                return false;
+
+            return true;
+        }
+        public override bool Equals(object? obj) => Equals(obj as ITEM_SandstormData);
     }
 }
