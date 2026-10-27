@@ -45,6 +45,8 @@
             darkLabel42 = new Label();
             darkLabel43 = new Label();
             CFGUBreadCrumbPositionXNUD = new NumericUpDown();
+            label3 = new Label();
+            CommentTB = new TextBox();
             CFGUBreadCrumbGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)CFGUBreadCrumbRadiusNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CFGUBreadCrumbEyeAccommodationNUD).BeginInit();
@@ -55,6 +57,8 @@
             // 
             // CFGUBreadCrumbGB
             // 
+            CFGUBreadCrumbGB.Controls.Add(CommentTB);
+            CFGUBreadCrumbGB.Controls.Add(label3);
             CFGUBreadCrumbGB.Controls.Add(UseLightLerpCB);
             CFGUBreadCrumbGB.Controls.Add(UseRadiusCB);
             CFGUBreadCrumbGB.Controls.Add(UseRayCastCB);
@@ -76,7 +80,7 @@
             CFGUBreadCrumbGB.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbGB.Name = "CFGUBreadCrumbGB";
             CFGUBreadCrumbGB.Padding = new Padding(4, 3, 4, 3);
-            CFGUBreadCrumbGB.Size = new Size(600, 174);
+            CFGUBreadCrumbGB.Size = new Size(600, 210);
             CFGUBreadCrumbGB.TabIndex = 224;
             CFGUBreadCrumbGB.TabStop = false;
             CFGUBreadCrumbGB.Text = "BreadCrumb Info";
@@ -85,7 +89,7 @@
             // 
             UseLightLerpCB.AutoSize = true;
             UseLightLerpCB.CheckAlign = ContentAlignment.MiddleRight;
-            UseLightLerpCB.Location = new Point(36, 140);
+            UseLightLerpCB.Location = new Point(19, 175);
             UseLightLerpCB.Margin = new Padding(4, 3, 4, 3);
             UseLightLerpCB.Name = "UseLightLerpCB";
             UseLightLerpCB.Size = new Size(15, 14);
@@ -97,7 +101,7 @@
             // 
             UseRadiusCB.AutoSize = true;
             UseRadiusCB.CheckAlign = ContentAlignment.MiddleRight;
-            UseRadiusCB.Location = new Point(36, 114);
+            UseRadiusCB.Location = new Point(19, 145);
             UseRadiusCB.Margin = new Padding(4, 3, 4, 3);
             UseRadiusCB.Name = "UseRadiusCB";
             UseRadiusCB.Size = new Size(15, 14);
@@ -109,7 +113,7 @@
             // 
             UseRayCastCB.AutoSize = true;
             UseRayCastCB.CheckAlign = ContentAlignment.MiddleRight;
-            UseRayCastCB.Location = new Point(36, 87);
+            UseRayCastCB.Location = new Point(19, 115);
             UseRayCastCB.Margin = new Padding(4, 3, 4, 3);
             UseRayCastCB.Name = "UseRayCastCB";
             UseRayCastCB.Size = new Size(15, 14);
@@ -121,7 +125,7 @@
             // 
             label2.AutoSize = true;
             label2.ForeColor = Color.FromArgb(220, 220, 220);
-            label2.Location = new Point(232, 139);
+            label2.Location = new Point(231, 176);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(152, 15);
@@ -132,7 +136,7 @@
             // 
             label1.AutoSize = true;
             label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(81, 140);
+            label1.Location = new Point(50, 174);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(60, 15);
@@ -143,7 +147,7 @@
             // 
             LightLerpCB.AutoSize = true;
             LightLerpCB.CheckAlign = ContentAlignment.MiddleRight;
-            LightLerpCB.Location = new Point(209, 140);
+            LightLerpCB.Location = new Point(208, 177);
             LightLerpCB.Margin = new Padding(4, 3, 4, 3);
             LightLerpCB.Name = "LightLerpCB";
             LightLerpCB.Size = new Size(15, 14);
@@ -156,7 +160,7 @@
             CFGUBreadCrumbRadiusNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUBreadCrumbRadiusNUD.DecimalPlaces = 2;
             CFGUBreadCrumbRadiusNUD.ForeColor = SystemColors.Control;
-            CFGUBreadCrumbRadiusNUD.Location = new Point(209, 109);
+            CFGUBreadCrumbRadiusNUD.Location = new Point(208, 143);
             CFGUBreadCrumbRadiusNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbRadiusNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUBreadCrumbRadiusNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -170,7 +174,7 @@
             // 
             darkLabel46.AutoSize = true;
             darkLabel46.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel46.Location = new Point(81, 111);
+            darkLabel46.Location = new Point(50, 144);
             darkLabel46.Margin = new Padding(4, 0, 4, 0);
             darkLabel46.Name = "darkLabel46";
             darkLabel46.Size = new Size(42, 15);
@@ -181,7 +185,7 @@
             // 
             darkLabel41.AutoSize = true;
             darkLabel41.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel41.Location = new Point(81, 86);
+            darkLabel41.Location = new Point(50, 114);
             darkLabel41.Margin = new Padding(4, 0, 4, 0);
             darkLabel41.Name = "darkLabel41";
             darkLabel41.Size = new Size(71, 15);
@@ -192,7 +196,7 @@
             // 
             CFGUBreadCrumbUseRayCastCB.AutoSize = true;
             CFGUBreadCrumbUseRayCastCB.CheckAlign = ContentAlignment.MiddleRight;
-            CFGUBreadCrumbUseRayCastCB.Location = new Point(209, 86);
+            CFGUBreadCrumbUseRayCastCB.Location = new Point(208, 115);
             CFGUBreadCrumbUseRayCastCB.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbUseRayCastCB.Name = "CFGUBreadCrumbUseRayCastCB";
             CFGUBreadCrumbUseRayCastCB.Size = new Size(15, 14);
@@ -205,7 +209,7 @@
             CFGUBreadCrumbEyeAccommodationNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUBreadCrumbEyeAccommodationNUD.DecimalPlaces = 2;
             CFGUBreadCrumbEyeAccommodationNUD.ForeColor = SystemColors.Control;
-            CFGUBreadCrumbEyeAccommodationNUD.Location = new Point(209, 51);
+            CFGUBreadCrumbEyeAccommodationNUD.Location = new Point(208, 81);
             CFGUBreadCrumbEyeAccommodationNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbEyeAccommodationNUD.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             CFGUBreadCrumbEyeAccommodationNUD.Minimum = new decimal(new int[] { 100000, 0, 0, int.MinValue });
@@ -220,7 +224,7 @@
             CFGUBreadCrumbPositionZNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUBreadCrumbPositionZNUD.DecimalPlaces = 4;
             CFGUBreadCrumbPositionZNUD.ForeColor = SystemColors.Control;
-            CFGUBreadCrumbPositionZNUD.Location = new Point(467, 21);
+            CFGUBreadCrumbPositionZNUD.Location = new Point(466, 51);
             CFGUBreadCrumbPositionZNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbPositionZNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUBreadCrumbPositionZNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -235,7 +239,7 @@
             CFGUBreadCrumbPositionYNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUBreadCrumbPositionYNUD.DecimalPlaces = 4;
             CFGUBreadCrumbPositionYNUD.ForeColor = SystemColors.Control;
-            CFGUBreadCrumbPositionYNUD.Location = new Point(338, 21);
+            CFGUBreadCrumbPositionYNUD.Location = new Point(337, 51);
             CFGUBreadCrumbPositionYNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbPositionYNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUBreadCrumbPositionYNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -249,7 +253,7 @@
             // 
             darkLabel42.AutoSize = true;
             darkLabel42.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel42.Location = new Point(81, 54);
+            darkLabel42.Location = new Point(50, 84);
             darkLabel42.Margin = new Padding(4, 0, 4, 0);
             darkLabel42.Name = "darkLabel42";
             darkLabel42.Size = new Size(118, 15);
@@ -260,7 +264,7 @@
             // 
             darkLabel43.AutoSize = true;
             darkLabel43.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel43.Location = new Point(81, 24);
+            darkLabel43.Location = new Point(50, 54);
             darkLabel43.Margin = new Padding(4, 0, 4, 0);
             darkLabel43.Name = "darkLabel43";
             darkLabel43.Size = new Size(50, 15);
@@ -272,7 +276,7 @@
             CFGUBreadCrumbPositionXNUD.BackColor = Color.FromArgb(60, 63, 65);
             CFGUBreadCrumbPositionXNUD.DecimalPlaces = 4;
             CFGUBreadCrumbPositionXNUD.ForeColor = SystemColors.Control;
-            CFGUBreadCrumbPositionXNUD.Location = new Point(209, 21);
+            CFGUBreadCrumbPositionXNUD.Location = new Point(208, 51);
             CFGUBreadCrumbPositionXNUD.Margin = new Padding(4, 3, 4, 3);
             CFGUBreadCrumbPositionXNUD.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             CFGUBreadCrumbPositionXNUD.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
@@ -282,6 +286,27 @@
             CFGUBreadCrumbPositionXNUD.TextAlign = HorizontalAlignment.Center;
             CFGUBreadCrumbPositionXNUD.ValueChanged += CFGUBreadCrumbPositionXNUD_ValueChanged;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.ForeColor = Color.FromArgb(220, 220, 220);
+            label3.Location = new Point(50, 24);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(61, 15);
+            label3.TabIndex = 215;
+            label3.Text = "Comment";
+            // 
+            // CommentTB
+            // 
+            CommentTB.BackColor = Color.FromArgb(60, 63, 65);
+            CommentTB.ForeColor = SystemColors.Control;
+            CommentTB.Location = new Point(208, 21);
+            CommentTB.Name = "CommentTB";
+            CommentTB.Size = new Size(380, 23);
+            CommentTB.TabIndex = 223;
+            CommentTB.TextChanged += CommentTB_TextChanged;
+            // 
             // cfgundergroundtriggersBreadCrumbControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -290,7 +315,7 @@
             Controls.Add(CFGUBreadCrumbGB);
             ForeColor = SystemColors.Control;
             Name = "cfgundergroundtriggersBreadCrumbControl";
-            Size = new Size(608, 182);
+            Size = new Size(600, 214);
             CFGUBreadCrumbGB.ResumeLayout(false);
             CFGUBreadCrumbGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)CFGUBreadCrumbRadiusNUD).EndInit();
@@ -320,5 +345,7 @@
         private CheckBox UseLightLerpCB;
         private CheckBox UseRadiusCB;
         private CheckBox UseRayCastCB;
+        private Label label3;
+        private TextBox CommentTB;
     }
 }

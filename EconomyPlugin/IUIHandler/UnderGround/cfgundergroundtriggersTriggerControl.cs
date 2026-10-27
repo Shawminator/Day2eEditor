@@ -35,7 +35,7 @@ namespace EconomyPlugin
             if (_data.CustomSpawn != null)
             {
                 UseCustopmSpawnCB.Checked = CustomSpawnCB.Visible = true;
-                CustomSpawnCB.Checked = _data.CustomSpawn == 1 ? true : false;
+                CustomSpawnCB.Checked = (bool)_data.CustomSpawn;
             }
             else
             {
@@ -121,7 +121,7 @@ namespace EconomyPlugin
             if (UseCustopmSpawnCB.Checked)
             {
                 CustomSpawnCB.Visible = true;
-                _data.CustomSpawn = 0;
+                _data.CustomSpawn = false;
             }
             else
             {
@@ -134,7 +134,7 @@ namespace EconomyPlugin
         private void CustomSpawnCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.CustomSpawn = CustomSpawnCB.Checked == true ? 1 : 0;
+            _data.CustomSpawn = CustomSpawnCB.Checked;
         }
 
         private void UseCommentCB_CheckedChanged(object sender, EventArgs e)

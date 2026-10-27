@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using static FileService;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -361,7 +362,8 @@ namespace EconomyPlugin
                    ShowHandler<IUIHandler>(new cfgundergroundtriggersTriggerControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Trigger, selected),
                 [typeof(Breadcrumb)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new cfgundergroundtriggersBreadCrumbControl(), typeof(cfgundergroundtriggersConfig), node.Tag as Breadcrumb, selected),
-
+                [typeof(BreadcrumbExternalValueController)] = (node, selected) =>
+                    ShowHandler<IUIHandler>(new ExternalvaluecontrollertypeControl(), typeof(cfgundergroundtriggersConfig), node.Tag as BreadcrumbExternalValueController, selected),
 
                 [typeof(prototypeGroup)] = (node, selected) =>
                    ShowHandler<IUIHandler>(new prototypeGroupControl(), typeof(mapgroupprotoConfig), node.Tag as prototypeGroup, selected),
@@ -895,6 +897,20 @@ namespace EconomyPlugin
                     MapGroupPosCM.Items.Add(removeSelectedObjectSpawnerArrToolStripMenuItem);
                     MapGroupPosCM.Show(Cursor.Position);
                 },
+                [typeof(Breadcrumb)] = node =>
+                {
+                    UndergoundCFGCM.Items.Clear();
+                    UndergoundCFGCM.Items.Add(AddExternalValueControllerToolStripMenuItem);
+                    UndergoundCFGCM.Show(Cursor.Position);
+                },
+                [typeof(BreadcrumbExternalValueController)] = node =>
+                {
+                    UndergoundCFGCM.Items.Clear();
+                    UndergoundCFGCM.Items.Add(RemoveExternalValueControllerToolStripMenuItem);
+                    UndergoundCFGCM.Items.Add(new ToolStripSeparator());
+                    UndergoundCFGCM.Items.Add(AddNewParamToolStripMenuItem);
+                    UndergoundCFGCM.Show(Cursor.Position);
+                },
             };
 
             // ----------------------
@@ -1021,6 +1037,12 @@ namespace EconomyPlugin
                     PlayerSpawnsCM.Items.Add(removeUnusedGroupSpawnsToolStripMenuItem);
                     PlayerSpawnsCM.Show(Cursor.Position);
                 },
+                ["ExternalValueControlerParam"] = node =>
+                {
+                    UndergoundCFGCM.Items.Clear();
+                    UndergoundCFGCM.Items.Add(RemoveNewParamToolStripMenuItem);
+                    UndergoundCFGCM.Show(Cursor.Position);
+                }
             };
         }
         public bool NodeHasChildOfType<T>(TreeNode node)
@@ -2249,7 +2271,21 @@ namespace EconomyPlugin
                     {
                         Tag = bc
                     };
-
+                    if (bc.ExternalValueController != null)
+                    {
+                        TreeNode evc = new TreeNode(bc.ExternalValueController.Type)
+                        {
+                            Tag = bc.ExternalValueController
+                        };
+                        foreach (string p in bc.ExternalValueController.Params)
+                        {
+                            evc.Nodes.Add(new TreeNode(p)
+                            {
+                                Tag = "ExternalValueControlerParam"
+                            });
+                        }
+                        breadcrumbNode.Nodes.Add(evc);
+                    }
                     triggerNode.Nodes.Add(breadcrumbNode);
                 }
 
@@ -5931,11 +5967,11 @@ namespace EconomyPlugin
             List<eventposdefEvent> usedeventpos = new List<eventposdefEvent>();
             foreach (eventposdefEvent eventpos in _economyManager.cfgeventspawnsConfig.Data.@event)
             {
-                foreach(EventsFile ef in _economyManager.eventsConfig.MutableItems)
+                foreach (EventsFile ef in _economyManager.eventsConfig.MutableItems)
                 {
-                    foreach(eventsEvent ev in ef.Data.@event)
+                    foreach (eventsEvent ev in ef.Data.@event)
                     {
-                        foreach(eventposdefEvent pos in _economyManager.cfgeventspawnsConfig.Data.@event)
+                        foreach (eventposdefEvent pos in _economyManager.cfgeventspawnsConfig.Data.@event)
                         {
                             if (ev.name == pos.name && !usedeventpos.Contains(pos))
                                 usedeventpos.Add(pos);
@@ -6623,7 +6659,7 @@ namespace EconomyPlugin
                 .ToList() ?? new List<object>());
 
             AddAttachmentGroup(currentst, itemDump.magazines);
-            foreach(DumpSlot dSlot in itemDump.attachmentSlots)
+            foreach (DumpSlot dSlot in itemDump.attachmentSlots)
             {
                 AddAttachmentGroup(currentst, dSlot.compatibleItems);
             }
@@ -6708,9 +6744,9 @@ namespace EconomyPlugin
             {
                 chance = 1.0m,
                 chanceSpecified = true,
-                item = new BindingList<spawnableTypeItem>() 
+                item = new BindingList<spawnableTypeItem>()
             };
-            foreach(string dscitem in dsitem.compatibleItems)
+            foreach (string dscitem in dsitem.compatibleItems)
             {
                 spawnableTypeItem newstitem = new spawnableTypeItem()
                 {
@@ -7303,7 +7339,72 @@ namespace EconomyPlugin
             }
         }
 
+        /// <summary>
+        /// UndergroundCFG Right Click Methods
+        /// </summary>
+        private void AddExternalValueControllerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Select Type, 1 type only ";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                Breadcrumb bc = currentTreeNode.Tag as Breadcrumb;
+                BreadcrumbExternalValueController nbcevc = new BreadcrumbExternalValueController()
+                {
+                    Type = addedtypes[0],
+                    Params = new BindingList<string>()
+                };
+                bc.ExternalValueController = nbcevc;
+                TreeNode evc = new TreeNode(nbcevc.Type)
+                {
+                    Tag = nbcevc
+                };
+                foreach (string p in nbcevc.Params)
+                {
+                    evc.Nodes.Add(new TreeNode(p)
+                    {
+                        Tag = "ExternalValueControlerParam"
+                    });
+                }
+                currentTreeNode.Nodes.Add(evc);
+            }
+        }
 
+        private void RemoveExternalValueControllerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Breadcrumb bc = currentTreeNode.FindParentOfType<Breadcrumb>();
+            bc.ExternalValueController = null;
+            currentTreeNode.Remove();
+        }
+
+        private void AddNewParamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BreadcrumbExternalValueController BreadcrumbExternalValueController = currentTreeNode.Tag as BreadcrumbExternalValueController;
+            AddItemfromString form = new AddItemfromString();
+            form.TitleLable = "Add Param";
+            DialogResult result = form.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<string> addedtypes = form.addedtypes.ToList();
+                foreach (string l in addedtypes)
+                {
+                    BreadcrumbExternalValueController.Params.Add(l);
+                    currentTreeNode.Nodes.Add(new TreeNode(l)
+                    {
+                        Tag = "ExternalValueControlerParam"
+                    });
+                }
+            }
+        }
+
+        private void RemoveNewParamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BreadcrumbExternalValueController BreadcrumbExternalValueController = currentTreeNode.FindParentOfType<BreadcrumbExternalValueController>();
+            BreadcrumbExternalValueController.Params.Remove(currentTreeNode.Text);
+            currentTreeNode.Remove();
+        }
 
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
         {

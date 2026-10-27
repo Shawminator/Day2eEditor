@@ -29,7 +29,7 @@ namespace Day2eEditor
                         HandleLoadError(ex);
                     },
                     configName: "cfgundergroundtriggers",
-                    useBoolConvertor: false,
+                    useBoolConvertor: true,
                     useVecConvertor: true
                 );
 
@@ -60,7 +60,7 @@ namespace Day2eEditor
             if (!AreEqual(Data, ClonedData) || IsDirty == true)
             {
                 ClearDirty();
-                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, true, true);
                 ClonedData = CloneData(Data);
                 return new[] { _path };
             }
@@ -170,9 +170,10 @@ namespace Day2eEditor
 
     public class Trigger : IEquatable<Trigger>, IDeepCloneable<Trigger>
     {
-        public int? CustomSpawn { get; set; }
-        public BindingList<int>? ParentNetworkId { get; set; }
         public string? Comment { get; set; }
+        public bool? CustomSpawn { get; set; }
+        public string Tag { get; set; }
+        public BindingList<int>? ParentNetworkId { get; set; }
         public Vec3? Position { get; set; }
         public Vec3? Orientation { get; set; }
         public Vec3? Size { get; set; }
@@ -216,9 +217,10 @@ namespace Day2eEditor
                 return true;
 
             return
-                CustomSpawn == other.CustomSpawn &&
-                Helper.ListEquals(ParentNetworkId, other.ParentNetworkId) &&
                 Comment == other.Comment &&
+                CustomSpawn == other.CustomSpawn &&
+                Tag == other.Tag &&
+                Helper.ListEquals(ParentNetworkId, other.ParentNetworkId) &&
                 Equals(Position, other.Position) &&
                 Equals(Orientation, other.Orientation) &&
                 Equals(Size, other.Size) &&
@@ -239,9 +241,10 @@ namespace Day2eEditor
         {
             return new Trigger
             {
-                CustomSpawn = this.CustomSpawn,
-                ParentNetworkId = this.ParentNetworkId,
                 Comment = this.Comment,
+                CustomSpawn = this.CustomSpawn,
+                Tag = this.Tag,
+                ParentNetworkId = this.ParentNetworkId,
                 Position = this.Position.Clone(),
                 Orientation = this.Orientation.Clone(),
                 Size = this.Size.Clone(),
@@ -262,6 +265,7 @@ namespace Day2eEditor
         public int? UseRaycast { get; set; }
         public decimal? Radius { get; set; }
         public int? LightLerp { get; set; }
+        public string Comment { get; set; }
         public BreadcrumbExternalValueController? ExternalValueController { get; set; }
 
         public string getbreadcrumbtype()
@@ -295,6 +299,8 @@ namespace Day2eEditor
                 return false;
             if (LightLerp != other.LightLerp)
                 return false;
+            if (Comment != other.Comment)
+                return false;
             if (!Equals(ExternalValueController, other.ExternalValueController))
                 return false;
 
@@ -315,6 +321,7 @@ namespace Day2eEditor
                 UseRaycast = UseRaycast,
                 Radius = Radius,
                 LightLerp = LightLerp,
+                Comment = Comment,
                 ExternalValueController = ExternalValueController?.Clone()
             };
         }

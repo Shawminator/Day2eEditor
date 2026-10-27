@@ -31,7 +31,7 @@ namespace EconomyPlugin
             _nodes = selectedNodes;
 
             _suppressEvents = true;
-
+            CommentTB.Text = _data.Comment;
             CFGUBreadCrumbPositionXNUD.Value = (decimal)_data.Position.X;
             CFGUBreadCrumbPositionYNUD.Value = (decimal)_data.Position.Y;
             CFGUBreadCrumbPositionZNUD.Value = (decimal)_data.Position.Z;
@@ -75,9 +75,14 @@ namespace EconomyPlugin
                        $"#{i} {_data.getbreadcrumbtype()} " +
                        $"Eye:{_data.EyeAccommodation} " +
                        $"@ ({_data.Position.GetString()})";
-                
+
                 _nodes.Last().Text = bcLabel;
             }
+        }
+        private void CommentTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Comment = CommentTB.Text;
         }
         private void UseRayCastCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -163,5 +168,7 @@ namespace EconomyPlugin
             if (_suppressEvents) return;
             _data.LightLerp = LightLerpCB.Checked == true ? 1 : 0;
         }
+
+
     }
 }
