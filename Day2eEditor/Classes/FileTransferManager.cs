@@ -63,8 +63,9 @@ namespace Day2eEditor
 
             client.Connect();
 
+            // Paths are absolute, as with SFTP. Callers already include RootPath, so prefixing it here doubled it.
             var items = client
-                .GetListing(BuildRemotePath(s, path))
+                .GetListing(path.Replace("\\", "/"))
                 .Select(x => new RemoteItem
                 {
                     Name = x.Name,
@@ -78,15 +79,6 @@ namespace Day2eEditor
             client.Disconnect();
 
             return items;
-        }
-        private string BuildRemotePath(ProjectServerSettings settings, string path)
-        {
-            path = path.Replace("\\", "/");
-
-            if (string.IsNullOrWhiteSpace(settings.RootPath))
-                return path;
-
-            return $"{settings.RootPath.TrimEnd('/')}/{path.TrimStart('/')}";
         }
         public void Upload(ProjectServerSettings settings, string localPath, string remotePath)
         {
@@ -214,6 +206,7 @@ namespace Day2eEditor
                     {
                         RelativePath = relativePath,
                         LocalPath = local.FullPath,
+                        LocalModified = local.Modified,
                         Action = PendingServerAction.Upload
                     });
 
@@ -225,7 +218,10 @@ namespace Day2eEditor
                     results.Add(new SyncItem
                     {
                         RelativePath = relativePath,
+                        // Where the file will be downloaded to; it doesn't exist locally yet
+                        LocalPath = Path.Combine(localRoot, relativePath),
                         RemotePath = remote.FullPath,
+                        RemoteModified = remote.Modified,
                         Action = PendingServerAction.Download
                     });
 
@@ -410,6 +406,9 @@ namespace Day2eEditor
                 remote,
                 uploaded =>
                 {
+                    if (totalBytes == 0)
+                        return;
+
                     int percent = (int)(uploaded * 100 / totalBytes);
 
                     if (percent >= lastReported + 5)
@@ -440,21 +439,43 @@ namespace Day2eEditor
 
             Console.WriteLine($"Downloading: {Path.GetFileName(remote)}");
 
-            using var fs = File.Create(local);
+            string? localDir = Path.GetDirectoryName(local);
+            if (!string.IsNullOrEmpty(localDir))
+                Directory.CreateDirectory(localDir);
 
-            client.DownloadFile(
-                remote,
-                fs,
-                downloaded =>
+            // Download to a temp file and only replace the local file once the download succeeded,
+            // so a failed transfer doesn't leave an empty file behind
+            string tempFile = local + ".download";
+            try
+            {
+                using (var fs = File.Create(tempFile))
                 {
-                    int percent = (int)(downloaded * 100 / totalBytes);
+                    client.DownloadFile(
+                        remote,
+                        fs,
+                        downloaded =>
+                        {
+                            if (totalBytes == 0)
+                                return;
 
-                    if (percent >= lastReported + 5)
-                    {
-                        lastReported = percent;
-                        Console.WriteLine($"  {percent}%");
-                    }
-                });
+                            int percent = (int)(downloaded * 100 / totalBytes);
+
+                            if (percent >= lastReported + 5)
+                            {
+                                lastReported = percent;
+                                Console.WriteLine($"  {percent}%");
+                            }
+                        });
+                }
+
+                File.Move(tempFile, local, overwrite: true);
+            }
+            finally
+            {
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+            }
+            File.SetLastWriteTimeUtc(local, attrs.LastWriteTimeUtc);
 
             Console.WriteLine("  100%");
             Console.WriteLine("Download complete.");
@@ -643,21 +664,36 @@ namespace Day2eEditor
 
             Console.WriteLine($"Downloading: {Path.GetFileName(remote)}");
 
-            client.DownloadFile(
-                local,
-                remote,
-                FtpLocalExists.Overwrite,
-                FtpVerify.None,
-                progress =>
-                {
-                    int percent = (int)progress.Progress;
-
-                    if (percent >= lastReported + 5)
+            // Same as SFTP: only replace the local file once the download succeeded
+            string tempFile = local + ".download";
+            try
+            {
+                var status = client.DownloadFile(
+                    tempFile,
+                    remote,
+                    FtpLocalExists.Overwrite,
+                    FtpVerify.None,
+                    progress =>
                     {
-                        lastReported = percent;
-                        Console.WriteLine($"  {percent}%");
-                    }
-                });
+                        int percent = (int)progress.Progress;
+
+                        if (percent >= lastReported + 5)
+                        {
+                            lastReported = percent;
+                            Console.WriteLine($"  {percent}%");
+                        }
+                    });
+
+                if (status != FtpStatus.Success)
+                    throw new IOException($"Download of {remote} failed ({status}).");
+
+                File.Move(tempFile, local, overwrite: true);
+            }
+            finally
+            {
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+            }
 
             Console.WriteLine("Download complete.");
 

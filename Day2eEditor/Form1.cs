@@ -208,7 +208,11 @@ namespace Day2eEditor
             }
             else
             {
-                availbeentries.Add(pluginEntries.First(x => x.Identifier == "ProjectsPlugin"));
+                var projectsPlugin = pluginEntries.FirstOrDefault(x => x.Identifier == "ProjectsPlugin");
+                if (projectsPlugin != null)
+                    availbeentries.Add(projectsPlugin);
+                else
+                    Console.WriteLine("[ERROR] ProjectsPlugin.dll is missing or failed to load.");
 
             }
 
@@ -346,23 +350,33 @@ namespace Day2eEditor
 
 
 
-                            // Instantiate the plugin only when needed
-                            if (Activator.CreateInstance(selectedEntry.PluginType) is IPluginForm plugin)
+                            // Instantiate the plugin only when needed. A plugin that throws while
+                            // opening must not take the whole editor down with it.
+                            try
                             {
-                                var form = plugin.GetForm();
-                                form.MdiParent = this;
-                                form.Name = plugin.pluginIdentifier;
-                                form.Location = new Point(30, 0);
-                                form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                                form.Size = this.Size - new Size(40, 65);
-                                form.Show();
+                                if (Activator.CreateInstance(selectedEntry.PluginType) is IPluginForm plugin)
+                                {
+                                    var form = plugin.GetForm();
+                                    form.MdiParent = this;
+                                    form.Name = plugin.pluginIdentifier;
+                                    form.Location = new Point(30, 0);
+                                    form.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                                    form.Size = this.Size - new Size(40, 65);
+                                    form.Show();
 
-                                Console.WriteLine($"[INFO] Loading {plugin.pluginName}...");
-                                label1.Text = plugin.pluginName;
+                                    Console.WriteLine($"[INFO] Loading {plugin.pluginName}...");
+                                    label1.Text = plugin.pluginName;
+                                }
+                                else
+                                {
+                                    MessageBoxAtCursor.Show("Warning",$"Failed to load plugin: {selectedEntry.Name}");
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                MessageBoxAtCursor.Show("Warning",$"Failed to load plugin: {selectedEntry.Name}");
+                                var error = ex is TargetInvocationException { InnerException: not null } ? ex.InnerException : ex;
+                                Console.WriteLine($"[ERROR] Failed to open {selectedEntry.Name}: {error}");
+                                MessageBox.Show($"Failed to open {selectedEntry.Name}:\n\n{error.Message}", "Plugin Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                         break;
@@ -375,7 +389,7 @@ namespace Day2eEditor
         {
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             using var stream = assembly.GetManifestResourceStream(name);
-            return stream != null ? Image.FromStream(stream) : null;
+            return LoadDetachedImage(stream);
 
         }
         public static Image LoadPluginIcon(Type pluginType)
@@ -386,7 +400,17 @@ namespace Day2eEditor
 
             var assembly = pluginType.Assembly;
             using var stream = assembly.GetManifestResourceStream(attr.IconResourceName);
-            return stream != null ? Image.FromStream(stream) : null;
+            return LoadDetachedImage(stream);
+        }
+        // GDI+ needs the source stream for an image's whole lifetime, so copy it into
+        // a bitmap that doesn't depend on the stream before the stream is disposed
+        private static Image LoadDetachedImage(Stream stream)
+        {
+            if (stream == null)
+                return null;
+
+            using var image = Image.FromStream(stream);
+            return new Bitmap(image);
         }
         private void closeMdiChildren()
         {

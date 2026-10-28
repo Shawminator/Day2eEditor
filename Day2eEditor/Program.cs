@@ -1,4 +1,5 @@
 
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.Loader;
 
@@ -13,6 +14,12 @@ namespace Day2eEditor
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+
+            // DayZ config files always use '.' decimals; don't let the PC's regional settings change how numbers are read or written
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
             //Register updatemanager
             var updateManager = new UpdateManager();
