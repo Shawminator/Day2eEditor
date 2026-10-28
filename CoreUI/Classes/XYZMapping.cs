@@ -25,7 +25,7 @@ namespace Day2eEditor
 
         public MapData(string filename, int? mapsize = null)
         {
-            if (File.Exists(filename))
+            if (File.Exists(filename) && mapsize.HasValue)
             {
                 FileName = filename;
                 using (FileStream fs = new FileStream(FileName, FileMode.Open, FileAccess.Read))
@@ -33,7 +33,7 @@ namespace Day2eEditor
                 {
                     pointCount = br.ReadInt64();
                     cellcount = (int)Math.Sqrt(pointCount);
-                    cellsize = (float)(int)mapsize / cellcount;
+                    cellsize = (float)mapsize.Value / cellcount;
                 }
 
                 FileExists = true;
@@ -47,7 +47,12 @@ namespace Day2eEditor
             string[] lines = File.ReadAllLines(FileName);
             foreach (string line in lines)
             {
-                string[] split = line.Split(' ');
+                string[] split = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                // Skip blank or incomplete lines, such as a trailing newline
+                if (split.Length < 3)
+                    continue;
+
                 string[] newaary = new string[3];
                 newaary[0] = split[0];
                 newaary[1] = split[2];

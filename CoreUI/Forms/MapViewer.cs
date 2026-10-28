@@ -217,10 +217,9 @@ namespace Day2eEditor
             }
             if (e.Button == MouseButtons.Left)
             {
-                _lastClick = e;
-
                 if (_isFirstClick)
                 {
+                    _lastClick = e;
                     _isFirstClick = false;
                     _elapsed = 0;
                     _isDoubleClick = false;
@@ -228,10 +227,21 @@ namespace Day2eEditor
                 }
                 else
                 {
+                    // Compare against the first click, so two quick clicks in different places aren't a double-click
                     if ((Math.Abs(e.X - _lastClick.X) <= SystemInformation.DoubleClickSize.Width / 2) &&
                         (Math.Abs(e.Y - _lastClick.Y) <= SystemInformation.DoubleClickSize.Height / 2))
                     {
                         _isDoubleClick = true;
+                    }
+                    else if (!_isDoubleClick)
+                    {
+                        // Too far away: the first click was a single click, and this one starts a new cycle
+                        _clickTimer.Stop();
+                        MapsingleClicked?.Invoke(this, new MapClickEventArgs(GetMapCoordinate(_lastClick.Location)));
+
+                        _lastClick = e;
+                        _elapsed = 0;
+                        _clickTimer.Start();
                     }
                 }
             }
