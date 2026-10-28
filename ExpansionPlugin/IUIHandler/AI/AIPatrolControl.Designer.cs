@@ -1510,6 +1510,10 @@
             StaticPatrolSpeedCB.Size = new Size(269, 23);
             StaticPatrolSpeedCB.TabIndex = 317;
             StaticPatrolSpeedCB.SelectedIndexChanged += StaticPatrolSpeedCB_SelectedIndexChanged;
+            StaticPatrolDefaultStanceCB.SelectedIndexChanged += StaticPatrolDefaultStanceCB_SelectedIndexChanged;
+            StaticPatrolDefaultLookAngleNUD.ValueChanged += StaticPatrolDefaultLookAngleNUD_ValueChanged;
+            StsticPatrolMaxFlankingDistanceNUD.ValueChanged += StsticPatrolMaxFlankingDistanceNUD_ValueChanged;
+            StaticPatrolEnableFlankingOutsideCombatCB.CheckedChanged += StaticPatrolEnableFlankingOutsideCombatCB_CheckedChanged;
             // 
             // darkLabel29
             // 

@@ -99,6 +99,7 @@
             ClassNameTB.Location = new Point(126, 22);
             ClassNameTB.Margin = new Padding(4, 3, 4, 3);
             ClassNameTB.Name = "ClassNameTB";
+            ClassNameTB.ReadOnly = true;
             ClassNameTB.Size = new Size(249, 23);
             ClassNameTB.TabIndex = 4;
             ClassNameTB.Tag = "Container";

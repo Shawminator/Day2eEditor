@@ -39,7 +39,7 @@ namespace ExpansionPlugin
             _suppressEvents = true;
             MarketVisabilityCB.DataSource = Enum.GetValues(typeof(MapMarkerVisibility));
             // TODO: Populate control with data fields here
-            MarketVisabilityCB.SelectedItem = (MapMarkerVisibility)_data.ObjectiveType;
+            MarketVisabilityCB.SelectedItem = _data.MarkerVisibility ?? default(MapMarkerVisibility);
             ObjectivesTreasureHuntShowdistanceCB.Checked = _data.ShowDistance == 1 ? true : false;
             ObjectivesTreasureHuntAmountNUD.Value = (decimal)_data.LootItemsAmount;
             checkBox10.Checked = _data.DigInStash == 1 ? true : false;

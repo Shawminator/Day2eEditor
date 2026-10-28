@@ -40,7 +40,7 @@ namespace ExpansionPlugin
 
             MissionShowNotificationCB.Checked = _data.ShowNotification == 1 ? true : false;
             MissionHeightNUD.Value = (decimal)_data.Height;
-            MIssionDropZoneHeightNUD.Value = (decimal)_data.Height;
+            MIssionDropZoneHeightNUD.Value = _data.DropZoneHeight ?? 0;
             MissionSpeedNUD.Value = (decimal)_data.Speed;
             MissionDropZoneSpeedNUD.Value = (decimal)_data.DropZoneSpeed;
             MIssionContainerCB.SelectedIndex = MIssionContainerCB.FindStringExact(_data.Container);
@@ -112,7 +112,7 @@ namespace ExpansionPlugin
         private void MissionItemCountNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.ItemCount = (int)MissionInfectedCountNUD.Value;
+            _data.ItemCount = (int)MissionItemCountNUD.Value;
         }
 
         private void MissionInfectedCountNUD_ValueChanged(object sender, EventArgs e)

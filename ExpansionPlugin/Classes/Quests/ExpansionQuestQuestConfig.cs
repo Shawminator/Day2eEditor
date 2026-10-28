@@ -596,11 +596,11 @@ namespace ExpansionPlugin
         }
         public void SyncToDictionary()
         {
-            FactionReputationRequirements = FactionReputationRequirementsList
-                .ToDictionary(x => x.Faction, x => x.Reputation);
+            FactionReputationRequirements = Helpers.ToDictionaryChecked(
+                FactionReputationRequirementsList, x => x.Faction, x => x.Reputation, $"Quest {ID} faction reputation requirements");
 
-            FactionReputationRewards = FactionReputationRewardsList
-                .ToDictionary(x => x.Faction, x => x.Reputation);
+            FactionReputationRewards = Helpers.ToDictionaryChecked(
+                FactionReputationRewardsList, x => x.Faction, x => x.Reputation, $"Quest {ID} faction reputation rewards");
         }
 
         internal void GetReferencedQuests()

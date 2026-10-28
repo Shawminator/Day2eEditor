@@ -158,11 +158,8 @@ namespace ExpansionPlugin
         }
         public void convertreplisttodict()
         {
-            Data.EntityReputation = new Dictionary<string, int>();
-            foreach (EntityReputationlevels item in Data.entityreps)
-            {
-                Data.EntityReputation.Add(item.Classname, item.Level);
-            }
+            Data.EntityReputation = Helpers.ToDictionaryChecked(
+                Data.entityreps, item => item.Classname, item => item.Level, "Hardline entity reputation");
         }
 
     }

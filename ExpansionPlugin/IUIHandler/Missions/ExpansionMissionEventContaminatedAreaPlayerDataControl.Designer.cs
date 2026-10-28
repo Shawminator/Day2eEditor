@@ -73,6 +73,7 @@
             PPERequesterTypeTB.Location = new Point(216, 78);
             PPERequesterTypeTB.Margin = new Padding(4, 3, 4, 3);
             PPERequesterTypeTB.Name = "PPERequesterTypeTB";
+            PPERequesterTypeTB.TextChanged += PPERequesterTypeTB_TextChanged;
             PPERequesterTypeTB.Size = new Size(520, 23);
             PPERequesterTypeTB.TabIndex = 133;
             // 
@@ -94,6 +95,7 @@
             TinyPartNameTB.Location = new Point(216, 48);
             TinyPartNameTB.Margin = new Padding(4, 3, 4, 3);
             TinyPartNameTB.Name = "TinyPartNameTB";
+            TinyPartNameTB.TextChanged += TinyPartNameTB_TextChanged;
             TinyPartNameTB.Size = new Size(520, 23);
             TinyPartNameTB.TabIndex = 131;
             // 
@@ -115,6 +117,7 @@
             AroundPartNameTB.Location = new Point(216, 18);
             AroundPartNameTB.Margin = new Padding(4, 3, 4, 3);
             AroundPartNameTB.Name = "AroundPartNameTB";
+            AroundPartNameTB.TextChanged += AroundPartNameTB_TextChanged;
             AroundPartNameTB.Size = new Size(520, 23);
             AroundPartNameTB.TabIndex = 129;
             // 

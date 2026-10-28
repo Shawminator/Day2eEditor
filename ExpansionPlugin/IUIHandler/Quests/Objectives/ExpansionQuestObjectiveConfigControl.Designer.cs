@@ -268,6 +268,7 @@
             QuestObjectivesObjectiveTypeCB.Location = new Point(108, 0);
             QuestObjectivesObjectiveTypeCB.Margin = new Padding(4, 3, 4, 3);
             QuestObjectivesObjectiveTypeCB.Name = "QuestObjectivesObjectiveTypeCB";
+            QuestObjectivesObjectiveTypeCB.Enabled = false;
             QuestObjectivesObjectiveTypeCB.Size = new Size(289, 23);
             QuestObjectivesObjectiveTypeCB.TabIndex = 128;
             // 

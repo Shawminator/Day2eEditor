@@ -145,7 +145,7 @@ namespace ExpansionPlugin
         private void MaxLargeVehicleDistanceToTraderNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.MaxLargeVehicleDistanceToTrader = (int)MaxVehicleDistanceToTraderNUD.Value;
+            _data.MaxLargeVehicleDistanceToTrader = (int)MaxLargeVehicleDistanceToTraderNUD.Value;
             
         }
         private void MaxSZVehicleParkingTimeNUD_ValueChanged(object sender, EventArgs e)

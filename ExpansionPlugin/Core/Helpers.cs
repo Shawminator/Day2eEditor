@@ -58,6 +58,21 @@ namespace ExpansionPlugin
     }
     public static class Helpers
     {
+        // Like ToDictionary, but a duplicate key fails with a message that says which setting and key
+        // to fix, instead of "An item with the same key has already been added"
+        public static Dictionary<TKey, TValue> ToDictionaryChecked<TSource, TKey, TValue>(
+            IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> valueSelector, string settingName)
+            where TKey : notnull
+        {
+            var result = new Dictionary<TKey, TValue>();
+            foreach (var item in source)
+            {
+                var key = keySelector(item);
+                if (!result.TryAdd(key, valueSelector(item)))
+                    throw new InvalidOperationException($"{settingName} contains '{key}' more than once. Each entry must be unique, so remove or rename the duplicate and save again.");
+            }
+            return result;
+        }
         public static  TreeNode FindNodeByTag(TreeNodeCollection nodes, object target)
         {
             foreach (TreeNode node in nodes)

@@ -43,11 +43,8 @@ namespace ExpansionPlugin
         }
         public void SetExplosiveProjectilesDictionary()
         {
-            Data.ExplosiveProjectiles = new Dictionary<string, string>();
-            foreach (ExplosiveProjectiles ep in Data._ExplosiveProjectiles)
-            {
-                Data.ExplosiveProjectiles.Add(ep.explosion, ep.ammo);
-            }
+            Data.ExplosiveProjectiles = Helpers.ToDictionaryChecked(
+                Data._ExplosiveProjectiles, ep => ep.explosion, ep => ep.ammo, "Damage system explosive projectiles");
         }
     }
     public class ExpansionDamageSystemSettings : IEquatable<ExpansionDamageSystemSettings>, IDeepCloneable<ExpansionDamageSystemSettings>

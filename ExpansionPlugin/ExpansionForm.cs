@@ -5983,6 +5983,22 @@ namespace ExpansionPlugin
             EconomyRootNode.Nodes.Add(VehicleConfigNodes);
         }
 
+        // A value the editor can't display (for example outside a number box's range) must not crash the
+        // plugin or leave a half-filled panel whose edits are ignored, so report it and show no panel instead
+        private bool TryLoadHandler(IUIHandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
+        {
+            try
+            {
+                handler.LoadFromData(parent, primaryData, selectedNodes);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Could not display {primaryData}: {ex}");
+                MessageBox.Show($"This entry can't be displayed:\n\n{ex.Message}\n\nCheck its values in the file.", "Display Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
         where THandler : IUIHandler
         {
@@ -6003,7 +6019,8 @@ namespace ExpansionPlugin
             Type handlerType = handler.GetType();
             if (_currentHandler != null && _currentHandler.GetType() == handlerType)
             {
-                _currentHandler.LoadFromData(parent, primaryData, selectedNodes);
+                if (!TryLoadHandler(_currentHandler, parent, primaryData, selectedNodes))
+                    ShowHandler<IUIHandler>(null, parent, primaryData, selectedNodes);
                 return;
             }
 
@@ -6018,7 +6035,13 @@ namespace ExpansionPlugin
 
             // Set new handler
             _currentHandler = handler;
-            handler.LoadFromData(parent, primaryData, selectedNodes);
+            if (!TryLoadHandler(handler, parent, primaryData, selectedNodes))
+            {
+                handler.GetControl().Dispose();
+                (handler as IDisposable)?.Dispose();
+                _currentHandler = null;
+                return;
+            }
 
             var ctrl = handler.GetControl();
             ctrl.Location = new Point(2, 2);
@@ -10810,9 +10833,15 @@ namespace ExpansionPlugin
         private void addNewLoadBalancingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
+
+            // Category names are dictionary keys in the file, so each new one needs a unique name
+            string newName = "New Category - Change Me";
+            for (int n = 2; ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Any(x => x.name == newName); n++)
+                newName = $"New Category - Change Me {n}";
+
             Loadbalancingcategorie newcat = new Loadbalancingcategorie()
             {
-                name = "New Category - Change Me",
+                name = newName,
                 Categorieslist = new BindingList<Loadbalancingcategories>()
             };
             ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Add(newcat);
@@ -14797,6 +14826,17 @@ namespace ExpansionPlugin
                 Faction = "Civilian",
                 Reputation = 100
             };
+
+            // Factions are dictionary keys in the file, so the same faction can only be listed once
+            var existing = currentTreeNode.Tag.ToString() == "FactionReputationRequirements"
+                ? quest.FactionReputationRequirementsList
+                : quest.FactionReputationRewardsList;
+            if (existing.Any(x => x.Faction == frep.Faction))
+            {
+                MessageBox.Show($"This list already has a {frep.Faction} entry. Change that entry's faction before adding another.",
+                    "Faction Reputation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
             switch (currentTreeNode.Tag.ToString())
             {
                 case "FactionReputationRequirements":

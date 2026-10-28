@@ -261,7 +261,7 @@ namespace ExpansionPlugin
             if(ServerMarkers == null)
             {
                 ServerMarkers = new BindingList<ExpansionServerMarkerData>();
-                if (AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath.Split(".")[1] == "chernarusplus")
+                if (AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath is string missionPath && Helper.GetMapNameFromMissionPath(missionPath).Equals("chernarusplus", StringComparison.OrdinalIgnoreCase))
                     DefaultChernarusMarkers();
                 fixes.Add("Initialized HUDColors");
             }

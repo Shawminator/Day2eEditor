@@ -96,11 +96,8 @@ namespace ExpansionPlugin
         }
         public void SetLoadBalancingCategoriestoDictionary()
         {
-            Data.LoadBalancingCategories = new Dictionary<string, BindingList<Loadbalancingcategories>>();
-            foreach (Loadbalancingcategorie keyValuePair in Data._LoadBalancingCategories)
-            {
-                Data.LoadBalancingCategories.Add(keyValuePair.name, keyValuePair.Categorieslist);
-            }
+            Data.LoadBalancingCategories = Helpers.ToDictionaryChecked(
+                Data._LoadBalancingCategories, x => x.name, x => x.Categorieslist, "AI patrol load balancing categories");
         }
     }
     public class ExpansionAIPatrolSettings : IEquatable<ExpansionAIPatrolSettings>, IDeepCloneable<ExpansionAIPatrolSettings>

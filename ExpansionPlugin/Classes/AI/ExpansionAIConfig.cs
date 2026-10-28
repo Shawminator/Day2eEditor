@@ -127,7 +127,8 @@ namespace ExpansionPlugin
         }
         public void CreateDictionary()
         {
-            LightingConfigMinNightVisibilityMeters = AILightEntries.ToDictionary(e => e.Key, e => e.Value);
+            LightingConfigMinNightVisibilityMeters = Helpers.ToDictionaryChecked(
+                AILightEntries, e => e.Key, e => e.Value, "AI settings night visibility per lighting config");
         }
         public bool Equals(ExpansionAISettings other)
         {

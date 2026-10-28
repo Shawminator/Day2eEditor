@@ -299,7 +299,7 @@ namespace ExpansionPlugin
         }
         public void CreatestockDictionary()
         {
-            Stock = stockList.ToDictionary(x => x.Name, x => x.Quantity);
+            Stock = Helpers.ToDictionaryChecked(stockList, x => x.Name, x => x.Quantity, $"Trader zone '{m_DisplayName}' stock");
         }
         internal IEnumerable<string> FixMissingOrInvalidFields()
         {

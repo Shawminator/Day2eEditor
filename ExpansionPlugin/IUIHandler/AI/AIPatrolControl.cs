@@ -513,6 +513,27 @@ namespace ExpansionPlugin
             _data.Speed = StaticPatrolSpeedCB.GetItemText(StaticPatrolSpeedCB.SelectedItem);
 
         }
+        private void StaticPatrolDefaultStanceCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DefaultStance = StaticPatrolDefaultStanceCB.GetItemText(StaticPatrolDefaultStanceCB.SelectedItem);
+        }
+        private void StaticPatrolDefaultLookAngleNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DefaultLookAngle = StaticPatrolDefaultLookAngleNUD.Value;
+        }
+        private void StsticPatrolMaxFlankingDistanceNUD_ValueChanged(object sender, EventArgs e)
+        {
+            // While "use general" is ticked the box only shows the general value
+            if (_suppressEvents || StsticPatrolMaxFlankingDistanceGeneralCB.Checked) return;
+            _data.MaxFlankingDistance = StsticPatrolMaxFlankingDistanceNUD.Value;
+        }
+        private void StaticPatrolEnableFlankingOutsideCombatCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents || StaticPatrolEnableFlankingOutsideCombatGeneralCB.Checked) return;
+            _data.EnableFlankingOutsideCombat = StaticPatrolEnableFlankingOutsideCombatCB.Checked == true ? 1 : 0;
+        }
         private void StaticPatrolUnderThreatSpeedCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;

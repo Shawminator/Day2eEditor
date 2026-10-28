@@ -48,7 +48,7 @@ namespace ExpansionPlugin
             OnlyInTerritoriesCB.Checked = _data.OnlyInTerritories == 1 ? true : false;
             ShowPlayerItemInHandsCB.Checked = _data.ShowPlayerItemInHands == 1 ? true : false;
             ShowNPCTagsCB.Checked = _data.ShowNPCTags == 1 ? true : false;
-            ShowPlayerFactionCB.Checked = _data.ShowNPCTags == 1 ? true : false;
+            ShowPlayerFactionCB.Checked = _data.ShowPlayerFaction == 1 ? true : false;
             UseRarityColorForItemInHandsCB.Checked = _data.UseRarityColorForItemInHands == 1 ? true : false;
 
             _suppressEvents = false;
