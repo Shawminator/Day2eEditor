@@ -2880,6 +2880,22 @@ namespace EconomyPlugin
             parent.Nodes.Add(newSectionNode);
             return newSectionNode;
         }
+        // A value the editor can't display (for example outside a number box's range) must not crash the
+        // plugin or leave a half-filled panel whose edits are ignored, so report it and show no panel instead
+        private bool TryLoadHandler(IUIHandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
+        {
+            try
+            {
+                handler.LoadFromData(parent, primaryData, selectedNodes);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Could not display {primaryData}: {ex}");
+                MessageBox.Show($"This entry can't be displayed:\n\n{ex.Message}\n\nCheck its values in the file.", "Display Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
         void ShowHandler<THandler>(THandler handler, Type parent, object primaryData, List<TreeNode> selectedNodes)
         where THandler : IUIHandler
         {
@@ -2900,7 +2916,8 @@ namespace EconomyPlugin
             Type handlerType = handler.GetType();
             if (_currentHandler != null && _currentHandler.GetType() == handlerType)
             {
-                _currentHandler.LoadFromData(parent, primaryData, selectedNodes);
+                if (!TryLoadHandler(_currentHandler, parent, primaryData, selectedNodes))
+                    ShowHandler<IUIHandler>(null, parent, primaryData, selectedNodes);
                 return;
             }
 
@@ -2915,7 +2932,13 @@ namespace EconomyPlugin
 
             // Set new handler
             _currentHandler = handler;
-            handler.LoadFromData(parent, primaryData, selectedNodes);
+            if (!TryLoadHandler(handler, parent, primaryData, selectedNodes))
+            {
+                handler.GetControl().Dispose();
+                (handler as IDisposable)?.Dispose();
+                _currentHandler = null;
+                return;
+            }
 
             var ctrl = handler.GetControl();
             ctrl.Location = new Point(2, 2);
@@ -3214,7 +3237,7 @@ namespace EconomyPlugin
 
                             RemoveTreeNodeAndEmptyParents(currentTreeNode);
                             file.ToDelete = true;
-                            AppServices.GetRequired<EconomyManager>().eonomyCoreConfig.Save();
+                            _economyManager.SaveConfig(_economyManager.eonomyCoreConfig);
                         }
                         else
                         {
@@ -3222,7 +3245,7 @@ namespace EconomyPlugin
                             currentTreeNode.Remove();
                         }
 
-                        AppServices.GetRequired<EconomyManager>().economyConfig.Save();
+                        _economyManager.SaveConfig(_economyManager.economyConfig);
                     }
                 }
             }
@@ -3253,7 +3276,7 @@ namespace EconomyPlugin
                             // Remove file node and clean up empty parent nodes
                             RemoveTreeNodeAndEmptyParents(currentTreeNode);
                             file.ToDelete = true;
-                            AppServices.GetRequired<EconomyManager>().eonomyCoreConfig.Save();
+                            _economyManager.SaveConfig(_economyManager.eonomyCoreConfig);
                         }
                         else
                         {
@@ -3261,7 +3284,7 @@ namespace EconomyPlugin
                             currentTreeNode.Remove();
                         }
 
-                        AppServices.GetRequired<EconomyManager>().globalsConfig.Save();
+                        _economyManager.SaveConfig(_economyManager.globalsConfig);
                     }
                 }
             }
@@ -4757,7 +4780,7 @@ namespace EconomyPlugin
             if (existingFile == null)
             {
                 _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "economy");
-                _economyManager.eonomyCoreConfig.Save();
+                _economyManager.SaveConfig(_economyManager.eonomyCoreConfig);
                 _economyManager.economyConfig.MutableItems.Add(newFile);
             }
 
@@ -4776,7 +4799,7 @@ namespace EconomyPlugin
                     case "Player": newFile.Data.player = cloned; break;
                 }
             }
-            _economyManager.economyConfig.Save();
+            _economyManager.SaveConfig(_economyManager.economyConfig);
             HandleTreeViewSelection(newFile, sectionName, f => GetSectionByName(f.Data, sectionName), EconomyTV);
         }
         private EconomySection CloneSection(EconomySection original)
@@ -4831,7 +4854,7 @@ namespace EconomyPlugin
             if (existingFile == null)
             {
                 _economyManager.eonomyCoreConfig.AddCe(newFile.ModFolder, newFile.FileName, "globals");
-                _economyManager.eonomyCoreConfig.Save();
+                _economyManager.SaveConfig(_economyManager.eonomyCoreConfig);
                 _economyManager.globalsConfig.MutableItems.Add(newFile);
             }
 
@@ -4840,7 +4863,7 @@ namespace EconomyPlugin
                 newFile.Data.var.Add(CloneVariable(section));
             }
 
-            _economyManager.globalsConfig.Save();
+            _economyManager.SaveConfig(_economyManager.globalsConfig);
             HandleTreeViewSelection(newFile, sectionName, f => GetVariableByName(f.Data, sectionName), EconomyTV);
         }
         private variablesVar CloneVariable(variablesVar original)
@@ -7619,7 +7642,7 @@ namespace EconomyPlugin
         {
             if (currentTreeNode.Tag is EnfusionScriptfile EnfusionScriptfile)
             {
-                _economyManager.scriptfilesConfig.Save();
+                _economyManager.SaveConfig(_economyManager.scriptfilesConfig);
                 OpenWithExternalEditor frm = new OpenWithExternalEditor();
                 frm.StartPosition = FormStartPosition.CenterParent;
                 frm.filePath = EnfusionScriptfile._path;

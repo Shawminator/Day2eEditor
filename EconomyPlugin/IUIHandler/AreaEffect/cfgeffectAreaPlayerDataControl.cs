@@ -39,7 +39,7 @@ namespace EconomyPlugin
             _suppressEvents = true;
 
             AroundPartNameTB.Text = _data.AroundPartName;
-            TinyPartNameTB.Text = _data.AroundPartName;
+            TinyPartNameTB.Text = _data.TinyPartName;
             PPERequesterTypeTB.Text = _data.PPERequesterType;
 
             _suppressEvents = false;

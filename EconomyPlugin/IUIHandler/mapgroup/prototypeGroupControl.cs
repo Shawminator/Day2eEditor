@@ -121,29 +121,25 @@ namespace EconomyPlugin
                     if (_data.value[i].user != null && _data.value[i].user.Count() > 0 && _data.value[i].name == null)
                     {
                         tabControl24.SelectedIndex = 1;
-                        try
-                        {
-                            flowLayoutPanel2.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _data.value[i].user).Checked = true;
-                        }
-                        catch
-                        {
-                            _data.value.RemoveAt(i);
-                            i--;
-                        }
+                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
+                        // rather than deleting it just because the type was viewed.
+                        var box = flowLayoutPanel2.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _data.value[i].user);
+                        if (box != null)
+                            box.Checked = true;
+                        else
+                            Console.WriteLine($"[WARN] {_data.name} uses value flag '{_data.value[i].user}', which isn't defined in the limits definitions.");
                     }
                     else
                     {
                         tabControl24.SelectedIndex = 0;
 
-                        try
-                        {
-                            flowLayoutPanel1.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _data.value[i].name).Checked = true;
-                        }
-                        catch
-                        {
-                            _data.value.RemoveAt(i);
-                            i--;
-                        }
+                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
+                        // rather than deleting it just because the type was viewed.
+                        var box = flowLayoutPanel1.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _data.value[i].name);
+                        if (box != null)
+                            box.Checked = true;
+                        else
+                            Console.WriteLine($"[WARN] {_data.name} uses value flag '{_data.value[i].name}', which isn't defined in the limits definitions.");
                     }
                 }
             }

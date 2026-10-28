@@ -77,7 +77,7 @@ namespace EconomyPlugin
         private void RLmaxNUD_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.limits.min = RLmaxNUD.Value;
+            _data.limits.max = RLmaxNUD.Value;
         }
         private void RTLminNUD_ValueChanged(object sender, EventArgs e)
         {

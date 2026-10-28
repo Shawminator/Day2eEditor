@@ -92,29 +92,25 @@ namespace EconomyPlugin
                     if (_currentdata.Values[i].User != null && _currentdata.Values[i].User.Count() > 0 && _currentdata.Values[i].Name == null)
                     {
                         tabControl3.SelectedIndex = 1;
-                        try
-                        {
-                            flowLayoutPanel2.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _currentdata.Values[i].User).Checked = true;
-                        }
-                        catch
-                        {
-                            _currentdata.Values.RemoveAt(i);
-                            i--;
-                        }
+                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
+                        // rather than deleting it just because the type was viewed.
+                        var box = flowLayoutPanel2.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _currentdata.Values[i].User);
+                        if (box != null)
+                            box.Checked = true;
+                        else
+                            Console.WriteLine($"[WARN] {_currentdata.Name} uses value flag '{_currentdata.Values[i].User}', which isn't defined in the limits definitions.");
                     }
                     else
                     {
                         tabControl3.SelectedIndex = 0;
 
-                        try
-                        {
-                            flowLayoutPanel1.Controls.OfType<CheckBox>().First(x => x.Tag.ToString() == _currentdata.Values[i].Name).Checked = true;
-                        }
-                        catch
-                        {
-                            _currentdata.Values.RemoveAt(i);
-                            i--;
-                        }
+                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
+                        // rather than deleting it just because the type was viewed.
+                        var box = flowLayoutPanel1.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _currentdata.Values[i].Name);
+                        if (box != null)
+                            box.Checked = true;
+                        else
+                            Console.WriteLine($"[WARN] {_currentdata.Name} uses value flag '{_currentdata.Values[i].Name}', which isn't defined in the limits definitions.");
                     }
                 }
             }
