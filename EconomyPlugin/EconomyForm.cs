@@ -1075,9 +1075,18 @@ namespace EconomyPlugin
         {
             savefiles();
         }
-        public void savefiles(bool updated = false)
+        public bool savefiles(bool updated = false)
         {
-            var savedFiles = _economyManager.Save();
+            IEnumerable<string> savedFiles;
+            try
+            {
+                savedFiles = _economyManager.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Saving failed:\n\n{ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
@@ -1088,8 +1097,7 @@ namespace EconomyPlugin
                 ShowSavedFilesMessage(savedFiles);
             }
             RebuildWarning();
-
-
+            return true;
         }
         private void RebuildWarning()
         {
@@ -1148,7 +1156,15 @@ namespace EconomyPlugin
                 DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    savefiles();
+                    // Keep the form open if the save failed, so the changes aren't lost
+                    if (!savefiles())
+                        e.Cancel = true;
+                }
+                else
+                {
+                    // EconomyManager lives for the whole session, so reload it from disk;
+                    // otherwise the discarded edits come back next time and get saved later
+                    _economyManager.SetProject(AppServices.GetRequired<ProjectManager>().CurrentProject);
                 }
             }
         }
