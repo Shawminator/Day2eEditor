@@ -46,15 +46,7 @@ namespace Day2eEditor
                     useBoolConvertor: false
                 );
 
-                SpawnGearPresetconfigs = new SpawnGearPresetsConfig(BaseDirectory);
-                SpawnGearPresetconfigs.Load(BaseDirectory, Data.PlayerData.spawnGearPresetFiles);
-
-                PlayerRestrictedFilesConfig = new PlayerRestrictedFilesConfig(BaseDirectory);
-                PlayerRestrictedFilesConfig.Load(BaseDirectory, Data.WorldsData.playerRestrictedAreaFiles);
-
-                ObjectSpawnerArrConfig = new ObjectSpawnerArrConfig(BaseDirectory);
-                ObjectSpawnerArrConfig.Load(BaseDirectory, Data.WorldsData.objectSpawnersArr);
-
+                // Validate first so missing sections exist before the sub-configs read them
                 var issues = ValidateData();
                 if (issues?.Any() == true)
                 {
@@ -64,6 +56,15 @@ namespace Day2eEditor
 
                     MarkDirty();
                 }
+
+                SpawnGearPresetconfigs = new SpawnGearPresetsConfig(BaseDirectory);
+                SpawnGearPresetconfigs.Load(BaseDirectory, Data.PlayerData.spawnGearPresetFiles);
+
+                PlayerRestrictedFilesConfig = new PlayerRestrictedFilesConfig(BaseDirectory);
+                PlayerRestrictedFilesConfig.Load(BaseDirectory, Data.WorldsData.playerRestrictedAreaFiles);
+
+                ObjectSpawnerArrConfig = new ObjectSpawnerArrConfig(BaseDirectory);
+                ObjectSpawnerArrConfig.Load(BaseDirectory, Data.WorldsData.objectSpawnersArr);
 
                 OnAfterLoad(Data);
                 ClonedData = CloneData(Data);
@@ -287,6 +288,8 @@ namespace Day2eEditor
             UIData = new ITEM_UIData();
             MapData = new ITEM_MapData();
             VehicleData = new ITEM_VehicleData();
+            ExternalLockData = new ITEM_ExternalLockData();
+            SandstormData = new ITEM_SandstormData();
         }
 
         internal bool checkver()
@@ -310,7 +313,9 @@ namespace Day2eEditor
                 BaseBuildingData = BaseBuildingData?.Clone() ?? new ITEM_BaseBuildingData(),
                 UIData = UIData?.Clone() ?? new ITEM_UIData(),
                 MapData = MapData?.Clone() ?? new ITEM_MapData(),
-                VehicleData = VehicleData?.Clone() ?? new ITEM_VehicleData()
+                VehicleData = VehicleData?.Clone() ?? new ITEM_VehicleData(),
+                ExternalLockData = ExternalLockData?.Clone() ?? new ITEM_ExternalLockData(),
+                SandstormData = SandstormData?.Clone() ?? new ITEM_SandstormData()
             };
         }
 
@@ -326,7 +331,9 @@ namespace Day2eEditor
                    Equals(BaseBuildingData, other.BaseBuildingData) &&
                    Equals(UIData, other.UIData) &&
                    Equals(MapData, other.MapData) &&
-                   Equals(VehicleData, other.VehicleData);
+                   Equals(VehicleData, other.VehicleData) &&
+                   Equals(ExternalLockData, other.ExternalLockData) &&
+                   Equals(SandstormData, other.SandstormData);
         }
 
         public override bool Equals(object? obj) => Equals(obj as cfggameplay);
@@ -341,7 +348,89 @@ namespace Day2eEditor
                 version = currentversion;
             }
 
+            // Top level sections
+            if (GeneralData == null) { GeneralData = new ITEM_GeneralData(); fixes.Add("GeneralData was missing and has been set to defaults."); }
+            if (PlayerData == null) { PlayerData = new ITEM_PlayerData(); fixes.Add("PlayerData was missing and has been set to defaults."); }
+            if (WorldsData == null) { WorldsData = new ITEM_WorldData(); fixes.Add("WorldsData was missing and has been set to defaults."); }
+            if (BaseBuildingData == null) { BaseBuildingData = new ITEM_BaseBuildingData(); fixes.Add("BaseBuildingData was missing and has been set to defaults."); }
+            if (UIData == null) { UIData = new ITEM_UIData(); fixes.Add("UIData was missing and has been set to defaults."); }
+            if (MapData == null) { MapData = new ITEM_MapData(); fixes.Add("MapData was missing and has been set to defaults."); }
+            if (VehicleData == null) { VehicleData = new ITEM_VehicleData(); fixes.Add("VehicleData was missing and has been set to defaults."); }
+            if (ExternalLockData == null) { ExternalLockData = new ITEM_ExternalLockData(); fixes.Add("ExternalLockData was missing and has been set to defaults."); }
+            if (SandstormData == null) { SandstormData = new ITEM_SandstormData(); fixes.Add("SandstormData was missing and has been set to defaults."); }
 
+            // PlayerData
+            if (PlayerData.spawnGearPresetFiles == null) { PlayerData.spawnGearPresetFiles = new BindingList<string>(); fixes.Add("PlayerData.spawnGearPresetFiles was missing and has been set to an empty list."); }
+            if (PlayerData.StaminaData == null) { PlayerData.StaminaData = new ITEM_StaminaData(); fixes.Add("PlayerData.StaminaData was missing and has been set to defaults."); }
+            if (PlayerData.ShockHandlingData == null) { PlayerData.ShockHandlingData = new ITEM_ShockHandlingData(); fixes.Add("PlayerData.ShockHandlingData was missing and has been set to defaults."); }
+            if (PlayerData.MovementData == null) { PlayerData.MovementData = new ITEM_MovementData(); fixes.Add("PlayerData.MovementData was missing and has been set to defaults."); }
+            if (PlayerData.DrowningData == null) { PlayerData.DrowningData = new ITEM_DrowningData(); fixes.Add("PlayerData.DrowningData was missing and has been set to defaults."); }
+            if (PlayerData.WeaponObstructionData == null) { PlayerData.WeaponObstructionData = new ITEM_WeaponObstructionData(); fixes.Add("PlayerData.WeaponObstructionData was missing and has been set to defaults."); }
+
+            if (!Enum.IsDefined(PlayerData.WeaponObstructionData.staticMode))
+            {
+                fixes.Add($"PlayerData.WeaponObstructionData.staticMode had invalid value {(int)PlayerData.WeaponObstructionData.staticMode} and was reset to ENABLED.");
+                PlayerData.WeaponObstructionData.staticMode = EWeaponObstructionMode.ENABLED;
+            }
+            if (!Enum.IsDefined(PlayerData.WeaponObstructionData.dynamicMode))
+            {
+                fixes.Add($"PlayerData.WeaponObstructionData.dynamicMode had invalid value {(int)PlayerData.WeaponObstructionData.dynamicMode} and was reset to ENABLED.");
+                PlayerData.WeaponObstructionData.dynamicMode = EWeaponObstructionMode.ENABLED;
+            }
+
+            // WorldsData
+            var worldDefaults = new ITEM_WorldData();
+            if (WorldsData.lightingConfig is not (0 or 1))
+            {
+                fixes.Add($"WorldsData.lightingConfig had invalid value {WorldsData.lightingConfig} and was reset to {worldDefaults.lightingConfig}.");
+                WorldsData.lightingConfig = worldDefaults.lightingConfig;
+            }
+            if (WorldsData.objectSpawnersArr == null) { WorldsData.objectSpawnersArr = new BindingList<string>(); fixes.Add("WorldsData.objectSpawnersArr was missing and has been set to an empty list."); }
+            if (WorldsData.playerRestrictedAreaFiles == null) { WorldsData.playerRestrictedAreaFiles = new BindingList<string>(); fixes.Add("WorldsData.playerRestrictedAreaFiles was missing and has been set to an empty list."); }
+            if (WorldsData.environmentMinTemps?.Count != 12)
+            {
+                fixes.Add("WorldsData.environmentMinTemps was missing or did not have 12 monthly values and was reset to defaults.");
+                WorldsData.environmentMinTemps = worldDefaults.environmentMinTemps;
+            }
+            if (WorldsData.environmentMaxTemps?.Count != 12)
+            {
+                fixes.Add("WorldsData.environmentMaxTemps was missing or did not have 12 monthly values and was reset to defaults.");
+                WorldsData.environmentMaxTemps = worldDefaults.environmentMaxTemps;
+            }
+            if (WorldsData.wetnessWeightModifiers?.Count != 5)
+            {
+                fixes.Add("WorldsData.wetnessWeightModifiers was missing or did not have 5 values and was reset to defaults.");
+                WorldsData.wetnessWeightModifiers = worldDefaults.wetnessWeightModifiers;
+            }
+
+            // BaseBuildingData
+            if (BaseBuildingData.HologramData == null) { BaseBuildingData.HologramData = new Hologramdata(); fixes.Add("BaseBuildingData.HologramData was missing and has been set to defaults."); }
+            if (BaseBuildingData.ConstructionData == null) { BaseBuildingData.ConstructionData = new Constructiondata(); fixes.Add("BaseBuildingData.ConstructionData was missing and has been set to defaults."); }
+            if (BaseBuildingData.HologramData.disallowedTypesInUnderground == null)
+            {
+                BaseBuildingData.HologramData.disallowedTypesInUnderground = new Hologramdata().disallowedTypesInUnderground;
+                fixes.Add("BaseBuildingData.HologramData.disallowedTypesInUnderground was missing and has been set to defaults.");
+            }
+
+            // UIData
+            if (UIData.HitIndicationData == null) { UIData.HitIndicationData = new ITEM_HitIndicationData(); fixes.Add("UIData.HitIndicationData was missing and has been set to defaults."); }
+            var hitDefaults = new ITEM_HitIndicationData();
+            var hit = UIData.HitIndicationData;
+            if (hit.hitDirectionBehaviour is < 0 or > 2)
+            {
+                fixes.Add($"UIData.HitIndicationData.hitDirectionBehaviour had invalid value {hit.hitDirectionBehaviour} and was reset to {hitDefaults.hitDirectionBehaviour}.");
+                hit.hitDirectionBehaviour = hitDefaults.hitDirectionBehaviour;
+            }
+            if (hit.hitDirectionStyle is < 0 or > 2)
+            {
+                fixes.Add($"UIData.HitIndicationData.hitDirectionStyle had invalid value {hit.hitDirectionStyle} and was reset to {hitDefaults.hitDirectionStyle}.");
+                hit.hitDirectionStyle = hitDefaults.hitDirectionStyle;
+            }
+            if (string.IsNullOrWhiteSpace(hit.hitDirectionIndicatorColorStr))
+            {
+                fixes.Add($"UIData.HitIndicationData.hitDirectionIndicatorColorStr was missing and was reset to {hitDefaults.hitDirectionIndicatorColorStr}.");
+                hit.hitDirectionIndicatorColorStr = hitDefaults.hitDirectionIndicatorColorStr;
+            }
 
             return fixes;
         }
@@ -1073,7 +1162,7 @@ namespace Day2eEditor
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            if (protectionCountStageOne != other.protectionCountStageTwo ||
+            if (protectionCountStageOne != other.protectionCountStageOne ||
                 protectionCountStageTwo != other.protectionCountStageTwo ||
                 protectionTime != other.protectionTime ||
                 protectionResetTime != other.protectionResetTime)
