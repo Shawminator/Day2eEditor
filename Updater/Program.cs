@@ -45,15 +45,27 @@ class Updater
         if (!restartOnly)
         {
             Console.WriteLine("Extracting update...");
-            using (FileStream fs = File.OpenRead(zipPath))
+            try
             {
-                using (ZipArchive zip = new ZipArchive(fs))
+                using (FileStream fs = File.OpenRead(zipPath))
                 {
-                    ExtractToDirectory(zip, appDirectory, true);
+                    using (ZipArchive zip = new ZipArchive(fs))
+                    {
+                        ExtractToDirectory(zip, appDirectory, true);
+                    }
                 }
+                File.Delete(zipPath);
+                Console.WriteLine("Update applied.");
             }
-            File.Delete(zipPath);
-            Console.WriteLine("Update applied.");
+            catch (Exception ex)
+            {
+                // Don't leave the user without an editor: report the problem, then restart it anyway.
+                // The zip is kept so the update can be retried.
+                Console.WriteLine($"Update failed: {ex.Message}");
+                Console.WriteLine("Some files may not have been updated. The editor will restart and try again next time.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
         }
         else
         {
