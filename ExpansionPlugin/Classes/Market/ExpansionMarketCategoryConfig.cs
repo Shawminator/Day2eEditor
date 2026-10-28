@@ -79,6 +79,11 @@ namespace ExpansionPlugin
             if (!string.IsNullOrWhiteSpace(ExpansionMarketCategory._path) && File.Exists(ExpansionMarketCategory._path))
             {
                 File.Delete(ExpansionMarketCategory._path);
+
+                // Remove folders left empty, e.g. after a whole category folder was deleted
+                string? folder = Path.GetDirectoryName(ExpansionMarketCategory._path);
+                if (!string.IsNullOrEmpty(folder))
+                    Helper.DeleteEmptyFoldersUpToBase(folder, BasePath);
             }
         }
         public bool needToSave()

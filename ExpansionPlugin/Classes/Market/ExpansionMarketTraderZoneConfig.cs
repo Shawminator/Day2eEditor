@@ -97,7 +97,8 @@ namespace ExpansionPlugin
                 {
                     item.CreatestockDictionary();
                     SaveItem(item);
-                    if (_clonedItems[id]._path != item._path)
+                    // Case-insensitive: on Windows a case-only rename is the same file, so deleting the "old" one would delete the new save
+                    if (!string.Equals(_clonedItems[id]._path, item._path, StringComparison.OrdinalIgnoreCase))
                     {
                         if (File.Exists(_clonedItems[id]._path))
                             File.Delete(_clonedItems[id]._path);

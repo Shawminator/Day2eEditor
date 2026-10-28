@@ -774,6 +774,7 @@ namespace ExpansionPlugin
                    CanBeLooted == other.CanBeLooted &&
                    LootDropOnDeath == other.LootDropOnDeath &&
                    UnlimitedReload == other.UnlimitedReload &&
+                   CanSpawnInContaminatedArea == other.CanSpawnInContaminatedArea &&
                    SniperProneDistanceThreshold == other.SniperProneDistanceThreshold &&
                    AccuracyMin == other.AccuracyMin &&
                    AccuracyMax == other.AccuracyMax &&
@@ -825,6 +826,7 @@ namespace ExpansionPlugin
                 CanBeLooted = this.CanBeLooted,
                 LootDropOnDeath = this.LootDropOnDeath,
                 UnlimitedReload = this.UnlimitedReload,
+                CanSpawnInContaminatedArea = this.CanSpawnInContaminatedArea,
                 SniperProneDistanceThreshold = this.SniperProneDistanceThreshold,
                 AccuracyMin = this.AccuracyMin,
                 AccuracyMax = this.AccuracyMax,

@@ -3044,9 +3044,18 @@ namespace ExpansionPlugin
         {
             savefiles();
         }
-        public void savefiles(bool updated = false)
+        public bool savefiles(bool updated = false)
         {
-            var savedFiles = _expansionManager.Save();
+            IEnumerable<string> savedFiles;
+            try
+            {
+                savedFiles = _expansionManager.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Saving failed:\n\n{ex.Message}", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
             Console.WriteLine("Saved files:");
             foreach (var file in savedFiles)
             {
@@ -3056,6 +3065,7 @@ namespace ExpansionPlugin
             {
                 ShowSavedFilesMessage(savedFiles);
             }
+            return true;
         }
         private void ShowSavedFilesMessage(IEnumerable<string> files)
         {
@@ -3099,7 +3109,9 @@ namespace ExpansionPlugin
                 DialogResult dialogResult = MessageBox.Show("You have Unsaved Changes, do you wish to save", "Unsaved Changes found", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    savefiles();
+                    // Keep the form open if the save failed, so the changes aren't lost
+                    if (!savefiles())
+                        e.Cancel = true;
                 }
             }
         }
@@ -11720,7 +11732,17 @@ namespace ExpansionPlugin
 
             try
             {
-                if (Directory.Exists(fullPath))
+                // Mark the categories in this folder for deletion instead of deleting files straight away,
+                // so the delete happens on save, is queued for the server, and the categories leave memory too
+                string[] folderParts = relativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+                var categoryConfig = _expansionManager.ExpansionMarketCategoryConfig;
+                foreach (var category in categoryConfig.Items.Where(c => IsInFolder(c.FolderParts, folderParts)).ToList())
+                {
+                    categoryConfig.RemoveFile(category);
+                }
+
+                // A folder with no files in it (for example one just added) has nothing to save, so remove it now
+                if (Directory.Exists(fullPath) && !Directory.EnumerateFiles(fullPath, "*", SearchOption.AllDirectories).Any())
                 {
                     Directory.Delete(fullPath, recursive: true);
                 }
@@ -11734,6 +11756,18 @@ namespace ExpansionPlugin
                                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+        }
+        private static bool IsInFolder(List<string> categoryFolderParts, string[] folderParts)
+        {
+            if (categoryFolderParts == null || categoryFolderParts.Count < folderParts.Length)
+                return false;
+
+            for (int i = 0; i < folderParts.Length; i++)
+            {
+                if (!string.Equals(categoryFolderParts[i], folderParts[i], StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            return true;
         }
         private void moveCategoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
