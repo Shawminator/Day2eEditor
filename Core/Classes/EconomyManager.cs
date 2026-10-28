@@ -348,6 +348,21 @@ namespace Day2eEditor
             RebuildWarnings();
             return savedFiles;
         }
+        // Saves one config straight away (used by edits that must be written immediately)
+        // and queues the written files for upload, as Save() does for everything
+        public IEnumerable<string> SaveConfig(IConfigLoader config)
+        {
+            if (config == null)
+                return Array.Empty<string>();
+
+            var savedFiles = config.Save().ToList();
+            if (savedFiles.Count > 0)
+            {
+                AppServices.GetRequired<UploadTrackerService>().MarkForUpload(
+                    AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectName, savedFiles);
+            }
+            return savedFiles;
+        }
         public bool needToSave()
         {
             bool needtosave = false;
