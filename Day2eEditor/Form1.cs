@@ -10,7 +10,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Day2eEditor
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form, IHostShell
     {
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
@@ -59,7 +59,10 @@ namespace Day2eEditor
             slidePanel.Width = 30;
             hidden = true;
             ChangeToolstrip = activeProject;
+            AppServices.Register<IHostShell>(this);
         }
+
+        public void SetStatusText(string text) => ChangeToolstrip = text;
         void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;

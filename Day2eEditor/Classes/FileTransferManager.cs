@@ -10,32 +10,7 @@ using System.Xml.Linq;
 
 namespace Day2eEditor
 {
-    public class SyncItem
-    {
-        public string RelativePath { get; set; } = string.Empty;
-        public string LocalPath { get; set; } = string.Empty;
-        public string RemotePath { get; set; } = string.Empty;
-
-        public DateTime LocalModified { get; set; }
-        public DateTime RemoteModified { get; set; }
-
-        public PendingServerAction Action { get; set; }
-    }
-    public sealed class RemoteItem
-    {
-        public string Name { get; set; } = string.Empty;
-        public string FullPath { get; set; } = string.Empty;
-        public bool IsDirectory { get; set; }
-        public long Size { get; set; }
-        public DateTime Modified { get; set; }
-    }
-    public class SingleFileInfo
-    {
-        public string FullPath { get; set; } = string.Empty;
-        public long Size { get; set; }
-        public DateTime Modified { get; set; }
-    }
-    public sealed class FileTransferManager
+    public sealed class FileTransferManager : IFileTransferService
     {
         // -----------------------------
         // PUBLIC API

@@ -1,4 +1,4 @@
-using Day2eEditor;
+﻿using Day2eEditor;
 using System.Diagnostics;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -84,7 +84,7 @@ namespace ProjectsPlugin
             Application.DoEvents();
             if (_clickedItem?.Tag is PluginInfo plugin)
             {
-                await AppServices.GetRequired<UpdateManager>().DownloadNewPluginAsync(plugin);
+                await AppServices.GetRequired<IPluginInstaller>().DownloadNewPluginAsync(plugin);
                 this.Cursor = Cursors.Default;
                 MessageBox.Show($"{plugin.Name} Downloaded.", "Plugin Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -92,7 +92,7 @@ namespace ProjectsPlugin
             }
             else if (_clickedItem?.Tag is MapAddonInfo mapaddoninfo)
             {
-                await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddoninfo);
+                await AppServices.GetRequired<IPluginInstaller>().DownloadMapAddonAsync(mapaddoninfo);
                 this.Cursor = Cursors.Default;
                 MessageBox.Show($"{mapaddoninfo.Name} Downloaded.", "MapAddon Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 _clickedItem.SubItems.Add("Installed");
@@ -328,7 +328,7 @@ namespace ProjectsPlugin
                 string XYZPath = Path.Combine(appDirectory, "MapAddons", mapaddon.MapInfo.MapXYZ);
                 if (!File.Exists(imagePath) || !File.Exists(XYZPath))
                 {
-                    await AppServices.GetRequired<UpdateManager>().DownloadMapAddonAsync(mapaddon);
+                    await AppServices.GetRequired<IPluginInstaller>().DownloadMapAddonAsync(mapaddon);
                     _clickedItem.SubItems.Add("Installed");
                 }
             }
@@ -418,10 +418,7 @@ namespace ProjectsPlugin
             _ProjectManager.SetCurrentProject(selected);
             MessageBox.Show($"{selected.ProjectName} is now the active project.");
 
-            if (this.MdiParent is Form1 mainForm)
-            {
-                mainForm.toolStripStatusLabel1.Text = $"Active Project:{selected.ProjectName}";
-            }
+            AppServices.GetRequired<IHostShell>().SetStatusText($"Active Project:{selected.ProjectName}");
         }
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
@@ -441,10 +438,7 @@ namespace ProjectsPlugin
                     AppServices.GetRequired<UploadTrackerService>().RemoveProject(selected.ProjectName);
                     _ProjectManager.RemoveProject(selected);
                     groupBox2.Visible = false;
-                    if (this.MdiParent is Form1 mainForm)
-                    {
-                        mainForm.toolStripStatusLabel1.Text = $"Active Project:None Selected";
-                    }
+                    AppServices.GetRequired<IHostShell>().SetStatusText($"Active Project:None Selected");
                     MessageBox.Show("Project and files Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
                 else if (result == DialogResult.No)
@@ -452,10 +446,7 @@ namespace ProjectsPlugin
                     AppServices.GetRequired<UploadTrackerService>().RemoveProject(selected.ProjectName);
                     _ProjectManager.RemoveProject(selected);
                     groupBox2.Visible = false;
-                    if (this.MdiParent is Form1 mainForm)
-                    {
-                        mainForm.toolStripStatusLabel1.Text = $"Active Project:None Selected";
-                    }
+                    AppServices.GetRequired<IHostShell>().SetStatusText($"Active Project:None Selected");
                     MessageBox.Show("Project Removed....", "Done", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
                 else if (result == DialogResult.Cancel)

@@ -25,6 +25,7 @@ namespace Day2eEditor
                 MessageBox.Show($"Update failed:\n{ex.Message}", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             AppServices.Register(updateManager);
+            AppServices.Register<IPluginInstaller>(updateManager);
 
            
 
@@ -50,7 +51,7 @@ namespace Day2eEditor
 
             //Register Filetransfermanager
             var fileTransfer = new FileTransferManager();
-            AppServices.Register(fileTransfer);
+            AppServices.Register<IFileTransferService>(fileTransfer);
 
             // EconomyManager
             Console.WriteLine("[Load] Loading Economy Manager");

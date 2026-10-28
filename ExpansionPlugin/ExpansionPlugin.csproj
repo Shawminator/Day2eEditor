@@ -237,8 +237,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Day2eEditor\Day2eEditor.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreUI\CoreUI.csproj">
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\EconomyPlugin\EconomyPlugin.csproj" />
   </ItemGroup>
 

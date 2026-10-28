@@ -1,6 +1,5 @@
 using Core;
 using Day2eEditor;
-using Org.BouncyCastle.Pkcs;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Security.Policy;

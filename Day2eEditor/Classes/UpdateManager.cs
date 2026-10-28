@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Day2eEditor
 {
-    public class UpdateManager
+    public class UpdateManager : IPluginInstaller
     {
         private readonly string _mapAddonsManifestPath;
         private readonly string _pluginsDirectory;

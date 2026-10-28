@@ -47,7 +47,7 @@ namespace Day2eEditor
         {
             listView1.Items.Clear();
 
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
 
             var items = ftp.ListDirectory(AppServices.GetRequired<ProjectManager>().CurrentProject.ServerSettings,"/");
 
@@ -84,7 +84,7 @@ namespace Day2eEditor
             {
                 CurrentRemoteDirectory = remoteItem.FullPath;
 
-                var ftp = AppServices.GetRequired<FileTransferManager>();
+                var ftp = AppServices.GetRequired<IFileTransferService>();
 
                 listView1.Items.Clear();
 

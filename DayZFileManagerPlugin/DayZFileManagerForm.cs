@@ -1,5 +1,4 @@
 using Day2eEditor;
-using Renci.SshNet;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
 
@@ -123,7 +122,7 @@ namespace DayZFileManagerPlugin
         }
         private void uploadAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
             var project = _projectManager.CurrentProject;
 
 
@@ -242,7 +241,7 @@ namespace DayZFileManagerPlugin
         }
         private void uploadCheckedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
             var project = _projectManager.CurrentProject;
 
             if (pendingListView.CheckedItems.Count == 0)
@@ -362,7 +361,7 @@ namespace DayZFileManagerPlugin
         private void TestConnectionButton_Click(object sender, EventArgs e)
         {
 
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
 
             bool ok = ftp.TestConnection(_projectManager.CurrentProject.ServerSettings);
             if (ok)
@@ -404,7 +403,7 @@ namespace DayZFileManagerPlugin
             if (result != DialogResult.Yes)
                 return;
 
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
             string profileDir = _projectManager.CurrentProject.ProfileName;
             string mpMissionDirectory = _projectManager.CurrentProject.MpMissionPath;
 
@@ -452,7 +451,7 @@ namespace DayZFileManagerPlugin
             if (result != DialogResult.Yes)
                 return;
 
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
             string profileDir = _projectManager.CurrentProject.ProfileName;
             string profile = Path.GetFileName(profileDir);
             string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
@@ -473,7 +472,7 @@ namespace DayZFileManagerPlugin
             if (result != DialogResult.Yes)
                 return;
 
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
             string profileDir = _projectManager.CurrentProject.ProfileName;
             string profile = Path.GetFileName(profileDir);
             string localProfilePath = Path.Combine(_projectManager.CurrentProject.ProjectRoot, profile);
@@ -509,7 +508,7 @@ namespace DayZFileManagerPlugin
         }
         private void checkForChangesOnServerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ftp = AppServices.GetRequired<FileTransferManager>();
+            var ftp = AppServices.GetRequired<IFileTransferService>();
             string profileDir = _projectManager.CurrentProject.ProfileName;
             string mpMissionDirectory = _projectManager.CurrentProject.MpMissionPath;
 
