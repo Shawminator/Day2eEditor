@@ -125,21 +125,33 @@ namespace Day2eEditor
 
             Process.Start(psi);
         }
+        // "dayzOffline.chernarusplus" -> "chernarusplus"; a name without a dot is used as is
+        public static string GetMapNameFromMissionPath(string mpmissionpath)
+        {
+            if (string.IsNullOrWhiteSpace(mpmissionpath))
+                return string.Empty;
+
+            string name = Path.GetFileName(mpmissionpath.TrimEnd('/', '\\'));
+            int dot = name.IndexOf('.');
+            return dot >= 0 ? name.Substring(dot + 1) : name;
+        }
         public static int Getmapsizefrommissionpath(string mpmissionpath)
         {
-            string[] MapSizeList = File.ReadAllLines("Data/MapSizes.txt");
-            Dictionary<string, int> maplist = new Dictionary<string, int>();
-            foreach (string line in MapSizeList)
+            const string mapSizesPath = "Data/MapSizes.txt";
+            if (!File.Exists(mapSizesPath))
+                return 0;
+
+            var maplist = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            foreach (string line in File.ReadAllLines(mapSizesPath))
             {
-                maplist.Add(line.Split(':')[0], Convert.ToInt32(line.Split(':')[1]));
+                string[] parts = line.Split(':');
+                if (parts.Length != 2 || !int.TryParse(parts[1].Trim(), out int size))
+                    continue;
+
+                maplist[parts[0].Trim()] = size;
             }
-            string currentmap = mpmissionpath.ToLower().Split('.')[1];
-            int size;
-            if (maplist.TryGetValue(currentmap, out size))
-            {
-                return size;
-            }
-            return 0;
+
+            return maplist.TryGetValue(GetMapNameFromMissionPath(mpmissionpath), out int mapSize) ? mapSize : 0;
         }
         public static void SetStringValue(object src, string mytype, string myvalue)
         {
@@ -200,13 +212,22 @@ namespace Day2eEditor
             if (string.IsNullOrWhiteSpace(encryptedBase64))
                 return string.Empty;
 
-            var encrypted = Convert.FromBase64String(encryptedBase64);
-            var decrypted = ProtectedData.Unprotect(
-                encrypted,
-                optionalEntropy: null,
-                DataProtectionScope.CurrentUser);
+            try
+            {
+                var encrypted = Convert.FromBase64String(encryptedBase64);
+                var decrypted = ProtectedData.Unprotect(
+                    encrypted,
+                    optionalEntropy: null,
+                    DataProtectionScope.CurrentUser);
 
-            return Encoding.UTF8.GetString(decrypted);
+                return Encoding.UTF8.GetString(decrypted);
+            }
+            catch (Exception ex) when (ex is CryptographicException or FormatException)
+            {
+                // Encrypted on another PC or Windows account: the password has to be entered again
+                Console.WriteLine($"[WARN] Could not decrypt the saved server password: {ex.Message}");
+                return string.Empty;
+            }
         }
         public static bool ListEquals<T>(IList<T>? a, IList<T>? b)
         {

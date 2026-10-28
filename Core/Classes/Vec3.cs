@@ -48,9 +48,9 @@ namespace Day2eEditor
         public Vec3(string position)
         {
             string[] possplit = position.Split(' ');
-            X = Convert.ToSingle(possplit[0]);
-            Y = Convert.ToSingle(possplit[1]);
-            Z = Convert.ToSingle(possplit[2]);
+            X = Convert.ToSingle(possplit[0], CultureInfo.InvariantCulture);
+            Y = Convert.ToSingle(possplit[1], CultureInfo.InvariantCulture);
+            Z = Convert.ToSingle(possplit[2], CultureInfo.InvariantCulture);
         }
         public Vec3() { }
         public static Vec3 Parse(string input)
@@ -150,9 +150,9 @@ namespace Day2eEditor
             {
                 string[] posrotstring = Stuff.Split('|');
                 string[] possplit = posrotstring[0].Split(' ');
-                Position = new Vec3(Convert.ToSingle(possplit[0]), Convert.ToSingle(possplit[1]), Convert.ToSingle(possplit[2]));
+                Position = new Vec3(Convert.ToSingle(possplit[0], CultureInfo.InvariantCulture), Convert.ToSingle(possplit[1], CultureInfo.InvariantCulture), Convert.ToSingle(possplit[2], CultureInfo.InvariantCulture));
                 string[] rotsplit = posrotstring[1].Split(' ');
-                Rotation = new Vec3(Convert.ToSingle(rotsplit[0]), Convert.ToSingle(rotsplit[1]), Convert.ToSingle(rotsplit[2]));
+                Rotation = new Vec3(Convert.ToSingle(rotsplit[0], CultureInfo.InvariantCulture), Convert.ToSingle(rotsplit[1], CultureInfo.InvariantCulture), Convert.ToSingle(rotsplit[2], CultureInfo.InvariantCulture));
                 rotspecified = true;
             }
             else
@@ -161,13 +161,13 @@ namespace Day2eEditor
                 {
                     string[] posrotstring = Stuff.Split('|');
                     string[] possplit = posrotstring[0].Split(' ');
-                    Position = new Vec3(Convert.ToSingle(possplit[0]), Convert.ToSingle(possplit[1]), Convert.ToSingle(possplit[2]));
+                    Position = new Vec3(Convert.ToSingle(possplit[0], CultureInfo.InvariantCulture), Convert.ToSingle(possplit[1], CultureInfo.InvariantCulture), Convert.ToSingle(possplit[2], CultureInfo.InvariantCulture));
                     Rotation = new Vec3(0m, 0m, 0m);
                 }
                 else
                 {
                     string[] possplit = Stuff.Split(' ');
-                    Position = new Vec3(Convert.ToSingle(possplit[0]), Convert.ToSingle(possplit[1]), Convert.ToSingle(possplit[2]));
+                    Position = new Vec3(Convert.ToSingle(possplit[0], CultureInfo.InvariantCulture), Convert.ToSingle(possplit[1], CultureInfo.InvariantCulture), Convert.ToSingle(possplit[2], CultureInfo.InvariantCulture));
                     Rotation = new Vec3(0m, 0m, 0m);
                 }
             }

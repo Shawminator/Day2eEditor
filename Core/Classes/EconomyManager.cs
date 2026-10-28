@@ -54,11 +54,15 @@ namespace Day2eEditor
         }
         public void SetProject(Project project)
         {
-            basePath = Path.Combine(project.ProjectRoot, "mpmissions", project.MpMissionPath);
-            profilePath = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, AppServices.GetRequired<ProjectManager>().CurrentProject.ProfileName);
+            // Drop everything from the previous project so nothing can be saved into the wrong one
+            ResetState();
 
-            if (IsDirectoryEmpty(basePath))
+            basePath = Path.Combine(project.ProjectRoot, "mpmissions", project.MpMissionPath);
+            profilePath = Path.Combine(project.ProjectRoot, project.ProfileName);
+
+            if (!Directory.Exists(basePath) || IsDirectoryEmpty(basePath))
             {
+                Console.WriteLine($"[Economy Manager] Mission folder is missing or empty: {basePath}");
                 return;
             }
 
@@ -90,6 +94,38 @@ namespace Day2eEditor
             _paths["UniversalAttachmentDatabase"] = Path.Combine(profilePath, "UniversalAttachments.json");
 
             LoadFiles();
+        }
+        private void ResetState()
+        {
+            HasErrors = false;
+            Errors.Clear();
+            _paths.Clear();
+            ClearWarnings();
+            AttachmentDatabase = null;
+            _attachmentLookup.Clear();
+
+            eonomyCoreConfig = null;
+            cfglimitsdefinitionConfig = null;
+            cfglimitsdefinitionuserConfig = null;
+            cfgenvironmentConfig = null;
+            cfgeventspawnsConfig = null;
+            cfgeventgroupsConfig = null;
+            economyConfig = null;
+            globalsConfig = null;
+            TypesConfig = null;
+            eventsConfig = null;
+            cfgspawnabletypesConfig = null;
+            cfgrandompresetsConfig = null;
+            CFGGameplayConfig = null;
+            cfgeffectareaConfig = null;
+            cfgundergroundtriggersConfig = null;
+            cfgplayerspawnpointsConfig = null;
+            cfgweatherConfig = null;
+            cfgignorelistConfig = null;
+            mapgroupposConfig = null;
+            territoriesConfig = null;
+            mapgroupprotoConfig = null;
+            scriptfilesConfig = null;
         }
         private void LoadConfigWithErrorReport(string name, IConfigLoader config)
         {
@@ -208,7 +244,20 @@ namespace Day2eEditor
             Console.WriteLine($"\n**** Starting load of Universal Attachment Database If Available ****");
             LoadUniversalAttachmentDatabase();
 
-            Save();
+            // Only write load-time fixes when everything loaded cleanly, so a file that failed
+            // to parse is never overwritten with defaults
+            if (!HasErrors)
+            {
+                try
+                {
+                    Save();
+                }
+                catch (Exception ex)
+                {
+                    // The unsaved fixes stay dirty, so the user is prompted to save them later
+                    Console.WriteLine($"[Economy Manager] Could not write load-time fixes: {ex.Message}");
+                }
+            }
 
             RebuildWarnings();
         }

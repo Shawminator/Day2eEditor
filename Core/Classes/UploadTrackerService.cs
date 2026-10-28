@@ -72,10 +72,11 @@ namespace Day2eEditor
 
                 var action = DetermineAction(filePath);
                 var displayFileName = Path.GetFileName(filePath);
+                var normalizedPath = NormalizePath(filePath);
 
+                // Match on the full path so files with the same name in different folders stay separate
                 var existing = list.FirstOrDefault(x =>
-                    string.Equals(x.FullPath, filePath, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(x.FileName, displayFileName, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(NormalizePath(x.FullPath), normalizedPath, StringComparison.OrdinalIgnoreCase));
 
                 if (existing != null)
                 {
@@ -237,6 +238,21 @@ namespace Day2eEditor
             {
                 _pendingFiles[projectName] = new List<PendingUploadFile>();
             }
+        }
+
+        public void RenameProject(string oldName, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName))
+                return;
+
+            if (!_pendingFiles.Remove(oldName, out var list))
+                list = new List<PendingUploadFile>();
+
+            foreach (var file in list)
+                file.ProjectName = newName;
+
+            _pendingFiles[newName] = list;
+            Save();
         }
 
         public void RemoveProject(string projectName)

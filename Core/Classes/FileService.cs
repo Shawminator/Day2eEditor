@@ -221,6 +221,8 @@ public class FileService
         catch (Exception ex)
         {
             Console.WriteLine($"[SaveJson] Failed to write JSON: {ex.Message}");
+            // Rethrow so callers don't treat the file as saved
+            throw new IOException($"Failed to save {path}: {ex.Message}", ex);
         }
     }
     public T LoadOrCreateXml<T>(
@@ -280,12 +282,19 @@ public class FileService
                 OmitXmlDeclaration = false
             };
 
-            using var writer = XmlWriter.Create(path, settings);
-            serializer.Serialize(writer, data, ns);
+            // Serialize in memory first so a failure can't leave a half-written file
+            using var buffer = new MemoryStream();
+            using (var writer = XmlWriter.Create(buffer, settings))
+            {
+                serializer.Serialize(writer, data, ns);
+            }
+            File.WriteAllBytes(path, buffer.ToArray());
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[SaveXml] Failed to write XML: {ex.Message}");
+            // Rethrow so callers don't treat the file as saved
+            throw new IOException($"Failed to save {path}: {ex.Message}", ex);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace Day2eEditor
@@ -375,8 +376,9 @@ namespace Day2eEditor
             {
                 return type switch
                 {
-                    0 => int.TryParse(value, out var intVal) ? intVal : 0,
-                    1 => decimal.TryParse(value, out var decVal) ? decVal : 0m,
+                    // globals.xml always uses '.' decimals, whatever the PC's regional settings
+                    0 => int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var intVal) ? intVal : 0,
+                    1 => decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var decVal) ? decVal : 0m,
                     _ => value
                 };
             }
@@ -385,10 +387,10 @@ namespace Day2eEditor
                 switch (type)
                 {
                     case 0:
-                        this.value = Convert.ToInt32(value).ToString();
+                        this.value = Convert.ToInt32(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
                         break;
                     case 1:
-                        this.value = Convert.ToDecimal(value).ToString();
+                        this.value = Convert.ToDecimal(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
                         break;
                     default:
                         this.value = value?.ToString();

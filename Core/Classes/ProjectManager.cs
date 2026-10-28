@@ -33,10 +33,29 @@ namespace Day2eEditor
         {
             _store.Projects.Remove(project);
 
+            // Clear rather than pick another project: the economy data loaded is for the removed one
             if (_store.ActiveProject == project.ProjectName)
-                _store.ActiveProject = _store.Projects.FirstOrDefault()?.ProjectName ?? string.Empty;
+                _store.ActiveProject = string.Empty;
 
             Save();
+        }
+        public bool RenameProject(Project project, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName) || project.ProjectName == newName)
+                return true;
+
+            if (_store.Projects.Any(p => p != project && p.ProjectName.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+                return false;
+
+            string oldName = project.ProjectName;
+            project.ProjectName = newName;
+
+            if (_store.ActiveProject == oldName)
+                _store.ActiveProject = newName;
+
+            AppServices.GetRequired<UploadTrackerService>().RenameProject(oldName, newName);
+            SortProjects();
+            return true;
         }
         public void SetCurrentProject(Project project)
         {

@@ -99,7 +99,8 @@ namespace Day2eEditor
                 if (!AreEqual(item, baseline))
                 {
                     SaveItem(item);
-                    if (GetItemFilePath(_clonedItems[id]) != GetItemFilePath(item))
+                    // Case-insensitive: on Windows a case-only rename is the same file, so deleting the "old" one would delete the new save
+                    if (!string.Equals(GetItemFilePath(_clonedItems[id]), GetItemFilePath(item), StringComparison.OrdinalIgnoreCase))
                     {
                         if (File.Exists(GetItemFilePath(_clonedItems[id])))
                             File.Delete(GetItemFilePath(_clonedItems[id]));
