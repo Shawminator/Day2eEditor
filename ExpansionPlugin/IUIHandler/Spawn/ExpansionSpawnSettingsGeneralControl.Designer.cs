@@ -38,6 +38,8 @@
             BackgroundImagePathTB = new TextBox();
             darkLabel161 = new Label();
             TerritoryRespawnCooldownNUD = new NumericUpDown();
+            label7 = new Label();
+            UseLoadoutsCB = new CheckBox();
             SpawnCreateDeathMarkerCB = new CheckBox();
             PunishMultispawnCB = new CheckBox();
             darkLabel133 = new Label();
@@ -76,6 +78,8 @@
             groupBox44.Controls.Add(BackgroundImagePathTB);
             groupBox44.Controls.Add(darkLabel161);
             groupBox44.Controls.Add(TerritoryRespawnCooldownNUD);
+            groupBox44.Controls.Add(UseLoadoutsCB);
+            groupBox44.Controls.Add(label7);
             groupBox44.Controls.Add(SpawnCreateDeathMarkerCB);
             groupBox44.Controls.Add(PunishMultispawnCB);
             groupBox44.Controls.Add(darkLabel133);
@@ -98,7 +102,7 @@
             groupBox44.Margin = new Padding(4, 3, 4, 3);
             groupBox44.Name = "groupBox44";
             groupBox44.Padding = new Padding(4, 3, 4, 3);
-            groupBox44.Size = new Size(340, 440);
+            groupBox44.Size = new Size(340, 470);
             groupBox44.TabIndex = 4;
             groupBox44.TabStop = false;
             groupBox44.Text = "Spawn Settings";
@@ -107,7 +111,7 @@
             // 
             label6.AutoSize = true;
             label6.ForeColor = Color.FromArgb(220, 220, 220);
-            label6.Location = new Point(14, 385);
+            label6.Location = new Point(14, 415);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
             label6.Size = new Size(159, 15);
@@ -118,7 +122,7 @@
             // 
             label5.AutoSize = true;
             label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(14, 355);
+            label5.Location = new Point(14, 385);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new Size(115, 15);
@@ -129,7 +133,7 @@
             // 
             label4.AutoSize = true;
             label4.ForeColor = Color.FromArgb(220, 220, 220);
-            label4.Location = new Point(14, 265);
+            label4.Location = new Point(14, 295);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new Size(108, 15);
@@ -140,7 +144,7 @@
             // 
             label3.AutoSize = true;
             label3.ForeColor = Color.FromArgb(220, 220, 220);
-            label3.Location = new Point(14, 175);
+            label3.Location = new Point(14, 205);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.Size = new Size(155, 15);
@@ -173,7 +177,7 @@
             // 
             BackgroundImagePathTB.BackColor = Color.FromArgb(60, 63, 65);
             BackgroundImagePathTB.ForeColor = SystemColors.Control;
-            BackgroundImagePathTB.Location = new Point(14, 403);
+            BackgroundImagePathTB.Location = new Point(14, 433);
             BackgroundImagePathTB.Margin = new Padding(4, 3, 4, 3);
             BackgroundImagePathTB.Name = "BackgroundImagePathTB";
             BackgroundImagePathTB.Size = new Size(307, 23);
@@ -184,7 +188,7 @@
             // 
             darkLabel161.AutoSize = true;
             darkLabel161.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel161.Location = new Point(14, 235);
+            darkLabel161.Location = new Point(14, 265);
             darkLabel161.Margin = new Padding(4, 0, 4, 0);
             darkLabel161.Name = "darkLabel161";
             darkLabel161.Size = new Size(159, 15);
@@ -195,7 +199,7 @@
             // 
             TerritoryRespawnCooldownNUD.BackColor = Color.FromArgb(60, 63, 65);
             TerritoryRespawnCooldownNUD.ForeColor = SystemColors.Control;
-            TerritoryRespawnCooldownNUD.Location = new Point(190, 233);
+            TerritoryRespawnCooldownNUD.Location = new Point(190, 263);
             TerritoryRespawnCooldownNUD.Margin = new Padding(4, 3, 4, 3);
             TerritoryRespawnCooldownNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             TerritoryRespawnCooldownNUD.Name = "TerritoryRespawnCooldownNUD";
@@ -205,10 +209,32 @@
             TerritoryRespawnCooldownNUD.TextAlign = HorizontalAlignment.Center;
             TerritoryRespawnCooldownNUD.ValueChanged += TerritoryRespawnCooldownNUD_ValueChanged;
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.ForeColor = Color.FromArgb(220, 220, 220);
+            label7.Location = new Point(14, 85);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(84, 15);
+            label7.TabIndex = 25;
+            label7.Text = "Use Loadouts";
+            // 
+            // UseLoadoutsCB
+            // 
+            UseLoadoutsCB.AutoSize = true;
+            UseLoadoutsCB.Location = new Point(190, 86);
+            UseLoadoutsCB.Margin = new Padding(4, 3, 4, 3);
+            UseLoadoutsCB.Name = "UseLoadoutsCB";
+            UseLoadoutsCB.Size = new Size(15, 14);
+            UseLoadoutsCB.TabIndex = 4;
+            UseLoadoutsCB.UseVisualStyleBackColor = true;
+            UseLoadoutsCB.CheckedChanged += UseLoadoutsCB_CheckedChanged;
+            // 
             // SpawnCreateDeathMarkerCB
             // 
             SpawnCreateDeathMarkerCB.AutoSize = true;
-            SpawnCreateDeathMarkerCB.Location = new Point(190, 356);
+            SpawnCreateDeathMarkerCB.Location = new Point(190, 386);
             SpawnCreateDeathMarkerCB.Margin = new Padding(4, 3, 4, 3);
             SpawnCreateDeathMarkerCB.Name = "SpawnCreateDeathMarkerCB";
             SpawnCreateDeathMarkerCB.Size = new Size(15, 14);
@@ -220,7 +246,7 @@
             // PunishMultispawnCB
             // 
             PunishMultispawnCB.AutoSize = true;
-            PunishMultispawnCB.Location = new Point(190, 266);
+            PunishMultispawnCB.Location = new Point(190, 296);
             PunishMultispawnCB.Margin = new Padding(4, 3, 4, 3);
             PunishMultispawnCB.Name = "PunishMultispawnCB";
             PunishMultispawnCB.Size = new Size(15, 14);
@@ -233,7 +259,7 @@
             // 
             darkLabel133.AutoSize = true;
             darkLabel133.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel133.Location = new Point(14, 325);
+            darkLabel133.Location = new Point(14, 355);
             darkLabel133.Margin = new Padding(4, 0, 4, 0);
             darkLabel133.Name = "darkLabel133";
             darkLabel133.Size = new Size(104, 15);
@@ -244,7 +270,7 @@
             // 
             PunishTimeframeNUD.BackColor = Color.FromArgb(60, 63, 65);
             PunishTimeframeNUD.ForeColor = SystemColors.Control;
-            PunishTimeframeNUD.Location = new Point(190, 323);
+            PunishTimeframeNUD.Location = new Point(190, 353);
             PunishTimeframeNUD.Margin = new Padding(4, 3, 4, 3);
             PunishTimeframeNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             PunishTimeframeNUD.Name = "PunishTimeframeNUD";
@@ -258,7 +284,7 @@
             // 
             darkLabel160.AutoSize = true;
             darkLabel160.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel160.Location = new Point(14, 295);
+            darkLabel160.Location = new Point(14, 325);
             darkLabel160.Margin = new Padding(4, 0, 4, 0);
             darkLabel160.Name = "darkLabel160";
             darkLabel160.Size = new Size(101, 15);
@@ -269,7 +295,7 @@
             // 
             PunishCooldownNUD.BackColor = Color.FromArgb(60, 63, 65);
             PunishCooldownNUD.ForeColor = SystemColors.Control;
-            PunishCooldownNUD.Location = new Point(190, 293);
+            PunishCooldownNUD.Location = new Point(190, 323);
             PunishCooldownNUD.Margin = new Padding(4, 3, 4, 3);
             PunishCooldownNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             PunishCooldownNUD.Name = "PunishCooldownNUD";
@@ -283,7 +309,7 @@
             // 
             RespawnCooldownLbl.AutoSize = true;
             RespawnCooldownLbl.ForeColor = Color.FromArgb(220, 220, 220);
-            RespawnCooldownLbl.Location = new Point(14, 205);
+            RespawnCooldownLbl.Location = new Point(14, 235);
             RespawnCooldownLbl.Margin = new Padding(4, 0, 4, 0);
             RespawnCooldownLbl.Name = "RespawnCooldownLbl";
             RespawnCooldownLbl.Size = new Size(112, 15);
@@ -294,7 +320,7 @@
             // 
             RespawnCooldownNUD.BackColor = Color.FromArgb(60, 63, 65);
             RespawnCooldownNUD.ForeColor = SystemColors.Control;
-            RespawnCooldownNUD.Location = new Point(190, 203);
+            RespawnCooldownNUD.Location = new Point(190, 233);
             RespawnCooldownNUD.Margin = new Padding(4, 3, 4, 3);
             RespawnCooldownNUD.Maximum = new decimal(new int[] { 200000, 0, 0, 0 });
             RespawnCooldownNUD.Name = "RespawnCooldownNUD";
@@ -307,7 +333,7 @@
             // EnableRespawnCooldownsCB
             // 
             EnableRespawnCooldownsCB.AutoSize = true;
-            EnableRespawnCooldownsCB.Location = new Point(190, 176);
+            EnableRespawnCooldownsCB.Location = new Point(190, 206);
             EnableRespawnCooldownsCB.Margin = new Padding(4, 3, 4, 3);
             EnableRespawnCooldownsCB.Name = "EnableRespawnCooldownsCB";
             EnableRespawnCooldownsCB.Size = new Size(15, 14);
@@ -320,7 +346,7 @@
             // 
             darkLabel136.AutoSize = true;
             darkLabel136.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel136.Location = new Point(14, 145);
+            darkLabel136.Location = new Point(14, 175);
             darkLabel136.Margin = new Padding(4, 0, 4, 0);
             darkLabel136.Name = "darkLabel136";
             darkLabel136.Size = new Size(107, 15);
@@ -331,7 +357,7 @@
             // 
             SpawnWaterValueNUD.BackColor = Color.FromArgb(60, 63, 65);
             SpawnWaterValueNUD.ForeColor = SystemColors.Control;
-            SpawnWaterValueNUD.Location = new Point(190, 143);
+            SpawnWaterValueNUD.Location = new Point(190, 173);
             SpawnWaterValueNUD.Margin = new Padding(4, 3, 4, 3);
             SpawnWaterValueNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             SpawnWaterValueNUD.Name = "SpawnWaterValueNUD";
@@ -345,7 +371,7 @@
             // 
             darkLabel135.AutoSize = true;
             darkLabel135.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel135.Location = new Point(14, 115);
+            darkLabel135.Location = new Point(14, 145);
             darkLabel135.Margin = new Padding(4, 0, 4, 0);
             darkLabel135.Name = "darkLabel135";
             darkLabel135.Size = new Size(112, 15);
@@ -356,7 +382,7 @@
             // 
             SpawnEnergyValueNUD.BackColor = Color.FromArgb(60, 63, 65);
             SpawnEnergyValueNUD.ForeColor = SystemColors.Control;
-            SpawnEnergyValueNUD.Location = new Point(190, 113);
+            SpawnEnergyValueNUD.Location = new Point(190, 143);
             SpawnEnergyValueNUD.Margin = new Padding(4, 3, 4, 3);
             SpawnEnergyValueNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             SpawnEnergyValueNUD.Name = "SpawnEnergyValueNUD";
@@ -370,7 +396,7 @@
             // 
             darkLabel134.AutoSize = true;
             darkLabel134.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel134.Location = new Point(14, 85);
+            darkLabel134.Location = new Point(14, 115);
             darkLabel134.Margin = new Padding(4, 0, 4, 0);
             darkLabel134.Name = "darkLabel134";
             darkLabel134.Size = new Size(111, 15);
@@ -381,7 +407,7 @@
             // 
             SpawnHealthValueNUD.BackColor = Color.FromArgb(60, 63, 65);
             SpawnHealthValueNUD.ForeColor = SystemColors.Control;
-            SpawnHealthValueNUD.Location = new Point(190, 83);
+            SpawnHealthValueNUD.Location = new Point(190, 113);
             SpawnHealthValueNUD.Margin = new Padding(4, 3, 4, 3);
             SpawnHealthValueNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             SpawnHealthValueNUD.Name = "SpawnHealthValueNUD";
@@ -423,7 +449,7 @@
             Controls.Add(groupBox44);
             ForeColor = SystemColors.Control;
             Name = "ExpansionSpawnSettingsGeneralControl";
-            Size = new Size(340, 440);
+            Size = new Size(340, 470);
             groupBox44.ResumeLayout(false);
             groupBox44.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)TerritoryRespawnCooldownNUD).EndInit();
@@ -443,6 +469,8 @@
         private TextBox BackgroundImagePathTB;
         private Label darkLabel161;
         private NumericUpDown TerritoryRespawnCooldownNUD;
+        private Label label7;
+        private CheckBox UseLoadoutsCB;
         private CheckBox SpawnCreateDeathMarkerCB;
         private CheckBox PunishMultispawnCB;
         private Label darkLabel133;

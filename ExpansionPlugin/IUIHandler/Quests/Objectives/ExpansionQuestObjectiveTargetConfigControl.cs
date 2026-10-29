@@ -2,6 +2,7 @@
 using ExpansionPlugin;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -45,7 +46,30 @@ namespace ExpansionPlugin
             ObjectivesTargetCountSelfKillCB.Checked = _data.CountSelfKill == 1 ? true : false;
             checkBox7.Checked = _data.CountAIPlayers == 1 ? true : false;
 
+            if (_data.AllowedTargetFactions == null)
+                _data.AllowedTargetFactions = new BindingList<string>();
+            List<string> factions = File.ReadAllLines("Data\\ExpansionFactions.txt").Where(f => !string.IsNullOrWhiteSpace(f)).ToList();
+            factions.AddRange(_data.AllowedTargetFactions.Where(f => !factions.Contains(f)));
+            AllowedTargetFactionsCLB.Items.Clear();
+            foreach (string faction in factions)
+                AllowedTargetFactionsCLB.Items.Add(faction, _data.AllowedTargetFactions.Contains(faction));
+
             _suppressEvents = false;
+        }
+
+        private void AllowedTargetFactionsCLB_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (_suppressEvents) return;
+            string faction = AllowedTargetFactionsCLB.Items[e.Index].ToString();
+            if (e.NewValue == CheckState.Checked)
+            {
+                if (!_data.AllowedTargetFactions.Contains(faction))
+                    _data.AllowedTargetFactions.Add(faction);
+            }
+            else
+            {
+                _data.AllowedTargetFactions.Remove(faction);
+            }
         }
 
         #region Helper Methods

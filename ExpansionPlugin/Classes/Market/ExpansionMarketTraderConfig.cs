@@ -451,7 +451,7 @@ namespace ExpansionPlugin
                 }
             }
 
-            if (DisplayCurrencyValue == null || DisplayCurrencyValue < 0 || DisplayCurrencyValue > 1)
+            if (DisplayCurrencyValue == null || DisplayCurrencyValue < 1)
             {
                 fixes.Add($"Updated DisplayCurrencyValue to 1");
                 DisplayCurrencyValue = 1;

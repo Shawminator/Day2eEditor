@@ -42,6 +42,14 @@
             darkLabel42 = new Label();
             numericUpDown3 = new NumericUpDown();
             HealthGB = new GroupBox();
+            PrefabGB = new GroupBox();
+            darkLabel47 = new Label();
+            IncludeTB = new TextBox();
+            darkLabel48 = new Label();
+            ConstructionPartsLB = new ListBox();
+            ConstructionPartTB = new TextBox();
+            AddConstructionPartBT = new Button();
+            RemoveConstructionPartBT = new Button();
             groupBox1 = new GroupBox();
             darkLabel45 = new Label();
             textBox2 = new TextBox();
@@ -60,6 +68,7 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
             HealthGB.SuspendLayout();
+            PrefabGB.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown5).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
@@ -73,7 +82,7 @@
             LoadOutGB.Margin = new Padding(4, 3, 4, 3);
             LoadOutGB.Name = "LoadOutGB";
             LoadOutGB.Padding = new Padding(4, 3, 4, 3);
-            LoadOutGB.Size = new Size(324, 526);
+            LoadOutGB.Size = new Size(324, 742);
             LoadOutGB.TabIndex = 216;
             LoadOutGB.TabStop = false;
             LoadOutGB.Text = "Loadout item";
@@ -83,11 +92,12 @@
             flowLayoutPanel1.Controls.Add(groupBox7);
             flowLayoutPanel1.Controls.Add(groupBox2);
             flowLayoutPanel1.Controls.Add(HealthGB);
+            flowLayoutPanel1.Controls.Add(PrefabGB);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(4, 19);
             flowLayoutPanel1.Margin = new Padding(4, 3, 4, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(316, 504);
+            flowLayoutPanel1.Size = new Size(316, 720);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // groupBox7
@@ -252,6 +262,101 @@
             HealthGB.TabStop = false;
             HealthGB.Text = "Health";
             // 
+            // PrefabGB
+            // 
+            PrefabGB.Controls.Add(RemoveConstructionPartBT);
+            PrefabGB.Controls.Add(AddConstructionPartBT);
+            PrefabGB.Controls.Add(ConstructionPartTB);
+            PrefabGB.Controls.Add(ConstructionPartsLB);
+            PrefabGB.Controls.Add(darkLabel48);
+            PrefabGB.Controls.Add(IncludeTB);
+            PrefabGB.Controls.Add(darkLabel47);
+            PrefabGB.ForeColor = SystemColors.Control;
+            PrefabGB.Location = new Point(4, 506);
+            PrefabGB.Margin = new Padding(4, 3, 4, 3);
+            PrefabGB.Name = "PrefabGB";
+            PrefabGB.Padding = new Padding(4, 3, 4, 3);
+            PrefabGB.Size = new Size(312, 210);
+            PrefabGB.TabIndex = 200;
+            PrefabGB.TabStop = false;
+            PrefabGB.Text = "Prefab";
+            // 
+            // darkLabel47
+            // 
+            darkLabel47.AutoSize = true;
+            darkLabel47.Location = new Point(15, 27);
+            darkLabel47.Margin = new Padding(4, 0, 4, 0);
+            darkLabel47.Name = "darkLabel47";
+            darkLabel47.Size = new Size(46, 15);
+            darkLabel47.TabIndex = 0;
+            darkLabel47.Text = "Include";
+            // 
+            // IncludeTB
+            // 
+            IncludeTB.BackColor = Color.FromArgb(60, 63, 65);
+            IncludeTB.ForeColor = SystemColors.Control;
+            IncludeTB.Location = new Point(102, 22);
+            IncludeTB.Margin = new Padding(4, 3, 4, 3);
+            IncludeTB.Name = "IncludeTB";
+            IncludeTB.Size = new Size(197, 23);
+            IncludeTB.TabIndex = 1;
+            IncludeTB.TextChanged += IncludeTB_TextChanged;
+            // 
+            // darkLabel48
+            // 
+            darkLabel48.AutoSize = true;
+            darkLabel48.Location = new Point(15, 55);
+            darkLabel48.Margin = new Padding(4, 0, 4, 0);
+            darkLabel48.Name = "darkLabel48";
+            darkLabel48.Size = new Size(141, 15);
+            darkLabel48.TabIndex = 2;
+            darkLabel48.Text = "Construction Parts Built";
+            // 
+            // ConstructionPartsLB
+            // 
+            ConstructionPartsLB.BackColor = Color.FromArgb(60, 63, 65);
+            ConstructionPartsLB.DrawMode = DrawMode.OwnerDrawFixed;
+            ConstructionPartsLB.ForeColor = SystemColors.Control;
+            ConstructionPartsLB.FormattingEnabled = true;
+            ConstructionPartsLB.Location = new Point(8, 75);
+            ConstructionPartsLB.Margin = new Padding(4, 3, 4, 3);
+            ConstructionPartsLB.Name = "ConstructionPartsLB";
+            ConstructionPartsLB.Size = new Size(296, 94);
+            ConstructionPartsLB.TabIndex = 3;
+            ConstructionPartsLB.DrawItem += listBox_DrawItem;
+            // 
+            // ConstructionPartTB
+            // 
+            ConstructionPartTB.BackColor = Color.FromArgb(60, 63, 65);
+            ConstructionPartTB.ForeColor = SystemColors.Control;
+            ConstructionPartTB.Location = new Point(8, 177);
+            ConstructionPartTB.Margin = new Padding(4, 3, 4, 3);
+            ConstructionPartTB.Name = "ConstructionPartTB";
+            ConstructionPartTB.Size = new Size(164, 23);
+            ConstructionPartTB.TabIndex = 4;
+            // 
+            // AddConstructionPartBT
+            // 
+            AddConstructionPartBT.FlatStyle = FlatStyle.Flat;
+            AddConstructionPartBT.Location = new Point(178, 175);
+            AddConstructionPartBT.Margin = new Padding(4, 3, 4, 3);
+            AddConstructionPartBT.Name = "AddConstructionPartBT";
+            AddConstructionPartBT.Size = new Size(60, 27);
+            AddConstructionPartBT.TabIndex = 5;
+            AddConstructionPartBT.Text = "Add";
+            AddConstructionPartBT.Click += AddConstructionPartBT_Click;
+            // 
+            // RemoveConstructionPartBT
+            // 
+            RemoveConstructionPartBT.FlatStyle = FlatStyle.Flat;
+            RemoveConstructionPartBT.Location = new Point(244, 175);
+            RemoveConstructionPartBT.Margin = new Padding(4, 3, 4, 3);
+            RemoveConstructionPartBT.Name = "RemoveConstructionPartBT";
+            RemoveConstructionPartBT.Size = new Size(60, 27);
+            RemoveConstructionPartBT.TabIndex = 6;
+            RemoveConstructionPartBT.Text = "Remove";
+            RemoveConstructionPartBT.Click += RemoveConstructionPartBT_Click;
+            // 
             // groupBox1
             // 
             groupBox1.Controls.Add(darkLabel45);
@@ -392,7 +497,7 @@
             Controls.Add(LoadOutGB);
             ForeColor = SystemColors.Control;
             Name = "ExpansionAILoadoutsControl";
-            Size = new Size(324, 526);
+            Size = new Size(324, 742);
             LoadOutGB.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             groupBox7.ResumeLayout(false);
@@ -403,6 +508,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
             HealthGB.ResumeLayout(false);
+            PrefabGB.ResumeLayout(false);
+            PrefabGB.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown5).EndInit();
@@ -426,6 +533,14 @@
         private Label darkLabel42;
         private NumericUpDown numericUpDown3;
         private GroupBox HealthGB;
+        private GroupBox PrefabGB;
+        private Label darkLabel47;
+        private TextBox IncludeTB;
+        private Label darkLabel48;
+        private ListBox ConstructionPartsLB;
+        private TextBox ConstructionPartTB;
+        private Button AddConstructionPartBT;
+        private Button RemoveConstructionPartBT;
         private GroupBox groupBox1;
         private Label darkLabel45;
         private TextBox textBox2;

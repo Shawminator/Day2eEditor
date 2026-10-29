@@ -35,6 +35,8 @@
             label1 = new Label();
             UseCategoryOrderCB = new CheckBox();
             darkLabel80 = new Label();
+            label3 = new Label();
+            DisplayCurrencyValueNUD = new NumericUpDown();
             RequiredCompletedQuestIDNUD = new NumericUpDown();
             RequiredFactionLB = new ComboBox();
             darkLabel141 = new Label();
@@ -44,11 +46,14 @@
             MinRequiredHumanityNUD = new NumericUpDown();
             darkLabel70 = new Label();
             darkLabel57 = new Label();
+            label4 = new Label();
+            DisplayCurrencyNameTB = new TextBox();
             textBox2 = new TextBox();
             darkLabel50 = new Label();
             textBox5 = new TextBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)DisplayCurrencyValueNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MinRequiredHumanityNUD).BeginInit();
@@ -62,6 +67,8 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(UseCategoryOrderCB);
             groupBox1.Controls.Add(darkLabel80);
+            groupBox1.Controls.Add(DisplayCurrencyValueNUD);
+            groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(RequiredCompletedQuestIDNUD);
             groupBox1.Controls.Add(RequiredFactionLB);
             groupBox1.Controls.Add(darkLabel141);
@@ -71,6 +78,8 @@
             groupBox1.Controls.Add(MinRequiredHumanityNUD);
             groupBox1.Controls.Add(darkLabel70);
             groupBox1.Controls.Add(darkLabel57);
+            groupBox1.Controls.Add(DisplayCurrencyNameTB);
+            groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(textBox2);
             groupBox1.Controls.Add(darkLabel50);
             groupBox1.Controls.Add(textBox5);
@@ -79,7 +88,7 @@
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
-            groupBox1.Size = new Size(464, 397);
+            groupBox1.Size = new Size(464, 457);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Market Category Info";
@@ -151,6 +160,31 @@
             darkLabel80.Size = new Size(161, 15);
             darkLabel80.TabIndex = 192;
             darkLabel80.Text = "Required Completed QuestID";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.ForeColor = Color.FromArgb(220, 220, 220);
+            label3.Location = new Point(14, 397);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(154, 15);
+            label3.TabIndex = 195;
+            label3.Text = "Display Currency Value";
+            // 
+            // DisplayCurrencyValueNUD
+            // 
+            DisplayCurrencyValueNUD.BackColor = Color.FromArgb(60, 63, 65);
+            DisplayCurrencyValueNUD.ForeColor = SystemColors.Control;
+            DisplayCurrencyValueNUD.Location = new Point(197, 395);
+            DisplayCurrencyValueNUD.Margin = new Padding(4, 3, 4, 3);
+            DisplayCurrencyValueNUD.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            DisplayCurrencyValueNUD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            DisplayCurrencyValueNUD.Name = "DisplayCurrencyValueNUD";
+            DisplayCurrencyValueNUD.Size = new Size(256, 23);
+            DisplayCurrencyValueNUD.TabIndex = 181;
+            DisplayCurrencyValueNUD.TextAlign = HorizontalAlignment.Center;
+            DisplayCurrencyValueNUD.ValueChanged += DisplayCurrencyValueNUD_ValueChanged;
             // 
             // RequiredCompletedQuestIDNUD
             // 
@@ -261,6 +295,28 @@
             darkLabel57.TabIndex = 187;
             darkLabel57.Text = "FileName";
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.ForeColor = Color.FromArgb(220, 220, 220);
+            label4.Location = new Point(14, 427);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(147, 15);
+            label4.TabIndex = 195;
+            label4.Text = "Display Currency Name";
+            // 
+            // DisplayCurrencyNameTB
+            // 
+            DisplayCurrencyNameTB.BackColor = Color.FromArgb(60, 63, 65);
+            DisplayCurrencyNameTB.ForeColor = SystemColors.Control;
+            DisplayCurrencyNameTB.Location = new Point(197, 425);
+            DisplayCurrencyNameTB.Margin = new Padding(4, 3, 4, 3);
+            DisplayCurrencyNameTB.Name = "DisplayCurrencyNameTB";
+            DisplayCurrencyNameTB.Size = new Size(256, 23);
+            DisplayCurrencyNameTB.TabIndex = 176;
+            DisplayCurrencyNameTB.TextChanged += DisplayCurrencyNameTB_TextChanged;
+            // 
             // textBox2
             // 
             textBox2.BackColor = Color.FromArgb(60, 63, 65);
@@ -302,10 +358,11 @@
             Controls.Add(groupBox1);
             ForeColor = SystemColors.Control;
             Name = "ExpansionMarketTraderControl";
-            Size = new Size(464, 397);
+            Size = new Size(464, 457);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)DisplayCurrencyValueNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)RequiredCompletedQuestIDNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MaxRequiredHumanityNUD).EndInit();
             ((System.ComponentModel.ISupportInitialize)MinRequiredHumanityNUD).EndInit();
@@ -317,6 +374,8 @@
         private GroupBox groupBox1;
         private CheckBox UseCategoryOrderCB;
         private Label darkLabel80;
+        private Label label3;
+        private NumericUpDown DisplayCurrencyValueNUD;
         private NumericUpDown RequiredCompletedQuestIDNUD;
         private ComboBox RequiredFactionLB;
         private Label darkLabel141;
@@ -326,6 +385,8 @@
         private NumericUpDown MinRequiredHumanityNUD;
         private Label darkLabel70;
         private Label darkLabel57;
+        private Label label4;
+        private TextBox DisplayCurrencyNameTB;
         private TextBox textBox2;
         private Label darkLabel50;
         private TextBox textBox5;

@@ -40,6 +40,7 @@ namespace ExpansionPlugin
 
             EnableSpawnSelectionCB.Checked = _data.EnableSpawnSelection == 1 ? true : false;
             SpawnOnTerritoryCB.Checked = _data.SpawnOnTerritory == 1 ? true : false;
+            UseLoadoutsCB.Checked = _data.UseLoadouts == 1 ? true : false;
             SpawnHealthValueNUD.Value = (decimal)_data.SpawnHealthValue;
             SpawnEnergyValueNUD.Value = (decimal)_data.SpawnEnergyValue;
             SpawnWaterValueNUD.Value = (decimal)_data.SpawnWaterValue;
@@ -72,6 +73,11 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) { return; }
             _data.EnableSpawnSelection = EnableSpawnSelectionCB.Checked == true ? 1 : 0;
+        }
+        private void UseLoadoutsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.UseLoadouts = UseLoadoutsCB.Checked ? 1 : 0;
         }
         private void SpawnOnTerritoryCB_CheckedChanged(object sender, EventArgs e)
         {

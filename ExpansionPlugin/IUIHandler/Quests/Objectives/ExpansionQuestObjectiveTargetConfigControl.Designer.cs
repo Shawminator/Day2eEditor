@@ -30,6 +30,8 @@
         {
             ObjectivesTargetGB = new GroupBox();
             label2 = new Label();
+            label3 = new Label();
+            AllowedTargetFactionsCLB = new CheckedListBox();
             label1 = new Label();
             darkLabel189 = new Label();
             ObjectivesTargetMinDistanceNUD = new NumericUpDown();
@@ -48,6 +50,8 @@
             // ObjectivesTargetGB
             // 
             ObjectivesTargetGB.Controls.Add(label2);
+            ObjectivesTargetGB.Controls.Add(AllowedTargetFactionsCLB);
+            ObjectivesTargetGB.Controls.Add(label3);
             ObjectivesTargetGB.Controls.Add(label1);
             ObjectivesTargetGB.Controls.Add(darkLabel189);
             ObjectivesTargetGB.Controls.Add(ObjectivesTargetMinDistanceNUD);
@@ -62,7 +66,7 @@
             ObjectivesTargetGB.Margin = new Padding(4, 3, 4, 3);
             ObjectivesTargetGB.Name = "ObjectivesTargetGB";
             ObjectivesTargetGB.Padding = new Padding(4, 3, 4, 3);
-            ObjectivesTargetGB.Size = new Size(269, 174);
+            ObjectivesTargetGB.Size = new Size(269, 314);
             ObjectivesTargetGB.TabIndex = 292;
             ObjectivesTargetGB.TabStop = false;
             ObjectivesTargetGB.Text = "Target";
@@ -77,6 +81,30 @@
             label2.Size = new Size(81, 15);
             label2.TabIndex = 365;
             label2.Text = "Count Self Kill";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.ForeColor = Color.FromArgb(220, 220, 220);
+            label3.Location = new Point(15, 175);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(137, 15);
+            label3.TabIndex = 365;
+            label3.Text = "Allowed Target Factions";
+            // 
+            // AllowedTargetFactionsCLB
+            // 
+            AllowedTargetFactionsCLB.BackColor = Color.FromArgb(60, 63, 65);
+            AllowedTargetFactionsCLB.CheckOnClick = true;
+            AllowedTargetFactionsCLB.ForeColor = SystemColors.Control;
+            AllowedTargetFactionsCLB.FormattingEnabled = true;
+            AllowedTargetFactionsCLB.Location = new Point(15, 195);
+            AllowedTargetFactionsCLB.Margin = new Padding(4, 3, 4, 3);
+            AllowedTargetFactionsCLB.Name = "AllowedTargetFactionsCLB";
+            AllowedTargetFactionsCLB.Size = new Size(239, 112);
+            AllowedTargetFactionsCLB.TabIndex = 366;
+            AllowedTargetFactionsCLB.ItemCheck += AllowedTargetFactionsCLB_ItemCheck;
             // 
             // label1
             // 
@@ -199,7 +227,7 @@
             Controls.Add(ObjectivesTargetGB);
             ForeColor = SystemColors.Control;
             Name = "ExpansionQuestObjectiveTargetConfigControl";
-            Size = new Size(269, 174);
+            Size = new Size(269, 314);
             ObjectivesTargetGB.ResumeLayout(false);
             ObjectivesTargetGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ObjectivesTargetMinDistanceNUD).EndInit();
@@ -221,5 +249,7 @@
         private NumericUpDown ObjectivesTargetMaxDistanceNUD;
         private Label label2;
         private Label label1;
+        private Label label3;
+        private CheckedListBox AllowedTargetFactionsCLB;
     }
 }

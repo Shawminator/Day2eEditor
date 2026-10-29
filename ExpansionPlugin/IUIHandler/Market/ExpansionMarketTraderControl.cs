@@ -53,6 +53,8 @@ namespace ExpansionPlugin
             RequiredCompletedQuestIDNUD.Value = (int)_data.RequiredCompletedQuestID;
             TraderIconCB.SelectedIndex = TraderIconCB.FindStringExact(_data.TraderIcon);
             UseCategoryOrderCB.Checked = _data.UseCategoryOrder == 1 ? true : false;
+            DisplayCurrencyValueNUD.Value = (int)_data.DisplayCurrencyValue;
+            DisplayCurrencyNameTB.Text = _data.DisplayCurrencyName;
             GetIcon();
             _suppressEvents = false;
         }
@@ -71,6 +73,16 @@ namespace ExpansionPlugin
 
         #endregion
 
+        private void DisplayCurrencyValueNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DisplayCurrencyValue = (int)DisplayCurrencyValueNUD.Value;
+        }
+        private void DisplayCurrencyNameTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.DisplayCurrencyName = DisplayCurrencyNameTB.Text;
+        }
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;

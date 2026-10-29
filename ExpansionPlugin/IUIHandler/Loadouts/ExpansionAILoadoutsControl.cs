@@ -53,6 +53,11 @@ namespace ExpansionPlugin
             listBox1.DataSource = _data.Health;
             groupBox1.Visible = (_data.Health != null && _data.Health.Count > 0);
 
+            IncludeTB.Text = _data.Include ?? "";
+            if (_data.ConstructionPartsBuilt == null)
+                _data.ConstructionPartsBuilt = new BindingList<string>();
+            ConstructionPartsLB.DataSource = _data.ConstructionPartsBuilt;
+
             _suppressEvents = false;
         }
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -139,6 +144,26 @@ namespace ExpansionPlugin
             listBox1.SelectedIndex = _data.Health.Count - 1;
         }
 
+
+        private void IncludeTB_TextChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) return;
+            _data.Include = IncludeTB.Text;
+        }
+
+        private void AddConstructionPartBT_Click(object sender, EventArgs e)
+        {
+            string part = ConstructionPartTB.Text.Trim();
+            if (part.Length == 0 || _data.ConstructionPartsBuilt.Contains(part)) return;
+            _data.ConstructionPartsBuilt.Add(part);
+            ConstructionPartTB.Clear();
+        }
+
+        private void RemoveConstructionPartBT_Click(object sender, EventArgs e)
+        {
+            if (ConstructionPartsLB.SelectedItem is string part)
+                _data.ConstructionPartsBuilt.Remove(part);
+        }
 
         private void darkButton9_Click(object sender, EventArgs e)
         {

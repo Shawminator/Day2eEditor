@@ -406,6 +406,16 @@ namespace ExpansionPlugin
                     ExpansionBookRule ExpansionBookRule = node.Tag as ExpansionBookRule;
                     ShowHandler(new ExpansionBookRuleControl(), typeof(ExpansionBookConfig), ExpansionBookRule, selected);
                 },
+                [typeof(ExpansionBookSettingCategory)] = (node, selected) =>
+                {
+                    ExpansionBookSettingCategory ExpansionBookSettingCategory = node.Tag as ExpansionBookSettingCategory;
+                    ShowHandler(new ExpansionBookSettingCategoryControl(), typeof(ExpansionBookConfig), ExpansionBookSettingCategory, selected);
+                },
+                [typeof(ExpansionBookSetting)] = (node, selected) =>
+                {
+                    ExpansionBookSetting ExpansionBookSetting = node.Tag as ExpansionBookSetting;
+                    ShowHandler(new ExpansionBookSettingControl(), typeof(ExpansionBookConfig), ExpansionBookSetting, selected);
+                },
                 [typeof(ExpansionBookDescriptionCategory)] = (node, selected) =>
                 {
                     ExpansionBookDescriptionCategory ExpansionBookDescriptionCategory = node.Tag as ExpansionBookDescriptionCategory;
@@ -1631,6 +1641,20 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeRuleParagrapghToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                [typeof(ExpansionBookSettingCategory)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewBookSettingToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(removeSettingCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(ExpansionBookSetting)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeBookSettingToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 [typeof(ExpansionBookLink)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
@@ -2301,6 +2325,12 @@ namespace ExpansionPlugin
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewRuleCategoryToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                ["BookSettingCategories"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addNewSettingCategoryToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 ["BookLinks"] = node =>
@@ -3834,6 +3864,26 @@ namespace ExpansionPlugin
                 rnodes.Nodes.Add(rcnodes);
             }
             EconomyRootNode.Nodes.Add(rnodes);
+            TreeNode snodes = new TreeNode("Setting Categories")
+            {
+                Tag = "BookSettingCategories"
+            };
+            foreach (ExpansionBookSettingCategory sc in ef.Data.SettingCategories)
+            {
+                TreeNode scnodes = new TreeNode($"Category Name: {sc.CategoryName}")
+                {
+                    Tag = sc
+                };
+                foreach (ExpansionBookSetting bs in sc.Settings)
+                {
+                    scnodes.Nodes.Add(new TreeNode($"Setting Title: {bs.SettingTitle}")
+                    {
+                        Tag = bs
+                    });
+                }
+                snodes.Nodes.Add(scnodes);
+            }
+            EconomyRootNode.Nodes.Add(snodes);
             TreeNode lnodes = new TreeNode("Links")
             {
                 Tag = "BookLinks"
@@ -11491,6 +11541,49 @@ namespace ExpansionPlugin
         {
             ExpansionBookRuleCategory ExpansionBookRuleCategory = currentTreeNode.Parent.Tag as ExpansionBookRuleCategory;
             ExpansionBookRuleCategory.Rules.Remove(currentTreeNode.Tag as ExpansionBookRule);
+
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewSettingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookSettingCategory newExpansionBookSettingCategory = new ExpansionBookSettingCategory()
+            {
+                CategoryName = "New Category",
+                Settings = new BindingList<ExpansionBookSetting>()
+            };
+            _expansionManager.ExpansionBookConfig.Data.SettingCategories.Add(newExpansionBookSettingCategory);
+
+            currentTreeNode.Nodes.Add(new TreeNode($"Category Name: {newExpansionBookSettingCategory.CategoryName}")
+            {
+                Tag = newExpansionBookSettingCategory
+            });
+        }
+        private void removeSettingCategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _expansionManager.ExpansionBookConfig.Data.SettingCategories.Remove(currentTreeNode.Tag as ExpansionBookSettingCategory);
+
+            currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
+        }
+        private void addNewBookSettingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookSettingCategory ExpansionBookSettingCategory = currentTreeNode.Tag as ExpansionBookSettingCategory;
+            ExpansionBookSetting newExpansionBookSetting = new ExpansionBookSetting()
+            {
+                SettingTitle = "New Setting",
+                SettingText = "NewText",
+                SettingValue = ""
+            };
+            ExpansionBookSettingCategory.Settings.Add(newExpansionBookSetting);
+
+            currentTreeNode.Nodes.Add(new TreeNode($"Setting Title: {newExpansionBookSetting.SettingTitle}")
+            {
+                Tag = newExpansionBookSetting
+            });
+        }
+        private void removeBookSettingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionBookSettingCategory ExpansionBookSettingCategory = currentTreeNode.Parent.Tag as ExpansionBookSettingCategory;
+            ExpansionBookSettingCategory.Settings.Remove(currentTreeNode.Tag as ExpansionBookSetting);
 
             currentTreeNode.Parent.Nodes.Remove(currentTreeNode);
         }
