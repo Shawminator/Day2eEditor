@@ -345,7 +345,15 @@ namespace CaparePlugin
                 [typeof(CapareLPRewardTable)] = node => RemoveMenu("Remove Reward Table", _capareManager.CapareLPFrameworkConfig.Data.CapareLPRewardTables, node),
                 [typeof(CapareLPLootTable)] = node => RemoveMenu("Remove Loot Table", _capareManager.CapareLPFrameworkConfig.Data.CapareLPLootTables, node),
                 [typeof(CapareLPLootItemSet)] = node => RemoveMenu("Remove Item Set", _capareManager.CapareLPFrameworkConfig.Data.CapareLPItemSets, node),
-                [typeof(CapareLPdefinedItem)] = node => RemoveMenu("Remove Defined Item", _capareManager.CapareLPFrameworkConfig.Data.CapareLPdefinedItems, node),
+                [typeof(CapareLPdefinedItem)] = node =>
+                {
+                    var items = new List<(string, Action)>
+                    {
+                        MenuItem("Fill From Universal Attachments", () => FillDefinedItemFromUniversalAttachments(node))
+                    };
+                    items.AddRange(RemoveMenu("Remove Defined Item", _capareManager.CapareLPFrameworkConfig.Data.CapareLPdefinedItems, node));
+                    return items;
+                },
                 //WorkBench
                 [typeof(CapareWorkBenchRecipe)] = node =>
                 {
@@ -967,6 +975,34 @@ namespace CaparePlugin
             }
             itemNode.Nodes.Add(slotsNode);
             return itemNode;
+        }
+        private void FillDefinedItemFromUniversalAttachments(TreeNode node)
+        {
+            CapareLPdefinedItem item = (CapareLPdefinedItem)node.Tag;
+            DumpItem? dump = AppServices.GetRequired<EconomyManager>().GetAttachmentItem(item.Item);
+            if (dump == null)
+            {
+                MessageBox.Show($"{item.Item} was not found in the Universal Attachment database.\nRun the dump script from the Economy plugin to create or refresh it.");
+                return;
+            }
+
+            CapareDefinedItemAttachmentPreview form = new CapareDefinedItemAttachmentPreview { DumpItem = dump };
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
+
+            // Replaces the existing magazines and slots rather than merging into them
+            item.magazines = new BindingList<string>(form.SelectedMagazines);
+            item.attachments = new BindingList<CapareLPdefinewItemAttachments>(
+                form.SelectedSlots.Select(x => new CapareLPdefinewItemAttachments { attachments = new BindingList<string>(x) }).ToList());
+
+            // Rebuild the child nodes so the tree points at the new lists
+            node.Nodes.Clear();
+            foreach (TreeNode child in CreateDefinedItemNode(item).Nodes.Cast<TreeNode>().ToList())
+            {
+                child.Remove();
+                node.Nodes.Add(child);
+            }
+            node.Expand();
         }
         private static void RenumberAttachmentSlots(TreeNode slotsNode)
         {
