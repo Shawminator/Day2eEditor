@@ -1,0 +1,4571 @@
+{
+    "DebugLogging": 0,
+    "Repairing": {
+        "AllowRepairFromRuined": 1,
+        "RuinedPunishmentMultiplier": 5,
+        "SewingKitUsage": 10,
+        "LeatherSewingKitUsage": 15,
+        "WeaponCleaningKitUsage": 20,
+        "WhetstoneUsage": 5,
+        "TireRepairKitUsage": 25,
+        "ElectronicRepairKitUsage": 10,
+        "EpoxyPuttyUsage": 10
+    },
+    "ToolWear": {
+        "ToolDamagePerUse": 5.0,
+        "WearPartDamagePerUse": 8.0
+    },
+    "WorkbenchRecipes": [
+        {
+            "Recipe_Name": "Rope",
+            "ResultName": "Rope",
+            "ResultDescription": "Rags braided into a length of rope. Uses fewer rags than braiding by hand.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 8,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 1,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 4,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Bandage Dressing",
+            "ResultName": "BandageDressing",
+            "ResultDescription": "A clean rag cut into bandage dressings.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 8,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 5,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 2,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Splints",
+            "ResultName": "Splint",
+            "ResultDescription": "Two splints from sticks and a rag.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 2,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 6,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 3,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Torch",
+            "ResultName": "Torch",
+            "ResultDescription": "A stick wrapped with a rag, ready to light.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 6,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 4,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Sharpened Stick",
+            "ResultName": "SharpWoodenStick",
+            "ResultDescription": "A stick whittled to a point.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 5,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 5,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Firewood Bundle",
+            "ResultName": "Firewood",
+            "ResultDescription": "A log split into four pieces of firewood.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 4,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 8,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 6,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenLog",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hatchet",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Fabric Sheet",
+            "ResultName": "Fabric",
+            "ResultDescription": "Rags stitched into a usable sheet of fabric.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 7,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 3,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Hand-Cut Nails",
+            "ResultName": "Nail",
+            "ResultDescription": "Nails cut and headed from a length of wire by hand.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 30,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 8,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "MetalWire",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Empty Scrap Basket",
+            "ResultName": "Scrap_Basket_Empty",
+            "ResultDescription": "A woven basket for storing salvaged scrap. Attach it to the workbench's scrap slots.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 9,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 6,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rope",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Metal Wire",
+            "ResultName": "MetalWire",
+            "ResultDescription": "Scrap wire straightened and spliced into a usable coil.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 10,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Metal Plate",
+            "ResultName": "MetalPlate",
+            "ResultDescription": "Scrap metal heated and hammered flat into a plate.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 15.0,
+            "IsAmmo": 0,
+            "RecipeId": 11,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 150,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareBlowtorch"
+            ]
+        },
+        {
+            "Recipe_Name": "Mass Nail Production",
+            "ResultName": "Nail",
+            "ResultDescription": "Scrap wire cut and headed into nails on the grinder.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 30.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 12,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Cable Reel",
+            "ResultName": "CableReel",
+            "ResultDescription": "Scrap wire and electronics spliced into an extension reel.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 13,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 200,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Electronics_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Duct Tape Roll",
+            "ResultName": "DuctTape",
+            "ResultDescription": "Fabric scrap coated with adhesive from general scrap.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 14,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Fabric_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Wooden Crate",
+            "ResultName": "WoodenCrate",
+            "ResultDescription": "A sturdy crate. Half the planks and nails of building one by hand.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 15,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenPlank",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 4,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Nail",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 8,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Ammo Box",
+            "ResultName": "AmmoBox",
+            "ResultDescription": "A small metal box for storing ammunition.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 16,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 120,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Nail",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 4,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Sewing Kit",
+            "ResultName": "SewingKit",
+            "ResultDescription": "Needles cut from scrap wire, with thread from fabric scrap.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 17,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Fabric_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Leather Sewing Kit",
+            "ResultName": "LeatherSewingKit",
+            "ResultDescription": "Heavy needles and leather thread from scrap.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 18,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Leather_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 15,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Electronic Repair Kit",
+            "ResultName": "ElectronicRepairKit",
+            "ResultDescription": "Salvaged components, solder and wire for electronic repairs.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 20.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 19,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Electronics_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 120,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "DuctTape",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Screwdriver",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill"
+            ]
+        },
+        {
+            "Recipe_Name": "Epoxy Putty",
+            "ResultName": "EpoxyPutty",
+            "ResultDescription": "Two-part putty mixed from general scrap resins.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 20,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Whetstone",
+            "ResultName": "Whetstone",
+            "ResultDescription": "A stone ground flat and true on the grinder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 21,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Stone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Tire Repair Kit",
+            "ResultName": "TireRepairKit",
+            "ResultDescription": "Rubber patches and plugs from general scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 22,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "DuctTape",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Hammer",
+            "ResultName": "Hammer",
+            "ResultDescription": "A hammer head ground from scrap metal, on a wooden handle.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 23,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Pliers",
+            "ResultName": "Pliers",
+            "ResultDescription": "A pair of sprung pliers ground from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 20.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 24,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Springs_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Screwdriver",
+            "ResultName": "Screwdriver",
+            "ResultDescription": "A screwdriver ground from scrap metal, with a wooden handle.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 25,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Wrench",
+            "ResultName": "Wrench",
+            "ResultDescription": "A wrench ground from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 20.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 26,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Hacksaw",
+            "ResultName": "Hacksaw",
+            "ResultDescription": "A hacksaw blade and frame from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 27,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Crowbar",
+            "ResultName": "Crowbar",
+            "ResultDescription": "A bar of scrap metal cut and ground into a crowbar.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 35.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 28,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 200,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareSaw",
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Combination Lock",
+            "ResultName": "CombinationLock",
+            "ResultDescription": "A drilled and sprung combination lock.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 40.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 29,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Springs_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Screwdriver",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill",
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Blowtorch",
+            "ResultName": "Blowtorch",
+            "ResultDescription": "A gas blowtorch built from scrap fittings.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 20.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 30,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 120,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Wrench",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                },
+                {
+                    "IngredientName": "Screwdriver",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Welding Mask",
+            "ResultName": "WeldingMask",
+            "ResultDescription": "A protective mask for torch work.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 31,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "9V Battery",
+            "ResultName": "Battery9V",
+            "ResultDescription": "Salvaged cells repacked into a 9V battery.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 32,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Electronics_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Screwdriver",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Flashlight",
+            "ResultName": "Flashlight",
+            "ResultDescription": "A flashlight assembled from salvaged electronics.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 10.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 33,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Electronics_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Screwdriver",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill"
+            ]
+        },
+        {
+            "Recipe_Name": "Drill Bit",
+            "ResultName": "Capare_Drill_Bit",
+            "ResultDescription": "A replacement drill bit, filed by hand from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 30,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 34,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Saw Blade",
+            "ResultName": "Capare_Saw_Blade",
+            "ResultDescription": "A replacement saw blade, cut and toothed by hand from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 30,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 35,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 120,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hacksaw",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Grinder Disk",
+            "ResultName": "Capare_Grinder_Disk",
+            "ResultDescription": "A replacement grinder disk bonded from general scrap and grit.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareToolsManual",
+            "CraftTimeSeconds": 30,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 36,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Stone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Tanned Leather",
+            "ResultName": "TannedLeather",
+            "ResultDescription": "Any animal pelt cured with garden lime.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 2,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 37,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Pelt_Base",
+                    "PreviewImage": "DeerPelt",
+                    "PreviewName": "Any Pelt",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "GardenLime",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 250,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Waterskin",
+            "ResultName": "Waterskin_Natural",
+            "ResultDescription": "A leather waterskin, stitched with leather scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 38,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "TannedLeather",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Leather_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Leather Sack",
+            "ResultName": "LeatherSack_Natural",
+            "ResultDescription": "A leather sack, stitched with leather scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 39,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "TannedLeather",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Leather_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Burlap Sack",
+            "ResultName": "BurlapSack",
+            "ResultDescription": "A sack woven from fabric scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 40,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Fabric_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Improvised Bag",
+            "ResultName": "ImprovisedBag",
+            "ResultDescription": "A frame backpack lashed from fabric scrap and rope.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 41,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Fabric_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 200,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rope",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Netting",
+            "ResultName": "Netting",
+            "ResultDescription": "Rope knotted into netting.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 42,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Rope",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Camo Net",
+            "ResultName": "CamoNet",
+            "ResultDescription": "Netting woven through with dyed fabric scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 43,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Fabric_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 300,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rope",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Bone Knife",
+            "ResultName": "BoneKnife",
+            "ResultDescription": "A bone knapped into a blade.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 44,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Bone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Bone Fishing Hooks",
+            "ResultName": "BoneHook",
+            "ResultDescription": "Two fishing hooks carved from one bone.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 2,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 6,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 45,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Bone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Bone Fishing Bait",
+            "ResultName": "BoneBait",
+            "ResultDescription": "A bone hook baited with guts.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 5,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 46,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "BoneHook",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Guts",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Improvised Fishing Rod",
+            "ResultName": "ImprovisedFishingRod",
+            "ResultDescription": "A rod and line from a stick and rope.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 47,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rope",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Small Fish Trap",
+            "ResultName": "SmallFishTrap",
+            "ResultDescription": "A funnel trap cut from plastic scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 48,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Fish Net Trap",
+            "ResultName": "FishNetTrap",
+            "ResultDescription": "Netting stretched over a scrap wire frame.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 49,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Netting",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Rabbit Snare Trap",
+            "ResultName": "RabbitSnareTrap",
+            "ResultDescription": "A wire snare. No stick needed.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 8,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 50,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Wooden Hooks",
+            "ResultName": "WoodenHook",
+            "ResultDescription": "Two hooks whittled from a stick.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 2,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 5,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 51,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Long Wooden Sticks",
+            "ResultName": "LongWoodenStick",
+            "ResultDescription": "A log split into two long sticks.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 2,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 8,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 52,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenLog",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hatchet",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Hand Drill Kit",
+            "ResultName": "HandDrillKit",
+            "ResultDescription": "A fire-starting hand drill.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 6,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 53,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Purification Tablets",
+            "ResultName": "PurificationTablets",
+            "ResultDescription": "Water purification tablets pressed from iodine.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 54,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "IodineTincture",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Charcoal Tablets",
+            "ResultName": "CharcoalTablets",
+            "ResultDescription": "Activated charcoal tablets.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 55,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Charcoal_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Filtering Bottle",
+            "ResultName": "FilteringBottle",
+            "ResultDescription": "A plastic bottle with a charcoal filter.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 56,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Charcoal_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 25,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Heat Pack",
+            "ResultName": "Heatpack",
+            "ResultDescription": "Iron filings and charcoal sealed in a pouch.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 57,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Charcoal_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Orienteering Compass",
+            "ResultName": "OrienteeringCompass",
+            "ResultDescription": "A magnetised needle in a scrap metal housing.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareSurvivalManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 58,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Electronics_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Screwdriver",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Ammo Input Box",
+            "ResultName": "Capare_Ammo_Input_Box",
+            "ResultDescription": "Stages materials for ammo crafting. Attach to the workbench.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 59,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 150,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Nail",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Ammo Output Box",
+            "ResultName": "Capare_Ammo_Output_Box",
+            "ResultDescription": "Receives crafted ammunition. Attach to the workbench.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 60,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 150,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Nail",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Spare Bullet Press",
+            "ResultName": "Capare_Ammo_Press_Base",
+            "ResultDescription": "A replacement bullet press, machined from scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 30,
+            "PowerConsumption": 50.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 61,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 400,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Springs_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Wrench",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill",
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Empty Storage Jar",
+            "ResultName": "Capare_Empty_Jar",
+            "ResultDescription": "A glass bottle cut down into a storage jar.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 8,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 62,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "GlassBottle",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Charcoal Jar",
+            "ResultName": "Capare_Charcoal_Jar",
+            "ResultDescription": "Wood burned down to charcoal under the torch.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 500,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 20.0,
+            "IsAmmo": 0,
+            "RecipeId": 63,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenLog",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Empty_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareBlowtorch"
+            ]
+        },
+        {
+            "Recipe_Name": "Sulfur Jar",
+            "ResultName": "Capare_Sulfur_Jar",
+            "ResultDescription": "Sulfur-bearing stone ground to powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 500,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 64,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Stone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Empty_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Potassium Nitrate Jar",
+            "ResultName": "Capare_Potassium_Jar",
+            "ResultDescription": "Nitrates rendered down from guts under the torch.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 500,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 10.0,
+            "IsAmmo": 0,
+            "RecipeId": 65,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Guts",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Empty_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareBlowtorch"
+            ]
+        },
+        {
+            "Recipe_Name": "Gun Powder",
+            "ResultName": "Capare_GunPowder",
+            "ResultDescription": "Charcoal, sulfur and potassium nitrate mixed into gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 1000,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 66,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Charcoal_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 500,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Sulfur_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 500,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 500,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Matchbox",
+            "ResultName": "Matchbox",
+            "ResultDescription": "Match heads dipped from sulfur and potassium nitrate.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 8,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 67,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Sulfur_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Cast Bullets",
+            "ResultName": "Capare_Loose_Bullets",
+            "ResultDescription": "Scrap wire melted and cast into bullet heads in the press.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 30,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 25.0,
+            "IsAmmo": 0,
+            "RecipeId": 68,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 120,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress",
+                "CapareBlowtorch"
+            ]
+        },
+        {
+            "Recipe_Name": "Rifle/Pistol Casings",
+            "ResultName": "Capare_300blk_Casing",
+            "ResultDescription": "Scrap metal cut and drawn into casings.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 25.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 69,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 150,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareSaw",
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "Shotgun Casings",
+            "ResultName": "Capare_12g_Casings",
+            "ResultDescription": "Shotgun hulls from scrap metal bases and plastic scrap.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 25.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 70,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareSaw",
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": ".22 LR Cartridges",
+            "ResultName": "Ammo_22",
+            "ResultDescription": "30 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 30,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 71,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": ".380 Cartridges",
+            "ResultName": "Ammo_380",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 72,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "9x19 Cartridges",
+            "ResultName": "Ammo_9x19",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 73,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 45,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": ".45 ACP Cartridges",
+            "ResultName": "Ammo_45ACP",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 74,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": ".357 Cartridges",
+            "ResultName": "Ammo_357",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 75,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "5.45x39 Cartridges",
+            "ResultName": "Ammo_545x39",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 22,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 76,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "5.56x45 Cartridges",
+            "ResultName": "Ammo_556x45",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 22,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 77,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 55,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "7.62x39 Cartridges",
+            "ResultName": "Ammo_762x39",
+            "ResultDescription": "20 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 20,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 22,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 78,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 20,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 55,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "9x39 Cartridges",
+            "ResultName": "Ammo_9x39",
+            "ResultDescription": "15 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 15,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 79,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 15,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 15,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": ".308 Winchester Cartridges",
+            "ResultName": "Ammo_308Win",
+            "ResultDescription": "10 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 80,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 70,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "7.62x54 Cartridges",
+            "ResultName": "Ammo_762x54",
+            "ResultDescription": "10 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 81,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 70,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "12 Gauge Buckshot",
+            "ResultName": "Ammo_12gaPellets",
+            "ResultDescription": "10 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 82,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_12g_Casings",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 35,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "12 Gauge Slugs",
+            "ResultName": "Ammo_12gaSlug",
+            "ResultDescription": "10 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 83,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_12g_Casings",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 35,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "12 Gauge Rubber Slugs",
+            "ResultName": "Ammo_12gaRubberSlug",
+            "ResultDescription": "5 rounds pressed from bullets, casings and gun powder.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 84,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_Loose_Bullets",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_12g_Casings",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 15,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "5.45x39 Tracer Rounds",
+            "ResultName": "Ammo_545x39Tracer",
+            "ResultDescription": "10 rounds re-pressed with a tracer compound from a road flare.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 85,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_545x39",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "5.56x45 Tracer Rounds",
+            "ResultName": "Ammo_556x45Tracer",
+            "ResultDescription": "10 rounds re-pressed with a tracer compound from a road flare.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 86,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_556x45",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "7.62x39 Tracer Rounds",
+            "ResultName": "Ammo_762x39Tracer",
+            "ResultDescription": "10 rounds re-pressed with a tracer compound from a road flare.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 87,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_762x39",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": ".308 Tracer Rounds",
+            "ResultName": "Ammo_308WinTracer",
+            "ResultDescription": "10 rounds re-pressed with a tracer compound from a road flare.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 88,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_308Win",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "7.62x54 Tracer Rounds",
+            "ResultName": "Ammo_762x54Tracer",
+            "ResultDescription": "10 rounds re-pressed with a tracer compound from a road flare.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 18,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 89,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_762x54",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "9x39 AP Rounds",
+            "ResultName": "Ammo_9x39AP",
+            "ResultDescription": "10 rounds re-pressed with hardened steel cores from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 10,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 90,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_9x39",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 10,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "Signal Flares",
+            "ResultName": "Ammo_Flare",
+            "ResultDescription": "Five flare shells: road flare compound on a small lift charge.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 91,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "Red Signal Flares",
+            "ResultName": "Ammo_FlareRed",
+            "ResultDescription": "Five red flare shells: road flare compound on a small lift charge.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareAmmoManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 1,
+            "RecipeId": 92,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Capare_300blk_Casing",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Roadflare",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_Potassium_Jar",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Capare_GunPowder",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareWorkbenchBulletpress"
+            ]
+        },
+        {
+            "Recipe_Name": "Weapon Cleaning Kit",
+            "ResultName": "WeaponCleaningKit",
+            "ResultDescription": "Rods, brushes and solvent for weapon maintenance.",
+            "PreviewName": "",
+            "IsQuantity": 1,
+            "ResultCount": 100,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 12,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 93,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_WeaponParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 30,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rag",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "DisinfectantAlcohol",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Improvised Suppressor",
+            "ResultName": "ImprovisedSuppressor",
+            "ResultDescription": "A drilled plastic baffle wrapped in tape. Less tape than the bottle method.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 94,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_General_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "DuctTape",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 15,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill"
+            ]
+        },
+        {
+            "Recipe_Name": "Pistol Suppressor",
+            "ResultName": "PistolSuppressor",
+            "ResultDescription": "A machined pistol suppressor.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 35.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 95,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_WeaponParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 150,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 50,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill",
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "AR-Platform Suppressor",
+            "ResultName": "M4_Suppressor",
+            "ResultDescription": "A machined suppressor for AR-pattern rifles.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 45.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 96,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_WeaponParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 240,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Wrench",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill",
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "AK-Platform Suppressor",
+            "ResultName": "AK_Suppressor",
+            "ResultDescription": "A machined suppressor for AK-pattern rifles.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 45.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 97,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_WeaponParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 240,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Wrench",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareDrill",
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Improvised Crossbow",
+            "ResultName": "Crossbow_Wood",
+            "ResultDescription": "A sawn wooden crossbow with a scrap spring.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 25,
+            "PowerConsumption": 25.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 98,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenPlank",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Springs_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 100,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Rope",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareSaw"
+            ]
+        },
+        {
+            "Recipe_Name": "Improvised Bolts",
+            "ResultName": "Ammo_ImprovisedBolt_1",
+            "ResultDescription": "Five crossbow bolts whittled from sticks.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 99,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Feathered Bolts",
+            "ResultName": "Ammo_ImprovisedBolt_2",
+            "ResultDescription": "Five bolts fletched with feathers for better flight.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 5,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareWeaponsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 100,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Ammo_ImprovisedBolt_1",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 5,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "ChickenFeather",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Bear Trap",
+            "ResultName": "BearTrap",
+            "ResultDescription": "Ground steel jaws on a heavy scrap spring.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 30,
+            "PowerConsumption": 30.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 101,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 300,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Springs_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 200,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Wrench",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Tripwire Trap",
+            "ResultName": "TripwireTrap",
+            "ResultDescription": "A wire tripwire on two stakes.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 102,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 40,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 2,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Stone Knife",
+            "ResultName": "StoneKnife",
+            "ResultDescription": "A stone knapped into a blade.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 103,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Stone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Stone-Tipped Spear",
+            "ResultName": "SpearStone",
+            "ResultDescription": "A stone point bound to a stick.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 104,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Stone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Bone Spear",
+            "ResultName": "SpearBone",
+            "ResultDescription": "A bone point bound to a stick.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 105,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Bone",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "HuntingKnife",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 1.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Nailed Baseball Bat",
+            "ResultName": "NailedBaseballBat",
+            "ResultDescription": "A bat studded with nails. Fewer nails than by hand.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 106,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "BaseballBat",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Nail",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 8,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Barbed Baseball Bat",
+            "ResultName": "BarbedBaseballBat",
+            "ResultDescription": "A bat wrapped in scrap wire.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 10,
+            "PowerConsumption": 0.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 107,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "BaseballBat",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Scrap_Wire_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 80,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Pliers",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 2.0
+                }
+            ],
+            "AttachmentsNeeded": []
+        },
+        {
+            "Recipe_Name": "Brass Knuckles",
+            "ResultName": "BrassKnuckles_Dull",
+            "ResultDescription": "Knuckles ground from scrap metal.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 15,
+            "PowerConsumption": 15.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 108,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 60,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Crude Machete",
+            "ResultName": "CrudeMachete",
+            "ResultDescription": "A blade ground from scrap metal on a wooden handle.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 20.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 109,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 120,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Mace",
+            "ResultName": "Mace",
+            "ResultDescription": "A flanged scrap metal head on a wooden haft.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 20,
+            "PowerConsumption": 20.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 110,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 200,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenStick",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareGrinder"
+            ]
+        },
+        {
+            "Recipe_Name": "Sledgehammer",
+            "ResultName": "SledgeHammer",
+            "ResultDescription": "A heavy scrap metal head on a haft sawn from a log.",
+            "PreviewName": "",
+            "IsQuantity": 0,
+            "ResultCount": 1,
+            "CraftType": "craft",
+            "RecipeCategory": "CapareDeadlySkillsManual",
+            "CraftTimeSeconds": 30,
+            "PowerConsumption": 45.0,
+            "GasConsumption": 0.0,
+            "IsAmmo": 0,
+            "RecipeId": 111,
+            "Recipe_Ingredients": [
+                {
+                    "IngredientName": "Scrap_MechanicalParts_Basket",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 1,
+                    "IngredientAmount": 400,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "WoodenLog",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 1,
+                    "HealthDecrease": 0.0
+                },
+                {
+                    "IngredientName": "Hammer",
+                    "PreviewImage": "",
+                    "PreviewName": "",
+                    "IsQuantity": 0,
+                    "IngredientAmount": 1,
+                    "DestroyAfterUse": 0,
+                    "HealthDecrease": 3.0
+                }
+            ],
+            "AttachmentsNeeded": [
+                "CapareSaw",
+                "CapareGrinder"
+            ]
+        }
+    ]
+}
