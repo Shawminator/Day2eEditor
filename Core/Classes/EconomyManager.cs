@@ -1258,6 +1258,13 @@ bool StartsWith(string str, string suffix)
    
   return str.Substring(0,suffix.Length()) == suffix;
 }
+// Slot names are case-insensitive in config (e.g. ""WeaponOptics"" vs ""weaponOptics"")
+string SlotKey(string slot)
+{
+	string key = slot;
+	key.ToLower();
+	return key;
+}
 bool SkipClass(string className)
 {
 	if (className == string.Empty) return true;
@@ -1321,11 +1328,12 @@ void BuildAttachmentMapRoot(string root,map<string, ref TStringArray> attachment
 					if (slot1 == string.Empty)
 						continue;
 
-					if (!attachmentMap[slot1])
-						attachmentMap[slot1] = new TStringArray();
+					string key1 = SlotKey(slot1);
+					if (!attachmentMap[key1])
+						attachmentMap[key1] = new TStringArray();
 
-					if (attachmentMap[slot1].Find(className) == -1)
-						attachmentMap[slot1].Insert(className);
+					if (attachmentMap[key1].Find(className) == -1)
+						attachmentMap[key1].Insert(className);
 				}
 				break;
 			}
@@ -1339,11 +1347,12 @@ void BuildAttachmentMapRoot(string root,map<string, ref TStringArray> attachment
 				if (slot == string.Empty)
 					continue;
 
-				if (!attachmentMap[slot])
-					attachmentMap[slot] = new TStringArray();
+				string key = SlotKey(slot);
+				if (!attachmentMap[key])
+					attachmentMap[key] = new TStringArray();
 
-				if (attachmentMap[slot].Find(className) == -1)
-					attachmentMap[slot].Insert(className);
+				if (attachmentMap[key].Find(className) == -1)
+					attachmentMap[key].Insert(className);
 
 				break;
 			}
@@ -1383,9 +1392,10 @@ void DumpConfigRoot(string root,map<string, ref TStringArray> attachmentMap, Dum
 			DumpSlot slotDump = new DumpSlot();
 			slotDump.slotName = slot;
 
-			if (attachmentMap[slot])
+			string slotKey = SlotKey(slot);
+			if (attachmentMap[slotKey])
 			{
-				foreach (string attachment : attachmentMap[slot])
+				foreach (string attachment : attachmentMap[slotKey])
 				{
 					if (SkipClass(attachment))
 						continue;
