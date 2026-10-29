@@ -1400,7 +1400,7 @@ namespace CaparePlugin
         #endregion search treeview
     }
 
-    [PluginInfo("Capare Manager", "CaparePlugin")]
+    [PluginInfo("Capare Manager", "CaparePlugin", "CaparePlugin.Capare.png")]
     public class PluginCapare : IPluginForm, IDisposable
     {
         private bool disposed = false;
