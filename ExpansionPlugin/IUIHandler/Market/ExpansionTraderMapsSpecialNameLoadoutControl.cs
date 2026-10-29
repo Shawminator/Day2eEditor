@@ -43,7 +43,7 @@ namespace ExpansionPlugin
                 {
                     ""
                 };
-            foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
+            foreach (ExpansionPrefabObject lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
             {
                 LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
             }

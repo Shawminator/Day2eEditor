@@ -76,7 +76,7 @@ namespace ExpansionPlugin
         public int m_Version { get; set; }
         public BindingList<ExpansionAIRoamingLocation> RoamingLocations { get; set; }
         public BindingList<string> ExcludedRoamingBuildings { get; set; }
-        public BindingList<ExpansionAINoGoArea> NoGoAreas { get; set; }
+        public BindingList<ExpansionAINoGoAreaConfig> NoGoAreas { get; set; }
 
         public ExpansionAILocationSettings()
         {
@@ -86,7 +86,7 @@ namespace ExpansionPlugin
             m_Version = CurrentVersion;
             RoamingLocations = new BindingList<ExpansionAIRoamingLocation>();
             DefaultExcludedRoamingBuildings();
-            NoGoAreas = new BindingList<ExpansionAINoGoArea>();
+            NoGoAreas = new BindingList<ExpansionAINoGoAreaConfig>();
         }
         public List<string> DefaultExcludedRoamingBuildings()
         {
@@ -162,7 +162,7 @@ namespace ExpansionPlugin
             }
             if (NoGoAreas == null)
             {
-                NoGoAreas = new BindingList<ExpansionAINoGoArea>();
+                NoGoAreas = new BindingList<ExpansionAINoGoAreaConfig>();
                 fixes.Add("Initilised RoamingLocations");
             }
             return fixes;
@@ -179,7 +179,7 @@ namespace ExpansionPlugin
                     ? new BindingList<string>(this.ExcludedRoamingBuildings.ToList())
                     : null,
                 NoGoAreas = this.NoGoAreas != null
-                    ? new BindingList<ExpansionAINoGoArea>(this.NoGoAreas.Select(cat => cat.Clone()).ToList())
+                    ? new BindingList<ExpansionAINoGoAreaConfig>(this.NoGoAreas.Select(cat => cat.Clone()).ToList())
                     : null
             };
         }
@@ -221,7 +221,7 @@ namespace ExpansionPlugin
         }
 
     }
-    public class ExpansionAINoGoArea
+    public class ExpansionAINoGoAreaConfig
     {
         public string? Name { get; set; }
         public Vec3? Position { get; set; }
@@ -235,7 +235,7 @@ namespace ExpansionPlugin
         }
         public override bool Equals(object? obj)
         {
-            if (obj is not ExpansionAINoGoArea other)
+            if (obj is not ExpansionAINoGoAreaConfig other)
                 return false;
 
             return Name == other.Name &&
@@ -243,9 +243,9 @@ namespace ExpansionPlugin
                    Radius == other.Radius &&
                    Height == other.Height;
         }
-        public ExpansionAINoGoArea Clone()
+        public ExpansionAINoGoAreaConfig Clone()
         {
-            return new ExpansionAINoGoArea()
+            return new ExpansionAINoGoAreaConfig()
             {
                 Name = this.Name,
                 Position = this.Position.Clone(),

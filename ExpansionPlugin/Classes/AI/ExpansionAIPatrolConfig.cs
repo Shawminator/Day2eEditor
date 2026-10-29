@@ -84,7 +84,7 @@ namespace ExpansionPlugin
         {
             bool needtosave = false;
             Data._LoadBalancingCategories = new BindingList<Loadbalancingcategorie>();
-            foreach (KeyValuePair<string, BindingList<Loadbalancingcategories>> keyValuePair in Data.LoadBalancingCategories)
+            foreach (KeyValuePair<string, BindingList<ExpansionAIPatrolLoadBalancing>> keyValuePair in Data.LoadBalancingCategories)
             {
                 Data._LoadBalancingCategories.Add(new Loadbalancingcategorie()
                 {
@@ -120,7 +120,7 @@ namespace ExpansionPlugin
         public decimal? DamageReceivedMultiplier { get; set; }
         public decimal? ShoryukenChance { get; set; }
         public decimal? ShoryukenDamageMultiplier { get; set; }
-        public Dictionary<string, BindingList<Loadbalancingcategories>> LoadBalancingCategories { get; set; } //added version 24
+        public Dictionary<string, BindingList<ExpansionAIPatrolLoadBalancing>> LoadBalancingCategories { get; set; } //added version 24
         public BindingList<ExpansionAIPatrol> Patrols { get; set; }
 
         [JsonIgnore]
@@ -154,80 +154,80 @@ namespace ExpansionPlugin
         }
         private void DefaultLoadBalancing()
         {
-            LoadBalancingCategories = new Dictionary<string, BindingList<Loadbalancingcategories>>();
+            LoadBalancingCategories = new Dictionary<string, BindingList<ExpansionAIPatrolLoadBalancing>>();
             LoadBalancingCategories.Add(
                 "Global",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 10, MaxPatrols = 20},
-                    new Loadbalancingcategories(){MinPlayers = 11, MaxPlayers = 20, MaxPatrols = 16},
-                    new Loadbalancingcategories(){MinPlayers = 21, MaxPlayers = 30, MaxPatrols = 12},
-                    new Loadbalancingcategories(){MinPlayers = 31, MaxPlayers = 40, MaxPatrols = 8},
-                    new Loadbalancingcategories(){MinPlayers = 41, MaxPlayers = 50, MaxPatrols = 4},
-                    new Loadbalancingcategories(){MinPlayers = 51, MaxPlayers = 255, MaxPatrols = 0},
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 10, MaxPatrols = 20},
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 11, MaxPlayers = 20, MaxPatrols = 16},
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 21, MaxPlayers = 30, MaxPatrols = 12},
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 31, MaxPlayers = 40, MaxPatrols = 8},
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 41, MaxPlayers = 50, MaxPatrols = 4},
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 51, MaxPlayers = 255, MaxPatrols = 0},
                 }
             );
             LoadBalancingCategories.Add(
                 "ObjectPatrol",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
                 }
             );
             LoadBalancingCategories.Add(
                 "Patrol",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
                 }
             );
             LoadBalancingCategories.Add(
                 "Quest",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = -1}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = -1}
                 }
             );
             LoadBalancingCategories.Add(
                 "HelicopterWreck",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 3}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 3}
                 }
             );
             LoadBalancingCategories.Add(
                 "ContaminatedArea",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 3}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 3}
                 }
             );
             LoadBalancingCategories.Add(
                "MilitaryRoaming",
-               new BindingList<Loadbalancingcategories>()
+               new BindingList<ExpansionAIPatrolLoadBalancing>()
                {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
                }
            );
             LoadBalancingCategories.Add(
                "MilitaryStatic",
-               new BindingList<Loadbalancingcategories>()
+               new BindingList<ExpansionAIPatrolLoadBalancing>()
                {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 5}
                }
            );
             LoadBalancingCategories.Add(
                "Survivor",
-               new BindingList<Loadbalancingcategories>()
+               new BindingList<ExpansionAIPatrolLoadBalancing>()
                {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 15}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = 15}
                }
            );
             LoadBalancingCategories.Add(
                 "Example",
-                new BindingList<Loadbalancingcategories>()
+                new BindingList<ExpansionAIPatrolLoadBalancing>()
                 {
-                    new Loadbalancingcategories(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = -1}
+                    new ExpansionAIPatrolLoadBalancing(){MinPlayers = 0, MaxPlayers = 255, MaxPatrols = -1}
                 }
             );
         }
@@ -268,14 +268,14 @@ namespace ExpansionPlugin
             //! -------------------------------------------------------------------
 
             patrol = new ExpansionAIPatrol(-2, "JOG", "SPRINT", "LOOP_OR_ALTERNATE", "West", "NBCLoadout", true, unlimitedReload, (decimal)0.5, -1, -1, "ContaminatedArea_Static");
-            patrol.CanSpawnInContaminatedArea = 1;
+            patrol.CanSpawnInContaminatedArea = true;
             patrol.LoadBalancingCategory = "ContaminatedArea";
             patrol.LootingBehaviour = "DEFAULT | CLOTHING_BODY | CLOTHING_LEGS | CLOTHING_HEADGEAR | CLOTHING_MASK | CLOTHING_GLOVES | CLOTHING_FEET | CLOTHING_SIMILAR";
             patrol.WaypointInterpolation = "UniformCubic";
             Patrols.Add(patrol);
 
             patrol = new ExpansionAIPatrol(-2, "JOG", "SPRINT", "LOOP_OR_ALTERNATE", "West", "NBCLoadout", true, unlimitedReload, (decimal)0.5, -1, -1, "ContaminatedArea_Dynamic");
-            patrol.CanSpawnInContaminatedArea = 1;
+            patrol.CanSpawnInContaminatedArea = true;
             patrol.LoadBalancingCategory = "ContaminatedArea";
             patrol.LootingBehaviour = "DEFAULT | CLOTHING_BODY | CLOTHING_LEGS | CLOTHING_HEADGEAR | CLOTHING_MASK | CLOTHING_GLOVES | CLOTHING_FEET | CLOTHING_SIMILAR";
             patrol.WaypointInterpolation = "UniformCubic";
@@ -478,7 +478,7 @@ namespace ExpansionPlugin
             }
             else
             {
-                foreach(KeyValuePair<string, BindingList<Loadbalancingcategories>> lbcat in LoadBalancingCategories)
+                foreach(KeyValuePair<string, BindingList<ExpansionAIPatrolLoadBalancing>> lbcat in LoadBalancingCategories)
                 {
                     //var categoryFixes = category.FixMissingOrInvalidFields();
                     //fixes.AddRange(categoryFixes.Select(f => $"LoadBalancingCategory: {f}"));
@@ -535,7 +535,7 @@ namespace ExpansionPlugin
             };
         }
     }
-    public class Loadbalancingcategories
+    public class ExpansionAIPatrolLoadBalancing
     {
         public int MinPlayers { get; set; }
         public int MaxPlayers { get; set; }
@@ -543,7 +543,7 @@ namespace ExpansionPlugin
 
         public override bool Equals(object obj)
         {
-            if (obj is not Loadbalancingcategories other) return false;
+            if (obj is not ExpansionAIPatrolLoadBalancing other) return false;
 
             return MinPlayers == other.MinPlayers &&
                    MaxPlayers == other.MaxPlayers &&
@@ -555,9 +555,9 @@ namespace ExpansionPlugin
 
             return fixes;
         }
-        public Loadbalancingcategories Clone()
+        public ExpansionAIPatrolLoadBalancing Clone()
         {
-            return new Loadbalancingcategories()
+            return new ExpansionAIPatrolLoadBalancing()
             {
                 MinPlayers = this.MinPlayers,
                 MaxPlayers = this.MaxPlayers,
@@ -569,7 +569,7 @@ namespace ExpansionPlugin
     public class Loadbalancingcategorie
     {
         public string name { get; set; }
-        public BindingList<Loadbalancingcategories> Categorieslist { get; set; }
+        public BindingList<ExpansionAIPatrolLoadBalancing> Categorieslist { get; set; }
 
         public override string ToString()
         {
@@ -587,7 +587,7 @@ namespace ExpansionPlugin
             return new Loadbalancingcategorie()
             {
                 name = this.name,
-                Categorieslist = new BindingList<Loadbalancingcategories>(this.Categorieslist.Select(c => c.Clone()).ToList())
+                Categorieslist = new BindingList<ExpansionAIPatrolLoadBalancing>(this.Categorieslist.Select(c => c.Clone()).ToList())
             };
         }
 
@@ -625,7 +625,8 @@ namespace ExpansionPlugin
         public decimal? HeadshotResistance { get; set; }
         public decimal? ShoryukenChance { get; set; }
         public decimal? ShoryukenDamageMultiplier { get; set; }
-        public decimal? CanSpawnInContaminatedArea { get; set; }
+        [JsonConverter(typeof(FileService.BoolConverter))]
+        public bool CanSpawnInContaminatedArea { get; set; }
         public int? CanBeTriggeredByAI { get; set; }
         public decimal? MinDistRadius { get; set; }
         public decimal? MaxDistRadius { get; set; }
@@ -678,7 +679,7 @@ namespace ExpansionPlugin
             ShoryukenChance = -1.0M;
             ShoryukenDamageMultiplier = -1.0M;
             CanBeTriggeredByAI = 0;
-            CanSpawnInContaminatedArea = 0;
+            CanSpawnInContaminatedArea = false;
             MinDistRadius = -1;
             MaxDistRadius = -1;
             DespawnRadius = -1;
@@ -727,7 +728,7 @@ namespace ExpansionPlugin
             ShoryukenChance = -1.0M;
             ShoryukenDamageMultiplier = -1.0M;
             CanBeTriggeredByAI = 0;
-            CanSpawnInContaminatedArea = 0;
+            CanSpawnInContaminatedArea = false;
             MinDistRadius = minDistRadius;
             MaxDistRadius = maxDistRadius;
             DespawnRadius = -1;
@@ -887,7 +888,6 @@ namespace ExpansionPlugin
             if (ShoryukenChance == null) { ShoryukenChance = 0.009999999776482582m; fixes.Add("Set default ShoryukenChance");}
             if (ShoryukenDamageMultiplier == null) { ShoryukenDamageMultiplier = 3.0m; fixes.Add("Set default ShoryukenDamageMultiplier");}
             if (CanBeTriggeredByAI == null || (CanBeTriggeredByAI != 0 && CanBeTriggeredByAI != 1)) { CanBeTriggeredByAI = 0; fixes.Add("Corrected CanBeTriggeredByAI to 0"); }
-            if (CanSpawnInContaminatedArea == null || (CanSpawnInContaminatedArea != 0 && CanSpawnInContaminatedArea != 1)) { CanSpawnInContaminatedArea = 0; fixes.Add("Corrected CanSpawnInContaminatedArea to 0"); }
             if (MinDistRadius == null || MinDistRadius < -1) { MinDistRadius = -1; fixes.Add("Set MinDistRadius to -1"); }
             if (MaxDistRadius == null || MaxDistRadius < -1) { MaxDistRadius = -1; fixes.Add("Set MaxDistRadius to -1"); }
             if (DespawnRadius == null || DespawnRadius < -1) { DespawnRadius = -1; fixes.Add("Set DespawnRadius to -1"); }

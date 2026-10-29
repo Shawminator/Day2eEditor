@@ -13,10 +13,10 @@ namespace ExpansionPlugin
     /// </summary>
     public partial class ExpansionAINoGoAreaControl : UserControl, IUIHandler
     {
-        public event Action<ExpansionAINoGoArea> PositionChanged;
-        public event Action<ExpansionAINoGoArea> RadiusChanged;
+        public event Action<ExpansionAINoGoAreaConfig> PositionChanged;
+        public event Action<ExpansionAINoGoAreaConfig> RadiusChanged;
         private Type _parentType;
-        private ExpansionAINoGoArea _data;
+        private ExpansionAINoGoAreaConfig _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -36,7 +36,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as ExpansionAINoGoArea ?? throw new InvalidCastException();
+            _data = data as ExpansionAINoGoAreaConfig ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

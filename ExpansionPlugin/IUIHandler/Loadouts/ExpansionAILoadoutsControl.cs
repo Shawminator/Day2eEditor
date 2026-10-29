@@ -16,11 +16,11 @@ namespace ExpansionPlugin
     public partial class ExpansionAILoadoutsControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private AILoadouts _data;
+        private ExpansionPrefabObject _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
-        public Health? Currenthealth { get; private set; }
+        public ExpansionHealth? Currenthealth { get; private set; }
 
         public ExpansionAILoadoutsControl()
         {
@@ -38,7 +38,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as AILoadouts ?? throw new InvalidCastException();
+            _data = data as ExpansionPrefabObject ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
@@ -98,7 +98,7 @@ namespace ExpansionPlugin
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            if (_data.Quantity == null) _data.Quantity = new Quantity();
+            if (_data.Quantity == null) _data.Quantity = new ExpansionMinMax();
             _data.Quantity.Min = numericUpDown2.Value;
             
         }
@@ -106,7 +106,7 @@ namespace ExpansionPlugin
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            if (_data.Quantity == null) _data.Quantity = new Quantity();
+            if (_data.Quantity == null) _data.Quantity = new ExpansionMinMax();
             _data.Quantity.Max = numericUpDown3.Value;
             
         }
@@ -114,7 +114,7 @@ namespace ExpansionPlugin
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox1.SelectedItems.Count < 1) return;
-            Currenthealth = listBox1.SelectedItem as Health;
+            Currenthealth = listBox1.SelectedItem as ExpansionHealth;
             _suppressEvents = true;
             groupBox1.Visible = true;
             numericUpDown4.Value = Currenthealth.Min;
@@ -125,7 +125,7 @@ namespace ExpansionPlugin
 
         private void darkButton8_Click(object sender, EventArgs e)
         {
-            Health newhealth = new Health()
+            ExpansionHealth newhealth = new ExpansionHealth()
             {
                 Min = (decimal)0.7,
                 Max = (decimal)1.0,

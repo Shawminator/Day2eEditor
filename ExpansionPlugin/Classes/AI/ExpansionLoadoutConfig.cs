@@ -13,16 +13,16 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLoadoutConfig : MultiFileConfigLoaderBase<AILoadouts>
+    public class ExpansionLoadoutConfig : MultiFileConfigLoaderBase<ExpansionPrefabObject>
     {
         public ExpansionLoadoutConfig(string path) : base(path)
         {
         }
-        protected override AILoadouts LoadItem(string filePath)
+        protected override ExpansionPrefabObject LoadItem(string filePath)
         {
             var item = AppServices.GetRequired<FileService>().LoadOrCreateJson(
                     filePath,
-                    createNew: () => new AILoadouts(),
+                    createNew: () => new ExpansionPrefabObject(),
                     onError: ex => HandleItemError(filePath, ex),
                     configName: "Loadout",
                     useBoolConvertor: true
@@ -32,24 +32,24 @@ namespace ExpansionPlugin
             item.SetGuid(Guid.NewGuid());
             return item;
         }
-        protected override void SaveItem(AILoadouts item)
+        protected override void SaveItem(ExpansionPrefabObject item)
         {
             AppServices.GetRequired<FileService>().SaveJson(item._path, item);
         }
-        protected override string GetItemFileName(AILoadouts AILoadouts)
+        protected override string GetItemFileName(ExpansionPrefabObject AILoadouts)
             => AILoadouts.FileName;
-        protected override string GetItemFilePath(AILoadouts AILoadouts)
+        protected override string GetItemFilePath(ExpansionPrefabObject AILoadouts)
            => AILoadouts.FilePath;
-        protected override bool ShouldDelete(AILoadouts item)
+        protected override bool ShouldDelete(ExpansionPrefabObject item)
             => item.ToDelete;
-        protected override Guid GetID(AILoadouts item)
+        protected override Guid GetID(ExpansionPrefabObject item)
             => item.Id;
-        protected override void DeleteItemFile(AILoadouts item)
+        protected override void DeleteItemFile(ExpansionPrefabObject item)
         {
             if (!string.IsNullOrWhiteSpace(item._path) && File.Exists(item._path))
                 File.Delete(item._path);
         }
-        internal bool AddNewLoadoutFile(AILoadouts newAILoadouts)
+        internal bool AddNewLoadoutFile(ExpansionPrefabObject newAILoadouts)
         {
             bool exists = Items.Any(ld => ld.FileName.ToLower() == newAILoadouts.FileName.ToLower());
 
@@ -60,7 +60,7 @@ namespace ExpansionPlugin
             return true;
 
         }
-        internal void RemoveFile(AILoadouts AILoadouts)
+        internal void RemoveFile(ExpansionPrefabObject AILoadouts)
         {
             AILoadouts.ToDelete = true;
         }
@@ -69,7 +69,7 @@ namespace ExpansionPlugin
             return false;
         }
     }
-    public class AILoadouts : IDeepCloneable<AILoadouts>, IEquatable<AILoadouts>
+    public class ExpansionPrefabObject : IDeepCloneable<ExpansionPrefabObject>, IEquatable<ExpansionPrefabObject>
     {
         [JsonIgnore]
         public string _path { get; private set; }
@@ -87,27 +87,27 @@ namespace ExpansionPlugin
         public string ClassName { get; set; }
         public string Include { get; set; }
         public decimal Chance { get; set; }
-        public Quantity Quantity { get; set; }
-        public BindingList<Health> Health { get; set; }
-        public BindingList<Inventoryattachment> InventoryAttachments { get; set; }
-        public BindingList<AILoadouts> InventoryCargo { get; set; }
-        public BindingList<object> ConstructionPartsBuilt { get; set; }
-        public BindingList<AILoadouts> Sets { get; set; }
+        public ExpansionMinMax Quantity { get; set; }
+        public BindingList<ExpansionHealth> Health { get; set; }
+        public BindingList<ExpansionPrefabSlot> InventoryAttachments { get; set; }
+        public BindingList<ExpansionPrefabObject> InventoryCargo { get; set; }
+        public BindingList<string> ConstructionPartsBuilt { get; set; }
+        public BindingList<ExpansionPrefabObject> Sets { get; set; }
 
-        public AILoadouts()
+        public ExpansionPrefabObject()
         {
             ClassName = "";
             Include = "";
             Chance = (decimal)1;
-            Quantity = new Quantity();
-            Health = new BindingList<Health>();
-            InventoryAttachments = new BindingList<Inventoryattachment>();
-            InventoryCargo = new BindingList<AILoadouts>();
-            ConstructionPartsBuilt = new BindingList<object>();
-            Sets = new BindingList<AILoadouts>();
+            Quantity = new ExpansionMinMax();
+            Health = new BindingList<ExpansionHealth>();
+            InventoryAttachments = new BindingList<ExpansionPrefabSlot>();
+            InventoryCargo = new BindingList<ExpansionPrefabObject>();
+            ConstructionPartsBuilt = new BindingList<string>();
+            Sets = new BindingList<ExpansionPrefabObject>();
         }
 
-        public bool Equals(AILoadouts other)
+        public bool Equals(ExpansionPrefabObject other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -124,20 +124,20 @@ namespace ExpansionPlugin
                    Helper.ListEquals(Sets, other.Sets) &&
                    Id == other.Id;
         }
-        public override bool Equals(object? obj) => Equals(obj as AILoadouts);
-        public AILoadouts Clone()
+        public override bool Equals(object? obj) => Equals(obj as ExpansionPrefabObject);
+        public ExpansionPrefabObject Clone()
         {
-            var clone = new  AILoadouts()
+            var clone = new  ExpansionPrefabObject()
             {
                 ClassName = this.ClassName,
                 Include = this.Include,
                 Chance = this.Chance,
                 Quantity = this.Quantity.Clone(),
-                Health = new BindingList<Health>(this.Health.Select(x => x.Clone()).ToList()),
-                InventoryAttachments = new BindingList<Inventoryattachment>(this.InventoryAttachments.Select(x => x.Clone()).ToList()),
-                InventoryCargo = new BindingList<AILoadouts>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
-                ConstructionPartsBuilt = new BindingList<object>(this.ConstructionPartsBuilt.ToList()),
-                Sets = new BindingList<AILoadouts>(this.Sets.Select(x => x.Clone()).ToList())
+                Health = new BindingList<ExpansionHealth>(this.Health.Select(x => x.Clone()).ToList()),
+                InventoryAttachments = new BindingList<ExpansionPrefabSlot>(this.InventoryAttachments.Select(x => x.Clone()).ToList()),
+                InventoryCargo = new BindingList<ExpansionPrefabObject>(this.InventoryCargo.Select(x => x.Clone()).ToList()),
+                ConstructionPartsBuilt = new BindingList<string>(this.ConstructionPartsBuilt.ToList()),
+                Sets = new BindingList<ExpansionPrefabObject>(this.Sets.Select(x => x.Clone()).ToList())
             };
             clone.SetPath(_path);
             clone.SetGuid(Id);
@@ -154,22 +154,22 @@ namespace ExpansionPlugin
         }
     }
 
-    public class Quantity : IDeepCloneable<Quantity>, IEquatable<Quantity>
+    public class ExpansionMinMax : IDeepCloneable<ExpansionMinMax>, IEquatable<ExpansionMinMax>
     {
         public decimal Min { get; set; }
         public decimal Max { get; set; }
 
-        public override bool Equals(object? obj) => Equals(obj as Quantity);
-        public bool Equals(Quantity other)
+        public override bool Equals(object? obj) => Equals(obj as ExpansionMinMax);
+        public bool Equals(ExpansionMinMax other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             
             return Min == other.Min && Max == other.Max;
         }
-        public Quantity Clone()
+        public ExpansionMinMax Clone()
         {
-            return new Quantity()
+            return new ExpansionMinMax()
             {
                 Min = Min,
                 Max = Max
@@ -177,13 +177,13 @@ namespace ExpansionPlugin
         }
     }
 
-    public class Health : IDeepCloneable<Health>, IEquatable<Health>
+    public class ExpansionHealth : IDeepCloneable<ExpansionHealth>, IEquatable<ExpansionHealth>
     {
         public decimal Min { get; set; }
         public decimal Max { get; set; }
         public string Zone { get; set; }
 
-        public Health()
+        public ExpansionHealth()
         {
             Min = 0.7m;
             Max = 1.0m;
@@ -195,17 +195,17 @@ namespace ExpansionPlugin
                 return "No Zone";
             return Zone;
         }
-        public override bool Equals(object? obj) => Equals(obj as Health);
-        public bool Equals(Health other)
+        public override bool Equals(object? obj) => Equals(obj as ExpansionHealth);
+        public bool Equals(ExpansionHealth other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return Min == other.Min && Max == other.Max && Zone == other.Zone;
         }
-        public Health Clone()
+        public ExpansionHealth Clone()
         {
-            return new Health()
+            return new ExpansionHealth()
             {
                 Min = this.Min,
                 Max = this.Max,
@@ -214,17 +214,17 @@ namespace ExpansionPlugin
         }
     }
 
-    public class Inventoryattachment : IDeepCloneable<Inventoryattachment>, IEquatable<Inventoryattachment>
+    public class ExpansionPrefabSlot : IDeepCloneable<ExpansionPrefabSlot>, IEquatable<ExpansionPrefabSlot>
     {
         public string SlotName { get; set; }
-        public BindingList<AILoadouts> Items { get; set; }
+        public BindingList<ExpansionPrefabObject> Items { get; set; }
 
         public override string ToString()
         {
             return SlotName; ;
         }
-        public override bool Equals(object? obj) => Equals(obj as Inventoryattachment);
-        public bool Equals(Inventoryattachment other)
+        public override bool Equals(object? obj) => Equals(obj as ExpansionPrefabSlot);
+        public bool Equals(ExpansionPrefabSlot other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -232,12 +232,12 @@ namespace ExpansionPlugin
             return SlotName == other.SlotName &&
                    Helper.ListEquals(Items, other.Items);
         }
-        public Inventoryattachment Clone()
+        public ExpansionPrefabSlot Clone()
         {
-            return new Inventoryattachment()
+            return new ExpansionPrefabSlot()
             {
                 SlotName = this.SlotName,
-                Items = new BindingList<AILoadouts>(this.Items.Select(x => x.Clone()).ToList())
+                Items = new BindingList<ExpansionPrefabObject>(this.Items.Select(x => x.Clone()).ToList())
             };
         }
 

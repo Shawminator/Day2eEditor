@@ -272,7 +272,7 @@ namespace ExpansionPlugin
                 ShoryukenChance = -1.0M,
                 ShoryukenDamageMultiplier = -1.0M,
                 CanBeTriggeredByAI = 0,
-                CanSpawnInContaminatedArea = 0,
+                CanSpawnInContaminatedArea = false,
                 MinDistRadius = -1,
                 MaxDistRadius = -1,
                 DespawnRadius = -1,

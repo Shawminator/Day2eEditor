@@ -47,7 +47,7 @@ namespace ExpansionPlugin
             {
                 ""
             };
-            foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
+            foreach (ExpansionPrefabObject lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
             {
                 LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
             }
@@ -94,7 +94,7 @@ namespace ExpansionPlugin
             textBox6.Text = _data.ObjectClassName;
             StaticPatrolWaypointInterpolationCB.SelectedIndex = StaticPatrolWaypointInterpolationCB.FindStringExact(_data.WaypointInterpolation);
             StaticPatrolUseRandomWaypointAsStartPointCB.Checked = _data.UseRandomWaypointAsStartPoint == 1 ? true : false;
-            StaticPatrolCanSpawnInContaminatedAreaCB.Checked = _data.CanSpawnInContaminatedArea == 1 ? true : false;
+            StaticPatrolCanSpawnInContaminatedAreaCB.Checked = _data.CanSpawnInContaminatedArea;
             if (_data.FormationScale == -1)
             {
                 StaticPatrolFormationScaleNUD.Enabled = false;
@@ -799,7 +799,7 @@ namespace ExpansionPlugin
         private void StaticPatrolCanSpawnInContaminatedAreaCB_CheckedChanged(object sender, EventArgs e)
         {
             if (_suppressEvents) return;
-            _data.CanSpawnInContaminatedArea = StaticPatrolCanSpawnInContaminatedAreaCB.Checked == true ? 1 : 0;
+            _data.CanSpawnInContaminatedArea = StaticPatrolCanSpawnInContaminatedAreaCB.Checked;
 
         }
         private void StaticPatrolHeadshotResistanceNUD_Valuechanged(object sender, EventArgs e)

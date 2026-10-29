@@ -63,7 +63,7 @@ namespace ExpansionPlugin
             m_RequiredFactionCB.DataSource = new BindingList<string>(Factions?.ToList() ?? new List<string>());
 
             BindingList<string> LoadoutNameList = new BindingList<string> { "" };
-            foreach (AILoadouts lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
+            foreach (ExpansionPrefabObject lo in AppServices.GetRequired<ExpansionManager>().ExpansionLoadoutConfig.Items)
             {
                 LoadoutNameList.Add(Path.GetFileNameWithoutExtension(lo.FileName));
             }

@@ -277,15 +277,15 @@ namespace ExpansionPlugin
                     }
                 },
                 //Loadouts
-                [typeof(AILoadouts)] = (node, selected) =>
+                [typeof(ExpansionPrefabObject)] = (node, selected) =>
                 {
-                    AILoadouts AILoadouts = node.Tag as AILoadouts;
-                    ShowHandler(new ExpansionAILoadoutsControl(), typeof(AILoadouts), AILoadouts, selected);
+                    ExpansionPrefabObject AILoadouts = node.Tag as ExpansionPrefabObject;
+                    ShowHandler(new ExpansionAILoadoutsControl(), typeof(ExpansionPrefabObject), AILoadouts, selected);
                 },
-                [typeof(Inventoryattachment)] = (node, selected) =>
+                [typeof(ExpansionPrefabSlot)] = (node, selected) =>
                 {
-                    Inventoryattachment Inventoryattachment = node.Tag as Inventoryattachment;
-                    ShowHandler(new ExpansionInventoryattachmentControl(), typeof(AILoadouts), Inventoryattachment, selected);
+                    ExpansionPrefabSlot Inventoryattachment = node.Tag as ExpansionPrefabSlot;
+                    ShowHandler(new ExpansionInventoryattachmentControl(), typeof(ExpansionPrefabObject), Inventoryattachment, selected);
                 },
                 //Airdrops
                 [typeof(ExpansionAirdropSettings)] = (node, selected) =>
@@ -316,14 +316,14 @@ namespace ExpansionPlugin
                     Loadbalancingcategorie Loadbalancingcategorie = node.Tag as Loadbalancingcategorie;
                     ShowHandler(new AIPatrolLoadbalancingcategorieControl(), typeof(ExpansionAIPatrolConfig), Loadbalancingcategorie, selected);
                 },
-                [typeof(Loadbalancingcategories)] = (node, selected) =>
+                [typeof(ExpansionAIPatrolLoadBalancing)] = (node, selected) =>
                 {
-                    Loadbalancingcategories Loadbalancingcategories = node.Tag as Loadbalancingcategories;
+                    ExpansionAIPatrolLoadBalancing Loadbalancingcategories = node.Tag as ExpansionAIPatrolLoadBalancing;
                     ShowHandler(new AIPAtrolLoadbalancingcategoriesControl(), typeof(ExpansionAIPatrolConfig), Loadbalancingcategories, selected);
                 },
-                [typeof(ExpansionAINoGoArea)] = (node, selected) =>
+                [typeof(ExpansionAINoGoAreaConfig)] = (node, selected) =>
                 {
-                    ExpansionAINoGoArea ExpansionAINoGoArea = node.Tag as ExpansionAINoGoArea;
+                    ExpansionAINoGoAreaConfig ExpansionAINoGoArea = node.Tag as ExpansionAINoGoAreaConfig;
                     var control = new ExpansionAINoGoAreaControl();
                     control.PositionChanged += (updatedPos) =>
                     {
@@ -1508,7 +1508,7 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 // Loadouts
-                [typeof(Inventoryattachment)] = node =>
+                [typeof(ExpansionPrefabSlot)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(RemoveAttachemtItemToolStripMenuItem);
@@ -1516,7 +1516,7 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewItemToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                [typeof(AILoadouts)] = node =>
+                [typeof(ExpansionPrefabObject)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(RemoveItemToolStripMenuItem);
@@ -1541,13 +1541,13 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(addNewLoadBalancingCountsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                [typeof(Loadbalancingcategories)] = node =>
+                [typeof(ExpansionAIPatrolLoadBalancing)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeCountsToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                [typeof(ExpansionAINoGoArea)] = node =>
+                [typeof(ExpansionAINoGoAreaConfig)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeAINoGoAreaToolStripMenuItem);
@@ -3348,64 +3348,64 @@ namespace ExpansionPlugin
             {
                 Tag = ef
             };
-            foreach (AILoadouts AILoadouts in ef.Items)
+            foreach (ExpansionPrefabObject AILoadouts in ef.Items)
             {
                 AILoadoutConfigRootNode.Nodes.Add(SetupLoadoutTreeView(AILoadouts));
             }
 
             return AILoadoutConfigRootNode;
         }
-        private TreeNode SetupLoadoutTreeView(AILoadouts load)
+        private TreeNode SetupLoadoutTreeView(ExpansionPrefabObject load)
         {
             string display = !string.IsNullOrWhiteSpace(load.FileName) ? load.FileName : Path.GetFileNameWithoutExtension(load.FileName ?? string.Empty);
             TreeNode root = new TreeNode(display) { Tag = load };
 
             TreeNode invAttachments = new TreeNode("inventoryAttachments") { Tag = "InventoryAttachments" };
-            foreach (Inventoryattachment ia in load.InventoryAttachments ?? new BindingList<Inventoryattachment>())
+            foreach (ExpansionPrefabSlot ia in load.InventoryAttachments ?? new BindingList<ExpansionPrefabSlot>())
                 invAttachments.Nodes.Add(BuildInventoryAttachmentNode(ia));
             root.Nodes.Add(invAttachments);
 
             TreeNode invCargo = new TreeNode("InventoryCargo") { Tag = "InventoryCargo" };
-            foreach (AILoadouts cargo in load.InventoryCargo ?? new BindingList<AILoadouts>())
+            foreach (ExpansionPrefabObject cargo in load.InventoryCargo ?? new BindingList<ExpansionPrefabObject>())
                 invCargo.Nodes.Add(BuildAILoadoutsNode(cargo));
             root.Nodes.Add(invCargo);
 
             TreeNode sets = new TreeNode("Sets") { Tag = "Sets" };
-            foreach (AILoadouts set in load.Sets ?? new BindingList<AILoadouts>())
+            foreach (ExpansionPrefabObject set in load.Sets ?? new BindingList<ExpansionPrefabObject>())
                 sets.Nodes.Add(BuildAILoadoutsNode(set));
             root.Nodes.Add(sets);
 
             return root;
         }
-        private TreeNode BuildInventoryAttachmentNode(Inventoryattachment ia)
+        private TreeNode BuildInventoryAttachmentNode(ExpansionPrefabSlot ia)
         {
             string slotname = string.IsNullOrWhiteSpace(ia.SlotName) ? "Default Slot" : ia.SlotName;
             TreeNode tn = new TreeNode(slotname) { Tag = ia };
-            foreach (AILoadouts child in ia.Items ?? new BindingList<AILoadouts>())
+            foreach (ExpansionPrefabObject child in ia.Items ?? new BindingList<ExpansionPrefabObject>())
                 tn.Nodes.Add(BuildAILoadoutsNode(child));
             return tn;
         }
-        private TreeNode BuildAILoadoutsNode(AILoadouts a)
+        private TreeNode BuildAILoadoutsNode(ExpansionPrefabObject a)
         {
             string label = string.IsNullOrWhiteSpace(a.ClassName) ? "Set" : $"{a.ClassName}  -  {a.Chance * 100}%";
             TreeNode tn = new TreeNode(label) { Tag = a };
 
-            foreach (Inventoryattachment ia in a.InventoryAttachments ?? new BindingList<Inventoryattachment>())
+            foreach (ExpansionPrefabSlot ia in a.InventoryAttachments ?? new BindingList<ExpansionPrefabSlot>())
                 tn.Nodes.Add(BuildInventoryAttachmentNode(ia));
 
             TreeNode cargoNode = BuildCargoNode(a.InventoryCargo);
             if (cargoNode != null) tn.Nodes.Add(cargoNode);
 
-            foreach (AILoadouts set in a.Sets ?? new BindingList<AILoadouts>())
+            foreach (ExpansionPrefabObject set in a.Sets ?? new BindingList<ExpansionPrefabObject>())
                 tn.Nodes.Add(BuildAILoadoutsNode(set));
 
             return tn;
         }
-        private TreeNode BuildCargoNode(BindingList<AILoadouts> cargoList)
+        private TreeNode BuildCargoNode(BindingList<ExpansionPrefabObject> cargoList)
         {
             if (cargoList == null || cargoList.Count == 0) return null;
             TreeNode tn = new TreeNode("InventoryCargo") { Tag = "InventoryCargo" };
-            foreach (AILoadouts c in cargoList)
+            foreach (ExpansionPrefabObject c in cargoList)
                 tn.Nodes.Add(BuildAILoadoutsNode(c));
             return tn;
         }
@@ -3418,7 +3418,7 @@ namespace ExpansionPlugin
             foreach (AILootDrops AILootdrops in ef.Items)
             {
                 TreeNode fileNode = new TreeNode(AILootdrops.FileName) { Tag = AILootdrops };
-                foreach (AILoadouts entry in AILootdrops.LootdropList)
+                foreach (ExpansionPrefabObject entry in AILootdrops.LootdropList)
                 {
                     fileNode.Nodes.Add(BuildAILoadoutsNode(entry));
                 }
@@ -3458,7 +3458,7 @@ namespace ExpansionPlugin
                     Tag = lbc
                 };
                 int i = 0;
-                foreach (Loadbalancingcategories lbcat in lbc.Categorieslist)
+                foreach (ExpansionAIPatrolLoadBalancing lbcat in lbc.Categorieslist)
                 {
                     LoadbalancingcategorieRoot.Nodes.Add(new TreeNode($"Load Balancing : {i.ToString()}")
                     {
@@ -3532,7 +3532,7 @@ namespace ExpansionPlugin
             {
                 Tag = "NoGoAreas"
             };
-            foreach (ExpansionAINoGoArea lbc in ef.Data.NoGoAreas)
+            foreach (ExpansionAINoGoAreaConfig lbc in ef.Data.NoGoAreas)
             {
                 NoGoAreasNode.Nodes.Add(new TreeNode($"{lbc.Name}")
                 {
@@ -6206,7 +6206,7 @@ namespace ExpansionPlugin
         private ExpansionAIRoamingLocation _selectedAIRoamingLocations;
         private ExpansionAIPatrol _selectedAIPatrol;
         private ExpansionQuestObjectiveAIEscortConfig _selectedAIEscort;
-        private ExpansionAINoGoArea _selectedAINOGoArea;
+        private ExpansionAINoGoAreaConfig _selectedAINOGoArea;
         private ExpansionServerMarkerData _selectedServerMarkerData;
         private ExpansionMarketSpawnPosition _selectedVehicleSpanPosition;
         private ExpansionSafeZoneCircle _selectedSafeZoneCircle;
@@ -6351,7 +6351,7 @@ namespace ExpansionPlugin
                 DrawbaseTreasureHunt(tresure);
             });
         }
-        private void SetupAILocationNoGoAreas(ExpansionAINoGoArea pos, TreeNode node)
+        private void SetupAILocationNoGoAreas(ExpansionAINoGoAreaConfig pos, TreeNode node)
         {
             SetupMap(() =>
             {
@@ -6655,7 +6655,7 @@ namespace ExpansionPlugin
         }
         private void DrawbaseAILocationNoGoAreas(ExpansionAILocationConfig ExpansionAILocationConfig)
         {
-            foreach (ExpansionAINoGoArea ExpansionAINoGoArea in ExpansionAILocationConfig.Data.NoGoAreas)
+            foreach (ExpansionAINoGoAreaConfig ExpansionAINoGoArea in ExpansionAILocationConfig.Data.NoGoAreas)
             {
                 var marker = new TextMarkerDrawable(new PointF(ExpansionAINoGoArea.Position.X, ExpansionAINoGoArea.Position.Z), _mapControl.MapSize)
                 {
@@ -8541,7 +8541,7 @@ namespace ExpansionPlugin
 
             TreeNode parentNode = currentTreeNode.Parent;
 
-            ExpansionAINoGoArea closestPos = null;
+            ExpansionAINoGoAreaConfig closestPos = null;
             double closestDistance = double.MaxValue;
 
             PointF clickScreen = _mapControl.MapToScreen(e.MapCoordinates);
@@ -8549,7 +8549,7 @@ namespace ExpansionPlugin
             // Loop through all child nodes of the parent
             foreach (TreeNode child in parentNode.Nodes)
             {
-                if (child.Tag is ExpansionAINoGoArea pos)
+                if (child.Tag is ExpansionAINoGoAreaConfig pos)
                 {
                     // Node position in screen space
                     PointF posScreen = _mapControl.MapToScreen(new PointF(pos.Position.X, pos.Position.Z));
@@ -8584,7 +8584,7 @@ namespace ExpansionPlugin
         }
         private void MapControl_AILocationNoGoAreasDoubleclicked(object sender, MapClickEventArgs e)
         {
-            if (currentTreeNode.Tag is ExpansionAINoGoArea ExpansionAINoGoArea)
+            if (currentTreeNode.Tag is ExpansionAINoGoAreaConfig ExpansionAINoGoArea)
             {
                 ExpansionAINoGoArea.Position.X = (float)e.MapCoordinates.X;
                 ExpansionAINoGoArea.Position.Z = (float)e.MapCoordinates.Y;
@@ -9951,10 +9951,10 @@ namespace ExpansionPlugin
         //Loadouts
         private void AddNewAttachmentItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Inventoryattachment newIA = new Inventoryattachment()
+            ExpansionPrefabSlot newIA = new ExpansionPrefabSlot()
             {
                 SlotName = "Back",
-                Items = new BindingList<AILoadouts>()
+                Items = new BindingList<ExpansionPrefabObject>()
             };
 
             TreeNode newnode = new TreeNode(newIA.SlotName) { Tag = newIA };
@@ -9962,13 +9962,13 @@ namespace ExpansionPlugin
             // If selected node is the "inventoryAttachments" category under a file
             if (currentTreeNode != null && currentTreeNode.Tag is string tag && tag == "InventoryAttachments" && currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
             {
-                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
                 AILoadouts.InventoryAttachments.Add(newIA);
                 currentTreeNode.Nodes.Add(newnode);
             }
-            else if (currentTreeNode.FindParentOfType<AILoadouts>() != null)
+            else if (currentTreeNode.FindParentOfType<ExpansionPrefabObject>() != null)
             {
-                AILoadouts AILoadouts = currentTreeNode.FindParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts = currentTreeNode.FindParentOfType<ExpansionPrefabObject>();
                 AILoadouts.InventoryAttachments.Add(newIA);
                 currentTreeNode.Nodes.Add(newnode);
             }
@@ -9978,8 +9978,8 @@ namespace ExpansionPlugin
             // If the inventory attachment belongs to an AILoadouts file
             if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
             {
-                AILoadouts AILoadouts = currentTreeNode.FindParentOfType<AILoadouts>();
-                AILoadouts.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
+                ExpansionPrefabObject AILoadouts = currentTreeNode.FindParentOfType<ExpansionPrefabObject>();
+                AILoadouts.InventoryAttachments.Remove(currentTreeNode.Tag as ExpansionPrefabSlot);
                 if (currentTreeNode != null)
                     currentTreeNode.Remove();
             }
@@ -9988,38 +9988,38 @@ namespace ExpansionPlugin
                 // If this inventory attachment is inside an AILoadouts that belongs to a loot drops file,
                 // find that specific AILoadouts parent and update it and the loot drops file's dirty flag.
                 TreeNode parent = currentTreeNode.Parent;
-                if (parent != null && parent.Tag is AILoadouts parentLoadout)
+                if (parent != null && parent.Tag is ExpansionPrefabObject parentLoadout)
                 {
-                    parentLoadout.InventoryAttachments.Remove(currentTreeNode.Tag as Inventoryattachment);
+                    parentLoadout.InventoryAttachments.Remove(currentTreeNode.Tag as ExpansionPrefabSlot);
                     currentTreeNode.Remove();
                 }
             }
         }
         private void AddNewCargoItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AILoadouts newItem = new AILoadouts()
+            ExpansionPrefabObject newItem = new ExpansionPrefabObject()
             {
                 ClassName = "New Item, Replace me.",
                 Chance = (decimal)1.0,
-                Quantity = new Quantity(),
-                Health = new BindingList<Health>(),
-                InventoryAttachments = new BindingList<Inventoryattachment>(),
-                InventoryCargo = new BindingList<AILoadouts>(),
-                ConstructionPartsBuilt = new BindingList<object>(),
-                Sets = new BindingList<AILoadouts>()
+                Quantity = new ExpansionMinMax(),
+                Health = new BindingList<ExpansionHealth>(),
+                InventoryAttachments = new BindingList<ExpansionPrefabSlot>(),
+                InventoryCargo = new BindingList<ExpansionPrefabObject>(),
+                ConstructionPartsBuilt = new BindingList<string>(),
+                Sets = new BindingList<ExpansionPrefabObject>()
             };
             TreeNode newNode = new TreeNode(newItem.ClassName) { Tag = newItem };
 
 
 
-            if (currentTreeNode.Parent.Tag is AILoadouts AILoadouts)
+            if (currentTreeNode.Parent.Tag is ExpansionPrefabObject AILoadouts)
             {
                 AILoadouts.InventoryCargo.Add(newItem);
                 currentTreeNode.Nodes.Add(newNode);
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>();
-                AILoadouts AILoadouts3 = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts3 = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
             }
-            else if (currentTreeNode.Tag is AILoadouts selectedAILoadouts)
+            else if (currentTreeNode.Tag is ExpansionPrefabObject selectedAILoadouts)
             {
                 // find/create Cargo child
                 TreeNode cargoNode = currentTreeNode.Nodes.Cast<TreeNode>().FirstOrDefault(n => string.Equals(n.Tag as string, "InventoryCargo"));
@@ -10033,25 +10033,25 @@ namespace ExpansionPlugin
 
                 // If this AILoadouts is inside a loot drops file, mark the loot drops file dirty
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>();
-                AILoadouts AILoadouts3 = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts3 = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
             }
             ExpansionTV.SelectedNode = newNode;
         }
         private void AddNewSetItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AILoadouts newSet = new AILoadouts()
+            ExpansionPrefabObject newSet = new ExpansionPrefabObject()
             {
                 ClassName = "",
                 Chance = (decimal)1.0,
-                Quantity = new Quantity(),
-                Health = new BindingList<Health>(),
-                InventoryAttachments = new BindingList<Inventoryattachment>(),
-                InventoryCargo = new BindingList<AILoadouts>(),
-                ConstructionPartsBuilt = new BindingList<object>(),
-                Sets = new BindingList<AILoadouts>()
+                Quantity = new ExpansionMinMax(),
+                Health = new BindingList<ExpansionHealth>(),
+                InventoryAttachments = new BindingList<ExpansionPrefabSlot>(),
+                InventoryCargo = new BindingList<ExpansionPrefabObject>(),
+                ConstructionPartsBuilt = new BindingList<string>(),
+                Sets = new BindingList<ExpansionPrefabObject>()
             };
             AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
-            AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+            ExpansionPrefabObject AILoadouts = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
             if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
             {
                 AILoadouts.Sets.Add(newSet);
@@ -10061,18 +10061,18 @@ namespace ExpansionPlugin
         }
         private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AILoadouts newItem = new AILoadouts()
+            ExpansionPrefabObject newItem = new ExpansionPrefabObject()
             {
                 ClassName = "New Item, Replace me.",
                 Chance = (decimal)1.0,
-                Quantity = new Quantity(),
-                Health = new BindingList<Health>(),
-                InventoryAttachments = new BindingList<Inventoryattachment>(),
-                InventoryCargo = new BindingList<AILoadouts>(),
-                ConstructionPartsBuilt = new BindingList<object>(),
-                Sets = new BindingList<AILoadouts>()
+                Quantity = new ExpansionMinMax(),
+                Health = new BindingList<ExpansionHealth>(),
+                InventoryAttachments = new BindingList<ExpansionPrefabSlot>(),
+                InventoryCargo = new BindingList<ExpansionPrefabObject>(),
+                ConstructionPartsBuilt = new BindingList<string>(),
+                Sets = new BindingList<ExpansionPrefabObject>()
             };
-            newItem.Health.Add(new Health() { Zone = "", Min = (decimal)0.7, Max = (decimal)1.0 });
+            newItem.Health.Add(new ExpansionHealth() { Zone = "", Min = (decimal)0.7, Max = (decimal)1.0 });
 
             TreeNode newNode = new TreeNode(newItem.ClassName) { Tag = newItem };
             currentTreeNode.Nodes.Add(newNode);
@@ -10084,15 +10084,15 @@ namespace ExpansionPlugin
             }
             else if (currentTreeNode.FindParentOfType<ExpansionLoadoutConfig>() != null)
             {
-                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
                 // If adding under a loadouts file
-                if (currentTreeNode.Tag is Inventoryattachment Inventoryattachment)
+                if (currentTreeNode.Tag is ExpansionPrefabSlot Inventoryattachment)
                     Inventoryattachment.Items.Add(newItem);
             }
             else if (currentTreeNode.FindParentOfType<AILootDrops>() != null)
             {
                 AILootDrops AILootDrops = currentTreeNode.FindLastParentOfType<AILootDrops>();
-                if (currentTreeNode.Tag is Inventoryattachment Inventoryattachment)
+                if (currentTreeNode.Tag is ExpansionPrefabSlot Inventoryattachment)
                     Inventoryattachment.Items.Add(newItem);
             }
         }
@@ -10101,11 +10101,11 @@ namespace ExpansionPlugin
             TreeNode parent = currentTreeNode.Parent;
 
             // --- 1) Inventoryattachment parent ---
-            if (parent.Tag is Inventoryattachment ia)
+            if (parent.Tag is ExpansionPrefabSlot ia)
             {
-                AILoadouts item = currentTreeNode.Tag as AILoadouts;
+                ExpansionPrefabObject item = currentTreeNode.Tag as ExpansionPrefabObject;
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
-                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
                 ia.Items.Remove(item);
                 currentTreeNode.Remove();
                 return;
@@ -10114,7 +10114,7 @@ namespace ExpansionPlugin
             // --- 2) AILootDrops file parent (top-level loadout under LootDrops file) ---
             if (parent.Tag is AILootDrops parentLootFile)
             {
-                AILoadouts toRemove = currentTreeNode.Tag as AILoadouts;
+                ExpansionPrefabObject toRemove = currentTreeNode.Tag as ExpansionPrefabObject;
                 if (toRemove != null)
                 {
                     parentLootFile.LootdropList.Remove(toRemove);
@@ -10134,15 +10134,15 @@ namespace ExpansionPlugin
                 }
             }
 
-            // --- 4) All other cases where selected.Tag is AILoadouts ---
-            if (currentTreeNode.Tag is AILoadouts selectedLoadout)
+            // --- 4) All other cases where selected.Tag is ExpansionPrefabObject ---
+            if (currentTreeNode.Tag is ExpansionPrefabObject selectedLoadout)
             {
                 AILootDrops owningLootFile = currentTreeNode.FindParentOfType<AILootDrops>(); // capture before removal
-                AILoadouts AILoadouts = currentTreeNode.FindLastParentOfType<AILoadouts>();
+                ExpansionPrefabObject AILoadouts = currentTreeNode.FindLastParentOfType<ExpansionPrefabObject>();
                 // (a) InventoryCargo category
                 if (string.Equals(parent.Text, "InventoryCargo", StringComparison.OrdinalIgnoreCase))
                 {
-                    AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
+                    ExpansionPrefabObject fileRoot = parent.Parent?.Tag as ExpansionPrefabObject;
                     if (fileRoot != null)
                     {
                         fileRoot.InventoryCargo.Remove(selectedLoadout);
@@ -10157,7 +10157,7 @@ namespace ExpansionPlugin
                 // (b) Sets category
                 else if (string.Equals(parent.Text, "Sets", StringComparison.OrdinalIgnoreCase))
                 {
-                    AILoadouts fileRoot = parent.Parent?.Tag as AILoadouts;
+                    ExpansionPrefabObject fileRoot = parent.Parent?.Tag as ExpansionPrefabObject;
                     if (fileRoot != null)
                     {
                         fileRoot.Sets.Remove(selectedLoadout);
@@ -10192,12 +10192,12 @@ namespace ExpansionPlugin
                 string newmodPath = frm.moddir.Replace("/", "\\");
                 string typesfile = frm.typesname + ".json";
                 string newPath = Path.Combine(newmodPath, typesfile);
-                AILoadouts newAILoadouts = new AILoadouts()
+                ExpansionPrefabObject newAILoadouts = new ExpansionPrefabObject()
                 {
                     // default constructor already initializes lists
                     ClassName = "",
                     Chance = (decimal)1.0,
-                    Quantity = new Quantity()
+                    Quantity = new ExpansionMinMax()
                 };
                 newAILoadouts.SetPath(newPath);
                 newAILoadouts.SetGuid(Guid.NewGuid());
@@ -10248,14 +10248,14 @@ namespace ExpansionPlugin
                 string newPath = Path.Combine(newmodPath, typesfile);
                 AILootDrops newAILootDrops = new AILootDrops()
                 {
-                    LootdropList = new BindingList<AILoadouts>()
+                    LootdropList = new BindingList<ExpansionPrefabObject>()
                 };
                 newAILootDrops.SetPath(newPath);
                 bool added = _expansionManager.ExpansionLootDropConfig.AddNewLootDropFile(newAILootDrops);
                 if (added)
                 {
                     TreeNode newNode = new TreeNode(newAILootDrops.FileName) { Tag = newAILootDrops };
-                    foreach (AILoadouts entry in newAILootDrops.LootdropList)
+                    foreach (ExpansionPrefabObject entry in newAILootDrops.LootdropList)
                     {
                         newNode.Nodes.Add(BuildAILoadoutsNode(entry));
                     }
@@ -10293,9 +10293,9 @@ namespace ExpansionPlugin
             if (exists == true) return;
 
             string newPath = Path.Combine(loadoutsPath, $"{itemText}.json");
-            AILoadouts newAILoadouts = AppServices.GetRequired<FileService>().LoadOrCreateJson(
+            ExpansionPrefabObject newAILoadouts = AppServices.GetRequired<FileService>().LoadOrCreateJson(
                     newPath,
-                    createNew: () => new AILoadouts(),
+                    createNew: () => new ExpansionPrefabObject(),
                     configName: "Loadout",
                     useBoolConvertor: true
                 );
@@ -10506,7 +10506,7 @@ namespace ExpansionPlugin
                 ShoryukenChance = -1.0M,
                 ShoryukenDamageMultiplier = -1.0M,
                 CanBeTriggeredByAI = 0,
-                CanSpawnInContaminatedArea = 0,
+                CanSpawnInContaminatedArea = false,
                 MinDistRadius = -1,
                 MaxDistRadius = -1,
                 DespawnRadius = -1,
@@ -10842,7 +10842,7 @@ namespace ExpansionPlugin
             Loadbalancingcategorie newcat = new Loadbalancingcategorie()
             {
                 name = newName,
-                Categorieslist = new BindingList<Loadbalancingcategories>()
+                Categorieslist = new BindingList<ExpansionAIPatrolLoadBalancing>()
             };
             ExpansionAIPatrolConfig.Data._LoadBalancingCategories.Add(newcat);
             TreeNode newtreenode = new TreeNode($"Category Name : - {newcat.name}")
@@ -10865,7 +10865,7 @@ namespace ExpansionPlugin
         {
             ExpansionAIPatrolConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAIPatrolConfig>();
             Loadbalancingcategorie Loadbalancingcategorie = currentTreeNode.Tag as Loadbalancingcategorie;
-            Loadbalancingcategorie.Categorieslist.Add(new Loadbalancingcategories()
+            Loadbalancingcategorie.Categorieslist.Add(new ExpansionAIPatrolLoadBalancing()
             {
                 MinPlayers = 0,
                 MaxPlayers = 255,
@@ -10881,14 +10881,14 @@ namespace ExpansionPlugin
         }
         private void removeCountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (currentTreeNode.Parent.Tag as Loadbalancingcategorie).Categorieslist.Remove(currentTreeNode.Tag as Loadbalancingcategories);
+            (currentTreeNode.Parent.Tag as Loadbalancingcategorie).Categorieslist.Remove(currentTreeNode.Tag as ExpansionAIPatrolLoadBalancing);
 
             currentTreeNode.Remove();
         }
         private void addAiNoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
-            ExpansionAINoGoArea newnogo = new ExpansionAINoGoArea()
+            ExpansionAINoGoAreaConfig newnogo = new ExpansionAINoGoAreaConfig()
             {
                 Name = "New NoGO Area",
                 Position = new Vec3((float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2, 0f, (float)AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2),
@@ -10911,7 +10911,7 @@ namespace ExpansionPlugin
         private void removeAINoGoAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionAILocationConfig ExpansionAIPatrolConfig = currentTreeNode.FindParentOfType<ExpansionAILocationConfig>();
-            ExpansionAIPatrolConfig.Data.NoGoAreas.Remove(currentTreeNode.Tag as ExpansionAINoGoArea);
+            ExpansionAIPatrolConfig.Data.NoGoAreas.Remove(currentTreeNode.Tag as ExpansionAINoGoAreaConfig);
             currentTreeNode.Remove();
 
         }

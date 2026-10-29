@@ -18,9 +18,9 @@ namespace ExpansionPlugin
         }
         protected override AILootDrops LoadItem(string filePath)
         {
-            var item = AppServices.GetRequired<FileService>().LoadOrCreateJson<BindingList<AILoadouts>>(
+            var item = AppServices.GetRequired<FileService>().LoadOrCreateJson<BindingList<ExpansionPrefabObject>>(
                     filePath,
-                    createNew: () => new BindingList<AILoadouts>(),
+                    createNew: () => new BindingList<ExpansionPrefabObject>(),
                     onError: ex => HandleItemError(filePath, ex),
                     configName: "LootDrop"
                 );
@@ -86,14 +86,14 @@ namespace ExpansionPlugin
 
         public AILootDrops()
         {
-            LootdropList = new BindingList<AILoadouts>();
+            LootdropList = new BindingList<ExpansionPrefabObject>();
         }
         public AILootDrops(string name)
         {
             name = name;
-            LootdropList = new BindingList<AILoadouts>();
+            LootdropList = new BindingList<ExpansionPrefabObject>();
         }
-        public BindingList<AILoadouts> LootdropList { get; set; }
+        public BindingList<ExpansionPrefabObject> LootdropList { get; set; }
         public override string ToString()
         {
             return FileName;
@@ -110,7 +110,7 @@ namespace ExpansionPlugin
         {
             return new AILootDrops()
             {
-                LootdropList = new BindingList<AILoadouts>(this.LootdropList.Select(x => x.Clone()).ToList())
+                LootdropList = new BindingList<ExpansionPrefabObject>(this.LootdropList.Select(x => x.Clone()).ToList())
             };
         }
     }

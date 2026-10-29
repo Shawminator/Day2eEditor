@@ -14,7 +14,7 @@ namespace ExpansionPlugin
     public partial class ExpansionInventoryattachmentControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private Inventoryattachment _data;
+        private ExpansionPrefabSlot _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -34,7 +34,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as Inventoryattachment ?? throw new InvalidCastException();
+            _data = data as ExpansionPrefabSlot ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
