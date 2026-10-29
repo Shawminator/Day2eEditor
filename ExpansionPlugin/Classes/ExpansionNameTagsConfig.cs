@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionNameTagsConfig : SingleFileConfigLoaderBase<NameTagsSettings>
+    public class ExpansionNameTagsConfig : SingleFileConfigLoaderBase<ExpansionNameTagsSettings>
     {
         public const int CurrentVersion = 5;
         public ExpansionNameTagsConfig(string path) : base(path)
         {
         }
-        protected override NameTagsSettings CreateDefaultData()
+        protected override ExpansionNameTagsSettings CreateDefaultData()
         {
-            return new NameTagsSettings(CurrentVersion);
+            return new ExpansionNameTagsSettings(CurrentVersion);
         }
         protected override IEnumerable<string> ValidateData()
         {
             return Data.FixMissingOrInvalidFields();
         }
     }
-    public class NameTagsSettings : IEquatable<NameTagsSettings>, IDeepCloneable<NameTagsSettings>
+    public class ExpansionNameTagsSettings : IEquatable<ExpansionNameTagsSettings>, IDeepCloneable<ExpansionNameTagsSettings>
     {
         public int m_Version { get; set; }
         public int? EnablePlayerTags { get; set; }
@@ -37,8 +37,8 @@ namespace ExpansionPlugin
         public int? ShowPlayerFaction { get; set; }
         public int? UseRarityColorForItemInHands { get; set; }
 
-        public NameTagsSettings() { }
-        public NameTagsSettings(int CurrentVersion)
+        public ExpansionNameTagsSettings() { }
+        public ExpansionNameTagsSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
             EnablePlayerTags = 1;
@@ -127,7 +127,7 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public bool Equals(NameTagsSettings other)
+        public bool Equals(ExpansionNameTagsSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -146,10 +146,10 @@ namespace ExpansionPlugin
                ShowPlayerFaction == other.ShowPlayerFaction &&
                UseRarityColorForItemInHands == other.UseRarityColorForItemInHands;
         }
-        public override bool Equals(object? obj) => Equals(obj as NameTagsSettings);
-        public NameTagsSettings Clone()
+        public override bool Equals(object? obj) => Equals(obj as ExpansionNameTagsSettings);
+        public ExpansionNameTagsSettings Clone()
         {
-            return new NameTagsSettings
+            return new ExpansionNameTagsSettings
             {
                 m_Version = this.m_Version,
                 EnablePlayerTags = this.EnablePlayerTags,

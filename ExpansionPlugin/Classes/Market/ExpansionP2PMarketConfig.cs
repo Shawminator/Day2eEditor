@@ -10,22 +10,22 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionP2PMarketConfig : SingleFileConfigLoaderBase<ExpasnionP2PMarketSettings>
+    public class ExpansionP2PMarketConfig : SingleFileConfigLoaderBase<ExpansionP2PMarketSettings>
     {
         public const int CurrentVersion = 3;
         public ExpansionP2PMarketConfig(string path) : base(path)
         {
         }
-        protected override ExpasnionP2PMarketSettings CreateDefaultData()
+        protected override ExpansionP2PMarketSettings CreateDefaultData()
         {
-            return new ExpasnionP2PMarketSettings(CurrentVersion);
+            return new ExpansionP2PMarketSettings(CurrentVersion);
         }
         protected override IEnumerable<string> ValidateData()
         {
             return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpasnionP2PMarketSettings : IEquatable<ExpasnionP2PMarketSettings>, IDeepCloneable<ExpasnionP2PMarketSettings>
+    public class ExpansionP2PMarketSettings : IEquatable<ExpansionP2PMarketSettings>, IDeepCloneable<ExpansionP2PMarketSettings>
     {
         public int m_Version { get; set; }
         public int? Enabled { get; set; }
@@ -38,11 +38,11 @@ namespace ExpansionPlugin
         public int? SalesDepositTime { get; set; }
         public int? DisallowUnpersisted { get; set; }
 
-        public ExpasnionP2PMarketSettings()
+        public ExpansionP2PMarketSettings()
         {
 
         }
-        public ExpasnionP2PMarketSettings(int CurrentVersion)
+        public ExpansionP2PMarketSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
 
@@ -561,7 +561,7 @@ namespace ExpansionPlugin
             }
             return fixes;
         }
-        public bool Equals(ExpasnionP2PMarketSettings other)
+        public bool Equals(ExpansionP2PMarketSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -594,10 +594,10 @@ namespace ExpansionPlugin
             return left.SequenceEqual(right);
         }
 
-        public override bool Equals(object? obj) => Equals(obj as ExpasnionP2PMarketSettings);
-        public ExpasnionP2PMarketSettings Clone()
+        public override bool Equals(object? obj) => Equals(obj as ExpansionP2PMarketSettings);
+        public ExpansionP2PMarketSettings Clone()
         {
-            return new ExpasnionP2PMarketSettings()
+            return new ExpansionP2PMarketSettings()
             {
                 m_Version = this.m_Version,
                 Enabled = this.Enabled,

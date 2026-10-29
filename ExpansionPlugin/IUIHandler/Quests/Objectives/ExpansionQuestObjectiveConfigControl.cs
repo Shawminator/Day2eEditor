@@ -122,7 +122,7 @@ namespace ExpansionPlugin
                 var QuestList = AppServices.GetRequired<ExpansionManager>().ExpansionQuestQuestConfig.MutableItems;
                 foreach (ExpansionQuestQuest quest in QuestList)
                 {
-                    foreach(Objectives obj in quest.Objectives)
+                    foreach(ExpansionQuestObjectiveConfigBase obj in quest.Objectives)
                     {
                         if (obj.ObjectiveType == (ExpansionQuestObjectiveType)_data.ObjectiveType &&
                             obj.ID == currentid)

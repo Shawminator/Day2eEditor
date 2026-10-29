@@ -43,6 +43,7 @@ namespace ExpansionPlugin
 
             VehicleSyncComboBox.SelectedItem = (ExpansionVehicleNetworkMode)_data.VehicleSync;
             EnableWindAerodynamicsCB.Checked = _data.EnableWindAerodynamics == 1 ? true : false;
+            EnableMainRotorDamageCB.Checked = _data.EnableMainRotorDamage == 1 ? true : false;
             EnableTailRotorDamageCB.Checked = _data.EnableTailRotorDamage == 1 ? true : false;
             EnableHelicopterExplosionsCB.Checked = _data.EnableHelicopterExplosions == 1 ? true : false;
             DisableVehicleDamageCB.Checked = _data.DisableVehicleDamage == 1 ? true : false;
@@ -88,6 +89,11 @@ namespace ExpansionPlugin
         {
             if (_suppressEvents) { return; }
             _data.EnableWindAerodynamics = EnableWindAerodynamicsCB.Checked ? 1 : 0;
+        }
+        private void EnableMainRotorDamageCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents) { return; }
+            _data.EnableMainRotorDamage = EnableMainRotorDamageCB.Checked ? 1 : 0;
         }
         private void EnableTailRotorDamageCB_CheckedChanged(object sender, EventArgs e)
         {

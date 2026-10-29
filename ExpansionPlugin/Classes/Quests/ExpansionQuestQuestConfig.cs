@@ -316,7 +316,7 @@ namespace ExpansionPlugin
                 QuestTurnInIDs = new BindingList<int>(),
                 QuestTurnInIDsList = new BindingList<QuestNPCReferenceNode>(),
                 IsAchievement = 0,
-                Objectives = new BindingList<Objectives>(),
+                Objectives = new BindingList<ExpansionQuestObjectiveConfigBase>(),
                 QuestColor = 0,
                 ReputationReward = 0,
                 ReputationRequirement = -1,
@@ -406,7 +406,7 @@ namespace ExpansionPlugin
         public BindingList<int> QuestTurnInIDs { get; set; }
 
         public int? IsAchievement { get; set; }
-        public BindingList<Objectives> Objectives { get; set; }
+        public BindingList<ExpansionQuestObjectiveConfigBase> Objectives { get; set; }
         public int? QuestColor { get; set; }
         public int? ReputationReward { get; set; }
         public int? ReputationRequirement { get; set; }
@@ -462,7 +462,7 @@ namespace ExpansionPlugin
                       : null,
                 IsAchievement = IsAchievement,
                 Objectives = Objectives != null
-                      ? new BindingList<Objectives>(
+                      ? new BindingList<ExpansionQuestObjectiveConfigBase>(
                           Objectives.Select(x => x.Clone()).ToList())
                       : null,
                 QuestColor = QuestColor,
@@ -661,7 +661,7 @@ namespace ExpansionPlugin
             }
         }
     }
-    public class Objectives : IDeepCloneable<Objectives>, IEquatable<Objectives>
+    public class ExpansionQuestObjectiveConfigBase : IDeepCloneable<ExpansionQuestObjectiveConfigBase>, IEquatable<ExpansionQuestObjectiveConfigBase>
     {
         public int ConfigVersion { get; set; }
         public int ID { get; set; }
@@ -678,17 +678,17 @@ namespace ExpansionPlugin
             }
         }
 
-        public Objectives Clone()
+        public ExpansionQuestObjectiveConfigBase Clone()
         {
-            return new Objectives
+            return new ExpansionQuestObjectiveConfigBase
             {
                 ConfigVersion = ConfigVersion,
                 ID = ID,
                 ObjectiveType = ObjectiveType,
             };
         }
-        public override bool Equals(object? obj) => Equals(obj as Objectives);
-        public bool Equals(Objectives? other)
+        public override bool Equals(object? obj) => Equals(obj as ExpansionQuestObjectiveConfigBase);
+        public bool Equals(ExpansionQuestObjectiveConfigBase? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

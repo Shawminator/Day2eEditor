@@ -60,6 +60,8 @@
             VehicleSyncComboBox = new ComboBox();
             darkLabel130 = new Label();
             EnableWindAerodynamicsCB = new CheckBox();
+            EnableMainRotorDamageCB = new CheckBox();
+            label13 = new Label();
             EnableTailRotorDamageCB = new CheckBox();
             TowingCB = new CheckBox();
             EnableHelicopterExplosionsCB = new CheckBox();
@@ -116,6 +118,8 @@
             groupBox41.Controls.Add(VehicleSyncComboBox);
             groupBox41.Controls.Add(darkLabel130);
             groupBox41.Controls.Add(EnableWindAerodynamicsCB);
+            groupBox41.Controls.Add(EnableMainRotorDamageCB);
+            groupBox41.Controls.Add(label13);
             groupBox41.Controls.Add(EnableTailRotorDamageCB);
             groupBox41.Controls.Add(TowingCB);
             groupBox41.Controls.Add(EnableHelicopterExplosionsCB);
@@ -132,7 +136,7 @@
             groupBox41.Margin = new Padding(4, 3, 4, 3);
             groupBox41.Name = "groupBox41";
             groupBox41.Padding = new Padding(4, 3, 4, 3);
-            groupBox41.Size = new Size(626, 674);
+            groupBox41.Size = new Size(626, 704);
             groupBox41.TabIndex = 9;
             groupBox41.TabStop = false;
             groupBox41.Text = "General";
@@ -142,7 +146,7 @@
             PilotlessAutoHoverEngineStopDelaySecondsNUD.BackColor = Color.FromArgb(60, 63, 65);
             PilotlessAutoHoverEngineStopDelaySecondsNUD.DecimalPlaces = 1;
             PilotlessAutoHoverEngineStopDelaySecondsNUD.ForeColor = SystemColors.Control;
-            PilotlessAutoHoverEngineStopDelaySecondsNUD.Location = new Point(285, 472);
+            PilotlessAutoHoverEngineStopDelaySecondsNUD.Location = new Point(285, 502);
             PilotlessAutoHoverEngineStopDelaySecondsNUD.Margin = new Padding(4, 3, 4, 3);
             PilotlessAutoHoverEngineStopDelaySecondsNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             PilotlessAutoHoverEngineStopDelaySecondsNUD.Name = "PilotlessAutoHoverEngineStopDelaySecondsNUD";
@@ -156,7 +160,7 @@
             // 
             label12.AutoSize = true;
             label12.ForeColor = Color.FromArgb(220, 220, 220);
-            label12.Location = new Point(14, 475);
+            label12.Location = new Point(14, 505);
             label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
             label12.Size = new Size(262, 15);
@@ -168,7 +172,7 @@
             RoughLandingVerticalSpeedThresholdNUD.BackColor = Color.FromArgb(60, 63, 65);
             RoughLandingVerticalSpeedThresholdNUD.DecimalPlaces = 1;
             RoughLandingVerticalSpeedThresholdNUD.ForeColor = SystemColors.Control;
-            RoughLandingVerticalSpeedThresholdNUD.Location = new Point(285, 503);
+            RoughLandingVerticalSpeedThresholdNUD.Location = new Point(285, 533);
             RoughLandingVerticalSpeedThresholdNUD.Margin = new Padding(4, 3, 4, 3);
             RoughLandingVerticalSpeedThresholdNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             RoughLandingVerticalSpeedThresholdNUD.Name = "RoughLandingVerticalSpeedThresholdNUD";
@@ -182,7 +186,7 @@
             // 
             label11.AutoSize = true;
             label11.ForeColor = Color.FromArgb(220, 220, 220);
-            label11.Location = new Point(14, 505);
+            label11.Location = new Point(14, 535);
             label11.Margin = new Padding(4, 0, 4, 0);
             label11.Name = "label11";
             label11.Size = new Size(223, 15);
@@ -193,7 +197,7 @@
             // 
             label10.AutoSize = true;
             label10.ForeColor = Color.FromArgb(220, 220, 220);
-            label10.Location = new Point(14, 565);
+            label10.Location = new Point(14, 595);
             label10.Margin = new Padding(4, 0, 4, 0);
             label10.Name = "label10";
             label10.Size = new Size(46, 15);
@@ -204,7 +208,7 @@
             // 
             label9.AutoSize = true;
             label9.ForeColor = Color.FromArgb(220, 220, 220);
-            label9.Location = new Point(14, 595);
+            label9.Location = new Point(14, 625);
             label9.Margin = new Padding(4, 0, 4, 0);
             label9.Name = "label9";
             label9.Size = new Size(119, 15);
@@ -215,7 +219,7 @@
             // 
             label8.AutoSize = true;
             label8.ForeColor = Color.FromArgb(220, 220, 220);
-            label8.Location = new Point(14, 355);
+            label8.Location = new Point(14, 385);
             label8.Margin = new Padding(4, 0, 4, 0);
             label8.Name = "label8";
             label8.Size = new Size(246, 15);
@@ -226,7 +230,7 @@
             // 
             label7.AutoSize = true;
             label7.ForeColor = Color.FromArgb(220, 220, 220);
-            label7.Location = new Point(14, 415);
+            label7.Location = new Point(14, 445);
             label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.Size = new Size(204, 15);
@@ -237,7 +241,7 @@
             // 
             label6.AutoSize = true;
             label6.ForeColor = Color.FromArgb(220, 220, 220);
-            label6.Location = new Point(14, 385);
+            label6.Location = new Point(14, 415);
             label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
             label6.Size = new Size(152, 15);
@@ -248,7 +252,7 @@
             // 
             label5.AutoSize = true;
             label5.ForeColor = Color.FromArgb(220, 220, 220);
-            label5.Location = new Point(14, 265);
+            label5.Location = new Point(14, 295);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.Size = new Size(169, 15);
@@ -259,7 +263,7 @@
             // 
             label4.AutoSize = true;
             label4.ForeColor = Color.FromArgb(220, 220, 220);
-            label4.Location = new Point(14, 145);
+            label4.Location = new Point(14, 175);
             label4.Margin = new Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new Size(132, 15);
@@ -281,7 +285,7 @@
             // 
             label2.AutoSize = true;
             label2.ForeColor = Color.FromArgb(220, 220, 220);
-            label2.Location = new Point(14, 85);
+            label2.Location = new Point(14, 115);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(142, 15);
@@ -292,7 +296,7 @@
             // 
             label1.AutoSize = true;
             label1.ForeColor = Color.FromArgb(220, 220, 220);
-            label1.Location = new Point(14, 115);
+            label1.Location = new Point(14, 145);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(158, 15);
@@ -304,7 +308,7 @@
             FuelConsumptionPercentNUD.BackColor = Color.FromArgb(60, 63, 65);
             FuelConsumptionPercentNUD.DecimalPlaces = 1;
             FuelConsumptionPercentNUD.ForeColor = SystemColors.Control;
-            FuelConsumptionPercentNUD.Location = new Point(285, 623);
+            FuelConsumptionPercentNUD.Location = new Point(285, 653);
             FuelConsumptionPercentNUD.Margin = new Padding(4, 3, 4, 3);
             FuelConsumptionPercentNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             FuelConsumptionPercentNUD.Name = "FuelConsumptionPercentNUD";
@@ -318,7 +322,7 @@
             // 
             darkLabel297.AutoSize = true;
             darkLabel297.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel297.Location = new Point(14, 625);
+            darkLabel297.Location = new Point(14, 655);
             darkLabel297.Margin = new Padding(4, 0, 4, 0);
             darkLabel297.Name = "darkLabel297";
             darkLabel297.Size = new Size(148, 15);
@@ -329,7 +333,7 @@
             // 
             ShowVehicleOwnersCB.AutoSize = true;
             ShowVehicleOwnersCB.ForeColor = SystemColors.Control;
-            ShowVehicleOwnersCB.Location = new Point(285, 596);
+            ShowVehicleOwnersCB.Location = new Point(285, 626);
             ShowVehicleOwnersCB.Margin = new Padding(4, 3, 4, 3);
             ShowVehicleOwnersCB.Name = "ShowVehicleOwnersCB";
             ShowVehicleOwnersCB.Size = new Size(15, 14);
@@ -342,7 +346,7 @@
             // 
             CollisionDamageIfEngineOffCB.AutoSize = true;
             CollisionDamageIfEngineOffCB.ForeColor = SystemColors.Control;
-            CollisionDamageIfEngineOffCB.Location = new Point(285, 264);
+            CollisionDamageIfEngineOffCB.Location = new Point(285, 294);
             CollisionDamageIfEngineOffCB.Margin = new Padding(4, 3, 4, 3);
             CollisionDamageIfEngineOffCB.Name = "CollisionDamageIfEngineOffCB";
             CollisionDamageIfEngineOffCB.Size = new Size(15, 14);
@@ -356,7 +360,7 @@
             CollisionDamageMinSpeedKmhNUD.BackColor = Color.FromArgb(60, 63, 65);
             CollisionDamageMinSpeedKmhNUD.DecimalPlaces = 1;
             CollisionDamageMinSpeedKmhNUD.ForeColor = SystemColors.Control;
-            CollisionDamageMinSpeedKmhNUD.Location = new Point(285, 293);
+            CollisionDamageMinSpeedKmhNUD.Location = new Point(285, 323);
             CollisionDamageMinSpeedKmhNUD.Margin = new Padding(4, 3, 4, 3);
             CollisionDamageMinSpeedKmhNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             CollisionDamageMinSpeedKmhNUD.Name = "CollisionDamageMinSpeedKmhNUD";
@@ -370,7 +374,7 @@
             // 
             darkLabel253.AutoSize = true;
             darkLabel253.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel253.Location = new Point(14, 295);
+            darkLabel253.Location = new Point(14, 325);
             darkLabel253.Margin = new Padding(4, 0, 4, 0);
             darkLabel253.Name = "darkLabel253";
             darkLabel253.Size = new Size(187, 15);
@@ -382,7 +386,7 @@
             DamagedEngineStartupChancePercentNUD.BackColor = Color.FromArgb(60, 63, 65);
             DamagedEngineStartupChancePercentNUD.DecimalPlaces = 1;
             DamagedEngineStartupChancePercentNUD.ForeColor = SystemColors.Control;
-            DamagedEngineStartupChancePercentNUD.Location = new Point(285, 533);
+            DamagedEngineStartupChancePercentNUD.Location = new Point(285, 563);
             DamagedEngineStartupChancePercentNUD.Margin = new Padding(4, 3, 4, 3);
             DamagedEngineStartupChancePercentNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             DamagedEngineStartupChancePercentNUD.Name = "DamagedEngineStartupChancePercentNUD";
@@ -396,7 +400,7 @@
             // 
             darkLabel223.AutoSize = true;
             darkLabel223.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel223.Location = new Point(14, 535);
+            darkLabel223.Location = new Point(14, 565);
             darkLabel223.Margin = new Padding(4, 0, 4, 0);
             darkLabel223.Name = "darkLabel223";
             darkLabel223.Size = new Size(224, 15);
@@ -408,7 +412,7 @@
             VehicleRoadKillDamageMultiplierNUD.BackColor = Color.FromArgb(60, 63, 65);
             VehicleRoadKillDamageMultiplierNUD.DecimalPlaces = 1;
             VehicleRoadKillDamageMultiplierNUD.ForeColor = SystemColors.Control;
-            VehicleRoadKillDamageMultiplierNUD.Location = new Point(285, 233);
+            VehicleRoadKillDamageMultiplierNUD.Location = new Point(285, 263);
             VehicleRoadKillDamageMultiplierNUD.Margin = new Padding(4, 3, 4, 3);
             VehicleRoadKillDamageMultiplierNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             VehicleRoadKillDamageMultiplierNUD.Name = "VehicleRoadKillDamageMultiplierNUD";
@@ -422,7 +426,7 @@
             // 
             darkLabel222.AutoSize = true;
             darkLabel222.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel222.Location = new Point(14, 235);
+            darkLabel222.Location = new Point(14, 265);
             darkLabel222.Margin = new Padding(4, 0, 4, 0);
             darkLabel222.Name = "darkLabel222";
             darkLabel222.Size = new Size(191, 15);
@@ -434,7 +438,7 @@
             DesyncInvulnerabilityTimeoutSecondsNUD.BackColor = Color.FromArgb(60, 63, 65);
             DesyncInvulnerabilityTimeoutSecondsNUD.DecimalPlaces = 1;
             DesyncInvulnerabilityTimeoutSecondsNUD.ForeColor = SystemColors.Control;
-            DesyncInvulnerabilityTimeoutSecondsNUD.Location = new Point(285, 443);
+            DesyncInvulnerabilityTimeoutSecondsNUD.Location = new Point(285, 473);
             DesyncInvulnerabilityTimeoutSecondsNUD.Margin = new Padding(4, 3, 4, 3);
             DesyncInvulnerabilityTimeoutSecondsNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             DesyncInvulnerabilityTimeoutSecondsNUD.Name = "DesyncInvulnerabilityTimeoutSecondsNUD";
@@ -448,7 +452,7 @@
             // 
             darkLabel99.AutoSize = true;
             darkLabel99.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel99.Location = new Point(14, 445);
+            darkLabel99.Location = new Point(14, 475);
             darkLabel99.Margin = new Padding(4, 0, 4, 0);
             darkLabel99.Name = "darkLabel99";
             darkLabel99.Size = new Size(218, 15);
@@ -459,7 +463,7 @@
             // 
             ExplodingVehicleDropsAttachmentsCB.AutoSize = true;
             ExplodingVehicleDropsAttachmentsCB.ForeColor = SystemColors.Control;
-            ExplodingVehicleDropsAttachmentsCB.Location = new Point(285, 414);
+            ExplodingVehicleDropsAttachmentsCB.Location = new Point(285, 444);
             ExplodingVehicleDropsAttachmentsCB.Margin = new Padding(4, 3, 4, 3);
             ExplodingVehicleDropsAttachmentsCB.Name = "ExplodingVehicleDropsAttachmentsCB";
             ExplodingVehicleDropsAttachmentsCB.Size = new Size(15, 14);
@@ -472,7 +476,7 @@
             // 
             VehicleDropsRuinedDoorsCB.AutoSize = true;
             VehicleDropsRuinedDoorsCB.ForeColor = SystemColors.Control;
-            VehicleDropsRuinedDoorsCB.Location = new Point(285, 384);
+            VehicleDropsRuinedDoorsCB.Location = new Point(285, 414);
             VehicleDropsRuinedDoorsCB.Margin = new Padding(4, 3, 4, 3);
             VehicleDropsRuinedDoorsCB.Name = "VehicleDropsRuinedDoorsCB";
             VehicleDropsRuinedDoorsCB.Size = new Size(15, 14);
@@ -515,11 +519,35 @@
             EnableWindAerodynamicsCB.UseVisualStyleBackColor = true;
             EnableWindAerodynamicsCB.CheckedChanged += EnableWindAerodynamicsCB_CheckedChanged;
             // 
+            // EnableMainRotorDamageCB
+            // 
+            EnableMainRotorDamageCB.AutoSize = true;
+            EnableMainRotorDamageCB.ForeColor = SystemColors.Control;
+            EnableMainRotorDamageCB.Location = new Point(285, 84);
+            EnableMainRotorDamageCB.Margin = new Padding(4, 3, 4, 3);
+            EnableMainRotorDamageCB.Name = "EnableMainRotorDamageCB";
+            EnableMainRotorDamageCB.Size = new Size(15, 14);
+            EnableMainRotorDamageCB.TabIndex = 2;
+            EnableMainRotorDamageCB.Tag = "EnableMainRotorDamage";
+            EnableMainRotorDamageCB.UseVisualStyleBackColor = true;
+            EnableMainRotorDamageCB.CheckedChanged += EnableMainRotorDamageCB_CheckedChanged;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.ForeColor = Color.FromArgb(220, 220, 220);
+            label13.Location = new Point(14, 85);
+            label13.Margin = new Padding(4, 0, 4, 0);
+            label13.Name = "label13";
+            label13.Size = new Size(147, 15);
+            label13.TabIndex = 40;
+            label13.Text = "Enable Main Rotor Damage";
+            // 
             // EnableTailRotorDamageCB
             // 
             EnableTailRotorDamageCB.AutoSize = true;
             EnableTailRotorDamageCB.ForeColor = SystemColors.Control;
-            EnableTailRotorDamageCB.Location = new Point(285, 84);
+            EnableTailRotorDamageCB.Location = new Point(285, 114);
             EnableTailRotorDamageCB.Margin = new Padding(4, 3, 4, 3);
             EnableTailRotorDamageCB.Name = "EnableTailRotorDamageCB";
             EnableTailRotorDamageCB.Size = new Size(15, 14);
@@ -532,7 +560,7 @@
             // 
             TowingCB.AutoSize = true;
             TowingCB.ForeColor = SystemColors.Control;
-            TowingCB.Location = new Point(285, 565);
+            TowingCB.Location = new Point(285, 595);
             TowingCB.Margin = new Padding(4, 3, 4, 3);
             TowingCB.Name = "TowingCB";
             TowingCB.Size = new Size(15, 14);
@@ -545,7 +573,7 @@
             // 
             EnableHelicopterExplosionsCB.AutoSize = true;
             EnableHelicopterExplosionsCB.ForeColor = SystemColors.Control;
-            EnableHelicopterExplosionsCB.Location = new Point(285, 114);
+            EnableHelicopterExplosionsCB.Location = new Point(285, 144);
             EnableHelicopterExplosionsCB.Margin = new Padding(4, 3, 4, 3);
             EnableHelicopterExplosionsCB.Name = "EnableHelicopterExplosionsCB";
             EnableHelicopterExplosionsCB.Size = new Size(15, 14);
@@ -558,7 +586,7 @@
             // 
             DisableVehicleDamageCB.AutoSize = true;
             DisableVehicleDamageCB.ForeColor = SystemColors.Control;
-            DisableVehicleDamageCB.Location = new Point(285, 144);
+            DisableVehicleDamageCB.Location = new Point(285, 174);
             DisableVehicleDamageCB.Margin = new Padding(4, 3, 4, 3);
             DisableVehicleDamageCB.Name = "DisableVehicleDamageCB";
             DisableVehicleDamageCB.Size = new Size(15, 14);
@@ -571,7 +599,7 @@
             // 
             RevvingOverMaxRPMRuinsEngineInstantlyCB.AutoSize = true;
             RevvingOverMaxRPMRuinsEngineInstantlyCB.ForeColor = SystemColors.Control;
-            RevvingOverMaxRPMRuinsEngineInstantlyCB.Location = new Point(285, 354);
+            RevvingOverMaxRPMRuinsEngineInstantlyCB.Location = new Point(285, 384);
             RevvingOverMaxRPMRuinsEngineInstantlyCB.Margin = new Padding(4, 3, 4, 3);
             RevvingOverMaxRPMRuinsEngineInstantlyCB.Name = "RevvingOverMaxRPMRuinsEngineInstantlyCB";
             RevvingOverMaxRPMRuinsEngineInstantlyCB.Size = new Size(15, 14);
@@ -584,7 +612,7 @@
             // 
             darkLabel122.AutoSize = true;
             darkLabel122.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel122.Location = new Point(14, 175);
+            darkLabel122.Location = new Point(14, 205);
             darkLabel122.Margin = new Padding(4, 0, 4, 0);
             darkLabel122.Name = "darkLabel122";
             darkLabel122.Size = new Size(175, 15);
@@ -595,7 +623,7 @@
             // 
             darkLabel127.AutoSize = true;
             darkLabel127.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel127.Location = new Point(14, 325);
+            darkLabel127.Location = new Point(14, 355);
             darkLabel127.Margin = new Padding(4, 0, 4, 0);
             darkLabel127.Name = "darkLabel127";
             darkLabel127.Size = new Size(263, 15);
@@ -605,7 +633,7 @@
             // PlacePlayerOnGroundOnReconnectInVehicleComboBox
             // 
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.FormattingEnabled = true;
-            PlacePlayerOnGroundOnReconnectInVehicleComboBox.Location = new Point(285, 322);
+            PlacePlayerOnGroundOnReconnectInVehicleComboBox.Location = new Point(285, 352);
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.Margin = new Padding(4, 3, 4, 3);
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.Name = "PlacePlayerOnGroundOnReconnectInVehicleComboBox";
             PlacePlayerOnGroundOnReconnectInVehicleComboBox.Size = new Size(326, 23);
@@ -617,7 +645,7 @@
             VehicleCrewDamageMultiplierNUD.BackColor = Color.FromArgb(60, 63, 65);
             VehicleCrewDamageMultiplierNUD.DecimalPlaces = 1;
             VehicleCrewDamageMultiplierNUD.ForeColor = SystemColors.Control;
-            VehicleCrewDamageMultiplierNUD.Location = new Point(285, 173);
+            VehicleCrewDamageMultiplierNUD.Location = new Point(285, 203);
             VehicleCrewDamageMultiplierNUD.Margin = new Padding(4, 3, 4, 3);
             VehicleCrewDamageMultiplierNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             VehicleCrewDamageMultiplierNUD.Name = "VehicleCrewDamageMultiplierNUD";
@@ -632,7 +660,7 @@
             VehicleSpeedDamageMultiplierNUD.BackColor = Color.FromArgb(60, 63, 65);
             VehicleSpeedDamageMultiplierNUD.DecimalPlaces = 1;
             VehicleSpeedDamageMultiplierNUD.ForeColor = SystemColors.Control;
-            VehicleSpeedDamageMultiplierNUD.Location = new Point(285, 203);
+            VehicleSpeedDamageMultiplierNUD.Location = new Point(285, 233);
             VehicleSpeedDamageMultiplierNUD.Margin = new Padding(4, 3, 4, 3);
             VehicleSpeedDamageMultiplierNUD.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             VehicleSpeedDamageMultiplierNUD.Name = "VehicleSpeedDamageMultiplierNUD";
@@ -646,7 +674,7 @@
             // 
             darkLabel123.AutoSize = true;
             darkLabel123.ForeColor = Color.FromArgb(220, 220, 220);
-            darkLabel123.Location = new Point(14, 205);
+            darkLabel123.Location = new Point(14, 235);
             darkLabel123.Margin = new Padding(4, 0, 4, 0);
             darkLabel123.Name = "darkLabel123";
             darkLabel123.Size = new Size(180, 15);
@@ -661,7 +689,7 @@
             Controls.Add(groupBox41);
             ForeColor = SystemColors.Control;
             Name = "ExpansionVehicleSettingsGeneralControl";
-            Size = new Size(626, 677);
+            Size = new Size(626, 707);
             groupBox41.ResumeLayout(false);
             groupBox41.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PilotlessAutoHoverEngineStopDelaySecondsNUD).EndInit();
@@ -700,6 +728,8 @@
         private ComboBox VehicleSyncComboBox;
         private Label darkLabel130;
         private CheckBox EnableWindAerodynamicsCB;
+        private CheckBox EnableMainRotorDamageCB;
+        private Label label13;
         private CheckBox EnableTailRotorDamageCB;
         private CheckBox TowingCB;
         private CheckBox EnableHelicopterExplosionsCB;

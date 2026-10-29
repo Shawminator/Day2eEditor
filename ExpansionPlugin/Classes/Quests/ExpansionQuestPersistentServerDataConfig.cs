@@ -16,6 +16,50 @@ namespace ExpansionPlugin
         public ExpansionQuestPersistentServerDataConfig(string path) : base(path)
         {
         }
+        public override void Load()
+        {
+            try
+            {
+                Data = AppServices.GetRequired<FileService>()
+                    .LoadOrCreateJson(
+                        _path,
+                        createNew: () => CreateDefaultData(),
+                        onError: ex => HandleLoadError(ex),
+                        configName: FileName,
+                        useVecConvertor: true
+                    );
+                var issues = ValidateData();
+                if (issues?.Any() == true)
+                {
+                    Console.WriteLine("Validation issues in " + FileName + ":");
+                    foreach (var msg in issues)
+                        Console.WriteLine("- " + msg);
+
+                    MarkDirty();
+                }
+                OnAfterLoad(Data);
+                ClonedData = CloneData(Data);
+            }
+            catch (Exception ex)
+            {
+                HandleLoadError(ex);
+            }
+        }
+        public override IEnumerable<string> Save()
+        {
+            if (Data is null)
+                return Array.Empty<string>();
+
+            if (!AreEqual(Data, ClonedData) || IsDirty == true)
+            {
+                ClearDirty();
+                AppServices.GetRequired<FileService>().SaveJson(_path, Data, false, true);
+                ClonedData = CloneData(Data);
+                return new[] { _path };
+            }
+
+            return Array.Empty<string>();
+        }
         protected override ExpansionQuestPersistentServerData CreateDefaultData()
         {
             return new ExpansionQuestPersistentServerData(CurrentVersion);
@@ -100,9 +144,9 @@ namespace ExpansionPlugin
     }
     public class ExpansionQuestItemForMarket : IEquatable<ExpansionQuestItemForMarket>, IDeepCloneable<ExpansionQuestItemForMarket>
     {
-        public Vec3? ZonePosition;
-        public string? ClassName;
-        public int? Amount;
+        public Vec3? ZonePosition { get; set; }
+        public string? ClassName { get; set; }
+        public int? Amount { get; set; }
 
         public ExpansionQuestItemForMarket() 
         { }

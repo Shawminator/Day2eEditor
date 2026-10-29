@@ -143,7 +143,7 @@ namespace ExpansionPlugin
 
             return $"{npc.NPCName}";
         }
-        private string GetObjectiveReferenceText(Objectives objective)
+        private string GetObjectiveReferenceText(ExpansionQuestObjectiveConfigBase objective)
         {
             if (objective == null)
                 return "Objective: Missing";

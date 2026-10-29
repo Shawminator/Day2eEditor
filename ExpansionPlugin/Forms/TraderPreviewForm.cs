@@ -13,7 +13,7 @@ namespace ExpansionPlugin
     public partial class TraderPreviewForm : Form
     {
         private readonly ExpansionMarketTrader _trader;
-        private readonly MarketMenuColours _Colors;
+        private readonly ExpansionMarketMenuColors _Colors;
 
         private TableLayoutPanel _root;
 
@@ -64,7 +64,7 @@ namespace ExpansionPlugin
         private Color UiWarning => ParseUiColor(_Colors.ColorRequirementsNotMet, Color.OrangeRed);
         private Color UiAttachmentInfo => ParseUiColor(_Colors.ColorItemInfoAttachments, Color.Gold);
 
-        public TraderPreviewForm(ExpansionMarketTrader trader, MarketMenuColours colors)
+        public TraderPreviewForm(ExpansionMarketTrader trader, ExpansionMarketMenuColors colors)
         {
             _trader = trader ?? throw new ArgumentNullException(nameof(trader));
             _Colors = colors ?? throw new ArgumentNullException(nameof(colors));
@@ -1010,7 +1010,7 @@ Variants
         private readonly ExpansionMarketTraderBuySell _buySell;
         private readonly string _sourceLabel;
         private readonly bool _isDirectOverride;
-        private readonly MarketMenuColours _colors;
+        private readonly ExpansionMarketMenuColors _colors;
         private readonly bool _isHiddenPartGroup;
 
         private readonly AlphaPanel market_item_header_background;
@@ -1062,7 +1062,7 @@ Variants
             ExpansionMarketTraderBuySell buySell,
             string sourceLabel,
             bool isDirectOverride,
-            MarketMenuColours colors,
+            ExpansionMarketMenuColors colors,
             bool isHiddenPartGroup)
         {
             _marketItem = marketItem;

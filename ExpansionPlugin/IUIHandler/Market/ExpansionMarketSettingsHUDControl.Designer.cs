@@ -53,7 +53,7 @@
             darkLabel31 = new Label();
             ColorItemInfoAttachmentsColour = new PictureBox();
             darkLabel32 = new Label();
-            ColorItemInfoIsEquipedColour = new PictureBox();
+            ColorItemInfoIsEquippedColour = new PictureBox();
             darkLabel33 = new Label();
             ColorItemInfoIsAttachmentColour = new PictureBox();
             darkLabel34 = new Label();
@@ -119,7 +119,7 @@
             ((System.ComponentModel.ISupportInitialize)ColorCategoryCornersColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorToggleCategoriesTextColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoAttachmentsColour).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ColorItemInfoIsEquipedColour).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ColorItemInfoIsEquippedColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoIsAttachmentColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoHasBulletsColour).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoHasAttachmentsColour).BeginInit();
@@ -174,7 +174,7 @@
             groupBox2.Controls.Add(darkLabel31);
             groupBox2.Controls.Add(ColorItemInfoAttachmentsColour);
             groupBox2.Controls.Add(darkLabel32);
-            groupBox2.Controls.Add(ColorItemInfoIsEquipedColour);
+            groupBox2.Controls.Add(ColorItemInfoIsEquippedColour);
             groupBox2.Controls.Add(darkLabel33);
             groupBox2.Controls.Add(ColorItemInfoIsAttachmentColour);
             groupBox2.Controls.Add(darkLabel34);
@@ -491,15 +491,15 @@
             darkLabel32.TabIndex = 62;
             darkLabel32.Text = "ColorItemInfoAttachments";
             // 
-            // ColorItemInfoIsEquipedColour
+            // ColorItemInfoIsEquippedColour
             // 
-            ColorItemInfoIsEquipedColour.Location = new Point(597, 297);
-            ColorItemInfoIsEquipedColour.Margin = new Padding(4, 3, 4, 3);
-            ColorItemInfoIsEquipedColour.Name = "ColorItemInfoIsEquipedColour";
-            ColorItemInfoIsEquipedColour.Size = new Size(117, 15);
-            ColorItemInfoIsEquipedColour.TabIndex = 61;
-            ColorItemInfoIsEquipedColour.TabStop = false;
-            ColorItemInfoIsEquipedColour.Click += HUDColour_Click;
+            ColorItemInfoIsEquippedColour.Location = new Point(597, 297);
+            ColorItemInfoIsEquippedColour.Margin = new Padding(4, 3, 4, 3);
+            ColorItemInfoIsEquippedColour.Name = "ColorItemInfoIsEquippedColour";
+            ColorItemInfoIsEquippedColour.Size = new Size(117, 15);
+            ColorItemInfoIsEquippedColour.TabIndex = 61;
+            ColorItemInfoIsEquippedColour.TabStop = false;
+            ColorItemInfoIsEquippedColour.Click += HUDColour_Click;
             // 
             // darkLabel33
             // 
@@ -510,7 +510,7 @@
             darkLabel33.Name = "darkLabel33";
             darkLabel33.Size = new Size(132, 15);
             darkLabel33.TabIndex = 60;
-            darkLabel33.Text = "ColorItemInfoIsEquiped";
+            darkLabel33.Text = "ColorItemInfoIsEquipped";
             // 
             // ColorItemInfoIsAttachmentColour
             // 
@@ -1080,7 +1080,7 @@
             ((System.ComponentModel.ISupportInitialize)ColorCategoryCornersColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorToggleCategoriesTextColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoAttachmentsColour).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ColorItemInfoIsEquipedColour).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ColorItemInfoIsEquippedColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoIsAttachmentColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoHasBulletsColour).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorItemInfoHasAttachmentsColour).EndInit();
@@ -1135,7 +1135,7 @@
         private Label darkLabel31;
         private PictureBox ColorItemInfoAttachmentsColour;
         private Label darkLabel32;
-        private PictureBox ColorItemInfoIsEquipedColour;
+        private PictureBox ColorItemInfoIsEquippedColour;
         private Label darkLabel33;
         private PictureBox ColorItemInfoIsAttachmentColour;
         private Label darkLabel34;

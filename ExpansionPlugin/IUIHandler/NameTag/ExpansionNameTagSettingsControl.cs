@@ -14,7 +14,7 @@ namespace ExpansionPlugin
     public partial class ExpansionNameTagSettingsControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private NameTagsSettings _data;
+        private ExpansionNameTagsSettings _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -34,7 +34,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as NameTagsSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionNameTagsSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
@@ -107,7 +107,7 @@ namespace ExpansionPlugin
 
                     // Map PictureBox name to _data property dynamically
                     string propertyName = pb.Name.Replace("PB", ""); // e.g., SystemChatColorPB → SystemChatColor
-                    var prop = typeof(NameTagsSettings).GetProperty(propertyName);
+                    var prop = typeof(ExpansionNameTagsSettings).GetProperty(propertyName);
                     if (prop != null)
                     {
                         prop.SetValue(_data, (int?)pb.BackColor.ToArgb());

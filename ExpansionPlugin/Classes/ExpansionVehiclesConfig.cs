@@ -41,6 +41,7 @@ namespace ExpansionPlugin
         public int? PickLockTimeSeconds { get; set; }
         public decimal? PickLockToolDamagePercent { get; set; }
         public int? EnableWindAerodynamics { get; set; }        //! If enabled, wind simulation will be enabled
+        public int? EnableMainRotorDamage { get; set; }        //! If enabled, the rotor will be damageable
         public int? EnableTailRotorDamage { get; set; }        //! If enabled, the rotor will be damageable
         public int? Towing { get; set; }                        //! If enabled, allow vehicle to tow other vehicles
         public int? EnableHelicopterExplosions { get; set; }    //! If enabled, allow Helicopters to explode
@@ -113,6 +114,7 @@ namespace ExpansionPlugin
             ChangeLockTools = new BindingList<string>() { "Screwdriver" };
 
             EnableWindAerodynamics = 0; // Not ready, need tweaking
+            EnableMainRotorDamage = 1;
             EnableTailRotorDamage = 1;
 
             EnableHelicopterExplosions = 1;
@@ -251,6 +253,11 @@ namespace ExpansionPlugin
             {
                 EnableWindAerodynamics = 0;
                 fixes.Add($"Corrected EnableWindAerodynamics to 0.");
+            }
+            if (EnableMainRotorDamage is null or < 0 or > 1)
+            {
+                EnableMainRotorDamage = 1;
+                fixes.Add($"Corrected EnableMainRotorDamage to 1.");
             }
             if (EnableTailRotorDamage is null or < 0 or > 1)
             {
@@ -442,6 +449,7 @@ namespace ExpansionPlugin
                 PickLockTimeSeconds != other.PickLockTimeSeconds ||
                 PickLockToolDamagePercent != other.PickLockToolDamagePercent ||
                 EnableWindAerodynamics != other.EnableWindAerodynamics ||
+                EnableMainRotorDamage != other.EnableMainRotorDamage ||
                 EnableTailRotorDamage != other.EnableTailRotorDamage ||
                 Towing != other.Towing ||
                 EnableHelicopterExplosions != other.EnableHelicopterExplosions ||
@@ -530,6 +538,7 @@ namespace ExpansionPlugin
                 PickLockToolDamagePercent = this.PickLockToolDamagePercent,
 
                 EnableWindAerodynamics = this.EnableWindAerodynamics,
+                EnableMainRotorDamage = this.EnableMainRotorDamage,
                 EnableTailRotorDamage = this.EnableTailRotorDamage,
                 Towing = this.Towing,
                 EnableHelicopterExplosions = this.EnableHelicopterExplosions,

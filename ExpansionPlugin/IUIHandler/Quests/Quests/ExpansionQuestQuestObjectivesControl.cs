@@ -15,7 +15,7 @@ namespace ExpansionPlugin
     {
         private List<ExpansionQuestObjectiveConfig> objectiveslist { get; set; }
         private Type _parentType;
-        private Objectives _data;
+        private ExpansionQuestObjectiveConfigBase _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -35,7 +35,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as Objectives ?? throw new InvalidCastException();
+            _data = data as ExpansionQuestObjectiveConfigBase ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

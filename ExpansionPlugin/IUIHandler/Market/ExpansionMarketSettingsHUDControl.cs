@@ -116,7 +116,7 @@ namespace ExpansionPlugin
                     Color selectedColor = ColorTranslator.FromHtml(colorHex);
                     pb.BackColor = selectedColor;
                     string propertyName = pb.Name.Replace("Colour", "");
-                    var prop = typeof(MarketMenuColours).GetProperty(propertyName);
+                    var prop = typeof(ExpansionMarketMenuColors).GetProperty(propertyName);
                     if (prop != null)
                     {
                         prop.SetValue(_data.MarketMenuColors, colorHex.Substring(4, 6) + colorHex.Substring(2, 2));

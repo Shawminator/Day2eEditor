@@ -48,7 +48,7 @@ namespace ExpansionPlugin
         public BindingList<ExpansionMarketSpawnPosition> AirSpawnPositions { get; set; }
         public BindingList<ExpansionMarketSpawnPosition> WaterSpawnPositions { get; set; }
         public BindingList<ExpansionMarketSpawnPosition> TrainSpawnPositions { get; set; }
-        public MarketMenuColours MarketMenuColors { get; set; }
+        public ExpansionMarketMenuColors MarketMenuColors { get; set; }
         public BindingList<string> Currencies { get; set; }
         public BindingList<string> VehicleKeys { get; set; }
 
@@ -75,7 +75,7 @@ namespace ExpansionPlugin
             WaterSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>();
             TrainSpawnPositions = new BindingList<ExpansionMarketSpawnPosition>();
             Deafultspawnspositions();
-            MarketMenuColors = new MarketMenuColours();
+            MarketMenuColors = new ExpansionMarketMenuColors();
 
             CurrencyIcon = "DayZExpansion/Core/GUI/icons/misc/coinstack2_64x64.edds";
             SellPricePercent = 75;
@@ -277,7 +277,7 @@ namespace ExpansionPlugin
             }
             if (MarketMenuColors == null)
             {
-                MarketMenuColors = new MarketMenuColours();
+                MarketMenuColors = new ExpansionMarketMenuColors();
             }
             // Helper function to set default color if null or whitespace
             string SetDefaultColor(string currentValue, string defaultValue, string name)
@@ -321,7 +321,7 @@ namespace ExpansionPlugin
             MarketMenuColors.ColorItemInfoHasAttachments = SetDefaultColor(MarketMenuColors.ColorItemInfoHasAttachments, "FFB418FF", "ColorItemInfoHasAttachments");
             MarketMenuColors.ColorItemInfoHasBullets = SetDefaultColor(MarketMenuColors.ColorItemInfoHasBullets, "FFB418FF", "ColorItemInfoHasBullets");
             MarketMenuColors.ColorItemInfoIsAttachment = SetDefaultColor(MarketMenuColors.ColorItemInfoIsAttachment, "FFB418FF", "ColorItemInfoIsAttachment");
-            MarketMenuColors.ColorItemInfoIsEquiped = SetDefaultColor(MarketMenuColors.ColorItemInfoIsEquiped, "FFB418FF", "ColorItemInfoIsEquiped");
+            MarketMenuColors.ColorItemInfoIsEquipped = SetDefaultColor(MarketMenuColors.ColorItemInfoIsEquipped, "FFB418FF", "ColorItemInfoIsEquipped");
             MarketMenuColors.ColorItemInfoAttachments = SetDefaultColor(MarketMenuColors.ColorItemInfoAttachments, "FFB418FF", "ColorItemInfoAttachments");
             MarketMenuColors.ColorToggleCategoriesText = SetDefaultColor(MarketMenuColors.ColorToggleCategoriesText, "C726518C", "ColorToggleCategoriesText");
             MarketMenuColors.ColorCategoryCorners = SetDefaultColor(MarketMenuColors.ColorCategoryCorners, "FBFCFEFF", "ColorCategoryCorners");
@@ -512,7 +512,7 @@ namespace ExpansionPlugin
             };
         }
     }
-    public class MarketMenuColours
+    public class ExpansionMarketMenuColors
     {
         public string? BaseColorVignette { get; set; }
         public string? BaseColorHeaders { get; set; }
@@ -545,7 +545,7 @@ namespace ExpansionPlugin
         public string? ColorItemInfoHasAttachments { get; set; }
         public string? ColorItemInfoHasBullets { get; set; }
         public string? ColorItemInfoIsAttachment { get; set; }
-        public string? ColorItemInfoIsEquiped { get; set; }
+        public string? ColorItemInfoIsEquipped { get; set; }
         public string? ColorItemInfoAttachments { get; set; }
         public string? ColorToggleCategoriesText { get; set; }
         public string? ColorCategoryCorners { get; set; }
@@ -553,7 +553,7 @@ namespace ExpansionPlugin
         public string? ColorPlayerStock { get; set; }
         public string? ColorRequirementsNotMet { get; set; }
 
-        public MarketMenuColours()
+        public ExpansionMarketMenuColors()
         {
             BaseColorVignette = "000000C8";
             BaseColorHeaders = "13171BFF";
@@ -586,7 +586,7 @@ namespace ExpansionPlugin
             ColorItemInfoHasAttachments = "FFB418FF";
             ColorItemInfoHasBullets = "FFB418FF";
             ColorItemInfoIsAttachment = "FFB418FF";
-            ColorItemInfoIsEquiped = "FFB418FF";
+            ColorItemInfoIsEquipped = "FFB418FF";
             ColorItemInfoAttachments = "FFB418FF";
             ColorToggleCategoriesText = "C726518C";
             ColorCategoryCorners = "FBFCFEFF";
@@ -596,7 +596,7 @@ namespace ExpansionPlugin
         }
         public override bool Equals(object obj)
         {
-            if (obj is not MarketMenuColours other)
+            if (obj is not ExpansionMarketMenuColors other)
                 return false;
 
 
@@ -631,7 +631,7 @@ namespace ExpansionPlugin
                        ColorItemInfoHasAttachments == other.ColorItemInfoHasAttachments &&
                        ColorItemInfoHasBullets == other.ColorItemInfoHasBullets &&
                        ColorItemInfoIsAttachment == other.ColorItemInfoIsAttachment &&
-                       ColorItemInfoIsEquiped == other.ColorItemInfoIsEquiped &&
+                       ColorItemInfoIsEquipped == other.ColorItemInfoIsEquipped &&
                        ColorItemInfoAttachments == other.ColorItemInfoAttachments &&
                        ColorToggleCategoriesText == other.ColorToggleCategoriesText &&
                        ColorCategoryCorners == other.ColorCategoryCorners &&
@@ -639,9 +639,9 @@ namespace ExpansionPlugin
                        ColorPlayerStock == other.ColorPlayerStock &&
                        ColorRequirementsNotMet == other.ColorRequirementsNotMet;
         }
-        public MarketMenuColours Clone()
+        public ExpansionMarketMenuColors Clone()
         {
-            return new MarketMenuColours()
+            return new ExpansionMarketMenuColors()
             {
                 BaseColorVignette = this.BaseColorVignette,
                 BaseColorHeaders = this.BaseColorHeaders,
@@ -674,7 +674,7 @@ namespace ExpansionPlugin
                 ColorItemInfoHasAttachments = this.ColorItemInfoHasAttachments,
                 ColorItemInfoHasBullets = this.ColorItemInfoHasBullets,
                 ColorItemInfoIsAttachment = this.ColorItemInfoIsAttachment,
-                ColorItemInfoIsEquiped = this.ColorItemInfoIsEquiped,
+                ColorItemInfoIsEquipped = this.ColorItemInfoIsEquipped,
                 ColorItemInfoAttachments = this.ColorItemInfoAttachments,
                 ColorToggleCategoriesText = this.ColorToggleCategoriesText,
                 ColorCategoryCorners = this.ColorCategoryCorners,

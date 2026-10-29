@@ -499,7 +499,7 @@ namespace ExpansionPlugin
                     ExpansionMarketSettings MarketSettings = node.Tag as ExpansionMarketSettings;
                     ShowHandler(new ExpansionMarketSettingsGeneralControl(), typeof(ExpansionMarketSettingsConfig), MarketSettings, selected);
                 },
-                [typeof(MarketMenuColours)] = (node, selected) =>
+                [typeof(ExpansionMarketMenuColors)] = (node, selected) =>
                 {
                     ExpansionMarketSettingsConfig ExpansionMarketSettingsConfig = node.Parent.Tag as ExpansionMarketSettingsConfig;
                     ShowHandler(new ExpansionMarketSettingsHUDControl(), typeof(ExpansionMarketSettingsConfig), ExpansionMarketSettingsConfig.Data, selected);
@@ -636,9 +636,9 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionMonitoringSettingsControl(), typeof(ExpansionMonitoringConfig), MonitoringSettings, selected);
                 },
                 //NameTag
-                [typeof(NameTagsSettings)] = (node, selected) =>
+                [typeof(ExpansionNameTagsSettings)] = (node, selected) =>
                 {
-                    NameTagsSettings NameTagsSettings = node.Tag as NameTagsSettings;
+                    ExpansionNameTagsSettings NameTagsSettings = node.Tag as ExpansionNameTagsSettings;
                     ShowHandler(new ExpansionNameTagSettingsControl(), typeof(ExpansionNameTagsConfig), NameTagsSettings, selected);
                 },
                 //Notification
@@ -659,9 +659,9 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionNotificationScheduleControl(), typeof(ExpansionNotificationSchedulerConfig), ExpansionNotificationSchedule, selected);
                 },
                 //p2pMarket
-                [typeof(ExpasnionP2PMarketSettings)] = (node, selected) =>
+                [typeof(ExpansionP2PMarketSettings)] = (node, selected) =>
                 {
-                    ExpasnionP2PMarketSettings ExpasnionP2PMarketSettings = node.Tag as ExpasnionP2PMarketSettings;
+                    ExpansionP2PMarketSettings ExpasnionP2PMarketSettings = node.Tag as ExpansionP2PMarketSettings;
                     ShowHandler(new ExpansionP2PMarketSettingsGeneralControl(), typeof(ExpansionP2PMarketConfig), ExpasnionP2PMarketSettings, selected);
                 },
                 [typeof(ExpansionP2PMarketMenuCategory)] = (node, selected) =>
@@ -1002,10 +1002,10 @@ namespace ExpansionPlugin
                     var cfg = (ExpansionQuestObjectiveTravelConfig)tag.Object;
                     ShowHandler(new ExpansionQuestObjectiveTravelConfigControl(), typeof(ExpansionQuestObjectiveTravelConfig), cfg, selected);
                 },
-                [typeof(Objectives)] = (node, selected) =>
+                [typeof(ExpansionQuestObjectiveConfigBase)] = (node, selected) =>
                 {
                     ShowHandler<IUIHandler>(null, null, null, selected);
-                    var objectiveRef = node.Tag as Objectives;
+                    var objectiveRef = node.Tag as ExpansionQuestObjectiveConfigBase;
                 },
                 [typeof(ExpansionQuestQuest)] = (node, selected) =>
                 {
@@ -1078,9 +1078,9 @@ namespace ExpansionPlugin
                     FactionQuestRep FactionQuestRep = node.Tag as FactionQuestRep;
                     ShowHandler(new ExpansionQuestQuestFactionRepsControl(), typeof(ExpansionQuestItemConfig), FactionQuestRep, selected);
                 },
-                [typeof(Objectives)] = (node, selected) =>
+                [typeof(ExpansionQuestObjectiveConfigBase)] = (node, selected) =>
                 {
-                    Objectives Objectives = node.Tag as Objectives;
+                    ExpansionQuestObjectiveConfigBase Objectives = node.Tag as ExpansionQuestObjectiveConfigBase;
                     ShowHandler(new ExpansionQuestQuestObjectivesControl(), typeof(ExpansionQuestQuestConfig), Objectives, selected);
 
                 }
@@ -1930,7 +1930,7 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(jumpToNPCToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
-                [typeof(Objectives)] = node =>
+                [typeof(ExpansionQuestObjectiveConfigBase)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(removeObjectiveToolStripMenuItem);
@@ -5345,7 +5345,7 @@ namespace ExpansionPlugin
             TreeNode objectivesNode = new TreeNode($"Objectives") { Tag = "QuestObjectives" };
             if (quest.Objectives != null && quest.Objectives.Count > 0)
             {
-                foreach (Objectives objective in quest.Objectives)
+                foreach (ExpansionQuestObjectiveConfigBase objective in quest.Objectives)
                 {
                     objectivesNode.Nodes.Add(new TreeNode(objective.DisplayText)
                     {
@@ -14618,7 +14618,7 @@ namespace ExpansionPlugin
                 List<ExpansionQuestObjectiveConfig> selectedqauests = form.selectedObjectives;
                 foreach (ExpansionQuestObjectiveConfig obj in selectedqauests)
                 {
-                    Objectives Objective = new Objectives()
+                    ExpansionQuestObjectiveConfigBase Objective = new ExpansionQuestObjectiveConfigBase()
                     {
                         ObjectiveType = obj.ObjectiveType,
                         ID = (int)obj.ID,
@@ -14635,13 +14635,13 @@ namespace ExpansionPlugin
         private void removeObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestQuest ExpansionQuestQuest = currentTreeNode.FindParentOfType<ExpansionQuestQuest>();
-            Objectives Objective = currentTreeNode.Tag as Objectives;
+            ExpansionQuestObjectiveConfigBase Objective = currentTreeNode.Tag as ExpansionQuestObjectiveConfigBase;
             ExpansionQuestQuest.Objectives.Remove(Objective);
             currentTreeNode.Remove();
         }
         private void jumpToObjectiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var objectiveRef = currentTreeNode.Tag as Objectives;
+            var objectiveRef = currentTreeNode.Tag as ExpansionQuestObjectiveConfigBase;
             var objectiveFiles = _expansionManager.ExpansionQuestObjectiveConfigConfig.MutableItems;
 
             var objectiveConfig = objectiveFiles.FirstOrDefault(x =>
@@ -14665,7 +14665,7 @@ namespace ExpansionPlugin
         private void moveObjectiveUpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestQuest ExpansionQuestQuest = currentTreeNode.FindParentOfType<ExpansionQuestQuest>();
-            Objectives Objectives = currentTreeNode.Tag as Objectives;
+            ExpansionQuestObjectiveConfigBase Objectives = currentTreeNode.Tag as ExpansionQuestObjectiveConfigBase;
             TreeNodeCollection siblings;
             if (currentTreeNode.Parent != null)
             {
@@ -14689,7 +14689,7 @@ namespace ExpansionPlugin
         private void moveObjectiveDownToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExpansionQuestQuest ExpansionQuestQuest = currentTreeNode.FindParentOfType<ExpansionQuestQuest>();
-            Objectives Objectives = currentTreeNode.Tag as Objectives;
+            ExpansionQuestObjectiveConfigBase Objectives = currentTreeNode.Tag as ExpansionQuestObjectiveConfigBase;
             TreeNodeCollection siblings;
             if (currentTreeNode.Parent != null)
             {

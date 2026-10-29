@@ -221,6 +221,7 @@ namespace ExpansionPlugin
         public decimal? BuyPricePercent { get; set; }
         public decimal? SellPricePercent { get; set; }
         public Dictionary<string, int> Stock { get; set; }
+        [JsonIgnore]
         public BindingList<ExpansionMarketTraderStockItem> stockList { get; set; }
 
         public override string ToString()

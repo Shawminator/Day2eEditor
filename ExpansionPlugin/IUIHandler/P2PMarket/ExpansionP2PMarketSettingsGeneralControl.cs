@@ -13,7 +13,7 @@ namespace ExpansionPlugin
     public partial class ExpansionP2PMarketSettingsGeneralControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private ExpasnionP2PMarketSettings _data;
+        private ExpansionP2PMarketSettings _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -33,7 +33,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as ExpasnionP2PMarketSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionP2PMarketSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;
