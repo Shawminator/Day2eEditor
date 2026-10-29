@@ -92,25 +92,25 @@ namespace EconomyPlugin
                     if (_currentdata.Values[i].User != null && _currentdata.Values[i].User.Count() > 0 && _currentdata.Values[i].Name == null)
                     {
                         tabControl3.SelectedIndex = 1;
-                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
-                        // rather than deleting it just because the type was viewed.
+                        // Undefined flags are removed when the files load (see RemoveUndefinedFlags), so a flag
+                        // without a checkbox here was only removed from the definitions during this session.
                         var box = flowLayoutPanel2.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _currentdata.Values[i].User);
                         if (box != null)
                             box.Checked = true;
                         else
-                            Console.WriteLine($"[WARN] {_currentdata.Name} uses value flag '{_currentdata.Values[i].User}', which isn't defined in the limits definitions.");
+                            Console.WriteLine($"[WARN] {_currentdata.Name} uses value flag '{_currentdata.Values[i].User}', which is no longer defined in the limits definitions.");
                     }
                     else
                     {
                         tabControl3.SelectedIndex = 0;
 
-                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
-                        // rather than deleting it just because the type was viewed.
+                        // Undefined flags are removed when the files load (see RemoveUndefinedFlags), so a flag
+                        // without a checkbox here was only removed from the definitions during this session.
                         var box = flowLayoutPanel1.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _currentdata.Values[i].Name);
                         if (box != null)
                             box.Checked = true;
                         else
-                            Console.WriteLine($"[WARN] {_currentdata.Name} uses value flag '{_currentdata.Values[i].Name}', which isn't defined in the limits definitions.");
+                            Console.WriteLine($"[WARN] {_currentdata.Name} uses value flag '{_currentdata.Values[i].Name}', which is no longer defined in the limits definitions.");
                     }
                 }
             }

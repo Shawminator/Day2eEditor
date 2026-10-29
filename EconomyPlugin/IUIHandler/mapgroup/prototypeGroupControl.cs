@@ -121,25 +121,25 @@ namespace EconomyPlugin
                     if (_data.value[i].user != null && _data.value[i].user.Count() > 0 && _data.value[i].name == null)
                     {
                         tabControl24.SelectedIndex = 1;
-                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
-                        // rather than deleting it just because the type was viewed.
+                        // Undefined flags are removed when the files load (see RemoveUndefinedFlags), so a flag
+                        // without a checkbox here was only removed from the definitions during this session.
                         var box = flowLayoutPanel2.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _data.value[i].user);
                         if (box != null)
                             box.Checked = true;
                         else
-                            Console.WriteLine($"[WARN] {_data.name} uses value flag '{_data.value[i].user}', which isn't defined in the limits definitions.");
+                            Console.WriteLine($"[WARN] {_data.name} uses value flag '{_data.value[i].user}', which is no longer defined in the limits definitions.");
                     }
                     else
                     {
                         tabControl24.SelectedIndex = 0;
 
-                        // A flag that isn't defined in the limits definitions has no checkbox. Keep it in the data
-                        // rather than deleting it just because the type was viewed.
+                        // Undefined flags are removed when the files load (see RemoveUndefinedFlags), so a flag
+                        // without a checkbox here was only removed from the definitions during this session.
                         var box = flowLayoutPanel1.Controls.OfType<CheckBox>().FirstOrDefault(x => x.Tag.ToString() == _data.value[i].name);
                         if (box != null)
                             box.Checked = true;
                         else
-                            Console.WriteLine($"[WARN] {_data.name} uses value flag '{_data.value[i].name}', which isn't defined in the limits definitions.");
+                            Console.WriteLine($"[WARN] {_data.name} uses value flag '{_data.value[i].name}', which is no longer defined in the limits definitions.");
                     }
                 }
             }
