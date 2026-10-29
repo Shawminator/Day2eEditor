@@ -73,7 +73,7 @@ namespace EconomyPlugin
         private void darkButton27_Click(object sender, EventArgs e)
         {
             listsTag newusage = new listsTag();
-            newusage.name = "Change Me";
+            newusage.name = AppServices.GetRequired<EconomyManager>().GetUniqueDefinitionFlagName(DefinitionFlagKind.Tag, "Change Me");
             _data.Data.tags.Add(newusage);
         }
 
@@ -83,6 +83,8 @@ namespace EconomyPlugin
             listsTag uu = listBox9.SelectedItem as listsTag;
             string uuname = uu.name;
             _data.Data.tags.Remove(uu);
+            // Remove it from every type, map group prototype and user definition that uses it
+            AppServices.GetRequired<EconomyManager>().RemoveDefinitionFlag(DefinitionFlagKind.Tag, uuname);
         }
 
         private void darkButton83_Click(object sender, EventArgs e)
@@ -90,7 +92,23 @@ namespace EconomyPlugin
             if (listBox9.SelectedItems.Count <= 0) return;
             listsTag uu = listBox9.SelectedItem as listsTag;
             string uuname = uu.name;
-            uu.name = textBox3.Text;
+            string newName = textBox3.Text.Trim();
+            var economyManager = AppServices.GetRequired<EconomyManager>();
+            if (string.IsNullOrEmpty(newName) || newName == uuname)
+            {
+                darkButton83.Visible = false;
+                Cursor.Current = Cursors.Default;
+                return;
+            }
+            if (economyManager.DefinitionFlagExists(DefinitionFlagKind.Tag, newName))
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"'{newName}' already exists. Choose a different name.", "Rename", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            uu.name = newName;
+            // Rename it in every type, map group prototype and user definition that uses it
+            economyManager.RenameDefinitionFlag(DefinitionFlagKind.Tag, uuname, newName);
             darkButton83.Visible = false;
         }
 

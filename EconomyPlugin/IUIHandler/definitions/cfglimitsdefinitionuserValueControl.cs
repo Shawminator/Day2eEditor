@@ -80,7 +80,7 @@ namespace EconomyPlugin
         private void darkButton82_Click(object sender, EventArgs e)
         {
             user_listsUser1 newvalue = new user_listsUser1();
-            newvalue.name = "NewUserValueDef";
+            newvalue.name = AppServices.GetRequired<EconomyManager>().GetUniqueDefinitionFlagName(DefinitionFlagKind.UserValue, "NewUserValueDef");
             newvalue.value = new BindingList<user_listsUserValue>();
             _data.Data.valueflags.Add(newvalue);
         }
@@ -92,7 +92,8 @@ namespace EconomyPlugin
             user_listsUser1 uu = listBox10.SelectedItem as user_listsUser1;
             string uuname = uu.name;
             _data.Data.valueflags.Remove(uu);
-            AppServices.GetRequired<EconomyManager>().CheckallTypesValues(uuname);
+            // Remove it from every type, map group prototype and user definition that uses it
+            AppServices.GetRequired<EconomyManager>().RemoveDefinitionFlag(DefinitionFlagKind.UserValue, uuname);
             Cursor.Current = Cursors.Default;
         }
 
@@ -102,8 +103,23 @@ namespace EconomyPlugin
             Cursor.Current = Cursors.WaitCursor;
             user_listsUser1 uu = listBox10.SelectedItem as user_listsUser1;
             string uuname = uu.name;
-            uu.name = textBox4.Text;
-            AppServices.GetRequired<EconomyManager>().CheckallTypesValues(uuname, uu.name);
+            string newName = textBox4.Text.Trim();
+            var economyManager = AppServices.GetRequired<EconomyManager>();
+            if (string.IsNullOrEmpty(newName) || newName == uuname)
+            {
+                darkButton84.Visible = false;
+                Cursor.Current = Cursors.Default;
+                return;
+            }
+            if (economyManager.DefinitionFlagExists(DefinitionFlagKind.UserValue, newName))
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"'{newName}' already exists. Choose a different name.", "Rename", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            uu.name = newName;
+            // Rename it in every type, map group prototype and user definition that uses it
+            economyManager.RenameDefinitionFlag(DefinitionFlagKind.UserValue, uuname, newName);
             darkButton84.Visible = false;
             Cursor.Current = Cursors.Default;
         }
@@ -115,6 +131,18 @@ namespace EconomyPlugin
             user_listsUser1 uu = listBox10.SelectedItem as user_listsUser1;
             user_listsUserValue luu = listBox12.SelectedItem as user_listsUserValue;
             uu.value.Remove(luu);
+
+            // An empty user flag does nothing, so advise deleting it
+            if (uu.value.Count == 0)
+            {
+                MessageBox.Show(
+                    $"'{uu.name}' no longer contains any value flags.\n\n" +
+                    "An empty user flag does nothing, but any types and map group prototypes that use it still reference it. " +
+                    "Delete it with the delete button for the user flag, which also removes it from those types and prototypes.",
+                    "Empty User Flag",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private void darkButton80_Click(object sender, EventArgs e)

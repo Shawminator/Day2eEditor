@@ -71,7 +71,7 @@ namespace EconomyPlugin
         private void darkButton27_Click(object sender, EventArgs e)
         {
             listsValue newusage = new listsValue();
-            newusage.name = "Change Me";
+            newusage.name = AppServices.GetRequired<EconomyManager>().GetUniqueDefinitionFlagName(DefinitionFlagKind.Value, "Change Me");
             _data.Data.valueflags.Add(newusage);
         }
 
@@ -81,6 +81,22 @@ namespace EconomyPlugin
             listsValue uu = listBox9.SelectedItem as listsValue;
             string uuname = uu.name;
             _data.Data.valueflags.Remove(uu);
+            // Remove it from every type, map group prototype and user definition that uses it
+            AppServices.GetRequired<EconomyManager>().RemoveDefinitionFlag(DefinitionFlagKind.Value, uuname, out var emptiedUserFlags);
+
+            // A user flag that only contained this value flag is now empty. It is still defined, so types
+            // keep using it, but it no longer stands for anything, so advise deleting it.
+            if (emptiedUserFlags.Count > 0)
+            {
+                MessageBox.Show(
+                    $"Removing '{uuname}' left these user value flags with no value flags in them:\n\n" +
+                    string.Join("\n", emptiedUserFlags) +
+                    "\n\nAn empty user flag does nothing, but any types and map group prototypes that use it still reference it. " +
+                    "Delete it under User Value Flags (cfglimitsdefinitionuser.xml), which also removes it from those types and prototypes.",
+                    "Empty User Flags",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private void darkButton83_Click(object sender, EventArgs e)
@@ -88,7 +104,23 @@ namespace EconomyPlugin
             if (listBox9.SelectedItems.Count <= 0) return;
             listsValue uu = listBox9.SelectedItem as listsValue;
             string uuname = uu.name;
-            uu.name = textBox3.Text;
+            string newName = textBox3.Text.Trim();
+            var economyManager = AppServices.GetRequired<EconomyManager>();
+            if (string.IsNullOrEmpty(newName) || newName == uuname)
+            {
+                darkButton83.Visible = false;
+                Cursor.Current = Cursors.Default;
+                return;
+            }
+            if (economyManager.DefinitionFlagExists(DefinitionFlagKind.Value, newName))
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"'{newName}' already exists. Choose a different name.", "Rename", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            uu.name = newName;
+            // Rename it in every type, map group prototype and user definition that uses it
+            economyManager.RenameDefinitionFlag(DefinitionFlagKind.Value, uuname, newName);
             darkButton83.Visible = false;
         }
 

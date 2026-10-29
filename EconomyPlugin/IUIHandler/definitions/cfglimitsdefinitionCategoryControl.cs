@@ -81,7 +81,7 @@ namespace EconomyPlugin
         private void darkButton27_Click(object sender, EventArgs e)
         {
             listsCategory newusage = new listsCategory();
-            newusage.name = "Change Me";
+            newusage.name = AppServices.GetRequired<EconomyManager>().GetUniqueDefinitionFlagName(DefinitionFlagKind.Category, "Change Me");
             _data.Data.categories.Add(newusage);
         }
 
@@ -91,6 +91,8 @@ namespace EconomyPlugin
             listsCategory uu = listBox9.SelectedItem as listsCategory;
             string uuname = uu.name;
             _data.Data.categories.Remove(uu);
+            // Remove it from every type, map group prototype and user definition that uses it
+            AppServices.GetRequired<EconomyManager>().RemoveDefinitionFlag(DefinitionFlagKind.Category, uuname);
         }
 
         private void darkButton83_Click(object sender, EventArgs e)
@@ -98,7 +100,23 @@ namespace EconomyPlugin
             if (listBox9.SelectedItems.Count <= 0) return;
             listsCategory uu = listBox9.SelectedItem as listsCategory;
             string uuname = uu.name;
-            uu.name = textBox3.Text;
+            string newName = textBox3.Text.Trim();
+            var economyManager = AppServices.GetRequired<EconomyManager>();
+            if (string.IsNullOrEmpty(newName) || newName == uuname)
+            {
+                darkButton83.Visible = false;
+                Cursor.Current = Cursors.Default;
+                return;
+            }
+            if (economyManager.DefinitionFlagExists(DefinitionFlagKind.Category, newName))
+            {
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show($"'{newName}' already exists. Choose a different name.", "Rename", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            uu.name = newName;
+            // Rename it in every type, map group prototype and user definition that uses it
+            economyManager.RenameDefinitionFlag(DefinitionFlagKind.Category, uuname, newName);
             darkButton83.Visible = false;
         }
 
