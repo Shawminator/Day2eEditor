@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace ExpansionPlugin
 {
-    public class ExpansionLogsConfig : SingleFileConfigLoaderBase<ExpansionLogsSettings>
+    public class ExpansionLogsConfig : SingleFileConfigLoaderBase<ExpansionLogSettings>
     {
         public const int CurrentVersion = 8;
 
         public ExpansionLogsConfig(string path) : base(path)
         {
         }
-        protected override ExpansionLogsSettings CreateDefaultData()
+        protected override ExpansionLogSettings CreateDefaultData()
         {
-            return new ExpansionLogsSettings(CurrentVersion);
+            return new ExpansionLogSettings(CurrentVersion);
         }
         protected override IEnumerable<string> ValidateData()
         {
             return Data.FixMissingOrInvalidFields();
         }
     }
-    public class ExpansionLogsSettings : IEquatable<ExpansionLogsSettings>, IDeepCloneable<ExpansionLogsSettings>
+    public class ExpansionLogSettings : IEquatable<ExpansionLogSettings>, IDeepCloneable<ExpansionLogSettings>
     {
         public int? m_Version { get; set; }
         public int? Safezone { get; set; }
@@ -61,8 +61,8 @@ namespace ExpansionPlugin
         public int? Quests { get; set; }
 
 
-        public ExpansionLogsSettings() { }
-        public ExpansionLogsSettings(int CurrentVersion)
+        public ExpansionLogSettings() { }
+        public ExpansionLogSettings(int CurrentVersion)
         {
             m_Version = CurrentVersion;
             Safezone = 1;
@@ -98,7 +98,7 @@ namespace ExpansionPlugin
             EntityStorage = 1;
             Quests = 1;
         }
-        public  bool Equals(ExpansionLogsSettings other)
+        public  bool Equals(ExpansionLogSettings other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -137,7 +137,7 @@ namespace ExpansionPlugin
                    EntityStorage == other.EntityStorage &&
                    Quests == other.Quests;
         }
-        public override bool Equals(object? obj) => Equals(obj as ExpansionLogsSettings);
+        public override bool Equals(object? obj) => Equals(obj as ExpansionLogSettings);
         public List<string> FixMissingOrInvalidFields()
         {
             var fixes = new List<string>();
@@ -347,9 +347,9 @@ namespace ExpansionPlugin
             GetType().GetProperty(mytype).SetValue(this, myvalue, null);
 
         }
-        public ExpansionLogsSettings Clone()
+        public ExpansionLogSettings Clone()
         {
-            return new ExpansionLogsSettings()
+            return new ExpansionLogSettings()
             {
                 m_Version = this.m_Version,
                    Safezone = this.Safezone,

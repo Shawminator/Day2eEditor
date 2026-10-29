@@ -119,6 +119,7 @@ namespace ExpansionPlugin
         public bool? KillFeedInfected { get; set; }
         public bool? KillFeedAnimal { get; set; }
         public bool? KillFeedAI { get; set; }
+        public bool? KillFeedDrowned { get; set; }
         public bool? KillFeedKilledUnknown { get; set; }
         public bool? KillFeedDiedUnknown { get; set; }
         public bool? EnableKillFeedDiscordMsg { get; set; }
@@ -184,6 +185,7 @@ namespace ExpansionPlugin
             KillFeedInfected = true;
             KillFeedAnimal = true;
             KillFeedAI = true;
+            KillFeedDrowned = false;
             KillFeedKilledUnknown = true;
             KillFeedDiedUnknown = true;
 
@@ -254,6 +256,7 @@ namespace ExpansionPlugin
             if (KillFeedInfected is null) { KillFeedInfected = true; fixes.Add("Corrected KillFeedInfected"); }
             if (KillFeedAnimal is null) { KillFeedAnimal = true; fixes.Add("Corrected KillFeedAnimal"); }
             if (KillFeedAI is null) { KillFeedAI = true; fixes.Add("Corrected KillFeedAI"); }
+            if (KillFeedDrowned is null) { KillFeedDrowned = false; fixes.Add("Corrected KillFeedDrowned"); }
             if (KillFeedKilledUnknown is null) { KillFeedKilledUnknown = true; fixes.Add("Corrected KillFeedKilledUnknown"); }
             if (KillFeedDiedUnknown is null) { KillFeedDiedUnknown = true; fixes.Add("Corrected KillFeedDiedUnknown"); }
             if (EnableKillFeedDiscordMsg is null) { EnableKillFeedDiscordMsg = false; fixes.Add("Corrected EnableKillFeedDiscordMsg"); }
@@ -307,6 +310,7 @@ namespace ExpansionPlugin
                    KillFeedInfected == other.KillFeedInfected &&
                    KillFeedAnimal == other.KillFeedAnimal &&
                    KillFeedAI == other.KillFeedAI &&
+                   KillFeedDrowned == other.KillFeedDrowned &&
                    KillFeedKilledUnknown == other.KillFeedKilledUnknown &&
                    KillFeedDiedUnknown == other.KillFeedDiedUnknown &&
                    EnableKillFeedDiscordMsg == other.EnableKillFeedDiscordMsg;
@@ -359,6 +363,7 @@ namespace ExpansionPlugin
                 KillFeedInfected = this.KillFeedInfected,
                 KillFeedAnimal = this.KillFeedAnimal,
                 KillFeedAI = this.KillFeedAI,
+                KillFeedDrowned = this.KillFeedDrowned,
                 KillFeedKilledUnknown = this.KillFeedKilledUnknown,
                 KillFeedDiedUnknown = this.KillFeedDiedUnknown,
                 EnableKillFeedDiscordMsg = this.EnableKillFeedDiscordMsg,

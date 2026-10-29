@@ -72,6 +72,7 @@
             KillFeedInfectedCB = new CheckBox();
             KillFeedAnimalCB = new CheckBox();
             KillFeedAICB = new CheckBox();
+            KillFeedDrownedCB = new CheckBox();
             KillFeedKilledUnknownCB = new CheckBox();
             KillFeedDiedUnknownCB = new CheckBox();
             EnableKillFeedDiscordMsgCB = new CheckBox();
@@ -136,6 +137,7 @@
             flowLayoutPanel2.Controls.Add(KillFeedInfectedCB);
             flowLayoutPanel2.Controls.Add(KillFeedAnimalCB);
             flowLayoutPanel2.Controls.Add(KillFeedAICB);
+            flowLayoutPanel2.Controls.Add(KillFeedDrownedCB);
             flowLayoutPanel2.Controls.Add(KillFeedKilledUnknownCB);
             flowLayoutPanel2.Controls.Add(KillFeedDiedUnknownCB);
             flowLayoutPanel2.Controls.Add(EnableKillFeedDiscordMsgCB);
@@ -723,6 +725,20 @@
             KillFeedAICB.UseVisualStyleBackColor = true;
             KillFeedAICB.CheckedChanged += NotificationCB_CheckedChanged;
             // 
+            // KillFeedDrownedCB
+            // 
+            KillFeedDrownedCB.AutoSize = true;
+            KillFeedDrownedCB.ForeColor = SystemColors.Control;
+            KillFeedDrownedCB.Location = new Point(645, 53);
+            KillFeedDrownedCB.Margin = new Padding(4, 3, 4, 3);
+            KillFeedDrownedCB.Name = "KillFeedDrownedCB";
+            KillFeedDrownedCB.Size = new Size(126, 19);
+            KillFeedDrownedCB.TabIndex = 41;
+            KillFeedDrownedCB.Text = "Kill Feed Drowned";
+            KillFeedDrownedCB.TextAlign = ContentAlignment.MiddleRight;
+            KillFeedDrownedCB.UseVisualStyleBackColor = true;
+            KillFeedDrownedCB.CheckedChanged += NotificationCB_CheckedChanged;
+            // 
             // KillFeedKilledUnknownCB
             // 
             KillFeedKilledUnknownCB.AutoSize = true;
@@ -826,6 +842,7 @@
         private CheckBox KillFeedInfectedCB;
         private CheckBox KillFeedAnimalCB;
         private CheckBox KillFeedAICB;
+        private CheckBox KillFeedDrownedCB;
         private CheckBox KillFeedKilledUnknownCB;
         private CheckBox KillFeedDiedUnknownCB;
         private CheckBox EnableKillFeedDiscordMsgCB;

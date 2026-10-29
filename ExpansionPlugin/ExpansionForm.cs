@@ -473,9 +473,9 @@ namespace ExpansionPlugin
                     ShowHandler(new ExpansionHardlineFactionRepsControl(), typeof(ExpansionHardlinePlayerDataConfig), FactionReps, selected);
                 },
                 //Logs
-                [typeof(ExpansionLogsSettings)] = (node, selected) =>
+                [typeof(ExpansionLogSettings)] = (node, selected) =>
                 {
-                    ExpansionLogsSettings ExpansionLogsSettings = node.Tag as ExpansionLogsSettings;
+                    ExpansionLogSettings ExpansionLogsSettings = node.Tag as ExpansionLogSettings;
                     ShowHandler(new ExpansionHardlineLogsControl(), typeof(ExpansionLogsConfig), ExpansionLogsSettings, selected);
                 },
                 //map
@@ -630,9 +630,9 @@ namespace ExpansionPlugin
                     ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaPlayerDataControl(), typeof(ExpansionMissionEventBase), PlayerData, selected);
                 },
                 //Monitoring
-                [typeof(MonitoringSettings)] = (node, selected) =>
+                [typeof(ExpansionMonitoringSettings)] = (node, selected) =>
                 {
-                    MonitoringSettings MonitoringSettings = node.Tag as MonitoringSettings;
+                    ExpansionMonitoringSettings MonitoringSettings = node.Tag as ExpansionMonitoringSettings;
                     ShowHandler(new ExpansionMonitoringSettingsControl(), typeof(ExpansionMonitoringConfig), MonitoringSettings, selected);
                 },
                 //NameTag

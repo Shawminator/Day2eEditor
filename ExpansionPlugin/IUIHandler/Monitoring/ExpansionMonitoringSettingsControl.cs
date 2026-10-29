@@ -13,7 +13,7 @@ namespace ExpansionPlugin
     public partial class ExpansionMonitoringSettingsControl : UserControl, IUIHandler
     {
         private Type _parentType;
-        private MonitoringSettings _data;
+        private ExpansionMonitoringSettings _data;
         private List<TreeNode> _nodes;
         private bool _suppressEvents;
 
@@ -33,7 +33,7 @@ namespace ExpansionPlugin
         public void LoadFromData(Type parentType, object data, List<TreeNode> selectedNodes)
         {
             _parentType = parentType;
-            _data = data as MonitoringSettings ?? throw new InvalidCastException();
+            _data = data as ExpansionMonitoringSettings ?? throw new InvalidCastException();
             _nodes = selectedNodes;
 
             _suppressEvents = true;

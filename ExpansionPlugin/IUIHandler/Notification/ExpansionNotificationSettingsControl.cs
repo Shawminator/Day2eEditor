@@ -91,6 +91,7 @@ namespace ExpansionPlugin
             KillFeedInfectedCB.Checked = (bool)_data.KillFeedInfected;
             KillFeedAnimalCB.Checked = (bool)_data.KillFeedAnimal;
             KillFeedAICB.Checked = (bool)_data.KillFeedAI;
+            KillFeedDrownedCB.Checked = (bool)_data.KillFeedDrowned;
             KillFeedKilledUnknownCB.Checked = (bool)_data.KillFeedKilledUnknown;
             KillFeedDiedUnknownCB.Checked = (bool)_data.KillFeedDiedUnknown;
 
