@@ -13,6 +13,10 @@ namespace Day2eEditor
         {
         }
 
+        // Set by EconomyManager before loading. Null means the definition files didn't load,
+        // in which case undefined flags are left alone.
+        public DefinedFlags? DefinedFlags { get; set; }
+
         protected override void LoadCore()
         {
             ResetState();
@@ -121,8 +125,6 @@ namespace Day2eEditor
             item.Data.TypeList ??= new BindingList<TypeEntry>();
             item.SetPath(filePath);
             item.SetGuid(Guid.NewGuid());
-
-            ValidateLoadedTypes(item, item.Data);
 
             return item;
         }
@@ -428,8 +430,11 @@ namespace Day2eEditor
             return string.Join(Environment.NewLine, messages);
         }
 
+        // Runs after LoadCore has taken the unchanged copy of the file, so any flags removed here
+        // count as changes and are written by the normal save and queued for upload
         protected override IEnumerable<string> ValidateItem(TypesFile item)
         {
+            ValidateLoadedTypes(item, item.Data);
             return item.Errors;
         }
 
@@ -565,10 +570,89 @@ namespace Day2eEditor
             }
         }
 
+        // Every category, usage, tag and value flag a type uses has to be declared in cfglimitsdefinition.xml
+        // (or cfglimitsdefinitionuser.xml for user flags). Undefined ones are removed and reported as fixes.
+        // These aren't errors (HasErrors stays false), so loading carries on and the fix gets saved.
+        private void RemoveUndefinedFlags(TypesFile owner, TypeEntry entry, string typeName)
+        {
+            var defined = DefinedFlags;
+            if (defined == null)
+                return;
+
+            if (entry.Category?.Name is string category && !defined.Categories.Contains(category))
+            {
+                entry.Category = null;
+                ReportRemovedFlag(owner, typeName, "category", category, DefinedFlags.DefinitionFile);
+            }
+
+            if (entry.Usages != null)
+            {
+                for (int i = entry.Usages.Count - 1; i >= 0; i--)
+                {
+                    var usage = entry.Usages[i];
+                    if (usage.Name != null && !defined.Usages.Contains(usage.Name))
+                    {
+                        entry.Usages.RemoveAt(i);
+                        ReportRemovedFlag(owner, typeName, "usage flag", usage.Name, DefinedFlags.DefinitionFile);
+                    }
+                    else if (usage.User != null && !defined.UserUsages.Contains(usage.User))
+                    {
+                        entry.Usages.RemoveAt(i);
+                        ReportRemovedFlag(owner, typeName, "user usage flag", usage.User, DefinedFlags.UserDefinitionFile);
+                    }
+                }
+                if (entry.Usages.Count == 0)
+                    entry.Usages = null;
+            }
+
+            if (entry.Tags != null)
+            {
+                for (int i = entry.Tags.Count - 1; i >= 0; i--)
+                {
+                    var tag = entry.Tags[i];
+                    if (tag.Name != null && !defined.Tags.Contains(tag.Name))
+                    {
+                        entry.Tags.RemoveAt(i);
+                        ReportRemovedFlag(owner, typeName, "tag", tag.Name, DefinedFlags.DefinitionFile);
+                    }
+                }
+                if (entry.Tags.Count == 0)
+                    entry.Tags = null;
+            }
+
+            if (entry.Values != null)
+            {
+                for (int i = entry.Values.Count - 1; i >= 0; i--)
+                {
+                    var value = entry.Values[i];
+                    if (value.Name != null && !defined.Values.Contains(value.Name))
+                    {
+                        entry.Values.RemoveAt(i);
+                        ReportRemovedFlag(owner, typeName, "value flag", value.Name, DefinedFlags.DefinitionFile);
+                    }
+                    else if (value.User != null && !defined.UserValues.Contains(value.User))
+                    {
+                        entry.Values.RemoveAt(i);
+                        ReportRemovedFlag(owner, typeName, "user value flag", value.User, DefinedFlags.UserDefinitionFile);
+                    }
+                }
+                if (entry.Values.Count == 0)
+                    entry.Values = null;
+            }
+        }
+
+        private static void ReportRemovedFlag(TypesFile owner, string typeName, string kind, string flag, string definitionFile)
+        {
+            owner.Errors.Add($"[{typeName}] Removed {kind} '{flag}' because it isn't defined in {definitionFile}.");
+        }
+
         private void CheckPropertiesRecursively(TypesFile owner, object obj, string topTypeName)
         {
             if (obj == null)
                 return;
+
+            if (obj is TypeEntry entry)
+                RemoveUndefinedFlags(owner, entry, topTypeName);
 
             var objType = obj.GetType();
 

@@ -182,6 +182,11 @@ namespace Day2eEditor
             cfglimitsdefinitionuserConfig = new cfglimitsdefinitionuserConfig(_paths["cfglimitsdefinitionuser"]);
             LoadConfigWithErrorReport("cfglimitsdefinitionuser", cfglimitsdefinitionuserConfig);
 
+            // Types and map group prototypes may only use flags declared in the two definition files
+            var definedFlags = DefinedFlags.From(cfglimitsdefinitionConfig, cfglimitsdefinitionuserConfig);
+            if (definedFlags == null)
+                Console.WriteLine("[Economy Manager] Limits definitions didn't load cleanly, so undefined flags won't be removed from types or map group prototypes.");
+
             cfgenvironmentConfig = new CfgenvironmentConfig(_paths["cfgenvironment"]);
             LoadConfigWithErrorReport("cfgenvironment", cfgenvironmentConfig);
 
@@ -215,7 +220,7 @@ namespace Day2eEditor
             mapgroupposConfig = new mapgroupposConfig(_paths["mapgrouppos"]);
             LoadConfigWithErrorReport("mapgrouppos", mapgroupposConfig);
 
-            mapgroupprotoConfig = new mapgroupprotoConfig(_paths["mapgroupproto"]);
+            mapgroupprotoConfig = new mapgroupprotoConfig(_paths["mapgroupproto"]) { DefinedFlags = definedFlags };
             LoadConfigWithErrorReport("mapgroupproto", mapgroupprotoConfig);
 
             scriptfilesConfig = new scriptfilesConfig(_paths["ScriptFilesConfig"]);
@@ -229,7 +234,7 @@ namespace Day2eEditor
             globalsConfig = new GlobalsConfig(basePath);
             LoadConfigWithErrorReport("Globals", globalsConfig);
 
-            TypesConfig = new TypesConfig(basePath);
+            TypesConfig = new TypesConfig(basePath) { DefinedFlags = definedFlags };
             LoadConfigWithErrorReport("Types", TypesConfig);
 
             eventsConfig = new EventsConfig(basePath);

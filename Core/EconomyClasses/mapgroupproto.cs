@@ -9,6 +9,10 @@ namespace Day2eEditor
         {
         }
 
+        // Set by EconomyManager before loading. Null means the definition files didn't load,
+        // in which case undefined flags are left alone.
+        public DefinedFlags? DefinedFlags { get; set; }
+
         public override void Load()
         {
             HasErrors = false;
@@ -27,8 +31,18 @@ namespace Day2eEditor
                         configName: "prototype"
                     );
 
-                var issues = ValidateData();
-                if (issues?.Any() == true)
+                // ToList so every check runs; Any() on the lazy iterator stopped at the first issue
+                var issues = ValidateData().ToList();
+
+                var removedFlags = RemoveUndefinedFlags();
+                if (removedFlags.Count > 0)
+                {
+                    // The unchanged copy is taken below, so mark the file dirty to get the fix saved
+                    issues.AddRange(removedFlags);
+                    MarkDirty();
+                }
+
+                if (issues.Count > 0)
                 {
                     Console.WriteLine("Validation issues in " + FileName + ":");
                     foreach (var msg in issues)
@@ -68,6 +82,73 @@ namespace Day2eEditor
         protected override void OnAfterLoad(prototype data)
         {
             // Optional post-load logic
+        }
+
+        // Group value, usage, category and tag flags have to be declared in cfglimitsdefinition.xml
+        // (or cfglimitsdefinitionuser.xml for user value flags). Undefined ones are removed and reported.
+        private List<string> RemoveUndefinedFlags()
+        {
+            var removed = new List<string>();
+            var defined = DefinedFlags;
+            if (defined == null || Data is null)
+                return removed;
+
+            foreach (var g in Data.group)
+            {
+                string groupName = g.name ?? "UnnamedGroup";
+
+                for (int j = g.value.Count - 1; j >= 0; j--)
+                {
+                    var value = g.value[j];
+                    if (value.name != null && !defined.Values.Contains(value.name))
+                    {
+                        g.value.RemoveAt(j);
+                        removed.Add($"[{groupName}] Removed value flag '{value.name}' because it isn't defined in {DefinedFlags.DefinitionFile}.");
+                    }
+                    else if (value.user != null && !defined.UserValues.Contains(value.user))
+                    {
+                        g.value.RemoveAt(j);
+                        removed.Add($"[{groupName}] Removed user value flag '{value.user}' because it isn't defined in {DefinedFlags.UserDefinitionFile}.");
+                    }
+                }
+
+                for (int j = g.usage.Count - 1; j >= 0; j--)
+                {
+                    var usage = g.usage[j];
+                    if (usage.name != null && !defined.Usages.Contains(usage.name))
+                    {
+                        g.usage.RemoveAt(j);
+                        removed.Add($"[{groupName}] Removed usage flag '{usage.name}' because it isn't defined in {DefinedFlags.DefinitionFile}.");
+                    }
+                }
+
+                foreach (var container in g.container)
+                {
+                    string containerName = container.name ?? "UnnamedContainer";
+
+                    for (int k = container.category.Count - 1; k >= 0; k--)
+                    {
+                        var category = container.category[k].name;
+                        if (category != null && !defined.Categories.Contains(category))
+                        {
+                            container.category.RemoveAt(k);
+                            removed.Add($"[{groupName} / {containerName}] Removed category '{category}' because it isn't defined in {DefinedFlags.DefinitionFile}.");
+                        }
+                    }
+
+                    for (int k = container.tag.Count - 1; k >= 0; k--)
+                    {
+                        var tag = container.tag[k].name;
+                        if (tag != null && !defined.Tags.Contains(tag))
+                        {
+                            container.tag.RemoveAt(k);
+                            removed.Add($"[{groupName} / {containerName}] Removed tag '{tag}' because it isn't defined in {DefinedFlags.DefinitionFile}.");
+                        }
+                    }
+                }
+            }
+
+            return removed;
         }
 
         protected override IEnumerable<string> ValidateData()
