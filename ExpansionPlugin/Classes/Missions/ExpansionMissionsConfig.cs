@@ -28,6 +28,7 @@ namespace ExpansionPlugin
                 fileName.StartsWith("airdrop_") ? typeof(ExpansionMissionEventAirdrop) :
                 fileName.StartsWith("contaminatedarea_") ? typeof(ExpansionMissionEventContaminatedArea) :
                 fileName.StartsWith("helicrash_") ? typeof(ExpansionMissionEventHeliCrash) :
+                fileName.StartsWith("horde_") ? typeof(ExpansionMissionEventHorde) :
                 typeof(ExpansionMissionEventBase);
 
             var fileService = AppServices.GetRequired<FileService>();
@@ -38,6 +39,7 @@ namespace ExpansionPlugin
                 onError: ex => HandleItemError(filePath, ex),
                 configName: "Mission",
                 useBoolConvertor: true,
+                useVecConvertor: actualType == typeof(ExpansionMissionEventHorde),
                 targetType: actualType
             );
 
@@ -55,6 +57,8 @@ namespace ExpansionPlugin
                 fs.SaveJson(contaminated._path, contaminated, true);
             else if (item is ExpansionMissionEventHeliCrash helicrash)
                 fs.SaveJson(helicrash._path, helicrash);
+            else if (item is ExpansionMissionEventHorde horde)
+                fs.SaveJson(horde._path, horde, true, true);
             else
                 fs.SaveJson(item._path, item);
         }
@@ -570,6 +574,203 @@ namespace ExpansionPlugin
             clone.SetPath(_path);
             clone.SetGuid(Id);
             return clone;
+        }
+    }
+    public class ExpansionMissionEventHorde : ExpansionMissionEventBase
+    {
+        public const int VERSION = 0;
+
+        [JsonPropertyOrder(100)]
+        public int? MinInfectedAmount { get; set; }
+        [JsonPropertyOrder(101)]
+        public int? MaxInfectedAmount { get; set; }
+        [JsonPropertyOrder(102)]
+        public Vec3 Position { get; set; }
+        [JsonPropertyOrder(103)]
+        public decimal? MinimumSpawnRadius { get; set; }
+        [JsonPropertyOrder(104)]
+        public decimal? MaximumSpawnRadius { get; set; }
+        [JsonPropertyOrder(105)]
+        public BindingList<BehaviourGroupInfectedPackWaypointParams> WayPoints { get; set; }
+
+        public ExpansionMissionEventHorde()
+        {
+        }
+        public ExpansionMissionEventHorde(string missionName, Vec3 position)
+        {
+            m_Version = VERSION;
+            Enabled = 1;
+            Weight = 5m;
+            MissionMaxTime = 120;
+            MissionName = missionName;
+            Difficulty = 0;
+            Objective = 0;
+            Reward = "";
+            MinInfectedAmount = 10;
+            MaxInfectedAmount = 20;
+            Position = position;
+            MinimumSpawnRadius = 10m;
+            MaximumSpawnRadius = 20m;
+            WayPoints = new BindingList<BehaviourGroupInfectedPackWaypointParams>
+            {
+                new BehaviourGroupInfectedPackWaypointParams { m_CenterPosition = position.Clone(), m_Radius = 40m }
+            };
+        }
+        protected override bool EqualsCore(ExpansionMissionEventBase otherBase)
+        {
+            if (!base.EqualsCore(otherBase)) return false;
+
+            var other = (ExpansionMissionEventHorde)otherBase;
+
+            return MinInfectedAmount == other.MinInfectedAmount &&
+                   MaxInfectedAmount == other.MaxInfectedAmount &&
+                   Equals(Position, other.Position) &&
+                   MinimumSpawnRadius == other.MinimumSpawnRadius &&
+                   MaximumSpawnRadius == other.MaximumSpawnRadius &&
+                   WayPoints.SequenceEqual(other.WayPoints);
+        }
+        public override ExpansionMissionEventBase Clone()
+        {
+            var clone = new ExpansionMissionEventHorde
+            {
+                m_Version = m_Version,
+                Enabled = Enabled,
+                Weight = Weight,
+                MissionMaxTime = MissionMaxTime,
+                MissionName = MissionName,
+                Difficulty = Difficulty,
+                Objective = Objective,
+                Reward = Reward,
+
+                MinInfectedAmount = MinInfectedAmount,
+                MaxInfectedAmount = MaxInfectedAmount,
+                Position = Position?.Clone(),
+                MinimumSpawnRadius = MinimumSpawnRadius,
+                MaximumSpawnRadius = MaximumSpawnRadius,
+                WayPoints = WayPoints != null
+                    ? new BindingList<BehaviourGroupInfectedPackWaypointParams>(WayPoints.Select(w => w.Clone()).ToList())
+                    : new BindingList<BehaviourGroupInfectedPackWaypointParams>(),
+            };
+
+            clone.SetPath(_path);
+            clone.SetGuid(Id);
+            return clone;
+        }
+        public override List<string> FixMissingOrInvalidFields()
+        {
+            var fixes = new List<string>();
+
+            if (m_Version != VERSION)
+            {
+                fixes.Add($"Updated version from {m_Version} to {VERSION}");
+                m_Version = VERSION;
+            }
+            if (Enabled == null || (Enabled != 0 && Enabled != 1))
+            {
+                Enabled = 1;
+                fixes.Add("Corrected Enabled to 1");
+            }
+            if (Weight == null)
+            {
+                Weight = 5m;
+                fixes.Add("Set default Weight to 5.0");
+            }
+            if (MissionMaxTime == null)
+            {
+                MissionMaxTime = 120;
+                fixes.Add("Set default MissionMaxTime to 120");
+            }
+            if (MissionName == null)
+            {
+                MissionName = "Horde";
+                fixes.Add("Set default MissionName to Horde");
+            }
+            if (Difficulty == null)
+            {
+                Difficulty = 0;
+                fixes.Add("Set default Difficulty to 0");
+            }
+            if (Objective == null)
+            {
+                Objective = 0;
+                fixes.Add("Set default Objective to 0");
+            }
+            if (Reward == null)
+            {
+                Reward = "";
+                fixes.Add("Set default Reward to empty");
+            }
+            if (MinInfectedAmount == null || MinInfectedAmount < 0)
+            {
+                MinInfectedAmount = 10;
+                fixes.Add("Set default MinInfectedAmount to 10");
+            }
+            if (MaxInfectedAmount == null || MaxInfectedAmount < MinInfectedAmount)
+            {
+                MaxInfectedAmount = Math.Max(20, (int)MinInfectedAmount);
+                fixes.Add($"Set MaxInfectedAmount to {MaxInfectedAmount}");
+            }
+            if (Position == null)
+            {
+                Position = new Vec3(0f, 0f, 0f);
+                fixes.Add("Set default Position to 0 0 0");
+            }
+            if (MinimumSpawnRadius == null || MinimumSpawnRadius < 0)
+            {
+                MinimumSpawnRadius = 10m;
+                fixes.Add("Set default MinimumSpawnRadius to 10");
+            }
+            if (MaximumSpawnRadius == null || MaximumSpawnRadius < MinimumSpawnRadius)
+            {
+                MaximumSpawnRadius = Math.Max(20m, (decimal)MinimumSpawnRadius);
+                fixes.Add($"Set MaximumSpawnRadius to {MaximumSpawnRadius}");
+            }
+            if (WayPoints == null)
+            {
+                WayPoints = new BindingList<BehaviourGroupInfectedPackWaypointParams>();
+                fixes.Add("Initialised WayPoints");
+            }
+            foreach (var waypoint in WayPoints)
+            {
+                if (waypoint.m_CenterPosition == null)
+                {
+                    waypoint.m_CenterPosition = Position.Clone();
+                    fixes.Add("Set missing waypoint position to mission Position");
+                }
+                if (waypoint.m_Radius == null || waypoint.m_Radius < 0)
+                {
+                    waypoint.m_Radius = 40m;
+                    fixes.Add("Set waypoint radius to 40");
+                }
+            }
+
+            return fixes;
+        }
+    }
+    public class BehaviourGroupInfectedPackWaypointParams
+    {
+        public Vec3 m_CenterPosition { get; set; }
+        public decimal? m_Radius { get; set; }
+
+        public override string ToString()
+        {
+            return m_CenterPosition == null ? "Waypoint" : $"{m_CenterPosition.X:0.##}, {m_CenterPosition.Z:0.##}";
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not BehaviourGroupInfectedPackWaypointParams other)
+                return false;
+
+            return Equals(m_CenterPosition, other.m_CenterPosition) &&
+                   m_Radius == other.m_Radius;
+        }
+        public BehaviourGroupInfectedPackWaypointParams Clone()
+        {
+            return new BehaviourGroupInfectedPackWaypointParams
+            {
+                m_CenterPosition = m_CenterPosition?.Clone(),
+                m_Radius = m_Radius
+            };
         }
     }
 }

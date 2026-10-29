@@ -629,6 +629,20 @@ namespace ExpansionPlugin
                     PlayerData PlayerData = node.Tag as PlayerData;
                     ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaPlayerDataControl(), typeof(ExpansionMissionEventBase), PlayerData, selected);
                 },
+                [typeof(ExpansionMissionEventHorde)] = (node, selected) =>
+                {
+                    ExpansionMissionEventHorde horde = node.Tag as ExpansionMissionEventHorde;
+                    ShowHandler(new ExpansionMissionEventBaseControl(), typeof(ExpansionMissionSettingsConfig), horde, selected);
+                    SetupHordeMap(horde, node);
+                    _mapControl.EnsureVisible(new PointF(horde.Position.X, horde.Position.Z));
+                },
+                [typeof(BehaviourGroupInfectedPackWaypointParams)] = (node, selected) =>
+                {
+                    BehaviourGroupInfectedPackWaypointParams waypoint = node.Tag as BehaviourGroupInfectedPackWaypointParams;
+                    ShowHordeWaypointHandler(waypoint, selected);
+                    SetupHordeMap(waypoint, node);
+                    _mapControl.EnsureVisible(new PointF(waypoint.m_CenterPosition.X, waypoint.m_CenterPosition.Z));
+                },
                 //Monitoring
                 [typeof(ExpansionMonitoringSettings)] = (node, selected) =>
                 {
@@ -1271,6 +1285,20 @@ namespace ExpansionPlugin
                 {
                     ShowHandler<IUIHandler>(new ExpansionMissionEventContaminatedAreaControl(), typeof(ExpansionMissionsConfig), node.Parent.Tag as ExpansionMissionEventContaminatedArea, selected);
                 },
+                ["MissionHordeGeneral"] = (node, selected) =>
+                {
+                    ExpansionMissionEventHorde horde = node.Parent.Tag as ExpansionMissionEventHorde;
+                    ShowHordeHandler(horde, selected);
+                    SetupHordeMap(horde, node);
+                    _mapControl.EnsureVisible(new PointF(horde.Position.X, horde.Position.Z));
+                },
+                ["MissionHordeWaypoints"] = (node, selected) =>
+                {
+                    ExpansionMissionEventHorde horde = node.Parent.Tag as ExpansionMissionEventHorde;
+                    ShowHandler<IUIHandler>(null, null, null, selected);
+                    SetupHordeMap(null, node);
+                    _mapControl.EnsureVisible(new PointF(horde.Position.X, horde.Position.Z));
+                },
                 //P2P Market
                 ["P2PMarketTraderPOSandOri"] = (node, selected) =>
                 {
@@ -1764,12 +1792,26 @@ namespace ExpansionPlugin
                     ExpansionSettingsCM.Items.Add(removeMissionToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
+                [typeof(ExpansionMissionEventHorde)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
+                [typeof(BehaviourGroupInfectedPackWaypointParams)] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(removeHordeWaypointToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 [typeof(ExpansionMissionsConfig)] = node =>
                 {
                     ExpansionSettingsCM.Items.Clear();
                     ExpansionSettingsCM.Items.Add(addNewAirdropMissionToolStripMenuItem);
                     ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
                     ExpansionSettingsCM.Items.Add(addNewContaminatedMissionToolStripMenuItem);
+                    ExpansionSettingsCM.Items.Add(new ToolStripSeparator());
+                    ExpansionSettingsCM.Items.Add(addNewHordeMissionToolStripMenuItem);
                     ExpansionSettingsCM.Show(Cursor.Position);
                 },
                 //P2P Market
@@ -2071,6 +2113,13 @@ namespace ExpansionPlugin
             // ----------------------
             _stringContextMenus = new Dictionary<string, Action<TreeNode>>
             {
+                // Missions
+                ["MissionHordeWaypoints"] = node =>
+                {
+                    ExpansionSettingsCM.Items.Clear();
+                    ExpansionSettingsCM.Items.Add(addHordeWaypointToolStripMenuItem);
+                    ExpansionSettingsCM.Show(Cursor.Position);
+                },
                 // Loadouts
                 ["InventoryAttachments"] = node =>
                 {
@@ -4631,7 +4680,78 @@ namespace ExpansionPlugin
                 };
                 missionNode.Nodes.Add(alclnodes);
             }
+            else if (MB is ExpansionMissionEventHorde ExpansionMissionEventHorde)
+            {
+                AddHordeMissionNodes(ExpansionMissionEventHorde, missionNode);
+            }
             economyRootNode.Nodes.Add(missionNode);
+        }
+        private static void AddHordeMissionNodes(ExpansionMissionEventHorde horde, TreeNode missionNode)
+        {
+            missionNode.Nodes.Add(new TreeNode("Horde Settings")
+            {
+                Tag = "MissionHordeGeneral"
+            });
+            TreeNode waypointsNode = new TreeNode("Waypoints")
+            {
+                Tag = "MissionHordeWaypoints"
+            };
+            foreach (BehaviourGroupInfectedPackWaypointParams waypoint in horde.WayPoints)
+            {
+                waypointsNode.Nodes.Add(new TreeNode(waypoint.ToString())
+                {
+                    Tag = waypoint
+                });
+            }
+            missionNode.Nodes.Add(waypointsNode);
+        }
+        private void SetupHordeMap(object selected, TreeNode node)
+        {
+            SetupMap(() =>
+            {
+                _selectedHordeMarker = selected;
+                _mapControl.MapDoubleClicked += MapControl_MissionLocationPositionDoubleclicked;
+
+                _mapOverlayPanel.Visible = true;
+                ShowAllCB.Visible = true;
+                button6.Enabled = true;
+                button5.Enabled = true;
+
+                var ExpansionMissionsConfig = node.FindParentOfType<ExpansionMissionsConfig>();
+                if (ExpansionMissionsConfig != null)
+                    DrawbaseMissionMarkerData(ExpansionMissionsConfig);
+            });
+        }
+        private void DrawHordeMissionMarkers(ExpansionMissionEventHorde horde)
+        {
+            var marker = new TextMarkerDrawable(new PointF(horde.Position.X, horde.Position.Z), _mapControl.MapSize)
+            {
+                Color = _selectedHordeMarker == horde ? Color.LimeGreen : Color.Red,
+                Radius = (float)horde.MaximumSpawnRadius,
+                Scaleradius = true,
+                Shade = true,
+                Text = $"Horde - {horde.MissionName}",
+                TextPlacement = MarkerLabelPlacement.Top,
+                TextBackground = true,
+                TextBackgroundColor = Color.DarkOrange
+            };
+            _mapControl.RegisterDrawable(marker);
+            int index = 1;
+            foreach (BehaviourGroupInfectedPackWaypointParams waypoint in horde.WayPoints)
+            {
+                var wpmarker = new TextMarkerDrawable(new PointF(waypoint.m_CenterPosition.X, waypoint.m_CenterPosition.Z), _mapControl.MapSize)
+                {
+                    Color = _selectedHordeMarker == waypoint ? Color.LimeGreen : Color.Orange,
+                    Radius = (float)waypoint.m_Radius,
+                    Scaleradius = true,
+                    Shade = false,
+                    Text = $"Horde Waypoint {index++}",
+                    TextPlacement = MarkerLabelPlacement.Bottom,
+                    TextBackground = true,
+                    TextBackgroundColor = Color.DarkOrange
+                };
+                _mapControl.RegisterDrawable(wpmarker);
+            }
         }
 
         //Monitoring
@@ -6114,6 +6234,7 @@ namespace ExpansionPlugin
             _selectedSpawnLocation = null;
             _selectedAirdropLocation = null;
             _selectedExpansionMissionEventContaminatedArea = null;
+            _selectedHordeMarker = null;
             _selectedData = null;
             _selectedP2PTradervehiclespawn = null;
             _selectedPersonalStorageContainer = null;
@@ -6215,6 +6336,7 @@ namespace ExpansionPlugin
         private ExpansionSpawnLocation _selectedSpawnLocation;
         private ExpansionAirdropLocation _selectedAirdropLocation;
         private ExpansionMissionEventContaminatedArea _selectedExpansionMissionEventContaminatedArea;
+        private object _selectedHordeMarker;
         private Data _selectedData;
         private Vec3 _selectedP2PTradervehiclespawn;
         private ExpansionP2PMarketTraderConfig _selectedP2PMarketTrader;
@@ -7355,10 +7477,20 @@ namespace ExpansionPlugin
                         }
                         _mapControl.RegisterDrawable(marker);
                     }
+                    else if (mb is ExpansionMissionEventHorde horde)
+                    {
+                        DrawHordeMissionMarkers(horde);
+                    }
                 }
             }
             else
             {
+                ExpansionMissionEventHorde currentHorde = currentTreeNode.FindParentOfType<ExpansionMissionEventHorde>();
+                if (currentHorde != null)
+                {
+                    DrawHordeMissionMarkers(currentHorde);
+                    return;
+                }
                 if (currentTreeNode.Parent.Tag is ExpansionMissionEventAirdrop airdrop)
                 {
                     var marker = new TextMarkerDrawable(new PointF((float)airdrop.DropLocation.x, (float)airdrop.DropLocation.z), _mapControl.MapSize)
@@ -9113,6 +9245,52 @@ namespace ExpansionPlugin
                 ShowHandler(new ExpansionMissionEffectAreaControl(), typeof(CfgeffectareaConfig), area, new List<TreeNode>() { currentTreeNode });
                 DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
             }
+            else if (currentTreeNode.Tag is BehaviourGroupInfectedPackWaypointParams waypoint)
+            {
+                waypoint.m_CenterPosition.X = e.MapCoordinates.X;
+                waypoint.m_CenterPosition.Z = e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    waypoint.m_CenterPosition.Y = (float)MapData.gethieght(waypoint.m_CenterPosition.X, waypoint.m_CenterPosition.Z);
+                }
+                currentTreeNode.Text = waypoint.ToString();
+                _mapControl.ClearDrawables();
+                ShowHordeWaypointHandler(waypoint, new List<TreeNode>() { currentTreeNode });
+                DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
+            }
+            else if (currentTreeNode.Tag is string hordeTag && hordeTag == "MissionHordeGeneral")
+            {
+                ExpansionMissionEventHorde horde = currentTreeNode.Parent.Tag as ExpansionMissionEventHorde;
+                horde.Position.X = e.MapCoordinates.X;
+                horde.Position.Z = e.MapCoordinates.Y;
+                if (MapData.FileExists)
+                {
+                    horde.Position.Y = (float)MapData.gethieght(horde.Position.X, horde.Position.Z);
+                }
+                _mapControl.ClearDrawables();
+                ShowHordeHandler(horde, new List<TreeNode>() { currentTreeNode });
+                DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
+            }
+        }
+        private void ShowHordeHandler(ExpansionMissionEventHorde horde, List<TreeNode> selected)
+        {
+            var control = new ExpansionMissionEventHordeControl();
+            control.PositionChanged += () =>
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
+            };
+            ShowHandler<IUIHandler>(control, typeof(ExpansionMissionsConfig), horde, selected);
+        }
+        private void ShowHordeWaypointHandler(BehaviourGroupInfectedPackWaypointParams waypoint, List<TreeNode> selected)
+        {
+            var control = new ExpansionHordeWaypointControl();
+            control.PositionChanged += () =>
+            {
+                _mapControl.ClearDrawables();
+                DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
+            };
+            ShowHandler<IUIHandler>(control, typeof(ExpansionMissionsConfig), waypoint, selected);
         }
         private void MapControl_P2PTraderVehicleSpawnSingleclicked(object sender, MapClickEventArgs e)
         {
@@ -9884,6 +10062,10 @@ namespace ExpansionPlugin
                 else if (currentTreeNode.Parent.Tag is ExpansionMissionEventHeliCrash ExpansionMissionEventHeliCrash)
                 {
                     _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHeliCrash);
+                }
+                else if (currentTreeNode.Parent.Tag is ExpansionMissionEventHorde ExpansionMissionEventHorde)
+                {
+                    _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHorde);
                 }
                 currentTreeNode.Parent.Remove();
             }
@@ -13086,7 +13268,68 @@ namespace ExpansionPlugin
             {
                 _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHeliCrash);
             }
+            else if (currentTreeNode.Tag is ExpansionMissionEventHorde ExpansionMissionEventHorde)
+            {
+                _expansionManager.ExpansionMissionsConfig.RemoveFile(ExpansionMissionEventHorde);
+            }
             currentTreeNode.Remove();
+        }
+        private void addNewHordeMissionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEventFile frm = new AddEventFile();
+            frm.SetTitle = "Add new Horde File";
+            frm.Button4visable = false;
+            frm.StartPosition = FormStartPosition.CenterParent;
+            frm.Button5text = "Import to Expansion";
+            frm.HideCEStuff();
+            frm.moddir = Path.Combine(AppServices.GetRequired<ProjectManager>().CurrentProject.ProjectRoot, "mpmissions", AppServices.GetRequired<ProjectManager>().CurrentProject.MpMissionPath, "expansion", "missions");
+            DialogResult dr = frm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string newmodPath = frm.moddir.Replace("/", "\\");
+                string HordeFilename = "Horde_" + frm.typesname + ".json";
+                string newPath = Path.Combine(newmodPath, HordeFilename);
+                float centre = AppServices.GetRequired<ProjectManager>().CurrentProject.MapSize / 2;
+                Vec3 position = new Vec3(centre, 0, centre);
+                if (MapData.FileExists)
+                {
+                    position.Y = (float)MapData.gethieght(position.X, position.Z);
+                }
+                ExpansionMissionEventHorde newmission = new ExpansionMissionEventHorde(frm.typesname, position);
+                newmission.SetPath(newPath);
+                _expansionManager.ExpansionMissionsConfig.AddNewMissionFile(newmission);
+                TreeNode missionNode = new TreeNode(newmission.FileName)
+                {
+                    Tag = newmission
+                };
+                AddHordeMissionNodes(newmission, missionNode);
+                Helpers.InsertNodeAlphabetically(currentTreeNode.Nodes, missionNode);
+                ExpansionTV.SelectedNode = missionNode;
+            }
+        }
+        private void addHordeWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMissionEventHorde horde = currentTreeNode.Parent.Tag as ExpansionMissionEventHorde;
+            BehaviourGroupInfectedPackWaypointParams waypoint = new BehaviourGroupInfectedPackWaypointParams()
+            {
+                m_CenterPosition = horde.Position.Clone(),
+                m_Radius = 40m
+            };
+            horde.WayPoints.Add(waypoint);
+            TreeNode waypointNode = new TreeNode(waypoint.ToString())
+            {
+                Tag = waypoint
+            };
+            currentTreeNode.Nodes.Add(waypointNode);
+            ExpansionTV.SelectedNode = waypointNode;
+        }
+        private void removeHordeWaypointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExpansionMissionEventHorde horde = currentTreeNode.FindParentOfType<ExpansionMissionEventHorde>();
+            horde.WayPoints.Remove(currentTreeNode.Tag as BehaviourGroupInfectedPackWaypointParams);
+            currentTreeNode.Remove();
+            _mapControl.ClearDrawables();
+            DrawbaseMissionMarkerData(_expansionManager.ExpansionMissionsConfig);
         }
         //Notifications
         private void addNewNotificationToolStripMenuItem_Click(object sender, EventArgs e)

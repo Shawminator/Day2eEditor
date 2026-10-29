@@ -145,6 +145,9 @@
             addNewAirdropMissionToolStripMenuItem = new ToolStripMenuItem();
             addNewContaminatedMissionToolStripMenuItem = new ToolStripMenuItem();
             removeMissionToolStripMenuItem = new ToolStripMenuItem();
+            addNewHordeMissionToolStripMenuItem = new ToolStripMenuItem();
+            addHordeWaypointToolStripMenuItem = new ToolStripMenuItem();
+            removeHordeWaypointToolStripMenuItem = new ToolStripMenuItem();
             addP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
             removeP2PWaypointToolStripMenuItem = new ToolStripMenuItem();
             moveP2PWaypointUpToolStripMenuItem = new ToolStripMenuItem();
@@ -1304,7 +1307,7 @@
             // ChatCM
             // 
             ChatCM.BackColor = Color.FromArgb(60, 63, 65);
-            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem, moveP2PWaypointUpToolStripMenuItem, moveP2PWaypointDownToolStripMenuItem, removeHardlinePlayerFactionRepToolStripMenuItem });
+            ChatCM.Items.AddRange(new ToolStripItem[] { addNewBlacklistedWordToolStripMenuItem, removeBlacklistedWordToolStripMenuItem, addNewNotificationToolStripMenuItem, removeNotificationToolStripMenuItem, addNewAirdropMissionToolStripMenuItem, addNewContaminatedMissionToolStripMenuItem, addNewHordeMissionToolStripMenuItem, addHordeWaypointToolStripMenuItem, removeHordeWaypointToolStripMenuItem, removeMissionToolStripMenuItem, addP2PWaypointToolStripMenuItem, removeP2PWaypointToolStripMenuItem, moveP2PWaypointUpToolStripMenuItem, moveP2PWaypointDownToolStripMenuItem, removeHardlinePlayerFactionRepToolStripMenuItem });
             ChatCM.Name = "ChatCM";
             ChatCM.ShowImageMargin = false;
             ChatCM.Size = new Size(222, 290);
@@ -1364,6 +1367,30 @@
             removeMissionToolStripMenuItem.Size = new Size(221, 22);
             removeMissionToolStripMenuItem.Text = "Remove Mission";
             removeMissionToolStripMenuItem.Click += removeMissionToolStripMenuItem_Click;
+            // 
+            // addNewHordeMissionToolStripMenuItem
+            // 
+            addNewHordeMissionToolStripMenuItem.ForeColor = SystemColors.Control;
+            addNewHordeMissionToolStripMenuItem.Name = "addNewHordeMissionToolStripMenuItem";
+            addNewHordeMissionToolStripMenuItem.Size = new Size(221, 22);
+            addNewHordeMissionToolStripMenuItem.Text = "Add New Horde Mission";
+            addNewHordeMissionToolStripMenuItem.Click += addNewHordeMissionToolStripMenuItem_Click;
+            // 
+            // addHordeWaypointToolStripMenuItem
+            // 
+            addHordeWaypointToolStripMenuItem.ForeColor = SystemColors.Control;
+            addHordeWaypointToolStripMenuItem.Name = "addHordeWaypointToolStripMenuItem";
+            addHordeWaypointToolStripMenuItem.Size = new Size(221, 22);
+            addHordeWaypointToolStripMenuItem.Text = "Add Horde Waypoint";
+            addHordeWaypointToolStripMenuItem.Click += addHordeWaypointToolStripMenuItem_Click;
+            // 
+            // removeHordeWaypointToolStripMenuItem
+            // 
+            removeHordeWaypointToolStripMenuItem.ForeColor = SystemColors.Control;
+            removeHordeWaypointToolStripMenuItem.Name = "removeHordeWaypointToolStripMenuItem";
+            removeHordeWaypointToolStripMenuItem.Size = new Size(221, 22);
+            removeHordeWaypointToolStripMenuItem.Text = "Remove Horde Waypoint";
+            removeHordeWaypointToolStripMenuItem.Click += removeHordeWaypointToolStripMenuItem_Click;
             // 
             // addP2PWaypointToolStripMenuItem
             // 
@@ -3064,6 +3091,9 @@
         private ToolStripMenuItem addNewAirdropMissionToolStripMenuItem;
         private ToolStripMenuItem addNewContaminatedMissionToolStripMenuItem;
         private ToolStripMenuItem removeMissionToolStripMenuItem;
+        private ToolStripMenuItem addNewHordeMissionToolStripMenuItem;
+        private ToolStripMenuItem addHordeWaypointToolStripMenuItem;
+        private ToolStripMenuItem removeHordeWaypointToolStripMenuItem;
         private ContextMenuStrip P2PCM;
         private ToolStripMenuItem AddNewP2PMarketCategoryToolStripMenuItem;
         private ToolStripMenuItem RemoveP2PMarketCategoryToolStripMenuItem;
