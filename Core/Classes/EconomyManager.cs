@@ -430,65 +430,178 @@ namespace Day2eEditor
 
             return removedFolders;
         }
-        public void CheckallTypes(string uuname, string name)
+        // ---------------------------------------------------------------------------------------------
+        // Definition flags: renaming or deleting one in cfglimitsdefinition.xml / cfglimitsdefinitionuser.xml
+        // has to be applied everywhere the flag is used. Otherwise the next load's clean-up would strip the
+        // old name from every type and prototype. Each method returns how many references it changed.
+        // ---------------------------------------------------------------------------------------------
+        public int RenameDefinitionFlag(DefinitionFlagKind kind, string oldName, string newName)
         {
-            foreach (TypesFile ft in TypesConfig.MutableItems)
-            {
-                foreach (TypeEntry type in ft.Data.TypeList)
-                {
-                    Usage typeusage = type.Usages.FirstOrDefault(x => x.User == uuname);
-                    if (typeusage != null)
-                    {
-                        typeusage.User = name;
-                        ft.IsDirty = true;
-                    }
-                }
-            }
+            return UpdateFlagReferences(kind, oldName, newName, out _);
         }
-        public void CheckallTypes(string uuname)
+        public int RemoveDefinitionFlag(DefinitionFlagKind kind, string name)
         {
-            foreach (TypesFile ft in TypesConfig.MutableItems)
-            {
-                foreach (TypeEntry type in ft.Data.TypeList)
-                {
-                    Usage typeusage = type.Usages.FirstOrDefault(x => x.User == uuname);
-                    if (typeusage != null)
-                    {
-                        type.Usages.Remove(typeusage);
-                        ft.IsDirty = true;
-                    }
-                }
-            }
+            return UpdateFlagReferences(kind, name, null, out _);
         }
-        public void CheckallTypesValues(string uuname)
+        // emptiedUserFlags lists the user usage/value flags that only contained this flag and are now empty,
+        // so the caller can tell the user to delete them
+        public int RemoveDefinitionFlag(DefinitionFlagKind kind, string name, out List<string> emptiedUserFlags)
         {
-            foreach (TypesFile ft in TypesConfig.MutableItems)
-            {
-                foreach (TypeEntry type in ft.Data.TypeList)
-                {
-                    Value typevalue = type.Values.FirstOrDefault(x => x.User == uuname);
-                    if (typevalue != null)
-                    {
-                        type.Values.Remove(typevalue);
-                        ft.IsDirty = true;
-                    }
-                }
-            }
+            return UpdateFlagReferences(kind, name, null, out emptiedUserFlags);
         }
-        public void CheckallTypesValues(string uuname, string name)
+        // True when the definition list for this kind already has the name, so a rename or add would duplicate it
+        public bool DefinitionFlagExists(DefinitionFlagKind kind, string name)
         {
-            foreach (TypesFile ft in TypesConfig.MutableItems)
+            var defs = cfglimitsdefinitionConfig?.Data;
+            var userDefs = cfglimitsdefinitionuserConfig?.Data;
+            return kind switch
             {
-                foreach (TypeEntry type in ft.Data.TypeList)
+                DefinitionFlagKind.Category => defs?.categories.Any(x => x.name == name) == true,
+                DefinitionFlagKind.Tag => defs?.tags.Any(x => x.name == name) == true,
+                DefinitionFlagKind.Usage => defs?.usageflags.Any(x => x.name == name) == true,
+                DefinitionFlagKind.Value => defs?.valueflags.Any(x => x.name == name) == true,
+                DefinitionFlagKind.UserUsage => userDefs?.usageflags.Any(x => x.name == name) == true,
+                DefinitionFlagKind.UserValue => userDefs?.valueflags.Any(x => x.name == name) == true,
+                _ => false
+            };
+        }
+        // Returns baseName, or baseName 2, 3... so a newly added definition never duplicates an existing one
+        public string GetUniqueDefinitionFlagName(DefinitionFlagKind kind, string baseName)
+        {
+            string name = baseName;
+            for (int n = 2; DefinitionFlagExists(kind, name); n++)
+                name = $"{baseName} {n}";
+            return name;
+        }
+        // newName null = remove the flag
+        private int UpdateFlagReferences(DefinitionFlagKind kind, string oldName, string? newName, out List<string> emptiedUserFlags)
+        {
+            emptiedUserFlags = new List<string>();
+            if (string.IsNullOrEmpty(oldName))
+                return 0;
+
+            int changed = 0;
+
+            // Types (vanilla and modded)
+            if (TypesConfig != null)
+            {
+                foreach (TypesFile file in TypesConfig.MutableItems)
                 {
-                    Value typevalue = type.Values.FirstOrDefault(x => x.User == uuname);
-                    if (typevalue != null)
+                    int before = changed;
+                    foreach (TypeEntry type in file.Data.TypeList)
                     {
-                        typevalue.User = name;
-                        ft.IsDirty = true;
+                        switch (kind)
+                        {
+                            case DefinitionFlagKind.Category:
+                                if (type.Category?.Name == oldName)
+                                {
+                                    if (newName == null) type.Category = null;
+                                    else type.Category.Name = newName;
+                                    changed++;
+                                }
+                                break;
+                            case DefinitionFlagKind.Tag:
+                                type.Tags = UpdateList(type.Tags, x => x.Name, (x, n) => x.Name = n, oldName, newName, ref changed);
+                                break;
+                            case DefinitionFlagKind.Usage:
+                                type.Usages = UpdateList(type.Usages, x => x.Name, (x, n) => x.Name = n, oldName, newName, ref changed);
+                                break;
+                            case DefinitionFlagKind.UserUsage:
+                                type.Usages = UpdateList(type.Usages, x => x.User, (x, n) => x.User = n, oldName, newName, ref changed);
+                                break;
+                            case DefinitionFlagKind.Value:
+                                type.Values = UpdateList(type.Values, x => x.Name, (x, n) => x.Name = n, oldName, newName, ref changed);
+                                break;
+                            case DefinitionFlagKind.UserValue:
+                                type.Values = UpdateList(type.Values, x => x.User, (x, n) => x.User = n, oldName, newName, ref changed);
+                                break;
+                        }
+                    }
+                    if (changed != before)
+                        file.IsDirty = true;
+                }
+            }
+
+            // Map group prototypes. These lists are never null; an empty one writes no elements.
+            if (mapgroupprotoConfig?.Data != null)
+            {
+                foreach (var group in mapgroupprotoConfig.Data.group)
+                {
+                    switch (kind)
+                    {
+                        case DefinitionFlagKind.Value:
+                            UpdateList(group.value, x => x.name, (x, n) => x.name = n, oldName, newName, ref changed);
+                            break;
+                        case DefinitionFlagKind.UserValue:
+                            UpdateList(group.value, x => x.user, (x, n) => x.user = n, oldName, newName, ref changed);
+                            break;
+                        case DefinitionFlagKind.Usage:
+                            UpdateList(group.usage, x => x.name, (x, n) => x.name = n, oldName, newName, ref changed);
+                            break;
+                        case DefinitionFlagKind.Category:
+                            foreach (var container in group.container)
+                                UpdateList(container.category, x => x.name, (x, n) => x.name = n, oldName, newName, ref changed);
+                            break;
+                        case DefinitionFlagKind.Tag:
+                            foreach (var container in group.container)
+                                UpdateList(container.tag, x => x.name, (x, n) => x.name = n, oldName, newName, ref changed);
+                            break;
                     }
                 }
             }
+
+            // User definitions are built from the standard usage and value flags
+            if (cfglimitsdefinitionuserConfig?.Data != null)
+            {
+                if (kind == DefinitionFlagKind.Usage)
+                {
+                    foreach (var user in cfglimitsdefinitionuserConfig.Data.usageflags)
+                    {
+                        bool hadEntries = user.usage.Count > 0;
+                        UpdateList(user.usage, x => x.name, (x, n) => x.name = n, oldName, newName, ref changed);
+                        if (hadEntries && user.usage.Count == 0 && user.name != null)
+                            emptiedUserFlags.Add(user.name);
+                    }
+                }
+                else if (kind == DefinitionFlagKind.Value)
+                {
+                    foreach (var user in cfglimitsdefinitionuserConfig.Data.valueflags)
+                    {
+                        bool hadEntries = user.value.Count > 0;
+                        UpdateList(user.value, x => x.name, (x, n) => x.name = n, oldName, newName, ref changed);
+                        if (hadEntries && user.value.Count == 0 && user.name != null)
+                            emptiedUserFlags.Add(user.name);
+                    }
+                }
+            }
+
+            Console.WriteLine(newName == null
+                ? $"[Economy Manager] Removed {kind} '{oldName}' from {changed} place(s)."
+                : $"[Economy Manager] Renamed {kind} '{oldName}' to '{newName}' in {changed} place(s).");
+
+            return changed;
+        }
+        // Renames or removes matching entries. Returns null once removal empties the list, the same as the
+        // types editor does when the last tier is unticked, so no empty element group is kept around.
+        private static BindingList<T>? UpdateList<T>(BindingList<T>? list, Func<T, string?> getName, Action<T, string> setName,
+            string oldName, string? newName, ref int changed)
+        {
+            if (list == null)
+                return null;
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (getName(list[i]) != oldName)
+                    continue;
+
+                if (newName == null)
+                    list.RemoveAt(i);
+                else
+                    setName(list[i], newName);
+                changed++;
+            }
+
+            return list.Count == 0 ? null : list;
         }
         public void SetExternalFiles()
         {

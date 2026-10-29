@@ -1,5 +1,17 @@
 namespace Day2eEditor
 {
+    // Which definition list a flag belongs to: the first four are in cfglimitsdefinition.xml,
+    // the user ones in cfglimitsdefinitionuser.xml
+    public enum DefinitionFlagKind
+    {
+        Category,
+        Tag,
+        Usage,
+        Value,
+        UserUsage,
+        UserValue
+    }
+
     // The category, tag, usage and value names declared in cfglimitsdefinition.xml and
     // cfglimitsdefinitionuser.xml. Types and map group prototypes may only use these.
     public sealed class DefinedFlags
